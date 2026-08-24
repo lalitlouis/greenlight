@@ -78,6 +78,7 @@ function buildPanel() {
     col.appendChild(el("div", "col-body"));
     panel.appendChild(col);
   }
+  window.FX?.staggerIn(panel.querySelectorAll(".col"));
 }
 
 function setDeskStatus(id) {

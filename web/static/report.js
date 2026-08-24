@@ -168,7 +168,8 @@ function renderPrediction(root, pred) {
     const sim = el("div", "comp-sim");
     const bar = el("div", "comp-bar");
     const fill = el("div", "comp-fill");
-    fill.style.width = Math.round(100 * (1 - c.distance / (maxD * 1.15))) + "%";
+    fill.dataset.grow = String(Math.round(100 * (1 - c.distance / (maxD * 1.15))));
+    if (!window.FX?.on) fill.style.width = fill.dataset.grow + "%";
     bar.appendChild(fill);
     sim.appendChild(bar);
     sim.appendChild(el("span", "comp-d", "d " + (c.distance ?? 0).toFixed(3)));
@@ -201,7 +202,9 @@ function renderReport(record) {
 
   const head = el("div", "card rpt-head");
   const scoreBox = el("div", "score " + tone);
-  if (typeof score === "number") scoreBox.style.setProperty("--scorepct", String(score));
+  if (typeof score === "number" && !window.FX?.on) {
+    scoreBox.style.setProperty("--scorepct", String(score));
+  }
   scoreBox.appendChild(el("b", null, String(score)));
   scoreBox.appendChild(el("span", "of", "/100"));
   head.appendChild(scoreBox);
@@ -290,6 +293,12 @@ function renderReport(record) {
     const ul = el("ul", "plain-list");
     for (const n of notes) ul.appendChild(el("li", null, n));
     root.appendChild(ul);
+  }
+
+  if (window.FX?.on) {
+    FX.scoreRing(scoreBox, typeof score === "number" ? score : 0);
+    FX.growBars(root);
+    FX.staggerIn(root.querySelectorAll(".flag"));
   }
 
   if (window.location.hash) {

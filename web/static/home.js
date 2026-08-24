@@ -53,6 +53,7 @@ async function loadRuns() {
       card.appendChild(bottom);
       grid.appendChild(card);
     }
+    window.FX?.staggerIn(grid.querySelectorAll(".run-card"));
   } catch {
     grid.textContent = "";
     grid.appendChild(el("div", "card runs-empty", "Could not load analyses."));
@@ -63,4 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
   loadRuns();
   $("hero-upload")?.addEventListener("click", promptUpload);
   $("band-upload")?.addEventListener("click", promptUpload);
+  window.FX?.hero();
+  window.FX?.reveals();
+  window.FX?.counters();
 });
