@@ -60,8 +60,32 @@ async function loadRuns() {
   }
 }
 
+async function loadHomeCases() {
+  const grid = $("home-cases");
+  if (!grid) return;
+  try {
+    const cases = await (await fetch("/api/cases")).json();
+    grid.textContent = "";
+    for (const c of cases.slice(0, 3)) {
+      const card = el("a", "card case-card");
+      card.href = `/report?run=${encodeURIComponent(c.id)}`;
+      const top = el("div", "rc-top");
+      top.appendChild(el("span", "case-title", `${c.title} (${c.year})`));
+      if (c.score != null) top.appendChild(el("span", "score-pill bad", `${c.score}/100`));
+      card.appendChild(top);
+      card.appendChild(el("p", "case-hook-line", c.hook || ""));
+      card.appendChild(el("span", "stage-cta", "Read the report →"));
+      grid.appendChild(card);
+    }
+    window.FX?.staggerIn(grid.querySelectorAll(".case-card"));
+  } catch {
+    grid.closest("section")?.classList.add("hidden");
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   loadRuns();
+  loadHomeCases();
   $("hero-upload")?.addEventListener("click", promptUpload);
   $("band-upload")?.addEventListener("click", promptUpload);
   window.FX?.hero();

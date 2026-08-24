@@ -184,6 +184,8 @@ function injectChrome() {
   finner.appendChild(
     mkCol("Product", [
       ["/how-it-works", "How it works"],
+      ["/cases", "Case studies"],
+      ["/writer", "Writer's Room"],
       ["/run?replay=1", "Watch a recorded analysis"],
       ["/faq", "FAQ"],
     ])
