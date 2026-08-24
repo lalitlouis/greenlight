@@ -15,6 +15,9 @@ serve:          ## web UI (upload / live stream / replay) on :8080
 test:
 	.venv/bin/pytest -q
 
+costs:          ## local spend tracker across GCP / Parallel / ClickHouse / domain
+	.venv/bin/python scripts/costs.py
+
 eval:           ## score the latest run against fixtures/SEEDS.md
 	.venv/bin/python scripts/eval_run.py
 
