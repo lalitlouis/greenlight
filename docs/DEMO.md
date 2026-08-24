@@ -59,5 +59,10 @@ Nobody else will do this, and it reads as real engineering judgment.
 - Always have a **pre-computed run in `runs/`**. Never demo live against the network.
 - Show the desks finishing at **different times after different numbers of turns**. That asymmetry
   is the visual proof of autonomy; a progress bar proves nothing.
+- Both of the above require a **replay harness**: the UI must replay a recorded run with realistic
+  streaming and timing. A cached JSON alone does neither. Small feature, real feature — scope it
+  in Phase 3, not day 14.
+- The rejected flag (moment 4) is **harvested, not scripted** — the fixture screenplay seeds a
+  verifier trap, and the run committed to `runs/` is selected for containing a real rejection.
 - The fixture screenplay is **our own original work**. Never a real or leaked script.
 - Label cost figures as estimates on screen, as the product does.

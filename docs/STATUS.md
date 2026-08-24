@@ -71,11 +71,14 @@ Bonus finding: the practitioner triage criteria in those results (*prominently f
 Goal: `make run` prints real cited flags from a real screenplay. No UI, no ClickHouse, no fan-out.
 
 1. **Original demo screenplay** in `fixtures/` — must be our own work (contest rule), ~15 pages,
-   seeded with one instance of every flag category. Open question: dense checklist vs. a genuine
-   short film that happens to be dense. Leaning genuine short film — the video is the only thing
-   most judges experience.
+   seeded with one instance of every flag category **plus one verifier trap**: an entity where
+   surface search results look supportive but do not actually support the obvious claim. The
+   rejected-flag demo moment cannot be scripted, only harvested — the trap raises the odds, and
+   the cached run committed to `runs/` must be *selected* for containing a rejection. Open
+   question: dense checklist vs. a genuine short film that happens to be dense. Leaning genuine
+   short film — the video is the only thing most judges experience.
 2. **Fountain parser** -> `Scene[]` with `raw_span` char offsets.
-3. **EntityExtractor** (Gemini 2.5 Flash, structured output) -> `Entity[]`.
+3. **Triage** (Gemini 2.5 Flash, structured output) -> `Entity[]` + per-desk worklists.
 4. **ClearanceCounsel as a real LoopAgent** — tools (`read_scene`, `find_in_script`, `research`,
    `file_flag`, `done`), live Parallel calls, terminating on its own. Build one desk as a genuine
    loop rather than four as prompts; the other three are then repetition.
@@ -86,7 +89,9 @@ Then Phase 2 (panel + corpus), Phase 3 (product + deploy), Phase 4 (submission).
 ## Open items needing a human
 
 - [ ] **Add teammate to the Devpost project** — team members must be listed there
-- [ ] `docs/DATA_SOURCES.md` — provenance check on MPA/CARA rating rationales before ingesting
+- [ ] `docs/DATA_SOURCES.md` — provenance check on MPA/CARA rating rationales before ingesting.
+      **Do this week, not with Phase 2 ingest** — demo moment #3 (the comparables beat, the
+      "most defensible thirty seconds") dies with no replacement time if this check fails late.
 - [ ] Decide screenplay fixture style (checklist vs. short film)
 
 ## Known gotchas

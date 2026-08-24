@@ -81,6 +81,12 @@ claim?
 
 Withholding the desk's reasoning is deliberate: a verifier shown the argument tends to ratify it.
 
+Implementation note: ADK's `ParallelAgent` takes a static sub-agent list, and flag count is not
+known until the desks finish — so the VerificationPanel is built at runtime (or run as a fan-out
+inside a custom agent), not declared as a fixed `ParallelAgent`. Same class of care applies to the
+Adjudicator's `AgentTool` re-entry: a re-entered desk appends to `flags:<desk>` and must not
+double-file findings it already made.
+
 This pass is the product thesis made mechanical. Rejected-flag count is a metric we report to
 ourselves — if it is zero, the verifier is not doing its job.
 

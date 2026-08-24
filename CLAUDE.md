@@ -57,18 +57,34 @@ default path.
 
 ## Architecture
 
+Agentic, not a pipeline. An earlier design — extract entities, one search each, four prompts,
+dedupe — was deliberately killed on 2026-08-23 because it cannot produce a correct clearance
+report. **Do not regress to it.** Full reasoning in `docs/TECH_SPEC.md`, which is the
+authoritative spec; if this diagram and TECH_SPEC ever disagree, TECH_SPEC wins.
+
 ```
-GreenlightPipeline (SequentialAgent)
-├── ScriptParser        deterministic Python, not an LLM — Fountain/PDF -> Scene[]
-├── EntityExtractor     LlmAgent  -> Entity[]
-├── GatekeeperPanel     ParallelAgent — the four desks run concurrently
-│   ├── ClearanceCounsel     Parallel Search  -> Flag[]
-│   ├── RatingsBoard         ClickHouse kNN over CARA rationales -> Flag[]
-│   ├── SafetyUnderwriter    rules table + Parallel Search -> Flag[]
-│   └── TerritoryCensor      ClickHouse + Parallel Search -> Flag[]
-├── Adjudicator         LlmAgent — dedupe, resolve conflicts, score
-└── ReportWriter        deterministic Python -> Report + marked-up script
+GreenlightPipeline                  SequentialAgent
+├── ScriptParser                    deterministic Python, not an LLM — Fountain/PDF -> Scene[]
+├── Triage                          LlmAgent -> Entity[] + per-desk worklists
+├── GatekeeperPanel                 ParallelAgent — the four desks run concurrently
+│   ├── ClearanceCounsel            LoopAgent(max_iterations=8)
+│   ├── RatingsBoard                LoopAgent(max_iterations=4)
+│   ├── SafetyUnderwriter           LoopAgent(max_iterations=6)
+│   └── TerritoryCensor             LoopAgent(max_iterations=6)
+├── VerificationPanel               fan-out — one blinded verifier per filed flag; can REJECT
+├── Adjudicator                     LoopAgent(max_iterations=3) — merge, resolve conflicts,
+│                                   re-enter a desk via AgentTool when remedies interact
+└── ReportWriter                    deterministic Python -> Report + marked-up script
 ```
+
+Each desk is a `LoopAgent` over an `LlmAgent` with the shared toolbelt (`read_scene`,
+`find_in_script`, `research`, `query_precedent`, `file_flag`, `note_open_question`, `done`),
+deciding for itself what to investigate, how deep to chase ownership (cap 3), and when to stop.
+Verifiers are blinded — claim and citation, not the desk's reasoning — and an UNSUPPORTED flag
+never reaches the report.
+
+Governing principle, applied twice: **never let the model assert what you could retrieve.**
+Parallel for the outside world, ClickHouse for the comparison set. Gemini does judgement only.
 
 The fan-out is not decoration. A studio really does run four independent desks that do not talk
 to each other, and a producer reconciles them. The architecture mirrors the domain — say so.
