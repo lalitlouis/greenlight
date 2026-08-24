@@ -17,6 +17,7 @@ runs/*
 !runs/.gitkeep
 # the selected demo record ships — the demo must work with no network (CLAUDE.md)
 !runs/*_demo.json
+!runs/case_*.json
 
 .venv/
 .cache/

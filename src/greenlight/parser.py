@@ -15,10 +15,28 @@ from typing import Any
 
 from greenlight.contracts import validate
 
-# A scene heading: INT./EXT. variants, or a forced heading starting with a period.
+# A scene heading: INT./EXT. variants (period, colon, or space form), optionally
+# carrying shooting-script scene numbers ("12 INT. BAR - NIGHT 12"), or a forced
+# heading starting with a period (which must then read like a slugline, not prose —
+# OCR of a sentence that lost its first word also starts with a period).
 _HEADING_RE = re.compile(
-    r"^(?:\.(?=[A-Za-z])|(?:INT\.?/EXT|EXT\.?/INT|INT|EXT|EST|I/E)[.\s])", re.IGNORECASE
+    r"^(?:\d+[A-Z]?\s+)?(?:\.(?=[A-Z0-9])|(?:INT\.?/EXT|EXT\.?/INT|INT|EXT|EST|I/E)[.:\s])",
+    re.IGNORECASE,
 )
+_SCENE_NUM_PREFIX = re.compile(r"^\d+[A-Z]?\s+")
+_SCENE_NUM_SUFFIX = re.compile(r"\s+\d+[A-Z]?$")
+
+
+def _is_heading(stripped: str) -> bool:
+    if not _HEADING_RE.match(stripped):
+        return False
+    if stripped.startswith("."):  # forced heading: sluglines shout, prose does not
+        letters = [c for c in stripped if c.isalpha()]
+        if not letters or sum(c.isupper() for c in letters) / len(letters) < _FORCED_HEADING_UPPER:
+            return False
+    return True
+
+
 _TIME_WORDS = {
     "DAY",
     "NIGHT",
@@ -45,6 +63,7 @@ _TRANSITION_RE = re.compile(
 # action wraps at ~60 chars, dialogue at ~35.
 _LINES_PER_PAGE = 55
 _MAX_CUE_LEN = 40
+_FORCED_HEADING_UPPER = 0.8
 
 
 def _formatted_lines(text_line: str, kind: str) -> int:
@@ -67,8 +86,9 @@ class _SceneAccumulator:
 
 def _split_heading(heading: str) -> tuple[str, str, str]:
     """'INT./EXT. MARGARET ROSE - WHEELHOUSE - NIGHT - CONTINUOUS'
-    -> ('INT/EXT', 'MARGARET ROSE - WHEELHOUSE', 'NIGHT - CONTINUOUS')."""
-    text = heading.lstrip(".").strip()
+    -> ('INT/EXT', 'MARGARET ROSE - WHEELHOUSE', 'NIGHT - CONTINUOUS').
+    Also handles '12 INT. BAR - NIGHT 12' and 'INT: BEDROOM. MORNING'."""
+    text = _SCENE_NUM_SUFFIX.sub("", _SCENE_NUM_PREFIX.sub("", heading)).lstrip(".").strip()
     upper = text.upper()
     if upper.startswith(("INT./EXT", "INT/EXT", "EXT./INT", "EXT/INT", "I/E")):
         int_ext = "INT/EXT"
@@ -80,14 +100,21 @@ def _split_heading(heading: str) -> tuple[str, str, str]:
         int_ext = "UNKNOWN"
 
     body = re.sub(
-        r"^(?:INT\.?/EXT|EXT\.?/INT|INT|EXT|EST|I/E)[.\s]+", "", text, flags=re.IGNORECASE
+        r"^(?:INT\.?/EXT|EXT\.?/INT|INT|EXT|EST|I/E)[.:\s]+", "", text, flags=re.IGNORECASE
     )
-    segments = [s.strip() for s in body.split(" - ") if s.strip()]
-    time_segments: list[str] = []
-    while segments and segments[-1].upper() in _TIME_WORDS:
-        time_segments.insert(0, segments.pop())
-    location = " - ".join(segments) if segments else body.strip()
-    time_of_day = " - ".join(time_segments) if time_segments else "UNKNOWN"
+    if " - " in body:
+        segments = [s.strip() for s in body.split(" - ") if s.strip()]
+        time_segments: list[str] = []
+        while segments and segments[-1].upper() in _TIME_WORDS:
+            time_segments.insert(0, segments.pop())
+        location = " - ".join(segments) if segments else body.strip()
+        time_of_day = " - ".join(time_segments) if time_segments else "UNKNOWN"
+    elif ". " in body:  # 'BEDROOM. EARLY-MORNING HOURS' — dot-separated slug style
+        location, _, time_of_day = body.rpartition(". ")
+        location = location.strip().rstrip(".")
+        time_of_day = time_of_day.strip() or "UNKNOWN"
+    else:
+        location, time_of_day = body.strip().rstrip("."), "UNKNOWN"
     return int_ext, location, time_of_day
 
 
@@ -96,7 +123,7 @@ def _is_cue(line: str, next_line: str | None) -> bool:
     stripped = line.strip()
     if not stripped or next_line is None or not next_line.strip():
         return False
-    if len(stripped) > _MAX_CUE_LEN or stripped.endswith(":") or _HEADING_RE.match(stripped):
+    if len(stripped) > _MAX_CUE_LEN or stripped.endswith(":") or _is_heading(stripped):
         return False
     if _TRANSITION_RE.match(stripped):
         return False
@@ -143,7 +170,7 @@ def parse_fountain(  # noqa: PLR0915 - one continuous scan loop
     pos = body_start
     for line in text[body_start:].split("\n"):
         stripped = line.strip()
-        if _HEADING_RE.match(stripped) and not _TRANSITION_RE.match(stripped):
+        if _is_heading(stripped) and not _TRANSITION_RE.match(stripped):
             heading_positions.append((pos, stripped))
         pos += len(line) + 1
 

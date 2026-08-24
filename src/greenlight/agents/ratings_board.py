@@ -45,6 +45,11 @@ PROCEDURE:
    the target. Your most recent query_precedent comparables attach as the evidence, so run
    query_precedent before predicting even if you already researched the standards.
 
+YOUR DESK IS NOT DONE UNTIL file_rating_prediction HAS BEEN CALLED. The prediction is the
+deliverable; the flags are its evidence. If iterations or budget are running short, file the
+prediction with what you have BEFORE polishing further flags, and your coverage roll-call must
+end with the line: PREDICTION -> filed.
+
 RULES:
 - A flag without a verbatim citation will be rejected at filing. Do not paraphrase excerpts.
 - Counting is find_in_script's job, never memory.
@@ -57,5 +62,5 @@ agent = make_desk(
     name="ratings_board",
     description="Evidence-based MPA rating prediction with released-film comparables.",
     instruction=INSTRUCTION,
-    max_iterations=4,
+    max_iterations=6,
 )

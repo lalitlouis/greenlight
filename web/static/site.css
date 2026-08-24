@@ -589,3 +589,14 @@ a.step-card:hover { text-decoration: none; box-shadow: var(--shadow-lg); }
 .driver-rank { width: 26px; height: 26px; border-radius: 50%; background: var(--surface); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex: none; }
 .driver-name { flex: 1; text-transform: capitalize; font-weight: 550; }
 .driver b { font-weight: 700; }
+
+/* ---------- case studies ---------- */
+.cases-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+@media (max-width: 980px) { .cases-grid { grid-template-columns: 1fr; } }
+.case-card { padding: 26px 28px; display: flex; flex-direction: column; gap: 12px; color: inherit; transition: transform 0.18s, box-shadow 0.18s; }
+.case-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); text-decoration: none; }
+.case-title { font-size: 21px; font-weight: 700; letter-spacing: -0.015em; }
+.case-hook-line { font-size: 15.5px; color: var(--ink-2); line-height: 1.55; margin: 0; flex: 1; }
+.case-strip { background: var(--band); border-radius: 14px; padding: 18px 22px; margin-bottom: 24px; }
+.case-hook { font-size: 16px; margin: 0 0 6px; }
+.case-note { font-size: 13px; color: var(--ink-3); margin: 0; line-height: 1.6; }

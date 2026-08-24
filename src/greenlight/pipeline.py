@@ -166,7 +166,10 @@ async def run(
             for line in _describe_event(event):
                 print(line)
     except Exception as e:
-        error = f"{type(e).__name__}: {str(e)[:300]}"
+        cause: BaseException = e
+        while isinstance(cause, BaseExceptionGroup) and cause.exceptions:
+            cause = cause.exceptions[0]  # the group message hides the real failure
+        error = f"{type(cause).__name__}: {str(cause)[:300]}"
         print(f"\n{BOLD}RUN ABORTED{RESET} — {error}\nSalvaging partial results.\n")
 
     final = await runner.session_service.get_session(

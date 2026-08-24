@@ -201,6 +201,17 @@ function renderReport(record) {
 
   $("rpt-title").textContent = record.script_title || "Report";
 
+  if (record.kind === "case_study" && record.case) {
+    $("script-link")?.classList.add("hidden"); // the screenplay text is not reproduced
+    const strip = el("div", "case-strip");
+    const head = el("p", "case-hook");
+    head.appendChild(el("b", null, `${record.case.title} (${record.case.year}) — case study. `));
+    head.appendChild(document.createTextNode(record.case.hook || ""));
+    strip.appendChild(head);
+    strip.appendChild(el("p", "case-note", record.case.note || ""));
+    root.appendChild(strip);
+  }
+
   const head = el("div", "card rpt-head");
   const scoreBox = el("div", "score " + tone);
   if (typeof score === "number" && !window.FX?.on) {

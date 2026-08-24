@@ -12,4 +12,5 @@ scripts
 web/package.json
 runs/*
 !runs/*_demo.json
+!runs/case_*.json
 runs/uploads

@@ -1,0 +1,3003 @@
+{
+  "script_title": "Clerks",
+  "generated_at": "2026-08-24T16:35:54-0700",
+  "elapsed_s": 525.0,
+  "error": null,
+  "scenes": 64,
+  "entities": [
+    {
+      "entity_id": "E001",
+      "type": "PUBLICATION",
+      "surface": "Dante's Inferno",
+      "scene_ids": [
+        "S001"
+      ],
+      "context": "A SHELF OF BOOKS holds such classics as Dante's Inferno, Beyond Good and Evil, T\u2026",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E002",
+      "type": "PUBLICATION",
+      "surface": "Beyond Good and Evil",
+      "scene_ids": [
+        "S001"
+      ],
+      "context": "A SHELF OF BOOKS holds such classics as Dante's Inferno, Beyond Good and Evil, T\u2026",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E003",
+      "type": "PUBLICATION",
+      "surface": "The Catcher in the Rye",
+      "scene_ids": [
+        "S001"
+      ],
+      "context": "A SHELF OF BOOKS holds such classics as Dante's Inferno, Beyond Good and Evil, T\u2026",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E004",
+      "type": "PUBLICATION",
+      "surface": "The Dark Knight Returns",
+      "scene_ids": [
+        "S001"
+      ],
+      "context": "A SHELF OF BOOKS holds such classics as Dante's Inferno, Beyond Good and Evil, T\u2026",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E005",
+      "type": "BRAND",
+      "surface": "Play-Doh",
+      "scene_ids": [
+        "S001"
+      ],
+      "context": "The picture is decorated with a Play-Doh beard and mustache.",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E006",
+      "type": "BRAND",
+      "surface": "VCR",
+      "scene_ids": [
+        "S006",
+        "S026"
+      ],
+      "context": "A hand grabs keys from atop a VCR.",
+      "depicted_negatively": false,
+      "prominence": "BACKGROUND"
+    },
+    {
+      "entity_id": "E007",
+      "type": "PUBLICATION",
+      "surface": "ASBURY PARK PRESS",
+      "scene_ids": [
+        "S009",
+        "S010"
+      ],
+      "context": "The empty newspaper rack with the heading ASBURY PARK PRESS seems out of place a\u2026",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E008",
+      "type": "BRAND",
+      "surface": "Chewlies Gum",
+      "scene_ids": [
+        "S017",
+        "S019"
+      ],
+      "context": "Here. Chewlies Gum. Try this.",
+      "depicted_negatively": false,
+      "prominence": "PLOT_CRITICAL"
+    },
+    {
+      "entity_id": "E009",
+      "type": "PERSON",
+      "surface": "JAY",
+      "scene_ids": [
+        "S018",
+        "S030",
+        "S040",
+        "S046",
+        "S049",
+        "S051",
+        "S054",
+        "S058",
+        "S060",
+        "S064"
+      ],
+      "context": "JAY steps into the frame, followed by SILENT BOB.",
+      "depicted_negatively": false,
+      "prominence": "PLOT_CRITICAL"
+    },
+    {
+      "entity_id": "E010",
+      "type": "PERSON",
+      "surface": "SILENT BOB",
+      "scene_ids": [
+        "S018",
+        "S030",
+        "S051",
+        "S054",
+        "S058",
+        "S060"
+      ],
+      "context": "JAY pulls off his coat and swings it into the arms of SILENT BOB.",
+      "depicted_negatively": false,
+      "prominence": "PLOT_CRITICAL"
+    },
+    {
+      "entity_id": "E011",
+      "type": "PERSON",
+      "surface": "Blue Velvet Hopper",
+      "scene_ids": [
+        "S018"
+      ],
+      "context": "(Blue Velvet Hopper) I'LL FUCK ANYTHING THAT MOVES!",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E012",
+      "type": "BRAND",
+      "surface": "MasterCard",
+      "scene_ids": [
+        "S018"
+      ],
+      "context": "We take cash, or stolen MasterCard and Visa.",
+      "depicted_negatively": true,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E013",
+      "type": "BRAND",
+      "surface": "Visa",
+      "scene_ids": [
+        "S018"
+      ],
+      "context": "We take cash, or stolen MasterCard and Visa.",
+      "depicted_negatively": true,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E014",
+      "type": "ORGANIZATION",
+      "surface": "Nazis",
+      "scene_ids": [
+        "S019"
+      ],
+      "context": "another bunch of hate mongers that were just following orders: they were called\u2026",
+      "depicted_negatively": true,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E015",
+      "type": "LOCATION",
+      "surface": "Tiananmen Square",
+      "scene_ids": [
+        "S019"
+      ],
+      "context": "It looked like Tiananmen Square in here for a second.",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E016",
+      "type": "ORGANIZATION",
+      "surface": "Big Choice Video",
+      "scene_ids": [
+        "S021",
+        "S022"
+      ],
+      "context": "I'm going to Big Choice Video instead.",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E017",
+      "type": "PERSON",
+      "surface": "Short-round",
+      "scene_ids": [
+        "S024"
+      ],
+      "context": "(as Short-round) No time for love, Doctor Jones!",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E018",
+      "type": "PERSON",
+      "surface": "Doctor Jones",
+      "scene_ids": [
+        "S024"
+      ],
+      "context": "No time for love, Doctor Jones!",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E019",
+      "type": "ORGANIZATION",
+      "surface": "R.S.T. Video",
+      "scene_ids": [
+        "S028",
+        "S047"
+      ],
+      "context": "Yes, hello; this is R.S.T. Video calling.",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E020",
+      "type": "LOCATION",
+      "surface": "Russia",
+      "scene_ids": [
+        "S030"
+      ],
+      "context": "Check this out, he's from Russia.",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E021",
+      "type": "LOCATION",
+      "surface": "Moscow",
+      "scene_ids": [
+        "S030"
+      ],
+      "context": "Moscow.",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E022",
+      "type": "FILM_CLIP",
+      "surface": "Star Wars",
+      "scene_ids": [
+        "S031"
+      ],
+      "context": "The theme to Star Wars plays.",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E023",
+      "type": "BRAND",
+      "surface": "Pringles",
+      "scene_ids": [
+        "S033"
+      ],
+      "context": "DANTE is tugging at a can of Pringles potato chips.",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E024",
+      "type": "FILM_CLIP",
+      "surface": "Return of the Jedi",
+      "scene_ids": [
+        "S033"
+      ],
+      "context": "Return of the Jedi.",
+      "depicted_negatively": false,
+      "prominence": "PLOT_CRITICAL"
+    },
+    {
+      "entity_id": "E025",
+      "type": "FILM_CLIP",
+      "surface": "The Empire Strikes Back",
+      "scene_ids": [
+        "S033"
+      ],
+      "context": "Which did you like better: Jedi or The Empire Strikes Back.",
+      "depicted_negatively": false,
+      "prominence": "PLOT_CRITICAL"
+    },
+    {
+      "entity_id": "E026",
+      "type": "PERSON",
+      "surface": "Luke",
+      "scene_ids": [
+        "S033"
+      ],
+      "context": "Empire had the better ending: Luke gets his hand cut off, and finds out Vader's\u2026",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E027",
+      "type": "PERSON",
+      "surface": "Vader",
+      "scene_ids": [
+        "S033"
+      ],
+      "context": "Empire had the better ending: Luke gets his hand cut off, and finds out Vader's\u2026",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E028",
+      "type": "PERSON",
+      "surface": "Han",
+      "scene_ids": [
+        "S033"
+      ],
+      "context": "Han gets frozen and taken away by Boba Fett.",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E029",
+      "type": "PERSON",
+      "surface": "Boba Fett",
+      "scene_ids": [
+        "S033"
+      ],
+      "context": "Han gets frozen and taken away by Boba Fett.",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E030",
+      "type": "BRAND",
+      "surface": "Muppets",
+      "scene_ids": [
+        "S033"
+      ],
+      "context": "All Jedi had was a bunch of Muppets.",
+      "depicted_negatively": true,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E031",
+      "type": "PERSON",
+      "surface": "Emperor",
+      "scene_ids": [
+        "S033"
+      ],
+      "context": "All right, Vader's boss...The Emperor.",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E032",
+      "type": "PERSON",
+      "surface": "Leia",
+      "scene_ids": [
+        "S033"
+      ],
+      "context": "The only problem is that at no point in the series did I ever hear Leia or any o\u2026",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E033",
+      "type": "PERSON",
+      "surface": "Lando Calrissian",
+      "scene_ids": [
+        "S033"
+      ],
+      "context": "Compliments of Lando Calrissian.",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E034",
+      "type": "ORGANIZATION",
+      "surface": "Dunn and Reddy Home Improvements",
+      "scene_ids": [
+        "S033"
+      ],
+      "context": "Dunn and Reddy Home Improvements.",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E035",
+      "type": "PERSON",
+      "surface": "Dominick Bambino",
+      "scene_ids": [
+        "S033"
+      ],
+      "context": "Dominick Bambino's.",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E036",
+      "type": "PERSON",
+      "surface": "Babyface Bambino",
+      "scene_ids": [
+        "S033"
+      ],
+      "context": "Babyface Bambino? The gangster?",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E037",
+      "type": "ORGANIZATION",
+      "surface": "Food City",
+      "scene_ids": [
+        "S035",
+        "S060"
+      ],
+      "context": "I was in the Food City last year when the same thing happened, different guy tho\u2026",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E038",
+      "type": "FILM_CLIP",
+      "surface": "Home Alone",
+      "scene_ids": [
+        "S036"
+      ],
+      "context": "Ooooh! Home Alone!",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E039",
+      "type": "FILM_CLIP",
+      "surface": "Hook",
+      "scene_ids": [
+        "S036"
+      ],
+      "context": "Ooooh! Hook!",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E040",
+      "type": "FILM_CLIP",
+      "surface": "Navy Seals",
+      "scene_ids": [
+        "S036",
+        "S061"
+      ],
+      "context": "Ooooh! Navy Seals!",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E041",
+      "type": "BRAND",
+      "surface": "Gatorade",
+      "scene_ids": [
+        "S039",
+        "S040",
+        "S041"
+      ],
+      "context": "Dante, let me grab a Gatorade.",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E042",
+      "type": "ORGANIZATION",
+      "surface": "YMCA",
+      "scene_ids": [
+        "S041"
+      ],
+      "context": "She was swimming at the YMCA pool when it happened.",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E043",
+      "type": "ORGANIZATION",
+      "surface": "Paulsen's Funeral Parlor",
+      "scene_ids": [
+        "S041"
+      ],
+      "context": "Paulsen's Funeral Parlor. The next show is at four.",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E044",
+      "type": "ORGANIZATION",
+      "surface": "Quick Stop Convenience",
+      "scene_ids": [
+        "S047",
+        "S048"
+      ],
+      "context": "We are employees of Quick Stop Convenience and RST video, respectively.",
+      "depicted_negatively": false,
+      "prominence": "PLOT_CRITICAL"
+    },
+    {
+      "entity_id": "E045",
+      "type": "ORGANIZATION",
+      "surface": "Time Warner",
+      "scene_ids": [
+        "S047"
+      ],
+      "context": "Space Alien Revealed as Head of Time Warner; Reports Stock Increase.",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E046",
+      "type": "LOCATION",
+      "surface": "Bosnia",
+      "scene_ids": [
+        "S047"
+      ],
+      "context": "So I'm no more responsible for my own decisions while I'm here at work than, say\u2026",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E047",
+      "type": "VEHICLE",
+      "surface": "Trans-Am",
+      "scene_ids": [
+        "S048"
+      ],
+      "context": "While you two were dating in high school. We're talking four, five years ago, ba\u2026",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E048",
+      "type": "ORGANIZATION",
+      "surface": "New Jersey Statute Section Two A, number one-seventy slash fifty-one",
+      "scene_ids": [
+        "S048"
+      ],
+      "context": "For violation of New Jersey Statute Section Two A, number one-seventy slash fift\u2026",
+      "depicted_negatively": false,
+      "prominence": "PLOT_CRITICAL"
+    },
+    {
+      "entity_id": "E049",
+      "type": "ORGANIZATION",
+      "surface": "NJAC-the New Jersey Administrative Code, section eighteen, five, slash twelve point five",
+      "scene_ids": [
+        "S048"
+      ],
+      "context": "According to the NJAC-the New Jersey Administrative Code, section eighteen, five\u2026",
+      "depicted_negatively": false,
+      "prominence": "PLOT_CRITICAL"
+    },
+    {
+      "entity_id": "E050",
+      "type": "BRAND",
+      "surface": "Walkman",
+      "scene_ids": [
+        "S051"
+      ],
+      "context": "He comes back a few seconds later, carrying a mini-Walkman with ten-watt speaker\u2026",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E051",
+      "type": "FILM_CLIP",
+      "surface": "Best of Both Worlds",
+      "scene_ids": [
+        "S053"
+      ],
+      "context": "What'd you rent? (reads) Best of Both Worlds?",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E052",
+      "type": "MUSIC",
+      "surface": "Jaws theme",
+      "scene_ids": [
+        "S059"
+      ],
+      "context": "(mumbling Jaws theme) Da-dum! Da-dum! Da-dum! DA-DUM! DADUM! DA-DUM!",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E053",
+      "type": "PERSON",
+      "surface": "Brody",
+      "scene_ids": [
+        "S059"
+      ],
+      "context": "(as Brody) 'We're gonna need a bigger boat.'",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E054",
+      "type": "PERSON",
+      "surface": "Quint",
+      "scene_ids": [
+        "S059"
+      ],
+      "context": "(as Quint) 'Man goes into the cage; cage goes into the salsa; shark's in the sal\u2026",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E055",
+      "type": "BRAND",
+      "surface": "E-Z Wider",
+      "scene_ids": [
+        "S060"
+      ],
+      "context": "E-Z Wider, one-and-a-halfs.",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E056",
+      "type": "BRAND",
+      "surface": "Pepsi",
+      "scene_ids": [
+        "S060"
+      ],
+      "context": "How much is Pepsi here?",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E057",
+      "type": "LOCATION",
+      "surface": "Times Square",
+      "scene_ids": [
+        "S062"
+      ],
+      "context": "put the hookers in Times Square to shame with all the guys I go down on now!",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    },
+    {
+      "entity_id": "E058",
+      "type": "BRAND",
+      "surface": "Entenman's",
+      "scene_ids": [
+        "S064"
+      ],
+      "context": "RANDAL tumbles into the cakes as Entenman's products scatter beneath and around\u2026",
+      "depicted_negatively": false,
+      "prominence": "FEATURED"
+    }
+  ],
+  "flags": [
+    {
+      "flag_id": "F301",
+      "agent": "safety_underwriter",
+      "scene_ids": [
+        "S064"
+      ],
+      "entity_id": null,
+      "severity": "BLOCKER",
+      "category": "stunt_physical_altercation_gunshot",
+      "finding": "Scene S064 depicts an extensive and violent physical altercation including choking, hitting with objects, falling into displays, and a fatal simulated gunshot. This sequence presents significant safety risks to actors and crew and cannot be filmed as written without professional stunt coordination and special effects supervision. The simulated gunshot, in particular, requires expert handling to ensure actor safety and realistic effects.",
+      "citations": [
+        {
+          "source_type": "web",
+          "title": "Stunt/Fight/Prop Weapon Safety Coordinator - Stunt/Fight/Prop Weapon Safety Coordinator Job in 'Thicker In Blood' | Backstage",
+          "url": "https://www.backstage.com/casting/thicker-in-blood-3195026/stuntfightprop-weapon-safety-coordinator-5580735",
+          "excerpt": "Seeking a stunt/fight/safety coordinator for scenes involving physical action, fights, intimidation, prop weapons, staged gunfire, home invasion, shooting scenes,",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        },
+        {
+          "source_type": "web",
+          "title": "What is a Stunt Coordinator in Film \u2014 Job Description Explained",
+          "url": "https://www.studiobinder.com/blog/what-is-a-stunt-coordinator-job-description/",
+          "excerpt": "A Stunt Coordinator oversees the execution of stunts on a film or TV set. They are involved in the stunt process from beginning to end; they plan out the stunts, cast the stunt performers, and ensure the safety of each stunt.",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        }
+      ],
+      "remedy": {
+        "action": "ADD_SPECIALIST",
+        "detail": "Hire a qualified stunt coordinator to choreograph and supervise the entire physical altercation, including all falls, impacts, and the simulated choking. Engage a special effects supervisor for the simulated gunshot and blood effects. Ensure all props (food items) used as weapons are safe for impact. Conduct thorough safety briefings and rehearsals.",
+        "est_cost_usd": [
+          5000,
+          25000
+        ],
+        "est_added_days": 2
+      },
+      "confidence": 1
+    },
+    {
+      "flag_id": "F401",
+      "agent": "territory_censor",
+      "scene_ids": [
+        "S018",
+        "S030",
+        "S046",
+        "S049",
+        "S060"
+      ],
+      "entity_id": null,
+      "severity": "BLOCKER",
+      "category": "territory_cn_drug_use",
+      "finding": "The screenplay contains pervasive and explicit depictions of drug dealing and consumption (hash, weed, 'shrooms, coke, rolling a joint). This content is strictly prohibited under Chinese film censorship laws and will likely result in the film being blocked from release.",
+      "citations": [
+        {
+          "source_type": "web",
+          "title": "Film Industry Promotion Law (draft)",
+          "url": "https://www.chinalawtranslate.com/en/filmlawdraft/",
+          "excerpt": "Article 20: Films must not contain the following content: (5) endangerment of social morality, disturbing social order, undermining social stability; promoting pornography, gambling, drug use, violence, or terror; instigation of crimes or imparting criminal methods;",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        },
+        {
+          "source_type": "web",
+          "title": "11 films banned in China: censorship of movies explained",
+          "url": "https://www.nationalworld.com/arts-and-culture/film-and-tv/china-films-banned-censorship-movies-4076866",
+          "excerpt": "Predictably the edits saw scenes of Rami Malek\u2019s Mercury kissing other men cut, along with scenes of drug use.",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        },
+        {
+          "source_type": "web",
+          "title": "In China, one actor\u2019s drug arrest can jeopardize an entire film - Los Angeles Times",
+          "url": "https://www.latimes.com/entertainment/movies/moviesnow/la-et-mn-china-arrest-movie-ban-20150316-story.html",
+          "excerpt": "China\u2019s State Administration of Press, Publication, Radio, Film and Television issued a missive in September saying that celebrities who use drugs or hire prostitutes should be banned from TV and film screens. Entertainers, the censorship agency said, ought to \u201cspread positive energy\u201d and \u201ccreate a positive environment\u201d on media platforms.",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        }
+      ],
+      "remedy": {
+        "action": "CUT",
+        "detail": "All explicit references to and depictions of drug dealing and consumption must be removed. This includes dialogue, visual cues, and character actions related to drugs. Given the pervasive nature of these references, this would significantly alter the narrative and characterization of Jay.",
+        "est_cost_usd": null,
+        "est_added_days": null
+      },
+      "confidence": 1
+    },
+    {
+      "flag_id": "F104",
+      "agent": "clearance_counsel",
+      "scene_ids": [
+        "S018"
+      ],
+      "entity_id": "E012",
+      "severity": "HIGH",
+      "category": "trademark_disparagement",
+      "finding": "The brand name \"MasterCard\" is verbally referenced in a negative context (\"stolen MasterCard\"). Associating a real brand with criminal activity can constitute trademark disparagement or tarnishment, which can lead to legal action from the brand owner.",
+      "citations": [
+        {
+          "source_type": "web",
+          "title": "Using Brand Names in a Film: Do You Need Permission?",
+          "url": "https://www.moviemaker.com/using-brand-names-in-a-film-aditya-ezhuthachan",
+          "excerpt": "Trademark tarnishment, on the other hand, requires a lower threshold of proof, since a plaintiff does not need to prove a false statement, just harm to the trademark\u2019s reputation. Hormel also brought a claim of trademark tarnishment, but the court concluded that parody alone was not sufficient to find tarnishment. Instead, the goodwill is tarnished through portraying the trademark \u201cin an unwholesome or unsavory context\u2026\u201d",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        },
+        {
+          "source_type": "web",
+          "title": "Check out this article...Movie Trademarks: Protection for Films and Characters",
+          "url": "https://www.upcounsel.com/movie-trademarks",
+          "excerpt": "Defamation by Context \u2013 Showing a real product in a negative light (e.g., associating it with crime).",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        }
+      ],
+      "remedy": {
+        "action": "REPLACE",
+        "detail": "Replace \"MasterCard\" with a fictional credit card brand name, or remove the \"stolen\" descriptor.",
+        "est_cost_usd": [
+          0,
+          0
+        ],
+        "est_added_days": 0
+      },
+      "confidence": 0.95
+    },
+    {
+      "flag_id": "F105",
+      "agent": "clearance_counsel",
+      "scene_ids": [
+        "S018"
+      ],
+      "entity_id": "E013",
+      "severity": "HIGH",
+      "category": "trademark_disparagement",
+      "finding": "The brand name \"Visa\" is verbally referenced in a negative context (\"stolen Visa\"). Associating a real brand with criminal activity can constitute trademark disparagement or tarnishment, which can lead to legal action from the brand owner.",
+      "citations": [
+        {
+          "source_type": "web",
+          "title": "Using Brand Names in a Film: Do You Need Permission?",
+          "url": "https://www.moviemaker.com/using-brand-names-in-a-film-aditya-ezhuthachan",
+          "excerpt": "Trademark tarnishment, on the other hand, requires a lower threshold of proof, since a plaintiff does not need to prove a false statement, just harm to the trademark\u2019s reputation. Hormel also brought a claim of trademark tarnishment, but the court concluded that parody alone was not sufficient to find tarnishment. Instead, the goodwill is tarnished through portraying the trademark \u201cin an unwholesome or unsavory context\u2026\u201d",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        },
+        {
+          "source_type": "web",
+          "title": "Check out this article...Movie Trademarks: Protection for Films and Characters",
+          "url": "https://www.upcounsel.com/movie-trademarks",
+          "excerpt": "Defamation by Context \u2013 Showing a real product in a negative light (e.g., associating it with crime).",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        }
+      ],
+      "remedy": {
+        "action": "REPLACE",
+        "detail": "Replace \"Visa\" with a fictional credit card brand name, or remove the \"stolen\" descriptor.",
+        "est_cost_usd": [
+          0,
+          0
+        ],
+        "est_added_days": 0
+      },
+      "confidence": 0.95
+    },
+    {
+      "flag_id": "F302",
+      "agent": "safety_underwriter",
+      "scene_ids": [
+        "S040"
+      ],
+      "entity_id": null,
+      "severity": "HIGH",
+      "category": "stunt_rooftop_sports_ladder",
+      "finding": "Scene S040 depicts a hockey game being played on a rooftop, involving skating, collisions, potential falls from height, and objects flying off the roof. Additionally, a customer ascends a ladder to the roof. These elements present significant safety hazards, including falls from height, impact injuries, and ladder-related accidents. A stunt coordinator is essential to safely choreograph and supervise the hockey game and ensure proper fall protection and rigging for all performers on the roof. Ladder use must adhere to strict safety protocols, including securing the ladder and ensuring proper footing.",
+      "citations": [
+        {
+          "source_type": "web",
+          "title": "What Is a Stunt Coordinator? Job Description, Salary, Responsibilities + More",
+          "url": "https://www.backstage.com/magazine/article/stunt-coordinator-production-crew-career-70389/",
+          "excerpt": "Due to the dangerous nature of stunt work, the stunt coordinator\u2019s main responsibility is ensuring the safety of all cast and crew when stunts are being performed on set.",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        },
+        {
+          "source_type": "web",
+          "title": "Basic Production Safety Guidelines & Agreement for Media Productions",
+          "url": "https://tisch.nyu.edu/content/dam/tisch/openarts/CA_OA%20Basic%20Level%20Production%20Guidelines%20Fall%2021.pdf",
+          "excerpt": "NO Rooftops, Balconies, Bridges, or other High Altitudes, without prior approval: Any scenes taking place on rooftops... are not allowed, unless the elevated property has 42 inch or higher safety railings and is used as an approved pedestrian area.",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        },
+        {
+          "source_type": "web",
+          "title": "10 Important Safety Requirements for Rooftop Work -- Occupational Health & Safety",
+          "url": "https://ohsonline.com/articles/2023/01/31/10-important-safety-requirements.aspx",
+          "excerpt": "Use guardrails or safety netting.",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        },
+        {
+          "source_type": "web",
+          "title": "Ladder Safety A 5-Minute Safety Training Aid E",
+          "url": "https://www.tdi.texas.gov/pubs/videoresource/t5laddersafe.pdf",
+          "excerpt": "Every year in the U.S., more than 100 people die in ladder-related accidents, and thousands suffer disabling injuries.",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        },
+        {
+          "source_type": "web",
+          "title": "Ladder Safety A 5-Minute Safety Training Aid E",
+          "url": "https://www.tdi.texas.gov/pubs/videoresource/t5laddersafe.pdf",
+          "excerpt": "Tie in, block, or secure the top of the straight ladder to keep it from moving.",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        }
+      ],
+      "remedy": {
+        "action": "ADD_SPECIALIST",
+        "detail": "Hire a qualified stunt coordinator to choreograph and supervise the rooftop hockey game, including all skating, collisions, and any planned falls or flying objects. Implement comprehensive fall protection measures, such as safety netting, guardrails, or fall arrest systems for all personnel on the roof. Ensure all ladders used are properly secured, inspected, and operated by trained personnel. Consider using stunt doubles for high-risk actions. Clarify the age of the players to determine if minor work rules apply.",
+        "est_cost_usd": [
+          10000,
+          30000
+        ],
+        "est_added_days": 3
+      },
+      "confidence": 1
+    },
+    {
+      "flag_id": "F402",
+      "agent": "territory_censor",
+      "scene_ids": [
+        "S018",
+        "S030",
+        "S046",
+        "S049",
+        "S060"
+      ],
+      "entity_id": null,
+      "severity": "HIGH",
+      "category": "territory_uae_drug_use",
+      "finding": "The pervasive depiction of drug dealing and consumption (hash, weed, 'shrooms, coke, rolling a joint) in the screenplay is highly likely to be problematic for release in the UAE. While a new 21+ rating exists, content must still respect the cultural values, and explicit drug use is generally considered illicit and unsuitable.",
+      "citations": [
+        {
+          "source_type": "web",
+          "title": "Media Content Standards \u2013 UAE Media Council",
+          "url": "https://uaemc.gov.ae/en/media-content-standards",
+          "excerpt": "The content of the advertisement shall respect the culture, identity, and values of the UAE.",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        },
+        {
+          "source_type": "web",
+          "title": "Barbie in the Middle East | The Washington Institute",
+          "url": "https://www.washingtoninstitute.org/policy-analysis/barbie-middle-east",
+          "excerpt": "Yet media reports indicate that the government based its decision on scenes it deemed \u201cunsuitable for children, such as drug use or other illicit content.\u201d",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        },
+        {
+          "source_type": "web",
+          "title": "United Arab Emirates Moves Needle Forward Against Film Censorship With New Rating Category",
+          "url": "https://variety.com/2021/film/news/united-arab-emirates-film-censorship-1235139554/",
+          "excerpt": "The UAE\u2019s Media Regulatory Office made the announcement Monday on Twitter, specifying that the new rating for films classified for audiences aged over 21 will allow the international \u2014 meaning uncut \u2014 version of movies to be shown in cinemas \u201cwith an emphasis on the strict following of age classification standards for audience",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        }
+      ],
+      "remedy": {
+        "action": "CUT",
+        "detail": "Significant cuts to all explicit depictions and discussions of drug dealing and consumption would be required. This would likely impact the characterization of Jay and several plot points.",
+        "est_cost_usd": null,
+        "est_added_days": null
+      },
+      "confidence": 0.9
+    },
+    {
+      "flag_id": "F403",
+      "agent": "territory_censor",
+      "scene_ids": [
+        "S018",
+        "S030",
+        "S046",
+        "S049",
+        "S060"
+      ],
+      "entity_id": null,
+      "severity": "HIGH",
+      "category": "territory_uk_drug_use",
+      "finding": "The pervasive depiction of drug dealing and consumption (hash, weed, 'shrooms, coke, rolling a joint) in the screenplay is likely to require significant edits for release in the UK. The BBFC guidelines state that no work, even at '18', may promote or encourage the use of illegal drugs, and clear instructive or glamorizing detail is unacceptable. The script's explicit portrayal of drug sales and use, including rolling a joint, would be problematic.",
+      "citations": [
+        {
+          "source_type": "web",
+          "title": "BBFC guidelines aw 16.8.02",
+          "url": "https://www.argyll-bute.gov.uk/moderngov/documents/s13350/BBFCGuidelines2002.pdf",
+          "excerpt": "Drugs No work taken as a whole, even at \u201818\u2019, may promote or encourage the use of illegal drugs. Clear instructive detail is unacceptable at all levels up to \u201815\u2019. Even at \u201818\u2019, such detail may only be acceptable if there are exceptional considerations of context. Glamorising detail is a particular concern.",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        },
+        {
+          "source_type": "web",
+          "title": "British Board of Film Classification - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/British_Board_of_Film_Classification",
+          "excerpt": "Drug abuse being condoned or glamorised",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        },
+        {
+          "source_type": "web",
+          "title": "British Board of Film Classification - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/British_Board_of_Film_Classification",
+          "excerpt": "Criminal and dangerous acts that can be easily imitated, as well as scenes condoning, glamorising, or showing clear instruction of how to abuse drugs have also been the subject of UK editing.",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        }
+      ],
+      "remedy": {
+        "action": "CUT",
+        "detail": "All explicit depictions and detailed discussions of drug dealing and consumption, particularly those that could be seen as instructional or glamorizing, would need to be removed or significantly altered. This would impact character dialogue and actions.",
+        "est_cost_usd": null,
+        "est_added_days": null
+      },
+      "confidence": 0.95
+    },
+    {
+      "flag_id": "F404",
+      "agent": "territory_censor",
+      "scene_ids": [
+        "S018",
+        "S030",
+        "S046",
+        "S049",
+        "S060"
+      ],
+      "entity_id": null,
+      "severity": "HIGH",
+      "category": "territory_us_drug_use",
+      "finding": "The pervasive depiction of drug dealing and consumption (hash, weed, 'shrooms, coke, rolling a joint) in the screenplay will significantly impact its MPAA rating in the US. This content is inconsistent with PG ratings and would almost certainly result in an R or potentially NC-17 rating due to explicit drug abuse and references.",
+      "citations": [
+        {
+          "source_type": "web",
+          "title": "Homepage - MPA Film Ratings",
+          "url": "https://www.filmratings.com/",
+          "excerpt": "There is no drug use content in a PG-rated motion picture.",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        },
+        {
+          "source_type": "web",
+          "title": "Homepage - MPA Film Ratings",
+          "url": "https://www.filmratings.com/",
+          "excerpt": "An R-rated motion picture, in the view of the Rating Board, contains some adult material. An R-rated motion picture may include adult themes, adult activity, hard language, intense or persistent violence, sexually-oriented nudity, drug abuse or other elements, so that parents are counseled to take this rating very seriously.",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        },
+        {
+          "source_type": "web",
+          "title": "Homepage - MPA Film Ratings",
+          "url": "https://www.filmratings.com/",
+          "excerpt": "An NC-17 rating can be based on violence, sex, aberrational behavior, drug abuse or any other element that most parents would consider too strong and therefore off-limits for viewing by their children.",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        },
+        {
+          "source_type": "web",
+          "title": "How are movie ratings decided in the US?",
+          "url": "https://www.kron4.com/news/national/how-are-movie-ratings-decided-in-the-us/",
+          "excerpt": "Films with this rating may contain strong language throughout, intense violence, drug abuse and nudity.",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        }
+      ],
+      "remedy": {
+        "action": "NO_ACTION",
+        "detail": "No action is required if an R or NC-17 rating is acceptable. To achieve a lower rating (e.g., PG-13), significant cuts and alterations to all drug-related content would be necessary, which would fundamentally change the characters and narrative.",
+        "est_cost_usd": null,
+        "est_added_days": null
+      },
+      "confidence": 0.95
+    },
+    {
+      "flag_id": "F303",
+      "agent": "safety_underwriter",
+      "scene_ids": [
+        "S045"
+      ],
+      "entity_id": null,
+      "severity": "MEDIUM",
+      "category": "stunt_car_crowd_chase",
+      "finding": "[partially supported] Scene S045 involves Dante and Randal being chased by an angry crowd, a car making a fast departure near the crowd, and the crowd throwing objects. This sequence presents significant safety risks, including potential for injury to actors/extras from the pursuing crowd, being hit by the vehicle, or being struck by thrown objects. Proper crowd control and vehicle stunt coordination are essential to prevent accidents.",
+      "citations": [
+        {
+          "source_type": "web",
+          "title": "What Is Crowd Control And Permits?",
+          "url": "https://beverlyboy.com/filmmaking/what-is-crowd-control-and-permits/",
+          "excerpt": "Effective crowd control is one of the most important responsibilities in film and video production. You need to think about how you\u2019ll manage the movement and behavior of every individual on set, whether they\u2019re part of the cast, extras, or the general public nearby.",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        },
+        {
+          "source_type": "web",
+          "title": "1 ENTERTAINMENT: DRIVING SAFETY INTRODUCTION",
+          "url": "https://info.castandcrew.com/hubfs/Entertainment%20-%20Driving%20Safety.pdf?hsLang=en",
+          "excerpt": "Only allow qualified and licensed drivers to drive vehicles for shots. ... If you have questions regarding pod driving, please speak with the stunt coordinator and director.",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        },
+        {
+          "source_type": "web",
+          "title": "Safety Guide to Using Prop Weapons | School of the Arts Academic Information",
+          "url": "https://academicinformation.arts.columbia.edu/theatre/prop-weapons",
+          "excerpt": "At the beginning of the rehearsal in which the scene(s) will be rehearsed where the prop is used, you must hold another safety meeting should occur where all members are informed that there will be a prop weapon in use, which individuals will be handling it and how it will be used in the scene.",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        }
+      ],
+      "remedy": {
+        "action": "ADD_SPECIALIST",
+        "detail": "Hire a qualified stunt coordinator to oversee the car action and manage the crowd. Implement strict crowd control measures to ensure the safety of all participants. Use trained stunt drivers for the vehicle. Ensure all thrown objects are soft props and that actors/extras are instructed on safe throwing and receiving techniques. Conduct thorough safety briefings and rehearsals.",
+        "est_cost_usd": [
+          7500,
+          20000
+        ],
+        "est_added_days": 2
+      },
+      "confidence": 1
+    },
+    {
+      "flag_id": "F304",
+      "agent": "safety_underwriter",
+      "scene_ids": [
+        "S062"
+      ],
+      "entity_id": null,
+      "severity": "MEDIUM",
+      "category": "stunt_physical_altercation",
+      "finding": "Scene S062 depicts a physical altercation involving simulated kicks to Dante and Veronica throwing a purse at him. To ensure the safety of the actors and prevent injury, these actions must be carefully choreographed and supervised. Without proper stunt coordination, there is a risk of accidental injury from impacts or uncontrolled movements.",
+      "citations": [
+        {
+          "source_type": "web",
+          "title": "What Is a Stunt Coordinator? Job Description, Salary, Responsibilities + More",
+          "url": "https://www.backstage.com/magazine/article/stunt-coordinator-production-crew-career-70389/",
+          "excerpt": "The stunt coordinator\u2019s main responsibility is ensuring the safety of all cast and crew when stunts are being performed on set.",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        },
+        {
+          "source_type": "web",
+          "title": "Stage Combat Basics: An Actor's Guide to Fight Choreography | Backstage",
+          "url": "https://www.backstage.com/magazine/article/stage-combat-basics-16768/",
+          "excerpt": "For safe kicks, Rothrock recommends that you tighten your body and control where the kick will go, rather than throwing the leg. Never hyperextend the kicking leg, and make sure the standing leg is completely grounded.",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        },
+        {
+          "source_type": "web",
+          "title": "Safety Guide to Using Prop Weapons | School of the Arts Academic Information",
+          "url": "https://academicinformation.arts.columbia.edu/theatre/prop-weapons",
+          "excerpt": "At the beginning of the rehearsal in which the scene(s) will be rehearsed where the prop is used, you must hold another safety meeting should occur where all members are informed that there will be a prop weapon in use, which individuals will be handling it and how it will be used in the scene.",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        }
+      ],
+      "remedy": {
+        "action": "ADD_SPECIALIST",
+        "detail": "Hire a qualified stunt coordinator to choreograph and supervise the simulated kicks and the throwing of the purse. Ensure actors are trained in safe stage combat techniques or use stunt doubles if necessary. Conduct safety briefings for all involved and use soft props for the purse if it is to be thrown with force.",
+        "est_cost_usd": [
+          2500,
+          7500
+        ],
+        "est_added_days": 1
+      },
+      "confidence": 1
+    },
+    {
+      "flag_id": "F305",
+      "agent": "safety_underwriter",
+      "scene_ids": [
+        "S046"
+      ],
+      "entity_id": null,
+      "severity": "MEDIUM",
+      "category": "stunt_physical_altercation",
+      "finding": "Scene S046 involves a physical altercation where Randal lunges at Jay, and Dante intervenes by grabbing Randal. While not as intense as other fight scenes, any physical contact between actors requires careful choreography and supervision to prevent accidental injury. The 'farts' mentioned are likely a comedic sound effect and do not pose a physical safety risk requiring stunt coordination.",
+      "citations": [
+        {
+          "source_type": "web",
+          "title": "Stunt & Safety | SAG-AFTRA",
+          "url": "https://www.sagaftra.org/contracts-industry-resources/stunt-safety",
+          "excerpt": "Performer safety is SAG-AFTRA's top priority, whether it\u2019s ensuring physical protection during exciting stunts or preventing harassment and assault in the workplace.",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        },
+        {
+          "source_type": "web",
+          "title": "SAFETY BULLETIN #4 STUNTS \u201cADDENDUM A\u201d \u2013 SPECIALIZED ACTIVITIES",
+          "url": "https://enduser-medianetworksproductionsafety-prod.paramount.com/files/documents/4A%20STUNTS-SPECIALIZED%20ACTIVITIES.pdf",
+          "excerpt": "Map out and rehearse filmed sequences in pre-production.",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        }
+      ],
+      "remedy": {
+        "action": "ADD_SPECIALIST",
+        "detail": "Hire a stunt coordinator to choreograph and supervise the lunging and grabbing actions to ensure actor safety. Conduct thorough rehearsals and safety briefings. Ensure clear communication between actors and the stunt coordinator.",
+        "est_cost_usd": [
+          1000,
+          3000
+        ],
+        "est_added_days": 0.5
+      },
+      "confidence": 1
+    },
+    {
+      "flag_id": "F306",
+      "agent": "safety_underwriter",
+      "scene_ids": [
+        "S047"
+      ],
+      "entity_id": null,
+      "severity": "MEDIUM",
+      "category": "stunt_physical_altercation",
+      "finding": "Scene S047 involves Randal spitting water at a customer, followed by the customer attempting to grab Randal and Dante intervening. While simulated spitting can be managed with actor consent and hygiene protocols (e.g., clean water, mouthwash), the physical altercation (attempted grabbing and blocking) requires careful choreography to prevent injury. A stunt coordinator is necessary to ensure these actions are performed safely.",
+      "citations": [
+        {
+          "source_type": "web",
+          "title": "film techniques - Do other actors/actresses really spit on each other in movies? - Movies & TV Stack Exchange",
+          "url": "https://movies.stackexchange.com/questions/15223/do-other-actors-actresses-really-spit-on-each-other-in-movies",
+          "excerpt": "This can often come down to the willingness of the actors concerned as to whether to go all the way during a 'spitting' scene. ... Sometimes you will indeed see the shot as an edited one - 'spitter' spits, cut to 'spitee' receiving the phlegm. This is easy to pull off and does not have to involve any real phlegm hitting the 'spitee's' face - this can be simulated with water/egg white/corn syrup. ... However, when you see the shot as a two-shot (both actors in frame), then there is no faking it, but you can rest assured that plenty of mouthwash is involved, plus a simil[ar substance].",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        },
+        {
+          "source_type": "web",
+          "title": "What is a Stunt Coordinator? - Beverly Boy Productions",
+          "url": "https://beverlyboy.com/filmmaking/what-is-a-stunt-coordinator/",
+          "excerpt": "When they\u2019re not choreographing ... the production of the stunt. They work with hair, makeup, and wardrobe to ensure safety of the stuntman when implementing the stunt and filming the scene.",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        }
+      ],
+      "remedy": {
+        "action": "ADD_SPECIALIST",
+        "detail": "Hire a stunt coordinator to choreograph and supervise the physical interaction between the customer, Randal, and Dante. Ensure actor consent for simulated spitting and implement strict hygiene protocols. Conduct thorough rehearsals and safety briefings for all involved.",
+        "est_cost_usd": [
+          750,
+          2000
+        ],
+        "est_added_days": 0.5
+      },
+      "confidence": 1
+    },
+    {
+      "flag_id": "F307",
+      "agent": "safety_underwriter",
+      "scene_ids": [
+        "S019"
+      ],
+      "entity_id": null,
+      "severity": "MEDIUM",
+      "category": "special_effects_fire_extinguisher",
+      "finding": "[partially supported] Scene S019 involves Veronica discharging a fire extinguisher, described as 'white powder,' over a crowd of actors/extras. Dry chemical agents can cause respiratory and eye irritation, and prolonged exposure can be harmful. Additionally, Veronica jumps off a freezer case. This sequence requires careful management to ensure the safety of all involved.",
+      "citations": [
+        {
+          "source_type": "web",
+          "title": "A dry chemical fire extinguisher (often called a DCP or ABE extinguisher)",
+          "url": "https://www.fireextinguisheronline.com.au/blog/post/what-are-dry-chemical-fire-extinguishers",
+          "excerpt": "Can Cause Breathing Problems - If dry powder is inhaled it can irritate the respiratory organs. Whilst short term exposure is not considered to be harmful, repeated inhalation should be avoided.",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        },
+        {
+          "source_type": "web",
+          "title": "Fire extinguisher safety | Poison Control",
+          "url": "https://www.poison.org/articles/fire-extinguisher-safety-184",
+          "excerpt": "Exposure of the eyes or skin to any of the dry chemical fire extinguishers should be treated by immediate rinsing of the affected areas.",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        },
+        {
+          "source_type": "web",
+          "title": "Fire Extinguisher A/B/C | Film Location Equipment",
+          "url": "https://www.expresswaycine.com/film-location-equipment/set-safety/fire-extinguisher-a-b-c",
+          "excerpt": "Protect production crew, talent, and flammable items with this safety equipment.",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        }
+      ],
+      "remedy": {
+        "action": "ADD_SPECIALIST",
+        "detail": "Hire a special effects coordinator to manage the fire extinguisher discharge. Use a non-toxic, theatrical-grade substitute for the dry chemical agent, or a water-based extinguisher with appropriate additives, ensuring it is safe for human exposure. Provide eye protection and respiratory masks for actors/extras if necessary. A stunt coordinator should supervise Veronica's jump from the freezer case. Conduct thorough safety briefings and rehearsals.",
+        "est_cost_usd": [
+          1500,
+          5000
+        ],
+        "est_added_days": 1
+      },
+      "confidence": 1
+    },
+    {
+      "flag_id": "F308",
+      "agent": "safety_underwriter",
+      "scene_ids": [
+        "S001",
+        "S002",
+        "S005",
+        "S009",
+        "S025",
+        "S029",
+        "S035",
+        "S038",
+        "S053"
+      ],
+      "entity_id": null,
+      "severity": "MEDIUM",
+      "category": "animal_presence",
+      "finding": "The screenplay features a dog in scenes S001, S002, S005 and a cat in scenes S009, S025, S029, S035, S038, S053. The presence of animals on set requires adherence to strict animal welfare guidelines and the supervision of trained professionals to ensure the safety and well-being of the animals, as well as the cast and crew. The American Humane Association provides guidelines and certified representatives for this purpose.",
+      "citations": [
+        {
+          "source_type": "web",
+          "title": "In 'Water for Elephants,' Safety Stars in the Center Ring: From Large Cats to Larvae, American Humane Association Certifies That 'No Animals Were Harmed'\u00ae",
+          "url": "https://www.prnewswire.com/news-releases/in-water-for-elephants-safety-stars-in-the-center-ring-from-large-cats-to-larvae-american-humane-association-certifies-that-no-animals-were-harmed-120487794.html",
+          "excerpt": "Throughout the entire filming process, an American Humane Association Certified Animal Safety Representative\u2122 , Gina ... Johnson diligently monitored the temperature, lighting, other animals, people and other requirements of American Humane Association's \"Guidelines for the Safe Use of Animals in Filmed Media.\"",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        },
+        {
+          "source_type": "web",
+          "title": "How to Work with Animals in Film - InFocus Film School",
+          "url": "https://infocusfilmschool.com/animals-in-film",
+          "excerpt": "American Humane Society is the only organization legally entitled to award the copyrighted rider \u201c No animals were harmed...\u201d regardless of where you\u2019re shooting in the world. Their guidelines and protocols require a high standard of care and attention.",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        },
+        {
+          "source_type": "web",
+          "title": "Mastering Animal Work on Film Sets: 17 Essential Tips for Success",
+          "url": "https://www.factualamerica.com/filmmaking/17-essential-tips-for-working-with-animals-on-film-sets",
+          "excerpt": "Each species has different needs. Dogs might need short breaks every hour, while more sensitive animals, like cats or rabbits, might require longer rest periods. Communicating with a skilled animal trainer can provide insights into the specific needs of each animal.",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        }
+      ],
+      "remedy": {
+        "action": "ADD_SPECIALIST",
+        "detail": "Hire a professional animal handler for all scenes involving animals. Ensure compliance with American Humane Association guidelines for the safe use of animals in filmed media. Provide appropriate rest periods, food, water, and safe housing for all animals on set.",
+        "est_cost_usd": [
+          500,
+          2000
+        ],
+        "est_added_days": 0
+      },
+      "confidence": 1
+    },
+    {
+      "flag_id": "F405",
+      "agent": "territory_censor",
+      "scene_ids": [
+        "S060"
+      ],
+      "entity_id": null,
+      "severity": "MEDIUM",
+      "category": "territory_cn_alcohol_use",
+      "finding": "The references to alcohol use ('Drinking beers!', 'drink some beers, get ripped') in scene S060, while not as explicitly prohibited as drug use, could be subject to editing in China. Chinese policy aims to restrict alcohol imagery, especially concerning young people, and the context of the dialogue (partying, getting 'ripped') might be seen as promoting an undesirable lifestyle.",
+      "citations": [
+        {
+          "source_type": "web",
+          "title": "China: Film Censorship | Library of Congress",
+          "url": "https://www.loc.gov/item/global-legal-monitor/2008-05-02/china-film-censorship",
+          "excerpt": "It bans the detailed representation of crimes, disclosure of special investigatory techniques, or highly provocative depiction of homicide, blood, violence, drug use, or gambling; scenes of maltreatment of prisoners and of the extraction through",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        },
+        {
+          "source_type": "web",
+          "title": "Alcohol imagery in popular films in China, 2001\u20132020",
+          "url": "https://link.springer.com/article/10.1057/s41271-024-00493-2",
+          "excerpt": "National policies are required to restrict alcohol imagery in films and to reduce the availability of such films for viewing by young people.",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        }
+      ],
+      "remedy": {
+        "action": "CUT",
+        "detail": "Dialogue promoting excessive alcohol consumption or linking it to illicit activities may need to be edited or removed.",
+        "est_cost_usd": null,
+        "est_added_days": null
+      },
+      "confidence": 0.7
+    },
+    {
+      "flag_id": "F406",
+      "agent": "territory_censor",
+      "scene_ids": [
+        "S060"
+      ],
+      "entity_id": null,
+      "severity": "MEDIUM",
+      "category": "territory_uae_alcohol_use",
+      "finding": "[partially supported] The references to alcohol use ('Drinking beers!', 'drink some beers, get ripped') in scene S060, particularly when linked to getting 'ripped', could be problematic for release in the UAE. While the 21+ rating allows for more mature content, media must still conform to societal values. Explicit promotion of excessive alcohol consumption, even if not outright banned, might be subject to review and potential edits.",
+      "citations": [
+        {
+          "source_type": "web",
+          "title": "Decoding UAE age ratings for films, books and video games: What parents should know",
+          "url": "https://gulfnews.com/living-in-uae/ask-us/decoding-uae-age-ratings-for-films-books-and-video-games-what-parents-should-know-1.1727272240932",
+          "excerpt": "Age rating is a system designed to assess the suitability of media content for different age groups. This classification ensures that media, such as books, films, and video games, conform to content standards and societal values, particularly concerning profanity, violence, and sexual content.",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        },
+        {
+          "source_type": "web",
+          "title": "Decoding UAE age ratings for films, books and video games: What parents should know",
+          "url": "https://gulfnews.com/living-in-uae/ask-us/decoding-uae-age-ratings-for-films-books-and-video-games-what-parents-should-know-1.1727272240932",
+          "excerpt": "Age ratings for films in the UAE \u2022 21+: Introduced in 2021 , this rating allows the screening of uncensored international version of films for mature audiences aged 21 and above.",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        },
+        {
+          "source_type": "web",
+          "title": "UAE issues guidelines for sponsored social media posts | The National",
+          "url": "https://www.thenationalnews.com/uae/government/uae-issues-guidelines-for-sponsored-social-media-posts-1.785695",
+          "excerpt": "Advertising for alcoholic beverages or narcotics is not permitted in any form, whether directly or indirectly",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        }
+      ],
+      "remedy": {
+        "action": "CUT",
+        "detail": "Consider editing dialogue that explicitly promotes excessive alcohol consumption or links it to irresponsible behavior.",
+        "est_cost_usd": null,
+        "est_added_days": null
+      },
+      "confidence": 0.8
+    },
+    {
+      "flag_id": "F407",
+      "agent": "territory_censor",
+      "scene_ids": [
+        "S060"
+      ],
+      "entity_id": null,
+      "severity": "LOW",
+      "category": "territory_uk_alcohol_use",
+      "finding": "The references to alcohol use ('Drinking beers!', 'get ripped') in scene S060 are unlikely to be a major issue for UK classification, especially if the film receives an 18 rating. While the BBFC considers 'alcohol abuse' in works appealing to children, this script is clearly not aimed at a young audience. The phrase 'get ripped' might be flagged if interpreted as promoting excessive consumption, but it's a minor point in the overall context.",
+      "citations": [
+        {
+          "source_type": "web",
+          "title": "Alcohol imagery and branding, and age classification of films popular in the UK | International Journal of Epidemiology | Oxford Academic",
+          "url": "https://academic.oup.com/ije/article/40/5/1411/659641",
+          "excerpt": "The BBFC classification guidelines do not, however, appear to consider the potential behavioural influences of alcohol imagery in films in the classification process, stating only that \u2018 where smoking, alcohol abuse or substance misuse feature to a significant extent in works which appeal to children, this will normally be",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        },
+        {
+          "source_type": "web",
+          "title": "Alcohol imagery and branding, and age classification of films popular in the UK - PMC",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3204211/",
+          "excerpt": "Most films containing alcohol appearances, including 90% of those including \u2018alcohol brand appearances\u2019, were rated as suitable for viewing by children and young people.",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        }
+      ],
+      "remedy": {
+        "action": "NO_ACTION",
+        "detail": "No specific action is likely required, but minor edits to the phrase 'get ripped' could be considered if aiming for a lower adult rating.",
+        "est_cost_usd": null,
+        "est_added_days": null
+      },
+      "confidence": 0.6
+    },
+    {
+      "flag_id": "F408",
+      "agent": "territory_censor",
+      "scene_ids": [
+        "S060"
+      ],
+      "entity_id": null,
+      "severity": "LOW",
+      "category": "territory_us_alcohol_use",
+      "finding": "[partially supported] The references to alcohol use ('Drinking beers!', 'get ripped') in scene S060 will contribute to the overall MPAA rating. While alcohol use is present across all ratings, the implication of intoxication ('get ripped') combined with other adult content in the script would likely contribute to an R rating. It is not expected to block release or require cuts, but it is a factor in the rating.",
+      "citations": [
+        {
+          "source_type": "web",
+          "title": "Tobacco, Alcohol, and Other Risk Behaviors in Film: How Well Do MPAA Ratings Distinguish Content? - PMC",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2802064/",
+          "excerpt": "Fifty percent of R-rated movies contained 162 seconds or more of alcohol use, comparable with 49% of PG-13 and 25% of PG movies.",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        },
+        {
+          "source_type": "web",
+          "title": "Youth Exposure to Alcohol Use and Brand Appearances in Popular Contemporary Movies - PMC",
+          "url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3541777/",
+          "excerpt": "Most movies (83%, including 57% of G/PG-rated movies) depicted alcohol use and 52% (including 19% of G/PG movies) contained at least one alcohol brand appearance",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        }
+      ],
+      "remedy": {
+        "action": "NO_ACTION",
+        "detail": "No action is required if an R rating is acceptable. To achieve a lower rating, minor edits to dialogue implying excessive intoxication might be considered.",
+        "est_cost_usd": null,
+        "est_added_days": null
+      },
+      "confidence": 0.7
+    }
+  ],
+  "rejected_flags": [
+    {
+      "flag_id": "F101",
+      "agent": "clearance_counsel",
+      "scene_ids": [
+        "S001"
+      ],
+      "entity_id": "E005",
+      "severity": "LOW",
+      "category": "trademark_use",
+      "finding": "The brand name \"Play-Doh\" is mentioned in dialogue and the product is visually depicted as a beard and mustache on a picture. While incidental verbal use of a brand name is generally permissible, the visual depiction of the product, even in a modified form, could warrant a courtesy clearance to avoid any potential claims of unauthorized use or dilution, especially given Hasbro's known protectiveness of the brand.",
+      "citations": [
+        {
+          "source_type": "web",
+          "title": "Play Dough is confusingly similar to Play-Doh \u00ae - Lexology",
+          "url": "https://www.lexology.com/library/detail.aspx?g=f4d14007-7784-4330-9ac0-d544d3809a97",
+          "excerpt": "As a result the judge concluded it is \"beyond dispute that PLAY-DOH is a very well known brand\". It was right \"that PLAY-DOH is a word that would be instantly recognizable to a lot of mums\" and that \"the PLAY-DOH marks have achieved the status of household names\".",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        },
+        {
+          "source_type": "web",
+          "title": "Using Trademarks in Film and TV",
+          "url": "https://news.bloomberglaw.com/ip-law/using-trademarks-in-film-and-tv",
+          "excerpt": "Nowadays, trademarks are a kind of intellectual property\u2014a word, name, symbol, device\u2014that a person or company can own which identifies them as the source of the products and, thus, prevents others from using the same mark to sell competing products.",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        }
+      ],
+      "remedy": {
+        "action": "OBTAIN_RELEASE",
+        "detail": "Obtain a release from Hasbro for the incidental visual and verbal use of the Play-Doh brand and product.",
+        "est_cost_usd": [
+          0,
+          500
+        ],
+        "est_added_days": 0
+      },
+      "confidence": 0.8,
+      "rejection_reason": "The claim misstates the script facts by asserting that the brand name \"Play-Doh\" is mentioned in dialogue; the script explicitly states it is a visual depiction on a picture. Additionally, while the excerpts establish Play-Doh as a well-known brand and define trademarks, they do not state or directly entail the premise that the visual depiction of a product, even in a modified form, could warrant a courtesy clearance to avoid potential claims of unauthorized use or dilution. The excerpts do not address visual depictions, modified forms, or the concept of courtesy clearance for such uses."
+    },
+    {
+      "flag_id": "F102",
+      "agent": "clearance_counsel",
+      "scene_ids": [
+        "S009",
+        "S010"
+      ],
+      "entity_id": "E007",
+      "severity": "HIGH",
+      "category": "trademark_use",
+      "finding": "The newspaper name \"ASBURY PARK PRESS\" is visually depicted on a newspaper rack in a featured capacity. As a real and active publication, its name and masthead are protected by trademark. Use of the trademark without permission could lead to a claim of infringement, especially if it implies endorsement or is used in a way that could dilute the brand.",
+      "citations": [
+        {
+          "source_type": "web",
+          "title": "Asbury Park Press - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Asbury_Park_Press",
+          "excerpt": "The **Asbury Park Press**, formerly known as the **Shore Press**, **Daily Press**, **Asbury Park Daily Press**, and **Asbury Park Evening Press**, is the third largest daily newspaper in the state of New Jersey. Established in 1879, it has been owned by Gannett since 1997.",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        },
+        {
+          "source_type": "web",
+          "title": "Trademark Law Alert\u2014Non-Syndicated Newspaper Column Titles Are Now Registrable - Trademark - United States",
+          "url": "https://www.mondaq.com/unitedstates/trademark/1325308/trademark-law-alertnon-syndicated-newspaper-column-titles-are-now-registrable",
+          "excerpt": "The U.S. Patent and Trademark Office (USPTO) has historically treated print newspaper columns as ineligible to meet the requirements of goods in trade unless sold, syndicated, or offered for publication or broadcast by multiple parties. There were two exceptions: (1) demonstrating acquired distinctiveness of the",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        }
+      ],
+      "remedy": {
+        "action": "OBTAIN_LICENSE",
+        "detail": "Obtain a license from Gannett, the owner of the Asbury Park Press, for the visual use of the newspaper's name and masthead. Alternatively, replace the newspaper with a fictional one.",
+        "est_cost_usd": [
+          500,
+          2000
+        ],
+        "est_added_days": 0
+      },
+      "confidence": 0.9,
+      "rejection_reason": "The script facts are accurate; the newspaper name 'ASBURY PARK PRESS' is depicted on a rack and vending machine. However, the cited excerpts do not support the legal premise. Excerpt [1] confirms the Asbury Park Press is a real publication and its owner, but does not state that its name and masthead are protected by trademark. Excerpt [2] discusses trademark law specifically for 'newspaper column titles' and their registrability, which is a narrower and distinct concept from the newspaper's overall name and masthead. Therefore, the claim that the newspaper's name and masthead are protected by trademark, and the general principles of infringement, endorsement, or dilution as applied to the newspaper's main name, are not supported by the provided excerpts."
+    },
+    {
+      "flag_id": "F103",
+      "agent": "clearance_counsel",
+      "scene_ids": [
+        "S018"
+      ],
+      "entity_id": "E011",
+      "severity": "MEDIUM",
+      "category": "copyright_infringement",
+      "finding": "A character verbally references and directly quotes a memorable line (\"I'LL FUCK ANYTHING THAT MOVES!\") from Dennis Hopper's character (Frank Booth) in the film \"Blue Velvet.\" While short quotes can sometimes fall under fair use, directly quoting a distinctive line from a copyrighted film, especially if it's a significant part of the character's identity, carries a risk of copyright infringement.",
+      "citations": [
+        {
+          "source_type": "web",
+          "title": "Does quoting a line from a film infringe copyright?",
+          "url": "https://law.stackexchange.com/questions/26371/does-quoting-a-line-from-a-film-infringe-copyright",
+          "excerpt": "No. This is fair use under U.S. Copyright law, which allows you to use portions of a Copyrighted piece as long as you are able to demonstrate that you are using the quote in a transformative manor (presumably a character is a fan of the movie and is quoting it because it institutionally appropriate).",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        },
+        {
+          "source_type": "web",
+          "title": "Are Movie Lines Copyrighted? What You Need to Know About Film Quotes \u2013 The Legal Guide",
+          "url": "https://thelegalguide.org/are-movie-lines-copyrighted-what-you-need-know-film-quotes/",
+          "excerpt": "For example, quoting a line to illustrate a character\u2019s arc or to critique a screenplay\u2019s dialogue tends to be more defensible than reproducing an entire dialogue scene for entertainment value. When in doubt, limit quotes and consult legal counsel for high-stakes projects. Filmmakers and content creators often obtain permissions through licensing agreements or work with rights holders to include dialogue in derivative works, subtitles, or fan projects.",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        }
+      ],
+      "remedy": {
+        "action": "OBTAIN_LICENSE",
+        "detail": "Obtain a license from the rights holders of \"Blue Velvet\" for the use of the character's quote, or paraphrase the line to avoid direct quotation.",
+        "est_cost_usd": [
+          1000,
+          5000
+        ],
+        "est_added_days": 0
+      },
+      "confidence": 0.7,
+      "rejection_reason": "The script facts are accurate, as JAY directly quotes the line and references 'Blue Velvet Hopper'. However, the premise that directly quoting a distinctive line carries a risk of copyright infringement is not supported by the cited excerpts. Excerpt [1] explicitly states, 'No. This is fair use under U.S. Copyright law, which allows you to use portions of a Copyrighted piece as long as you are able to demonstrate that you are using the quote in a transformative manor (presumably a character is a fan of the movie and is quoting it because it institutionally appropriate).' The script indicates a transformative use by having a character quote and reference the source. Excerpt [2] mentions that licensing is often obtained, but this does not establish an infringement risk for this specific type of quote, especially when Excerpt [1] suggests it falls under fair use."
+    },
+    {
+      "flag_id": "F201",
+      "agent": "ratings_board",
+      "scene_ids": [
+        "S001",
+        "S018",
+        "S019",
+        "S020",
+        "S021",
+        "S024",
+        "S028",
+        "S030",
+        "S036",
+        "S038",
+        "S039",
+        "S040",
+        "S042",
+        "S046",
+        "S047",
+        "S051",
+        "S056",
+        "S059",
+        "S062",
+        "S064",
+        "S009",
+        "S012",
+        "S017",
+        "S023",
+        "S027",
+        "S035",
+        "S041",
+        "S048",
+        "S053",
+        "S060"
+      ],
+      "entity_id": null,
+      "severity": "HIGH",
+      "category": "rating_language",
+      "finding": "The screenplay contains pervasive strong language, including 41 uses of 'fucking', 45 uses of 'shit', 27 uses of 'hell' (many as expletives), 5 uses of 'cunt', 10 uses of 'ass' (mostly as expletives), 1 use of 'faggot', and 1 use of 'jerkoff'. This frequency and intensity of profanity is a primary driver for an R rating.",
+      "citations": [
+        {
+          "source_type": "precedent",
+          "title": "Flower",
+          "url": null,
+          "excerpt": "Flower is a 2017 American romantic comedy drama film directed by Max Winkler, from a screenplay by Winkler, Alex McAulay, and Matt Spicer.",
+          "retrieved_at": null,
+          "via": "clickhouse"
+        },
+        {
+          "source_type": "precedent",
+          "title": "Things to Do in Denver When You're Dead",
+          "url": null,
+          "excerpt": "Things to Do in Denver When You're Dead is a 1995 American crime drama film directed by Gary Fleder and written by Scott Rosenberg.",
+          "retrieved_at": null,
+          "via": "clickhouse"
+        }
+      ],
+      "remedy": {
+        "action": "NO_ACTION",
+        "detail": "No action needed as R rating is targeted.",
+        "est_cost_usd": null,
+        "est_added_days": null
+      },
+      "confidence": 1,
+      "rejection_reason": "The claim misstates the script facts. The provided script excerpts do not contain the stated frequency of profanity (e.g., 5 instances of 'fucking' found vs. 41 claimed, 2 instances of 'shit' vs. 45 claimed, 2 instances of 'hell' vs. 27 claimed, 0 instances of 'cunt' vs. 5 claimed, 1 instance of 'ass' not as an expletive vs. 10 mostly as expletives claimed, 0 instances of 'faggot' vs. 1 claimed, 0 instances of 'jerkoff' vs. 1 claimed). Furthermore, the cited excerpts are descriptions of other films and do not contain any information or rules regarding film ratings, profanity, or how profanity influences ratings, thus providing no support for the claim's premise."
+    },
+    {
+      "flag_id": "F202",
+      "agent": "ratings_board",
+      "scene_ids": [
+        "S018",
+        "S020",
+        "S028",
+        "S030",
+        "S036",
+        "S041",
+        "S042",
+        "S046",
+        "S049",
+        "S053",
+        "S055",
+        "S056",
+        "S057",
+        "S059",
+        "S060",
+        "S061",
+        "S062",
+        "S064",
+        "S039"
+      ],
+      "entity_id": null,
+      "severity": "HIGH",
+      "category": "rating_sexual_content",
+      "finding": "The screenplay contains pervasive and explicit sexual dialogue and references. This includes one instance of 'tits and ass' (S018), five instances of 'pussy' (S018, S028, S039, S060, S062, with one non-sexual use in 'pussyfoot'), numerous uses of 'fuck' and 'fucking' in sexual contexts (e.g., 'I\\'LL FUCK ANYTHING THAT MOVES!', 'making fuck', 'to fuck her', 'fucking a dead guy'), four instances of 'blow job' (S018, S020), one instance of 'snowballing' (S020), and two instances of 'jizz-mopper' (S036). Scene S028 features an extensive list of explicit pornographic titles, and S053 references 'Hermaphroditic porn'. Scene S020 contains a detailed discussion of sexual history, including oral sex. Scenes S056 and S057 imply sexual acts with a deceased person, and S062 includes references to oral sex with multiple partners. This content is a primary driver for an R rating.",
+      "citations": [
+        {
+          "source_type": "precedent",
+          "title": "Flower",
+          "url": null,
+          "excerpt": "Flower is a 2017 American romantic comedy drama film directed by Max Winkler, from a screenplay by Winkler, Alex McAulay, and Matt Spicer.",
+          "retrieved_at": null,
+          "via": "clickhouse"
+        },
+        {
+          "source_type": "precedent",
+          "title": "Things to Do in Denver When You're Dead",
+          "url": null,
+          "excerpt": "Things to Do in Denver When You're Dead is a 1995 American crime drama film directed by Gary Fleder and written by Scott Rosenberg.",
+          "retrieved_at": null,
+          "via": "clickhouse"
+        }
+      ],
+      "remedy": {
+        "action": "NO_ACTION",
+        "detail": "No action needed as R rating is targeted.",
+        "est_cost_usd": null,
+        "est_added_days": null
+      },
+      "confidence": 1,
+      "rejection_reason": "The claim misstates several script facts. Specifically, the provided script excerpts do not contain 'five instances of pussy' (only one sexual and one non-sexual use are found), 'four instances of blow job', 'one instance of snowballing', or 'an extensive list of explicit pornographic titles' in S028 (which mentions 'Happy Scrappy'). Scene S020 does not contain a 'detailed discussion of sexual history, including oral sex'. Scenes S056 and S057 do not imply 'sexual acts with a deceased person'. While some elements of the claim are present (e.g., 'tits and ass', 'jizz-mopper', 'Hermaphroditic porn', 'gone down on a couple guys'), the numerous inaccuracies in the script facts undermine the overall claim of pervasive and explicit content as described. Furthermore, the cited excerpts (film titles and credits) provide no information or support whatsoever for the premise that this content is a primary driver for an R rating."
+    },
+    {
+      "flag_id": "F203",
+      "agent": "ratings_board",
+      "scene_ids": [
+        "S018",
+        "S030",
+        "S046",
+        "S049",
+        "S060"
+      ],
+      "entity_id": null,
+      "severity": "HIGH",
+      "category": "rating_drug_use",
+      "finding": "The screenplay depicts drug use and references. This includes two instances of 'hash' (S018, S049), six instances of 'weed' (S018, S060), one instance of 'shrooms' (S018), one instance of 'coke' (S060), and one instance of 'rolling a joint' (S060). Characters are shown selling and using drugs. This content contributes to an R rating.",
+      "citations": [
+        {
+          "source_type": "precedent",
+          "title": "Flower",
+          "url": null,
+          "excerpt": "Flower is a 2017 American romantic comedy drama film directed by Max Winkler, from a screenplay by Winkler, Alex McAulay, and Matt Spicer.",
+          "retrieved_at": null,
+          "via": "clickhouse"
+        },
+        {
+          "source_type": "precedent",
+          "title": "Things to Do in Denver When You're Dead",
+          "url": null,
+          "excerpt": "Things to Do in Denver When You're Dead is a 1995 American crime drama film directed by Gary Fleder and written by Scott Rosenberg.",
+          "retrieved_at": null,
+          "via": "clickhouse"
+        }
+      ],
+      "remedy": {
+        "action": "NO_ACTION",
+        "detail": "No action needed as R rating is targeted.",
+        "est_cost_usd": null,
+        "est_added_days": null
+      },
+      "confidence": 1,
+      "rejection_reason": "The script facts regarding drug references and depictions are accurate. However, the cited excerpts provide no information whatsoever about film ratings, rating criteria, or how drug content contributes to an R rating. The excerpts are merely film descriptions and are entirely off-topic for the premise that the content contributes to an R rating."
+    },
+    {
+      "flag_id": "F204",
+      "agent": "ratings_board",
+      "scene_ids": [
+        "S060"
+      ],
+      "entity_id": null,
+      "severity": "LOW",
+      "category": "rating_alcohol_use",
+      "finding": "The screenplay includes references to alcohol use, specifically one instance of 'drinking beers' and one instance of 'get ripped' in scene S060. This contributes to the mature content of the film.",
+      "citations": [
+        {
+          "source_type": "precedent",
+          "title": "Flower",
+          "url": null,
+          "excerpt": "Flower is a 2017 American romantic comedy drama film directed by Max Winkler, from a screenplay by Winkler, Alex McAulay, and Matt Spicer.",
+          "retrieved_at": null,
+          "via": "clickhouse"
+        },
+        {
+          "source_type": "precedent",
+          "title": "Things to Do in Denver When You're Dead",
+          "url": null,
+          "excerpt": "Things to Do in Denver When You're Dead is a 1995 American crime drama film directed by Gary Fleder and written by Scott Rosenberg.",
+          "retrieved_at": null,
+          "via": "clickhouse"
+        }
+      ],
+      "remedy": {
+        "action": "NO_ACTION",
+        "detail": "No action needed as R rating is targeted.",
+        "est_cost_usd": null,
+        "est_added_days": null
+      },
+      "confidence": 1,
+      "rejection_reason": "The script facts are accurate: scene S060 contains multiple references to 'drinking beers' and one instance of 'get ripped', which are references to alcohol use. However, the cited excerpts provide no information whatsoever regarding what constitutes 'mature content' in a film, nor do they state or imply that alcohol references contribute to it. The excerpts are merely production credits for unrelated films and are entirely off-topic for the premise of the claim."
+    },
+    {
+      "flag_id": "F205",
+      "agent": "ratings_board",
+      "scene_ids": [
+        "S019",
+        "S040",
+        "S046",
+        "S047",
+        "S062",
+        "S064"
+      ],
+      "entity_id": null,
+      "severity": "HIGH",
+      "category": "rating_violence",
+      "finding": "The screenplay contains various acts of violence. This includes pelting with cigarettes and fire extinguisher spray (S019), hockey game violence with smashed faces and slide tackles (S040), a casket being knocked over with a body falling out (S046), spitting water at a customer leading to physical threats (S047), physical altercation involving kicking and throwing a purse (S062), and an extensive physical altercation including choking, hitting with objects, and a fatal gunshot (S064). The fatal gunshot is a significant element contributing to an R rating.",
+      "citations": [
+        {
+          "source_type": "precedent",
+          "title": "Flower",
+          "url": null,
+          "excerpt": "Flower is a 2017 American romantic comedy drama film directed by Max Winkler, from a screenplay by Winkler, Alex McAulay, and Matt Spicer.",
+          "retrieved_at": null,
+          "via": "clickhouse"
+        },
+        {
+          "source_type": "precedent",
+          "title": "Things to Do in Denver When You're Dead",
+          "url": null,
+          "excerpt": "Things to Do in Denver When You're Dead is a 1995 American crime drama film directed by Gary Fleder and written by Scott Rosenberg.",
+          "retrieved_at": null,
+          "via": "clickhouse"
+        }
+      ],
+      "remedy": {
+        "action": "NO_ACTION",
+        "detail": "No action needed as R rating is targeted.",
+        "est_cost_usd": null,
+        "est_added_days": null
+      },
+      "confidence": 1,
+      "rejection_reason": "The claim states that scene S064 includes \"a fatal gunshot.\" However, the provided script for S064 describes a physical altercation between Dante and Randal, after which both characters are shown alive and conversing. There is no mention of a gunshot, fatal or otherwise, in S064, which directly contradicts the claim's assertion regarding the script facts."
+    },
+    {
+      "flag_id": "F206",
+      "agent": "ratings_board",
+      "scene_ids": [
+        "S017",
+        "S019",
+        "S020",
+        "S028",
+        "S041",
+        "S046",
+        "S053",
+        "S057"
+      ],
+      "entity_id": null,
+      "severity": "HIGH",
+      "category": "rating_thematic_elements",
+      "finding": "The screenplay features several mature and disturbing thematic elements. These include anti-smoking activism with graphic imagery (S017, S019), a controversial comparison to Nazis/Holocaust (S019), extensive and explicit discussion of sexual history (S020), pervasive pornographic content through titles and descriptions (S028, S053), and disturbing depictions of death and embalming, including a dead body with an erection and implied sexual acts with the deceased (S041, S046, S057). The overall tone is cynical and crude. These elements strongly contribute to an R rating.",
+      "citations": [
+        {
+          "source_type": "precedent",
+          "title": "Flower",
+          "url": null,
+          "excerpt": "Flower is a 2017 American romantic comedy drama film directed by Max Winkler, from a screenplay by Winkler, Alex McAulay, and Matt Spicer.",
+          "retrieved_at": null,
+          "via": "clickhouse"
+        },
+        {
+          "source_type": "precedent",
+          "title": "Things to Do in Denver When You're Dead",
+          "url": null,
+          "excerpt": "Things to Do in Denver When You're Dead is a 1995 American crime drama film directed by Gary Fleder and written by Scott Rosenberg.",
+          "retrieved_at": null,
+          "via": "clickhouse"
+        }
+      ],
+      "remedy": {
+        "action": "NO_ACTION",
+        "detail": "No action needed as R rating is targeted.",
+        "est_cost_usd": null,
+        "est_added_days": null
+      },
+      "confidence": 1,
+      "rejection_reason": "The script facts are accurate. However, the cited excerpts provide no information or context regarding film ratings (e.g., R rating criteria, how thematic elements contribute to ratings). The excerpts are merely descriptions of other films and do not support the premise that the described elements contribute to an R rating."
+    },
+    {
+      "flag_id": "F207",
+      "agent": "ratings_board",
+      "scene_ids": [
+        "S036",
+        "S048"
+      ],
+      "entity_id": null,
+      "severity": "HIGH",
+      "category": "rating_minor_tobacco",
+      "finding": "The screenplay depicts a five-year-old girl asking for and receiving cigarettes from a clerk in scene S036. In scene S048, the protagonist is fined $500 for this action, with specific legal citations (New Jersey Statute Section Two A, number one-seventy slash fifty-one and NJAC-the New Jersey Administrative Code, section eighteen, five, slash twelve point five). This depiction of a minor obtaining tobacco products is a significant factor for a restrictive rating.",
+      "citations": [
+        {
+          "source_type": "precedent",
+          "title": "Flower",
+          "url": null,
+          "excerpt": "Flower is a 2017 American romantic comedy drama film directed by Max Winkler, from a screenplay by Winkler, Alex McAulay, and Matt Spicer.",
+          "retrieved_at": null,
+          "via": "clickhouse"
+        },
+        {
+          "source_type": "precedent",
+          "title": "Things to Do in Denver When You're Dead",
+          "url": null,
+          "excerpt": "Things to Do in Denver When You're Dead is a 1995 American crime drama film directed by Gary Fleder and written by Scott Rosenberg.",
+          "retrieved_at": null,
+          "via": "clickhouse"
+        }
+      ],
+      "remedy": {
+        "action": "NO_ACTION",
+        "detail": "No action needed as R rating is targeted.",
+        "est_cost_usd": null,
+        "est_added_days": null
+      },
+      "confidence": 1,
+      "rejection_reason": "The script facts are accurate: scene S036 depicts a five-year-old girl asking for and receiving cigarettes from a clerk, and scene S048 shows the protagonist being fined $500 for this action, with the specified legal citations. However, the premise that 'This depiction of a minor obtaining tobacco products is a significant factor for a restrictive rating' is not supported by the provided excerpts. The excerpts are filmography entries for 'Flower' and 'Things to Do in Denver When You're Dead' and contain no information regarding film ratings, tobacco depiction, or factors influencing restrictive ratings."
+    }
+  ],
+  "verdicts": {
+    "F101": {
+      "verdict": "UNSUPPORTED",
+      "reason": "The claim misstates the script facts by asserting that the brand name \"Play-Doh\" is mentioned in dialogue; the script explicitly states it is a visual depiction on a picture. Additionally, while the excerpts establish Play-Doh as a well-known brand and define trademarks, they do not state or directly entail the premise that the visual depiction of a product, even in a modified form, could warrant a courtesy clearance to avoid potential claims of unauthorized use or dilution. The excerpts do not address visual depictions, modified forms, or the concept of courtesy clearance for such uses."
+    },
+    "F102": {
+      "verdict": "UNSUPPORTED",
+      "reason": "The script facts are accurate; the newspaper name 'ASBURY PARK PRESS' is depicted on a rack and vending machine. However, the cited excerpts do not support the legal premise. Excerpt [1] confirms the Asbury Park Press is a real publication and its owner, but does not state that its name and masthead are protected by trademark. Excerpt [2] discusses trademark law specifically for 'newspaper column titles' and their registrability, which is a narrower and distinct concept from the newspaper's overall name and masthead. Therefore, the claim that the newspaper's name and masthead are protected by trademark, and the general principles of infringement, endorsement, or dilution as applied to the newspaper's main name, are not supported by the provided excerpts."
+    },
+    "F103": {
+      "verdict": "UNSUPPORTED",
+      "reason": "The script facts are accurate, as JAY directly quotes the line and references 'Blue Velvet Hopper'. However, the premise that directly quoting a distinctive line carries a risk of copyright infringement is not supported by the cited excerpts. Excerpt [1] explicitly states, 'No. This is fair use under U.S. Copyright law, which allows you to use portions of a Copyrighted piece as long as you are able to demonstrate that you are using the quote in a transformative manor (presumably a character is a fan of the movie and is quoting it because it institutionally appropriate).' The script indicates a transformative use by having a character quote and reference the source. Excerpt [2] mentions that licensing is often obtained, but this does not establish an infringement risk for this specific type of quote, especially when Excerpt [1] suggests it falls under fair use."
+    },
+    "F104": {
+      "verdict": "SUPPORTED",
+      "reason": "The script accurately states that 'MasterCard' is referenced in the negative context of being 'stolen.' Excerpt [1] supports the concept of 'trademark tarnishment' when a trademark is portrayed 'in an unwholesome or unsavory context.' Excerpt [2] directly addresses 'Defamation by Context' by stating that 'associating it with crime' is an example of 'showing a real product in a negative light.' Together, these excerpts support the premise that associating a real brand with criminal activity can constitute trademark disparagement or tarnishment and lead to legal action."
+    },
+    "F105": {
+      "verdict": "SUPPORTED",
+      "reason": "The script accurately states that the brand name 'Visa' is referenced in the context of 'stolen MasterCard and Visa,' which is a negative association with criminal activity. Excerpt [1] supports that trademark tarnishment can occur by portraying a trademark 'in an unwholesome or unsavory context.' Excerpt [2] explicitly states that 'associating it with crime' is an example of showing a real product in a negative light, which falls under 'Defamation by Context,' directly supporting the premise of potential legal action due to trademark disparagement or tarnishment."
+    },
+    "F201": {
+      "verdict": "UNSUPPORTED",
+      "reason": "The claim misstates the script facts. The provided script excerpts do not contain the stated frequency of profanity (e.g., 5 instances of 'fucking' found vs. 41 claimed, 2 instances of 'shit' vs. 45 claimed, 2 instances of 'hell' vs. 27 claimed, 0 instances of 'cunt' vs. 5 claimed, 1 instance of 'ass' not as an expletive vs. 10 mostly as expletives claimed, 0 instances of 'faggot' vs. 1 claimed, 0 instances of 'jerkoff' vs. 1 claimed). Furthermore, the cited excerpts are descriptions of other films and do not contain any information or rules regarding film ratings, profanity, or how profanity influences ratings, thus providing no support for the claim's premise."
+    },
+    "F202": {
+      "verdict": "UNSUPPORTED",
+      "reason": "The claim misstates several script facts. Specifically, the provided script excerpts do not contain 'five instances of pussy' (only one sexual and one non-sexual use are found), 'four instances of blow job', 'one instance of snowballing', or 'an extensive list of explicit pornographic titles' in S028 (which mentions 'Happy Scrappy'). Scene S020 does not contain a 'detailed discussion of sexual history, including oral sex'. Scenes S056 and S057 do not imply 'sexual acts with a deceased person'. While some elements of the claim are present (e.g., 'tits and ass', 'jizz-mopper', 'Hermaphroditic porn', 'gone down on a couple guys'), the numerous inaccuracies in the script facts undermine the overall claim of pervasive and explicit content as described. Furthermore, the cited excerpts (film titles and credits) provide no information or support whatsoever for the premise that this content is a primary driver for an R rating."
+    },
+    "F203": {
+      "verdict": "UNSUPPORTED",
+      "reason": "The script facts regarding drug references and depictions are accurate. However, the cited excerpts provide no information whatsoever about film ratings, rating criteria, or how drug content contributes to an R rating. The excerpts are merely film descriptions and are entirely off-topic for the premise that the content contributes to an R rating."
+    },
+    "F204": {
+      "verdict": "UNSUPPORTED",
+      "reason": "The script facts are accurate: scene S060 contains multiple references to 'drinking beers' and one instance of 'get ripped', which are references to alcohol use. However, the cited excerpts provide no information whatsoever regarding what constitutes 'mature content' in a film, nor do they state or imply that alcohol references contribute to it. The excerpts are merely production credits for unrelated films and are entirely off-topic for the premise of the claim."
+    },
+    "F205": {
+      "verdict": "UNSUPPORTED",
+      "reason": "The claim states that scene S064 includes \"a fatal gunshot.\" However, the provided script for S064 describes a physical altercation between Dante and Randal, after which both characters are shown alive and conversing. There is no mention of a gunshot, fatal or otherwise, in S064, which directly contradicts the claim's assertion regarding the script facts."
+    },
+    "F206": {
+      "verdict": "UNSUPPORTED",
+      "reason": "The script facts are accurate. However, the cited excerpts provide no information or context regarding film ratings (e.g., R rating criteria, how thematic elements contribute to ratings). The excerpts are merely descriptions of other films and do not support the premise that the described elements contribute to an R rating."
+    },
+    "F207": {
+      "verdict": "UNSUPPORTED",
+      "reason": "The script facts are accurate: scene S036 depicts a five-year-old girl asking for and receiving cigarettes from a clerk, and scene S048 shows the protagonist being fined $500 for this action, with the specified legal citations. However, the premise that 'This depiction of a minor obtaining tobacco products is a significant factor for a restrictive rating' is not supported by the provided excerpts. The excerpts are filmography entries for 'Flower' and 'Things to Do in Denver When You're Dead' and contain no information regarding film ratings, tobacco depiction, or factors influencing restrictive ratings."
+    },
+    "F301": {
+      "verdict": "SUPPORTED",
+      "reason": "The script facts accurately describe an extensive and violent physical altercation, including choking, hitting with objects, falling into displays, and a fatal simulated gunshot. The cited excerpts support the premise that such a sequence requires professional supervision for safety. Excerpt [2] defines a Stunt Coordinator's role in planning stunts and ensuring safety. Excerpt [1] explicitly seeks a 'stunt/fight/safety coordinator' for 'physical action, fights,' and 'staged gunfire, shooting scenes,' directly supporting the need for stunt coordination for the physical altercation and expert handling/supervision for the simulated gunshot."
+    },
+    "F302": {
+      "verdict": "SUPPORTED",
+      "reason": "The script facts are accurate: Scene S040 clearly depicts a hockey game on a rooftop involving skating, collisions, an object (the ball) flying off the roof, and a customer ascending a ladder to the roof. The claim's premise regarding the necessity of a stunt coordinator for dangerous work is supported by Excerpt [1], which states a stunt coordinator's main responsibility is ensuring safety during stunt work. The need for fall protection on rooftops is supported by Excerpt [2] (requiring approval and safety railings for rooftops) and Excerpt [3] (recommending guardrails or safety netting). The assertion about ladder safety protocols, including securing the ladder, is supported by Excerpt [4] (highlighting ladder accident dangers) and Excerpt [5] (specifically advising to 'secure the top of the straight ladder to keep it from moving')."
+    },
+    "F303": {
+      "verdict": "PARTIAL",
+      "reason": "The script facts are accurate. Excerpt [1] supports the need for crowd control, and excerpt [2] supports the need for qualified drivers and a stunt coordinator for vehicle action. However, the specific remedy for thrown objects, requiring 'soft props' and instruction on 'safe throwing and receiving techniques,' is not explicitly stated or directly entailed by excerpt [3], which focuses on safety meetings for 'prop weapons' rather than general thrown objects or their specific material and handling."
+    },
+    "F304": {
+      "verdict": "SUPPORTED",
+      "reason": "The script accurately depicts Veronica kicking Dante twice and throwing a purse at him. Excerpt [1] states that a stunt coordinator's main responsibility is ensuring safety during stunts, directly supporting the need for supervision and choreography to prevent injury. Excerpt [2] provides specific guidance for safe kicking techniques, reinforcing the necessity of careful choreography for the simulated kicks. Excerpt [3] discusses safety meetings and informing cast about prop usage, which supports the general premise of ensuring safety when props like a thrown purse are involved. Together, the excerpts fully support the claim's premise regarding safety, choreography, and the role of stunt coordination for these actions."
+    },
+    "F305": {
+      "verdict": "SUPPORTED",
+      "reason": "The script facts are accurate: Randal lunges at Jay, and Dante grabs Randal. The 'farts' are clearly a comedic sound effect. Excerpt [1] establishes performer safety and physical protection as a top priority. Excerpt [2], titled 'SAFETY BULLETIN #4 STUNTS \u2013 SPECIALIZED ACTIVITIES,' directly supports the need to 'Map out and rehearse filmed sequences in pre-production.' The lunging and grabbing actions constitute a 'filmed sequence' involving physical contact, which, in the context of a 'STUNTS' bulletin, implies the need for careful choreography and supervision to ensure safety, aligning with the claim's premise and asserted remedy for a stunt coordinator."
+    },
+    "F306": {
+      "verdict": "SUPPORTED",
+      "reason": "The script facts accurately describe Randal spitting water at a customer, the customer attempting to grab Randal, and Dante intervening. Excerpt [1] supports the need for actor consent and hygiene protocols for simulated spitting, mentioning 'willingness of the actors' and 'plenty of mouthwash'. Excerpt [2] supports the necessity of a stunt coordinator for physical altercations, stating their role in 'choreographing' and ensuring 'safety of the stuntman when implementing the stunt and filming the scene'. The claim's premise and asserted remedy are directly supported by the provided excerpts."
+    },
+    "F307": {
+      "verdict": "PARTIAL",
+      "reason": "The script facts are accurate: Veronica discharges a fire extinguisher described as 'white powder' over a crowd, and she jumps off a freezer case. The premise that dry chemical agents can cause respiratory and eye irritation and that prolonged exposure can be harmful is supported by Excerpts [1] and [2]. However, the specific remedies asserted, such as hiring a special effects coordinator, using non-toxic theatrical-grade substitutes, providing specific PPE, or hiring a stunt coordinator for Veronica's jump, are not directly stated or explicitly entailed by the provided excerpts. The excerpts establish the hazard but not the specific production-related solutions."
+    },
+    "F308": {
+      "verdict": "SUPPORTED",
+      "reason": "The script facts are accurate, as dogs are present in S001, S002, S005 and cats are present in S009, S025, S029, S038. For truncated scenes S035 and S053, the provided text does not contradict the presence of a cat. The premise is well-supported by the cited excerpts. Excerpt [1] and [2] explicitly mention the American Humane Association's 'Guidelines for the Safe Use of Animals in Filmed Media' and the role of a 'Certified Animal Safety Representative' to monitor requirements for animal safety and well-being. Excerpt [2] also states their guidelines require a 'high standard of care and attention'. Excerpt [3] reinforces the need for 'skilled animal trainer[s]' and mentions specific welfare considerations like 'rest periods' for different species. The asserted remedy directly aligns with these supported points."
+    },
+    "F401": {
+      "verdict": "SUPPORTED",
+      "reason": "The script accurately depicts pervasive and explicit drug dealing and consumption, including specific drugs like hash, weed, 'shrooms, and coke, and the act of rolling a joint. The cited excerpts directly support the premise that such content is prohibited under Chinese film censorship laws. Excerpt [1] explicitly states that films must not contain content 'promoting ... drug use' or 'instigation of crimes.' Excerpt [2] provides a real-world example of 'scenes of drug use' being cut from films in China. Excerpt [3] further reinforces China's strict stance against drug-related content in media, indicating that such depictions would be contrary to the requirement to 'spread positive energy' and could lead to films being blocked or requiring significant cuts."
+    },
+    "F402": {
+      "verdict": "SUPPORTED",
+      "reason": "The script facts are accurate: the screenplay explicitly depicts and discusses drug dealing and consumption, including hash, weed, 'shrooms, coke, and the act of rolling a joint, across multiple scenes. The premise is also supported by the cited excerpts. Excerpt [1] states that content must \"respect the culture, identity, and values of the UAE.\" Excerpt [2] directly indicates that the government deems \"drug use or other illicit content\" as \"unsuitable.\" Excerpt [3] confirms the existence of a new 21+ rating but emphasizes \"strict following of age classification standards,\" which, when combined with the other excerpts, implies that even with a higher rating, content must still align with cultural values regarding illicit activities like drug use. The claim accurately reflects the information provided by both the script and the excerpts."
+    },
+    "F403": {
+      "verdict": "SUPPORTED",
+      "reason": "The script facts are accurate: the screenplay explicitly depicts drug dealing (hash, weed, 'shrooms, coke) and consumption (rolling a joint, smoking pot mentioned). The cited excerpts directly support the premise that BBFC guidelines, even at '18', prohibit works from promoting or encouraging illegal drug use, and that clear instructive or glamorizing detail is unacceptable. The script's explicit portrayal of drug sales and the act of rolling a joint align with the problematic elements described in the guidelines."
+    },
+    "F404": {
+      "verdict": "SUPPORTED",
+      "reason": "The script facts are accurate, as the scenes explicitly depict pervasive drug dealing (hash, weed, 'shrooms, general 'drugs') and consumption/references (smoking weed, coke, rolling a joint). The premise is directly supported by the cited excerpts. Excerpt [1] states, 'There is no drug use content in a PG-rated motion picture,' directly supporting the inconsistency with a PG rating. Excerpts [2], [3], and [4] all explicitly list 'drug abuse' as a factor that can lead to an R or NC-17 rating, thus supporting the claim that the depicted content would almost certainly result in one of these higher ratings."
+    },
+    "F405": {
+      "verdict": "SUPPORTED",
+      "reason": "The script facts accurately reflect the dialogue in S060 regarding alcohol use ('Drinking beers!', 'drink some beers, get ripped') and its context of partying and getting 'ripped'. Excerpt [2] directly supports the premise that 'National policies are required to restrict alcohol imagery in films and to reduce the availability of such films for viewing by young people,' which aligns with the claim's assertion that Chinese policy aims to restrict alcohol imagery, especially concerning young people, and that the context might be seen as promoting an undesirable lifestyle. The claim's acknowledgment that alcohol is 'not as explicitly prohibited as drug use' is consistent with Excerpt [1] which lists drug use but not alcohol as explicitly banned. The asserted remedy of editing or removal is a logical consequence of policies requiring restriction of such imagery."
+    },
+    "F406": {
+      "verdict": "PARTIAL",
+      "reason": "The script facts are accurate; the dialogue in S060 explicitly mentions 'Drinking beers!' and 'drink some beers, get ripped'. The claim's assertion that 'While the 21+ rating allows for more mature content, media must still conform to societal values' is supported by Excerpt [2] (21+ rating for mature audiences) and Excerpt [1] (media must 'conform to content standards and societal values'). However, the core assertion that 'Explicit promotion of excessive alcohol consumption... might be subject to review and potential edits' is not directly supported by the provided excerpts. Excerpt [3] prohibits 'Advertising for alcoholic beverages', which is a narrower concept than 'explicit promotion' within a film's narrative content. The excerpts do not explicitly state that narrative content promoting excessive alcohol consumption is problematic or subject to review/edits, only that advertising is prohibited."
+    },
+    "F407": {
+      "verdict": "SUPPORTED",
+      "reason": "The script facts are accurate: scene S060 contains references to 'Drinking beers!' and 'get ripped', and the dialogue clearly indicates the film is not aimed at a young audience. The premise that the BBFC primarily considers 'alcohol abuse' in works appealing to children is directly supported by Excerpt [1]: 'where smoking, alcohol abuse or substance misuse feature to a significant extent in works which appeal to children, this will normally be'. Given that the script is not aimed at children, the claim that alcohol use is 'unlikely to be a major issue for UK classification, especially if the film receives an 18 rating' is a logical and well-supported inference from this excerpt. While the excerpts do not specifically address the phrase 'get ripped' or the concept of 'promoting excessive consumption' for adult content, the claim itself frames this as a minor, speculative point, which does not undermine the overall supported premise."
+    },
+    "F408": {
+      "verdict": "PARTIAL",
+      "reason": "The script facts regarding the references to alcohol use ('Drinking beers!', 'get ripped') in scene S060 are accurate. The excerpts confirm that alcohol use is a factor in MPAA ratings and is present across various rating categories, including R, and does not inherently block release. However, the provided excerpts do not offer specific criteria or guidance to support the claim that the *implication of intoxication* ('get ripped') *combined with other adult content* in the script would *likely contribute* to an R rating. While the excerpts indicate alcohol use is common in R-rated films, they do not establish a direct causal link or likelihood based on the specific details of the claim's premise regarding the severity of alcohol use or its combination with other content."
+    }
+  },
+  "report": {
+    "script_title": "Clerks",
+    "generated_at": "2026-08-24T16:35:54-0700",
+    "greenlight_score": 23,
+    "dimension_scores": {
+      "clearance_counsel": 85,
+      "ratings_board": 100,
+      "safety_underwriter": 54,
+      "territory_censor": 51
+    },
+    "counts": {
+      "BLOCKER": 2,
+      "HIGH": 6,
+      "MEDIUM": 8,
+      "LOW": 2,
+      "FYI": 0
+    },
+    "by_agent": {
+      "safety_underwriter": 8,
+      "territory_censor": 8,
+      "clearance_counsel": 2
+    },
+    "est_clearance_cost_usd": [
+      28750,
+      94500
+    ],
+    "est_added_days": 3,
+    "rating_prediction": {
+      "predicted": "R",
+      "target": "R",
+      "rationale": "Rated R for pervasive strong language, explicit sexual content and references, drug use, strong violence including a fatal gunshot, and disturbing thematic elements including a minor receiving tobacco products.",
+      "comparables": [
+        {
+          "title": "Flower",
+          "year": 2017,
+          "rating": "R",
+          "rationale": "Flower is a 2017 American romantic comedy drama film directed by Max Winkler, from a screenplay by Winkler, Alex McAulay, and Matt Spicer.",
+          "source_url": "https://en.wikipedia.org/wiki/Flower_%28film%29",
+          "distance": 0.3726
+        },
+        {
+          "title": "Things to Do in Denver When You're Dead",
+          "year": 1995,
+          "rating": "R",
+          "rationale": "Things to Do in Denver When You're Dead is a 1995 American crime drama film directed by Gary Fleder and written by Scott Rosenberg.",
+          "source_url": "https://en.wikipedia.org/wiki/Things_to_Do_in_Denver_When_You%27re_Dead",
+          "distance": 0.379
+        },
+        {
+          "title": "White Boy Rick",
+          "year": 2018,
+          "rating": "R",
+          "rationale": "White Boy Rick is a 2018 American crime drama film directed by Yann Demange and written by Andy Weiss, Logan Miller, and Noah Miller.",
+          "source_url": "https://en.wikipedia.org/wiki/White_Boy_Rick",
+          "distance": 0.3965
+        },
+        {
+          "title": "Mid90s",
+          "year": 2018,
+          "rating": "R",
+          "rationale": "Mid90s (stylized as mid90s) is a 2018 American coming-of-age comedy-drama film written and directed by Jonah Hill, in his feature directorial debut. The plot follows Stevie, a 13-year-old boy in 1990s Los Angeles.",
+          "source_url": "https://en.wikipedia.org/wiki/Mid90s",
+          "distance": 0.3983
+        },
+        {
+          "title": "American Satan",
+          "year": 2017,
+          "rating": "R",
+          "rationale": "American Satan is a 2017 American supernatural musical thriller film directed by Ash Avildsen, who also wrote the screenplay with Matty Beckerman.",
+          "source_url": "https://en.wikipedia.org/wiki/American_Satan",
+          "distance": 0.4014
+        },
+        {
+          "title": "Assassination Nation",
+          "year": 2018,
+          "rating": "R",
+          "rationale": "Assassination Nation is a 2018 American satirical black comedy horror thriller film written and directed by Sam Levinson. It stars an ensemble cast led by Odessa Young, Suki Waterhouse, Hari Nef, and Abra.",
+          "source_url": "https://en.wikipedia.org/wiki/Assassination_Nation",
+          "distance": 0.4023
+        },
+        {
+          "title": "Bad Lieutenant: Port of Call New Orleans",
+          "year": 2009,
+          "rating": "R",
+          "rationale": "Bad Lieutenant: Port of Call New Orleans  is a 2009 American black comedy crime drama film directed by Werner Herzog, written by William Finkelstein, and starring Nicolas Cage, Eva Mendes, Val Kilmer, and Alvin 'Xzibit'",
+          "source_url": "https://en.wikipedia.org/wiki/Bad_Lieutenant%3A_Port_of_Call_New_Orleans",
+          "distance": 0.4025
+        },
+        {
+          "title": "Death Wish",
+          "year": 2018,
+          "rating": "R",
+          "rationale": "Death Wish is a 2018 American vigilante action-thriller film directed by Eli Roth, written by Joe Carnahan, and produced by Roger Birnbaum.",
+          "source_url": "https://en.wikipedia.org/wiki/Death_Wish_%282018_film%29",
+          "distance": 0.4041
+        }
+      ],
+      "beats_to_cut": []
+    },
+    "flags": [
+      {
+        "flag_id": "F301",
+        "agent": "safety_underwriter",
+        "scene_ids": [
+          "S064"
+        ],
+        "entity_id": null,
+        "severity": "BLOCKER",
+        "category": "stunt_physical_altercation_gunshot",
+        "finding": "Scene S064 depicts an extensive and violent physical altercation including choking, hitting with objects, falling into displays, and a fatal simulated gunshot. This sequence presents significant safety risks to actors and crew and cannot be filmed as written without professional stunt coordination and special effects supervision. The simulated gunshot, in particular, requires expert handling to ensure actor safety and realistic effects.",
+        "citations": [
+          {
+            "source_type": "web",
+            "title": "Stunt/Fight/Prop Weapon Safety Coordinator - Stunt/Fight/Prop Weapon Safety Coordinator Job in 'Thicker In Blood' | Backstage",
+            "url": "https://www.backstage.com/casting/thicker-in-blood-3195026/stuntfightprop-weapon-safety-coordinator-5580735",
+            "excerpt": "Seeking a stunt/fight/safety coordinator for scenes involving physical action, fights, intimidation, prop weapons, staged gunfire, home invasion, shooting scenes,",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          },
+          {
+            "source_type": "web",
+            "title": "What is a Stunt Coordinator in Film \u2014 Job Description Explained",
+            "url": "https://www.studiobinder.com/blog/what-is-a-stunt-coordinator-job-description/",
+            "excerpt": "A Stunt Coordinator oversees the execution of stunts on a film or TV set. They are involved in the stunt process from beginning to end; they plan out the stunts, cast the stunt performers, and ensure the safety of each stunt.",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          }
+        ],
+        "remedy": {
+          "action": "ADD_SPECIALIST",
+          "detail": "Hire a qualified stunt coordinator to choreograph and supervise the entire physical altercation, including all falls, impacts, and the simulated choking. Engage a special effects supervisor for the simulated gunshot and blood effects. Ensure all props (food items) used as weapons are safe for impact. Conduct thorough safety briefings and rehearsals.",
+          "est_cost_usd": [
+            5000,
+            25000
+          ],
+          "est_added_days": 2
+        },
+        "confidence": 1
+      },
+      {
+        "flag_id": "F401",
+        "agent": "territory_censor",
+        "scene_ids": [
+          "S018",
+          "S030",
+          "S046",
+          "S049",
+          "S060"
+        ],
+        "entity_id": null,
+        "severity": "BLOCKER",
+        "category": "territory_cn_drug_use",
+        "finding": "The screenplay contains pervasive and explicit depictions of drug dealing and consumption (hash, weed, 'shrooms, coke, rolling a joint). This content is strictly prohibited under Chinese film censorship laws and will likely result in the film being blocked from release.",
+        "citations": [
+          {
+            "source_type": "web",
+            "title": "Film Industry Promotion Law (draft)",
+            "url": "https://www.chinalawtranslate.com/en/filmlawdraft/",
+            "excerpt": "Article 20: Films must not contain the following content: (5) endangerment of social morality, disturbing social order, undermining social stability; promoting pornography, gambling, drug use, violence, or terror; instigation of crimes or imparting criminal methods;",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          },
+          {
+            "source_type": "web",
+            "title": "11 films banned in China: censorship of movies explained",
+            "url": "https://www.nationalworld.com/arts-and-culture/film-and-tv/china-films-banned-censorship-movies-4076866",
+            "excerpt": "Predictably the edits saw scenes of Rami Malek\u2019s Mercury kissing other men cut, along with scenes of drug use.",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          },
+          {
+            "source_type": "web",
+            "title": "In China, one actor\u2019s drug arrest can jeopardize an entire film - Los Angeles Times",
+            "url": "https://www.latimes.com/entertainment/movies/moviesnow/la-et-mn-china-arrest-movie-ban-20150316-story.html",
+            "excerpt": "China\u2019s State Administration of Press, Publication, Radio, Film and Television issued a missive in September saying that celebrities who use drugs or hire prostitutes should be banned from TV and film screens. Entertainers, the censorship agency said, ought to \u201cspread positive energy\u201d and \u201ccreate a positive environment\u201d on media platforms.",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          }
+        ],
+        "remedy": {
+          "action": "CUT",
+          "detail": "All explicit references to and depictions of drug dealing and consumption must be removed. This includes dialogue, visual cues, and character actions related to drugs. Given the pervasive nature of these references, this would significantly alter the narrative and characterization of Jay.",
+          "est_cost_usd": null,
+          "est_added_days": null
+        },
+        "confidence": 1
+      },
+      {
+        "flag_id": "F104",
+        "agent": "clearance_counsel",
+        "scene_ids": [
+          "S018"
+        ],
+        "entity_id": "E012",
+        "severity": "HIGH",
+        "category": "trademark_disparagement",
+        "finding": "The brand name \"MasterCard\" is verbally referenced in a negative context (\"stolen MasterCard\"). Associating a real brand with criminal activity can constitute trademark disparagement or tarnishment, which can lead to legal action from the brand owner.",
+        "citations": [
+          {
+            "source_type": "web",
+            "title": "Using Brand Names in a Film: Do You Need Permission?",
+            "url": "https://www.moviemaker.com/using-brand-names-in-a-film-aditya-ezhuthachan",
+            "excerpt": "Trademark tarnishment, on the other hand, requires a lower threshold of proof, since a plaintiff does not need to prove a false statement, just harm to the trademark\u2019s reputation. Hormel also brought a claim of trademark tarnishment, but the court concluded that parody alone was not sufficient to find tarnishment. Instead, the goodwill is tarnished through portraying the trademark \u201cin an unwholesome or unsavory context\u2026\u201d",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          },
+          {
+            "source_type": "web",
+            "title": "Check out this article...Movie Trademarks: Protection for Films and Characters",
+            "url": "https://www.upcounsel.com/movie-trademarks",
+            "excerpt": "Defamation by Context \u2013 Showing a real product in a negative light (e.g., associating it with crime).",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          }
+        ],
+        "remedy": {
+          "action": "REPLACE",
+          "detail": "Replace \"MasterCard\" with a fictional credit card brand name, or remove the \"stolen\" descriptor.",
+          "est_cost_usd": [
+            0,
+            0
+          ],
+          "est_added_days": 0
+        },
+        "confidence": 0.95
+      },
+      {
+        "flag_id": "F105",
+        "agent": "clearance_counsel",
+        "scene_ids": [
+          "S018"
+        ],
+        "entity_id": "E013",
+        "severity": "HIGH",
+        "category": "trademark_disparagement",
+        "finding": "The brand name \"Visa\" is verbally referenced in a negative context (\"stolen Visa\"). Associating a real brand with criminal activity can constitute trademark disparagement or tarnishment, which can lead to legal action from the brand owner.",
+        "citations": [
+          {
+            "source_type": "web",
+            "title": "Using Brand Names in a Film: Do You Need Permission?",
+            "url": "https://www.moviemaker.com/using-brand-names-in-a-film-aditya-ezhuthachan",
+            "excerpt": "Trademark tarnishment, on the other hand, requires a lower threshold of proof, since a plaintiff does not need to prove a false statement, just harm to the trademark\u2019s reputation. Hormel also brought a claim of trademark tarnishment, but the court concluded that parody alone was not sufficient to find tarnishment. Instead, the goodwill is tarnished through portraying the trademark \u201cin an unwholesome or unsavory context\u2026\u201d",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          },
+          {
+            "source_type": "web",
+            "title": "Check out this article...Movie Trademarks: Protection for Films and Characters",
+            "url": "https://www.upcounsel.com/movie-trademarks",
+            "excerpt": "Defamation by Context \u2013 Showing a real product in a negative light (e.g., associating it with crime).",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          }
+        ],
+        "remedy": {
+          "action": "REPLACE",
+          "detail": "Replace \"Visa\" with a fictional credit card brand name, or remove the \"stolen\" descriptor.",
+          "est_cost_usd": [
+            0,
+            0
+          ],
+          "est_added_days": 0
+        },
+        "confidence": 0.95
+      },
+      {
+        "flag_id": "F302",
+        "agent": "safety_underwriter",
+        "scene_ids": [
+          "S040"
+        ],
+        "entity_id": null,
+        "severity": "HIGH",
+        "category": "stunt_rooftop_sports_ladder",
+        "finding": "Scene S040 depicts a hockey game being played on a rooftop, involving skating, collisions, potential falls from height, and objects flying off the roof. Additionally, a customer ascends a ladder to the roof. These elements present significant safety hazards, including falls from height, impact injuries, and ladder-related accidents. A stunt coordinator is essential to safely choreograph and supervise the hockey game and ensure proper fall protection and rigging for all performers on the roof. Ladder use must adhere to strict safety protocols, including securing the ladder and ensuring proper footing.",
+        "citations": [
+          {
+            "source_type": "web",
+            "title": "What Is a Stunt Coordinator? Job Description, Salary, Responsibilities + More",
+            "url": "https://www.backstage.com/magazine/article/stunt-coordinator-production-crew-career-70389/",
+            "excerpt": "Due to the dangerous nature of stunt work, the stunt coordinator\u2019s main responsibility is ensuring the safety of all cast and crew when stunts are being performed on set.",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          },
+          {
+            "source_type": "web",
+            "title": "Basic Production Safety Guidelines & Agreement for Media Productions",
+            "url": "https://tisch.nyu.edu/content/dam/tisch/openarts/CA_OA%20Basic%20Level%20Production%20Guidelines%20Fall%2021.pdf",
+            "excerpt": "NO Rooftops, Balconies, Bridges, or other High Altitudes, without prior approval: Any scenes taking place on rooftops... are not allowed, unless the elevated property has 42 inch or higher safety railings and is used as an approved pedestrian area.",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          },
+          {
+            "source_type": "web",
+            "title": "10 Important Safety Requirements for Rooftop Work -- Occupational Health & Safety",
+            "url": "https://ohsonline.com/articles/2023/01/31/10-important-safety-requirements.aspx",
+            "excerpt": "Use guardrails or safety netting.",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          },
+          {
+            "source_type": "web",
+            "title": "Ladder Safety A 5-Minute Safety Training Aid E",
+            "url": "https://www.tdi.texas.gov/pubs/videoresource/t5laddersafe.pdf",
+            "excerpt": "Every year in the U.S., more than 100 people die in ladder-related accidents, and thousands suffer disabling injuries.",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          },
+          {
+            "source_type": "web",
+            "title": "Ladder Safety A 5-Minute Safety Training Aid E",
+            "url": "https://www.tdi.texas.gov/pubs/videoresource/t5laddersafe.pdf",
+            "excerpt": "Tie in, block, or secure the top of the straight ladder to keep it from moving.",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          }
+        ],
+        "remedy": {
+          "action": "ADD_SPECIALIST",
+          "detail": "Hire a qualified stunt coordinator to choreograph and supervise the rooftop hockey game, including all skating, collisions, and any planned falls or flying objects. Implement comprehensive fall protection measures, such as safety netting, guardrails, or fall arrest systems for all personnel on the roof. Ensure all ladders used are properly secured, inspected, and operated by trained personnel. Consider using stunt doubles for high-risk actions. Clarify the age of the players to determine if minor work rules apply.",
+          "est_cost_usd": [
+            10000,
+            30000
+          ],
+          "est_added_days": 3
+        },
+        "confidence": 1
+      },
+      {
+        "flag_id": "F402",
+        "agent": "territory_censor",
+        "scene_ids": [
+          "S018",
+          "S030",
+          "S046",
+          "S049",
+          "S060"
+        ],
+        "entity_id": null,
+        "severity": "HIGH",
+        "category": "territory_uae_drug_use",
+        "finding": "The pervasive depiction of drug dealing and consumption (hash, weed, 'shrooms, coke, rolling a joint) in the screenplay is highly likely to be problematic for release in the UAE. While a new 21+ rating exists, content must still respect the cultural values, and explicit drug use is generally considered illicit and unsuitable.",
+        "citations": [
+          {
+            "source_type": "web",
+            "title": "Media Content Standards \u2013 UAE Media Council",
+            "url": "https://uaemc.gov.ae/en/media-content-standards",
+            "excerpt": "The content of the advertisement shall respect the culture, identity, and values of the UAE.",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          },
+          {
+            "source_type": "web",
+            "title": "Barbie in the Middle East | The Washington Institute",
+            "url": "https://www.washingtoninstitute.org/policy-analysis/barbie-middle-east",
+            "excerpt": "Yet media reports indicate that the government based its decision on scenes it deemed \u201cunsuitable for children, such as drug use or other illicit content.\u201d",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          },
+          {
+            "source_type": "web",
+            "title": "United Arab Emirates Moves Needle Forward Against Film Censorship With New Rating Category",
+            "url": "https://variety.com/2021/film/news/united-arab-emirates-film-censorship-1235139554/",
+            "excerpt": "The UAE\u2019s Media Regulatory Office made the announcement Monday on Twitter, specifying that the new rating for films classified for audiences aged over 21 will allow the international \u2014 meaning uncut \u2014 version of movies to be shown in cinemas \u201cwith an emphasis on the strict following of age classification standards for audience",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          }
+        ],
+        "remedy": {
+          "action": "CUT",
+          "detail": "Significant cuts to all explicit depictions and discussions of drug dealing and consumption would be required. This would likely impact the characterization of Jay and several plot points.",
+          "est_cost_usd": null,
+          "est_added_days": null
+        },
+        "confidence": 0.9
+      },
+      {
+        "flag_id": "F403",
+        "agent": "territory_censor",
+        "scene_ids": [
+          "S018",
+          "S030",
+          "S046",
+          "S049",
+          "S060"
+        ],
+        "entity_id": null,
+        "severity": "HIGH",
+        "category": "territory_uk_drug_use",
+        "finding": "The pervasive depiction of drug dealing and consumption (hash, weed, 'shrooms, coke, rolling a joint) in the screenplay is likely to require significant edits for release in the UK. The BBFC guidelines state that no work, even at '18', may promote or encourage the use of illegal drugs, and clear instructive or glamorizing detail is unacceptable. The script's explicit portrayal of drug sales and use, including rolling a joint, would be problematic.",
+        "citations": [
+          {
+            "source_type": "web",
+            "title": "BBFC guidelines aw 16.8.02",
+            "url": "https://www.argyll-bute.gov.uk/moderngov/documents/s13350/BBFCGuidelines2002.pdf",
+            "excerpt": "Drugs No work taken as a whole, even at \u201818\u2019, may promote or encourage the use of illegal drugs. Clear instructive detail is unacceptable at all levels up to \u201815\u2019. Even at \u201818\u2019, such detail may only be acceptable if there are exceptional considerations of context. Glamorising detail is a particular concern.",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          },
+          {
+            "source_type": "web",
+            "title": "British Board of Film Classification - Wikipedia",
+            "url": "https://en.wikipedia.org/wiki/British_Board_of_Film_Classification",
+            "excerpt": "Drug abuse being condoned or glamorised",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          },
+          {
+            "source_type": "web",
+            "title": "British Board of Film Classification - Wikipedia",
+            "url": "https://en.wikipedia.org/wiki/British_Board_of_Film_Classification",
+            "excerpt": "Criminal and dangerous acts that can be easily imitated, as well as scenes condoning, glamorising, or showing clear instruction of how to abuse drugs have also been the subject of UK editing.",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          }
+        ],
+        "remedy": {
+          "action": "CUT",
+          "detail": "All explicit depictions and detailed discussions of drug dealing and consumption, particularly those that could be seen as instructional or glamorizing, would need to be removed or significantly altered. This would impact character dialogue and actions.",
+          "est_cost_usd": null,
+          "est_added_days": null
+        },
+        "confidence": 0.95
+      },
+      {
+        "flag_id": "F404",
+        "agent": "territory_censor",
+        "scene_ids": [
+          "S018",
+          "S030",
+          "S046",
+          "S049",
+          "S060"
+        ],
+        "entity_id": null,
+        "severity": "HIGH",
+        "category": "territory_us_drug_use",
+        "finding": "The pervasive depiction of drug dealing and consumption (hash, weed, 'shrooms, coke, rolling a joint) in the screenplay will significantly impact its MPAA rating in the US. This content is inconsistent with PG ratings and would almost certainly result in an R or potentially NC-17 rating due to explicit drug abuse and references.",
+        "citations": [
+          {
+            "source_type": "web",
+            "title": "Homepage - MPA Film Ratings",
+            "url": "https://www.filmratings.com/",
+            "excerpt": "There is no drug use content in a PG-rated motion picture.",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          },
+          {
+            "source_type": "web",
+            "title": "Homepage - MPA Film Ratings",
+            "url": "https://www.filmratings.com/",
+            "excerpt": "An R-rated motion picture, in the view of the Rating Board, contains some adult material. An R-rated motion picture may include adult themes, adult activity, hard language, intense or persistent violence, sexually-oriented nudity, drug abuse or other elements, so that parents are counseled to take this rating very seriously.",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          },
+          {
+            "source_type": "web",
+            "title": "Homepage - MPA Film Ratings",
+            "url": "https://www.filmratings.com/",
+            "excerpt": "An NC-17 rating can be based on violence, sex, aberrational behavior, drug abuse or any other element that most parents would consider too strong and therefore off-limits for viewing by their children.",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          },
+          {
+            "source_type": "web",
+            "title": "How are movie ratings decided in the US?",
+            "url": "https://www.kron4.com/news/national/how-are-movie-ratings-decided-in-the-us/",
+            "excerpt": "Films with this rating may contain strong language throughout, intense violence, drug abuse and nudity.",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          }
+        ],
+        "remedy": {
+          "action": "NO_ACTION",
+          "detail": "No action is required if an R or NC-17 rating is acceptable. To achieve a lower rating (e.g., PG-13), significant cuts and alterations to all drug-related content would be necessary, which would fundamentally change the characters and narrative.",
+          "est_cost_usd": null,
+          "est_added_days": null
+        },
+        "confidence": 0.95
+      },
+      {
+        "flag_id": "F303",
+        "agent": "safety_underwriter",
+        "scene_ids": [
+          "S045"
+        ],
+        "entity_id": null,
+        "severity": "MEDIUM",
+        "category": "stunt_car_crowd_chase",
+        "finding": "[partially supported] Scene S045 involves Dante and Randal being chased by an angry crowd, a car making a fast departure near the crowd, and the crowd throwing objects. This sequence presents significant safety risks, including potential for injury to actors/extras from the pursuing crowd, being hit by the vehicle, or being struck by thrown objects. Proper crowd control and vehicle stunt coordination are essential to prevent accidents.",
+        "citations": [
+          {
+            "source_type": "web",
+            "title": "What Is Crowd Control And Permits?",
+            "url": "https://beverlyboy.com/filmmaking/what-is-crowd-control-and-permits/",
+            "excerpt": "Effective crowd control is one of the most important responsibilities in film and video production. You need to think about how you\u2019ll manage the movement and behavior of every individual on set, whether they\u2019re part of the cast, extras, or the general public nearby.",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          },
+          {
+            "source_type": "web",
+            "title": "1 ENTERTAINMENT: DRIVING SAFETY INTRODUCTION",
+            "url": "https://info.castandcrew.com/hubfs/Entertainment%20-%20Driving%20Safety.pdf?hsLang=en",
+            "excerpt": "Only allow qualified and licensed drivers to drive vehicles for shots. ... If you have questions regarding pod driving, please speak with the stunt coordinator and director.",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          },
+          {
+            "source_type": "web",
+            "title": "Safety Guide to Using Prop Weapons | School of the Arts Academic Information",
+            "url": "https://academicinformation.arts.columbia.edu/theatre/prop-weapons",
+            "excerpt": "At the beginning of the rehearsal in which the scene(s) will be rehearsed where the prop is used, you must hold another safety meeting should occur where all members are informed that there will be a prop weapon in use, which individuals will be handling it and how it will be used in the scene.",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          }
+        ],
+        "remedy": {
+          "action": "ADD_SPECIALIST",
+          "detail": "Hire a qualified stunt coordinator to oversee the car action and manage the crowd. Implement strict crowd control measures to ensure the safety of all participants. Use trained stunt drivers for the vehicle. Ensure all thrown objects are soft props and that actors/extras are instructed on safe throwing and receiving techniques. Conduct thorough safety briefings and rehearsals.",
+          "est_cost_usd": [
+            7500,
+            20000
+          ],
+          "est_added_days": 2
+        },
+        "confidence": 1
+      },
+      {
+        "flag_id": "F304",
+        "agent": "safety_underwriter",
+        "scene_ids": [
+          "S062"
+        ],
+        "entity_id": null,
+        "severity": "MEDIUM",
+        "category": "stunt_physical_altercation",
+        "finding": "Scene S062 depicts a physical altercation involving simulated kicks to Dante and Veronica throwing a purse at him. To ensure the safety of the actors and prevent injury, these actions must be carefully choreographed and supervised. Without proper stunt coordination, there is a risk of accidental injury from impacts or uncontrolled movements.",
+        "citations": [
+          {
+            "source_type": "web",
+            "title": "What Is a Stunt Coordinator? Job Description, Salary, Responsibilities + More",
+            "url": "https://www.backstage.com/magazine/article/stunt-coordinator-production-crew-career-70389/",
+            "excerpt": "The stunt coordinator\u2019s main responsibility is ensuring the safety of all cast and crew when stunts are being performed on set.",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          },
+          {
+            "source_type": "web",
+            "title": "Stage Combat Basics: An Actor's Guide to Fight Choreography | Backstage",
+            "url": "https://www.backstage.com/magazine/article/stage-combat-basics-16768/",
+            "excerpt": "For safe kicks, Rothrock recommends that you tighten your body and control where the kick will go, rather than throwing the leg. Never hyperextend the kicking leg, and make sure the standing leg is completely grounded.",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          },
+          {
+            "source_type": "web",
+            "title": "Safety Guide to Using Prop Weapons | School of the Arts Academic Information",
+            "url": "https://academicinformation.arts.columbia.edu/theatre/prop-weapons",
+            "excerpt": "At the beginning of the rehearsal in which the scene(s) will be rehearsed where the prop is used, you must hold another safety meeting should occur where all members are informed that there will be a prop weapon in use, which individuals will be handling it and how it will be used in the scene.",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          }
+        ],
+        "remedy": {
+          "action": "ADD_SPECIALIST",
+          "detail": "Hire a qualified stunt coordinator to choreograph and supervise the simulated kicks and the throwing of the purse. Ensure actors are trained in safe stage combat techniques or use stunt doubles if necessary. Conduct safety briefings for all involved and use soft props for the purse if it is to be thrown with force.",
+          "est_cost_usd": [
+            2500,
+            7500
+          ],
+          "est_added_days": 1
+        },
+        "confidence": 1
+      },
+      {
+        "flag_id": "F305",
+        "agent": "safety_underwriter",
+        "scene_ids": [
+          "S046"
+        ],
+        "entity_id": null,
+        "severity": "MEDIUM",
+        "category": "stunt_physical_altercation",
+        "finding": "Scene S046 involves a physical altercation where Randal lunges at Jay, and Dante intervenes by grabbing Randal. While not as intense as other fight scenes, any physical contact between actors requires careful choreography and supervision to prevent accidental injury. The 'farts' mentioned are likely a comedic sound effect and do not pose a physical safety risk requiring stunt coordination.",
+        "citations": [
+          {
+            "source_type": "web",
+            "title": "Stunt & Safety | SAG-AFTRA",
+            "url": "https://www.sagaftra.org/contracts-industry-resources/stunt-safety",
+            "excerpt": "Performer safety is SAG-AFTRA's top priority, whether it\u2019s ensuring physical protection during exciting stunts or preventing harassment and assault in the workplace.",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          },
+          {
+            "source_type": "web",
+            "title": "SAFETY BULLETIN #4 STUNTS \u201cADDENDUM A\u201d \u2013 SPECIALIZED ACTIVITIES",
+            "url": "https://enduser-medianetworksproductionsafety-prod.paramount.com/files/documents/4A%20STUNTS-SPECIALIZED%20ACTIVITIES.pdf",
+            "excerpt": "Map out and rehearse filmed sequences in pre-production.",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          }
+        ],
+        "remedy": {
+          "action": "ADD_SPECIALIST",
+          "detail": "Hire a stunt coordinator to choreograph and supervise the lunging and grabbing actions to ensure actor safety. Conduct thorough rehearsals and safety briefings. Ensure clear communication between actors and the stunt coordinator.",
+          "est_cost_usd": [
+            1000,
+            3000
+          ],
+          "est_added_days": 0.5
+        },
+        "confidence": 1
+      },
+      {
+        "flag_id": "F306",
+        "agent": "safety_underwriter",
+        "scene_ids": [
+          "S047"
+        ],
+        "entity_id": null,
+        "severity": "MEDIUM",
+        "category": "stunt_physical_altercation",
+        "finding": "Scene S047 involves Randal spitting water at a customer, followed by the customer attempting to grab Randal and Dante intervening. While simulated spitting can be managed with actor consent and hygiene protocols (e.g., clean water, mouthwash), the physical altercation (attempted grabbing and blocking) requires careful choreography to prevent injury. A stunt coordinator is necessary to ensure these actions are performed safely.",
+        "citations": [
+          {
+            "source_type": "web",
+            "title": "film techniques - Do other actors/actresses really spit on each other in movies? - Movies & TV Stack Exchange",
+            "url": "https://movies.stackexchange.com/questions/15223/do-other-actors-actresses-really-spit-on-each-other-in-movies",
+            "excerpt": "This can often come down to the willingness of the actors concerned as to whether to go all the way during a 'spitting' scene. ... Sometimes you will indeed see the shot as an edited one - 'spitter' spits, cut to 'spitee' receiving the phlegm. This is easy to pull off and does not have to involve any real phlegm hitting the 'spitee's' face - this can be simulated with water/egg white/corn syrup. ... However, when you see the shot as a two-shot (both actors in frame), then there is no faking it, but you can rest assured that plenty of mouthwash is involved, plus a simil[ar substance].",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          },
+          {
+            "source_type": "web",
+            "title": "What is a Stunt Coordinator? - Beverly Boy Productions",
+            "url": "https://beverlyboy.com/filmmaking/what-is-a-stunt-coordinator/",
+            "excerpt": "When they\u2019re not choreographing ... the production of the stunt. They work with hair, makeup, and wardrobe to ensure safety of the stuntman when implementing the stunt and filming the scene.",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          }
+        ],
+        "remedy": {
+          "action": "ADD_SPECIALIST",
+          "detail": "Hire a stunt coordinator to choreograph and supervise the physical interaction between the customer, Randal, and Dante. Ensure actor consent for simulated spitting and implement strict hygiene protocols. Conduct thorough rehearsals and safety briefings for all involved.",
+          "est_cost_usd": [
+            750,
+            2000
+          ],
+          "est_added_days": 0.5
+        },
+        "confidence": 1
+      },
+      {
+        "flag_id": "F307",
+        "agent": "safety_underwriter",
+        "scene_ids": [
+          "S019"
+        ],
+        "entity_id": null,
+        "severity": "MEDIUM",
+        "category": "special_effects_fire_extinguisher",
+        "finding": "[partially supported] Scene S019 involves Veronica discharging a fire extinguisher, described as 'white powder,' over a crowd of actors/extras. Dry chemical agents can cause respiratory and eye irritation, and prolonged exposure can be harmful. Additionally, Veronica jumps off a freezer case. This sequence requires careful management to ensure the safety of all involved.",
+        "citations": [
+          {
+            "source_type": "web",
+            "title": "A dry chemical fire extinguisher (often called a DCP or ABE extinguisher)",
+            "url": "https://www.fireextinguisheronline.com.au/blog/post/what-are-dry-chemical-fire-extinguishers",
+            "excerpt": "Can Cause Breathing Problems - If dry powder is inhaled it can irritate the respiratory organs. Whilst short term exposure is not considered to be harmful, repeated inhalation should be avoided.",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          },
+          {
+            "source_type": "web",
+            "title": "Fire extinguisher safety | Poison Control",
+            "url": "https://www.poison.org/articles/fire-extinguisher-safety-184",
+            "excerpt": "Exposure of the eyes or skin to any of the dry chemical fire extinguishers should be treated by immediate rinsing of the affected areas.",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          },
+          {
+            "source_type": "web",
+            "title": "Fire Extinguisher A/B/C | Film Location Equipment",
+            "url": "https://www.expresswaycine.com/film-location-equipment/set-safety/fire-extinguisher-a-b-c",
+            "excerpt": "Protect production crew, talent, and flammable items with this safety equipment.",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          }
+        ],
+        "remedy": {
+          "action": "ADD_SPECIALIST",
+          "detail": "Hire a special effects coordinator to manage the fire extinguisher discharge. Use a non-toxic, theatrical-grade substitute for the dry chemical agent, or a water-based extinguisher with appropriate additives, ensuring it is safe for human exposure. Provide eye protection and respiratory masks for actors/extras if necessary. A stunt coordinator should supervise Veronica's jump from the freezer case. Conduct thorough safety briefings and rehearsals.",
+          "est_cost_usd": [
+            1500,
+            5000
+          ],
+          "est_added_days": 1
+        },
+        "confidence": 1
+      },
+      {
+        "flag_id": "F308",
+        "agent": "safety_underwriter",
+        "scene_ids": [
+          "S001",
+          "S002",
+          "S005",
+          "S009",
+          "S025",
+          "S029",
+          "S035",
+          "S038",
+          "S053"
+        ],
+        "entity_id": null,
+        "severity": "MEDIUM",
+        "category": "animal_presence",
+        "finding": "The screenplay features a dog in scenes S001, S002, S005 and a cat in scenes S009, S025, S029, S035, S038, S053. The presence of animals on set requires adherence to strict animal welfare guidelines and the supervision of trained professionals to ensure the safety and well-being of the animals, as well as the cast and crew. The American Humane Association provides guidelines and certified representatives for this purpose.",
+        "citations": [
+          {
+            "source_type": "web",
+            "title": "In 'Water for Elephants,' Safety Stars in the Center Ring: From Large Cats to Larvae, American Humane Association Certifies That 'No Animals Were Harmed'\u00ae",
+            "url": "https://www.prnewswire.com/news-releases/in-water-for-elephants-safety-stars-in-the-center-ring-from-large-cats-to-larvae-american-humane-association-certifies-that-no-animals-were-harmed-120487794.html",
+            "excerpt": "Throughout the entire filming process, an American Humane Association Certified Animal Safety Representative\u2122 , Gina ... Johnson diligently monitored the temperature, lighting, other animals, people and other requirements of American Humane Association's \"Guidelines for the Safe Use of Animals in Filmed Media.\"",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          },
+          {
+            "source_type": "web",
+            "title": "How to Work with Animals in Film - InFocus Film School",
+            "url": "https://infocusfilmschool.com/animals-in-film",
+            "excerpt": "American Humane Society is the only organization legally entitled to award the copyrighted rider \u201c No animals were harmed...\u201d regardless of where you\u2019re shooting in the world. Their guidelines and protocols require a high standard of care and attention.",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          },
+          {
+            "source_type": "web",
+            "title": "Mastering Animal Work on Film Sets: 17 Essential Tips for Success",
+            "url": "https://www.factualamerica.com/filmmaking/17-essential-tips-for-working-with-animals-on-film-sets",
+            "excerpt": "Each species has different needs. Dogs might need short breaks every hour, while more sensitive animals, like cats or rabbits, might require longer rest periods. Communicating with a skilled animal trainer can provide insights into the specific needs of each animal.",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          }
+        ],
+        "remedy": {
+          "action": "ADD_SPECIALIST",
+          "detail": "Hire a professional animal handler for all scenes involving animals. Ensure compliance with American Humane Association guidelines for the safe use of animals in filmed media. Provide appropriate rest periods, food, water, and safe housing for all animals on set.",
+          "est_cost_usd": [
+            500,
+            2000
+          ],
+          "est_added_days": 0
+        },
+        "confidence": 1
+      },
+      {
+        "flag_id": "F405",
+        "agent": "territory_censor",
+        "scene_ids": [
+          "S060"
+        ],
+        "entity_id": null,
+        "severity": "MEDIUM",
+        "category": "territory_cn_alcohol_use",
+        "finding": "The references to alcohol use ('Drinking beers!', 'drink some beers, get ripped') in scene S060, while not as explicitly prohibited as drug use, could be subject to editing in China. Chinese policy aims to restrict alcohol imagery, especially concerning young people, and the context of the dialogue (partying, getting 'ripped') might be seen as promoting an undesirable lifestyle.",
+        "citations": [
+          {
+            "source_type": "web",
+            "title": "China: Film Censorship | Library of Congress",
+            "url": "https://www.loc.gov/item/global-legal-monitor/2008-05-02/china-film-censorship",
+            "excerpt": "It bans the detailed representation of crimes, disclosure of special investigatory techniques, or highly provocative depiction of homicide, blood, violence, drug use, or gambling; scenes of maltreatment of prisoners and of the extraction through",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          },
+          {
+            "source_type": "web",
+            "title": "Alcohol imagery in popular films in China, 2001\u20132020",
+            "url": "https://link.springer.com/article/10.1057/s41271-024-00493-2",
+            "excerpt": "National policies are required to restrict alcohol imagery in films and to reduce the availability of such films for viewing by young people.",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          }
+        ],
+        "remedy": {
+          "action": "CUT",
+          "detail": "Dialogue promoting excessive alcohol consumption or linking it to illicit activities may need to be edited or removed.",
+          "est_cost_usd": null,
+          "est_added_days": null
+        },
+        "confidence": 0.7
+      },
+      {
+        "flag_id": "F406",
+        "agent": "territory_censor",
+        "scene_ids": [
+          "S060"
+        ],
+        "entity_id": null,
+        "severity": "MEDIUM",
+        "category": "territory_uae_alcohol_use",
+        "finding": "[partially supported] The references to alcohol use ('Drinking beers!', 'drink some beers, get ripped') in scene S060, particularly when linked to getting 'ripped', could be problematic for release in the UAE. While the 21+ rating allows for more mature content, media must still conform to societal values. Explicit promotion of excessive alcohol consumption, even if not outright banned, might be subject to review and potential edits.",
+        "citations": [
+          {
+            "source_type": "web",
+            "title": "Decoding UAE age ratings for films, books and video games: What parents should know",
+            "url": "https://gulfnews.com/living-in-uae/ask-us/decoding-uae-age-ratings-for-films-books-and-video-games-what-parents-should-know-1.1727272240932",
+            "excerpt": "Age rating is a system designed to assess the suitability of media content for different age groups. This classification ensures that media, such as books, films, and video games, conform to content standards and societal values, particularly concerning profanity, violence, and sexual content.",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          },
+          {
+            "source_type": "web",
+            "title": "Decoding UAE age ratings for films, books and video games: What parents should know",
+            "url": "https://gulfnews.com/living-in-uae/ask-us/decoding-uae-age-ratings-for-films-books-and-video-games-what-parents-should-know-1.1727272240932",
+            "excerpt": "Age ratings for films in the UAE \u2022 21+: Introduced in 2021 , this rating allows the screening of uncensored international version of films for mature audiences aged 21 and above.",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          },
+          {
+            "source_type": "web",
+            "title": "UAE issues guidelines for sponsored social media posts | The National",
+            "url": "https://www.thenationalnews.com/uae/government/uae-issues-guidelines-for-sponsored-social-media-posts-1.785695",
+            "excerpt": "Advertising for alcoholic beverages or narcotics is not permitted in any form, whether directly or indirectly",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          }
+        ],
+        "remedy": {
+          "action": "CUT",
+          "detail": "Consider editing dialogue that explicitly promotes excessive alcohol consumption or links it to irresponsible behavior.",
+          "est_cost_usd": null,
+          "est_added_days": null
+        },
+        "confidence": 0.8
+      },
+      {
+        "flag_id": "F407",
+        "agent": "territory_censor",
+        "scene_ids": [
+          "S060"
+        ],
+        "entity_id": null,
+        "severity": "LOW",
+        "category": "territory_uk_alcohol_use",
+        "finding": "The references to alcohol use ('Drinking beers!', 'get ripped') in scene S060 are unlikely to be a major issue for UK classification, especially if the film receives an 18 rating. While the BBFC considers 'alcohol abuse' in works appealing to children, this script is clearly not aimed at a young audience. The phrase 'get ripped' might be flagged if interpreted as promoting excessive consumption, but it's a minor point in the overall context.",
+        "citations": [
+          {
+            "source_type": "web",
+            "title": "Alcohol imagery and branding, and age classification of films popular in the UK | International Journal of Epidemiology | Oxford Academic",
+            "url": "https://academic.oup.com/ije/article/40/5/1411/659641",
+            "excerpt": "The BBFC classification guidelines do not, however, appear to consider the potential behavioural influences of alcohol imagery in films in the classification process, stating only that \u2018 where smoking, alcohol abuse or substance misuse feature to a significant extent in works which appeal to children, this will normally be",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          },
+          {
+            "source_type": "web",
+            "title": "Alcohol imagery and branding, and age classification of films popular in the UK - PMC",
+            "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3204211/",
+            "excerpt": "Most films containing alcohol appearances, including 90% of those including \u2018alcohol brand appearances\u2019, were rated as suitable for viewing by children and young people.",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          }
+        ],
+        "remedy": {
+          "action": "NO_ACTION",
+          "detail": "No specific action is likely required, but minor edits to the phrase 'get ripped' could be considered if aiming for a lower adult rating.",
+          "est_cost_usd": null,
+          "est_added_days": null
+        },
+        "confidence": 0.6
+      },
+      {
+        "flag_id": "F408",
+        "agent": "territory_censor",
+        "scene_ids": [
+          "S060"
+        ],
+        "entity_id": null,
+        "severity": "LOW",
+        "category": "territory_us_alcohol_use",
+        "finding": "[partially supported] The references to alcohol use ('Drinking beers!', 'get ripped') in scene S060 will contribute to the overall MPAA rating. While alcohol use is present across all ratings, the implication of intoxication ('get ripped') combined with other adult content in the script would likely contribute to an R rating. It is not expected to block release or require cuts, but it is a factor in the rating.",
+        "citations": [
+          {
+            "source_type": "web",
+            "title": "Tobacco, Alcohol, and Other Risk Behaviors in Film: How Well Do MPAA Ratings Distinguish Content? - PMC",
+            "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2802064/",
+            "excerpt": "Fifty percent of R-rated movies contained 162 seconds or more of alcohol use, comparable with 49% of PG-13 and 25% of PG movies.",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          },
+          {
+            "source_type": "web",
+            "title": "Youth Exposure to Alcohol Use and Brand Appearances in Popular Contemporary Movies - PMC",
+            "url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3541777/",
+            "excerpt": "Most movies (83%, including 57% of G/PG-rated movies) depicted alcohol use and 52% (including 19% of G/PG movies) contained at least one alcohol brand appearance",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          }
+        ],
+        "remedy": {
+          "action": "NO_ACTION",
+          "detail": "No action is required if an R rating is acceptable. To achieve a lower rating, minor edits to dialogue implying excessive intoxication might be considered.",
+          "est_cost_usd": null,
+          "est_added_days": null
+        },
+        "confidence": 0.7
+      }
+    ],
+    "page_count": 121
+  },
+  "adjudication_notes": [
+    "conflict: The remedies for territory flags F401, F402, and F403 (cutting drug content for international markets) must be addressed first. This may lead to the removal of scene S046, which would make the stunt safety flag F305 moot. If S046 is rewritten, the remedy for F305 still applies."
+  ],
+  "open_questions": {
+    "clearance_counsel": [
+      "Is \"VCR\" used generically or does it refer to a specific, visible brand that would require clearance?",
+      "Is \"Big Choice Video\" a real business requiring clearance, or is it a fictional entity?",
+      "Does the verbal reference and impersonation of the copyrighted character \"Short-round\" from \"Indiana Jones\" require clearance?",
+      "Does the verbal reference to the copyrighted character \"Doctor Jones\" from \"Indiana Jones\" require clearance?",
+      "Is \"R.S.T. Video\" a real business requiring clearance, or is it a fictional entity?",
+      "What are the specific rights holders for the composition and master recording of the \"Star Wars\" theme music, and what are the estimated costs for sync and master use licenses for playing the theme music?",
+      "Does the visual depiction of a \"Pringles\" can and verbal reference to the brand name require clearance?",
+      "Does the verbal reference to \"Muppets\" in a negative context (\"All Jedi had was a bunch of Muppets.\") constitute trademark disparagement or require clearance?",
+      "Is \"Dunn and Reddy Home Improvements\" a real business requiring clearance, or is it a fictional entity?",
+      "Is \"Dominick Bambino\" a real person or a fictional character that could be mistaken for one, requiring clearance for verbal reference?",
+      "Is \"Babyface Bambino\" a real person or a fictional character that could be mistaken for one, requiring clearance for verbal reference?",
+      "Is \"Food City\" a real business requiring clearance for verbal reference, or is it a fictional entity?",
+      "Does the verbal reference to \"Gatorade\" and implied visual presence of the product require clearance?",
+      "Is \"Paulsen's Funeral Parlor\" a real business requiring clearance, or is it a fictional entity?",
+      "Does the visual depiction of a \"Walkman\" and verbal reference to the brand name require clearance?",
+      "Is \"Best of Both Worlds\" a real film title, particularly a pornographic one, requiring clearance for verbal reference?",
+      "Does the verbal imitation of the \"Jaws theme\" music require clearance?",
+      "Does the verbal reference and impersonation of the copyrighted character \"Brody\" from \"Jaws\" require clearance?",
+      "Does the verbal reference and impersonation of the copyrighted character \"Quint\" from \"Jaws\" require clearance?",
+      "Does the verbal reference to \"E-Z Wider\" and implied visual presence of the product require clearance?",
+      "Does the verbal reference to \"Pepsi\" and implied visual presence of the product require clearance?",
+      "Does the visual depiction of \"Entenman's\" products and verbal reference to the brand name require clearance?"
+    ],
+    "ratings_board": [],
+    "safety_underwriter": [
+      "Are any of the 'PLAYERS' or 'INACTIVE PLAYERS' in scene S040 intended to be minors? If so, specific child labor laws and safety regulations for minors involved in stunts and on elevated surfaces will apply.",
+      "What are the specific safety requirements and protocols for filming night exterior scenes (S046, S049, S051, S054, S058), including adequate lighting, security, and general set safety for cast and crew?",
+      "What are the specific child actor safety protocols required for scenes involving explicit dialogue (S028, S055) and the depiction of a minor purchasing cigarettes (S036)? This includes legal requirements, presence of guardians/teachers, and psychological impact assessment."
+    ],
+    "territory_censor": [
+      "Evaluate pervasive explicit sexual dialogue and depictions, including 'tits and ass', 'pussy', 'fuck', 'blow job', 'snowballing', 'sucked dicks', 'jizz-mopper', porn titles, and descriptions of sexual acts in scenes S018, S020, S028, S030, S036, S041, S042, S046, S049, S053, S055, S056, S057, S059, S060, S061, S062, S064.",
+      "Evaluate religious content: discussion of theocracy, 'pope for the dark side of the Force', 'Catholics' (S033), and 'Jesus' as an exclamation throughout.",
+      "Evaluate depiction of state authority (New Jersey Statute, NJAC) condoning illegal acts (selling cigarettes to a minor) or being depicted negatively (fine for Dante despite Randal's action) in scene S048.",
+      "Evaluate depiction of a minor (five-year-old girl) asking for and receiving cigarettes (S036, S048).",
+      "Evaluate the scene where a dead body has an erection and is implied to have been involved in a sexual act (S056, S057)."
+    ]
+  },
+  "research_budget_left": {
+    "clearance_counsel": 0,
+    "ratings_board": 5,
+    "safety_underwriter": 0,
+    "territory_censor": 0
+  },
+  "kind": "case_study",
+  "case": {
+    "title": "Clerks",
+    "year": 1994,
+    "hook": "Rated NC-17 purely for language, overturned on appeal \u2014 called from the page.",
+    "note": "Independent analysis of a publicly circulating study draft, published for commentary and education. Not affiliated with the production. The screenplay text is not reproduced. Scores reflect the draft analyzed, not the released film."
+  }
+}

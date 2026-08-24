@@ -74,6 +74,7 @@ PAGES = {
     "/": "landing.html",
     "/home": "home.html",
     "/writer": "writer.html",
+    "/cases": "cases.html",
     "/how-it-works": "how-it-works.html",
     "/faq": "faq.html",
     "/contact": "contact.html",
@@ -409,6 +410,39 @@ async def writer_status(run_id: str) -> dict[str, Any]:
     if (record := _disk_writer_record(run_id)) is not None:
         return {"id": run_id, "status": "done", "record": record}
     raise HTTPException(404, f"Unknown writer run {run_id!r}")
+
+
+# ---------------------------------------------------------------- case studies
+
+
+@app.get("/api/cases")
+async def list_cases() -> list[dict[str, Any]]:
+    """Published case studies: famous screenplays, our analysis, script text never
+    shipped (see scripts/case_study.py for the stripping rules)."""
+    out: list[dict[str, Any]] = []
+    for path in sorted(RUNS_DIR.glob("case_*.json")):
+        try:
+            r = json.loads(path.read_text())
+        except (json.JSONDecodeError, OSError):
+            continue
+        rep = r.get("report") or {}
+        case = r.get("case") or {}
+        out.append(
+            {
+                "id": path.stem,
+                "title": case.get("title", r.get("script_title", path.stem)),
+                "year": case.get("year"),
+                "hook": case.get("hook", ""),
+                "score": rep.get("greenlight_score"),
+                "blockers": (rep.get("counts") or {}).get("BLOCKER", 0),
+                "flags": len(r.get("flags", [])),
+                "rejected": len(r.get("rejected_flags", [])),
+                "predicted_rating": (rep.get("rating_prediction") or {}).get("predicted"),
+                "target_rating": (rep.get("rating_prediction") or {}).get("target"),
+            }
+        )
+    out.sort(key=lambda c: c.get("year") or 0)
+    return out
 
 
 # ---------------------------------------------------------------- run index

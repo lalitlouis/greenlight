@@ -185,6 +185,13 @@ regenerated from `.env`; see Dockerfile/.dockerignore — scratch runs and secre
 - **Submission prep**: README rewritten for Stage One screening; docs/SUBMISSION.md drafts the
   Devpost form; DEMO.md carries a runbook against the shipped product.
 
+**Case studies shipped (day 3):** /cases tab — Reservoir Dogs (score 0, both needle-drops
+caught as sync+master pairs, quoted-lyrics rule fired), Clerks (predicted R, 8/8 comps),
+Little Miss Sunshine (predicted R vs PG-13 target, 7/8 comps, $30-150k master-use flag).
+Script text never ships: records strip source, research, and trim entity context
+(scripts/case_study.py). Parser gained shooting-script numbered sluglines and INT: colon
+style. Product renamed **ScriptRisk** (Greenlight Score stays as the metric).
+
 Remaining before 2026-09-08: record the video (two full days reserved), Devpost form + teammate,
 final demo-record selection, key rotation after the hackathon.
 

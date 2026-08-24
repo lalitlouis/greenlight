@@ -2212,7 +2212,13 @@
         "confidence": 0.7
       }
     ],
-    "page_count": 9
+    "page_count": 9,
+    "dimension_scores": {
+      "clearance_counsel": 75,
+      "ratings_board": 84,
+      "safety_underwriter": 57,
+      "territory_censor": 56
+    }
   },
   "adjudication_notes": [
     "F203: absorbed ['F206'] (Both flags address the multiple uses of 'fucking' which require an R rating; F203 is the comprehensive flag.)",

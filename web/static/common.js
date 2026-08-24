@@ -110,6 +110,7 @@ function promptUpload() {
 const NAV_LINKS = [
   ["/home", "Home"],
   ["/writer", "Writer's Room"],
+  ["/cases", "Case studies"],
   ["/how-it-works", "How it works"],
   ["/faq", "FAQ"],
   ["/contact", "Contact"],
