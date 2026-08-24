@@ -37,6 +37,23 @@
   </section>
 
   <section class="view hidden" id="view-panel">
+    <div class="progress-strip">
+      <div class="phases">
+        <span class="phase" id="phase-triage"><span class="p-dot"></span>Reading the script</span>
+        <span class="phase-arrow">&#8594;</span>
+        <span class="phase" id="phase-desks"><span class="p-dot"></span>Four desks investigating</span>
+        <span class="phase-arrow">&#8594;</span>
+        <span class="phase" id="phase-verify"><span class="p-dot"></span>Verifying every citation</span>
+        <span class="phase-arrow">&#8594;</span>
+        <span class="phase" id="phase-adjudicate"><span class="p-dot"></span>Adjudicating</span>
+        <span class="phase-arrow">&#8594;</span>
+        <span class="phase" id="phase-report"><span class="p-dot"></span>Report</span>
+      </div>
+      <div class="pbar-row">
+        <div class="pbar"><div class="pbar-fill" id="pbar-fill"></div></div>
+        <span class="pct" id="pct">0%</span>
+      </div>
+    </div>
     <div class="panel" id="panel"></div>
     <div class="pipe-strip">
       <div class="pipe-head label">Pipeline &mdash; triage &middot; verification &middot; adjudicator</div>

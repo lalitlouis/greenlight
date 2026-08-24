@@ -25,6 +25,8 @@ const state = {
   startedAt: null,
   timer: null,
   gotResult: false,
+  phase: null,
+  progress: 0,
   desks: {}, // id -> {calls, flags, done, started}
 };
 
@@ -51,6 +53,54 @@ function money(range) {
   return `${f(range[0])}–${f(range[1])}`;
 }
 
+/* ---------------- progress ----------------
+   Phase is inferred from event authors; percent is a monotonic estimate:
+   desks dominate the timeline, each desk's share eased on its call count. */
+
+const PHASE_ORDER = ["triage", "desks", "verify", "adjudicate", "report"];
+
+function setPhase(name) {
+  const idx = PHASE_ORDER.indexOf(name);
+  if (idx < 0 || idx < PHASE_ORDER.indexOf(state.phase)) return;
+  state.phase = name;
+  PHASE_ORDER.forEach((p, i) => {
+    const node = $("phase-" + p);
+    if (!node) return;
+    node.classList.toggle("active", i === idx);
+    node.classList.toggle("done", i < idx);
+  });
+}
+
+function deskFraction(d) {
+  // Eases toward 1 with activity; a desk is only certainly finished when done.
+  return d.done ? 1 : Math.min(0.92, 1 - Math.exp(-d.calls / 9));
+}
+
+function bumpProgress() {
+  let target = 2;
+  const fracs = DESK_IDS.map((id) => deskFraction(state.desks[id] || { calls: 0 }));
+  const anyDesk = DESK_IDS.some((id) => state.desks[id]?.started);
+  if (state.phase === "triage") target = 5;
+  if (state.phase === "desks" || anyDesk) {
+    target = 8 + (fracs.reduce((a, b) => a + b, 0) / DESK_IDS.length) * 64;
+  }
+  if (state.phase === "verify") target = Math.max(78, state.progress + 1.2);
+  if (state.phase === "adjudicate") target = Math.max(91, state.progress + 0.8);
+  if (state.phase === "report") target = 100;
+  const cap = { triage: 7, desks: 76, verify: 90, adjudicate: 97, report: 100 }[state.phase] ?? 5;
+  state.progress = Math.max(state.progress, Math.min(target, cap));
+  $("pbar-fill").style.width = state.progress.toFixed(1) + "%";
+  $("pct").textContent = Math.round(state.progress) + "%";
+}
+
+function resetProgress() {
+  state.phase = null;
+  state.progress = 0;
+  PHASE_ORDER.forEach((p) => $("phase-" + p)?.classList.remove("active", "done"));
+  $("pbar-fill").style.width = "0%";
+  $("pct").textContent = "0%";
+}
+
 /* ---------------- views ---------------- */
 
 function showView(name) {
@@ -73,6 +123,7 @@ function buildPanel() {
   panel.textContent = "";
   $("pipe-log").textContent = "";
   state.desks = {};
+  resetProgress();
   for (const [id, name, tag] of DESKS) {
     state.desks[id] = { calls: 0, flags: 0, done: false, started: false };
     const col = el("div", "col");
@@ -219,13 +270,22 @@ function handleEvent(ev) {
       chip.textContent = ev.mode === "replay" ? "REPLAY — CACHED RUN" : "LIVE";
       chip.className = "chip " + (ev.mode === "replay" ? "replay" : "live");
       startClock();
+      setPhase("triage");
+      bumpProgress();
       break;
     }
     case "tool_call":
     case "tool_result":
     case "text":
-      if (DESK_IDS.includes(ev.agent)) handleDeskEvent(ev);
-      else handlePipeEvent(ev);
+      if (DESK_IDS.includes(ev.agent)) {
+        setPhase("desks");
+        handleDeskEvent(ev);
+      } else {
+        if (ev.agent === "verification_panel") setPhase("verify");
+        else if (ev.agent === "adjudicator") setPhase("adjudicate");
+        handlePipeEvent(ev);
+      }
+      bumpProgress();
       break;
     case "error":
       toast(
@@ -248,6 +308,8 @@ function handleEvent(ev) {
 function onResult(record) {
   state.gotResult = true;
   state.record = record;
+  setPhase("report");
+  bumpProgress();
   stopClock();
   state.es?.close();
   for (const id of DESK_IDS) {
@@ -362,7 +424,7 @@ function flagRow(f, opts) {
   const main = el("div", "flag-main");
   const top = el("div", "flag-top");
   top.appendChild(el("span", `sev-chip sev-${f.severity}`, f.severity));
-  top.appendChild(el("span", "cat", f.category || ""));
+  top.appendChild(el("span", "cat", (f.category || "").replace(/_/g, " ")));
   top.appendChild(el("span", "by", f.agent || ""));
   main.appendChild(top);
   main.appendChild(el("p", "finding", f.finding || ""));
@@ -405,6 +467,7 @@ function renderReport(record) {
 
   const head = el("div", "rpt-head");
   const scoreBox = el("div", "score " + tone);
+  if (typeof score === "number") scoreBox.style.setProperty("--scorepct", String(score));
   scoreBox.appendChild(el("b", null, String(score)));
   scoreBox.appendChild(el("span", "of", "/100"));
   head.appendChild(scoreBox);
@@ -534,7 +597,9 @@ function renderScript() {
     const gutter = el("div", "gutter");
     for (const f of flags) {
       const note = el("div", "gnote gn-" + f.severity);
-      note.appendChild(el("span", "gt", `${f.severity} · ${f.flag_id} · ${f.category}`));
+      note.appendChild(
+        el("span", "gt", `${f.severity} · ${f.flag_id} · ${(f.category || "").replace(/_/g, " ")}`)
+      );
       note.appendChild(el("p", null, (f.finding || "").slice(0, 180) + ((f.finding || "").length > 180 ? "…" : "")));
       note.title = "Open in report";
       note.addEventListener("click", () => gotoFlag(f.flag_id));
