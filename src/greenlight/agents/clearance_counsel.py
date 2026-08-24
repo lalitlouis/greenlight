@@ -42,7 +42,11 @@ PROCEDURE, per worklist item:
    separate costs — and cite, for each, a source showing that that license is required, not
    merely who owns the work. Structure music research to get both: one query on ownership,
    one on the license requirement itself — an ownership excerpt alone will not survive
-   verification, and it should not.
+   verification, and it should not. Apply the use-type distinctions most productions get
+   wrong: a song TITLE spoken in dialogue generally needs no license; QUOTED LYRICS need a
+   print/sync license from the publisher; a character PERFORMING the song on screen needs a
+   sync license for the composition but no master (there is no recording being used); PLAYING
+   A SPECIFIC RECORDING needs both sync and master. File for the use actually on the page.
 4. An unresolved OWNER is not a missing flag. If the license requirement itself is
    established, file the flag citing the requirement, name the best ownership lead in the
    finding, and put the unresolved chain in note_open_question. The producer needs the flag

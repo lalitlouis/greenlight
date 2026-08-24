@@ -1,4 +1,4 @@
-/* GREENLIGHT — crisp product design.
+/* SCRIPTRISK — crisp product design.
    The reference is Apple's marketing language: enormous quiet headlines, 17px
    body, sentence case, generous white space, one accent, pill buttons, alternating
    white / soft-gray bands. No uppercase micro-labels, no letterspaced chrome, no
@@ -573,3 +573,19 @@ a.step-card:hover { text-decoration: none; box-shadow: var(--shadow-lg); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* dimension scores + cost drivers */
+.dims { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+.dim { display: flex; align-items: baseline; gap: 7px; padding: 6px 14px; border-radius: 980px; }
+.dim b { font-size: 19px; font-weight: 750; }
+.dim span { font-size: 13.5px; font-weight: 550; }
+.drivers-card { padding: 26px 30px; margin-bottom: 28px; border-radius: 24px; }
+.drivers-head { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; flex-wrap: wrap; margin-bottom: 12px; }
+.drivers-head h3 { margin: 0; }
+.drivers-total { font-size: 26px; font-weight: 750; letter-spacing: -0.02em; }
+.drivers { display: flex; flex-direction: column; gap: 8px; }
+.driver { display: flex; align-items: center; gap: 14px; background: var(--band); border: 0; border-radius: 12px; padding: 12px 16px; font-family: inherit; font-size: 16px; cursor: pointer; text-align: left; }
+.driver:hover { background: var(--line); }
+.driver-rank { width: 26px; height: 26px; border-radius: 50%; background: var(--surface); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex: none; }
+.driver-name { flex: 1; text-transform: capitalize; font-weight: 550; }
+.driver b { font-weight: 700; }

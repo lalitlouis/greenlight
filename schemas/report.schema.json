@@ -165,6 +165,18 @@
       "items": {
         "$ref": "https://greenlight.dev/schemas/flag.schema.json"
       }
+    },
+    "dimension_scores": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Per-desk 0-100 scores, same deterministic function as greenlight_score restricted to that desk's flags. Defensible where one number is not.",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 100
+      }
     }
   }
 }

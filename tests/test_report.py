@@ -142,3 +142,18 @@ def test_apply_plan_guards_against_hallucinated_ids_and_burying():
     # clamped — a proposal that far off should not move severity at all.
     assert out[0]["severity"] == "BLOCKER"
     assert out[0]["category"] == "sync_license"
+
+
+def test_dimension_scores_decompose_the_composite():
+    from greenlight.report import dimension_scores
+
+    flags = [
+        make_flag("F101", "BLOCKER"),
+        make_flag("F201", "HIGH", agent="ratings_board"),
+    ]
+    d = dimension_scores(flags)
+    assert d["clearance_counsel"] == 70
+    assert d["ratings_board"] == 92
+    assert d["safety_underwriter"] == 100  # no flags = clean dimension
+    rep = build_report("X", flags)
+    assert rep["dimension_scores"] == d

@@ -125,14 +125,14 @@ def test_upload_without_file_is_422():
 def test_index_serves_static_ui():
     res = client.get("/")
     assert res.status_code == 200
-    assert "GREENLIGHT" in res.text
+    assert "ScriptRisk" in res.text
 
 
 def test_all_pages_serve():
     for route in ["/", "/home", "/how-it-works", "/faq", "/contact", "/run", "/report", "/script"]:
         res = client.get(route)
         assert res.status_code == 200, route
-        assert "GREENLIGHT" in res.text, route
+        assert "ScriptRisk" in res.text, route
 
 
 def test_runs_index_lists_recorded_runs():

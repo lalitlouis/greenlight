@@ -117,7 +117,7 @@ function renderPrediction(root, pred) {
   if (!pred || !(pred.comparables || []).length) return;
   const sec = el("div", "section-head");
   sec.appendChild(el("h2", null, "Rating prediction"));
-  sec.appendChild(el("p", "lede", "Evidence, not opinion — your nearest released comparables and their actual ratings."));
+  sec.appendChild(el("p", "lede", "Evidence, not opinion — your nearest comparables from 2,487 released films (corpus updated Aug 2026)."));
   root.appendChild(sec);
 
   const card = el("div", "card pred-card");
@@ -237,6 +237,26 @@ function renderReport(record) {
   meta.appendChild(el("span", "est-note", "Cost figures are estimates, not quotes."));
   head.appendChild(meta);
 
+  const dims = rep.dimension_scores;
+  if (dims) {
+    const dimRow = el("div", "dims");
+    const names = {
+      clearance_counsel: "Rights",
+      ratings_board: "Ratings",
+      safety_underwriter: "Safety",
+      territory_censor: "Territory",
+    };
+    for (const [desk, label] of Object.entries(names)) {
+      const v = dims[desk];
+      if (v == null) continue;
+      const cell = el("div", "dim by-" + desk);
+      cell.appendChild(el("b", null, String(v)));
+      cell.appendChild(el("span", null, label));
+      dimRow.appendChild(cell);
+    }
+    meta.appendChild(dimRow);
+  }
+
   const tally = el("div", "tally");
   for (const sev of SEVS) {
     const cell = el("div");
@@ -246,6 +266,37 @@ function renderReport(record) {
   }
   head.appendChild(tally);
   root.appendChild(head);
+
+  const drivers = (record.flags || [])
+    .filter((f) => f.remedy?.est_cost_usd)
+    .sort((a, b) => b.remedy.est_cost_usd[1] - a.remedy.est_cost_usd[1])
+    .slice(0, 3);
+  if (drivers.length && rep.est_clearance_cost_usd) {
+    const card = el("div", "card drivers-card");
+    const h = el("div", "drivers-head");
+    h.appendChild(el("h3", null, "Estimated clearance exposure"));
+    h.appendChild(el("b", "drivers-total", money(rep.est_clearance_cost_usd)));
+    card.appendChild(h);
+    const ul = el("div", "drivers");
+    drivers.forEach((f, i) => {
+      const row = el("button", "driver");
+      row.type = "button";
+      row.addEventListener("click", () => {
+        const node = $("flag-" + f.flag_id);
+        node?.querySelector(".expand")?.classList.remove("hidden");
+        node?.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+      row.appendChild(el("span", "driver-rank", String(i + 1)));
+      row.appendChild(el("span", "driver-name", prettyCat(f.category)));
+      row.appendChild(el("b", null, money(f.remedy.est_cost_usd)));
+      ul.appendChild(row);
+    });
+    card.appendChild(ul);
+    card.appendChild(
+      el("p", "est-note", "The number for a financing conversation: total exposure, ranked by driver. Estimates, not quotes.")
+    );
+    root.appendChild(card);
+  }
 
   renderPrediction(root, rep.rating_prediction);
 
@@ -261,8 +312,16 @@ function renderReport(record) {
   if (rejectedFlags.length) {
     const sec = el("div", "section-head");
     sec.appendChild(el("h2", null, `Rejected in verification — ${rejectedFlags.length}`));
+    const rate = Math.round(
+      (100 * rejectedFlags.length) / Math.max(1, rejectedFlags.length + (record.flags || []).length)
+    );
     sec.appendChild(
-      el("p", "lede", "An independent verifier read every citation. These claims did not survive.")
+      el(
+        "p",
+        "lede",
+        `An independent verifier read every citation and rejected ${rate}% of draft findings ` +
+          "in this analysis. These claims did not survive."
+      )
     );
     root.appendChild(sec);
     const list = el("div", "flags");

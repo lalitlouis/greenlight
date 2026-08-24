@@ -1,4 +1,4 @@
-/* GREENLIGHT shared chrome + helpers. Every page includes this first.
+/* SCRIPTRISK shared chrome + helpers. Every page includes this first.
    The header/footer are injected here so seven pages stay consistent without a
    build step. Vanilla JS, no CDN, works offline. */
 
@@ -124,7 +124,7 @@ function injectChrome() {
   const brand = el("a", "brand");
   brand.href = "/home";
   brand.appendChild(el("span", "brand-dot"));
-  brand.appendChild(el("span", "brand-name", "GREENLIGHT"));
+  brand.appendChild(el("span", "brand-name", "SCRIPTRISK"));
   inner.appendChild(brand);
 
   const nav = el("nav", "site-nav");
@@ -155,7 +155,7 @@ function injectChrome() {
   const col1 = el("div", "footer-col");
   const fbrand = el("div", "brand");
   fbrand.appendChild(el("span", "brand-dot"));
-  fbrand.appendChild(el("span", "brand-name", "GREENLIGHT"));
+  fbrand.appendChild(el("span", "brand-name", "SCRIPTRISK"));
   col1.appendChild(fbrand);
   col1.appendChild(
     el(
@@ -200,11 +200,11 @@ function injectChrome() {
     el(
       "p",
       null,
-      "Cost figures are rule-of-thumb estimates, not quotes. GREENLIGHT is a research tool, " +
+      "Cost figures are rule-of-thumb estimates, not quotes. SCRIPTRISK is a research tool, " +
         "not legal advice. Built for the Agentic Cinema hackathon."
     )
   );
-  fine.appendChild(el("p", null, "© 2026 GREENLIGHT"));
+  fine.appendChild(el("p", null, "© 2026 SCRIPTRISK"));
   footer.appendChild(fine);
   document.body.appendChild(footer);
 }

@@ -50,6 +50,16 @@ def _added_days(flags: list[dict[str, Any]]) -> float | None:
     return max(days) if days else None
 
 
+DESKS = ("clearance_counsel", "ratings_board", "safety_underwriter", "territory_censor")
+
+
+def dimension_scores(flags: list[dict[str, Any]]) -> dict[str, int]:
+    """The composite, decomposed: each desk scored by its own flags alone. Four
+    numbers with a published rubric survive scrutiny where one number invites
+    'why 20 and not 35?'."""
+    return {desk: greenlight_score([f for f in flags if f["agent"] == desk]) for desk in DESKS}
+
+
 def build_report(
     script_title: str,
     flags: list[dict[str, Any]],
@@ -66,6 +76,7 @@ def build_report(
         "script_title": script_title,
         "generated_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
         "greenlight_score": greenlight_score(flags),
+        "dimension_scores": dimension_scores(flags),
         "counts": counts,
         "by_agent": by_agent,
         "est_clearance_cost_usd": _cost_range(flags),

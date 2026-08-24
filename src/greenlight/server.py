@@ -66,7 +66,7 @@ class RunHandle:
 
 RUNS: dict[str, RunHandle] = {}
 
-app = FastAPI(title="GREENLIGHT")
+app = FastAPI(title="ScriptRisk")
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 

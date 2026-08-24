@@ -1,4 +1,4 @@
-/* GREENLIGHT motion design. GSAP 3 + ScrollTrigger (vendored, /static/vendor).
+/* SCRIPTRISK motion design. GSAP 3 + ScrollTrigger (vendored, /static/vendor).
    Every effect degrades to the final resting state when GSAP is absent or the
    user prefers reduced motion — animation is garnish, never a dependency. */
 

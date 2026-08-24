@@ -1,6 +1,7 @@
-# GREENLIGHT
+# ScriptRisk
 
 **Multi-agent screenplay clearance and production-risk analysis.**
+*(repo codename: greenlight — the product is ScriptRisk; its score kept the old name)*
 Live at **[scriptrisk.com](https://scriptrisk.com)** · built for the Agentic Cinema hackathon, Parallel track.
 
 Before a single frame is shot, a studio spends weeks clearing a screenplay: four separate desks —
@@ -8,7 +9,7 @@ rights counsel, the ratings board, the safety underwriter, and territory censors
 same script looking for different ways it will cost money or fail to release. The work is manual,
 serial, and expensive; independent producers mostly can't afford it at all.
 
-GREENLIGHT runs those four desks concurrently as agents. Every finding it returns carries a
+ScriptRisk runs those four desks concurrently as agents. Every finding it returns carries a
 **verbatim citation**, a concrete remedy, and a cost estimate — and an independent verifier
 re-reads every citation and **rejects** findings the source does not support. The rejection shows
 up in the report, with the reason.
@@ -100,5 +101,5 @@ scripts/                corpus ingest, eval harness, compliance scan
 docs/                   PRD, TECH_SPEC, STATUS, DEMO, DATA_SOURCES, ...
 ```
 
-MIT licensed. Cost figures are rule-of-thumb estimates, not quotes; GREENLIGHT is a research
+MIT licensed. Cost figures are rule-of-thumb estimates, not quotes; ScriptRisk is a research
 tool, not legal advice.
