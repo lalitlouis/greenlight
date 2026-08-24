@@ -12,12 +12,12 @@ function gotoScene(sid) {
 
 function citationCard(c, idx, total) {
   const wrap = el("div");
-  wrap.appendChild(el("div", "blk-label", `CITATION — ${idx + 1} OF ${total}`));
+  wrap.appendChild(el("div", "blk-label", `Citation ${idx + 1} of ${total}`));
   const card = el("div", "cite");
   card.appendChild(el("q", null, c.excerpt || ""));
   const src = el("div", "src");
   src.appendChild(
-    el("span", "via", (c.via || c.source_type || "source").replace("_", " ").toUpperCase())
+    el("span", "via", (c.via || c.source_type || "source").replace("_", " "))
   );
   if (c.url) {
     const a = el("a", null, c.url.replace(/^https?:\/\//, "").slice(0, 60));
@@ -54,7 +54,7 @@ function flagExpand(f) {
   }
   if (f.rejection_reason) {
     const rej = el("div", "rejection");
-    rej.appendChild(el("b", null, "REJECTED IN VERIFICATION — "));
+    rej.appendChild(el("b", null, "Rejected in verification — "));
     rej.appendChild(document.createTextNode(f.rejection_reason));
     ex.appendChild(rej);
   }
@@ -116,20 +116,21 @@ function flagRow(f, opts) {
 function renderPrediction(root, pred) {
   if (!pred || !(pred.comparables || []).length) return;
   const sec = el("div", "section-head");
-  sec.appendChild(el("span", "label", "MPA rating prediction — evidence, not opinion"));
+  sec.appendChild(el("h2", null, "Rating prediction"));
+  sec.appendChild(el("p", "lede", "Evidence, not opinion — your nearest released comparables and their actual ratings."));
   root.appendChild(sec);
 
   const card = el("div", "card pred-card");
   const head = el("div", "pred-head");
   const ratings = el("div", "pred-ratings");
   const predBox = el("div", "pred-box");
-  predBox.appendChild(el("span", "pred-label", "PREDICTED AS WRITTEN"));
+  predBox.appendChild(el("span", "pred-label", "Predicted, as written"));
   predBox.appendChild(el("b", "rating-badge r-" + pred.predicted, pred.predicted));
   ratings.appendChild(predBox);
   if (pred.target && pred.target !== pred.predicted) {
     ratings.appendChild(el("span", "pred-vs", "vs"));
     const tgtBox = el("div", "pred-box");
-    tgtBox.appendChild(el("span", "pred-label", "PRODUCTION TARGET"));
+    tgtBox.appendChild(el("span", "pred-label", "Production target"));
     tgtBox.appendChild(el("b", "rating-badge target", pred.target));
     ratings.appendChild(tgtBox);
   }
@@ -180,7 +181,7 @@ function renderPrediction(root, pred) {
 
   if ((pred.beats_to_cut || []).length) {
     const cuts = el("div", "cuts");
-    cuts.appendChild(el("div", "blk-label", `THE CUT LIST TO ${pred.target || "TARGET"}`));
+    cuts.appendChild(el("div", "blk-label", `The cut list to ${pred.target || "your target"}`));
     const ol = el("ol");
     for (const b of pred.beats_to_cut) ol.appendChild(el("li", null, b));
     cuts.appendChild(ol);
@@ -212,10 +213,10 @@ function renderReport(record) {
   const meta = el("div", "score-meta");
   const verdict =
     blockers > 0
-      ? `NOT CLEARED — ${blockers} BLOCKER${blockers === 1 ? "" : "S"}`
+      ? `Not cleared — ${blockers} blocker${blockers === 1 ? "" : "s"}`
       : tone === "good"
-        ? "CLEARED — CONDITIONS BELOW"
-        : "CONDITIONAL — REMEDIES REQUIRED";
+        ? "Cleared, with conditions"
+        : "Conditional — remedies required";
   meta.appendChild(el("span", "verdict " + tone, verdict));
   const proj = el("span", "proj");
   proj.appendChild(
@@ -233,7 +234,7 @@ function renderReport(record) {
     c.appendChild(el("b", null, cost));
     meta.appendChild(c);
   }
-  meta.appendChild(el("span", "est-note", "COST FIGURES ARE ESTIMATES, NOT QUOTES"));
+  meta.appendChild(el("span", "est-note", "Cost figures are estimates, not quotes."));
   head.appendChild(meta);
 
   const tally = el("div", "tally");

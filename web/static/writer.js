@@ -76,9 +76,9 @@ function render(record) {
     card.appendChild(top);
     card.appendChild(el("p", "wr-verdict-reason", cov.verdict_reason || ""));
 
-    card.appendChild(el("div", "blk-label", "LOGLINE, AS READ"));
+    card.appendChild(el("div", "blk-label", "Logline, as read"));
     card.appendChild(el("p", "wr-logline", cov.logline_as_read || ""));
-    card.appendChild(el("div", "blk-label", "SYNOPSIS"));
+    card.appendChild(el("div", "blk-label", "Synopsis"));
     card.appendChild(el("p", null, cov.synopsis || ""));
 
     const cols = el("div", "wr-notes");
@@ -98,7 +98,7 @@ function render(record) {
     card.appendChild(cols);
 
     if ((cov.character_notes || []).length) {
-      card.appendChild(el("div", "blk-label", "CHARACTERS"));
+      card.appendChild(el("div", "blk-label", "Characters"));
       const ul = el("ul", "plain-list");
       for (const n of cov.character_notes) ul.appendChild(el("li", null, n));
       card.appendChild(ul);
@@ -118,14 +118,14 @@ function render(record) {
     top.appendChild(el("span", "wr-genre", [pitch.genre, pitch.tone].filter(Boolean).join(" · ")));
     card.appendChild(top);
 
-    card.appendChild(el("div", "blk-label", "LOGLINE OPTIONS"));
+    card.appendChild(el("div", "blk-label", "Logline options"));
     const ol = el("ol", "wr-loglines");
     for (const l of pitch.logline_options || []) ol.appendChild(el("li", null, l));
     card.appendChild(ol);
 
     if ((pitch.comps || []).length) {
       card.appendChild(
-        el("div", "blk-label", "COMPARABLES — retrieved from released films, with sources")
+        el("div", "blk-label", "Comparables — retrieved from released films, with sources")
       );
       const comps = el("div", "comps");
       for (const c of pitch.comps) {
@@ -147,7 +147,7 @@ function render(record) {
       card.appendChild(comps);
     }
 
-    card.appendChild(el("div", "blk-label", "ONE-PAGE SYNOPSIS"));
+    card.appendChild(el("div", "blk-label", "One-page synopsis"));
     for (const para of (pitch.one_page_synopsis || "").split(/\n\n+/)) {
       card.appendChild(el("p", null, para));
     }

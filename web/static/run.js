@@ -72,7 +72,7 @@ function buildPanel() {
     head.appendChild(el("span", "sub", sub));
     const st = el("span", "st queued");
     st.appendChild(el("span", "pulse"));
-    st.appendChild(el("span", "st-txt", "QUEUED"));
+    st.appendChild(el("span", "st-txt", "Waiting"));
     head.appendChild(st);
     col.appendChild(head);
     col.appendChild(el("div", "col-body"));
@@ -88,10 +88,10 @@ function setDeskStatus(id) {
   if (!st || !txt) return;
   if (d.done) {
     st.className = "st done";
-    txt.textContent = `DONE · ${d.calls} CALLS · ${d.flags} FLAGS`;
+    txt.textContent = `Done · ${d.calls} calls · ${d.flags} flags`;
   } else if (d.started) {
     st.className = "st running";
-    txt.textContent = `WORKING · ${d.calls} CALLS · ${d.flags} FLAGS`;
+    txt.textContent = `Working · ${d.calls} calls · ${d.flags} flags`;
   }
 }
 
@@ -185,7 +185,7 @@ function handleEvent(ev) {
       state.reportId = ev.mode === "replay" ? ev.record_id || ev.run_id : ev.run_id;
       $("run-title").textContent = ev.script_title || "Analysis";
       const chip = $("mode-chip");
-      chip.textContent = ev.mode === "replay" ? "REPLAY — RECORDED RUN" : "LIVE";
+      chip.textContent = ev.mode === "replay" ? "Replay · recorded run" : "Live";
       chip.className = "chip " + (ev.mode === "replay" ? "replay" : "live");
       startClock();
       setPhase("triage");

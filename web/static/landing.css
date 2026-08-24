@@ -1,57 +1,38 @@
-/* The landing: a movie-poster moment. Dark cinematic ground, neon greenlight,
-   one message, one door in. Inner pages stay light and readable — this is the
-   marquee outside the theater. */
+/* The landing: one statement, one door in. Black band, enormous quiet type,
+   a single green accent. No glows, no gradients-for-their-own-sake. */
 
 .landing-body {
   min-height: 100vh;
   margin: 0;
   display: flex;
   flex-direction: column;
-  background:
-    radial-gradient(1200px 700px at 50% -20%, rgba(34, 197, 94, 0.16), transparent 60%),
-    linear-gradient(180deg, #06110b 0%, #081711 55%, #06110b 100%);
-  color: #f2f7f4;
-  overflow-x: hidden;
-  position: relative;
+  background: #000;
+  color: #f5f5f7;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
-
-/* drifting color fields */
-.glow {
-  position: fixed;
-  border-radius: 50%;
-  filter: blur(90px);
-  opacity: 0.5;
-  pointer-events: none;
-  z-index: 0;
-}
-.glow-a { width: 560px; height: 560px; left: -160px; top: 8%; background: rgba(16, 185, 129, 0.35); }
-.glow-b { width: 480px; height: 480px; right: -140px; top: 30%; background: rgba(45, 212, 191, 0.28); }
-.glow-c { width: 520px; height: 520px; left: 32%; bottom: -240px; background: rgba(251, 191, 36, 0.16); }
 
 .landing-top {
-  position: relative;
-  z-index: 2;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 22px 34px;
+  padding: 24px 36px;
 }
-.brand.light { color: #f2f7f4; display: flex; align-items: center; gap: 10px; }
+.brand.light { color: #f5f5f7; display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.brand-name { font-weight: 700; font-size: 16px; letter-spacing: 0.02em; }
 .brand-dot.big {
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
-  background: #22c55e;
-  box-shadow: 0 0 18px #22c55e, 0 0 44px rgba(34, 197, 94, 0.5);
-  animation: beacon 2.4s ease-in-out infinite;
+  background: #30d158;
+  animation: beacon 2.6s ease-in-out infinite;
 }
-@keyframes beacon { 50% { box-shadow: 0 0 26px #22c55e, 0 0 70px rgba(34, 197, 94, 0.75); } }
-.skip { color: rgba(242, 247, 244, 0.6); font-size: 14px; font-weight: 600; }
-.skip:hover { color: #f2f7f4; text-decoration: none; }
+@keyframes beacon { 50% { box-shadow: 0 0 22px rgba(48, 209, 88, 0.8); } }
+.skip { color: #86868b; font-size: 15px; text-decoration: none; }
+.skip:hover { color: #f5f5f7; }
 
 .landing {
-  position: relative;
-  z-index: 2;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -59,93 +40,61 @@
   justify-content: center;
   text-align: center;
   padding: 24px;
-  gap: 8px;
 }
 .eyebrow {
-  font-size: 12.5px;
-  font-weight: 700;
-  letter-spacing: 0.22em;
-  color: #34d399;
-  margin: 0 0 18px;
+  font-size: 17px;
+  font-weight: 550;
+  letter-spacing: 0;
+  text-transform: none;
+  color: #30d158;
+  margin: 0 0 20px;
 }
 .landing h1 {
-  font-size: clamp(40px, 6.5vw, 76px);
-  font-weight: 850;
-  line-height: 1.06;
-  letter-spacing: -0.025em;
-  margin: 0 0 22px;
-  color: #f7fbf9;
+  font-size: clamp(44px, 7vw, 88px);
+  font-weight: 750;
+  line-height: 1.04;
+  letter-spacing: -0.028em;
+  margin: 0 0 26px;
+  color: #f5f5f7;
+  max-width: 16ch;
 }
-.grad-text {
-  background: linear-gradient(92deg, #34d399 5%, #2dd4bf 45%, #fbbf24 95%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
+.grad-text { color: #30d158; background: none; }
 .land-sub {
-  font-size: clamp(16px, 1.6vw, 19px);
-  line-height: 1.7;
-  color: rgba(242, 247, 244, 0.82);
-  max-width: 64ch;
-  margin: 0 0 34px;
+  font-size: clamp(17px, 1.8vw, 22px);
+  line-height: 1.55;
+  color: #a1a1a6;
+  max-width: 56ch;
+  margin: 0 0 40px;
 }
-.land-sub b { color: #6ee7b7; }
+.land-sub b { color: #f5f5f7; font-weight: 600; }
 
-.land-ctas { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; margin-bottom: 44px; }
-.btn-glow {
-  background: linear-gradient(92deg, #10b981, #22c55e);
-  color: #04150c;
-  font-weight: 800;
-  border: 0;
-  box-shadow: 0 4px 30px rgba(34, 197, 94, 0.45);
-}
-.btn-glow:hover { box-shadow: 0 6px 44px rgba(34, 197, 94, 0.65); transform: translateY(-2px); }
-.btn-ghost {
-  background: rgba(255, 255, 255, 0.06);
-  color: #d9efe4;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  backdrop-filter: blur(6px);
-}
-.btn-ghost:hover { border-color: #34d399; color: #fff; }
+.land-ctas { display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; align-items: center; margin-bottom: 56px; }
+.btn { border-radius: 980px; font-size: 18px; padding: 13px 30px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: background 0.15s ease; }
+.btn-glow { background: #30d158; color: #04150c; font-weight: 600; border: 0; }
+.btn-glow:hover { background: #4ade80; }
+.btn-ghost { background: none; color: #30d158; border: 0; font-weight: 500; }
+.btn-ghost:hover { text-decoration: underline; }
 
-.land-stats {
-  display: flex;
-  align-items: center;
-  gap: 26px;
-  flex-wrap: wrap;
-  justify-content: center;
-  margin-bottom: 34px;
-}
+.land-stats { display: flex; align-items: center; gap: 30px; flex-wrap: wrap; justify-content: center; margin-bottom: 44px; }
 .land-stats > div { display: flex; flex-direction: column; gap: 2px; }
-.land-stats b { font-size: 26px; font-weight: 800; color: #6ee7b7; font-variant-numeric: tabular-nums; }
-.land-stats span { font-size: 12.5px; color: rgba(242, 247, 244, 0.6); }
-.land-stats .divider { width: 1px; height: 34px; background: rgba(255, 255, 255, 0.14); }
+.land-stats b { font-size: 28px; font-weight: 700; color: #f5f5f7; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.land-stats span { font-size: 13.5px; color: #86868b; }
+.land-stats .divider { width: 1px; height: 36px; background: rgba(255, 255, 255, 0.16); }
 
-.land-desks { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
-.desk-pill {
-  font-size: 13px;
-  font-weight: 700;
-  padding: 8px 18px;
-  border-radius: 999px;
-  border: 1px solid;
-  backdrop-filter: blur(4px);
-}
-.dp-clearance { color: #a5b4fc; border-color: rgba(129, 140, 248, 0.5); background: rgba(99, 102, 241, 0.12); }
-.dp-ratings { color: #d8b4fe; border-color: rgba(192, 132, 252, 0.5); background: rgba(168, 85, 247, 0.12); }
-.dp-safety { color: #fcd34d; border-color: rgba(251, 191, 36, 0.5); background: rgba(245, 158, 11, 0.12); }
-.dp-territory { color: #7dd3fc; border-color: rgba(56, 189, 248, 0.5); background: rgba(14, 165, 233, 0.12); }
+.land-desks { display: flex; gap: 10px 26px; flex-wrap: wrap; justify-content: center; }
+.desk-pill { font-size: 15px; font-weight: 500; color: #a1a1a6; border: 0; background: none; padding: 0; display: inline-flex; align-items: center; gap: 8px; }
+.desk-pill::before { content: ""; width: 8px; height: 8px; border-radius: 50%; }
+.dp-clearance::before { background: #818cf8; }
+.dp-ratings::before { background: #c084fc; }
+.dp-safety::before { background: #fbbf24; }
+.dp-territory::before { background: #38bdf8; }
 
-.landing-foot {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  justify-content: space-between;
-  padding: 18px 34px;
-  font-size: 13px;
-  color: rgba(242, 247, 244, 0.5);
-}
-.landing-foot a { color: rgba(242, 247, 244, 0.7); }
+.landing-foot { display: flex; justify-content: space-between; padding: 20px 36px; font-size: 13.5px; color: #6e6e73; }
+.landing-foot a { color: #86868b; text-decoration: none; }
+.landing-foot a:hover { color: #f5f5f7; }
+
+.glow { display: none; }
 
 @media (prefers-reduced-motion: reduce) {
-  .brand-dot.big, .glow { animation: none !important; }
+  .brand-dot.big { animation: none !important; }
 }
