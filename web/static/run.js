@@ -236,6 +236,15 @@ function onResult(record) {
     }
   }
   stashRecord(state.reportId, record);
+  if (typeof window.confetti === "function") {
+    window.confetti({
+      particleCount: 110,
+      spread: 75,
+      origin: { y: 0.7 },
+      colors: ["#22c55e", "#34d399", "#a5b4fc", "#fcd34d", "#7dd3fc"],
+      disableForReducedMotion: true,
+    });
+  }
   const target = `/report?run=${encodeURIComponent(state.reportId)}`;
   $("done-link").href = target;
   $("done-banner").classList.remove("hidden");

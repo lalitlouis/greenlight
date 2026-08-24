@@ -171,3 +171,9 @@ def test_replay_accepts_record_selection(replay):
         events = sse_events(response)
     assert events[0]["record_id"] == run_id
     assert events[-1]["type"] == "result"
+
+
+def test_latest_alias_resolves_newest_record():
+    res = client.get("/api/records/latest")
+    assert res.status_code == 200 and res.json()["record"]["flags"]
+    assert client.get("/api/script/latest").status_code == 200

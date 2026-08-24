@@ -5,108 +5,188 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>How it works — GREENLIGHT</title>
 <link rel="stylesheet" href="/static/site.css">
+<script defer src="/static/vendor/gsap.min.js"></script>
+<script defer src="/static/vendor/ScrollTrigger.min.js"></script>
 <script defer src="/static/common.js"></script>
+<script defer src="/static/fx.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  window.FX?.hero();
+  window.FX?.reveals();
+});
+</script>
 </head>
 <body>
 <main>
   <div class="container">
-    <div class="page-head">
+    <div class="page-head" data-reveal>
       <span class="kicker">How it works</span>
       <h1>A studio clearance department, run by agents</h1>
-      <p class="lede">Before a film shoots, its screenplay goes through clearance: separate desks
-      read the same script looking for different ways it will cost money or fail to release.
-      GREENLIGHT runs that process the way a studio does — four independent desks, then a
-      producer who reconciles them — in about five minutes.</p>
+      <p class="lede">Drop in a screenplay. Five minutes later: every rights problem, rating
+      risk, safety hazard, and censorship trap — cited, verified, priced, and anchored to your
+      pages. Here is exactly what happens in between, and what you can do with each piece.</p>
     </div>
 
-    <div class="callout">
+    <svg class="pipeline-svg hiw-pipe" viewBox="0 0 560 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path class="flow-line" d="M60 60 H170" />
+      <path class="flow-line" d="M300 60 H400" />
+      <path class="flow-line" d="M470 60 H520" />
+      <g class="pipe-node"><rect x="8" y="42" width="52" height="36" rx="9"/><text x="34" y="64">SCRIPT</text></g>
+      <g class="pipe-node"><rect x="170" y="6" width="130" height="22" rx="7"/><text x="235" y="21">CLEARANCE</text></g>
+      <g class="pipe-node"><rect x="170" y="34" width="130" height="22" rx="7"/><text x="235" y="49">RATINGS</text></g>
+      <g class="pipe-node"><rect x="170" y="62" width="130" height="22" rx="7"/><text x="235" y="77">SAFETY</text></g>
+      <g class="pipe-node"><rect x="170" y="90" width="130" height="22" rx="7"/><text x="235" y="105">TERRITORY</text></g>
+      <g class="pipe-node"><rect x="400" y="42" width="70" height="36" rx="9"/><text x="435" y="64">VERIFY</text></g>
+      <g class="pipe-node accent"><rect x="500" y="42" width="52" height="36" rx="9"/><text x="526" y="64">REPORT</text></g>
+    </svg>
+
+    <div class="callout" data-reveal>
       <b>The one non-negotiable rule:</b> a finding without a citation does not appear in your
       report. Anyone can ask an AI "what's risky in this script" and get a confident paragraph.
-      GREENLIGHT returns claims you can hand to a lawyer — each backed by verbatim, sourced text,
-      each re-checked by an independent verifier before it reaches you.
+      GREENLIGHT returns claims you can hand to a lawyer — verbatim sourced text, re-checked by
+      an independent verifier before it reaches you.
     </div>
 
     <div class="stage-list">
-      <div class="card stage">
-        <span class="step-num">1</span>
-        <div>
-          <h3>Parse &amp; triage</h3>
+
+      <div class="card stage" data-reveal>
+        <div class="stage-icon si-green" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M4 3h12l4 4v14H4z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 9h8M8 13h8M8 17h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </div>
+        <div class="stage-body">
+          <h3>1 · Parse &amp; triage</h3>
           <span class="who">Deterministic parser + a fast reading pass</span>
-          <p>Your Fountain screenplay is split into scenes with exact page anchors — no AI
-          involved, so scene references are always right. Then a triage pass extracts every
-          clearance-relevant entity: brands, songs, real people, artworks, film clips,
-          organizations, stunts, and sensitive beats — and writes a worklist for each desk.</p>
+          <p>Your screenplay is split into scenes with exact page anchors — no AI in the parser,
+          so scene references are always right. Then triage extracts every clearance-relevant
+          entity and writes each desk's worklist.</p>
+          <div class="stage-example">
+            <span class="eg-label">FROM A REAL RUN</span>
+            "Hallelujah" → MUSIC, plot-critical · Coors Light → BRAND, depicted negatively ·
+            burning boat + minor → SAFETY worklist
+          </div>
         </div>
       </div>
-      <div class="card stage">
-        <span class="step-num">2</span>
-        <div>
-          <h3>Clearance Counsel</h3>
-          <span class="who">Rights &amp; clearances desk</span>
-          <p>Researches every entity on the live web: does this use need a license, from whom,
-          and what does it cost? Music gets the full chase — composition and master recording
-          are separately owned, and the desk follows both chains to the current rightsholder.</p>
+
+      <div class="card stage" data-reveal>
+        <div class="stage-icon si-indigo" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 3v18M5 7l7-4 7 4M5 7v4c0 2 1.5 3.5 3.5 3.5S12 13 12 11m7-4v4c0 2-1.5 3.5-3.5 3.5S12 13 12 11M7 21h10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </div>
+        <div class="stage-body">
+          <h3>2 · Clearance Counsel</h3>
+          <span class="who">Rights &amp; clearances · live web research</span>
+          <p>Does this use need a license, from whom, and at what cost? Music gets the full
+          chase: composition and master are separately owned, and the desk follows both chains
+          to the current rightsholder.</p>
+          <div class="stage-example sev-line-BLOCKER">
+            <span class="eg-label">WHAT YOU GET</span>
+            F101 · sync license — "Hallelujah" · OBTAIN_LICENSE · est. $10,000–$50,000 ·
+            cited to easysong.com &amp; Variety
+          </div>
+          <a class="stage-cta" href="/report?run=latest">See it in a real report →</a>
         </div>
       </div>
-      <div class="card stage">
-        <span class="step-num">3</span>
-        <div>
-          <h3>Ratings Board</h3>
-          <span class="who">MPA rating prediction</span>
-          <p>Counts the rating drivers in your script — language, violence, drug use — then finds
-          the released films whose content sits nearest to yours in a corpus of 2,500 titles.
-          The prediction is evidence: "seven of your eight nearest comparables are rated R." If
-          you're targeting a lower rating, you get the exact cut list that buys it.</p>
+
+      <div class="card stage" data-reveal>
+        <div class="stage-icon si-purple" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 12 16 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/></svg>
+        </div>
+        <div class="stage-body">
+          <h3>3 · Ratings Board</h3>
+          <span class="who">Evidence-based MPA prediction · 2,487-film corpus</span>
+          <p>It counts your rating drivers — never estimates them — then finds the released
+          films whose content sits nearest to yours and reads their actual ratings. If you
+          target a lower rating, you get the exact beats that buy it.</p>
+          <div class="stage-example sev-line-HIGH">
+            <span class="eg-label">WHAT YOU GET</span>
+            Predicted R vs PG-13 target · 7 of 8 nearest comparables rated R ·
+            "Cut 2 of 3 F-bombs, keep the one in S011"
+          </div>
+          <a class="stage-cta" href="/report?run=latest">See the comparables →</a>
         </div>
       </div>
-      <div class="card stage">
-        <span class="step-num">4</span>
-        <div>
-          <h3>Safety Underwriter</h3>
-          <span class="who">Physical production risk</span>
-          <p>Reads your script like a completion-bond underwriter: stunts, fire, water, night
-          work, minors, animals, weapons — and how they stack. A boat fire is one risk; a boat
-          fire at night with a child in an adjacent skiff is a different, much larger one. Each
-          hazard gets the specialists, permits, and rule-of-thumb costs an insurer will require.</p>
+
+      <div class="card stage" data-reveal>
+        <div class="stage-icon si-amber" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 3 22 20H2z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 10v4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="17.2" r="1.1" fill="currentColor"/></svg>
+        </div>
+        <div class="stage-body">
+          <h3>4 · Safety Underwriter</h3>
+          <span class="who">Reads like a completion-bond underwriter</span>
+          <p>Hazards stack: a boat fire is one risk — a boat fire at night with a child and a
+          dog in an adjacent skiff is a much bigger one. Each hazard gets the specialists,
+          permits, and rule-of-thumb costs an insurer will demand.</p>
+          <div class="stage-example sev-line-HIGH">
+            <span class="eg-label">WHAT YOU GET</span>
+            Stacked pyro + water + night + minor · marine coordinator, fire marshal permit,
+            safety boats · est. cost &amp; added days
+          </div>
         </div>
       </div>
-      <div class="card stage">
-        <span class="step-num">5</span>
-        <div>
-          <h3>Territory Censor</h3>
+
+      <div class="card stage" data-reveal>
+        <div class="stage-icon si-sky" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 12h17M12 3.5c3 2.7 3 14.3 0 17-3-2.7-3-14.3 0-17z" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+        </div>
+        <div class="stage-body">
+          <h3>5 · Territory Censor</h3>
           <span class="who">US · UK · China · UAE</span>
-          <p>What gets cut or blocks release, market by market, under each territory's actual
-          rules — with an honest account of the creative cost when a required cut would touch
-          the heart of your film.</p>
+          <p>What gets cut or blocks release, market by market, under each regulator's actual
+          rules — with an honest account of the creative cost when a required cut touches the
+          heart of your film.</p>
+          <div class="stage-example sev-line-BLOCKER">
+            <span class="eg-label">WHAT YOU GET</span>
+            Ghost played straight → likely CN refusal · remedy options: reframe as memory,
+            or release without that market
+          </div>
         </div>
       </div>
-      <div class="card stage">
-        <span class="step-num">6</span>
-        <div>
-          <h3>Verification &amp; adjudication</h3>
-          <span class="who">The quality gate</span>
-          <p>Every filed finding goes to an independent verifier that reads only the claim, the
-          scenes it cites, and its sources — never the desk's reasoning. If the source doesn't
-          support the claim, the finding is rejected, and your report shows the rejection and the
-          reason. Then an adjudicator merges duplicates and resolves conflicting remedies, like a
-          producer reconciling the panel.</p>
+
+      <div class="card stage" data-reveal>
+        <div class="stage-icon si-green" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M4 12.5 9.5 18 20 6.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="stage-body">
+          <h3>6 · Verify &amp; adjudicate</h3>
+          <span class="who">The quality gate — findings can die here</span>
+          <p>An independent verifier re-reads every claim against its sources — blind to the
+          desk's reasoning. Unsupported claims are rejected, and your report shows each
+          rejection with the verifier's reason. Then an adjudicator merges duplicates and
+          resolves conflicting remedies.</p>
+          <div class="stage-example sev-line-REJ">
+            <span class="eg-label">FROM A REAL RUN</span>
+            territory uae drug use — REJECTED: "the excerpt is a general statement about media
+            regulation; it does not support the claim"
+          </div>
+          <a class="stage-cta" href="/run?replay=1">Watch the verifier work →</a>
         </div>
       </div>
     </div>
 
-    <div class="prose">
-      <h2>What you get</h2>
-      <ul>
-        <li><b>A Greenlight Score</b> (0–100) — a deterministic function of finding severities,
-        never an AI's opinion.</li>
-        <li><b>Severity-ranked findings</b> — each with verbatim citations, a concrete remedy
-        ("rename to a fictional brand", "engage a marine coordinator"), and a cost range.</li>
-        <li><b>A rating prediction with comparables</b> — and the beats to cut for your target.</li>
-        <li><b>A marked-up script</b> — every finding anchored to its scene, both directions.</li>
-        <li><b>Honest unknowns</b> — what the desks could not resolve is listed as open
-        questions, not guessed at.</li>
-      </ul>
-      <p><a class="btn btn-primary" href="/run?replay=1">Watch a recorded analysis</a></p>
+    <div class="hiw-actions" data-reveal>
+      <h2>Do this now</h2>
+      <div class="action-grid">
+        <a class="card action-card" href="/run?replay=1">
+          <span class="ac-num">1</span>
+          <h3>Watch the demo</h3>
+          <p>A recorded analysis of an original short film, replayed end to end. Two minutes to
+          understand everything above.</p>
+          <span class="stage-cta">Watch now →</span>
+        </a>
+        <a class="card action-card" href="#" onclick="promptUpload(); return false;">
+          <span class="ac-num">2</span>
+          <h3>Run your screenplay</h3>
+          <p>Fountain format, about five minutes, nothing stored between sessions. Watch the
+          four desks work on <em>your</em> pages.</p>
+          <span class="stage-cta">Upload a script →</span>
+        </a>
+        <a class="card action-card" href="/faq">
+          <span class="ac-num">3</span>
+          <h3>Read the fine print</h3>
+          <p>What the score means, where citations come from, what this is not (legal advice),
+          and what it costs (nothing, currently).</p>
+          <span class="stage-cta">FAQ →</span>
+        </a>
+      </div>
     </div>
   </div>
 </main>

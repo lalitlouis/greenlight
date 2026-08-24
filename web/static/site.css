@@ -862,3 +862,207 @@ a.run-card { color: inherit; }
 .pipeline-svg g:nth-of-type(3) text { fill: var(--desk-ratings); }
 .pipeline-svg g:nth-of-type(4) text { fill: var(--desk-safety); }
 .pipeline-svg g:nth-of-type(5) text { fill: var(--desk-territory); }
+
+/* ================= THEME: NEON CINEMA (dark) =================
+   The landing set the tone; the whole site now lives in it. Tokens are
+   redefined here so the entire component system flips at once; below are the
+   handful of rules that assumed a light ground. Text surfaces stay
+   high-contrast — color lives in structure, glow, and identity. */
+
+:root {
+  --bg: #0a1120;
+  --surface: #111a2e;
+  --surface-2: #0d1526;
+  --ink: #edf2fb;
+  --ink-2: #a9b6cc;
+  --ink-3: #7284a1;
+  --line: rgba(148, 178, 255, 0.11);
+  --line-2: rgba(148, 178, 255, 0.22);
+  --green: #22c55e;
+  --green-dark: #4ade80;
+  --green-soft: rgba(34, 197, 94, 0.14);
+  --blocker: #f87171;
+  --high: #fb923c;
+  --medium: #facc15;
+  --low: #94a3b8;
+  --fyi: #64748b;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 8px 20px rgba(0, 0, 0, 0.45), 0 24px 60px rgba(0, 0, 0, 0.5);
+}
+
+body {
+  background:
+    radial-gradient(1100px 600px at 78% -10%, rgba(34, 197, 94, 0.09), transparent 60%),
+    radial-gradient(900px 520px at -10% 30%, rgba(99, 102, 241, 0.09), transparent 55%),
+    radial-gradient(760px 480px at 108% 78%, rgba(14, 165, 233, 0.08), transparent 55%),
+    var(--bg);
+}
+
+.site-header { background: rgba(10, 17, 32, 0.82); }
+.site-nav a:hover { background: rgba(148, 178, 255, 0.08); color: var(--ink); }
+.site-nav a.active { color: var(--green-dark); background: var(--green-soft); }
+.brand { color: var(--ink); }
+.brand-dot { box-shadow: 0 0 12px var(--green), 0 0 0 4px rgba(34, 197, 94, 0.15); }
+
+.btn-primary {
+  background: linear-gradient(92deg, #10b981, #22c55e);
+  color: #04150c;
+  box-shadow: 0 2px 18px rgba(34, 197, 94, 0.35);
+}
+.btn-primary:hover { background: linear-gradient(92deg, #34d399, #4ade80); box-shadow: 0 6px 26px rgba(34, 197, 94, 0.5); }
+.btn-secondary { background: rgba(148, 178, 255, 0.06); color: var(--green-dark); border-color: var(--line-2); }
+.btn:hover { box-shadow: 0 6px 20px rgba(34, 197, 94, 0.3); }
+
+.site-footer { background: var(--surface-2); }
+.toast { background: #1c2840; color: var(--ink); border: 1px solid var(--line-2); }
+.toast.error { background: rgba(248, 113, 113, 0.15); color: var(--blocker); border-color: rgba(248, 113, 113, 0.4); }
+
+/* gradient titles read bright on dark */
+.section-title h2, .page-head h1 {
+  background: linear-gradient(92deg, var(--ink) 25%, #6ee7b7 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* key cards get a faint gradient border glow */
+.hero-mock, .pred-card, .rpt-head, .counter-strip, .cta-band, .done-banner {
+  position: relative;
+  border: 1px solid transparent;
+  background-clip: padding-box;
+}
+.hero-mock::before, .pred-card::before, .rpt-head::before, .counter-strip::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.5), rgba(99, 102, 241, 0.35), rgba(14, 165, 233, 0.3));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.hero-band {
+  background:
+    radial-gradient(900px 420px at 80% -10%, rgba(34, 197, 94, 0.14), transparent 60%),
+    radial-gradient(680px 380px at 4% 100%, rgba(99, 102, 241, 0.12), transparent 60%),
+    linear-gradient(180deg, rgba(13, 21, 38, 0.6), var(--bg));
+}
+.counter-strip { background: linear-gradient(135deg, var(--surface) 55%, rgba(34, 197, 94, 0.08)); }
+.counter-strip div:nth-child(1) b { color: #4ade80; }
+.counter-strip div:nth-child(2) b { color: #a5b4fc; }
+.counter-strip div:nth-child(3) b { color: #d8b4fe; }
+.counter-strip div:nth-child(4) b { color: #fcd34d; }
+
+.step-card:nth-child(4) .step-num { color: #fcd34d; }
+.step-card:nth-child(5) .step-num { color: #5eead4; }
+.by-safety_underwriter { color: #fcd34d; }
+.by-territory_censor { color: #7dd3fc; }
+
+.cta-band {
+  background:
+    radial-gradient(520px 280px at 85% 0%, rgba(45, 212, 191, 0.3), transparent 60%),
+    radial-gradient(420px 260px at 8% 100%, rgba(251, 191, 36, 0.18), transparent 55%),
+    linear-gradient(135deg, #064e3b, #047857);
+}
+.cta-band .btn-primary { background: #fff; color: #065f46; box-shadow: 0 4px 24px rgba(255, 255, 255, 0.25); }
+
+/* mock + pipeline on dark */
+.hm-score small { color: var(--ink-3); }
+.pipeline-svg rect { fill: rgba(148, 178, 255, 0.05); }
+.rating-badge.target { background: transparent; color: var(--green-dark); border-color: var(--green); }
+.remedy { background: rgba(34, 197, 94, 0.1); border-color: rgba(34, 197, 94, 0.3); }
+.cite { border-left-color: #34d399; }
+.rejection { background: rgba(248, 113, 113, 0.08); border-color: rgba(248, 113, 113, 0.3); color: #fca5a5; }
+.flag.rejected { background: rgba(13, 21, 38, 0.7); }
+.scene-link { color: #6ee7b7; background: rgba(34, 197, 94, 0.12); border-color: rgba(34, 197, 94, 0.35); }
+.hm-cite { color: #6ee7b7; background: rgba(34, 197, 94, 0.12); }
+.pred-evidence { color: #86efac; }
+.comp-bar { background: rgba(148, 178, 255, 0.12); }
+.sev-chip.sev-MEDIUM { color: #1a1a1a; }
+.score.good b { color: #4ade80; }
+.verdict.good { color: #4ade80; }
+.demo-tag { color: #6ee7b7; background: rgba(34, 197, 94, 0.14); }
+.faq-list summary::after { color: #4ade80; }
+.callout { background: rgba(34, 197, 94, 0.09); }
+.callout b { color: #6ee7b7; }
+.pct { color: #4ade80; }
+.phase.active { color: #6ee7b7; }
+.st.done { color: #4ade80; }
+.t-done { color: #4ade80; }
+.pipe-log .who { color: #4ade80; }
+.cite-toggle { color: #6ee7b7; }
+a { color: #34d399; }
+.footer-col a, .footer-blurb, .footer-fine p { color: var(--ink-3); }
+.skip { color: var(--ink-3); }
+
+/* ---------- how-it-works: icons, examples, action ladder ---------- */
+.hiw-pipe { max-width: 720px; margin: 8px auto 26px; display: block; }
+.stage { align-items: flex-start; }
+.stage-icon {
+  flex: none;
+  width: 46px;
+  height: 46px;
+  border-radius: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+}
+.stage-icon svg { width: 26px; height: 26px; }
+.si-green { color: #4ade80; background: rgba(34, 197, 94, 0.13); }
+.si-indigo { color: #a5b4fc; background: rgba(99, 102, 241, 0.14); }
+.si-purple { color: #d8b4fe; background: rgba(168, 85, 247, 0.14); }
+.si-amber { color: #fcd34d; background: rgba(245, 158, 11, 0.14); }
+.si-sky { color: #7dd3fc; background: rgba(14, 165, 233, 0.14); }
+.stage-body { min-width: 0; }
+.stage-example {
+  margin-top: 12px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--ink-2);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--green);
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+.stage-example .eg-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--ink-3);
+  margin-bottom: 4px;
+}
+.sev-line-BLOCKER { border-left-color: var(--blocker); }
+.sev-line-HIGH { border-left-color: var(--high); }
+.sev-line-REJ { border-left-color: var(--blocker); }
+.stage-cta {
+  display: inline-block;
+  margin-top: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #6ee7b7;
+}
+.hiw-actions { margin-top: 54px; }
+.action-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+@media (max-width: 900px) { .action-grid { grid-template-columns: 1fr; } }
+.action-card { padding: 24px; color: inherit; display: flex; flex-direction: column; transition: transform 0.15s, box-shadow 0.15s; }
+.action-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); text-decoration: none; }
+.action-card .ac-num {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #10b981, #22c55e);
+  color: #04150c;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+.action-card p { font-size: 14px; color: var(--ink-2); flex: 1; }

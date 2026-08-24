@@ -397,6 +397,9 @@ def _disk_record(run_id: str) -> dict[str, Any] | None:
     # run ids are our own file stems — refuse anything path-shaped.
     if not run_id.replace("_", "").replace("-", "").isalnum():
         return None
+    if run_id == "latest":  # stable alias: pages deep-link a real example
+        candidates = sorted(RUNS_DIR.glob("run_*.json"))
+        return json.loads(candidates[-1].read_text()) if candidates else None
     path = RUNS_DIR / f"{run_id}.json"
     if not path.exists():
         return None
