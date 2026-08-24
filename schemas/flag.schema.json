@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://greenlight.dev/schemas/flag.schema.json",
+  "title": "Flag",
+  "description": "The universal output of every gatekeeper agent. THE contract of this project. INVARIANT: a Flag with no citation does not render. If an agent cannot cite it, it is not a finding.",
+  "type": "object",
+  "required": ["flag_id", "agent", "scene_ids", "severity", "category", "finding", "citations", "remedy", "confidence"],
+  "additionalProperties": false,
+  "properties": {
+    "flag_id":   {"type": "string", "pattern": "^F[0-9]{3,4}$"},
+    "agent":     {"type": "string", "enum": ["clearance_counsel", "ratings_board", "safety_underwriter", "territory_censor"]},
+    "scene_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "entity_id": {"type": ["string", "null"], "description": "Null for findings not tied to a named entity (e.g. a stunt)."},
+    "severity":  {"type": "string", "enum": ["BLOCKER", "HIGH", "MEDIUM", "LOW", "FYI"],
+                  "description": "BLOCKER = cannot shoot or cannot release as written."},
+    "category":  {"type": "string", "description": "Slug, e.g. trademark_disparagement, sync_license, stunt_pyro, territory_ban."},
+    "finding":   {"type": "string", "description": "One paragraph, plain English, addressed to a producer."},
+    "citations": {
+      "type": "array", "minItems": 1,
+      "description": "At least one. Enforced, not aspirational.",
+      "items": {
+        "type": "object",
+        "required": ["source_type", "excerpt"],
+        "additionalProperties": false,
+        "properties": {
+          "source_type": {"type": "string", "enum": ["web", "precedent", "statute", "rules_table"]},
+          "title":        {"type": "string"},
+          "url":          {"type": ["string", "null"]},
+          "excerpt":      {"type": "string", "description": "Verbatim supporting text. No paraphrase."},
+          "retrieved_at": {"type": ["string", "null"], "format": "date-time"},
+          "via":          {"type": "string", "enum": ["parallel_search", "clickhouse", "local"]}
+        }
+      }
+    },
+    "remedy": {
+      "type": "object",
+      "required": ["action", "detail"],
+      "additionalProperties": false,
+      "properties": {
+        "action":        {"type": "string", "enum": ["REPLACE", "OBTAIN_LICENSE", "OBTAIN_RELEASE", "RESHOOT", "ADD_DISCLAIMER", "ADD_SPECIALIST", "CUT", "NO_ACTION"]},
+        "detail":        {"type": "string", "description": "Concrete and actionable. 'Rename to a fictional brand', not 'consider alternatives'."},
+        "est_cost_usd":  {"type": ["array", "null"], "minItems": 2, "maxItems": 2, "items": {"type": "number"},
+                          "description": "[low,high]. Industry rule-of-thumb table, NOT a live quote. Label it as such in the UI."},
+        "est_added_days":{"type": ["number", "null"]}
+      }
+    },
+    "confidence": {"type": "number", "minimum": 0, "maximum": 1}
+  }
+}

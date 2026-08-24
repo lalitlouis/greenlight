@@ -1,0 +1,18 @@
+# --- Google Cloud AI (the ONLY permitted runtime AI tooling; see CLAUDE.md) ---
+google-adk>=2.7.1
+google-genai>=2.19.0
+google-cloud-aiplatform[agent-engines]>=1.60.0
+
+# --- Parallel: partner track requirement, Search API called at runtime ---
+parallel-web>=1.3.0
+
+# --- ClickHouse: plain database, permitted as a non-AI third-party service ---
+clickhouse-connect>=1.7.2
+
+# --- App / parsing ---
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+pydantic>=2.9.0
+python-dotenv>=1.0.1
+pdfplumber>=0.11.0
+jsonschema>=4.23.0
