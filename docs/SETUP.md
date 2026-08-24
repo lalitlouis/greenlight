@@ -1,5 +1,23 @@
 # Provisioning
 
+## Provisioned state (as of 2026-08-23)
+
+| Resource | Value | Status |
+|---|---|---|
+| GitHub repo | https://github.com/lalitlouis/greenlight | public, MIT detected |
+| GCP project | `greenlight-clearance-2026` (number `219740804594`) | active, billing linked |
+| Billing account | `012600-29EBC8-C419FB` | linked; budget alerts at 40/75/90% of $100 |
+| Region | `us-central1` | Gemini 2.5 Flash verified working |
+| Staging bucket | `gs://greenlight-clearance-2026-staging` | created |
+| Parallel | — | **pending API key** |
+| ClickHouse Cloud | — | **pending service** |
+
+Gotcha worth remembering: a freshly created project needs `roles/aiplatform.user` granted
+explicitly even to the owner, and IAM takes ~60s to propagate. Symptom is a 403 on
+`aiplatform.endpoints.predict` that turns into a 404 before it turns into success.
+
+---
+
 Four external services. Steps marked **[you]** need a browser or an interactive login and cannot
 be automated; everything else is scripted.
 
