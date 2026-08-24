@@ -1,87 +1,104 @@
 # GREENLIGHT
 
 **Multi-agent screenplay clearance and production-risk analysis.**
+Live at **[scriptrisk.com](https://scriptrisk.com)** · built for the Agentic Cinema hackathon, Parallel track.
 
 Before a single frame is shot, a studio spends weeks clearing a screenplay: four separate desks —
 rights counsel, the ratings board, the safety underwriter, and territory censors — each read the
-same script looking for different ways it will cost money or fail to release. It is manual,
-serial, and expensive.
+same script looking for different ways it will cost money or fail to release. The work is manual,
+serial, and expensive; independent producers mostly can't afford it at all.
 
-GREENLIGHT runs those four desks concurrently as agents, and every finding it returns carries a
-citation, a concrete remedy, and a cost/schedule estimate.
+GREENLIGHT runs those four desks concurrently as agents. Every finding it returns carries a
+**verbatim citation**, a concrete remedy, and a cost estimate — and an independent verifier
+re-reads every citation and **rejects** findings the source does not support. The rejection shows
+up in the report, with the reason.
 
-> **Status:** in development for the Agentic Cinema hackathon (Parallel track).
+> **The one non-negotiable rule:** a finding without a citation does not render. It is enforced
+> in the `file_flag` tool's schema validation, not requested in a prompt.
 
 ## What it produces
 
-- A **marked-up script** with every flag anchored to its scene.
-- A **Production Risk Report**: severity-ranked flags, each with sourced citations and a remedy.
-- A **Greenlight Score** (0–100) and an evidence-based MPA rating prediction with comparable films.
-
-## Stack
-
-| Layer | Technology |
-|---|---|
-| Agent framework | Google Agent Development Kit (`google-adk`) |
-| Models | Gemini 2.5 Flash / Pro on Vertex AI |
-| Hosting | Google Cloud (Agent Engine + Cloud Run) |
-| Research | **Parallel Search API** (`parallel-web`) — per-entity clearance research |
-| Precedent corpus | ClickHouse Cloud — kNN over MPA rating rationales |
-
-All AI/model inference at runtime is **Gemini on Google Cloud**. No other AI models, agent
-frameworks, or AI APIs are used anywhere in this project.
+- A **Production Risk Report** — severity-ranked findings, each cited, each with a remedy and a
+  rule-of-thumb cost range; a deterministic **Greenlight Score**; honest open questions.
+- An **MPA rating prediction with evidence** — your script's content profile against a corpus of
+  2,487 released films: "7 of your 8 nearest comparables are rated R," plus the exact beats to
+  cut for your target rating.
+- A **marked-up script** — every finding anchored to its scene by character offsets, both ways.
+- The **Writer's Room** — professional-style coverage (PASS/CONSIDER/RECOMMEND), a pitch package
+  whose comparables are *retrieved* from the corpus with sources (never invented), and a
+  deterministic format & readiness check.
 
 ## Architecture
 
 ```
-GreenlightPipeline (SequentialAgent)
-├── ScriptParser        Fountain/PDF -> Scene[]        (deterministic)
-├── EntityExtractor     -> Entity[]                    (Gemini)
-├── GatekeeperPanel     ParallelAgent — four desks, concurrent
-│   ├── ClearanceCounsel     Parallel Search  -> Flag[]
-│   ├── RatingsBoard         ClickHouse kNN   -> Flag[]
-│   ├── SafetyUnderwriter    rules + Parallel -> Flag[]
-│   └── TerritoryCensor      ClickHouse + Parallel -> Flag[]
-├── Adjudicator         dedupe, reconcile, score       (Gemini)
-└── ReportWriter        -> Report + marked-up script   (deterministic)
+GreenlightPipeline                  SequentialAgent (Google ADK)
+├── ScriptParser                    deterministic Python — Fountain/PDF -> Scene[]
+├── Triage                          LlmAgent (Gemini Flash) -> Entity[] + per-desk worklists
+├── GatekeeperPanel                 ParallelAgent — four desks, concurrent
+│   ├── ClearanceCounsel            LoopAgent — rights, music ownership chains
+│   ├── RatingsBoard                LoopAgent — rating drivers + kNN comparables (ClickHouse)
+│   ├── SafetyUnderwriter           LoopAgent — stunts, pyro, water, minors, animals
+│   └── TerritoryCensor             LoopAgent — US / UK / CN / UAE
+├── VerificationPanel               one blinded verifier per filed flag; can REJECT
+├── Adjudicator                     LlmAgent (Gemini Pro) — merge, normalize, resolve conflicts
+└── ReportWriter                    deterministic Python -> Report + marked-up script
 ```
 
-The fan-out mirrors the domain: a real clearance process is four independent desks that do not
-talk to each other, reconciled at the end by a producer.
+Each desk is a genuine research loop: seven tools (`read_scene`, `find_in_script`, `research`,
+`query_precedent`, `file_flag`, `note_open_question`, `done`), its own budget, and the freedom to
+decide what to chase and when to stop. `research()` is the **Parallel Search API** — the source
+of every web citation. Verifiers are blinded to the desks' reasoning; the adjudicator's merge
+plan is applied deterministically with guards. Governing principle throughout: **never let the
+model assert what you could retrieve.**
 
-## Running locally
+## Runtime stack
+
+| Piece | Technology |
+|---|---|
+| Agents | **Google ADK** (`google-adk`) on **Vertex AI Gemini** — Flash for the desks, Pro for adjudication & coverage |
+| Live web research / citations | **Parallel Search API** (`parallel-web`) |
+| Ratings corpus (2,487 films) | **ClickHouse Cloud** kNN over `text-embedding-005` embeddings; facts from Wikidata (CC0) + Wikipedia via official APIs, every row with a source URL |
+| Web app | FastAPI + SSE on **Cloud Run**, vanilla JS + GSAP (vendored) |
+
+No AI SDK other than Google's is used at runtime — enforced by `scripts/check_forbidden_deps.sh`
+on every build (`make check`).
+
+## Run it
 
 ```bash
-cp .env.example .env      # fill in credentials
+git clone https://github.com/lalitlouis/greenlight.git
+cd greenlight
 make install
-make run                  # end-to-end on the fixture screenplay
-make dev                  # ADK dev UI
+make serve          # -> http://localhost:8080
 ```
 
-See [`docs/SETUP.md`](docs/SETUP.md) for provisioning Google Cloud, Parallel, and ClickHouse.
+**No credentials needed** to explore: the site ships with a recorded analysis — click *Watch a
+recorded analysis* (or *See an example report* in the Writer's Room). Live analyses need a `.env`
+with `GOOGLE_CLOUD_PROJECT` (Vertex AI enabled), `PARALLEL_API_KEY`, and `CLICKHOUSE_*`.
 
-**Product overview: https://lalitlouis.github.io/greenlight/**
+```bash
+make run            # clearance pipeline on the fixture screenplay (live APIs)
+make test           # 53 tests, no network
+make eval           # score the newest run against the seeded ground truth
+make check          # lint + forbidden-dependency scan
+python -m greenlight.cli write fixtures/slack_tide.fountain   # Writer's Room, CLI
+```
 
-## Documentation
+The fixture screenplay, *Slack Tide*, is an original short film written for this project and
+deliberately seeded with one instance of every flag category — plus two traps designed to be
+wrongly flagged so the verifier has something real to reject (`fixtures/SEEDS.md` is the ground
+truth; `make eval` executes it).
 
-- [Status](docs/STATUS.md) — current state and next steps
-- [PRD](docs/PRD.md) — problem, users, scope
-- [Tech Spec](docs/TECH_SPEC.md) — pipeline, contracts, deployment
-- [Stack](docs/STACK.md) — every technology and why it is here
-- [Compliance](docs/COMPLIANCE.md) — contest requirements and status
-- [Demo plan](docs/DEMO.md) — the 3-minute video
-- [Market](docs/MARKET.md) — pricing, competitors, productization
+## Repository
 
-## Data contracts
+```
+src/greenlight/         agents/, tools/, writer/, parser, pipeline, server, report
+schemas/                frozen JSON contracts: scene, entity, flag, report
+fixtures/               Slack Tide + seed map + cached API cassettes
+runs/*_demo.json        the recorded analyses the demo replays
+scripts/                corpus ingest, eval harness, compliance scan
+docs/                   PRD, TECH_SPEC, STATUS, DEMO, DATA_SOURCES, ...
+```
 
-`schemas/` holds the frozen JSON Schemas (`scene`, `entity`, `flag`, `report`) that every
-component codes against. Core invariant: **a flag without a citation does not render.**
-
-## Demo script
-
-`fixtures/` contains an original screenplay written for this project, seeded with one instance of
-every flag category. It is not a real or third-party screenplay.
-
-## License
-
-MIT — see [LICENSE](LICENSE).
+MIT licensed. Cost figures are rule-of-thumb estimates, not quotes; GREENLIGHT is a research
+tool, not legal advice.

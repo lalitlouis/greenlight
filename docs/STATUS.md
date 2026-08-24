@@ -1,6 +1,6 @@
 # Status
 
-Last updated: **2026-08-24** (evening). Deadline **2026-09-09, 2:00 PM PT** — treat Sept 8 as real.
+Last updated: **2026-08-24** (night). Deadline **2026-09-09, 2:00 PM PT** — treat Sept 8 as real.
 
 ## Architecture changed on 2026-08-23 — read this first
 
@@ -171,6 +171,22 @@ zero, 1Gi/1cpu, max 3 instances. Domain: scriptrisk.com via Cloud Domains, $12 o
 with zero credentials, live runs use env-var creds and the compute SA's `aiplatform.user`
 grant. Redeploy: `gcloud run deploy greenlight --source . --region us-central1` (env file
 regenerated from `.env`; see Dockerfile/.dockerignore — scratch runs and secrets never ship).
+
+### Phase 3 & beyond — shipped (day 3)
+
+- **Product**: full multi-page site (landing, home, run, report, marked-up script, Writer's
+  Room, how-it-works, FAQ, contact) in an Apple-crisp design language after three user-driven
+  redesign rounds; GSAP motion, replay harness, PDF intake, deep links (/report?run=latest).
+- **Writer's Room**: coverage (Pro, PASS/CONSIDER/RECOMMEND), pitch package with comps
+  retrieved from the corpus (cited), deterministic format check. Live run: RECOMMEND on Slack
+  Tide, comps incl. CODA / Where the Crawdads Sing.
+- **Deployed**: https://scriptrisk.com (custom domain, $12 one-time, renewal disabled) on Cloud
+  Run; run.app URL as fallback. Demo records (clearance + writer) ship in the image.
+- **Submission prep**: README rewritten for Stage One screening; docs/SUBMISSION.md drafts the
+  Devpost form; DEMO.md carries a runbook against the shipped product.
+
+Remaining before 2026-09-08: record the video (two full days reserved), Devpost form + teammate,
+final demo-record selection, key rotation after the hackathon.
 
 ### Protect these three
 

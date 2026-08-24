@@ -205,7 +205,7 @@ function promptUpload2() {
   if (!input) {
     input = el("input");
     input.type = "file";
-    input.accept = ".fountain,.txt,text/plain";
+    input.accept = ".fountain,.txt,.pdf,text/plain,application/pdf";
     input.id = "wr-file-input";
     input.hidden = true;
     input.addEventListener("change", (e) => {

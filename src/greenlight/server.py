@@ -30,6 +30,7 @@ from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
 from greenlight import parser
+from greenlight.pdf import screenplay_text
 
 ROOT = Path(__file__).resolve().parents[2]
 RUNS_DIR = ROOT / "runs"
@@ -122,7 +123,7 @@ async def _run_live(handle: RunHandle, script_path: Path) -> None:
 
 @app.post("/api/runs")
 async def create_run(screenplay: UploadFile) -> dict[str, str]:
-    source = (await screenplay.read()).decode("utf-8", errors="replace")
+    source = screenplay_text(screenplay.filename or "", await screenplay.read())
     run_id = uuid.uuid4().hex[:12]
     upload_dir = RUNS_DIR / "uploads"
     upload_dir.mkdir(parents=True, exist_ok=True)
@@ -379,7 +380,7 @@ async def _run_writer(run_id: str, path: Path) -> None:
 
 @app.post("/api/writer")
 async def create_writer_run(screenplay: UploadFile) -> dict[str, str]:
-    source = (await screenplay.read()).decode("utf-8", errors="replace")
+    source = screenplay_text(screenplay.filename or "", await screenplay.read())
     run_id = "w" + uuid.uuid4().hex[:11]
     upload_dir = RUNS_DIR / "uploads"
     upload_dir.mkdir(parents=True, exist_ok=True)

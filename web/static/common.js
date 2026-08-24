@@ -94,7 +94,7 @@ function promptUpload() {
   if (!input) {
     input = el("input");
     input.type = "file";
-    input.accept = ".fountain,.txt,text/plain";
+    input.accept = ".fountain,.txt,.pdf,text/plain,application/pdf";
     input.id = "gl-file-input";
     input.hidden = true;
     input.addEventListener("change", (e) => {

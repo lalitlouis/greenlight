@@ -43,6 +43,25 @@ evidence, not opinion.
 it. This turns "every claim is checked" from a promise into something the judge watched happen.
 Nobody else will do this, and it reads as real engineering judgment.
 
+## Runbook against the shipped product (2026-08-24)
+
+Everything below is recordable today from https://scriptrisk.com (or `make serve` locally —
+same bits). Record from **replay**, never live: /run?replay=1 streams the committed 18/18 demo
+record with realistic pacing. `?pace=` scales speed if a beat needs tightening.
+
+- 0:00 open on the LANDING (black, "Every screenplay hides a six-figure surprise") — 3 seconds,
+  then Enter. It states the problem faster than narration can.
+- The money-on-a-page beat: /script?run=latest — the funeral scene with the sync-license flag
+  in the gutter. Then /report?run=latest, open F101: verbatim citation, remedy, $10–50k.
+- The ownership chase: during replay, the Clearance column's research() calls stream by —
+  composition owner, then master, then the license requirement.
+- The comparables beat: the Rating prediction card — R vs PG-13 target, 7 of 8 comparables R,
+  the cut list naming exact scenes ("keep Danny's in S011").
+- The rejected flag: report's "Rejected in verification" section — struck through, with the
+  verifier's reason. Also visible live in the replay's pipeline log.
+- Bonus if time allows (it likely won't — protect the four moments): 5 seconds of the Writer's
+  Room example (/writer?run=latest) to show breadth: coverage verdict + retrieved comps.
+
 ## Beat sheet
 
 | Time | Beat |
