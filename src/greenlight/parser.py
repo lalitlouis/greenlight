@@ -1,0 +1,224 @@
+"""Deterministic Fountain screenplay parser. No model anywhere near this file.
+
+A hallucinated scene number breaks every anchor downstream, so parsing is plain
+Python: screenplay text in, Scene[] out, each validated against scene.schema.json.
+
+raw_span is [start, end) char offsets into the ORIGINAL source text — the marked-up
+script view depends on these being exact, so scenes are sliced, never re-assembled.
+"""
+
+from __future__ import annotations
+
+import re
+from dataclasses import dataclass, field
+from typing import Any
+
+from greenlight.contracts import validate
+
+# A scene heading: INT./EXT. variants, or a forced heading starting with a period.
+_HEADING_RE = re.compile(
+    r"^(?:\.(?=[A-Za-z])|(?:INT\.?/EXT|EXT\.?/INT|INT|EXT|EST|I/E)[.\s])", re.IGNORECASE
+)
+_TIME_WORDS = {
+    "DAY",
+    "NIGHT",
+    "DAWN",
+    "DUSK",
+    "MORNING",
+    "AFTERNOON",
+    "EVENING",
+    "SUNSET",
+    "SUNRISE",
+    "CONTINUOUS",
+    "LATER",
+    "MOMENTS LATER",
+    "SAME",
+    "SAME TIME",
+    "THE WAKE",
+}
+_CUE_EXTENSION_RE = re.compile(r"\s*\((?:CONT'D|O\.S\.|O\.C\.|V\.O\.|OFF)\.?\)\s*$", re.IGNORECASE)
+_TRANSITION_RE = re.compile(
+    r"^(?:[A-Z ]+TO:|FADE (?:IN|OUT)[.:]?|SMASH CUT[.:]?|CUT TO BLACK[.:]?)$"
+)
+
+# Crude but deterministic page model: a formatted screenplay page is ~55 lines;
+# action wraps at ~60 chars, dialogue at ~35.
+_LINES_PER_PAGE = 55
+_MAX_CUE_LEN = 40
+
+
+def _formatted_lines(text_line: str, kind: str) -> int:
+    width = 35 if kind == "dialogue" else 60
+    stripped = text_line.strip()
+    if not stripped:
+        return 1
+    return max(1, -(-len(stripped) // width))  # ceil division
+
+
+@dataclass
+class _SceneAccumulator:
+    heading: str
+    start: int
+    action_parts: list[str] = field(default_factory=list)
+    dialogue: list[dict[str, str]] = field(default_factory=list)
+    characters: list[str] = field(default_factory=list)
+    line_count: int = 1  # the heading line itself
+
+
+def _split_heading(heading: str) -> tuple[str, str, str]:
+    """'INT./EXT. MARGARET ROSE - WHEELHOUSE - NIGHT - CONTINUOUS'
+    -> ('INT/EXT', 'MARGARET ROSE - WHEELHOUSE', 'NIGHT - CONTINUOUS')."""
+    text = heading.lstrip(".").strip()
+    upper = text.upper()
+    if upper.startswith(("INT./EXT", "INT/EXT", "EXT./INT", "EXT/INT", "I/E")):
+        int_ext = "INT/EXT"
+    elif upper.startswith("INT"):
+        int_ext = "INT"
+    elif upper.startswith(("EXT", "EST")):
+        int_ext = "EXT"
+    else:
+        int_ext = "UNKNOWN"
+
+    body = re.sub(
+        r"^(?:INT\.?/EXT|EXT\.?/INT|INT|EXT|EST|I/E)[.\s]+", "", text, flags=re.IGNORECASE
+    )
+    segments = [s.strip() for s in body.split(" - ") if s.strip()]
+    time_segments: list[str] = []
+    while segments and segments[-1].upper() in _TIME_WORDS:
+        time_segments.insert(0, segments.pop())
+    location = " - ".join(segments) if segments else body.strip()
+    time_of_day = " - ".join(time_segments) if time_segments else "UNKNOWN"
+    return int_ext, location, time_of_day
+
+
+def _is_cue(line: str, next_line: str | None) -> bool:
+    """A character cue is a short all-caps line immediately followed by speech."""
+    stripped = line.strip()
+    if not stripped or next_line is None or not next_line.strip():
+        return False
+    if len(stripped) > _MAX_CUE_LEN or stripped.endswith(":") or _HEADING_RE.match(stripped):
+        return False
+    if _TRANSITION_RE.match(stripped):
+        return False
+    bare = _CUE_EXTENSION_RE.sub("", stripped)
+    letters = [c for c in bare if c.isalpha()]
+    return bool(letters) and bare == bare.upper() and not bare.endswith(".")
+
+
+def strip_title_page(text: str) -> tuple[dict[str, str], int]:
+    """Parse the Fountain title page. Returns (metadata, offset of body start)."""
+    meta: dict[str, str] = {}
+    offset = 0
+    lines = text.split("\n")
+    key = None
+    pos = 0
+    for line in lines:
+        line_end = pos + len(line) + 1
+        if re.match(r"^[A-Za-z][A-Za-z ]*:", line):
+            key, _, value = line.partition(":")
+            key = key.strip().lower()
+            meta[key] = value.strip()
+        elif line.startswith(("   ", "\t")) and key:
+            meta[key] = (meta[key] + "\n" + line.strip()).strip()
+        elif not line.strip():
+            if meta:
+                offset = line_end
+        else:
+            break
+        pos = line_end
+    return (meta, offset) if meta else ({}, 0)
+
+
+def parse_fountain(  # noqa: PLR0915 - one continuous scan loop
+    text: str,
+) -> tuple[dict[str, str], list[dict[str, Any]]]:
+    """Parse Fountain source into (title_metadata, Scene[]).
+
+    Every scene dict validates against scene.schema.json before it is returned.
+    """
+    meta, body_start = strip_title_page(text)
+
+    # Locate scene heading line starts, as offsets into the original text.
+    heading_positions: list[tuple[int, str]] = []
+    pos = body_start
+    for line in text[body_start:].split("\n"):
+        stripped = line.strip()
+        if _HEADING_RE.match(stripped) and not _TRANSITION_RE.match(stripped):
+            heading_positions.append((pos, stripped))
+        pos += len(line) + 1
+
+    scenes: list[dict[str, Any]] = []
+    cumulative_lines = 0.0
+
+    for i, (start, heading) in enumerate(heading_positions):
+        end = heading_positions[i + 1][0] if i + 1 < len(heading_positions) else len(text)
+        chunk = text[start:end]
+        acc = _SceneAccumulator(heading=heading, start=start)
+
+        lines = chunk.split("\n")[1:]  # skip the heading line itself
+        j = 0
+        while j < len(lines):
+            line = lines[j]
+            stripped = line.strip()
+            next_line = lines[j + 1] if j + 1 < len(lines) else None
+            if not stripped:
+                j += 1
+                continue
+            if _TRANSITION_RE.match(stripped):
+                acc.line_count += 1
+                j += 1
+                continue
+            if _is_cue(line, next_line):
+                character = _CUE_EXTENSION_RE.sub("", stripped).strip()
+                if character not in acc.characters:
+                    acc.characters.append(character)
+                acc.line_count += 1
+                j += 1
+                parenthetical = ""
+                speech: list[str] = []
+                while j < len(lines) and lines[j].strip():
+                    dline = lines[j].strip()
+                    if dline.startswith("(") and dline.endswith(")") and not speech:
+                        parenthetical = dline
+                    else:
+                        speech.append(dline)
+                    acc.line_count += _formatted_lines(dline, "dialogue")
+                    j += 1
+                entry: dict[str, str] = {"character": character, "line": " ".join(speech)}
+                if parenthetical:
+                    entry["parenthetical"] = parenthetical
+                acc.dialogue.append(entry)
+                continue
+            acc.action_parts.append(stripped)
+            acc.line_count += _formatted_lines(stripped, "action")
+            j += 1
+
+        page = 1 + int(cumulative_lines // _LINES_PER_PAGE)
+        cumulative_lines += acc.line_count + 1  # + blank line before next heading
+
+        int_ext, location, time_of_day = _split_heading(heading)
+        scene = {
+            "scene_id": f"S{i + 1:03d}",
+            "page": page,
+            "heading": heading,
+            "int_ext": int_ext,
+            "location": location,
+            "time_of_day": time_of_day,
+            "action": "\n\n".join(acc.action_parts),
+            "dialogue": acc.dialogue,
+            "characters": acc.characters,
+            "raw_span": [start, end],
+        }
+        scenes.append(validate("scene", scene))
+
+    return meta, scenes
+
+
+def annotated_script(text: str, scenes: list[dict[str, Any]]) -> str:
+    """The script with [scene_id] markers on each heading — what Triage reads,
+    so the scene ids it assigns to entities are the parser's ids, not inventions."""
+    out: list[str] = []
+    for scene in scenes:
+        start, end = scene["raw_span"]
+        out.append(f"[{scene['scene_id']}] {text[start:end].rstrip()}")
+    return "\n\n".join(out)

@@ -7,7 +7,7 @@ dev:            ## local ADK dev UI
 	.venv/bin/adk web src/greenlight/agents
 
 run:            ## end-to-end on the fixture screenplay
-	.venv/bin/python -m greenlight.cli run fixtures/the_last_reel.fountain
+	.venv/bin/python -m greenlight.cli run fixtures/slack_tide.fountain
 
 test:
 	.venv/bin/pytest -q

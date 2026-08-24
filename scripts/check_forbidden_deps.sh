@@ -20,7 +20,7 @@ for d in src web/src web/app; do
 done
 [[ ${#TARGETS[@]} -eq 0 ]] && exit 0
 
-BANNED='anthropic|openai|langchain|langgraph|llama[-_]index|llamaindex|crewai|pyautogen|autogen|litellm|cohere|mistralai|ollama|replicate|huggingface_hub|azure[-_.]ai|bedrock-runtime'
+BANNED='anthropic|openai|langchain|langgraph|llama[-_]index|llamaindex|crewai|pyautogen|autogen|litellm|\bcohere\b|mistralai|ollama|replicate|huggingface_hub|azure[-_.]ai|bedrock-runtime'
 
 HITS=$(grep -rEn --binary-files=without-match \
         --exclude-dir=node_modules --exclude-dir=__pycache__ --exclude-dir=.next \

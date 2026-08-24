@@ -1,6 +1,6 @@
 # Status
 
-Last updated: **2026-08-23**. Deadline **2026-09-09, 2:00 PM PT** — treat Sept 8 as real.
+Last updated: **2026-08-24**. Deadline **2026-09-09, 2:00 PM PT** — treat Sept 8 as real.
 
 ## Architecture changed on 2026-08-23 — read this first
 
@@ -66,20 +66,27 @@ Bonus finding: the practitioner triage criteria in those results (*prominently f
 *suggests endorsement*, *negative light*, *essential to plot*) independently match the
 `prominence` and `depicted_negatively` fields in `entity.schema.json`.
 
-## Next — Phase 1 (days 2–4): ugly spine, end to end
+## Phase 1 — COMPLETE (day 2, ahead of schedule)
 
-Goal: `make run` prints real cited flags from a real screenplay. No UI, no ClickHouse, no fan-out.
+`make run` works end to end: parse -> Triage -> ClearanceCounsel as a genuine LoopAgent with
+live Parallel research -> real cited flags. First full run: 15 entities, 6 flags in 125.7s, and
+the desk split "Hallelujah" into sync (Sony/ATV) and master (Columbia/Sony Music) on its own —
+the ownership chase is real. It researched the Stephen Foster trap and correctly declined to
+flag it. Cached run in `runs/`. New-project Gemini 429s are ridden out by ADK retry_config; a
+crashed run salvages partial state.
 
-1. **Original demo screenplay** in `fixtures/` — must be our own work (contest rule), ~15 pages,
+Original goal, for reference:
+
+1. [x] **Original demo screenplay** in `fixtures/` — must be our own work (contest rule), ~15 pages,
    seeded with one instance of every flag category **plus one verifier trap**: an entity where
    surface search results look supportive but do not actually support the obvious claim. The
    rejected-flag demo moment cannot be scripted, only harvested — the trap raises the odds, and
    the cached run committed to `runs/` must be *selected* for containing a rejection. Open
    question: dense checklist vs. a genuine short film that happens to be dense. Leaning genuine
    short film — the video is the only thing most judges experience.
-2. **Fountain parser** -> `Scene[]` with `raw_span` char offsets.
-3. **Triage** (Gemini 2.5 Flash, structured output) -> `Entity[]` + per-desk worklists.
-4. **ClearanceCounsel as a real LoopAgent** — tools (`read_scene`, `find_in_script`, `research`,
+2. [x] **Fountain parser** -> `Scene[]` with `raw_span` char offsets.
+3. [x] **Triage** (Gemini 2.5 Flash, structured output) -> `Entity[]` + per-desk worklists.
+4. [x] **ClearanceCounsel as a real LoopAgent** — tools (`read_scene`, `find_in_script`, `research`,
    `file_flag`, `done`), live Parallel calls, terminating on its own. Build one desk as a genuine
    loop rather than four as prompts; the other three are then repetition.
 
@@ -130,6 +137,10 @@ creative magic, not legal ops. Fixed entirely in presentation — see `docs/DEMO
 
 Revise up to ~25% unconditional if a one-desk loop with real citations works by day 5. Revise down
 to ~5% if there is no end-to-end run by day 10.
+
+**2026-08-24: the tripwire hit on day 2 — one-desk loop, real citations, self-terminating.
+Unconditional revised to ~25% per the rule above.** Remaining gap to the conditional number is
+the panel, verification, corpus, UI, and deploy — integration risk, no longer feasibility risk.
 
 ### Preference
 

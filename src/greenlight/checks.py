@@ -63,16 +63,12 @@ def check_google_cloud() -> Result:
             contents="Reply with the single word: ready",
         )
         text = (resp.text or "").strip()
-        return Result(
-            name, bool(text), f"gemini-2.5-flash replied: {text[:40]!r}", gate=True
-        )
-    except Exception as e:  # noqa: BLE001 - preflight reports, never raises
+        return Result(name, bool(text), f"gemini-2.5-flash replied: {text[:40]!r}", gate=True)
+    except Exception as e:
         hint = ""
         if "default credentials" in str(e).lower():
             hint = "  -> run: gcloud auth application-default login"
-        return Result(
-            name, False, f"{type(e).__name__}: {str(e)[:180]}{hint}", gate=True
-        )
+        return Result(name, False, f"{type(e).__name__}: {str(e)[:180]}{hint}", gate=True)
 
 
 def check_parallel() -> Result:
@@ -96,7 +92,7 @@ def check_parallel() -> Result:
         n = len(res.results)
         top = res.results[0].url if n else "(none)"
         return Result(name, n > 0, f"{n} results, top: {top[:90]}", gate=True)
-    except Exception as e:  # noqa: BLE001
+    except Exception as e:
         return Result(name, False, f"{type(e).__name__}: {str(e)[:180]}", gate=True)
 
 
@@ -117,7 +113,7 @@ def check_clickhouse() -> Result:
         )
         version = client.query("SELECT version()").result_rows[0][0]
         return Result(name, True, f"connected, server version {version}")
-    except Exception as e:  # noqa: BLE001
+    except Exception as e:
         return Result(name, False, f"{type(e).__name__}: {str(e)[:180]}")
 
 
@@ -138,9 +134,7 @@ def check_compliance() -> Result:
         problems.append("forbidden AI dependency present -- see `make check`")
     if problems:
         return Result(name, False, "; ".join(problems), gate=True)
-    return Result(
-        name, True, "LICENSE present; no non-Google AI SDKs in shipped code", gate=True
-    )
+    return Result(name, True, "LICENSE present; no non-Google AI SDKs in shipped code", gate=True)
 
 
 CHECKS = {
