@@ -1,0 +1,750 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GREENLIGHT</title>
+<meta name="description" content="Multi-agent screenplay clearance. Four gatekeeper desks read your script concurrently and return cited, costed findings.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Libre+Franklin:wght@400;500;600&family=Courier+Prime:wght@400;700&display=swap">
+<style>
+:root{
+  --paper:#EDEEF0; --paper-2:#E3E6EA; --card:#FFFFFF;
+  --ink:#15181D; --ink-2:#4A5058; --ink-3:#787F89;
+  --rule:#CFD3D8; --rule-soft:#DFE2E6;
+  --stamp:#1B6B47; --stamp-soft:#DBE8E1;
+  --blocker:#A32B24; --high:#A96712; --medium:#6E6631; --low:#4A5560;
+  --screen:#0E1116; --screen-2:#161B22; --screen-3:#1D242D;
+  --screen-rule:#262F3A; --screen-ink:#E7EAEE; --screen-ink-2:#96A0AC; --screen-ink-3:#6B7482;
+  --screen-stamp:#54B98A;
+  --sans:"Libre Franklin",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --serif:"Newsreader",Georgia,"Times New Roman",serif;
+  --mono:"Courier Prime",ui-monospace,"Courier New",monospace;
+  --measure:66ch; --wide:1180px;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#0B0E12; --paper-2:#11151A; --card:#141920;
+    --ink:#E8EBEF; --ink-2:#A6AEB9; --ink-3:#79828E;
+    --rule:#232A33; --rule-soft:#1B222A;
+    --stamp:#57BC8C; --stamp-soft:#122320;
+    --blocker:#E0685F; --high:#D3963F; --medium:#AEA560; --low:#8B97A5;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0B0E12; --paper-2:#11151A; --card:#141920;
+  --ink:#E8EBEF; --ink-2:#A6AEB9; --ink-3:#79828E;
+  --rule:#232A33; --rule-soft:#1B222A;
+  --stamp:#57BC8C; --stamp-soft:#122320;
+  --blocker:#E0685F; --high:#D3963F; --medium:#AEA560; --low:#8B97A5;
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:var(--sans); font-size:17px; line-height:1.65;
+  font-feature-settings:"kern";
+}
+.wrap{max-width:var(--measure); margin-inline:auto; padding-inline:28px}
+.wide{max-width:var(--wide); margin-inline:auto; padding-inline:28px}
+
+h1,h2,h3{font-family:var(--serif); font-weight:500; text-wrap:balance; margin:0}
+h2{font-size:clamp(28px,3.6vw,38px); line-height:1.15; letter-spacing:-.01em}
+h3{font-size:21px; line-height:1.3}
+p{margin:0}
+a{color:inherit}
+
+.label{
+  font-family:var(--mono); font-size:11.5px; font-weight:700;
+  text-transform:uppercase; letter-spacing:.14em; color:var(--ink-3);
+}
+.stack{display:flex; flex-direction:column}
+.gap-8{gap:8px}.gap-12{gap:12px}.gap-16{gap:16px}.gap-24{gap:24px}.gap-32{gap:32px}
+
+/* ---------- masthead ---------- */
+.masthead{border-bottom:1px solid var(--rule); background:var(--paper)}
+.masthead-in{
+  max-width:var(--wide); margin-inline:auto; padding:14px 28px;
+  display:flex; align-items:center; justify-content:space-between; gap:20px;
+}
+.mark{display:flex; align-items:center; gap:10px; font-family:var(--mono); font-weight:700; letter-spacing:.16em; font-size:13px}
+.dot{width:9px; height:9px; border-radius:50%; background:var(--stamp); box-shadow:0 0 0 3px var(--stamp-soft)}
+.masthead .label{font-size:11px}
+
+/* ---------- hero ---------- */
+.hero{padding:76px 0 56px; border-bottom:1px solid var(--rule)}
+.hero h1{
+  font-size:clamp(38px,6.2vw,64px); line-height:1.04; letter-spacing:-.022em;
+  margin-block:18px 22px;
+}
+.hero .lede{font-size:19px; color:var(--ink-2); max-width:56ch}
+.rule-label{display:flex; align-items:center; gap:14px}
+.rule-label::after{content:""; flex:1; height:1px; background:var(--rule)}
+
+.facts{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:1px; background:var(--rule); border:1px solid var(--rule);
+  margin-top:40px;
+}
+.fact{background:var(--paper); padding:18px 18px 16px; display:flex; flex-direction:column; gap:6px}
+.fact b{font-family:var(--mono); font-size:24px; font-weight:700; letter-spacing:-.02em; font-variant-numeric:tabular-nums}
+.fact span{font-size:13px; color:var(--ink-3); line-height:1.4}
+
+/* ---------- sections ---------- */
+section{padding:64px 0; border-bottom:1px solid var(--rule)}
+.sec-head{display:flex; flex-direction:column; gap:14px; margin-bottom:32px}
+.prose{display:flex; flex-direction:column; gap:18px; color:var(--ink-2)}
+.prose strong{color:var(--ink); font-weight:600}
+
+/* ---------- desks ---------- */
+.desks{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:1px; background:var(--rule); border:1px solid var(--rule)}
+.desk{background:var(--card); padding:20px; display:flex; flex-direction:column; gap:9px}
+.desk .n{font-family:var(--mono); font-size:11px; color:var(--stamp); font-weight:700; letter-spacing:.1em}
+.desk h3{font-size:17px}
+.desk p{font-size:14px; color:var(--ink-2); line-height:1.5}
+
+/* ---------- screen (app mockups) ---------- */
+.screen{
+  background:var(--screen); color:var(--screen-ink);
+  border:1px solid var(--screen-rule); border-radius:7px; overflow:hidden;
+  font-family:var(--sans); box-shadow:0 18px 44px -26px rgba(0,0,0,.55);
+}
+.chrome{
+  display:flex; align-items:center; gap:10px; padding:9px 14px;
+  background:var(--screen-2); border-bottom:1px solid var(--screen-rule);
+}
+.tl{display:flex; gap:6px}
+.tl i{width:10px; height:10px; border-radius:50%; background:var(--screen-3); display:block}
+.chrome .path{font-family:var(--mono); font-size:11.5px; color:var(--screen-ink-3); letter-spacing:.02em}
+.caption{font-size:13.5px; color:var(--ink-3); margin-top:12px; font-family:var(--mono); line-height:1.5}
+.shot{margin-top:14px}
+.shot + .shot{margin-top:44px}
+
+/* score header */
+.rpt-head{display:flex; flex-wrap:wrap; gap:24px; padding:22px 24px; border-bottom:1px solid var(--screen-rule); align-items:flex-start}
+.score{display:flex; align-items:baseline; gap:10px}
+.score b{font-family:var(--mono); font-size:52px; font-weight:700; line-height:.9; letter-spacing:-.03em; color:var(--blocker); font-variant-numeric:tabular-nums}
+.score .of{font-family:var(--mono); font-size:14px; color:var(--screen-ink-3)}
+.score-meta{display:flex; flex-direction:column; gap:5px}
+.verdict{
+  font-family:var(--mono); font-size:11px; font-weight:700; letter-spacing:.12em;
+  color:#fff; background:var(--blocker); padding:3px 8px; align-self:flex-start;
+}
+.proj{font-size:13px; color:var(--screen-ink-2)}
+.proj b{color:var(--screen-stamp); font-family:var(--mono); font-variant-numeric:tabular-nums}
+.tally{display:flex; gap:0; margin-left:auto; border:1px solid var(--screen-rule)}
+.tally div{padding:10px 15px; display:flex; flex-direction:column; gap:3px; border-right:1px solid var(--screen-rule)}
+.tally div:last-child{border-right:0}
+.tally b{font-family:var(--mono); font-size:19px; font-variant-numeric:tabular-nums; line-height:1}
+.tally span{font-family:var(--mono); font-size:9.5px; letter-spacing:.1em; color:var(--screen-ink-3)}
+.t-b b{color:var(--blocker)} .t-h b{color:var(--high)} .t-m b{color:var(--medium)} .t-l b{color:var(--low)}
+
+/* flag rows */
+.flags{display:flex; flex-direction:column}
+.flag{display:grid; grid-template-columns:4px 76px 1fr auto; gap:0 16px; padding:15px 24px 15px 0; border-bottom:1px solid var(--screen-rule); align-items:start}
+.flag:last-child{border-bottom:0}
+.sev-bar{width:4px; align-self:stretch}
+.sev-blocker{background:var(--blocker)} .sev-high{background:var(--high)}
+.sev-medium{background:var(--medium)} .sev-low{background:var(--low)}
+.flag .scene{font-family:var(--mono); font-size:12px; color:var(--screen-ink-3); padding-left:20px; padding-top:2px}
+.flag-main{display:flex; flex-direction:column; gap:5px; min-width:0}
+.flag-top{display:flex; align-items:center; gap:9px; flex-wrap:wrap}
+.sev-chip{font-family:var(--mono); font-size:9.5px; font-weight:700; letter-spacing:.1em; padding:2px 6px; border:1px solid currentColor}
+.c-blocker{color:var(--blocker)} .c-high{color:var(--high)} .c-medium{color:var(--medium)} .c-low{color:var(--low)}
+.cat{font-family:var(--mono); font-size:11.5px; color:var(--screen-ink-3)}
+.by{font-family:var(--mono); font-size:11px; color:var(--screen-ink-3); margin-left:auto}
+.flag h4{margin:0; font-size:15px; font-weight:600; line-height:1.35; color:var(--screen-ink)}
+.flag p{font-size:13.5px; color:var(--screen-ink-2); line-height:1.55}
+.cost{font-family:var(--mono); font-size:12.5px; text-align:right; white-space:nowrap; padding-top:2px; color:var(--screen-ink-2); font-variant-numeric:tabular-nums}
+.cost b{display:block; color:var(--screen-ink); font-size:13.5px}
+
+/* expanded flag */
+.expand{margin-top:11px; border-left:2px solid var(--screen-rule); padding-left:15px; display:flex; flex-direction:column; gap:13px}
+.blk-label{font-family:var(--mono); font-size:9.5px; font-weight:700; letter-spacing:.13em; color:var(--screen-ink-3); margin-bottom:6px}
+.cite{background:var(--screen-2); border:1px solid var(--screen-rule); padding:12px 14px}
+.cite q{display:block; font-family:var(--serif); font-size:14.5px; line-height:1.55; color:var(--screen-ink); quotes:"\201C" "\201D"}
+.cite .src{display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:9px; font-family:var(--mono); font-size:11px; color:var(--screen-ink-3)}
+.cite .src a{color:var(--screen-stamp); text-decoration:none; border-bottom:1px solid transparent}
+.cite .src a:hover,.cite .src a:focus-visible{border-bottom-color:currentColor}
+.via{border:1px solid var(--screen-rule); padding:1px 5px; font-size:9.5px; letter-spacing:.08em}
+.remedy{display:flex; gap:12px; align-items:flex-start; background:var(--stamp-soft-screen,rgba(84,185,138,.07)); border:1px solid rgba(84,185,138,.22); padding:12px 14px}
+.remedy .act{font-family:var(--mono); font-size:10px; font-weight:700; letter-spacing:.1em; color:var(--screen-stamp); border:1px solid currentColor; padding:2px 6px; white-space:nowrap}
+.remedy p{font-size:13.5px; color:var(--screen-ink-2); margin:0}
+
+/* four-desk live panel */
+.panel{display:grid; grid-template-columns:repeat(4,1fr)}
+.col{border-right:1px solid var(--screen-rule); display:flex; flex-direction:column}
+.col:last-child{border-right:0}
+.col-head{padding:13px 15px 12px; border-bottom:1px solid var(--screen-rule); display:flex; flex-direction:column; gap:8px}
+.col-head .nm{font-size:13.5px; font-weight:600}
+.col-head .st{font-family:var(--mono); font-size:10.5px; letter-spacing:.06em; display:flex; align-items:center; gap:6px}
+.pulse{width:6px; height:6px; border-radius:50%; background:currentColor}
+.running{color:var(--high)}
+.done{color:var(--screen-stamp)}
+.queued{color:var(--screen-ink-3)}
+@media (prefers-reduced-motion:no-preference){
+  .running .pulse{animation:blink 1.15s ease-in-out infinite}
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+.bar{height:2px; background:var(--screen-3); overflow:hidden}
+.bar i{display:block; height:100%; background:currentColor}
+.col-body{padding:11px 15px 15px; display:flex; flex-direction:column; gap:8px; min-height:190px}
+.tick{font-family:var(--mono); font-size:11px; line-height:1.45; color:var(--screen-ink-3); display:flex; gap:7px}
+.tick b{color:var(--screen-ink-2); font-weight:400}
+.tick.hit{color:var(--screen-ink-2)}
+.tick.hit b{color:var(--blocker)}
+.tick .g{color:var(--screen-stamp)}
+
+/* comparables */
+.comps{padding:20px 24px; display:flex; flex-direction:column; gap:16px}
+.pred{display:flex; align-items:center; gap:16px; flex-wrap:wrap}
+.rating-card{border:2px solid var(--screen-ink); padding:7px 15px; font-family:var(--mono); font-weight:700; font-size:24px; letter-spacing:.04em}
+.pred .vs{font-family:var(--mono); font-size:12px; color:var(--screen-ink-3); line-height:1.5}
+.pred .vs b{color:var(--screen-ink-2)}
+table{width:100%; border-collapse:collapse; font-size:13px}
+th{font-family:var(--mono); font-size:9.5px; letter-spacing:.11em; text-transform:uppercase; color:var(--screen-ink-3); text-align:left; padding:0 12px 8px 0; border-bottom:1px solid var(--screen-rule); font-weight:700}
+td{padding:9px 12px 9px 0; border-bottom:1px solid var(--screen-rule); color:var(--screen-ink-2); vertical-align:top}
+tr:last-child td{border-bottom:0}
+td.ti{color:var(--screen-ink); font-weight:500}
+td.rt{font-family:var(--mono); font-weight:700; color:var(--screen-ink)}
+td.d{font-family:var(--mono); font-variant-numeric:tabular-nums; color:var(--screen-ink-3); text-align:right}
+.tbl-scroll{overflow-x:auto}
+.cuts{background:var(--screen-2); border:1px solid var(--screen-rule); padding:14px 16px; display:flex; flex-direction:column; gap:8px}
+.cuts ol{margin:0; padding-left:18px; display:flex; flex-direction:column; gap:6px; font-size:13.5px; color:var(--screen-ink-2)}
+
+/* script view */
+.scriptview{display:grid; grid-template-columns:1fr 250px}
+.page{padding:26px 30px; font-family:var(--mono); font-size:13px; line-height:1.55; color:var(--screen-ink-2); border-right:1px solid var(--screen-rule)}
+.page .sl{color:var(--screen-ink); font-weight:700; margin:20px 0 10px}
+.page .sl:first-child{margin-top:0}
+.page .ac{margin:0 0 10px}
+.page .ch{margin:14px 0 0; padding-left:34%; color:var(--screen-ink); font-weight:700}
+.page .di{margin:0 0 10px; padding-left:20%; padding-right:16%}
+mark{background:rgba(163,43,36,.2); color:inherit; border-bottom:1px solid var(--blocker); padding:1px 0}
+mark.m2{background:rgba(169,103,18,.18); border-bottom-color:var(--high)}
+.gutter{padding:26px 18px; display:flex; flex-direction:column; gap:14px}
+.gnote{display:flex; flex-direction:column; gap:4px; border-left:2px solid var(--blocker); padding-left:11px}
+.gnote.h{border-left-color:var(--high)}
+.gnote .gt{font-family:var(--mono); font-size:9.5px; font-weight:700; letter-spacing:.1em; color:var(--blocker)}
+.gnote.h .gt{color:var(--high)}
+.gnote p{font-size:12px; line-height:1.45; color:var(--screen-ink-2)}
+
+/* intake */
+.intake{padding:44px 30px; display:flex; flex-direction:column; align-items:center; gap:16px; text-align:center}
+.drop{border:1.5px dashed var(--screen-rule); border-radius:5px; padding:34px 40px; display:flex; flex-direction:column; gap:9px; align-items:center; width:100%; max-width:440px}
+.drop .big{font-size:16px; font-weight:600}
+.drop .sm{font-family:var(--mono); font-size:11.5px; color:var(--screen-ink-3)}
+.btn{font-family:var(--mono); font-size:12px; font-weight:700; letter-spacing:.1em; background:var(--screen-stamp); color:#062117; border:0; padding:10px 22px; cursor:pointer}
+.opts{display:flex; gap:18px; flex-wrap:wrap; justify-content:center; font-family:var(--mono); font-size:11px; color:var(--screen-ink-3)}
+
+/* pipeline */
+.pipe{font-family:var(--mono); font-size:12.5px; line-height:1.85; background:var(--card); border:1px solid var(--rule); padding:20px 22px; overflow-x:auto; color:var(--ink-2); white-space:pre}
+.pipe b{color:var(--stamp); font-weight:700}
+
+/* stack table */
+.stack-tbl{width:100%; border-collapse:collapse; font-size:14.5px}
+.stack-tbl th{color:var(--ink-3); border-bottom:1px solid var(--rule); padding:0 14px 9px 0}
+.stack-tbl td{border-bottom:1px solid var(--rule-soft); padding:11px 14px 11px 0; color:var(--ink-2); vertical-align:top}
+.stack-tbl td:first-child{color:var(--ink); font-family:var(--mono); font-size:13px; white-space:nowrap}
+
+/* footer */
+footer{padding:44px 0 60px; border-bottom:0}
+.foot{display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap; align-items:flex-end}
+.foot a{color:var(--stamp); text-decoration:none; border-bottom:1px solid transparent; font-family:var(--mono); font-size:13px}
+.foot a:hover,.foot a:focus-visible{border-bottom-color:currentColor}
+.disc{font-size:12.5px; color:var(--ink-3); max-width:48ch; line-height:1.5}
+
+:focus-visible{outline:2px solid var(--stamp); outline-offset:2px}
+
+@media (max-width:900px){
+  .panel{grid-template-columns:repeat(2,1fr)}
+  .col:nth-child(2){border-right:0}
+  .col:nth-child(-n+2){border-bottom:1px solid var(--screen-rule)}
+  .scriptview{grid-template-columns:1fr}
+  .page{border-right:0; border-bottom:1px solid var(--screen-rule)}
+}
+@media (max-width:640px){
+  body{font-size:16px}
+  .panel{grid-template-columns:1fr}
+  .col{border-right:0; border-bottom:1px solid var(--screen-rule)}
+  .flag{grid-template-columns:4px 1fr; gap:0 12px}
+  .flag .scene{grid-column:2; padding-left:0; padding-bottom:4px}
+  .flag-main{grid-column:2}
+  .cost{grid-column:2; text-align:left; padding-top:8px}
+  .tally{margin-left:0}
+  .by{margin-left:0}
+}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-in">
+    <div class="mark"><span class="dot" aria-hidden="true"></span>GREENLIGHT</div>
+    <div class="label">Script clearance, run as a panel</div>
+  </div>
+</header>
+
+<div class="hero wrap">
+  <div class="rule-label"><span class="label">Pre-production risk</span></div>
+  <h1>Four clearance desks read your screenplay at once.</h1>
+  <p class="lede">Every finding comes back with the source it came from, what it costs to fix,
+  and how many days it adds. Nothing renders without a citation.</p>
+  <div class="facts">
+    <div class="fact"><b>$1&ndash;3k</b><span>Cost of a first clearance report on a feature</span></div>
+    <div class="fact"><b>7 days</b><span>Standard turnaround, priced by speed</span></div>
+    <div class="fact"><b>Per page</b><span>How incumbents bill &mdash; it is metered labour</span></div>
+    <div class="fact"><b>Mandatory</b><span>No clearance report, no E&amp;O insurance, no distribution</span></div>
+  </div>
+</div>
+
+<section class="wrap">
+  <div class="sec-head">
+    <div class="rule-label"><span class="label">01 &nbsp;The problem</span></div>
+    <h2>Clearance is four people reading the same script for four different reasons.</h2>
+  </div>
+  <div class="prose">
+    <p>Before a frame is shot, a screenplay goes through clearance. Rights counsel looks for brands,
+    music, real people and artwork. A ratings consultant estimates what the MPA will assign. The
+    insurer's reader looks for stunts, pyro, animals and minors. Territory advisors look for what
+    gets cut in each release market.</p>
+    <p>They work <strong>serially, by hand, and expensively</strong>. Findings arrive as a memo weeks
+    later, by which point the budget is locked. Independent producers, who need it most, often skip
+    it entirely and discover the problem in post.</p>
+    <p>GREENLIGHT runs those four desks concurrently as agents and returns the same document in
+    minutes &mdash; with every claim sourced.</p>
+  </div>
+</section>
+
+<section class="wide">
+  <div class="sec-head" style="max-width:var(--measure);margin-inline:auto;width:100%">
+    <div class="rule-label"><span class="label">02 &nbsp;The panel</span></div>
+    <h2>Four gatekeepers, no shared context.</h2>
+    <p style="color:var(--ink-2)">Each desk reads independently, exactly as it works in a studio.
+    An adjudicator reconciles them at the end &mdash; which is what a producer does.</p>
+  </div>
+  <div class="desks">
+    <div class="desk">
+      <span class="n">DESK 01</span>
+      <h3>Clearance Counsel</h3>
+      <p>Brands, music, real people, artwork, locations, publications. Runs one live research task
+      per entity and returns verbatim sourced text.</p>
+    </div>
+    <div class="desk">
+      <span class="n">DESK 02</span>
+      <h3>Ratings Board</h3>
+      <p>Matches your content beats against a corpus of published MPA rating rationales and returns
+      the nearest released films &mdash; evidence, not a guess.</p>
+    </div>
+    <div class="desk">
+      <span class="n">DESK 03</span>
+      <h3>Safety Underwriter</h3>
+      <p>Stunts, pyro, firearms, water, animals, minors. Flags what an insurer will require on the
+      call sheet and what it adds to the schedule.</p>
+    </div>
+    <div class="desk">
+      <span class="n">DESK 04</span>
+      <h3>Territory Censor</h3>
+      <p>What gets cut, re-rated or refused in each release market, and which scenes need an
+      alternate assembly.</p>
+    </div>
+  </div>
+</section>
+
+<section class="wide">
+  <div class="sec-head" style="max-width:var(--measure);margin-inline:auto;width:100%">
+    <div class="rule-label"><span class="label">03 &nbsp;The product</span></div>
+    <h2>What it looks like.</h2>
+    <p style="color:var(--ink-2)">Screens below are design mockups built with representative
+    findings. The citation shown in the expanded flag is real output captured from a live run.</p>
+  </div>
+
+  <div class="shot">
+    <div class="screen">
+      <div class="chrome"><div class="tl" aria-hidden="true"><i></i><i></i><i></i></div>
+        <span class="path">greenlight &mdash; new analysis</span></div>
+      <div class="intake">
+        <div class="drop">
+          <span class="big">Drop a screenplay</span>
+          <span class="sm">.fountain &nbsp;&middot;&nbsp; .pdf &nbsp;&middot;&nbsp; .fdx</span>
+          <button class="btn" type="button">SELECT FILE</button>
+        </div>
+        <div class="opts">
+          <span>TARGET RATING &nbsp;&rsaquo;&nbsp; PG-13</span>
+          <span>TERRITORIES &nbsp;&rsaquo;&nbsp; US / UK / CN / AE</span>
+          <span>BUDGET TIER &nbsp;&rsaquo;&nbsp; INDIE</span>
+        </div>
+      </div>
+    </div>
+    <p class="caption">Intake. Target rating and territories are set up front, because both change
+    what counts as a finding.</p>
+  </div>
+
+  <div class="shot">
+    <div class="screen">
+      <div class="chrome"><div class="tl" aria-hidden="true"><i></i><i></i><i></i></div>
+        <span class="path">THE LAST REEL &mdash; 94 pages &mdash; 61 entities &mdash; 00:47 elapsed</span></div>
+      <div class="panel">
+        <div class="col">
+          <div class="col-head">
+            <span class="nm">Clearance Counsel</span>
+            <span class="st running"><span class="pulse"></span>RESEARCHING 38/61</span>
+            <span class="bar running"><i style="width:62%"></i></span>
+          </div>
+          <div class="col-body">
+            <span class="tick hit"><b>S014</b> beverage brand &mdash; destroyed on screen</span>
+            <span class="tick hit"><b>S022</b> needle-drop &mdash; 2 rightsholders</span>
+            <span class="tick"><b>S031</b> &ldquo;Happy Birthday&rdquo; <span class="g">&check; public domain</span></span>
+            <span class="tick"><b>S008</b> public figure on background TV</span>
+            <span class="tick">S040 mural &mdash; searching&hellip;</span>
+          </div>
+        </div>
+        <div class="col">
+          <div class="col-head">
+            <span class="nm">Ratings Board</span>
+            <span class="st done"><span class="pulse"></span>COMPLETE</span>
+            <span class="bar done"><i style="width:100%"></i></span>
+          </div>
+          <div class="col-body">
+            <span class="tick">14 content beats extracted</span>
+            <span class="tick">312 rationales compared</span>
+            <span class="tick hit"><b>R</b> predicted &mdash; target PG-13</span>
+            <span class="tick">8 comparables returned</span>
+            <span class="tick">3 beats to cut identified</span>
+          </div>
+        </div>
+        <div class="col">
+          <div class="col-head">
+            <span class="nm">Safety Underwriter</span>
+            <span class="st running"><span class="pulse"></span>READING 71/94</span>
+            <span class="bar running"><i style="width:76%"></i></span>
+          </div>
+          <div class="col-body">
+            <span class="tick hit"><b>S047</b> car fire &mdash; minor in frame</span>
+            <span class="tick"><b>S047</b> licensed pyro required</span>
+            <span class="tick">S052 exterior night, water</span>
+            <span class="tick">S061 firearm &mdash; blank-fire</span>
+            <span class="tick">reading p.72&hellip;</span>
+          </div>
+        </div>
+        <div class="col">
+          <div class="col-head">
+            <span class="nm">Territory Censor</span>
+            <span class="st queued"><span class="pulse"></span>QUEUED</span>
+            <span class="bar queued"><i style="width:0"></i></span>
+          </div>
+          <div class="col-body">
+            <span class="tick">US &mdash; pending</span>
+            <span class="tick">UK &mdash; pending</span>
+            <span class="tick">CN &mdash; pending</span>
+            <span class="tick">AE &mdash; pending</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="caption">The desks run concurrently, and the interface says so. Each column fills at
+    its own rate; findings appear as they land rather than at the end.</p>
+  </div>
+
+  <div class="shot">
+    <div class="screen">
+      <div class="chrome"><div class="tl" aria-hidden="true"><i></i><i></i><i></i></div>
+        <span class="path">THE LAST REEL &mdash; production risk report</span></div>
+      <div class="rpt-head">
+        <div class="score"><b>35</b><span class="of">/100</span></div>
+        <div class="score-meta">
+          <span class="verdict">NOT CLEARED &mdash; 1 BLOCKER</span>
+          <span class="proj">Clearance readiness. Projected <b>81</b> once the six remedies below are applied.</span>
+        </div>
+        <div class="tally">
+          <div class="t-b"><b>1</b><span>BLOCKER</span></div>
+          <div class="t-h"><b>2</b><span>HIGH</span></div>
+          <div class="t-m"><b>2</b><span>MED</span></div>
+          <div class="t-l"><b>1</b><span>LOW</span></div>
+        </div>
+      </div>
+
+      <div class="flags">
+        <div class="flag">
+          <span class="sev-bar sev-blocker" aria-hidden="true"></span>
+          <span class="scene">S014 &middot; p.23</span>
+          <div class="flag-main">
+            <div class="flag-top">
+              <span class="sev-chip c-blocker">BLOCKER</span>
+              <span class="cat">trademark_disparagement</span>
+              <span class="by">clearance_counsel</span>
+            </div>
+            <h4>A named national beverage brand is destroyed on screen and injures a character.</h4>
+            <p>The script specifies a real brand by name. Depicting an identifiable product as
+            defective or dangerous moves this outside incidental use, and the owner will not grant
+            permission for a negative depiction.</p>
+
+            <div class="expand">
+              <div>
+                <div class="blk-label">CITATION &mdash; 1 OF 3</div>
+                <div class="cite">
+                  <q>Generally, if a product or trademark appears in a favorable or neutral light,
+                  you will have no trouble getting permission from the manufacturer or trademark
+                  owner to film it. If the product appears in a negative light, however, you may be
+                  sued for product disparagement (or libel) unless you have written permission to
+                  film it in that way.</q>
+                  <div class="src">
+                    <span class="via">PARALLEL SEARCH</span>
+                    <a href="https://www.eqgroup.com/library/film-law1">eqgroup.com/library/film-law1</a>
+                    <span>&middot; Your Film: Blockbuster Hit&hellip; or Lawsuit-in-Waiting?</span>
+                    <span>&middot; 2024-08-30</span>
+                  </div>
+                </div>
+              </div>
+              <div class="remedy">
+                <span class="act">REPLACE</span>
+                <p>Rename to a fictional brand and confirm no live trademark registration in class 32.
+                Art department must dress the scene with a cleared prop label. <b>$0 &middot; no schedule
+                impact if changed before the shoot.</b></p>
+              </div>
+            </div>
+          </div>
+          <div class="cost"><b>$0</b>if fixed now</div>
+        </div>
+
+        <div class="flag">
+          <span class="sev-bar sev-high" aria-hidden="true"></span>
+          <span class="scene">S022 &middot; p.34</span>
+          <div class="flag-main">
+            <div class="flag-top">
+              <span class="sev-chip c-high">HIGH</span>
+              <span class="cat">sync_license</span>
+              <span class="by">clearance_counsel</span>
+            </div>
+            <h4>Needle-drop over the wake sequence requires two separate licences.</h4>
+            <p>Composition (publisher) and master recording (label) are cleared separately and
+            negotiated in parallel. Both must close before the cut is locked.</p>
+          </div>
+          <div class="cost"><b>$25k&ndash;$60k</b>4&ndash;6 weeks</div>
+        </div>
+
+        <div class="flag">
+          <span class="sev-bar sev-high" aria-hidden="true"></span>
+          <span class="scene">S047 &middot; p.71</span>
+          <div class="flag-main">
+            <div class="flag-top">
+              <span class="sev-chip c-high">HIGH</span>
+              <span class="cat">stunt_pyro_minor</span>
+              <span class="by">safety_underwriter</span>
+            </div>
+            <h4>Car fire with a minor in frame &mdash; insurer will require three additions.</h4>
+            <p>Licensed pyrotechnician, on-set fire safety officer, and a studio teacher with a work
+            permit for the minor. The minor cannot be in the shot during the burn; plate and
+            composite instead.</p>
+          </div>
+          <div class="cost"><b>+$18k&ndash;$26k</b>+2 shoot days</div>
+        </div>
+
+        <div class="flag">
+          <span class="sev-bar sev-medium" aria-hidden="true"></span>
+          <span class="scene">S031 &middot; p.48</span>
+          <div class="flag-main">
+            <div class="flag-top">
+              <span class="sev-chip c-medium">MEDIUM</span>
+              <span class="cat">over_cleared</span>
+              <span class="by">clearance_counsel</span>
+            </div>
+            <h4>&ldquo;Happy Birthday to You&rdquo; is public domain. Do not pay for it.</h4>
+            <p>Productions still routinely licence this song out of habit. The copyright claim was
+            invalidated in 2016 and the work is in the US public domain. No licence required &mdash;
+            but document the determination, because E&amp;O carriers still query it.</p>
+            <div class="expand">
+              <div class="remedy">
+                <span class="act">NO ACTION</span>
+                <p>Record the public-domain determination in the clearance file and attach it to the
+                E&amp;O submission. <b>Saves roughly $1,500 against a typical quoted fee.</b></p>
+              </div>
+            </div>
+          </div>
+          <div class="cost"><b>&minus;$1,500</b>saved</div>
+        </div>
+
+        <div class="flag">
+          <span class="sev-bar sev-medium" aria-hidden="true"></span>
+          <span class="scene">S052 &middot; p.78</span>
+          <div class="flag-main">
+            <div class="flag-top">
+              <span class="sev-chip c-medium">MEDIUM</span>
+              <span class="cat">territory_cut</span>
+              <span class="by">territory_censor</span>
+            </div>
+            <h4>The supernatural resolution will not pass review in CN.</h4>
+            <p>The third act resolves through a literal ghost. An alternate assembly framing the
+            sequence as hallucination is the standard remedy and needs to be shot, not fixed in post.</p>
+          </div>
+          <div class="cost"><b>+$4k</b>alt coverage</div>
+        </div>
+
+        <div class="flag">
+          <span class="sev-bar sev-low" aria-hidden="true"></span>
+          <span class="scene">S008 &middot; p.11</span>
+          <div class="flag-main">
+            <div class="flag-top">
+              <span class="sev-chip c-low">LOW</span>
+              <span class="cat">likeness_incidental</span>
+              <span class="by">clearance_counsel</span>
+            </div>
+            <h4>A public figure appears on a background television.</h4>
+            <p>Incidental, non-endorsing, and news footage. Low exposure, but the underlying
+            broadcast clip itself needs a licence if it is legible.</p>
+          </div>
+          <div class="cost"><b>$0&ndash;$2k</b>clip licence</div>
+        </div>
+      </div>
+    </div>
+    <p class="caption">The report. Severity on the left, cost on the right, source in the middle.
+    A finding with no citation does not render &mdash; that rule is enforced in the schema, not the prompt.</p>
+  </div>
+
+  <div class="shot">
+    <div class="screen">
+      <div class="chrome"><div class="tl" aria-hidden="true"><i></i><i></i><i></i></div>
+        <span class="path">ratings board &mdash; comparables</span></div>
+      <div class="comps">
+        <div class="pred">
+          <span class="rating-card">R</span>
+          <span class="vs">PREDICTED &nbsp;&mdash;&nbsp; you are targeting <b>PG-13</b><br>
+          8 nearest released films by rating rationale, <b>7 of them R</b></span>
+        </div>
+        <div class="tbl-scroll">
+          <table>
+            <thead><tr><th>Comparable rationale</th><th>Rating</th><th>Year</th><th style="text-align:right">Distance</th></tr></thead>
+            <tbody>
+              <tr><td class="ti">strong bloody violence, language throughout, teen drug use</td><td class="rt">R</td><td>2019</td><td class="d">0.118</td></tr>
+              <tr><td class="ti">pervasive language, some drug material, brief violence</td><td class="rt">R</td><td>2021</td><td class="d">0.134</td></tr>
+              <tr><td class="ti">violent content, grief-related thematic material, language</td><td class="rt">R</td><td>2017</td><td class="d">0.141</td></tr>
+              <tr><td class="ti">thematic elements, teen drinking, language throughout</td><td class="rt">PG-13</td><td>2022</td><td class="d">0.149</td></tr>
+              <tr><td class="ti">disturbing images, strong language, brief drug use</td><td class="rt">R</td><td>2018</td><td class="d">0.152</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="cuts">
+          <div class="blk-label">TO REACH PG-13 &mdash; 3 BEATS</div>
+          <ol>
+            <li>S022 &mdash; reduce the F-word count from 9 to 1. Above one non-sexual use, the rating is effectively fixed at R.</li>
+            <li>S047 &mdash; the burn victim's injuries are described in close detail. Shoot wider and shorter.</li>
+            <li>S039 &mdash; on-screen drug preparation. Imply rather than depict.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+    <p class="caption">The rating is not a model's opinion. It is a nearest-neighbour lookup over
+    published rating rationales, so the answer arrives with the films it is based on.</p>
+  </div>
+
+  <div class="shot">
+    <div class="screen">
+      <div class="chrome"><div class="tl" aria-hidden="true"><i></i><i></i><i></i></div>
+        <span class="path">THE LAST REEL &mdash; marked-up script &mdash; p.23</span></div>
+      <div class="scriptview">
+        <div class="page">
+          <p class="sl">INT. DINER &mdash; NIGHT</p>
+          <p class="ac">Rain against the window. MAYA (34) sits alone in a booth,
+          a half-eaten plate pushed aside.</p>
+          <p class="ac">She twists the cap off a bottle of <mark>a national cola brand</mark>.
+          It hisses, then detonates &mdash; glass and syrup across the table. She recoils, hand
+          bleeding.</p>
+          <p class="ch">MAYA</p>
+          <p class="di">(to no one)<br>Of course.</p>
+          <p class="ac">Behind the counter, a small television plays
+          <mark class="m2">an archive news clip of a sitting senator</mark>. Nobody watches it.</p>
+        </div>
+        <div class="gutter">
+          <div class="gnote">
+            <span class="gt">BLOCKER &middot; F031</span>
+            <p>Named brand destroyed on screen. Will not clear. Replace with a fictional label.</p>
+          </div>
+          <div class="gnote h">
+            <span class="gt">LOW &middot; F044</span>
+            <p>Incidental likeness is fine; the broadcast clip needs a licence if legible.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="caption">Every flag anchors to a character offset in the source, so the report and the
+    script are two views of one object rather than two documents.</p>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="sec-head">
+    <div class="rule-label"><span class="label">04 &nbsp;How it is built</span></div>
+    <h2>The architecture is the workflow.</h2>
+    <p style="color:var(--ink-2)">A real clearance process is four independent desks that do not
+    consult each other, reconciled at the end by a producer. That is exactly what the agent graph
+    does &mdash; the fan-out is structural, not decorative.</p>
+  </div>
+  <div class="pipe"><b>ScriptParser</b>       deterministic      screenplay &rarr; Scene[]
+     &darr;
+<b>EntityExtractor</b>    Gemini 2.5 Flash   Scene[] &rarr; Entity[]
+     &darr;
+<b>ResearchCache</b>      Parallel Search    one search per entity, shared
+     &darr;
+<b>GatekeeperPanel</b>    ADK ParallelAgent  four desks, concurrent
+     &boxvr; ClearanceCounsel     &rarr; Flag[]
+     &boxvr; RatingsBoard         &rarr; Flag[] + rating
+     &boxvr; SafetyUnderwriter    &rarr; Flag[]
+     &boxur; TerritoryCensor      &rarr; Flag[]
+     &darr;
+<b>Adjudicator</b>        Gemini 2.5 Pro     dedupe, reconcile, score
+     &darr;
+<b>ReportWriter</b>       deterministic      Report + marked-up script</div>
+  <div class="prose" style="margin-top:26px">
+    <p><strong>Parsing and scoring never touch a model.</strong> A parser that invents a scene number
+    breaks every anchor downstream, and a score that moves between runs is not a score. Models are
+    used only where judgement is genuinely required.</p>
+    <p><strong>One search per entity, not one per desk.</strong> Four desks researching the same song
+    independently would quadruple cost and latency for identical results, so research is cached in
+    session state and shared.</p>
+    <p><strong>Citations pass through untouched.</strong> A model may decide whether an excerpt
+    supports a finding. It may never rewrite the excerpt. The whole value is that a producer can
+    hand the quote to a lawyer.</p>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="sec-head">
+    <div class="rule-label"><span class="label">05 &nbsp;Stack</span></div>
+    <h2>Built for the Agentic Cinema hackathon &mdash; Parallel track.</h2>
+  </div>
+  <div class="tbl-scroll">
+    <table class="stack-tbl">
+      <thead><tr><th>Technology</th><th>Why it is here</th></tr></thead>
+      <tbody>
+        <tr><td>google-adk</td><td>SequentialAgent and ParallelAgent give real concurrent fan-out with shared session state. Native Google Cloud path, no wrapper library.</td></tr>
+        <tr><td>Gemini 2.5 Flash / Pro</td><td>Flash by default for cost; Pro reserved for adjudication, the one task that reasons across four desks' conflicting output.</td></tr>
+        <tr><td>Vertex AI Agent Engine</td><td>Managed runtime for the agent graph.</td></tr>
+        <tr><td>parallel-web</td><td>One live research task per entity. Returns verbatim excerpts, which is what makes a citable report possible at all.</td></tr>
+        <tr><td>ClickHouse Cloud</td><td>Nearest-neighbour search over published MPA rating rationales. Turns rating prediction into evidence.</td></tr>
+        <tr><td>Cloud Run</td><td>Scales to zero.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prose" style="margin-top:26px">
+    <p>All runtime model inference is <strong>Gemini on Google Cloud</strong>. No other AI models,
+    agent frameworks or AI APIs are used anywhere in the project &mdash; a rule enforced by a
+    pre-commit dependency scan rather than by discipline.</p>
+  </div>
+</section>
+
+<footer class="wrap">
+  <div class="foot">
+    <div class="stack gap-8">
+      <div class="mark"><span class="dot" aria-hidden="true"></span>GREENLIGHT</div>
+      <a href="https://github.com/lalitlouis/greenlight">github.com/lalitlouis/greenlight</a>
+    </div>
+    <p class="disc">Cost and schedule figures are industry rules of thumb, not quotes. GREENLIGHT
+    produces a first-pass triage report and is not legal advice or a substitute for a clearance
+    professional.</p>
+  </div>
+</footer>
+
+</body>
+</html>
