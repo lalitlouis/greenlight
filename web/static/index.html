@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GREENLIGHT</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<header class="masthead">
+  <div class="mark"><span class="dot" aria-hidden="true"></span>GREENLIGHT</div>
+  <div class="run-info">
+    <span id="run-title" class="title"></span>
+    <span id="mode-chip" class="chip hidden"></span>
+    <span id="elapsed"></span>
+  </div>
+  <nav class="tabs hidden" id="tabs" aria-label="Views">
+    <button class="tab active" data-view="panel" type="button">PANEL</button>
+    <button class="tab" data-view="report" id="tab-report" type="button" disabled>REPORT</button>
+    <button class="tab" data-view="script" id="tab-script" type="button" disabled>SCRIPT</button>
+  </nav>
+</header>
+
+<main>
+  <section class="view" id="view-intake">
+    <div class="drop" id="dropzone">
+      <span class="big">Drop a screenplay</span>
+      <span class="sm">.fountain &middot; four clearance desks read it concurrently</span>
+      <input type="file" id="file-input" accept=".fountain,.txt,text/plain" hidden>
+      <button class="btn" id="pick-btn" type="button">SELECT FILE</button>
+    </div>
+    <div class="or">OR</div>
+    <button class="btn ghost" id="replay-btn" type="button">&#9654;&nbsp; REPLAY LAST RECORDED RUN</button>
+    <p class="fine">Replay streams a cached analysis from runs/ with live pacing &mdash;
+    no network, no model calls. All cost figures are estimates, not quotes.</p>
+  </section>
+
+  <section class="view hidden" id="view-panel">
+    <div class="panel" id="panel"></div>
+    <div class="pipe-strip">
+      <div class="pipe-head label">Pipeline &mdash; triage &middot; verification &middot; adjudicator</div>
+      <div class="pipe-log" id="pipe-log"></div>
+    </div>
+  </section>
+
+  <section class="view hidden" id="view-report">
+    <div id="report"></div>
+  </section>
+
+  <section class="view hidden" id="view-script">
+    <div id="script"></div>
+  </section>
+</main>
+
+<div class="toast hidden" id="toast" role="status"></div>
+<script src="/static/app.js"></script>
+</body>
+</html>

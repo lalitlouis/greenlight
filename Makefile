@@ -1,4 +1,4 @@
-.PHONY: install dev run test lint check clean
+.PHONY: install dev run serve test lint check clean
 
 install:
 	python3 -m venv .venv && .venv/bin/pip install -q -U pip && .venv/bin/pip install -r requirements-dev.txt
@@ -8,6 +8,9 @@ dev:            ## local ADK dev UI
 
 run:            ## end-to-end on the fixture screenplay
 	.venv/bin/python -m greenlight.cli run fixtures/slack_tide.fountain
+
+serve:          ## web UI (upload / live stream / replay) on :8080
+	.venv/bin/uvicorn greenlight.server:app --reload --port 8080
 
 test:
 	.venv/bin/pytest -q
