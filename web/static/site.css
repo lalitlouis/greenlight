@@ -770,3 +770,95 @@ a.run-card { color: inherit; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* ================= VIBRANCY PASS ================= */
+:root {
+  --desk-clearance: #6366f1;
+  --desk-ratings: #a855f7;
+  --desk-safety: #f59e0b;
+  --desk-territory: #0ea5e9;
+  --teal: #14b8a6;
+  --amber: #f59e0b;
+  --violet: #8b5cf6;
+}
+
+/* headline flair on section titles */
+.section-title h2, .page-head h1 {
+  background: linear-gradient(92deg, var(--ink) 30%, var(--green-dark));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* the four desks each own a color — consistent on run page, report, landing */
+#col-clearance_counsel .col-head { border-top: 4px solid var(--desk-clearance); }
+#col-ratings_board .col-head { border-top: 4px solid var(--desk-ratings); }
+#col-safety_underwriter .col-head { border-top: 4px solid var(--desk-safety); }
+#col-territory_censor .col-head { border-top: 4px solid var(--desk-territory); }
+#col-clearance_counsel .nm { color: var(--desk-clearance); }
+#col-ratings_board .nm { color: var(--desk-ratings); }
+#col-safety_underwriter .nm { color: var(--desk-safety); }
+#col-territory_censor .nm { color: var(--desk-territory); }
+
+.by { font-weight: 700; padding: 2px 10px; border-radius: 999px; font-size: 12px; }
+.by-clearance_counsel { color: var(--desk-clearance); background: rgba(99, 102, 241, 0.1); }
+.by-ratings_board { color: var(--desk-ratings); background: rgba(168, 85, 247, 0.1); }
+.by-safety_underwriter { color: #b45309; background: rgba(245, 158, 11, 0.13); }
+.by-territory_censor { color: #0369a1; background: rgba(14, 165, 233, 0.12); }
+
+/* step cards: one accent each */
+.step-card { border-top: 4px solid var(--green); }
+.step-card:nth-child(1) { border-top-color: var(--green); }
+.step-card:nth-child(2) { border-top-color: var(--desk-clearance); }
+.step-card:nth-child(3) { border-top-color: var(--desk-ratings); }
+.step-card:nth-child(4) { border-top-color: var(--amber); }
+.step-card:nth-child(5) { border-top-color: var(--teal); }
+.step-card:nth-child(1) .step-num { background: var(--green-soft); color: var(--green-dark); }
+.step-card:nth-child(2) .step-num { background: rgba(99, 102, 241, 0.12); color: var(--desk-clearance); }
+.step-card:nth-child(3) .step-num { background: rgba(168, 85, 247, 0.12); color: var(--desk-ratings); }
+.step-card:nth-child(4) .step-num { background: rgba(245, 158, 11, 0.14); color: #b45309; }
+.step-card:nth-child(5) .step-num { background: rgba(20, 184, 166, 0.12); color: #0f766e; }
+
+/* stat strip: each number its own color */
+.counter-strip { background: linear-gradient(135deg, #ffffff 60%, #f0fdf6); }
+.counter-strip div:nth-child(1) b { color: var(--green-dark); }
+.counter-strip div:nth-child(2) b { color: var(--desk-clearance); }
+.counter-strip div:nth-child(3) b { color: var(--desk-ratings); }
+.counter-strip div:nth-child(4) b { color: #b45309; }
+
+/* richer bands */
+.hero-band {
+  background:
+    radial-gradient(900px 420px at 82% -10%, rgba(16, 185, 129, 0.16), transparent 60%),
+    radial-gradient(680px 380px at 4% 100%, rgba(99, 102, 241, 0.10), transparent 60%),
+    radial-gradient(540px 320px at 60% 120%, rgba(245, 158, 11, 0.08), transparent 60%),
+    linear-gradient(180deg, #ffffff, var(--bg));
+}
+.cta-band {
+  background:
+    radial-gradient(500px 260px at 85% 0%, rgba(45, 212, 191, 0.35), transparent 60%),
+    radial-gradient(420px 260px at 10% 100%, rgba(251, 191, 36, 0.25), transparent 55%),
+    linear-gradient(135deg, #064e3b, #059669);
+}
+.btn-primary { background: linear-gradient(92deg, #059669, #10b981); }
+.btn-primary:hover { background: linear-gradient(92deg, #047857, #059669); }
+
+/* stage cards on how-it-works pick up desk colors */
+.stage:nth-child(2) { border-left: 4px solid var(--desk-clearance); }
+.stage:nth-child(3) { border-left: 4px solid var(--desk-ratings); }
+.stage:nth-child(4) { border-left: 4px solid var(--desk-safety); }
+.stage:nth-child(5) { border-left: 4px solid var(--desk-territory); }
+.stage:nth-child(1), .stage:nth-child(6) { border-left: 4px solid var(--green); }
+
+/* score ring gains a soft halo */
+.score { filter: drop-shadow(0 4px 14px rgba(23, 33, 47, 0.10)); }
+
+/* pipeline svg desk nodes take their colors */
+.pipeline-svg g:nth-of-type(2) rect { stroke: var(--desk-clearance); }
+.pipeline-svg g:nth-of-type(3) rect { stroke: var(--desk-ratings); }
+.pipeline-svg g:nth-of-type(4) rect { stroke: var(--desk-safety); }
+.pipeline-svg g:nth-of-type(5) rect { stroke: var(--desk-territory); }
+.pipeline-svg g:nth-of-type(2) text { fill: var(--desk-clearance); }
+.pipeline-svg g:nth-of-type(3) text { fill: var(--desk-ratings); }
+.pipeline-svg g:nth-of-type(4) text { fill: var(--desk-safety); }
+.pipeline-svg g:nth-of-type(5) text { fill: var(--desk-territory); }

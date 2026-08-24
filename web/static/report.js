@@ -82,7 +82,7 @@ function flagRow(f, opts) {
   const top = el("div", "flag-top");
   top.appendChild(el("span", `sev-chip sev-${f.severity}`, f.severity));
   top.appendChild(el("span", "cat", prettyCat(f.category)));
-  top.appendChild(el("span", "by", prettyCat(f.agent)));
+  top.appendChild(el("span", "by by-" + f.agent, prettyCat(f.agent)));
   main.appendChild(top);
   main.appendChild(el("p", "finding", f.finding || ""));
 

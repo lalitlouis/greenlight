@@ -108,7 +108,7 @@ function promptUpload() {
 /* ---------- shared header / footer ---------- */
 
 const NAV_LINKS = [
-  ["/", "Home"],
+  ["/home", "Home"],
   ["/how-it-works", "How it works"],
   ["/faq", "FAQ"],
   ["/contact", "Contact"],
@@ -121,7 +121,7 @@ function injectChrome() {
   const inner = el("div", "container header-inner");
 
   const brand = el("a", "brand");
-  brand.href = "/";
+  brand.href = "/home";
   brand.appendChild(el("span", "brand-dot"));
   brand.appendChild(el("span", "brand-name", "GREENLIGHT"));
   inner.appendChild(brand);

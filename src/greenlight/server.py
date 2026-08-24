@@ -70,7 +70,8 @@ app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 
 PAGES = {
-    "/": "home.html",
+    "/": "landing.html",
+    "/home": "home.html",
     "/how-it-works": "how-it-works.html",
     "/faq": "faq.html",
     "/contact": "contact.html",

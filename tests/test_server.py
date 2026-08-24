@@ -129,7 +129,7 @@ def test_index_serves_static_ui():
 
 
 def test_all_pages_serve():
-    for route in ["/", "/how-it-works", "/faq", "/contact", "/run", "/report", "/script"]:
+    for route in ["/", "/home", "/how-it-works", "/faq", "/contact", "/run", "/report", "/script"]:
         res = client.get(route)
         assert res.status_code == 200, route
         assert "GREENLIGHT" in res.text, route
