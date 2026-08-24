@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Analysis — GREENLIGHT</title>
+<link rel="stylesheet" href="/static/site.css">
+<script defer src="/static/common.js"></script>
+<script defer src="/static/run.js"></script>
+</head>
+<body>
+<main>
+  <div class="container">
+    <div class="run-head">
+      <h1 id="run-title">Analysis</h1>
+      <span id="mode-chip" class="chip hidden"></span>
+      <span id="elapsed"></span>
+    </div>
+
+    <div class="card progress-strip">
+      <div class="phases">
+        <span class="phase" id="phase-triage"><span class="p-dot"></span>Reading the script</span>
+        <span class="phase-arrow">→</span>
+        <span class="phase" id="phase-desks"><span class="p-dot"></span>Four desks investigating</span>
+        <span class="phase-arrow">→</span>
+        <span class="phase" id="phase-verify"><span class="p-dot"></span>Verifying every citation</span>
+        <span class="phase-arrow">→</span>
+        <span class="phase" id="phase-adjudicate"><span class="p-dot"></span>Adjudicating</span>
+        <span class="phase-arrow">→</span>
+        <span class="phase" id="phase-report"><span class="p-dot"></span>Report</span>
+      </div>
+      <div class="pbar-row">
+        <div class="pbar"><div class="pbar-fill" id="pbar-fill"></div></div>
+        <span class="pct" id="pct">0%</span>
+      </div>
+    </div>
+
+    <div class="panel" id="panel"></div>
+
+    <div class="card pipe-strip">
+      <div class="pipe-head label">Pipeline — triage · verification · adjudicator</div>
+      <div class="pipe-log" id="pipe-log"></div>
+    </div>
+
+    <div class="card done-banner hidden" id="done-banner">
+      <b>Analysis complete.</b>
+      <a class="btn btn-primary" id="done-link" href="#">Open the report</a>
+    </div>
+  </div>
+</main>
+</body>
+</html>

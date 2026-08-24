@@ -69,9 +69,26 @@ app = FastAPI(title="GREENLIGHT")
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 
-@app.get("/")
-async def index() -> FileResponse:
-    return FileResponse(STATIC_DIR / "index.html")
+PAGES = {
+    "/": "home.html",
+    "/how-it-works": "how-it-works.html",
+    "/faq": "faq.html",
+    "/contact": "contact.html",
+    "/run": "run.html",
+    "/report": "report.html",
+    "/script": "script.html",
+}
+
+
+def _page(name: str):
+    async def serve() -> FileResponse:
+        return FileResponse(STATIC_DIR / name)
+
+    return serve
+
+
+for route, filename in PAGES.items():
+    app.get(route)(_page(filename))
 
 
 # ---------------------------------------------------------------- live runs
@@ -303,16 +320,23 @@ async def _replay_stream(
 
 
 @app.get("/api/replay")
-async def replay(pace: float = 1.0) -> StreamingResponse:
-    """Replay the newest cached run as SSE — same event contract as a live run."""
+async def replay(pace: float = 1.0, record: str = "") -> StreamingResponse:
+    """Replay a cached run (newest by default) as SSE — same contract as live."""
     pace = min(max(pace, 0.0), 10.0)
-    path, record = _latest_record()
+    if record:
+        rec = _disk_record(record)
+        if rec is None:
+            raise HTTPException(404, f"Unknown record {record!r}")
+        path, record_obj = RUNS_DIR / f"{record}.json", rec
+    else:
+        path, record_obj = _latest_record()
+    record = None
     run_id = f"replay-{uuid.uuid4().hex[:8]}"
     handle = RunHandle(
         run_id=run_id,
         mode="replay",
-        record=record,
-        script_path=record.get("script_path"),
+        record=record_obj,
+        script_path=record_obj.get("script_path"),
     )
     RUNS[run_id] = handle
     handle.publish(
@@ -320,15 +344,73 @@ async def replay(pace: float = 1.0) -> StreamingResponse:
             "type": "meta",
             "run_id": run_id,
             "mode": "replay",
-            "script_title": record.get("script_title", path.stem),
-            "recorded_at": record.get("generated_at"),
+            "record_id": path.stem,
+            "script_title": record_obj.get("script_title", path.stem),
+            "recorded_at": record_obj.get("generated_at"),
         }
     )
     return StreamingResponse(
-        _replay_stream(handle, record, pace),
+        _replay_stream(handle, record_obj, pace),
         media_type="text/event-stream",
         headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
     )
+
+
+# ---------------------------------------------------------------- run index
+
+
+def _summarize(record: dict[str, Any], run_id: str, kind: str) -> dict[str, Any]:
+    rep = record.get("report") or {}
+    return {
+        "id": run_id,
+        "kind": kind,  # "recorded" (on disk) | "session" (this server's memory)
+        "title": record.get("script_title", run_id),
+        "generated_at": record.get("generated_at"),
+        "score": rep.get("greenlight_score"),
+        "flags": len(record.get("flags", [])),
+        "rejected": len(record.get("rejected_flags", [])),
+        "blockers": (rep.get("counts") or {}).get("BLOCKER", 0),
+        "predicted_rating": (rep.get("rating_prediction") or {}).get("predicted"),
+        "demo": run_id.endswith("_demo"),
+    }
+
+
+@app.get("/api/runs")
+async def list_runs() -> list[dict[str, Any]]:
+    """Every viewable analysis: cached records on disk plus finished in-memory
+    sessions. Newest first — the home page renders straight from this."""
+    out: list[dict[str, Any]] = []
+    for path in RUNS_DIR.glob("run_*.json"):
+        try:
+            out.append(_summarize(json.loads(path.read_text()), path.stem, "recorded"))
+        except (json.JSONDecodeError, OSError):
+            continue  # a torn or foreign file must not take the home page down
+    for run_id, handle in RUNS.items():
+        if handle.record is not None and handle.mode == "live":
+            out.append(_summarize(handle.record, run_id, "session"))
+    out.sort(key=lambda r: r.get("generated_at") or "", reverse=True)
+    return out
+
+
+def _disk_record(run_id: str) -> dict[str, Any] | None:
+    # run ids are our own file stems — refuse anything path-shaped.
+    if not run_id.replace("_", "").replace("-", "").isalnum():
+        return None
+    path = RUNS_DIR / f"{run_id}.json"
+    if not path.exists():
+        return None
+    return json.loads(path.read_text())
+
+
+@app.get("/api/records/{run_id}")
+async def get_record(run_id: str) -> dict[str, Any]:
+    """One record by id — memory first (live sessions), then disk (cached runs)."""
+    handle = RUNS.get(run_id)
+    if handle is not None and handle.record is not None:
+        return {"id": run_id, "kind": "session", "record": handle.record}
+    if (record := _disk_record(run_id)) is not None:
+        return {"id": run_id, "kind": "recorded", "record": record}
+    raise HTTPException(404, f"Unknown record {run_id!r}")
 
 
 # ---------------------------------------------------------------- shared endpoints
@@ -390,7 +472,12 @@ async def run_script(run_id: str) -> dict[str, Any]:
     """The fountain source plus parsed scenes: the marked-up script view anchors
     flags to raw_span char offsets, so the source must be byte-identical to what
     the parser saw — hence re-reading the original file, never a re-assembly."""
-    handle = _handle_or_404(run_id)
+    handle = RUNS.get(run_id)
+    if handle is None:
+        disk = _disk_record(run_id)
+        if disk is None:
+            raise HTTPException(404, f"Unknown run {run_id!r}")
+        handle = RunHandle(run_id=run_id, mode="recorded", script_path=disk.get("script_path"))
     source = handle.source
     if source is None and handle.script_path:
         path = Path(handle.script_path)

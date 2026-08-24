@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How it works — GREENLIGHT</title>
+<link rel="stylesheet" href="/static/site.css">
+<script defer src="/static/common.js"></script>
+</head>
+<body>
+<main>
+  <div class="container">
+    <div class="page-head">
+      <span class="kicker">How it works</span>
+      <h1>A studio clearance department, run by agents</h1>
+      <p class="lede">Before a film shoots, its screenplay goes through clearance: separate desks
+      read the same script looking for different ways it will cost money or fail to release.
+      GREENLIGHT runs that process the way a studio does — four independent desks, then a
+      producer who reconciles them — in about five minutes.</p>
+    </div>
+
+    <div class="callout">
+      <b>The one non-negotiable rule:</b> a finding without a citation does not appear in your
+      report. Anyone can ask an AI "what's risky in this script" and get a confident paragraph.
+      GREENLIGHT returns claims you can hand to a lawyer — each backed by verbatim, sourced text,
+      each re-checked by an independent verifier before it reaches you.
+    </div>
+
+    <div class="stage-list">
+      <div class="card stage">
+        <span class="step-num">1</span>
+        <div>
+          <h3>Parse &amp; triage</h3>
+          <span class="who">Deterministic parser + a fast reading pass</span>
+          <p>Your Fountain screenplay is split into scenes with exact page anchors — no AI
+          involved, so scene references are always right. Then a triage pass extracts every
+          clearance-relevant entity: brands, songs, real people, artworks, film clips,
+          organizations, stunts, and sensitive beats — and writes a worklist for each desk.</p>
+        </div>
+      </div>
+      <div class="card stage">
+        <span class="step-num">2</span>
+        <div>
+          <h3>Clearance Counsel</h3>
+          <span class="who">Rights &amp; clearances desk</span>
+          <p>Researches every entity on the live web: does this use need a license, from whom,
+          and what does it cost? Music gets the full chase — composition and master recording
+          are separately owned, and the desk follows both chains to the current rightsholder.</p>
+        </div>
+      </div>
+      <div class="card stage">
+        <span class="step-num">3</span>
+        <div>
+          <h3>Ratings Board</h3>
+          <span class="who">MPA rating prediction</span>
+          <p>Counts the rating drivers in your script — language, violence, drug use — then finds
+          the released films whose content sits nearest to yours in a corpus of 2,500 titles.
+          The prediction is evidence: "seven of your eight nearest comparables are rated R." If
+          you're targeting a lower rating, you get the exact cut list that buys it.</p>
+        </div>
+      </div>
+      <div class="card stage">
+        <span class="step-num">4</span>
+        <div>
+          <h3>Safety Underwriter</h3>
+          <span class="who">Physical production risk</span>
+          <p>Reads your script like a completion-bond underwriter: stunts, fire, water, night
+          work, minors, animals, weapons — and how they stack. A boat fire is one risk; a boat
+          fire at night with a child in an adjacent skiff is a different, much larger one. Each
+          hazard gets the specialists, permits, and rule-of-thumb costs an insurer will require.</p>
+        </div>
+      </div>
+      <div class="card stage">
+        <span class="step-num">5</span>
+        <div>
+          <h3>Territory Censor</h3>
+          <span class="who">US · UK · China · UAE</span>
+          <p>What gets cut or blocks release, market by market, under each territory's actual
+          rules — with an honest account of the creative cost when a required cut would touch
+          the heart of your film.</p>
+        </div>
+      </div>
+      <div class="card stage">
+        <span class="step-num">6</span>
+        <div>
+          <h3>Verification &amp; adjudication</h3>
+          <span class="who">The quality gate</span>
+          <p>Every filed finding goes to an independent verifier that reads only the claim, the
+          scenes it cites, and its sources — never the desk's reasoning. If the source doesn't
+          support the claim, the finding is rejected, and your report shows the rejection and the
+          reason. Then an adjudicator merges duplicates and resolves conflicting remedies, like a
+          producer reconciling the panel.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="prose">
+      <h2>What you get</h2>
+      <ul>
+        <li><b>A Greenlight Score</b> (0–100) — a deterministic function of finding severities,
+        never an AI's opinion.</li>
+        <li><b>Severity-ranked findings</b> — each with verbatim citations, a concrete remedy
+        ("rename to a fictional brand", "engage a marine coordinator"), and a cost range.</li>
+        <li><b>A rating prediction with comparables</b> — and the beats to cut for your target.</li>
+        <li><b>A marked-up script</b> — every finding anchored to its scene, both directions.</li>
+        <li><b>Honest unknowns</b> — what the desks could not resolve is listed as open
+        questions, not guessed at.</li>
+      </ul>
+      <p><a class="btn btn-primary" href="/run?replay=1">Watch a recorded analysis</a></p>
+    </div>
+  </div>
+</main>
+</body>
+</html>

@@ -126,3 +126,48 @@ def test_index_serves_static_ui():
     res = client.get("/")
     assert res.status_code == 200
     assert "GREENLIGHT" in res.text
+
+
+def test_all_pages_serve():
+    for route in ["/", "/how-it-works", "/faq", "/contact", "/run", "/report", "/script"]:
+        res = client.get(route)
+        assert res.status_code == 200, route
+        assert "GREENLIGHT" in res.text, route
+
+
+def test_runs_index_lists_recorded_runs():
+    res = client.get("/api/runs")
+    assert res.status_code == 200
+    runs = res.json()
+    assert runs, "committed demo record should be listed"
+    demo = [r for r in runs if r["demo"]]
+    assert demo and demo[0]["score"] is not None and demo[0]["flags"] > 0
+    assert runs == sorted(runs, key=lambda r: r.get("generated_at") or "", reverse=True)
+
+
+def test_record_endpoint_serves_disk_records():
+    run_id = client.get("/api/runs").json()[0]["id"]
+    res = client.get(f"/api/records/{run_id}")
+    assert res.status_code == 200
+    body = res.json()
+    assert body["kind"] == "recorded"
+    assert body["record"]["flags"]
+    # path traversal shaped ids are refused, not resolved
+    assert client.get("/api/records/..%2f..%2fetc").status_code == 404
+
+
+def test_script_endpoint_works_for_disk_records():
+    run_id = client.get("/api/runs").json()[0]["id"]
+    res = client.get(f"/api/script/{run_id}")
+    assert res.status_code == 200
+    data = res.json()
+    assert data["scenes"] and data["source"]
+
+
+def test_replay_accepts_record_selection(replay):
+    run_id = client.get("/api/runs").json()[0]["id"]
+    with client.stream("GET", f"/api/replay?pace=0&record={run_id}") as response:
+        assert response.status_code == 200
+        events = sse_events(response)
+    assert events[0]["record_id"] == run_id
+    assert events[-1]["type"] == "result"
