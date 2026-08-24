@@ -20,12 +20,23 @@ load_dotenv(ROOT / ".env")
 os.environ.setdefault("GOOGLE_GENAI_USE_VERTEXAI", "TRUE")
 os.environ.setdefault("GOOGLE_CLOUD_LOCATION", os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1"))
 
-from google.adk.agents import SequentialAgent  # noqa: E402
+from google.adk.agents import ParallelAgent, SequentialAgent  # noqa: E402
 from google.adk.runners import InMemoryRunner  # noqa: E402
 from google.genai import types  # noqa: E402
 
 from greenlight import parser  # noqa: E402
-from greenlight.agents import clearance_counsel, triage  # noqa: E402
+from greenlight import report as report_mod  # noqa: E402
+from greenlight.agents import (  # noqa: E402
+    adjudicator,
+    clearance_counsel,
+    ratings_board,
+    safety_underwriter,
+    territory_censor,
+    triage,
+    verification,
+)
+from greenlight.agents.verification import apply_verdicts  # noqa: E402
+from greenlight.tools.toolbelt import DESKS  # noqa: E402
 
 APP_NAME = "greenlight"
 USER_ID = "producer"
@@ -34,24 +45,47 @@ DIM, BOLD, RESET = "\033[2m", "\033[1m", "\033[0m"
 SEV_ORDER = {"BLOCKER": 0, "HIGH": 1, "MEDIUM": 2, "LOW": 3, "FYI": 4}
 
 
+# Per-desk live research() budgets. Clearance chases ownership chains and gets more;
+# ratings leans on query_precedent once the corpus lands.
+DEFAULT_BUDGETS = {
+    "clearance_counsel": 12,
+    "ratings_board": 5,
+    "safety_underwriter": 8,
+    "territory_censor": 8,
+}
+
+
 def build_root_agent() -> SequentialAgent:
+    panel = ParallelAgent(
+        name="gatekeeper_panel",
+        description="The four desks, concurrent and independent — as in a real studio.",
+        sub_agents=[
+            clearance_counsel.agent,
+            ratings_board.agent,
+            safety_underwriter.agent,
+            territory_censor.agent,
+        ],
+    )
     return SequentialAgent(
         name="greenlight_pipeline",
-        description="Screenplay clearance: triage then the gatekeeper desks.",
-        sub_agents=[triage.agent, clearance_counsel.agent],
+        description="Screenplay clearance: triage -> gatekeeper panel -> verification.",
+        sub_agents=[triage.agent, panel, verification.agent, adjudicator.agent],
     )
 
 
-def _initial_state(text: str, scenes: list[dict[str, Any]], research_budget: int) -> dict[str, Any]:
+def _initial_state(
+    text: str, scenes: list[dict[str, Any]], budgets: dict[str, int]
+) -> dict[str, Any]:
     scene_index = "\n".join(f"{s['scene_id']}  p{s['page']:>2}  {s['heading']}" for s in scenes)
-    return {
+    state: dict[str, Any] = {
         "script_text": text,
         "scenes": scenes,
         "script_annotated": parser.annotated_script(text, scenes),
         "scene_index": scene_index,
-        "research_budget": research_budget,
-        "flag_seq": 0,
     }
+    for desk, budget in budgets.items():
+        state[f"research_budget:{desk}"] = budget
+    return state
 
 
 def _describe_event(event: Any) -> list[str]:
@@ -73,7 +107,7 @@ def _describe_event(event: Any) -> list[str]:
     return lines
 
 
-async def run(script_path: str | Path, research_budget: int = 10) -> dict[str, Any]:
+async def run(script_path: str | Path, budgets: dict[str, int] | None = None) -> dict[str, Any]:
     source = Path(script_path).read_text()
     meta, scenes = parser.parse_fountain(source)
     title = meta.get("title", Path(script_path).stem)
@@ -83,7 +117,7 @@ async def run(script_path: str | Path, research_budget: int = 10) -> dict[str, A
     session = await runner.session_service.create_session(
         app_name=APP_NAME,
         user_id=USER_ID,
-        state=_initial_state(source, scenes, research_budget),
+        state=_initial_state(source, scenes, budgets or DEFAULT_BUDGETS),
     )
 
     message = types.Content(
@@ -106,10 +140,24 @@ async def run(script_path: str | Path, research_budget: int = 10) -> dict[str, A
     )
     state = final.state
 
-    flags = sorted(
-        (f for d in ("clearance_counsel",) for f in state.get(f"flags:{d}", [])),
-        key=lambda f: SEV_ORDER.get(f["severity"], 9),
-    )
+    filed = [f for d in DESKS for f in state.get(f"flags:{d}", [])]
+    verdicts = {
+        f["flag_id"]: state[f"verdicts:{f['flag_id']}"]
+        for f in filed
+        if f"verdicts:{f['flag_id']}" in state
+    }
+    if "verified_flags" in state:
+        kept, rejected = state["verified_flags"], state.get("rejected_flags", [])
+    else:  # verification did not run (aborted run) — fall back, fail open
+        kept, rejected = apply_verdicts(filed, verdicts)
+    adjudication_notes: list[str] = []
+    if plan := state.get("adjudication"):
+        kept, adjudication_notes = adjudicator.apply_plan(kept, plan)
+    kept.sort(key=lambda f: SEV_ORDER.get(f["severity"], 9))
+
+    page_count = scenes[-1]["page"] if scenes else None
+    the_report = report_mod.build_report(title, kept, page_count=page_count)
+
     record = {
         "script_title": title,
         "script_path": str(script_path),
@@ -118,9 +166,13 @@ async def run(script_path: str | Path, research_budget: int = 10) -> dict[str, A
         "error": error,
         "scenes": len(scenes),
         "entities": state.get("triage", {}).get("entities", []),
-        "flags": flags,
-        "open_questions": {d: state.get(f"open_questions:{d}", []) for d in ("clearance_counsel",)},
-        "research_budget_left": state.get("research_budget"),
+        "flags": kept,
+        "rejected_flags": rejected,
+        "verdicts": verdicts,
+        "report": the_report,
+        "adjudication_notes": adjudication_notes,
+        "open_questions": {d: state.get(f"open_questions:{d}", []) for d in DESKS},
+        "research_budget_left": {d: state.get(f"research_budget:{d}") for d in DESKS},
         "research": {
             k: v for k, v in state.items() if isinstance(k, str) and k.startswith("research:")
         },
@@ -137,10 +189,15 @@ def save_run(record: dict[str, Any], out_dir: Path | None = None) -> Path:
 
 
 def print_summary(record: dict[str, Any]) -> None:
+    rep = record.get("report", {})
+    score = rep.get("greenlight_score")
     print(
-        f"\n{BOLD}=== {record['script_title']} — {len(record['flags'])} flags, "
-        f"{len(record['entities'])} entities, {record['elapsed_s']}s ==={RESET}\n"
+        f"\n{BOLD}=== {record['script_title']} — Greenlight Score {score}/100 — "
+        f"{len(record['flags'])} flags ({len(record.get('rejected_flags', []))} rejected in "
+        f"verification), {len(record['entities'])} entities, {record['elapsed_s']}s ==={RESET}\n"
     )
+    if cost := rep.get("est_clearance_cost_usd"):
+        print(f"est. clearance cost: ${cost[0]:,.0f}-${cost[1]:,.0f} (rule-of-thumb, not quotes)\n")
     for f in record["flags"]:
         cost = f["remedy"].get("est_cost_usd")
         cost_s = f" ~${cost[0]:,.0f}-${cost[1]:,.0f} (est.)" if cost else ""
@@ -153,6 +210,13 @@ def print_summary(record: dict[str, Any]) -> None:
         for c in f["citations"]:
             print(f'  {DIM}cite: {c["url"]} — "{c["excerpt"][:110]}..."{RESET}')
         print()
+    for n in record.get("adjudication_notes", []):
+        print(f"{DIM}adjudicator: {n[:180]}{RESET}")
+    for f in record.get("rejected_flags", []):
+        print(
+            f"{DIM}rejected in verification: {f['flag_id']} [{f['severity']}] "
+            f"{f['category']} — {f['rejection_reason'][:140]}{RESET}"
+        )
     for desk, qs in record["open_questions"].items():
         for q in qs:
             print(f"{DIM}open question ({desk}): {q}{RESET}")

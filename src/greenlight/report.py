@@ -1,0 +1,73 @@
+"""ReportWriter: deterministic assembly of the Production Risk Report.
+
+No model here, on purpose. A score that moves between runs is not a score, so the
+Greenlight Score is a pure function of flag severities, and the report is rendered
+from validated objects only.
+"""
+
+from __future__ import annotations
+
+import time
+from typing import Any
+
+from greenlight.contracts import validate
+
+SEVERITIES = ("BLOCKER", "HIGH", "MEDIUM", "LOW", "FYI")
+
+# Rule-of-thumb weights, stated in the product as such. A BLOCKER dominates by design:
+# one unshootable scene matters more than any pile of routine paperwork.
+_WEIGHT = {"BLOCKER": 25, "HIGH": 10, "MEDIUM": 4, "LOW": 1, "FYI": 0}
+
+
+def greenlight_score(flags: list[dict[str, Any]]) -> int:
+    """0-100. Deterministic; documented weights; floor at 0."""
+    return max(0, 100 - sum(_WEIGHT[f["severity"]] for f in flags))
+
+
+def _cost_range(flags: list[dict[str, Any]]) -> list[float] | None:
+    lows, highs = [], []
+    for f in flags:
+        rng = f["remedy"].get("est_cost_usd")
+        if rng:
+            lows.append(rng[0])
+            highs.append(rng[1])
+    return [sum(lows), sum(highs)] if lows else None
+
+
+def _added_days(flags: list[dict[str, Any]]) -> float | None:
+    days = [
+        f["remedy"]["est_added_days"]
+        for f in flags
+        if f["remedy"].get("est_added_days") is not None
+    ]
+    # Remedies overlap in schedule; summing them would be dishonest. The critical
+    # path is the longest single remedy.
+    return max(days) if days else None
+
+
+def build_report(
+    script_title: str,
+    flags: list[dict[str, Any]],
+    page_count: float | None = None,
+    rating_prediction: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Assemble and validate the Report object. Flags must already be verified."""
+    counts = {sev: sum(f["severity"] == sev for f in flags) for sev in SEVERITIES}
+    by_agent: dict[str, int] = {}
+    for f in flags:
+        by_agent[f["agent"]] = by_agent.get(f["agent"], 0) + 1
+
+    report: dict[str, Any] = {
+        "script_title": script_title,
+        "generated_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
+        "greenlight_score": greenlight_score(flags),
+        "counts": counts,
+        "by_agent": by_agent,
+        "est_clearance_cost_usd": _cost_range(flags),
+        "est_added_days": _added_days(flags),
+        "rating_prediction": rating_prediction,
+        "flags": flags,
+    }
+    if page_count is not None:
+        report["page_count"] = page_count
+    return validate("report", report)

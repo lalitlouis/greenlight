@@ -20,7 +20,12 @@ class FakeState(dict):
 
 def make_ctx(agent_name="clearance_counsel", **state):
     _, scenes = parser.parse_fountain(SOURCE)
-    base = {"script_text": SOURCE, "scenes": scenes, "research_budget": 3, "flag_seq": 0}
+    base = {
+        "script_text": SOURCE,
+        "scenes": scenes,
+        "research_budget:clearance_counsel": 3,
+        "research_budget:territory_censor": 3,
+    }
     base.update(state)
     return SimpleNamespace(
         agent_name=agent_name, state=FakeState(base), actions=SimpleNamespace(escalate=False)
@@ -55,7 +60,7 @@ def file_good_flag(ctx, **overrides):
 def test_file_flag_happy_path():
     ctx = make_ctx()
     msg = file_good_flag(ctx)
-    assert msg.startswith("Filed F001")
+    assert msg.startswith("Filed F101")
     (flag,) = ctx.state["flags:clearance_counsel"]
     assert flag["agent"] == "clearance_counsel"
     assert flag["citations"][0]["via"] == "parallel_search"
@@ -79,8 +84,8 @@ def test_flag_with_bogus_scene_is_rejected():
     ctx = make_ctx()
     msg = file_good_flag(ctx, scene_ids=["S999"])
     assert msg.startswith("REJECTED")
-    # and the sequence number was returned, so the next flag is still F001
-    assert file_good_flag(ctx).startswith("Filed F001")
+    # and the sequence number was returned, so the next flag is still F101
+    assert file_good_flag(ctx).startswith("Filed F101")
 
 
 def test_rejection_reports_all_errors_at_once():
@@ -97,7 +102,7 @@ def test_research_budget_and_cache(monkeypatch):
         return CASSETTE
 
     monkeypatch.setattr(toolbelt, "_live_search", fake_search)
-    ctx = make_ctx(research_budget=2)
+    ctx = make_ctx(**{"research_budget:clearance_counsel": 2})
 
     r1 = toolbelt.research("Is the brand cleared?", ["brand clearance film"], "E001", ctx)
     assert r1["cached"] is False and r1["budget_remaining"] == 1
@@ -147,3 +152,17 @@ def test_open_question():
     ctx = make_ctx(agent_name="territory_censor")
     toolbelt.note_open_question("UAE cut list unclear", ctx)
     assert ctx.state["open_questions:territory_censor"] == ["UAE cut list unclear"]
+
+
+def test_flag_ids_are_partitioned_per_desk():
+    """Two desks filing concurrently must never mint the same flag id."""
+    c1 = file_good_flag(make_ctx("clearance_counsel"))
+    t1 = file_good_flag(make_ctx("territory_censor"))
+    assert c1.startswith("Filed F101") and t1.startswith("Filed F401")
+
+
+def test_query_precedent_degrades_gracefully(monkeypatch):
+    monkeypatch.delenv("CLICKHOUSE_HOST", raising=False)
+    monkeypatch.delenv("CLICKHOUSE_PASSWORD", raising=False)
+    out = toolbelt.query_precedent("strong language throughout", 8, make_ctx())
+    assert "error" in out and "research()" in out["guidance"]

@@ -1,5 +1,5 @@
 # --- Google Cloud AI (the ONLY permitted runtime AI tooling; see CLAUDE.md) ---
-google-adk>=2.7.1
+google-adk>=2.7.1,<3  # 2.7 deprecates Sequential/Loop/Parallel agents for Workflow; migrate deliberately, not by surprise
 google-genai>=2.19.0
 google-cloud-aiplatform[agent-engines]>=1.60.0
 

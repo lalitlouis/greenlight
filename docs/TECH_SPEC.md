@@ -118,13 +118,15 @@ objects:
 |---|---|---|
 | `scenes` | ScriptParser | all |
 | `entities` | Triage | all desks |
-| `research:<entity_id>` | `research()` tool | all desks — one search per entity, shared |
+| `research:<entity_id>:<question>` | `research()` tool | all desks — keyed per entity AND question: a chase asks several questions about one entity; identical questions share across desks |
 | `flags:<desk>` | each desk | VerificationPanel |
 | `verdicts:<flag_id>` | verifiers | Adjudicator |
 | `report` | Adjudicator | ReportWriter |
 
-`research:<entity_id>` is the cost control that matters: four desks needing the same song hit the
-cache, not the API.
+The research cache is the cost control that matters: four desks asking the same question about
+the same song hit the cache, not the API. (Keying on entity alone was tried first and looped —
+a desk chasing ownership asks several different questions about one entity and kept getting the
+first answer back.)
 
 ## Data contracts
 

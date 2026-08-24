@@ -23,6 +23,15 @@ from greenlight.contracts import ContractViolation, validate
 
 DESKS = ("clearance_counsel", "ratings_board", "safety_underwriter", "territory_censor")
 
+# The four desks run concurrently under a ParallelAgent. Shared counters would race,
+# so flag ids are partitioned per desk and research budgets are per-desk keys.
+FLAG_ID_OFFSET = {
+    "clearance_counsel": 100,
+    "ratings_board": 200,
+    "safety_underwriter": 300,
+    "territory_censor": 400,
+}
+
 _MAX_RESULTS_TO_MODEL = 6
 _MAX_EXCERPT_CHARS = 1200
 
@@ -155,12 +164,17 @@ def research(
     Every citation you file must copy an excerpt from these results VERBATIM. Never
     paraphrase an excerpt.
     """
-    key = f"research:{entity_id or hashlib.sha1(objective.encode()).hexdigest()[:12]}"
+    # Key on entity AND question: an ownership chase asks several different
+    # questions about one entity, and each deserves its own search. Identical
+    # questions still share across desks.
+    q_hash = hashlib.sha1(objective.encode()).hexdigest()[:12]
+    key = f"research:{entity_id}:{q_hash}" if entity_id else f"research:{q_hash}"
     cached = tool_context.state.get(key)
     if cached is not None:
         return {"cached": True, "results": cached["results"], "search_id": cached["search_id"]}
 
-    budget = int(tool_context.state.get("research_budget", 0))
+    budget_key = f"research_budget:{_desk(tool_context)}"
+    budget = int(tool_context.state.get(budget_key, 0))
     if budget <= 0:
         return {
             "error": "research budget spent",
@@ -171,7 +185,7 @@ def research(
         }
 
     raw = _live_search(objective, queries)
-    tool_context.state["research_budget"] = budget - 1
+    tool_context.state[budget_key] = budget - 1
     compacted = _compact(raw)
     record = {
         "objective": objective,
@@ -227,8 +241,9 @@ def file_flag(
     On rejection you get every validation error at once — fix them all and refile once.
     """
     desk = _desk(tool_context)
-    seq = int(tool_context.state.get("flag_seq", 0)) + 1
-    tool_context.state["flag_seq"] = seq
+    seq_key = f"flag_seq:{desk}"
+    seq = int(tool_context.state.get(seq_key, 0)) + 1
+    tool_context.state[seq_key] = seq
 
     cits = []
     for c in citations:
@@ -243,7 +258,7 @@ def file_flag(
         cits.append(cit)
 
     flag: dict[str, Any] = {
-        "flag_id": f"F{seq:03d}",
+        "flag_id": f"F{FLAG_ID_OFFSET[desk] + seq}",
         "agent": desk,
         "scene_ids": scene_ids,
         "entity_id": entity_id or None,
@@ -267,20 +282,103 @@ def file_flag(
     try:
         validate("flag", flag)
     except ContractViolation as e:
-        tool_context.state["flag_seq"] = seq - 1
+        tool_context.state[seq_key] = seq - 1
         return "REJECTED, not filed. Fix ALL of these and refile once:\n- " + "\n- ".join(e.errors)
 
     if not all(c["excerpt"].strip() for c in cits):
-        tool_context.state["flag_seq"] = seq - 1
+        tool_context.state[seq_key] = seq - 1
         return "REJECTED, not filed: every citation needs a non-empty verbatim excerpt."
 
     known = {s["scene_id"] for s in tool_context.state.get("scenes", [])}
     if bad := [s for s in scene_ids if s not in known]:
-        tool_context.state["flag_seq"] = seq - 1
+        tool_context.state[seq_key] = seq - 1
         return f"REJECTED, not filed: unknown scene ids {bad}. Use ids from your worklist."
 
     _state_append(tool_context, f"flags:{desk}", flag)
     return f"Filed {flag['flag_id']} ({severity} {category})."
+
+
+# --- query_precedent --------------------------------------------------------
+
+
+def _clickhouse_client():
+    """Lazy ClickHouse client. Module-level so tests can monkeypatch it."""
+    import clickhouse_connect
+
+    return clickhouse_connect.get_client(
+        host=os.environ["CLICKHOUSE_HOST"],
+        port=int(os.getenv("CLICKHOUSE_PORT", "8443")),
+        username=os.getenv("CLICKHOUSE_USER", "default"),
+        password=os.environ["CLICKHOUSE_PASSWORD"],
+        secure=os.getenv("CLICKHOUSE_SECURE", "true").lower() == "true",
+    )
+
+
+def _embed(text: str) -> list[float]:
+    """Embed text with Vertex — must match the model used at corpus ingest time."""
+    from google import genai
+
+    client = genai.Client(
+        vertexai=True,
+        project=os.environ["GOOGLE_CLOUD_PROJECT"],
+        location=os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1"),
+    )
+    res = client.models.embed_content(model="text-embedding-005", contents=text)
+    return list(res.embeddings[0].values)
+
+
+def query_precedent(text: str, k: int, tool_context: ToolContext) -> dict[str, Any]:
+    """Find the k nearest released films by MPA/CARA rating rationale.
+
+    text: a capsule content profile of THIS script — the rating-relevant facts in the
+    style of a rating rationale, e.g. "strong language throughout, brief violence,
+    drug use, thematic elements involving grief". 1-3 sentences.
+    k: how many comparables, typically 8.
+
+    Returns released films with their actual rating, official rationale, and distance
+    (smaller = more similar). This is evidence — cite it with source_type "precedent"
+    and via "clickhouse", quoting the rationale verbatim as the excerpt. If you get an
+    error field back, the corpus is unavailable: fall back to research() on documented
+    CARA standards instead.
+    """
+    if _missing_env := [v for v in ("CLICKHOUSE_HOST", "CLICKHOUSE_PASSWORD") if not os.getenv(v)]:
+        return {
+            "error": f"precedent corpus not configured ({', '.join(_missing_env)} unset)",
+            "guidance": "Fall back to research() on documented CARA standards.",
+        }
+    try:
+        vec = _embed(text)
+        rows = (
+            _clickhouse_client()
+            .query(
+                """
+            SELECT title, year, rating, rationale,
+                   cosineDistance(embedding, %(vec)s) AS distance
+            FROM rating_rationales
+            ORDER BY distance ASC
+            LIMIT %(k)s
+            """,
+                parameters={"vec": vec, "k": max(1, min(int(k), 20))},
+            )
+            .result_rows
+        )
+    except Exception as e:
+        return {
+            "error": f"precedent corpus unavailable: {type(e).__name__}: {str(e)[:120]}",
+            "guidance": "Fall back to research() on documented CARA standards.",
+        }
+    return {
+        "comparables": [
+            {
+                "title": r[0],
+                "year": r[1],
+                "rating": r[2],
+                "rationale": r[3],
+                "distance": round(float(r[4]), 4),
+            }
+            for r in rows
+        ]
+    }
 
 
 # --- note_open_question -----------------------------------------------------
@@ -306,4 +404,12 @@ def done(reason: str, tool_context: ToolContext) -> str:
     return f"Desk closed: {reason}"
 
 
-DESK_TOOLS = [read_scene, find_in_script, research, file_flag, note_open_question, done]
+DESK_TOOLS = [
+    read_scene,
+    find_in_script,
+    research,
+    query_precedent,
+    file_flag,
+    note_open_question,
+    done,
+]

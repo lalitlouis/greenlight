@@ -6,6 +6,7 @@ from greenlight.tools.toolbelt import (
     file_flag,
     find_in_script,
     note_open_question,
+    query_precedent,
     read_scene,
     research,
 )
@@ -16,6 +17,7 @@ __all__ = [
     "file_flag",
     "find_in_script",
     "note_open_question",
+    "query_precedent",
     "read_scene",
     "research",
 ]

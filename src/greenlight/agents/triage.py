@@ -11,7 +11,7 @@ from typing import Literal
 from google.adk.agents import LlmAgent
 from pydantic import BaseModel, Field
 
-from greenlight.agents.common import RETRY
+from greenlight.agents.common import GEN_CONFIG, RETRY
 
 MODEL = "gemini-2.5-flash"
 
@@ -89,7 +89,17 @@ Fictional people and places invented by the script are NOT entities. A real song
 played is. A real person merely mentioned in dialogue still is — note in context that it is a
 verbal mention only.
 
-Then write a worklist for each of the four desks. Worklist items reference an entity_id where
+Then write a worklist for each of the four desks. Coverage matters more than brevity — a
+hazard or censorship exposure missing from a worklist is invisible to every desk downstream:
+- clearance_counsel: every extracted entity that implicates rights.
+- ratings_board: every language, violence, drug/alcohol, sexuality, and thematic driver.
+- safety_underwriter: every stunt, fire/pyro, water scene, night exterior, weapon, animal, and
+  every scene where a MINOR is present near any of these.
+- territory_censor: any supernatural or occult content (including a ghost played straight),
+  drug use, alcohol prominence, sexuality, religious content, and depictions of state
+  authority condoning illegal acts — these are the categories censors act on.
+
+Worklist items reference an entity_id where
 one applies; for scene-level work (a stunt, a rating beat) use entity_id "" and name the scenes
 in the note. Be specific about what the desk must establish; do not pre-judge the answer.
 
@@ -106,5 +116,6 @@ agent = LlmAgent(
     output_schema=TriageOutput,
     output_key="triage",
     retry_config=RETRY,
+    generate_content_config=GEN_CONFIG,
     include_contents="none",
 )

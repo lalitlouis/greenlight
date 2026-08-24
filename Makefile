@@ -12,6 +12,9 @@ run:            ## end-to-end on the fixture screenplay
 test:
 	.venv/bin/pytest -q
 
+eval:           ## score the latest run against fixtures/SEEDS.md
+	.venv/bin/python scripts/eval_run.py
+
 lint:
 	.venv/bin/ruff check src && .venv/bin/ruff format --check src
 

@@ -7,13 +7,7 @@ where the citation invariant is enforced.
 
 from __future__ import annotations
 
-from google.adk.agents import LlmAgent, LoopAgent
-
-from greenlight.agents.common import RETRY
-from greenlight.tools import DESK_TOOLS
-
-MODEL = "gemini-2.5-flash"
-MAX_ITERATIONS = 8
+from greenlight.agents.common import make_desk
 
 INSTRUCTION = """\
 You are Clearance Counsel, the rights and clearances desk of a film production's script
@@ -29,6 +23,10 @@ TRIAGE:
 SCENE INDEX:
 {scene_index}
 
+ORDER OF WORK: PLOT_CRITICAL entities first, then FEATURED, then BACKGROUND — budget runs
+out from the bottom of the list, and the plot-critical finding is the one the producer is
+paying for.
+
 PROCEDURE, per worklist item:
 1. read_scene / find_in_script first. Establish as FACTS: how the entity is used, how often, how
    prominently, and whether it is depicted negatively. Never guess what you can look up in the
@@ -39,8 +37,17 @@ PROCEDURE, per worklist item:
 3. For music: composition and master recording are separately owned. If the script requires a
    specific recording, chase both chains: identify the composition's owner, then the master's,
    then the administrator if ownership has moved. Each hop is a new research() call. Stop at
-   three hops — deeper is a human's job; note_open_question it.
-4. Decide. Either file_flag with severity, a concrete remedy, a rule-of-thumb cost range, and at
+   three hops — deeper is a human's job; note_open_question it. File the composition (sync)
+   and the master recording as SEPARATE flags — separate owners, separate negotiations,
+   separate costs — and cite, for each, a source showing that that license is required, not
+   merely who owns the work. Structure music research to get both: one query on ownership,
+   one on the license requirement itself — an ownership excerpt alone will not survive
+   verification, and it should not.
+4. An unresolved OWNER is not a missing flag. If the license requirement itself is
+   established, file the flag citing the requirement, name the best ownership lead in the
+   finding, and put the unresolved chain in note_open_question. The producer needs the flag
+   either way; ownership murk raises the cost, it does not clear the song.
+5. Decide. Either file_flag with severity, a concrete remedy, a rule-of-thumb cost range, and at
    least one citation whose excerpt is copied VERBATIM from research results — or move on,
    leaving no flag. If research was inconclusive, note_open_question instead of guessing.
 
@@ -57,18 +64,9 @@ RULES:
 - When every worklist item is flagged, cleared, or noted: call done() with a one-line summary.
 """
 
-worker = LlmAgent(
+agent = make_desk(
     name="clearance_counsel",
-    model=MODEL,
     description="Rights & clearances: brands, music, people, artwork, clips, insignia.",
     instruction=INSTRUCTION,
-    tools=list(DESK_TOOLS),
-    retry_config=RETRY,
-)
-
-agent = LoopAgent(
-    name="clearance_counsel_desk",
-    description="Clearance Counsel research loop; exits via done() or iteration cap.",
-    sub_agents=[worker],
-    max_iterations=MAX_ITERATIONS,
+    max_iterations=8,
 )
