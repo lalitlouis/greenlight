@@ -163,8 +163,11 @@ creative magic, not legal ops. Fixed entirely in presentation — see `docs/DEMO
 
 ### Deployed — 2026-08-24 (day 9 gate cleared on day 3)
 
+**https://scriptrisk.com** (custom domain; run.app URL below remains as fallback) —
 **https://greenlight-219740804594.us-central1.run.app** — Cloud Run, us-central1, scales to
-zero, 1Gi/1cpu, max 3 instances. Ships the full multi-page site + the demo record; replay works
+zero, 1Gi/1cpu, max 3 instances. Domain: scriptrisk.com via Cloud Domains, $12 one-time,
+**renewal disabled** (expires 2027-08-24, nothing recurring); DNS in Cloud DNS zone
+`scriptrisk-zone`; apex + www mapped with managed SSL. Ships the full multi-page site + the demo record; replay works
 with zero credentials, live runs use env-var creds and the compute SA's `aiplatform.user`
 grant. Redeploy: `gcloud run deploy greenlight --source . --region us-central1` (env file
 regenerated from `.env`; see Dockerfile/.dockerignore — scratch runs and secrets never ship).
