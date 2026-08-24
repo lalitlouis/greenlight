@@ -20,6 +20,16 @@ RETRY = RetryConfig(max_attempts=6, initial_delay=10, max_delay=60, backoff_fact
 GEN_CONFIG = types.GenerateContentConfig(temperature=0.2)
 
 
+COVERAGE_RULE = """
+
+COVERAGE ROLL-CALL — the contract for finishing. Immediately before calling done(), write out
+every item on your worklist with its disposition, one line each:
+  <worklist item> -> FLAGGED <flag_id> | CLEARED (one-line reason) | OPEN QUESTION (noted)
+An item with no disposition is unfinished work: deal with it before you close. If the budget
+is spent, its disposition is an open question, never silence.
+"""
+
+
 def make_desk(name: str, description: str, instruction: str, max_iterations: int) -> LoopAgent:
     """One gatekeeper desk: a LoopAgent over an LlmAgent with the shared toolbelt.
 
@@ -31,7 +41,7 @@ def make_desk(name: str, description: str, instruction: str, max_iterations: int
         name=name,
         model=FLASH,
         description=description,
-        instruction=instruction,
+        instruction=instruction + COVERAGE_RULE,
         tools=list(DESK_TOOLS),
         retry_config=RETRY,
         generate_content_config=GEN_CONFIG,

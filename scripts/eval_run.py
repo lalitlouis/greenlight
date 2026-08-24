@@ -45,7 +45,8 @@ def flags_about(flags, *, category_any=(), text_any=(), desk=None):
 
 def main() -> int:
     path = sys.argv[1] if len(sys.argv) > 1 else sorted(glob.glob("runs/run_*.json"))[-1]
-    r = json.load(open(path))
+    with open(path) as fh:
+        r = json.load(fh)
     flags = r["flags"]
     rejected = r.get("rejected_flags", [])
     checks: list[tuple[str, bool, str]] = []
@@ -65,11 +66,19 @@ def main() -> int:
     )
     check(
         "artwork flagged (Nighthawks)",
-        bool(flags_about(flags, category_any=["artwork", "art_"], text_any=["nighthawks", "hopper"])),
+        bool(
+            flags_about(flags, category_any=["artwork", "art_"], text_any=["nighthawks", "hopper"])
+        ),
     )
     check(
         "likeness flagged (Springsteen photo)",
-        bool(flags_matching(flags, category_any=["publicity", "likeness"])),
+        bool(
+            flags_about(
+                flags,
+                category_any=["publicity", "likeness", "personality"],
+                text_any=["springsteen"],
+            )
+        ),
     )
     check(
         "film clip flagged (Jaws)",
@@ -115,9 +124,7 @@ def main() -> int:
     )
 
     # --- Safety seeds
-    climax = flags_matching(
-        flags, desk="safety_underwriter", scenes_any=["S009", "S010", "S011"]
-    )
+    climax = flags_matching(flags, desk="safety_underwriter", scenes_any=["S009", "S010", "S011"])
     check(
         "safety: THE CLIMAX IS FLAGGED (S009-S011)",
         bool(climax),
@@ -131,11 +138,22 @@ def main() -> int:
     # --- Territory seeds
     check(
         "territory: CN supernatural flag on the ghost scene",
-        bool(flags_matching(flags, category_any=["supernatural", "superstition"], scenes_any=["S007"])),
+        bool(
+            flags_matching(
+                flags, category_any=["supernatural", "superstition"], scenes_any=["S007"]
+            )
+        ),
     )
     check(
         "territory: CN or UAE drug flag",
-        bool(flags_matching(flags, category_any=["drug"], desk="territory_censor")),
+        bool(
+            flags_about(
+                flags,
+                category_any=["drug"],
+                text_any=["marijuana", "joint", "drug"],
+                desk="territory_censor",
+            )
+        ),
     )
 
     # --- Verification health
