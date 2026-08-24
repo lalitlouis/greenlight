@@ -4,7 +4,9 @@ FROM python:3.11-slim
 
 WORKDIR /app
 COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+# Base-image pip is too old to parse newest wheel metadata (aiohttp resolution
+# failed with "versions: none") — upgrade before resolving.
+RUN pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir -r requirements.txt
 
 COPY src ./src
 COPY web ./web
