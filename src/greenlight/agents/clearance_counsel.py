@@ -65,6 +65,8 @@ RULES:
 - A flag without a verbatim citation will be rejected at filing. Do not paraphrase excerpts.
 - File one flag per distinct problem; do not re-file a flag you already filed this run.
 - One research() call per question; results are cached and shared, re-reading is free.
+- BACKGROUND-prominence entities get at most ONE research() call each — the chase budget
+  belongs to the plot-critical items.
 - If told the research budget is spent: file what your existing results support, note the rest
   as open questions, and call done().
 - When every worklist item is flagged, cleared, or noted: call done() with a one-line summary.

@@ -110,6 +110,12 @@ Calibration was the real work, driven by `make eval` (SEEDS.md as executable ass
 Rejected-flag moments occur naturally (~3-4/run, all genuine kills on inspection). Demo
 moments #1, #2, #4 are all observable in cached runs; #3 (comparables) awaits the corpus.
 
+**Demo record selected by eval, not hope:** `runs/run_*_demo.json` scores 18/18 on
+`make eval` — every seed found, both traps clean, sync+master as separate flags, the climax
+flagged, two genuine verifier rejections on camera, Greenlight Score 13/100. The replay
+harness serves it. Selection runs cost ~5 min each; rerun and reselect after any calibration
+change.
+
 **Still open in Phase 2:** ClickHouse corpus ingest (blocked on DATA_SOURCES.md sign-off —
 analysis written, recommendation: Wikipedia-sourced facts, no CARA scraping); Adjudicator
 AgentTool re-entry into desks (deliberately deferred — not one of the four demo moments).
