@@ -58,7 +58,14 @@ make run                  # end-to-end on the fixture screenplay
 make dev                  # ADK dev UI
 ```
 
-See `docs/SETUP.md` for provisioning Google Cloud, Parallel, and ClickHouse.
+See [`docs/SETUP.md`](docs/SETUP.md) for provisioning Google Cloud, Parallel, and ClickHouse.
+
+## Documentation
+
+- [PRD](docs/PRD.md) — problem, users, scope
+- [Tech Spec](docs/TECH_SPEC.md) — pipeline, contracts, deployment
+- [Stack](docs/STACK.md) — every technology and why it is here
+- [Compliance](docs/COMPLIANCE.md) — contest requirements and status
 
 ## Data contracts
 
