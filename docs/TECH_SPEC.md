@@ -1,106 +1,174 @@
 # Tech Spec — GREENLIGHT
 
-## Pipeline
+## Why this is an agent system and not a pipeline
+
+An earlier draft of this spec described a pipeline: extract entities, run one search each, run
+four prompts, dedupe. That design was wrong — not because it would score badly, but because it
+cannot produce a correct clearance report. Four things in this domain require an agent.
+
+**1. Research is iterative and its shape is unknown in advance.** A song is not one lookup.
+Search it, discover the composition and the master are separately owned, research each
+rightsholder, discover the master sits with a reissue label, research that. The entity graph
+*expands as you research it*. No fixed number of calls covers it.
+
+**2. A desk must decide what to look at.** Safety Underwriter reads "the car catches fire" and has
+to establish who else is in the scene, whether it reads as practical or VFX, whether a minor is in
+frame, and only then what an insurer requires. Each answer changes the next question.
+
+**3. Remedies interact.** Replacing a brand rewrites an action beat, which may move a rating beat
+that Ratings Board already scored. Something has to notice and send it back.
+
+**4. A citation is only worth anything if something checked it.** "The model was told to include a
+URL" is not a guarantee. A separate agent that re-reads the source and can *reject* the flag is.
+
+## Agent graph
 
 ```
-ScriptParser      deterministic Python      screenplay -> Scene[]
-      |
-EntityExtractor   Gemini 2.5 Flash          Scene[] -> Entity[]
-      |
-ResearchCache     Parallel Search           one search per Entity, shared across agents
-      |
-GatekeeperPanel   ADK ParallelAgent         four desks, concurrent
-  |- ClearanceCounsel    Parallel   -> Flag[]
-  |- RatingsBoard        ClickHouse -> Flag[] + rating_prediction
-  |- SafetyUnderwriter   rules      -> Flag[]
-  |- TerritoryCensor     ClickHouse -> Flag[]
-      |
-Adjudicator       Gemini 2.5 Pro            dedupe, reconcile, assign severity
-      |
-ReportWriter      deterministic Python      -> Report + marked-up script
+GreenlightPipeline                  SequentialAgent
+├── ScriptParser                    deterministic — screenplay -> Scene[]
+├── Triage                          LlmAgent  -> Entity[] + per-desk worklists
+├── GatekeeperPanel                 ParallelAgent — four desks, concurrent
+│   ├── ClearanceCounsel            LoopAgent(max_iterations=8)
+│   ├── RatingsBoard                LoopAgent(max_iterations=4)
+│   ├── SafetyUnderwriter           LoopAgent(max_iterations=6)
+│   └── TerritoryCensor             LoopAgent(max_iterations=6)
+├── VerificationPanel               ParallelAgent — one verifier per filed flag
+├── Adjudicator                     LoopAgent(max_iterations=3)
+└── ReportWriter                    deterministic -> Report + marked-up script
 ```
 
-The fan-out mirrors the domain: a real clearance process is four independent desks that do not
-consult each other, reconciled at the end by a producer.
+Each desk is a `LoopAgent` wrapping an `LlmAgent` with tools. It decides what to investigate, how
+deep to chase it, and when it is finished. It is not a prompt.
 
-## Design decisions
+## The toolbelt
 
-**Parsing and scoring are deterministic, not model calls.** A parser that hallucinates a scene
-number breaks every downstream anchor, and a Greenlight Score that varies run-to-run is not a
-score. Models are used only where judgment is genuinely required: entity extraction, per-desk
-analysis, and adjudication.
+Every desk gets the same tools; they differ only in instruction and worklist.
 
-**One search per entity, not per entity per desk.** `ResearchCache` runs the Parallel search
-once and shares results through ADK session state. Four desks researching the same song
-independently would quadruple cost and latency for identical results.
+| Tool | Purpose |
+|---|---|
+| `read_scene(scene_id)` | Full scene text. Desks go back to the script rather than working from a dump. |
+| `find_in_script(pattern)` | Where and how often something appears. Prominence is a fact, not a guess. |
+| `research(objective, queries)` | Parallel Search. `objective` is the clearance question in prose. |
+| `query_precedent(text, k)` | ClickHouse kNN over MPA rating rationales. |
+| `file_flag(flag)` | Emit a finding. Schema-validated on the way in; a flag without a citation is rejected at the tool boundary. |
+| `note_open_question(text)` | Record something the desk could not resolve. Surfaced in the report — an honest unknown beats a confident guess. |
+| `done(reason)` | Self-terminate. Sets `tool_context.actions.escalate = True`, which is how a `LoopAgent` exits early. |
 
-**Citations pass through untouched.** A model may decide *whether* an excerpt supports a finding,
-never rewrite it. The excerpt's value is that it is quotable and checkable.
+Tools are plain typed Python functions. ADK reads the signature and docstring as the tool spec, so
+docstrings are written for a model, not a human.
 
-**Agents communicate through state, not text.** Every `LlmAgent` writes via `output_key`;
-downstream agents read structured state. Nothing re-parses another agent's prose.
+## Loop termination
+
+Three independent stops, because a research loop that cannot end is a bill:
+
+1. **Self-termination** — the desk calls `done()` and escalates.
+2. **`max_iterations`** — a hard ceiling per desk.
+3. **Research budget** — a per-run cap on `research()` calls, enforced in the tool. When exhausted
+   the tool returns "budget spent, file what you have," which the desk handles gracefully.
+
+Chase depth is capped at 3 (entity -> rightsholder -> administrator). Deeper than that is a human's
+job and the report says so.
+
+## Verification
+
+Every filed flag fans out to an independent verifier that receives **the claim and the citation,
+but not the desk's reasoning**, and answers one question: does this source actually support this
+claim?
+
+- `SUPPORTED` — flag stands.
+- `PARTIAL` — flag stands, severity capped at MEDIUM, marked "partially supported."
+- `UNSUPPORTED` — flag is dropped and logged. It never reaches the report.
+
+Withholding the desk's reasoning is deliberate: a verifier shown the argument tends to ratify it.
+
+This pass is the product thesis made mechanical. Rejected-flag count is a metric we report to
+ourselves — if it is zero, the verifier is not doing its job.
+
+## Adjudication
+
+A `LoopAgent` that reconciles surviving flags:
+
+- Merges duplicates found by different desks on the same scene.
+- Resolves conflicting remedies (Ratings Board wants a line cut; Clearance Counsel wants the same
+  line rewritten).
+- **Detects interaction.** When a remedy changes a scene another desk scored, it calls that desk
+  again through `AgentTool` with the proposed change. That re-entry is why this is a loop.
+
+Terminates when a pass produces no new merges, conflicts, or re-checks.
+
+## What deliberately does not use a model
+
+- **Parsing.** A hallucinated scene number breaks every anchor downstream.
+- **Scoring.** A score that moves between runs is not a score.
+- **Report assembly.** Deterministic rendering from validated objects.
+- **Schema validation.** Enforced at the `file_flag` boundary, not requested in a prompt.
+
+## State contract
+
+Desks never read each other's prose. Everything crosses through ADK session state as validated
+objects:
+
+| Key | Written by | Read by |
+|---|---|---|
+| `scenes` | ScriptParser | all |
+| `entities` | Triage | all desks |
+| `research:<entity_id>` | `research()` tool | all desks — one search per entity, shared |
+| `flags:<desk>` | each desk | VerificationPanel |
+| `verdicts:<flag_id>` | verifiers | Adjudicator |
+| `report` | Adjudicator | ReportWriter |
+
+`research:<entity_id>` is the cost control that matters: four desks needing the same song hit the
+cache, not the API.
 
 ## Data contracts
 
-`schemas/` — `scene`, `entity`, `flag`, `report`. Frozen. They are the interface between the
-agent workstream and the data/UI workstream; changing one blocks the other person.
+`schemas/` — `scene`, `entity`, `flag`, `report`. Frozen. Key invariants:
 
-Key invariants:
-- `flag.citations` has `minItems: 1` — enforced by schema, not prompt.
-- `scene.raw_span` is a char offset pair into the source, which is what makes the marked-up
-  script view possible.
-- `entity.depicted_negatively` is the field that flips a brand from "courtesy letter" to "will
-  never clear."
+- `flag.citations` has `minItems: 1`, enforced by schema at the tool boundary.
+- `scene.raw_span` is a char-offset pair, which is what makes the marked-up script view possible.
+- `entity.depicted_negatively` flips a brand from "courtesy letter" to "will never clear."
 
-## Components
+## Models
 
-| Component | Impl | Notes |
+| Component | Model | Why |
 |---|---|---|
-| ScriptParser | `pdfplumber` + Fountain regex | Emits `raw_span` offsets |
-| EntityExtractor | Gemini 2.5 Flash, structured output | Typed against `entity.schema.json` |
-| ResearchCache | `parallel-web` | Dedup citations on normalized URL — Parallel returns the same page at different casing |
-| RatingsBoard | ClickHouse kNN over CARA rationales | Embeddings via Vertex; returns comparables |
-| Adjudicator | Gemini 2.5 Pro | The only Pro call; merges overlapping flags |
-| ReportWriter | Python | Score is a pure function of severities |
-| Web app | FastAPI + SSE, static frontend | Streams per-desk progress |
-
-## Greenlight Score
-
-Deterministic, never asked of a model:
-
-```
-score = 100 - min(100, 30*BLOCKER + 12*HIGH + 5*MEDIUM + 1*LOW)
-```
-
-Weights are tunable; the property that matters is that one BLOCKER visibly dominates, because in
-production it does.
-
-## Deployment
-
-- **Agents:** Vertex AI Agent Engine. Deployed late (day 12+) — it bills for idle replicas.
-- **Web app:** Cloud Run, scales to zero.
-- **Dev:** local `adk web`. Agent Engine is not in the inner loop.
-
-Region `us-central1`. Staging bucket `gs://greenlight-clearance-2026-staging`.
+| Triage | Flash | High-volume extraction |
+| The four desks | Flash | Many tool-calling turns; Flash is the default and cost driver |
+| Verifiers | Flash | Narrow, single-question judgement |
+| Adjudicator | Pro | The only task reasoning across four desks' conflicting output |
 
 ## Cost
 
-$100 total. Flash for everything except adjudication. Cassettes in `fixtures/cassettes/` keep
-tests free and deterministic. A full cached run lives in `runs/` so the demo survives a dead
-network.
+$100 total, and iterative research spends faster than a pipeline would. Controls: shared
+`research:` cache, per-run research budget, `max_iterations` per desk, chase depth 3, Flash
+everywhere except adjudication. Cassettes in `fixtures/cassettes/` make tests free and
+deterministic. A full cached run lives in `runs/` so the demo survives a dead network.
+
+## Deployment
+
+- **Agents:** Vertex AI Agent Engine. Deployed from day 9; Cloud Run is the fallback.
+- **Web app:** Cloud Run, scales to zero, FastAPI + SSE.
+- Region `us-central1`. Staging bucket `gs://greenlight-clearance-2026-staging`.
+
+The UI streams tool calls as they happen. The four columns show what each desk is *doing* —
+"two rightsholders found, chasing administrator" — not a progress bar. The agency has to be
+visible or it may as well not exist.
 
 ## Testing
 
 - Schema validation on every emitted object.
 - Parser unit tests against the fixture screenplay.
-- Agent tests replay cassettes — no live API calls in the suite.
+- Desk tests replay cassettes; no live API calls in the suite.
+- **Verifier regression set:** hand-labelled flag/citation pairs, including deliberately
+  unsupported ones. If the verifier stops rejecting those, it has silently broken.
 - `make check` runs lint plus the forbidden-dependency scan.
 
 ## Risks
 
 | Risk | Mitigation |
 |---|---|
+| Research loops burn the budget | Three independent stops; shared cache; depth cap |
+| Desks under-investigate and file thin flags | Verifier rejection rate is monitored; instruction tuning |
 | Agent Engine deploy fights us | Cloud Run fallback; ADK runs either way |
 | Live demo network failure | Pre-computed run committed to `runs/` |
-| $100 credit exhausted | Budget alerts at 40/75/90%; Flash default |
-| Feature-length script too slow | Concurrent fan-out; scene-level batching |
+| Latency on a feature script | Concurrent desks; per-entity research cache |

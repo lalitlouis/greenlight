@@ -190,12 +190,50 @@ section{padding:64px 0; border-bottom:1px solid var(--rule)}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
 .bar{height:2px; background:var(--screen-3); overflow:hidden}
 .bar i{display:block; height:100%; background:currentColor}
-.col-body{padding:11px 15px 15px; display:flex; flex-direction:column; gap:8px; min-height:190px}
-.tick{font-family:var(--mono); font-size:11px; line-height:1.45; color:var(--screen-ink-3); display:flex; gap:7px}
-.tick b{color:var(--screen-ink-2); font-weight:400}
-.tick.hit{color:var(--screen-ink-2)}
-.tick.hit b{color:var(--blocker)}
-.tick .g{color:var(--screen-stamp)}
+.col-body{padding:12px 14px 15px; display:flex; flex-direction:column; gap:5px; min-height:250px}
+
+/* agent reasoning trace */
+.tr{
+  font-family:var(--mono); font-size:10.5px; line-height:1.5;
+  color:var(--screen-ink-3); display:block; position:relative;
+  padding-left:13px; word-break:break-word;
+}
+.tr::before{position:absolute; left:0; top:0; opacity:.65}
+.tr em{font-style:normal; color:var(--screen-ink-3)}
+
+.t-call{color:var(--screen-ink-2)}
+.t-call::before{content:"\2192"}                /* -> tool call */
+.t-out{padding-left:24px; color:var(--screen-ink-3)}
+.t-out::before{content:"\21B3"; left:12px}      /* result */
+.t-flag{color:var(--blocker); font-weight:700; letter-spacing:.02em}
+.t-flag::before{content:"\2691"; opacity:1}     /* flag filed */
+.t-esc{color:var(--screen-stamp)}
+.t-hit{color:var(--blocker)}
+.t-q{color:var(--high)}
+.t-q::before{content:"?"; font-weight:700}
+.t-depth,.t-idle{color:var(--screen-ink-3); opacity:.6; padding-left:0}
+.t-depth::before,.t-idle::before{content:""}
+.t-depth{margin-top:2px; font-size:9.5px; letter-spacing:.06em}
+
+.cur{
+  display:inline-block; width:6px; height:11px; margin-left:3px;
+  background:var(--high); vertical-align:-1px;
+}
+@media (prefers-reduced-motion:no-preference){
+  .cur{animation:blink 1.05s step-end infinite}
+}
+
+/* research budget meter */
+.budget{
+  display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+  padding:10px 15px; border-top:1px solid var(--screen-rule);
+  background:var(--screen-2); font-family:var(--mono); font-size:10.5px;
+  color:var(--screen-ink-3);
+}
+.budget b{color:var(--screen-ink-2); font-weight:700; letter-spacing:.06em}
+.bmeter{flex:1; min-width:110px; height:3px; background:var(--screen-3); display:block}
+.bmeter i{display:block; height:100%; background:var(--screen-stamp)}
+.bnote{opacity:.75}
 
 /* comparables */
 .comps{padding:20px 24px; display:flex; flex-direction:column; gap:16px}
@@ -242,6 +280,7 @@ mark.m2{background:rgba(169,103,18,.18); border-bottom-color:var(--high)}
 /* pipeline */
 .pipe{font-family:var(--mono); font-size:12.5px; line-height:1.85; background:var(--card); border:1px solid var(--rule); padding:20px 22px; overflow-x:auto; color:var(--ink-2); white-space:pre}
 .pipe b{color:var(--stamp); font-weight:700}
+code{font-family:var(--mono); font-size:.88em; background:var(--paper-2); padding:1px 5px; border:1px solid var(--rule-soft)}
 
 /* stack table */
 .stack-tbl{width:100%; border-collapse:collapse; font-size:14.5px}
@@ -290,8 +329,10 @@ footer{padding:44px 0 60px; border-bottom:0}
 <div class="hero wrap">
   <div class="rule-label"><span class="label">Pre-production risk</span></div>
   <h1>Four clearance desks read your screenplay at once.</h1>
-  <p class="lede">Every finding comes back with the source it came from, what it costs to fix,
-  and how many days it adds. Nothing renders without a citation.</p>
+  <p class="lede">Four agents investigate independently &mdash; reading scenes, chasing ownership,
+  deciding when they are done. Every finding comes back with the source it came from, what it costs
+  to fix, and how many days it adds. Nothing renders unless a second agent has checked the
+  citation.</p>
   <div class="facts">
     <div class="fact"><b>$1&ndash;3k</b><span>Cost of a first clearance report on a feature</span></div>
     <div class="fact"><b>7 days</b><span>Standard turnaround, priced by speed</span></div>
@@ -322,27 +363,29 @@ footer{padding:44px 0 60px; border-bottom:0}
   <div class="sec-head" style="max-width:var(--measure);margin-inline:auto;width:100%">
     <div class="rule-label"><span class="label">02 &nbsp;The panel</span></div>
     <h2>Four gatekeepers, no shared context.</h2>
-    <p style="color:var(--ink-2)">Each desk reads independently, exactly as it works in a studio.
-    An adjudicator reconciles them at the end &mdash; which is what a producer does.</p>
+    <p style="color:var(--ink-2)">Each desk is an autonomous agent that investigates on its own
+    terms &mdash; it reads scenes, runs research, chases ownership chains, and stops when it decides
+    it is done. They cannot see each other's work, exactly as in a studio. An adjudicator reconciles
+    them at the end, which is what a producer does.</p>
   </div>
   <div class="desks">
     <div class="desk">
       <span class="n">DESK 01</span>
       <h3>Clearance Counsel</h3>
-      <p>Brands, music, real people, artwork, locations, publications. Runs one live research task
-      per entity and returns verbatim sourced text.</p>
+      <p>Brands, music, real people, artwork, locations. Chases ownership until it bottoms out
+      &mdash; a song becomes a composition owner, then a master owner, then an administrator.</p>
     </div>
     <div class="desk">
       <span class="n">DESK 02</span>
       <h3>Ratings Board</h3>
-      <p>Matches your content beats against a corpus of published MPA rating rationales and returns
-      the nearest released films &mdash; evidence, not a guess.</p>
+      <p>Matches content beats against a corpus of published MPA rating rationales and returns the
+      nearest released films &mdash; evidence, not a guess.</p>
     </div>
     <div class="desk">
       <span class="n">DESK 03</span>
       <h3>Safety Underwriter</h3>
-      <p>Stunts, pyro, firearms, water, animals, minors. Flags what an insurer will require on the
-      call sheet and what it adds to the schedule.</p>
+      <p>Stunts, pyro, firearms, water, animals, minors. Reads back into the scene to establish who
+      is present before deciding what an insurer will require.</p>
     </div>
     <div class="desk">
       <span class="n">DESK 04</span>
@@ -390,62 +433,76 @@ footer{padding:44px 0 60px; border-bottom:0}
         <div class="col">
           <div class="col-head">
             <span class="nm">Clearance Counsel</span>
-            <span class="st running"><span class="pulse"></span>RESEARCHING 38/61</span>
+            <span class="st running"><span class="pulse"></span>TURN 5 / 8 &middot; 38 OF 61</span>
             <span class="bar running"><i style="width:62%"></i></span>
           </div>
           <div class="col-body">
-            <span class="tick hit"><b>S014</b> beverage brand &mdash; destroyed on screen</span>
-            <span class="tick hit"><b>S022</b> needle-drop &mdash; 2 rightsholders</span>
-            <span class="tick"><b>S031</b> &ldquo;Happy Birthday&rdquo; <span class="g">&check; public domain</span></span>
-            <span class="tick"><b>S008</b> public figure on background TV</span>
-            <span class="tick">S040 mural &mdash; searching&hellip;</span>
+            <span class="tr t-call">find_in_script<em>("cola")</em></span>
+            <span class="tr t-out">4 occurrences &middot; S014 plot-critical</span>
+            <span class="tr t-call">research<em>(&ldquo;brand destroyed on screen&hellip;&rdquo;)</em></span>
+            <span class="tr t-out">3 sources &middot; doctrine: disparagement</span>
+            <span class="tr t-flag">file_flag &middot; BLOCKER &middot; S014</span>
+            <span class="tr t-call">research<em>(&ldquo;sync rightsholders&hellip;&rdquo;)</em></span>
+            <span class="tr t-out">2 owners &mdash; composition + master</span>
+            <span class="tr t-call t-live">research<em>(&ldquo;master administrator&hellip;&rdquo;)</em>
+              <span class="cur" aria-hidden="true"></span></span>
+            <span class="tr t-depth">chase depth 2 / 3</span>
           </div>
         </div>
         <div class="col">
           <div class="col-head">
             <span class="nm">Ratings Board</span>
-            <span class="st done"><span class="pulse"></span>COMPLETE</span>
+            <span class="st done"><span class="pulse"></span>DONE &middot; 3 TURNS</span>
             <span class="bar done"><i style="width:100%"></i></span>
           </div>
           <div class="col-body">
-            <span class="tick">14 content beats extracted</span>
-            <span class="tick">312 rationales compared</span>
-            <span class="tick hit"><b>R</b> predicted &mdash; target PG-13</span>
-            <span class="tick">8 comparables returned</span>
-            <span class="tick">3 beats to cut identified</span>
+            <span class="tr t-call">query_precedent<em>(beats, k=20)</em></span>
+            <span class="tr t-out">312 rationales &middot; 8 within 0.16</span>
+            <span class="tr t-call">read_scene<em>(S022)</em></span>
+            <span class="tr t-out">9 uses &mdash; above PG-13 threshold</span>
+            <span class="tr t-flag">file_flag &middot; HIGH &middot; rating_gap</span>
+            <span class="tr t-call">done<em>("target delta resolved")</em></span>
+            <span class="tr t-out t-esc">escalate &rarr; loop exit</span>
           </div>
         </div>
         <div class="col">
           <div class="col-head">
             <span class="nm">Safety Underwriter</span>
-            <span class="st running"><span class="pulse"></span>READING 71/94</span>
-            <span class="bar running"><i style="width:76%"></i></span>
+            <span class="st running"><span class="pulse"></span>TURN 3 / 6 &middot; p.71</span>
+            <span class="bar running"><i style="width:52%"></i></span>
           </div>
           <div class="col-body">
-            <span class="tick hit"><b>S047</b> car fire &mdash; minor in frame</span>
-            <span class="tick"><b>S047</b> licensed pyro required</span>
-            <span class="tick">S052 exterior night, water</span>
-            <span class="tick">S061 firearm &mdash; blank-fire</span>
-            <span class="tick">reading p.72&hellip;</span>
+            <span class="tr t-call">read_scene<em>(S047)</em></span>
+            <span class="tr t-out">car fire &middot; 3 characters present</span>
+            <span class="tr t-call">find_in_script<em>("DEVI")</em></span>
+            <span class="tr t-out t-hit">age 11 &mdash; minor in frame</span>
+            <span class="tr t-call t-live">research<em>(&ldquo;pyro requirements minor on set&hellip;&rdquo;)</em>
+              <span class="cur" aria-hidden="true"></span></span>
+            <span class="tr t-q">note_open_question &mdash; practical or VFX?</span>
           </div>
         </div>
         <div class="col">
           <div class="col-head">
             <span class="nm">Territory Censor</span>
-            <span class="st queued"><span class="pulse"></span>QUEUED</span>
+            <span class="st queued"><span class="pulse"></span>QUEUED &middot; 4 MARKETS</span>
             <span class="bar queued"><i style="width:0"></i></span>
           </div>
           <div class="col-body">
-            <span class="tick">US &mdash; pending</span>
-            <span class="tick">UK &mdash; pending</span>
-            <span class="tick">CN &mdash; pending</span>
-            <span class="tick">AE &mdash; pending</span>
+            <span class="tr t-idle">awaiting worklist from Triage</span>
+            <span class="tr t-idle">US &middot; UK &middot; CN &middot; AE</span>
           </div>
         </div>
       </div>
+      <div class="budget">
+        <span><b>research budget</b> 38 / 80 calls</span>
+        <span class="bmeter" aria-hidden="true"><i style="width:47%"></i></span>
+        <span class="bnote">shared cache &mdash; 23 hits avoided a repeat search</span>
+      </div>
     </div>
-    <p class="caption">The desks run concurrently, and the interface says so. Each column fills at
-    its own rate; findings appear as they land rather than at the end.</p>
+    <p class="caption">Each desk is a loop agent with a toolbelt, not a prompt. It chooses what to
+    look at, chases ownership until it bottoms out or hits its depth cap, and calls <em>done</em>
+    when it is satisfied &mdash; which is why the columns finish at different times and after a
+    different number of turns.</p>
   </div>
 
   <div class="shot">
@@ -676,36 +733,46 @@ footer{padding:44px 0 60px; border-bottom:0}
 <section class="wrap">
   <div class="sec-head">
     <div class="rule-label"><span class="label">04 &nbsp;How it is built</span></div>
-    <h2>The architecture is the workflow.</h2>
-    <p style="color:var(--ink-2)">A real clearance process is four independent desks that do not
-    consult each other, reconciled at the end by a producer. That is exactly what the agent graph
-    does &mdash; the fan-out is structural, not decorative.</p>
+    <h2>Each desk is a loop agent with a toolbelt.</h2>
+    <p style="color:var(--ink-2)">A desk is not a prompt. It is given a worklist and a set of
+    tools, and it decides what to read, what to research, how far to chase an ownership chain, and
+    when it is finished.</p>
   </div>
-  <div class="pipe"><b>ScriptParser</b>       deterministic      screenplay &rarr; Scene[]
-     &darr;
-<b>EntityExtractor</b>    Gemini 2.5 Flash   Scene[] &rarr; Entity[]
-     &darr;
-<b>ResearchCache</b>      Parallel Search    one search per entity, shared
-     &darr;
-<b>GatekeeperPanel</b>    ADK ParallelAgent  four desks, concurrent
-     &boxvr; ClearanceCounsel     &rarr; Flag[]
-     &boxvr; RatingsBoard         &rarr; Flag[] + rating
-     &boxvr; SafetyUnderwriter    &rarr; Flag[]
-     &boxur; TerritoryCensor      &rarr; Flag[]
-     &darr;
-<b>Adjudicator</b>        Gemini 2.5 Pro     dedupe, reconcile, score
-     &darr;
-<b>ReportWriter</b>       deterministic      Report + marked-up script</div>
+  <div class="pipe"><b>GreenlightPipeline</b>            SequentialAgent
+&boxvr; ScriptParser                deterministic &mdash; screenplay &rarr; Scene[]
+&boxvr; Triage                      LlmAgent &rarr; Entity[] + per-desk worklists
+&boxvr; <b>GatekeeperPanel</b>            ParallelAgent &mdash; four desks, concurrent
+&boxv;  &boxvr; ClearanceCounsel        LoopAgent(max_iterations=8)
+&boxv;  &boxvr; RatingsBoard            LoopAgent(max_iterations=4)
+&boxv;  &boxvr; SafetyUnderwriter       LoopAgent(max_iterations=6)
+&boxv;  &boxur; TerritoryCensor         LoopAgent(max_iterations=6)
+&boxvr; <b>VerificationPanel</b>          ParallelAgent &mdash; one verifier per filed flag
+&boxvr; <b>Adjudicator</b>                LoopAgent &mdash; may re-enter a desk via AgentTool
+&boxur; ReportWriter                deterministic &rarr; Report + marked-up script
+
+<b>tools</b>  read_scene &middot; find_in_script &middot; research &middot; query_precedent
+       file_flag &middot; note_open_question &middot; done</div>
   <div class="prose" style="margin-top:26px">
-    <p><strong>Parsing and scoring never touch a model.</strong> A parser that invents a scene number
-    breaks every anchor downstream, and a score that moves between runs is not a score. Models are
-    used only where judgement is genuinely required.</p>
-    <p><strong>One search per entity, not one per desk.</strong> Four desks researching the same song
-    independently would quadruple cost and latency for identical results, so research is cached in
-    session state and shared.</p>
-    <p><strong>Citations pass through untouched.</strong> A model may decide whether an excerpt
-    supports a finding. It may never rewrite the excerpt. The whole value is that a producer can
-    hand the quote to a lawyer.</p>
+    <p><strong>Research is iterative because ownership is.</strong> A song is not one lookup: search
+    it, find the composition and master are separately owned, research each rightsholder, find the
+    master sits with a reissue label, research that. The entity graph expands as you research it, so
+    no fixed number of calls covers it. Chase depth is capped at three; past that it is a human's
+    job and the report says so.</p>
+    <p><strong>Every flag is checked by something that did not write it.</strong> Each filed flag
+    fans out to an independent verifier that receives the claim and the citation but
+    <em>not</em> the desk's reasoning &mdash; a verifier shown the argument tends to ratify it. It
+    can downgrade a flag to partially supported, or drop it entirely. That is what turns "every
+    claim is sourced" from a prompt instruction into a guarantee.</p>
+    <p><strong>Remedies interact, so adjudication is a loop.</strong> Replacing a brand rewrites an
+    action beat, which may move a rating beat that Ratings Board already scored. When the
+    adjudicator spots that, it calls the affected desk again through <code>AgentTool</code> with the
+    proposed change and waits for a revised answer.</p>
+    <p><strong>Loops that cannot end are just bills.</strong> Three independent stops: the desk
+    calls <code>done()</code> and escalates, a hard <code>max_iterations</code> per desk, and a
+    per-run research budget enforced inside the tool &mdash; when it is spent the tool replies
+    "file what you have."</p>
+    <p><strong>Parsing and scoring never touch a model.</strong> A parser that invents a scene
+    number breaks every anchor downstream, and a score that moves between runs is not a score.</p>
   </div>
 </section>
 
