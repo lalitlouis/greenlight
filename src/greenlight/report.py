@@ -14,14 +14,19 @@ from greenlight.contracts import validate
 
 SEVERITIES = ("BLOCKER", "HIGH", "MEDIUM", "LOW", "FYI")
 
-# Rule-of-thumb weights, stated in the product as such. A BLOCKER dominates by design:
-# one unshootable scene matters more than any pile of routine paperwork.
-_WEIGHT = {"BLOCKER": 25, "HIGH": 10, "MEDIUM": 4, "LOW": 1, "FYI": 0}
+# Each finding multiplies remaining confidence — deterministic, documented, and it
+# keeps the scale meaningful at both ends: a linear penalty pins every dense script
+# to 0, which reads as a broken gauge rather than a bad script. A BLOCKER dominates
+# by design: one unshootable scene outweighs any pile of routine paperwork.
+_FACTOR = {"BLOCKER": 0.70, "HIGH": 0.92, "MEDIUM": 0.97, "LOW": 0.995, "FYI": 1.0}
 
 
 def greenlight_score(flags: list[dict[str, Any]]) -> int:
-    """0-100. Deterministic; documented weights; floor at 0."""
-    return max(0, 100 - sum(_WEIGHT[f["severity"]] for f in flags))
+    """0-100. Deterministic product of per-severity factors. Never asked of an LLM."""
+    score = 100.0
+    for f in flags:
+        score *= _FACTOR[f["severity"]]
+    return round(score)
 
 
 def _cost_range(flags: list[dict[str, Any]]) -> list[float] | None:

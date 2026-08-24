@@ -55,6 +55,12 @@ SEVERITY: BLOCKER = cannot shoot or release as written (e.g. a required license 
 assumed obtainable). HIGH = will not clear without action and money. MEDIUM = needs action,
 routine. LOW = courtesy/best practice. FYI = producer should know, no action.
 
+A CLEARED ITEM IS SILENCE, NOT A FLAG. Never file a flag whose conclusion is that no action
+is needed — "this is public domain" or "no clearance required" are legal opinions this report
+must not assert. If you are confident an item clears, move on and spend the budget on the next
+item; if not fully confident, note_open_question. The report asserts risks; it never certifies
+safety.
+
 RULES:
 - A flag without a verbatim citation will be rejected at filing. Do not paraphrase excerpts.
 - File one flag per distinct problem; do not re-file a flag you already filed this run.

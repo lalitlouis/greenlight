@@ -16,7 +16,7 @@ import json
 import sys
 
 
-def flags_matching(flags, *, category_any=None, scenes_any=None, desk=None):
+def flags_matching(flags, *, category_any=None, scenes_any=None, desk=None, text_any=None):
     out = []
     for f in flags:
         if desk and f["agent"] != desk:
@@ -25,7 +25,21 @@ def flags_matching(flags, *, category_any=None, scenes_any=None, desk=None):
             continue
         if scenes_any and not set(f["scene_ids"]) & set(scenes_any):
             continue
+        if text_any and not any(s in f["finding"].lower() for s in text_any):
+            continue
         out.append(f)
+    return out
+
+
+def flags_about(flags, *, category_any=(), text_any=(), desk=None):
+    """Category OR finding-text match — desks drift category slugs run to run."""
+    by_cat = flags_matching(flags, category_any=list(category_any), desk=desk)
+    by_text = flags_matching(flags, text_any=list(text_any), desk=desk)
+    seen, out = set(), []
+    for f in by_cat + by_text:
+        if f["flag_id"] not in seen:
+            seen.add(f["flag_id"])
+            out.append(f)
     return out
 
 
@@ -51,7 +65,7 @@ def main() -> int:
     )
     check(
         "artwork flagged (Nighthawks)",
-        bool(flags_matching(flags, category_any=["artwork", "art_"])),
+        bool(flags_about(flags, category_any=["artwork", "art_"], text_any=["nighthawks", "hopper"])),
     )
     check(
         "likeness flagged (Springsteen photo)",
@@ -59,7 +73,12 @@ def main() -> int:
     )
     check(
         "film clip flagged (Jaws)",
-        bool(flags_matching(flags, category_any=["film_clip", "clip"])),
+        bool(flags_about(flags, category_any=["film_clip", "clip"], text_any=["jaws"])),
+    )
+    check(
+        "no 'all clear' assertions filed as flags",
+        not flags_matching(flags, category_any=["no_clearance", "no_action_required"]),
+        "the report asserts risks, never certifies safety",
     )
 
     # --- Verifier traps: these must NOT survive as flags

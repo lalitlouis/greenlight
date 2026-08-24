@@ -35,10 +35,14 @@ def make_flag(fid, severity, cost=None, days=None, agent="clearance_counsel"):
 
 def test_score_is_deterministic_and_weighted():
     assert greenlight_score([]) == 100
-    assert greenlight_score([make_flag("F101", "BLOCKER")]) == 75
-    assert greenlight_score([make_flag("F101", "HIGH"), make_flag("F102", "MEDIUM")]) == 86
-    many = [make_flag(f"F{i}", "BLOCKER") for i in range(101, 111)]
-    assert greenlight_score(many) == 0  # floored, never negative
+    assert greenlight_score([make_flag("F101", "BLOCKER")]) == 70
+    assert greenlight_score([make_flag("F101", "HIGH"), make_flag("F102", "MEDIUM")]) == 89
+    many = [make_flag(f"F{i}", "BLOCKER") for i in range(101, 121)]
+    assert 0 <= greenlight_score(many) <= 2  # dense scripts approach 0, never below
+    # a BLOCKER always costs more than any single lesser flag
+    assert greenlight_score([make_flag("F1", "BLOCKER")]) < greenlight_score(
+        [make_flag("F1", "HIGH")]
+    )
 
 
 def test_build_report_validates_and_aggregates():
@@ -48,7 +52,7 @@ def test_build_report_validates_and_aggregates():
         make_flag("F301", "FYI", agent="safety_underwriter"),
     ]
     rep = build_report("SLACK TIDE", flags, page_count=13)
-    assert rep["greenlight_score"] == 100 - 10 - 4
+    assert rep["greenlight_score"] == round(100 * 0.92 * 0.97)
     assert rep["counts"]["HIGH"] == 1 and rep["counts"]["BLOCKER"] == 0
     assert rep["by_agent"]["clearance_counsel"] == 1
     assert rep["est_clearance_cost_usd"] == [1500, 7000]

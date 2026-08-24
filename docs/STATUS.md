@@ -1,6 +1,6 @@
 # Status
 
-Last updated: **2026-08-24**. Deadline **2026-09-09, 2:00 PM PT** — treat Sept 8 as real.
+Last updated: **2026-08-24** (evening). Deadline **2026-09-09, 2:00 PM PT** — treat Sept 8 as real.
 
 ## Architecture changed on 2026-08-23 — read this first
 
@@ -90,12 +90,39 @@ Original goal, for reference:
    `file_flag`, `done`), live Parallel calls, terminating on its own. Build one desk as a genuine
    loop rather than four as prompts; the other three are then repetition.
 
-Then Phase 2 (panel + corpus), Phase 3 (product + deploy), Phase 4 (submission). See the plan in
-`docs/PRD.md` and `docs/TECH_SPEC.md`.
+## Phase 2 — panel, verification, adjudication: BUILT (day 2, same day)
+
+The full agent graph runs end to end on live APIs:
+triage -> four concurrent desks (ParallelAgent) -> blinded per-flag verification (runtime
+fan-out) -> Adjudicator on Pro (structured merge/conflict plan, applied deterministically with
+guards) -> deterministic report with multiplicative Greenlight Score.
+
+Calibration was the real work, driven by `make eval` (SEEDS.md as executable assertions):
+- Verifier v1 over-rejected: it faulted web excerpts for not containing script facts, and a
+  silent scene-text truncation made it reject true findings ("not in the script"). Fixed:
+  scenes passed as marked ground truth, premise-focused standard, marked truncation.
+- Research cache keyed per entity+question — entity-only keying looped the ownership chase.
+- Desks now work worst-first (budget dies from the bottom of the list), never file "no
+  clearance needed" opinions (a wrong PD assertion about Nighthawks proved why), and territory
+  no longer pads (21 flags -> ~9).
+- Flag ids and budgets are per-desk — shared counters raced under the ParallelAgent.
+
+Rejected-flag moments occur naturally (~3-4/run, all genuine kills on inspection). Demo
+moments #1, #2, #4 are all observable in cached runs; #3 (comparables) awaits the corpus.
+
+**Still open in Phase 2:** ClickHouse corpus ingest (blocked on DATA_SOURCES.md sign-off —
+analysis written, recommendation: Wikipedia-sourced facts, no CARA scraping); Adjudicator
+AgentTool re-entry into desks (deliberately deferred — not one of the four demo moments).
+
+Then Phase 3 (product + deploy), Phase 4 (submission). See the plan in
+`docs/PRD.md` and `docs/TECH_SPEC.md`. Phase 3 has started: the web UI (FastAPI + SSE, four
+live desk columns, report, marked-up script, replay harness) is being built by a parallel
+agent against the stable `pipeline.run(on_event=...)` interface.
 
 ## Open items needing a human
 
 - [ ] **Add teammate to the Devpost project** — team members must be listed there
+- [ ] **Sign off `docs/DATA_SOURCES.md`** — gates the comparables corpus (demo moment #3)
 - [ ] `docs/DATA_SOURCES.md` — provenance check on MPA/CARA rating rationales before ingesting.
       **Do this week, not with Phase 2 ingest** — demo moment #3 (the comparables beat, the
       "most defensible thirty seconds") dies with no replacement time if this check fails late.
