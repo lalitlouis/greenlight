@@ -72,6 +72,7 @@ app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 PAGES = {
     "/": "landing.html",
     "/home": "home.html",
+    "/writer": "writer.html",
     "/how-it-works": "how-it-works.html",
     "/faq": "faq.html",
     "/contact": "contact.html",
@@ -355,6 +356,58 @@ async def replay(pace: float = 1.0, record: str = "") -> StreamingResponse:
         media_type="text/event-stream",
         headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
     )
+
+
+# ---------------------------------------------------------------- writer's room
+
+
+WRITER_RUNS: dict[str, dict[str, Any]] = {}  # id -> {"status", "record"}
+
+
+async def _run_writer(run_id: str, path: Path) -> None:
+    try:
+        from greenlight.writer import pipeline as writer_pipeline
+
+        record = await writer_pipeline.run(path)
+        WRITER_RUNS[run_id] = {
+            "status": "error" if record.get("error") else "done",
+            "record": record,
+        }
+    except Exception as e:
+        WRITER_RUNS[run_id] = {"status": "error", "record": None, "message": str(e)[:300]}
+
+
+@app.post("/api/writer")
+async def create_writer_run(screenplay: UploadFile) -> dict[str, str]:
+    source = (await screenplay.read()).decode("utf-8", errors="replace")
+    run_id = "w" + uuid.uuid4().hex[:11]
+    upload_dir = RUNS_DIR / "uploads"
+    upload_dir.mkdir(parents=True, exist_ok=True)
+    path = upload_dir / f"{run_id}.fountain"
+    path.write_text(source)
+    WRITER_RUNS[run_id] = {"status": "running", "record": None}
+    asyncio.get_running_loop().create_task(_run_writer(run_id, path))
+    return {"run_id": run_id}
+
+
+def _disk_writer_record(run_id: str) -> dict[str, Any] | None:
+    if not run_id.replace("_", "").replace("-", "").isalnum():
+        return None
+    if run_id == "latest":
+        candidates = sorted(RUNS_DIR.glob("writer_*.json"))
+        return json.loads(candidates[-1].read_text()) if candidates else None
+    path = RUNS_DIR / f"{run_id}.json"
+    return json.loads(path.read_text()) if path.exists() else None
+
+
+@app.get("/api/writer/{run_id}")
+async def writer_status(run_id: str) -> dict[str, Any]:
+    """Poll target for the writer page: {status, record}. Memory first, then disk."""
+    if run_id in WRITER_RUNS:
+        return {"id": run_id, **WRITER_RUNS[run_id]}
+    if (record := _disk_writer_record(run_id)) is not None:
+        return {"id": run_id, "status": "done", "record": record}
+    raise HTTPException(404, f"Unknown writer run {run_id!r}")
 
 
 # ---------------------------------------------------------------- run index

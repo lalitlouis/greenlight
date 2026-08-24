@@ -1,0 +1,205 @@
+{
+  "kind": "writer",
+  "script_title": "SLACK TIDE",
+  "script_path": "fixtures/slack_tide.fountain",
+  "generated_at": "2026-08-24T14:56:07-0700",
+  "elapsed_s": 63.1,
+  "error": null,
+  "format": {
+    "checks": [
+      {
+        "id": "length",
+        "label": "Page count",
+        "status": "INFO",
+        "detail": "~9 pages \u2014 short-film territory; feature norms do not apply."
+      },
+      {
+        "id": "title_page",
+        "label": "Title page",
+        "status": "PASS",
+        "detail": "Title and author present."
+      },
+      {
+        "id": "headings",
+        "label": "Scene headings",
+        "status": "PASS",
+        "detail": "All 12 sluglines parse as INT/EXT."
+      },
+      {
+        "id": "times",
+        "label": "Time of day",
+        "status": "PASS",
+        "detail": "Sluglines carry DAY/NIGHT consistently."
+      },
+      {
+        "id": "cast",
+        "label": "Cast size",
+        "status": "PASS",
+        "detail": "9 speaking characters."
+      },
+      {
+        "id": "one_scene_roles",
+        "label": "Single-scene speakers",
+        "status": "INFO",
+        "detail": "5 characters speak in exactly one scene (ELI, REYES, SAM, TEDDY, VETERAN) \u2014 each is a casting line-item."
+      },
+      {
+        "id": "balance",
+        "label": "Dialogue / action balance",
+        "status": "PASS",
+        "detail": "29% dialogue by volume \u2014 within the typical band."
+      },
+      {
+        "id": "load",
+        "label": "Production load",
+        "status": "INFO",
+        "detail": "8/12 scenes exterior, 5/12 at night \u2014 night exteriors are the expensive quadrant."
+      },
+      {
+        "id": "scene_length",
+        "label": "Scene lengths",
+        "status": "PASS",
+        "detail": "Longest scene ~0.9 pages \u2014 nothing overstays."
+      }
+    ],
+    "counts": {
+      "PASS": 6,
+      "WARN": 0,
+      "INFO": 3
+    },
+    "stats": {
+      "pages": 9,
+      "scenes": 12,
+      "cast": 9,
+      "dialogue_ratio": 0.291,
+      "night_scenes": 5,
+      "ext_scenes": 8
+    }
+  },
+  "coverage": {
+    "logline_as_read": "Estranged siblings return to their small New England fishing town for their father's funeral and must fulfill his final, illegal wish: a Viking funeral for him and his beloved boat.",
+    "synopsis": "High-powered lawyer Mara Voss returns to her hometown of Port Bannock for the funeral of her estranged, larger-than-life father, Eli. Reunited with her brother Danny and nephew Sam, she discovers Eli's will demands not a burial, but a Viking funeral\u2014his ashes to be burned aboard his fishing boat in the harbor. As they navigate the logistical and legal hurdles of this request, old family wounds resurface, culminating in a fistfight at the wake. After a cathartic, ghostly conversation with her father, Mara commits to the plan, and with the tacit approval of the community, the siblings stage a spectacular, fiery send-off that nearly goes awry, forcing Mara into a final, heroic act that brings her peace and a renewed connection to her family.",
+    "genre": "Family Drama",
+    "tone": "Elegiac, wry, heartfelt",
+    "strengths": [
+      {
+        "scene_ids": [
+          "S002"
+        ],
+        "note": "The script excels at characterization through environment. S002 introduces Eli Voss's entire personality before he ever appears through the details of his bar: the crooked Hopper print, the photo with Springsteen, the terrible beer he drank out of loyalty and spite. It's a masterclass in efficient, evocative world-building that makes the character feel lived-in and real from the outset."
+      },
+      {
+        "scene_ids": [
+          "S003",
+          "S010"
+        ],
+        "note": "The thematic throughline of 'belonging' is established beautifully and paid off with precision. Danny's story in S003 about their father at Fenway\u2014\"He decided we belonged, so we did\"\u2014is not just a fond memory, but the core of the siblings' relationship with him. This is perfectly recalled in S010 when Danny hands Mara the flare gun, telling her, \"He decided you belonged here. So you do.\" It provides a powerful, earned emotional resolution for Mara's character arc."
+      },
+      {
+        "scene_ids": [
+          "S007"
+        ],
+        "note": "The supernatural encounter between Mara and Eli in S007 is a high-risk scene that lands perfectly. It avoids sentimentality by keeping Eli's dialogue sharp, specific, and true to his established character (\"Spite is just loyalty with the brights on\"). His explanation for his distance\u2014\"You were the one thing I ever made that didn't need fixing. I didn't have a language for that\"\u2014provides the direct catharsis Mara needs, giving her permission to finally grieve and act."
+      },
+      {
+        "scene_ids": [
+          "S011"
+        ],
+        "note": "The climax is a spectacular and meaningful set piece. The burning of the boat is visually powerful, but the script smartly introduces a final complication: the boat drifting toward the Hendersons' float. Mara's decision to dive into the water is a fantastic, active choice that physicalizes her transformation. She isn't just watching her past burn; she is actively saving her father's legacy from becoming one last disaster, a moment of pure, earned heroism."
+      }
+    ],
+    "weaknesses": [
+      {
+        "scene_ids": [
+          "S006"
+        ],
+        "note": "The conflict with Cousin Teddy in S006 feels slightly manufactured. He appears abruptly to voice a valid financial concern but is characterized as a simple drunk to be punched and dismissed. The scene serves its purpose\u2014fulfilling Eli's wish for a 'real' wake with a fistfight\u2014but the antagonist is too thin to create meaningful stakes, making the conflict feel more like a plot device than an organic development."
+      },
+      {
+        "scene_ids": [
+          "S008"
+        ],
+        "note": "The resolution with the Coast Guard in S008, while charming, feels overly convenient. Petty Officer Reyes appears, delivers a monologue that neatly solves the primary legal obstacle to the climax, and then disappears. While his motivation is clear and poignant, it deflates a major source of tension too easily. The story might be stronger if the siblings had to be more clever or take a greater risk to circumvent the authorities."
+      },
+      {
+        "scene_ids": [
+          "S005",
+          "S009"
+        ],
+        "note": "While a sweet presence, the character of Sam is underutilized. He primarily serves as a passive observer and a point of connection for Mara and Danny. Receiving the flag in S005 is a powerful image, but he has little agency of his own. Giving him a more active role\u2014perhaps he possesses a key piece of information from Eli, or makes a specific request that influences the funeral\u2014could deepen his character and his relationship with the grandfather he's lost."
+      }
+    ],
+    "character_notes": [
+      "MARA VOSS (38): A sharp, successful lawyer who built a life far from home to escape her father's shadow, only to realize upon his death that she's been seeking his approval all along.",
+      "DANNY VOSS (34): The son who stayed behind, dutifully running the family bar and bearing the weight of his father's local legend status with a mix of resentment and fierce loyalty.",
+      "ELI VOSS (70): The deceased patriarch, a charismatic, stubborn, and beloved local icon whose final, impossible wish forces a reckoning for his children and his town.",
+      "CROW (60s): A fisherman and bar regular who acts as the story's grizzled Greek chorus, providing wisdom, history, and the occasional, perfectly-timed bar-clearing intervention."
+    ],
+    "dialogue_note": "The dialogue is a significant strength: spare, specific, and loaded with subtext. Characters speak in distinct, authentic voices, capturing the clipped, wry cadence of coastal New England. Lines like \"Spite is just loyalty with the brights on\" do immense character and thematic work in a single stroke.",
+    "pacing_note": "The script's pacing is deliberate and confident, mirroring the unhurried rhythm of its setting. It patiently builds emotional weight through quiet, character-driven scenes before delivering on its major set pieces, ensuring the climactic funeral feels both spectacular and deeply earned.",
+    "verdict": "RECOMMEND",
+    "verdict_reason": "This is an exceptionally well-crafted and emotionally resonant drama with a powerful sense of place and a rare confidence in its own voice. The script delivers a moving story of family and forgiveness, executing its high-concept premise with both visual spectacle and profound grace."
+  },
+  "pitch": {
+    "logline_options": [
+      "An estranged lawyer returns to her small fishing town for her father's funeral, where his last wish\u2014an illegal Viking funeral\u2014forces her to team up with her resentful brother and confront the larger-than-life legacy she tried to escape.",
+      "After their impossible father dies, two estranged siblings must grant his final wish to burn his beloved boat in the town harbor, a reckless act of love that pits them against the law, their family, and a lifetime of unresolved grief.",
+      "When their father, a local legend, demands a Viking funeral, a pragmatic lawyer and her blue-collar brother must set fire to their inheritance, discovering that the only way to make peace with the dead is to finally make peace with each other."
+    ],
+    "one_page_synopsis": "High-powered lawyer Mara Voss returns to the fog-drenched fishing town of Port Bannock for the funeral of the father she fled years ago. The town, and her younger brother Danny, greet her with the chilly politeness reserved for strangers who should be family. The deceased, Eli Voss\u2014a beloved, hard-drinking bar owner and local hero\u2014has left behind three notarized instructions: no church-basement sandwiches, Jeff Buckley\u2019s \u201cHallelujah\u201d at the service, and one impossible demand: burn his prized lobster boat, the Margaret Rose, with his ashes aboard in a Viking-style pyre.\n\nMara, the pragmatist, balks at the illegality and absurdity of the request, while Danny, who stayed behind to live in their father\u2019s long shadow, feels the pull of loyalty. The siblings\u2019 shared grief and old resentments simmer, boiling over at the wake in a fistfight over the boat\u2019s monetary value. But in the quiet aftermath, Mara has a ghostly, heartfelt confrontation with her father, who explains his gruff distance was a form of awe: \u201cYou were the one thing I ever made that didn't need fixing.\u201d He gives her his blessing to burn the boat and be free of the weight of his memory, finally uniting the siblings in their wild, cathartic mission.\n\nWith a tacit nod from a Coast Guard officer whose mother Eli once saved, the whole town gathers on the seawall to witness the forbidden ceremony. But when the burning vessel breaks its mooring and drifts toward disaster, Mara dives into the freezing black water to wrestle the pyre back on course\u2014a final, reckless act of love that mirrors her father\u2019s own impossible spirit. As the Margaret Rose burns to the waterline under a sky of contraband fireworks, Mara and Danny, soaked and shivering but finally reconciled, watch it go. The next morning, Mara, no longer in a rush to return to her city life, shares a coffee with her brother, suggesting the home she ran from is finally the one she\u2019s ready to choose.",
+    "genre": "Family Drama",
+    "tone": "Wry, melancholic, and ultimately hopeful.",
+    "target_audience": "Viewers who gravitate toward character-driven, independent dramas about dysfunctional families finding their way back to each other.",
+    "why_now": "In an era of digital detachment, this is a story about the messy, tangible, and necessary rituals that bind a family and a community together.",
+    "comps": [
+      {
+        "title": "Remarkably Bright Creatures",
+        "year": 2026,
+        "rating": "PG-13",
+        "blurb": "Remarkably Bright Creatures is a 2026 American drama film directed by Olivia Newman, who co-wrote the film with screenwriter John Whittington. It is an adaptation on the 2022 novel of the same name by Shelby Van Pelt.",
+        "source_url": "https://en.wikipedia.org/wiki/Remarkably_Bright_Creatures_%28film%29",
+        "distance": 0.3457
+      },
+      {
+        "title": "CODA",
+        "year": 2021,
+        "rating": "PG-13",
+        "blurb": "CODA is a 2021 coming-of-age comedy-drama film written and directed by Sian Heder.",
+        "source_url": "https://en.wikipedia.org/wiki/CODA_%282021_film%29",
+        "distance": 0.3483
+      },
+      {
+        "title": "Where the Crawdads Sing",
+        "year": 2022,
+        "rating": "PG-13",
+        "blurb": "Where the Crawdads Sing is a 2022 American mystery drama film based on the 2018 novel by Delia Owens.",
+        "source_url": "https://en.wikipedia.org/wiki/Where_the_Crawdads_Sing_%28film%29",
+        "distance": 0.3571
+      },
+      {
+        "title": "One True Loves",
+        "year": 2023,
+        "rating": "PG-13",
+        "blurb": "One True Loves is a 2023 American romantic comedy-drama film directed and produced by Andy Fickman as an adaptation of the 2016 novel of the same name by Taylor Jenkins Reid.",
+        "source_url": "https://en.wikipedia.org/wiki/One_True_Loves",
+        "distance": 0.3594
+      },
+      {
+        "title": "It Ends with Us",
+        "year": 2024,
+        "rating": "PG-13",
+        "blurb": "It Ends with Us is a 2024 American romantic drama film directed by Justin Baldoni and written by Christy Hall, based on the 2016 novel by Colleen Hoover.",
+        "source_url": "https://en.wikipedia.org/wiki/It_Ends_with_Us_%28film%29",
+        "distance": 0.3599
+      },
+      {
+        "title": "The Water Man",
+        "year": 2020,
+        "rating": "PG",
+        "blurb": "The Water Man is a 2020 American drama film directed by David Oyelowo, in his feature directorial debut, from a screenplay by Emma Needell.",
+        "source_url": "https://en.wikipedia.org/wiki/The_Water_Man_%28film%29",
+        "distance": 0.3611
+      }
+    ]
+  }
+}

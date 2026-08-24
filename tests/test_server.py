@@ -177,3 +177,14 @@ def test_latest_alias_resolves_newest_record():
     res = client.get("/api/records/latest")
     assert res.status_code == 200 and res.json()["record"]["flags"]
     assert client.get("/api/script/latest").status_code == 200
+
+
+def test_writer_page_and_latest_record():
+    assert client.get("/writer").status_code == 200
+    res = client.get("/api/writer/latest")
+    assert res.status_code == 200
+    body = res.json()
+    assert body["status"] == "done"
+    assert body["record"]["coverage"]["verdict"] in {"PASS", "CONSIDER", "RECOMMEND"}
+    assert body["record"]["format"]["checks"]
+    assert body["record"]["pitch"]["comps"], "comps must be retrieved, and shipped in the demo"

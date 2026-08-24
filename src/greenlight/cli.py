@@ -20,7 +20,23 @@ def main(argv: list[str] | None = None) -> int:
     )
     runp.add_argument("--no-save", action="store_true", help="Do not write runs/<ts>.json")
     runp.add_argument("--target", default="PG-13", help="Target MPA rating for the prediction")
+    wp = sub.add_parser("write", help="Writer's Room: coverage, pitch package, format check.")
+    wp.add_argument("script", help="Path to a .fountain screenplay")
     args = ap.parse_args(argv)
+
+    if args.cmd == "write":
+        import json
+
+        from greenlight.writer import pipeline as writer_pipeline
+
+        record = asyncio.run(writer_pipeline.run(args.script))
+        path = writer_pipeline.save_run(record)
+        cov = record.get("coverage") or {}
+        print(json.dumps({k: record[k] for k in ("script_title", "elapsed_s", "error")}, indent=2))
+        print("verdict:", cov.get("verdict"), "-", (cov.get("verdict_reason") or "")[:200])
+        print("comps:", [c["title"] for c in (record.get("pitch") or {}).get("comps", [])])
+        print("saved:", path)
+        return 0
 
     from greenlight import pipeline
 
