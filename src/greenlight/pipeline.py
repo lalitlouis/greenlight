@@ -88,6 +88,29 @@ def _initial_state(
     return state
 
 
+def structured_events(event: Any) -> list[dict[str, Any]]:
+    """Typed events for the UI stream. The four desk columns render from these —
+    author is the agent name, so desk attribution is free."""
+    out: list[dict[str, Any]] = []
+    content = getattr(event, "content", None)
+    for part in getattr(content, "parts", None) or []:
+        if fc := getattr(part, "function_call", None):
+            args = {k: str(v)[:200] for k, v in (fc.args or {}).items() if k != "tool_context"}
+            out.append({"type": "tool_call", "agent": event.author, "tool": fc.name, "args": args})
+        elif fr := getattr(part, "function_response", None):
+            out.append(
+                {
+                    "type": "tool_result",
+                    "agent": event.author,
+                    "tool": fr.name,
+                    "brief": str(fr.response)[:200],
+                }
+            )
+        elif (text := getattr(part, "text", None)) and text.strip():
+            out.append({"type": "text", "agent": event.author, "text": text.strip()[:400]})
+    return out
+
+
 def _describe_event(event: Any) -> list[str]:
     """Terminal progress lines. The desks' tool calls ARE the demo — show them."""
     lines: list[str] = []
@@ -107,7 +130,13 @@ def _describe_event(event: Any) -> list[str]:
     return lines
 
 
-async def run(script_path: str | Path, budgets: dict[str, int] | None = None) -> dict[str, Any]:
+async def run(
+    script_path: str | Path,
+    budgets: dict[str, int] | None = None,
+    on_event: Any = None,
+) -> dict[str, Any]:
+    """Run the pipeline. on_event, if given, receives each structured event dict
+    (see structured_events) as it happens — this is the UI's live stream."""
     source = Path(script_path).read_text()
     meta, scenes = parser.parse_fountain(source)
     title = meta.get("title", Path(script_path).stem)
@@ -129,6 +158,9 @@ async def run(script_path: str | Path, budgets: dict[str, int] | None = None) ->
         async for event in runner.run_async(
             user_id=USER_ID, session_id=session.id, new_message=message
         ):
+            if on_event is not None:
+                for ev in structured_events(event):
+                    on_event(ev)
             for line in _describe_event(event):
                 print(line)
     except Exception as e:
