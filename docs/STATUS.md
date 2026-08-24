@@ -2,6 +2,21 @@
 
 Last updated: **2026-08-23**. Deadline **2026-09-09, 2:00 PM PT** — treat Sept 8 as real.
 
+## Architecture changed on 2026-08-23 — read this first
+
+The original design was a **pipeline**: extract entities, run one search each, run four prompts,
+dedupe. Lalit challenged it — *"where is the agent aspect, how is this different from just calling
+Parallel?"* — and he was right. It has been rewritten as a genuine agent system. **Do not regress
+to the pipeline.**
+
+Each desk is now a `LoopAgent` over an `LlmAgent` with seven tools, deciding what to investigate
+and when to stop. Plus a blinded verification fan-out that can reject flags, and an adjudicator
+loop that can re-enter a desk via `AgentTool` when remedies interact. Full reasoning in
+`docs/TECH_SPEC.md`.
+
+Governing principle, applied twice: **never let the model assert what you could retrieve.**
+Parallel for the outside world, ClickHouse for the comparison set. Gemini does judgement only.
+
 ## Phase 0 — COMPLETE
 
 All four preflight checks pass. Verified by live calls, not credential checks:
@@ -36,7 +51,10 @@ ClickHouse password after the hackathon.
 - `src/greenlight/checks.py` — preflight, separates contest gates from soft dependencies
 - `.claude/skills/parallel-search/` — written from an introspected signature and a live response
 - `fixtures/cassettes/clearance_brand_disparagement.json` — real captured Parallel response
-- Docs: PRD, TECH_SPEC, STACK, COMPLIANCE, MARKET, SETUP
+- Docs: PRD, TECH_SPEC (agentic), STACK, COMPLIANCE, MARKET, DEMO, SETUP
+- **Product page live at https://lalitlouis.github.io/greenlight/** — Pages serves `main /docs`,
+  redeploys on push. Five UI mockups in HTML/CSS: intake, the four-desk panel streaming tool
+  calls, the risk report with a real captured citation, ratings comparables, marked-up script.
 
 ### Validated
 
@@ -58,7 +76,9 @@ Goal: `make run` prints real cited flags from a real screenplay. No UI, no Click
    most judges experience.
 2. **Fountain parser** -> `Scene[]` with `raw_span` char offsets.
 3. **EntityExtractor** (Gemini 2.5 Flash, structured output) -> `Entity[]`.
-4. **ClearanceCounsel** — one gatekeeper, live Parallel calls -> `Flag[]` with real citations.
+4. **ClearanceCounsel as a real LoopAgent** — tools (`read_scene`, `find_in_script`, `research`,
+   `file_flag`, `done`), live Parallel calls, terminating on its own. Build one desk as a genuine
+   loop rather than four as prompts; the other three are then repetition.
 
 Then Phase 2 (panel + corpus), Phase 3 (product + deploy), Phase 4 (submission). See the plan in
 `docs/PRD.md` and `docs/TECH_SPEC.md`.
@@ -79,11 +99,33 @@ Then Phase 2 (panel + corpus), Phase 3 (product + deploy), Phase 4 (submission).
 
 ## Honest risk assessment
 
-Scope is four gatekeepers **and** a polished deployed UI — full scope, chosen deliberately over a
-cut-down version. The schedule has no slack.
+Scope is four gatekeepers **and** a polished deployed UI — full scope, chosen deliberately. The
+agentic redesign raised the ceiling and the difficulty at the same time: loop agents are harder to
+debug than pipelines (non-deterministic, intermittent failures, "the agent stopped early" can eat
+a day).
 
-Strongest criteria: Potential Impact and Quality of the Idea. Weakest: **Design (25% of score,
-currently zero UI)**. Biggest risk is not finishing, not concept.
+**Odds, assuming we fully ship:** ~40% to place, ~12–15% for first. Top-decile on all four
+criteria, with Idea and Impact at roughly top 5%. Unconditionally it is nearer 15%, and the whole
+gap is execution risk.
 
-Three things to protect: deploy by day 9 (not day 15); the ClickHouse ratings-comparables demo
-moment; two full days for the video.
+Criteria read: strongest are **Quality of the Idea** and **Potential Impact**. Weakest is
+**Design (25%, still zero product UI)**. Technological Implementation moved from a liability to a
+strength with the redesign — but only once the loops actually run.
+
+Biggest non-execution risk: **taste mismatch.** This is called *Agentic Cinema* and judges may want
+creative magic, not legal ops. Fixed entirely in presentation — see `docs/DEMO.md`.
+
+### Protect these three
+
+1. **A thin end-to-end run by day 7** — one desk, one loop, real citations, ugly HTML. Teams that
+   get a complete skeleton early and thicken it beat teams that integrate on day 15.
+2. **Deploy by day 9**, ugly. Hosted URL is a hard gate and deploy always fights you.
+3. **Two full days for the video.**
+
+Revise up to ~25% unconditional if a one-desk loop with real citations works by day 5. Revise down
+to ~5% if there is no end-to-end run by day 10.
+
+### Preference
+
+When Lalit asks about winning chances, he means **assuming the product fully ships** — give the
+conditional number, not the execution-risk-adjusted one.

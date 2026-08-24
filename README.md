@@ -60,6 +60,8 @@ make dev                  # ADK dev UI
 
 See [`docs/SETUP.md`](docs/SETUP.md) for provisioning Google Cloud, Parallel, and ClickHouse.
 
+**Product overview: https://lalitlouis.github.io/greenlight/**
+
 ## Documentation
 
 - [Status](docs/STATUS.md) — current state and next steps
@@ -67,6 +69,7 @@ See [`docs/SETUP.md`](docs/SETUP.md) for provisioning Google Cloud, Parallel, an
 - [Tech Spec](docs/TECH_SPEC.md) — pipeline, contracts, deployment
 - [Stack](docs/STACK.md) — every technology and why it is here
 - [Compliance](docs/COMPLIANCE.md) — contest requirements and status
+- [Demo plan](docs/DEMO.md) — the 3-minute video
 - [Market](docs/MARKET.md) — pricing, competitors, productization
 
 ## Data contracts
