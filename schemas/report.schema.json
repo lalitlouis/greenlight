@@ -4,52 +4,167 @@
   "title": "Report",
   "description": "The Production Risk Report. Top-level deliverable rendered by the web app.",
   "type": "object",
-  "required": ["script_title", "generated_at", "greenlight_score", "flags", "counts"],
+  "required": [
+    "script_title",
+    "generated_at",
+    "greenlight_score",
+    "flags",
+    "counts"
+  ],
   "additionalProperties": false,
   "properties": {
-    "script_title":   {"type": "string"},
-    "page_count":     {"type": "number"},
-    "generated_at":   {"type": "string", "format": "date-time"},
-    "greenlight_score": {"type": "integer", "minimum": 0, "maximum": 100,
-                         "description": "0-100. Deterministic function of flag severities — never asked of an LLM."},
+    "script_title": {
+      "type": "string"
+    },
+    "page_count": {
+      "type": "number"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "greenlight_score": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "0-100. Deterministic function of flag severities \u2014 never asked of an LLM."
+    },
     "counts": {
       "type": "object",
-      "required": ["BLOCKER", "HIGH", "MEDIUM", "LOW", "FYI"],
+      "required": [
+        "BLOCKER",
+        "HIGH",
+        "MEDIUM",
+        "LOW",
+        "FYI"
+      ],
       "additionalProperties": false,
       "properties": {
-        "BLOCKER": {"type": "integer"}, "HIGH": {"type": "integer"}, "MEDIUM": {"type": "integer"},
-        "LOW": {"type": "integer"}, "FYI": {"type": "integer"}
+        "BLOCKER": {
+          "type": "integer"
+        },
+        "HIGH": {
+          "type": "integer"
+        },
+        "MEDIUM": {
+          "type": "integer"
+        },
+        "LOW": {
+          "type": "integer"
+        },
+        "FYI": {
+          "type": "integer"
+        }
       }
     },
-    "by_agent": {"type": "object", "additionalProperties": {"type": "integer"}},
-    "est_clearance_cost_usd": {"type": ["array", "null"], "minItems": 2, "maxItems": 2, "items": {"type": "number"}},
-    "est_added_days":         {"type": ["number", "null"]},
+    "by_agent": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer"
+      }
+    },
+    "est_clearance_cost_usd": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "number"
+      }
+    },
+    "est_added_days": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
     "rating_prediction": {
-      "type": ["object", "null"],
+      "type": [
+        "object",
+        "null"
+      ],
       "description": "Ratings Board output. Evidence-based: nearest CARA rationales from ClickHouse, not an LLM guess.",
-      "required": ["predicted", "comparables"],
+      "required": [
+        "predicted",
+        "comparables"
+      ],
       "additionalProperties": false,
       "properties": {
-        "predicted":   {"type": "string", "enum": ["G", "PG", "PG-13", "R", "NC-17"]},
-        "target":      {"type": ["string", "null"]},
-        "rationale":   {"type": "string", "description": "In CARA house style."},
+        "predicted": {
+          "type": "string",
+          "enum": [
+            "G",
+            "PG",
+            "PG-13",
+            "R",
+            "NC-17"
+          ]
+        },
+        "target": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rationale": {
+          "type": "string",
+          "description": "In CARA house style."
+        },
         "comparables": {
           "type": "array",
           "items": {
             "type": "object",
-            "required": ["title", "rating", "rationale", "distance"],
+            "required": [
+              "title",
+              "rating",
+              "rationale",
+              "distance"
+            ],
             "additionalProperties": false,
             "properties": {
-              "title": {"type": "string"}, "year": {"type": ["integer", "null"]},
-              "rating": {"type": "string"}, "rationale": {"type": "string"},
-              "distance": {"type": "number"}
+              "title": {
+                "type": "string"
+              },
+              "year": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "rating": {
+                "type": "string"
+              },
+              "rationale": {
+                "type": "string"
+              },
+              "distance": {
+                "type": "number"
+              },
+              "source_url": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
             }
           }
         },
-        "beats_to_cut": {"type": "array", "items": {"type": "string"},
-                         "description": "What to change to hit the target rating."}
+        "beats_to_cut": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "What to change to hit the target rating."
+        }
       }
     },
-    "flags": {"type": "array", "items": {"$ref": "https://greenlight.dev/schemas/flag.schema.json"}}
+    "flags": {
+      "type": "array",
+      "items": {
+        "$ref": "https://greenlight.dev/schemas/flag.schema.json"
+      }
+    }
   }
 }

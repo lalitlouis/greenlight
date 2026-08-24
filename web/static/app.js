@@ -509,6 +509,8 @@ function renderReport(record) {
   head.appendChild(tally);
   root.appendChild(head);
 
+  renderPrediction(root, rep.rating_prediction);
+
   // The invariant, enforced at render: a flag without a citation does not exist.
   const cited = (record.flags || []).filter((f) => (f.citations || []).length > 0);
   const secFlags = el("div", "section-head");
@@ -555,6 +557,85 @@ function renderReport(record) {
     for (const n of notes) ul.appendChild(el("li", null, n));
     root.appendChild(ul);
   }
+}
+
+/* ---------------- rating prediction (the comparables beat) ---------------- */
+
+function renderPrediction(root, pred) {
+  if (!pred || !(pred.comparables || []).length) return;
+  const sec = el("div", "section-head");
+  sec.appendChild(el("span", "label", "MPA rating prediction — evidence, not opinion"));
+  root.appendChild(sec);
+
+  const card = el("div", "pred-card");
+  const head = el("div", "pred-head");
+  const ratings = el("div", "pred-ratings");
+  const predBox = el("div", "pred-box");
+  predBox.appendChild(el("span", "pred-label", "PREDICTED AS WRITTEN"));
+  predBox.appendChild(el("b", "rating-badge r-" + pred.predicted, pred.predicted));
+  ratings.appendChild(predBox);
+  if (pred.target && pred.target !== pred.predicted) {
+    ratings.appendChild(el("span", "pred-vs", "vs"));
+    const tgtBox = el("div", "pred-box");
+    tgtBox.appendChild(el("span", "pred-label", "PRODUCTION TARGET"));
+    tgtBox.appendChild(el("b", "rating-badge target", pred.target));
+    ratings.appendChild(tgtBox);
+  }
+  head.appendChild(ratings);
+
+  const meta = el("div", "pred-meta");
+  if (pred.rationale) meta.appendChild(el("p", "pred-rationale", pred.rationale));
+  const comps = pred.comparables || [];
+  const sameAsPred = comps.filter((c) => c.rating === pred.predicted).length;
+  meta.appendChild(
+    el(
+      "p",
+      "pred-evidence",
+      `${sameAsPred} of your ${comps.length} nearest released comparables are rated ${pred.predicted}.`
+    )
+  );
+  head.appendChild(meta);
+  card.appendChild(head);
+
+  const list = el("div", "comps");
+  const maxD = Math.max(...comps.map((c) => c.distance || 0), 0.001);
+  for (const c of comps) {
+    const row = el("div", "comp-row");
+    row.appendChild(el("b", "comp-rating r-" + c.rating, c.rating));
+    const main = el("div", "comp-main");
+    const title = el("span", "comp-title", `${c.title}${c.year ? " (" + c.year + ")" : ""}`);
+    main.appendChild(title);
+    if (c.rationale) main.appendChild(el("span", "comp-quote", c.rationale));
+    if (c.source_url) {
+      const a = el("a", "comp-src", "source");
+      a.href = c.source_url;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      main.appendChild(a);
+    }
+    row.appendChild(main);
+    const sim = el("div", "comp-sim");
+    const bar = el("div", "comp-bar");
+    const fill = el("div", "comp-fill");
+    // Closer distance = fuller bar.
+    fill.style.width = Math.round(100 * (1 - c.distance / (maxD * 1.15))) + "%";
+    bar.appendChild(fill);
+    sim.appendChild(bar);
+    sim.appendChild(el("span", "comp-d", "d " + (c.distance ?? 0).toFixed(3)));
+    row.appendChild(sim);
+    list.appendChild(row);
+  }
+  card.appendChild(list);
+
+  if ((pred.beats_to_cut || []).length) {
+    const cuts = el("div", "cuts");
+    cuts.appendChild(el("div", "blk-label", `THE CUT LIST TO ${pred.target || "TARGET"}`));
+    const ol = el("ol");
+    for (const b of pred.beats_to_cut) ol.appendChild(el("li", null, b));
+    cuts.appendChild(ol);
+    card.appendChild(cuts);
+  }
+  root.appendChild(card);
 }
 
 /* ---------------- marked-up script ---------------- */

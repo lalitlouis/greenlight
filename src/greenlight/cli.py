@@ -19,12 +19,13 @@ def main(argv: list[str] | None = None) -> int:
         help="Uniform per-desk research() cap (0 = per-desk defaults)",
     )
     runp.add_argument("--no-save", action="store_true", help="Do not write runs/<ts>.json")
+    runp.add_argument("--target", default="PG-13", help="Target MPA rating for the prediction")
     args = ap.parse_args(argv)
 
     from greenlight import pipeline
 
     budgets = dict.fromkeys(pipeline.DEFAULT_BUDGETS, args.budget) if args.budget else None
-    record = asyncio.run(pipeline.run(args.script, budgets=budgets))
+    record = asyncio.run(pipeline.run(args.script, budgets=budgets, target_rating=args.target))
     pipeline.print_summary(record)
     if not args.no_save:
         path = pipeline.save_run(record)

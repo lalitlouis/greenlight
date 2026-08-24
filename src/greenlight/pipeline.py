@@ -74,7 +74,7 @@ def build_root_agent() -> SequentialAgent:
 
 
 def _initial_state(
-    text: str, scenes: list[dict[str, Any]], budgets: dict[str, int]
+    text: str, scenes: list[dict[str, Any]], budgets: dict[str, int], target_rating: str
 ) -> dict[str, Any]:
     scene_index = "\n".join(f"{s['scene_id']}  p{s['page']:>2}  {s['heading']}" for s in scenes)
     state: dict[str, Any] = {
@@ -82,6 +82,7 @@ def _initial_state(
         "scenes": scenes,
         "script_annotated": parser.annotated_script(text, scenes),
         "scene_index": scene_index,
+        "target_rating": target_rating,
     }
     for desk, budget in budgets.items():
         state[f"research_budget:{desk}"] = budget
@@ -134,6 +135,7 @@ async def run(
     script_path: str | Path,
     budgets: dict[str, int] | None = None,
     on_event: Any = None,
+    target_rating: str = "PG-13",
 ) -> dict[str, Any]:
     """Run the pipeline. on_event, if given, receives each structured event dict
     (see structured_events) as it happens — this is the UI's live stream."""
@@ -146,7 +148,7 @@ async def run(
     session = await runner.session_service.create_session(
         app_name=APP_NAME,
         user_id=USER_ID,
-        state=_initial_state(source, scenes, budgets or DEFAULT_BUDGETS),
+        state=_initial_state(source, scenes, budgets or DEFAULT_BUDGETS, target_rating),
     )
 
     message = types.Content(
@@ -188,7 +190,9 @@ async def run(
     kept.sort(key=lambda f: SEV_ORDER.get(f["severity"], 9))
 
     page_count = scenes[-1]["page"] if scenes else None
-    the_report = report_mod.build_report(title, kept, page_count=page_count)
+    the_report = report_mod.build_report(
+        title, kept, page_count=page_count, rating_prediction=state.get("rating_prediction")
+    )
 
     record = {
         "script_title": title,

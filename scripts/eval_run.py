@@ -156,6 +156,22 @@ def main() -> int:
         ),
     )
 
+    # --- Rating prediction (demo moment #3)
+    pred = (r.get("report") or {}).get("rating_prediction")
+    check(
+        "rating prediction filed with comparables",
+        bool(pred and len(pred.get("comparables", [])) >= 6),
+        "query_precedent -> file_rating_prediction; needs the corpus loaded",
+    )
+    check(
+        "cut list present when prediction exceeds target",
+        bool(
+            not pred
+            or pred.get("predicted") in (pred.get("target"), None)
+            or pred.get("beats_to_cut")
+        ),
+    )
+
     # --- Verification health
     check(
         "verification: rejection rate in (0%, 40%]",

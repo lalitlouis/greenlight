@@ -352,7 +352,7 @@ def query_precedent(text: str, k: int, tool_context: ToolContext) -> dict[str, A
             _clickhouse_client()
             .query(
                 """
-            SELECT title, year, rating, rationale,
+            SELECT title, year, rating, rationale, source_url,
                    cosineDistance(embedding, %(vec)s) AS distance
             FROM rating_rationales
             ORDER BY distance ASC
@@ -367,18 +367,65 @@ def query_precedent(text: str, k: int, tool_context: ToolContext) -> dict[str, A
             "error": f"precedent corpus unavailable: {type(e).__name__}: {str(e)[:120]}",
             "guidance": "Fall back to research() on documented CARA standards.",
         }
-    return {
-        "comparables": [
-            {
-                "title": r[0],
-                "year": r[1],
-                "rating": r[2],
-                "rationale": r[3],
-                "distance": round(float(r[4]), 4),
-            }
-            for r in rows
-        ]
+    comparables = [
+        {
+            "title": r[0],
+            "year": r[1],
+            "rating": r[2],
+            "rationale": r[3],
+            "source_url": r[4],
+            "distance": round(float(r[5]), 4),
+        }
+        for r in rows
+    ]
+    # The prediction tool assembles the report's rating_prediction from the most
+    # recent comparables — stored here so the desk never re-types them.
+    tool_context.state[f"last_precedent:{_desk(tool_context)}"] = comparables
+    return {"comparables": comparables}
+
+
+# --- file_rating_prediction -------------------------------------------------
+
+
+def file_rating_prediction(
+    predicted: str,
+    rationale: str,
+    beats_to_cut: list[str],
+    tool_context: ToolContext,
+) -> str:
+    """File the MPA rating prediction for the report. Ratings Board only; call once,
+    after query_precedent has returned comparables.
+
+    predicted: the rating this screenplay draws as written: G | PG | PG-13 | R | NC-17.
+    rationale: one sentence in CARA house style, e.g. "for strong language throughout,
+      drug use and brief violence" — derived from your counted findings.
+    beats_to_cut: if the production's target rating (in your instructions) is below
+      `predicted`, the exact changes that buy the target, most impactful first, e.g.
+      "Cut 2 of the 3 F-bombs; keep Danny's in S011". Empty list if already at target.
+
+    The comparables from your most recent query_precedent call are attached
+    automatically as the evidence. Filing without comparables is rejected.
+    """
+    desk = _desk(tool_context)
+    comparables = tool_context.state.get(f"last_precedent:{desk}")
+    if not comparables:
+        return (
+            "REJECTED: no comparables on record. Call query_precedent first — the "
+            "prediction's evidence is the nearest released films, not your judgement."
+        )
+    if predicted not in {"G", "PG", "PG-13", "R", "NC-17"}:
+        return "REJECTED: predicted must be one of G, PG, PG-13, R, NC-17."
+    tool_context.state["rating_prediction"] = {
+        "predicted": predicted,
+        "target": tool_context.state.get("target_rating"),
+        "rationale": rationale,
+        "comparables": comparables,
+        "beats_to_cut": list(beats_to_cut),
     }
+    dist: dict[str, int] = {}
+    for c in comparables:
+        dist[c["rating"]] = dist.get(c["rating"], 0) + 1
+    return f"Prediction filed: {predicted}. Comparable ratings: {dist}."
 
 
 # --- note_open_question -----------------------------------------------------
@@ -409,6 +456,7 @@ DESK_TOOLS = [
     find_in_script,
     research,
     query_precedent,
+    file_rating_prediction,
     file_flag,
     note_open_question,
     done,

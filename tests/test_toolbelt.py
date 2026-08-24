@@ -166,3 +166,25 @@ def test_query_precedent_degrades_gracefully(monkeypatch):
     monkeypatch.delenv("CLICKHOUSE_PASSWORD", raising=False)
     out = toolbelt.query_precedent("strong language throughout", 8, make_ctx())
     assert "error" in out and "research()" in out["guidance"]
+
+
+def test_rating_prediction_requires_comparables_first():
+    ctx = make_ctx("ratings_board", target_rating="PG-13")
+    msg = toolbelt.file_rating_prediction("R", "for language throughout", [], ctx)
+    assert msg.startswith("REJECTED")
+    ctx.state["last_precedent:ratings_board"] = [
+        {
+            "title": "X",
+            "year": 2001,
+            "rating": "R",
+            "rationale": "r",
+            "source_url": None,
+            "distance": 0.1,
+        }
+    ]
+    msg = toolbelt.file_rating_prediction(
+        "R", "for language throughout", ["cut 2 of 3 F-bombs"], ctx
+    )
+    assert msg.startswith("Prediction filed: R")
+    pred = ctx.state["rating_prediction"]
+    assert pred["target"] == "PG-13" and pred["comparables"][0]["title"] == "X"

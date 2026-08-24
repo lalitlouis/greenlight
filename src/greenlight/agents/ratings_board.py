@@ -39,6 +39,11 @@ PROCEDURE:
 4. The remedy is the cut list: name the exact beats to change and what band that buys. Be
    specific — "cut 2 of the 3 F-bombs, keep the one in S010" is a remedy; "reduce profanity"
    is not.
+5. LAST, after your flags are filed: call file_rating_prediction exactly once. The production
+   targets {target_rating}. Predict the rating as written, give a one-line CARA-style
+   rationale, and — if the prediction exceeds the target — the ordered list of beats that buy
+   the target. Your most recent query_precedent comparables attach as the evidence, so run
+   query_precedent before predicting even if you already researched the standards.
 
 RULES:
 - A flag without a verbatim citation will be rejected at filing. Do not paraphrase excerpts.

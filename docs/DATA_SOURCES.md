@@ -1,7 +1,20 @@
 # Data sources — provenance check
 
-Status: **analysis complete, needs Lalit's sign-off before ingest.** The comparables beat
-(DEMO.md moment #3) depends on this corpus; the go/no-go is needed this week.
+Status: **approved 2026-08-24 (content-profile pivot).** A 250-film pilot
+(`scripts/ingest_ratings.py pilot`) measured a 1% extraction rate for CARA rationale strings in
+English Wikipedia prose — articles rarely quote them (8 of 94 top articles even mention the
+MPAA). The rationale-string plan is dead; the corpus pivots to **content profiles**:
+
+- **Ratings** from Wikidata P1657 (validated by the pilot: clean, structured, CC0, scales).
+- **Embedding text** from each film's Wikipedia article lead + plot section via the official
+  MediaWiki API — a richer content signal than a one-line rationale in any case.
+- **Display line** per comparable: a short attributed quote from the article lead, with the
+  source URL. Every comparable shown in the report is itself citable.
+- The demo beat is unchanged in substance: "your screenplay's content profile sits nearest
+  these released films — seven of eight are rated R." The evidence is the neighbors' rating
+  distribution, not CARA's phrasing.
+
+Original analysis below, kept for the record.
 
 ## What the Ratings Board corpus is
 
@@ -37,9 +50,9 @@ imply MPA endorsement of GREENLIGHT; the UI already labels the prediction as our
 
 ## Recommendation
 
-1. **Ingest from Wikipedia infobox/prose statements of MPA ratings + rationales** for a film
-   set we select (~2,000–4,000 titles, 1990–present, skewed to titles a judge will recognize).
-   No filmratings.com scraping.
+1. ~~Ingest rationale strings from Wikipedia prose~~ **Superseded by the pilot** — see the
+   status block above. Film set: ~2,500 titles, 1985–present, ranked by Wikidata sitelink
+   count so the comparables are films a judge will recognize. No filmratings.com scraping.
 2. Store `source_url` per row so every comparable in the report is itself citable — matching
    the product invariant.
 3. Embeddings: Vertex `text-embedding-005` (same model at ingest and query — already assumed
@@ -50,4 +63,4 @@ imply MPA endorsement of GREENLIGHT; the UI already labels the prediction as our
 
 ## Sign-off
 
-- [ ] Lalit: approve ingest per the recommendation above
+- [x] Lalit: approved the content-profile pivot, 2026-08-24
