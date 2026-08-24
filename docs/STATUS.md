@@ -92,7 +92,8 @@ Then Phase 2 (panel + corpus), Phase 3 (product + deploy), Phase 4 (submission).
 - [ ] `docs/DATA_SOURCES.md` — provenance check on MPA/CARA rating rationales before ingesting.
       **Do this week, not with Phase 2 ingest** — demo moment #3 (the comparables beat, the
       "most defensible thirty seconds") dies with no replacement time if this check fails late.
-- [ ] Decide screenplay fixture style (checklist vs. short film)
+- [x] Decide screenplay fixture style — **decided 2026-08-24: genuine short film.** *Slack Tide*,
+      ~13 pp, written; seed map in `fixtures/SEEDS.md`
 
 ## Known gotchas
 
