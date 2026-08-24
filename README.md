@@ -62,10 +62,12 @@ See [`docs/SETUP.md`](docs/SETUP.md) for provisioning Google Cloud, Parallel, an
 
 ## Documentation
 
+- [Status](docs/STATUS.md) — current state and next steps
 - [PRD](docs/PRD.md) — problem, users, scope
 - [Tech Spec](docs/TECH_SPEC.md) — pipeline, contracts, deployment
 - [Stack](docs/STACK.md) — every technology and why it is here
 - [Compliance](docs/COMPLIANCE.md) — contest requirements and status
+- [Market](docs/MARKET.md) — pricing, competitors, productization
 
 ## Data contracts
 
