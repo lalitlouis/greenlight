@@ -147,9 +147,6 @@ function flagExpand(f) {
   if (f.confidence != null) {
     ex.appendChild(el("span", "conf", `desk confidence ${Math.round(f.confidence * 100)}%`));
   }
-  if (!IS_CASE && !f.rejection_reason && ["REPLACE", "CUT", "RESHOOT"].includes(r.action)) {
-    ex.appendChild(fixControls(f));
-  }
   if (f.rejection_reason) {
     const rej = el("div", "rejection");
     rej.appendChild(el("b", null, "Rejected in verification — "));
@@ -201,6 +198,10 @@ function flagRow(f, opts) {
   toggle.addEventListener("click", () => ex.classList.toggle("hidden"));
   main.appendChild(toggle);
   main.appendChild(ex);
+  const action = f.remedy?.action;
+  if (!IS_CASE && !rejected && action && action !== "NO_ACTION") {
+    main.appendChild(fixControls(f));
+  }
   row.appendChild(main);
 
   const costBox = el("div", "cost");
