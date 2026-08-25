@@ -14,7 +14,42 @@ from typing import Any
 _USER_PATH_PARTS = 3  # users/{sub}/runs...
 BUCKET = os.getenv("GREENLIGHT_BUCKET", "greenlight-clearance-2026-staging")
 
+# Application-layer encryption: screenplays and full analysis records are
+# encrypted BEFORE they reach the bucket (AES-128-CBC + HMAC via Fernet), so
+# bucket access alone yields ciphertext. GCS's own at-rest encryption sits
+# underneath. The key lives in the service environment, never in the bucket.
+# Absent key -> plaintext (local dev, tests); legacy plaintext objects load.
+
 _cache: dict = {}
+
+
+def _fernet():
+    if "fernet" not in _cache:
+        key = os.getenv("ENCRYPTION_KEY", "")
+        if not key:
+            _cache["fernet"] = None
+        else:
+            from cryptography.fernet import Fernet
+
+            _cache["fernet"] = Fernet(key.encode())
+    return _cache["fernet"]
+
+
+def _seal(plaintext: bytes) -> bytes:
+    f = _fernet()
+    return f.encrypt(plaintext) if f else plaintext
+
+
+def _unseal(data: bytes) -> bytes:
+    f = _fernet()
+    if f is None:
+        return data
+    from cryptography.fernet import InvalidToken
+
+    try:
+        return f.decrypt(data)
+    except InvalidToken:
+        return data  # legacy plaintext object from before encryption
 
 
 def _bucket():
@@ -28,7 +63,7 @@ def _bucket():
 def save_record(run_id: str, record: dict[str, Any]) -> bool:
     try:
         _bucket().blob(f"records/{run_id}.json").upload_from_string(
-            json.dumps(record), content_type="application/json"
+            _seal(json.dumps(record).encode()), content_type="application/octet-stream"
         )
         return True
     except Exception:
@@ -40,7 +75,7 @@ def load_record(run_id: str) -> dict[str, Any] | None:
         blob = _bucket().blob(f"records/{run_id}.json")
         if not blob.exists():
             return None
-        return json.loads(blob.download_as_text())
+        return json.loads(_unseal(blob.download_as_bytes()))
     except Exception:
         return None
 
@@ -48,7 +83,7 @@ def load_record(run_id: str) -> dict[str, Any] | None:
 def save_script(run_id: str, source: str) -> bool:
     try:
         _bucket().blob(f"scripts/{run_id}.fountain").upload_from_string(
-            source, content_type="text/plain"
+            _seal(source.encode()), content_type="application/octet-stream"
         )
         return True
     except Exception:
@@ -60,7 +95,7 @@ def load_script(run_id: str) -> str | None:
         blob = _bucket().blob(f"scripts/{run_id}.fountain")
         if not blob.exists():
             return None
-        return blob.download_as_text()
+        return _unseal(blob.download_as_bytes()).decode()
     except Exception:
         return None
 
