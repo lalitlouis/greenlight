@@ -893,3 +893,6 @@ body.show-detail .detail-only { display: grid; margin-top: 16px; }
 .btn-danger:hover { background: var(--blocker); color: #fff; }
 .btn-danger:disabled { opacity: 0.5; cursor: default; }
 .delete-err { color: var(--blocker); font-size: 13.5px; flex-basis: 100%; }
+
+.btn-google { display: inline-flex; align-items: center; gap: 9px; white-space: nowrap; }
+.btn-google svg { flex: none; }
