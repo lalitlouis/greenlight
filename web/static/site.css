@@ -780,3 +780,21 @@ mark.d-add { background: rgba(10, 143, 82, 0.16); color: var(--green-deep); bord
 }
 .trust-strip span::before { content: "✓"; color: var(--gold); font-weight: 700; }
 .secure-note { font-size: 13.5px; color: var(--ink-3); margin: 10px 0 0; }
+
+/* the studio room */
+.studio-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.studio-toggle { border: 0; background: none; color: var(--green-deep); font-size: 14px; font-weight: 600; cursor: pointer; }
+.studio-feed { display: flex; flex-direction: column; gap: 10px; padding: 14px 18px; max-height: 320px; overflow-y: auto; }
+.studio-feed:empty { display: none; }
+.studio-card { border-radius: 12px; padding: 12px 16px; background: var(--band); border-left: 4px solid var(--line-2); }
+.studio-card.sc-ok { border-left-color: var(--green); }
+.studio-card.sc-mid { border-left-color: var(--high); }
+.studio-card.sc-bad { border-left-color: var(--blocker); background: rgba(224, 52, 42, 0.05); }
+.sc-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.sc-top b { text-transform: capitalize; font-size: 15px; }
+.sc-fid { font-size: 12.5px; color: var(--ink-3); }
+.sc-verdict { margin-left: auto; font-size: 12.5px; font-weight: 800; letter-spacing: 0.03em; }
+.sc-ok .sc-verdict { color: var(--green-deep); }
+.sc-mid .sc-verdict { color: var(--high); }
+.sc-bad .sc-verdict { color: var(--blocker); }
+.sc-reason { margin: 6px 0 0; font-size: 13.5px; color: var(--ink-2); line-height: 1.55; }

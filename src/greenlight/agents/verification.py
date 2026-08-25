@@ -197,10 +197,29 @@ class VerificationPanel(BaseAgent):
             location=os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1"),
         )
         sem = asyncio.Semaphore(_CONCURRENCY)
-        results = await asyncio.gather(
-            *(self._verify_one(client, f, _scene_context(f, state), sem) for f in flags)
-        )
-        verdicts = {f["flag_id"]: v for f, v in zip(flags, results, strict=True)}
+
+        async def _one(f: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any]]:
+            return f, await self._verify_one(client, f, _scene_context(f, state), sem)
+
+        # Stream each verdict as it lands: the challenge-and-ruling is the part
+        # of the run worth watching, so it must not arrive as one silent batch.
+        verdicts: dict[str, dict[str, Any]] = {}
+        for fut in asyncio.as_completed([_one(f) for f in flags]):
+            f, v = await fut
+            verdicts[f["flag_id"]] = v
+            yield Event(
+                invocation_id=ctx.invocation_id,
+                author=self.name,
+                content=types.Content(
+                    role="model",
+                    parts=[
+                        types.Part(
+                            text=f"⚖ {f['flag_id']}|{f['category']}|{f['severity']}|"
+                            f"{v['verdict']}|{v['reason'][:160]}"
+                        )
+                    ],
+                ),
+            )
         kept, dropped = apply_verdicts(flags, verdicts)
 
         rejected = [fid for fid, v in verdicts.items() if v["verdict"] == "UNSUPPORTED"]
