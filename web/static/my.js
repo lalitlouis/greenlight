@@ -2,9 +2,13 @@
 
 "use strict";
 
+const STALL_MS = 30 * 60 * 1000;
+
 function rowFor(r) {
   const row = el("div", "card my-row");
-  const running = r.status === "running";
+  const started = Date.parse((r.generated_at || "").replace(/([+-]\d{2})(\d{2})$/, "$1:$2"));
+  const stalled = r.status === "running" && started && Date.now() - started > STALL_MS;
+  const running = r.status === "running" && !stalled;
   const liveHref = r.kind === "writer" ? `/writer?run=${encodeURIComponent(r.id)}` : `/run?id=${encodeURIComponent(r.id)}`;
   const doneHref = r.kind === "writer" ? `/writer?run=${encodeURIComponent(r.id)}` : `/report?run=${encodeURIComponent(r.id)}`;
   const main = el("div", "my-main");
@@ -14,6 +18,7 @@ function rowFor(r) {
   const meta = el("p", "my-meta");
   const bits = [r.kind === "writer" ? "Writer's Room" : "Clearance report", fmtDate(r.generated_at)];
   if (running) bits.push("running now");
+  if (stalled) bits.push("stalled — safe to delete");
   if (r.status === "error") bits.push("failed");
   if (r.score != null) bits.push(`score ${r.score}/100`);
   if (r.verdict) bits.push(r.verdict);

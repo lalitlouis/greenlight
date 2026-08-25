@@ -452,6 +452,10 @@ async def _run_live(handle: RunHandle, script_path: Path) -> None:
     except Exception as e:
         handle.status = "error"
         handle.publish({"type": "error", "message": f"{type(e).__name__}: {e}", "partial": False})
+        if handle.owner:
+            stub = _running_stub(handle.run_id, "clearance", handle.run_id, handle.owner_info or {})
+            stub["status"] = "error"
+            await asyncio.to_thread(storage.save_user_run, handle.owner, handle.run_id, stub)
     finally:
         for q in handle.subscribers:
             q.put_nowait(None)  # sentinel: stream over
