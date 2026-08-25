@@ -99,7 +99,7 @@ def test_research_budget_and_cache(monkeypatch):
     monkeypatch.setattr(toolbelt, "_durable_cache_store", lambda k, r: None)
     calls = []
 
-    def fake_search(objective, queries):
+    def fake_search(objective, queries, **kw):
         calls.append(objective)
         return CASSETTE
 
@@ -125,7 +125,7 @@ def test_durable_cache_is_consulted_before_spending(monkeypatch):
     monkeypatch.setattr(
         toolbelt, "_durable_cache_load", lambda k: {"results": [{"ok": 1}], "search_id": "s1"}
     )
-    monkeypatch.setattr(toolbelt, "_live_search", lambda o, q: hits.setdefault("live", True))
+    monkeypatch.setattr(toolbelt, "_live_search", lambda o, q, **kw: hits.setdefault("live", True))
     ctx = make_ctx(**{"research_budget:clearance_counsel": 2})
     r = toolbelt.research("cached question", ["q"], "E001", ctx)
     assert r["cached"] is True and r["search_id"] == "s1"
@@ -143,7 +143,7 @@ def test_research_dedups_case_variant_urls(monkeypatch):
         ],
         "search_id": "s",
     }
-    monkeypatch.setattr(toolbelt, "_live_search", lambda o, q: doubled)
+    monkeypatch.setattr(toolbelt, "_live_search", lambda o, q, **kw: doubled)
     ctx = make_ctx()
     r = toolbelt.research("q", ["q"], "E009", ctx)
     assert len(r["results"]) == 1

@@ -23,7 +23,7 @@ res = client.search(
     objective="...",        # Natural-language description of the real question. Self-contained.
     mode="advanced",        # turbo | fast | basic | advanced. Default advanced.
     max_chars_total=6000,   # Upper bound on total excerpt characters across all results.
-    session_id=None,        # Reuse across calls in one script run for better context.
+    session_id=None,        # WIRED: research() passes a per-run id so chained questions share context.
 )
 ```
 

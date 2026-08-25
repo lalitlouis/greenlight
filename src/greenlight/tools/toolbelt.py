@@ -99,10 +99,15 @@ def find_in_script(pattern: str, tool_context: ToolContext) -> dict[str, Any]:
 # --- research ---------------------------------------------------------------
 
 
-def _live_search(objective: str, queries: list[str]) -> dict[str, Any]:
+def _live_search(
+    objective: str, queries: list[str], session_id: str | None = None
+) -> dict[str, Any]:
     """The live Parallel Search call. Module-level so tests can monkeypatch it.
 
     This call is the partner-track requirement — it must stay on the default path.
+    session_id groups every search in one analysis run: Parallel builds context
+    across the chained questions (a song -> its composition owner -> its master),
+    which is exactly how the desks work.
     """
     import parallel
 
@@ -112,6 +117,7 @@ def _live_search(objective: str, queries: list[str]) -> dict[str, Any]:
         objective=objective,
         mode="advanced",
         max_chars_total=8000,
+        session_id=session_id,
     )
     return res.model_dump()
 
@@ -211,7 +217,8 @@ def research(
             ),
         }
 
-    raw = _live_search(objective, queries)
+    session_id = f"scriptrisk-{getattr(tool_context, 'invocation_id', '') or 'run'}"[:64]
+    raw = _live_search(objective, queries, session_id=session_id)
     tool_context.state[budget_key] = budget - 1
     compacted = _compact(raw)
     record = {
