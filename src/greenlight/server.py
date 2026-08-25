@@ -386,6 +386,7 @@ async def _run_writer(run_id: str, path: Path) -> None:
         if handle is not None:
             handle["stage"] = name
             handle["stage_info"] = info
+            handle.setdefault("stages", {})[name] = info  # fast stages outlive the poll gap
 
     try:
         from greenlight.writer import pipeline as writer_pipeline

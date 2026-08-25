@@ -37,6 +37,7 @@ function showProgress() {
 
 let currentStage = "upload";
 let currentInfo = {};
+const stageInfos = {};
 
 function setStage(stage, info) {
   if (STAGE_ORDER.indexOf(stage) < STAGE_ORDER.indexOf(currentStage)) return;
@@ -44,13 +45,19 @@ function setStage(stage, info) {
   currentStage = stage;
   currentInfo = info || {};
 
+  const pi = stageInfos.parsed || {};
+  const fi = stageInfos.format_done || {};
   const texts = {
     upload: ["Received."],
     parsed: [
-      `${currentInfo.title || "Screenplay"} — ${currentInfo.scenes ?? "?"} scenes, ~${currentInfo.pages ?? "?"} pages.`,
+      pi.scenes != null
+        ? `${pi.title || "Screenplay"} — ${pi.scenes} scenes, ~${pi.pages} pages.`
+        : "Parsed.",
     ],
     format_done: [
-      `${currentInfo.passes ?? "?"} checks passed, ${currentInfo.warns ?? 0} warnings — ready in the report.`,
+      fi.passes != null
+        ? `${fi.passes} checks passed, ${fi.warns} warning${fi.warns === 1 ? "" : "s"} — ready in the report.`
+        : "Done — results in the report.",
     ],
     desks: ["Both desks are reading now — long thoughts are normal…"],
     comps: ["Embedding your synopsis and searching the corpus…"],
@@ -88,6 +95,9 @@ async function poll(runId) {
     if (!res.ok) throw new Error(`run not found (${res.status})`);
     pollMisses = 0;
     const body = await res.json();
+    if (body.stages) {
+      for (const [s, info] of Object.entries(body.stages)) stageInfos[s] = info;
+    }
     if (body.stage) setStage(body.stage, body.stage_info);
     if (body.status === "running") {
       setTimeout(() => poll(runId), POLL_MS);
