@@ -41,18 +41,18 @@
       <p class="run-status" id="run-status">Connecting to the analysis…</p>
     </div>
 
-    <div class="readthrough">
-      <div class="card scene-strip-wrap">
-        <div class="strip-head">
-          <span class="label">Your script — the desks read it live; findings pin to their scenes</span>
-          <button class="follow-chip hidden" id="follow-chip" type="button">Resume following</button>
-        </div>
-        <div class="scene-strip" id="scene-strip">
-          <p class="runs-empty" style="padding: 24px;">Preparing the scene strip…</p>
-        </div>
+    <div class="card now-bar">
+      <div class="now-line" id="now-line"><span class="now-dot dot-system"></span><span>Warming up the desks…</span></div>
+      <div class="now-desks" id="desk-rail"></div>
+    </div>
+
+    <div class="card scene-strip-wrap">
+      <div class="strip-head">
+        <span class="label">Your script — findings pin to their scenes as the desks read</span>
+        <span class="strip-count" id="strip-count"></span>
       </div>
-      <div class="rt-rail">
-        <div class="card desk-rail" id="desk-rail"></div>
+      <div class="scene-strip" id="scene-strip">
+        <p class="runs-empty" style="padding: 24px;">Preparing the scene strip…</p>
       </div>
     </div>
 

@@ -12,7 +12,8 @@ const rt = {
   lastScene: {}, // desk -> scene_id
   pendingPin: {}, // desk -> pin element awaiting its flag id
   pins: {}, // flag_id -> pin element
-  autoFollow: true,
+  userScrollAt: 0,
+  pinCount: 0,
 };
 
 async function loadSceneHeadings(id) {
@@ -46,19 +47,63 @@ function buildSceneStrip(scenes) {
   rt.built = true;
   const ops = rt.backlog.splice(0);
   for (const op of ops) op();
-  strip.addEventListener("wheel", pauseFollow, { passive: true });
-  strip.addEventListener("touchstart", pauseFollow, { passive: true });
+  const noteScroll = () => { rt.userScrollAt = Date.now(); };
+  strip.addEventListener("wheel", noteScroll, { passive: true });
+  strip.addEventListener("touchstart", noteScroll, { passive: true });
 }
 
-function pauseFollow() {
-  if (!rt.autoFollow) return;
-  rt.autoFollow = false;
-  $("follow-chip")?.classList.remove("hidden");
+/* The camera never chases the desks. Only a landed finding nudges the view,
+   gently, and never within 8s of the user scrolling on their own. */
+function gentleFollow(node) {
+  if (!node || Date.now() - (rt.userScrollAt || 0) < 8000) return;
+  node.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
-function followTo(node) {
-  if (!rt.autoFollow || !node) return;
-  node.scrollIntoView({ behavior: "smooth", block: "center" });
+/* One narrated beat at a time. Events arrive in bursts no human can read, so
+   beats queue and play at reading speed — slower when quiet, faster when a
+   backlog builds, never a teleport. */
+const NARRATORS = {
+  triage: "Triage",
+  verification_panel: "Verification",
+  adjudicator: "Producer's desk",
+};
+const nowBar = { queue: [], lastAt: 0, timer: null };
+
+function whoIs(agent) {
+  const d = DESKS.find((x) => x[0] === agent);
+  return d ? d[1] : NARRATORS[agent] || "";
+}
+
+function enqueueBeat(agent, text) {
+  if (!text) return;
+  nowBar.queue.push({ agent, text });
+  if (nowBar.queue.length > 40) nowBar.queue.splice(0, nowBar.queue.length - 40);
+  startBeatPlayer();
+}
+
+function beatDur() {
+  return Math.max(600, Math.min(1800, Math.round(10000 / Math.max(1, nowBar.queue.length))));
+}
+
+function startBeatPlayer() {
+  if (nowBar.timer) return;
+  nowBar.timer = setInterval(() => {
+    if (!nowBar.queue.length) return;
+    if (Date.now() - nowBar.lastAt < beatDur()) return;
+    nowBar.lastAt = Date.now();
+    renderBeat(nowBar.queue.shift());
+  }, 150);
+}
+
+function renderBeat(b) {
+  const line = $("now-line");
+  if (!line) return;
+  line.textContent = "";
+  line.appendChild(el("span", "now-dot dot-" + (DESK_IDS.includes(b.agent) ? b.agent : "system")));
+  const who = whoIs(b.agent);
+  if (who) line.appendChild(el("b", null, who));
+  line.appendChild(el("span", "now-text", b.text));
+  if (window.FX?.on) gsap.fromTo(line, { opacity: 0.25, y: 5 }, { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" });
 }
 
 function rtOp(fn) {
@@ -74,10 +119,9 @@ function moveDeskDot(agent, sceneId) {
     const dot = el("span", `rt-dot dot-${agent}`);
     dot.title = (DESKS.find((d) => d[0] === agent) || [])[1] || agent;
     card.querySelector(".rts-dots").appendChild(dot);
-    card.classList.add("rts-active", "glow-" + agent);
+    card.classList.add("rts-read", "glow-" + agent);
     setTimeout(() => card.classList.remove("glow-" + agent), 1800);
     rt.lastScene[agent] = sceneId;
-    followTo(card);
   });
 }
 
@@ -105,8 +149,15 @@ function dropPin(agent, severity, category, sceneIds) {
     if (window.FX?.on) {
       gsap.fromTo(pin, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.45, ease: "back.out(1.8)" });
     }
-    followTo(card);
+    bumpPinCount(1);
+    gentleFollow(card);
   });
+}
+
+function bumpPinCount(delta) {
+  rt.pinCount = Math.max(0, (rt.pinCount || 0) + delta);
+  const sc = $("strip-count");
+  if (sc) sc.textContent = rt.pinCount ? rt.pinCount + (rt.pinCount === 1 ? " finding pinned" : " findings pinned") : "";
 }
 
 function assignPinId(agent, brief) {
@@ -115,8 +166,12 @@ function assignPinId(agent, brief) {
     const pin = rt.pendingPin[agent];
     if (!pin) return;
     delete rt.pendingPin[agent];
-    if (m) rt.pins[m[0]] = pin;
-    else pin.remove(); // the filing was rejected by validation — never landed
+    if (m) {
+      rt.pins[m[0]] = pin;
+    } else {
+      pin.remove(); // the filing was rejected by validation — never landed
+      bumpPinCount(-1);
+    }
   });
 }
 
@@ -157,9 +212,17 @@ const state = {
 
 const PHASE_ORDER = ["triage", "desks", "verify", "adjudicate", "report"];
 
+const PHASE_BEATS = {
+  triage: "Reading the script and building each desk's worklist…",
+  desks: "The four desks take the script — each investigates on its own.",
+  verify: "Every filed finding now faces a blinded verifier.",
+  adjudicate: "The producer's desk reconciles the four reports.",
+};
+
 function setPhase(name) {
   const idx = PHASE_ORDER.indexOf(name);
   if (idx < 0 || idx < PHASE_ORDER.indexOf(state.phase)) return;
+  if (name !== state.phase && PHASE_BEATS[name]) enqueueBeat("system", PHASE_BEATS[name]);
   state.phase = name;
   PHASE_ORDER.forEach((p, i) => {
     const node = $("phase-" + p);
@@ -197,14 +260,11 @@ function buildDeskRail() {
   if (!rail) return;
   rail.textContent = "";
   for (const [id, name] of DESKS) {
-    const row = el("div", "rail-row rail-" + id);
+    const row = el("span", "chip-desk rail-" + id);
     row.id = "rail-" + id;
-    const top = el("div", "rail-top");
-    top.appendChild(el("span", "rail-dot"));
-    top.appendChild(el("b", null, name));
-    top.appendChild(el("span", "rail-status", "Waiting"));
-    row.appendChild(top);
-    row.appendChild(el("p", "rail-spot", "…"));
+    row.appendChild(el("span", "rail-dot"));
+    row.appendChild(el("b", null, name));
+    row.appendChild(el("span", "rail-status", "waiting"));
     rail.appendChild(row);
   }
 }
@@ -250,7 +310,11 @@ function setDeskStatus(id) {
   const rail = document.querySelector(`#rail-${id} .rail-status`);
   const row = $("rail-" + id);
   if (rail) {
-    rail.textContent = d.done ? `Done · ${d.flags} flags` : d.started ? `${d.calls} calls` : "Waiting";
+    rail.textContent = d.done
+      ? `✓ ${d.flags} ${d.flags === 1 ? "flag" : "flags"}`
+      : d.started
+        ? `${d.flags} ${d.flags === 1 ? "flag" : "flags"} so far`
+        : "waiting";
     row?.classList.toggle("rail-working", d.started && !d.done);
     row?.classList.toggle("rail-done", d.done);
   }
@@ -310,8 +374,7 @@ function traceLine(ev) {
 function setDeskSpotlight(agent, text) {
   const node = document.querySelector(`#col-${agent} .spotlight`);
   if (node) node.textContent = text;
-  const railNode = document.querySelector(`#rail-${agent} .rail-spot`);
-  if (railNode) railNode.textContent = text;
+  enqueueBeat(agent, text);
 }
 
 function handleDeskEvent(ev) {
@@ -366,6 +429,7 @@ function maybeStudioEvent(ev) {
     const [fid, cat, sev, verdict, reason] = ev.text.slice(2).split("|");
     studioCard(fid, cat, sev, verdict, reason);
     pinVerdict(fid, verdict);
+    enqueueBeat("verification_panel", `${fid} ${prettyCat(cat)} — ${verdict}`);
     return true;
   }
   if (ev.type === "tool_result" && ev.tool === "verify_flag") {
@@ -373,6 +437,7 @@ function maybeStudioEvent(ev) {
     if (m) {
       studioCard(m[1], "", "FYI", m[2], m[3] || "");
       pinVerdict(m[1], m[2]);
+      enqueueBeat("verification_panel", `${m[1]} — ${m[2]}`);
       return true;
     }
   }
@@ -515,8 +580,22 @@ function handleEvent(ev) {
   }
 }
 
+function sweepSceneStates() {
+  rtOp(() => {
+    document.querySelectorAll(".rt-scene").forEach((card) => {
+      const pins = card.querySelector(".rts-pins");
+      if (pins && pins.childElementCount > 0) return;
+      const head = card.querySelector(".rts-head");
+      if (head && !card.querySelector(".rts-clear")) head.appendChild(el("span", "rts-clear", "no flags"));
+    });
+  });
+}
+
 function onResult(record) {
   state.gotResult = true;
+  sweepSceneStates();
+  nowBar.queue.length = 0;
+  renderBeat({ agent: "system", text: "Done — your marked-up script is ready. Opening the report…" });
   beacon("info", "stream_result", state.mode || "");
   const statusNode = $("run-status");
   if (statusNode) statusNode.textContent = "Done — opening your report.";
@@ -607,10 +686,6 @@ document.addEventListener("DOMContentLoaded", () => {
   $("detail-toggle")?.addEventListener("click", () => {
     const on = document.body.classList.toggle("show-detail");
     $("detail-toggle").textContent = on ? "Hide detail" : "Detail view";
-  });
-  $("follow-chip")?.addEventListener("click", () => {
-    rt.autoFollow = true;
-    $("follow-chip").classList.add("hidden");
   });
   $("studio-toggle")?.addEventListener("click", () => {
     const body = $("studio-body");
