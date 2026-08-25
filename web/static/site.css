@@ -658,3 +658,33 @@ a.step-card:hover { text-decoration: none; box-shadow: var(--shadow-lg); }
 .case-hook { font-size: 16px; margin: 0 0 6px; }
 .case-note { font-size: 13px; color: var(--ink-3); margin: 0; line-height: 1.6; }
 .dims-note { font-size: 12.5px; color: var(--ink-3); align-self: center; }
+
+/* ---------- upload overlay & progress narration ---------- */
+.upload-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 26, 20, 0.55);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 60;
+}
+.upload-card {
+  background: var(--surface);
+  border-radius: 20px;
+  box-shadow: var(--shadow-lg);
+  padding: 30px 36px;
+  width: min(440px, 90vw);
+}
+.upload-card h3 { margin-bottom: 4px; }
+.up-file { font-size: 14px; color: var(--ink-3); margin-bottom: 16px; }
+.up-bar { height: 8px; border-radius: 980px; background: var(--band); overflow: hidden; margin-bottom: 12px; }
+.up-fill { height: 100%; width: 0%; border-radius: 980px; background: var(--green); transition: width 0.2s ease; }
+.up-status { font-size: 15px; color: var(--ink-2); margin: 0; }
+.run-status { font-size: 14.5px; color: var(--ink-3); margin: 12px 0 0; font-style: italic; }
+.wr-progress-card { padding: 28px 32px; display: flex; flex-direction: column; gap: 16px; }
+.wr-progress-top { display: flex; gap: 18px; align-items: center; }
+.wr-progress-top h3 { margin-bottom: 2px; }
+.wr-progress-top p { margin: 0; color: var(--ink-2); }
+.wr-elapsed { margin-left: auto; font-size: 15px; color: var(--ink-3); font-variant-numeric: tabular-nums; }

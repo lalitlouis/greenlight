@@ -6,22 +6,45 @@
 const POLL_MS = 3000;
 
 async function uploadForWriter(file) {
-  const form = new FormData();
-  form.append("screenplay", file, file.name);
+  showUploadOverlay(file);
   try {
-    const res = await fetch("/api/writer", { method: "POST", body: form });
-    if (!res.ok) throw new Error(await res.text());
-    const { run_id } = await res.json();
+    const { run_id } = await uploadWithProgress("/api/writer", file);
+    hideUploadOverlay();
     showProgress();
     poll(run_id);
   } catch (e) {
+    hideUploadOverlay();
     toast("upload failed: " + e.message, true);
   }
 }
 
+let progressStart = null;
+let progressTimer = null;
+const WR_EXPECTED_S = 80; // typical room read; the bar eases toward 92% and waits
+
 function showProgress() {
   $("writer-intake").classList.add("hidden");
   $("writer-progress").classList.remove("hidden");
+  progressStart = Date.now();
+  clearInterval(progressTimer);
+  progressTimer = setInterval(() => {
+    const s = (Date.now() - progressStart) / 1000;
+    const pct = Math.min(92, (s / WR_EXPECTED_S) * 100);
+    const fill = $("wr-bar-fill");
+    if (fill) fill.style.width = pct.toFixed(1) + "%";
+    const elapsed = $("wr-elapsed");
+    if (elapsed) elapsed.textContent = `${Math.floor(s)}s`;
+    const steps = [
+      [0, "Format check complete — it runs instantly."],
+      [8, "Coverage desk is reading your script…"],
+      [25, "Pitch desk is drafting loglines and the synopsis…"],
+      [45, "Matching your story against 2,487 released films…"],
+      [70, "Almost there — assembling the three reports…"],
+    ];
+    const line = steps.filter(([at]) => s >= at).pop();
+    const status = $("wr-progress-line");
+    if (status && line) status.textContent = line[1];
+  }, 1000);
 }
 
 async function poll(runId) {
@@ -39,6 +62,7 @@ async function poll(runId) {
       $("writer-intake").classList.remove("hidden");
       return;
     }
+    clearInterval(progressTimer);
     render(body.record);
   } catch (e) {
     toast(e.message, true);

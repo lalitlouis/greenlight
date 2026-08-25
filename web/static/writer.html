@@ -35,13 +35,18 @@
     </section>
 
     <section id="writer-progress" class="hidden">
-      <div class="card wr-progress">
-        <div class="wr-spinner" aria-hidden="true"></div>
-        <div>
-          <h3 id="wr-progress-title">The room is reading…</h3>
-          <p id="wr-progress-sub">Coverage and pitch desks work in parallel; the format desk is
-          already done. Usually about a minute.</p>
+      <div class="card wr-progress-card">
+        <div class="wr-progress-top">
+          <div class="wr-spinner" aria-hidden="true"></div>
+          <div>
+            <h3 id="wr-progress-title">The room is reading your screenplay</h3>
+            <p id="wr-progress-line">Format check complete — it runs instantly.</p>
+          </div>
+          <span class="wr-elapsed" id="wr-elapsed">0s</span>
         </div>
+        <div class="pbar"><div class="pbar-fill" id="wr-bar-fill" style="width: 0%"></div></div>
+        <p class="run-status">Coverage and pitch desks read in parallel — typically about a
+        minute. This page updates itself; no need to refresh.</p>
       </div>
     </section>
 

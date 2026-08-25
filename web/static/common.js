@@ -74,17 +74,85 @@ async function fetchRecord(id) {
   return (await res.json()).record;
 }
 
-/* ---------- upload (offered from any page via the nav CTA) ---------- */
+/* ---------- upload with visible progress ---------- */
+
+function showUploadOverlay(file) {
+  let ov = $("upload-overlay");
+  if (!ov) {
+    ov = el("div", "upload-overlay");
+    ov.id = "upload-overlay";
+    const card = el("div", "upload-card");
+    card.appendChild(el("h3", null, "Sending your screenplay"));
+    card.appendChild(el("p", "up-file"));
+    const bar = el("div", "up-bar");
+    const fill = el("div", "up-fill");
+    fill.id = "up-fill";
+    bar.appendChild(fill);
+    card.appendChild(bar);
+    const status = el("p", "up-status");
+    status.id = "up-status";
+    card.appendChild(status);
+    ov.appendChild(card);
+    document.body.appendChild(ov);
+  }
+  ov.querySelector(".up-file").textContent =
+    `${file.name} · ${(file.size / 1024).toFixed(0)} KB`;
+  ov.classList.remove("hidden");
+  setUploadProgress(0, "Uploading — 0%");
+  return ov;
+}
+
+function setUploadProgress(pct, statusText) {
+  const fill = $("up-fill");
+  const status = $("up-status");
+  if (fill) fill.style.width = Math.min(100, pct) + "%";
+  if (status) status.textContent = statusText;
+}
+
+function hideUploadOverlay() {
+  $("upload-overlay")?.classList.add("hidden");
+}
+
+/* fetch() cannot report upload progress; XHR can. Resolves with parsed JSON. */
+function uploadWithProgress(url, file) {
+  return new Promise((resolve, reject) => {
+    const form = new FormData();
+    form.append("screenplay", file, file.name);
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", url);
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable) {
+        const pct = Math.round((100 * e.loaded) / e.total);
+        setUploadProgress(
+          pct,
+          pct < 100 ? `Uploading — ${pct}%` : "Upload complete — waking the desks…"
+        );
+      }
+    };
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        try {
+          resolve(JSON.parse(xhr.responseText));
+        } catch {
+          reject(new Error("bad server response"));
+        }
+      } else {
+        reject(new Error(xhr.responseText || `upload failed (${xhr.status})`));
+      }
+    };
+    xhr.onerror = () => reject(new Error("network error during upload"));
+    xhr.send(form);
+  });
+}
 
 async function uploadScreenplay(file) {
-  const form = new FormData();
-  form.append("screenplay", file, file.name);
+  showUploadOverlay(file);
   try {
-    const res = await fetch("/api/runs", { method: "POST", body: form });
-    if (!res.ok) throw new Error(await res.text());
-    const { run_id } = await res.json();
+    const { run_id } = await uploadWithProgress("/api/runs", file);
+    setUploadProgress(100, "Desks are opening the script — taking you to the live run…");
     window.location.href = `/run?id=${run_id}`;
   } catch (e) {
+    hideUploadOverlay();
     toast("upload failed: " + e.message, true);
   }
 }

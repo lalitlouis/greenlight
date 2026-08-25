@@ -163,6 +163,62 @@ function handlePipeEvent(ev) {
   appendTrace($("pipe-log"), line);
 }
 
+/* ---------- status narration: the quiet stretches are when models think ---------- */
+
+const QUIET_LINES = {
+  none: ["Connecting to the analysis…", "Waking the pipeline — a cold start can take a few seconds…"],
+  triage: [
+    "Triage is reading your screenplay scene by scene…",
+    "Extracting every brand, song, person, stunt, and sensitive beat…",
+    "Building each desk's worklist…",
+  ],
+  desks: [
+    "The desks are researching — live web lookups take a moment…",
+    "Long pauses are normal: a desk is reading sources before it files anything…",
+    "Findings without citations get rejected, so the desks read carefully…",
+  ],
+  verify: ["The verifier is re-reading every citation…", "Unsupported claims are being rejected…"],
+  adjudicate: ["The adjudicator is merging duplicates and resolving conflicts…"],
+  report: ["Assembling your report…"],
+};
+
+let lastEventAt = Date.now();
+let quietIdx = 0;
+
+function tickStatus() {
+  const node = $("run-status");
+  if (!node || state.gotResult) return;
+  const quietFor = (Date.now() - lastEventAt) / 1000;
+  const lines = QUIET_LINES[state.phase || "none"] || QUIET_LINES.none;
+  if (quietFor > 4) {
+    node.textContent = lines[quietIdx % lines.length];
+    quietIdx += 1;
+  }
+}
+setInterval(tickStatus, 5000);
+
+function noteActivity(ev) {
+  lastEventAt = Date.now();
+  const node = $("run-status");
+  if (!node) return;
+  if (ev.type === "tool_call" && DESK_IDS.includes(ev.agent)) {
+    const desk = DESKS.find((d) => d[0] === ev.agent);
+    const verb =
+      ev.tool === "research"
+        ? "is researching"
+        : ev.tool === "file_flag"
+          ? "just filed a finding"
+          : ev.tool === "query_precedent"
+            ? "is pulling comparables"
+            : "is reading the script";
+    node.textContent = `${desk ? desk[1] : ev.agent} ${verb}…`;
+  } else if (ev.agent === "verification_panel") {
+    node.textContent = "Verifying citations…";
+  } else if (ev.agent === "adjudicator") {
+    node.textContent = "Adjudicating findings…";
+  }
+}
+
 /* ---------- clock ---------- */
 
 function startClock() {
@@ -195,6 +251,7 @@ function handleEvent(ev) {
     case "tool_call":
     case "tool_result":
     case "text":
+      noteActivity(ev);
       if (DESK_IDS.includes(ev.agent)) {
         setPhase("desks");
         handleDeskEvent(ev);
@@ -225,6 +282,8 @@ function handleEvent(ev) {
 
 function onResult(record) {
   state.gotResult = true;
+  const statusNode = $("run-status");
+  if (statusNode) statusNode.textContent = "Done — opening your report.";
   setPhase("report");
   bumpProgress();
   clearInterval(state.timer);
