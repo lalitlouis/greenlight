@@ -214,7 +214,6 @@ function injectChrome() {
   authSlot.id = "auth-slot";
   actions.appendChild(authSlot);
   inner.appendChild(actions);
-  hydrateAuth();
 
   header.appendChild(inner);
   document.body.prepend(header);
@@ -279,6 +278,7 @@ function injectChrome() {
   fine.appendChild(el("p", null, "© 2026 SCRIPTRISK"));
   footer.appendChild(fine);
   document.body.appendChild(footer);
+  hydrateAuth(); // must run AFTER the chrome is in the DOM — the slot is found by id
 }
 
 async function hydrateAuth() {
