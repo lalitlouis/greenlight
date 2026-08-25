@@ -103,6 +103,9 @@ function showUploadOverlay(file) {
     const status = el("p", "up-status");
     status.id = "up-status";
     card.appendChild(status);
+    card.appendChild(
+      el("p", "secure-note", "🔒 Encrypted in transit and at rest — never used to train models.")
+    );
     ov.appendChild(card);
     document.body.appendChild(ov);
   }
@@ -283,7 +286,8 @@ function injectChrome() {
     el(
       "p",
       null,
-      "Cost figures are rule-of-thumb estimates, not quotes. ScriptRisk is a research tool, " +
+      "Screenplays are encrypted in transit and at rest and never used to train AI models. " +
+        "Cost figures are rule-of-thumb estimates, not quotes. ScriptRisk is a research tool, " +
         "not legal advice. Built for the Agentic Cinema hackathon."
     )
   );
