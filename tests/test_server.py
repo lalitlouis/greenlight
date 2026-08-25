@@ -232,3 +232,8 @@ def test_fix_rejects_case_studies_and_unknown_flags():
     assert res.status_code == 400
     res = client.post("/api/fix", json={"run_id": "nonexistent_run", "flag_id": "F101"})
     assert res.status_code == 404
+
+
+def test_replay_404s_cleanly_on_unknown_record():
+    res = client.get("/api/replay?pace=0&record=doesnotexist123")
+    assert res.status_code == 404

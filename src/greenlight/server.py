@@ -631,7 +631,8 @@ async def replay(pace: float = 1.0, record: str = "") -> StreamingResponse:
     """Replay a cached run (newest by default) as SSE — same contract as live."""
     pace = min(max(pace, 0.0), 10.0)
     if record:
-        rec = _disk_record(record)
+        record = _safe_id(record)
+        rec = await _load_record_any(record)  # disk, memory, or GCS — replays anywhere
         if rec is None:
             raise HTTPException(404, f"Unknown record {record!r}")
         path, record_obj = RUNS_DIR / f"{record}.json", rec

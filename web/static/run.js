@@ -372,11 +372,31 @@ function startStream(url) {
   es.onopen = () => {
     if (receivedAny) buildPanel(); // server resends history on reconnect
   };
+  let streamErrors = 0;
   es.onerror = () => {
-    if (!state.gotResult) {
-      beacon("error", "stream_error", url + " readyState=" + es.readyState);
-      toast("stream interrupted — reconnecting…", true);
+    if (state.gotResult) return;
+    streamErrors += 1;
+    beacon("error", "stream_error", url + " readyState=" + es.readyState + " n=" + streamErrors);
+    if (streamErrors >= 4 && !receivedAny) {
+      // The stream never opened — retrying forever is a lie. Say so and offer outs.
+      es.close();
+      clearInterval(state.timer);
+      const node = $("run-status");
+      if (node) {
+        node.textContent =
+          "This analysis could not be streamed — it may have been deleted or the link is stale.";
+      }
+      const banner = $("done-banner");
+      if (banner) {
+        banner.classList.remove("hidden");
+        banner.querySelector("b").textContent = "Couldn't load this analysis.";
+        const link = $("done-link");
+        link.textContent = "Watch the recorded demo instead";
+        link.href = "/run?replay=1";
+      }
+      return;
     }
+    toast("stream interrupted — reconnecting…", true);
   };
   let firstEvent = true;
   es.onmessage = (msg) => {
