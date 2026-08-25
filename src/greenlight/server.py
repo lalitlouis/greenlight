@@ -304,9 +304,23 @@ def _redirect_uri(request: Request) -> str:
     return f"{proto}://{request.headers.get('host', request.url.netloc)}/auth/callback"
 
 
+_profiled_subs: set[str] = set()
+
+
 @app.get("/api/auth/status")
 async def auth_status(request: Request) -> dict[str, Any]:
     user = _current_user(request)
+    if user and user["sub"] not in _profiled_subs:
+        _profiled_subs.add(user["sub"])
+        await asyncio.to_thread(
+            storage.save_user_profile,
+            user["sub"],
+            {
+                "email": user.get("email", ""),
+                "name": user.get("name", ""),
+                "last_seen": _time_module.strftime("%Y-%m-%dT%H:%M:%S%z"),
+            },
+        )
     return {
         "configured": auth.configured(),
         "is_admin": auth.is_admin(user),
@@ -827,11 +841,12 @@ async def admin_overview(request: Request) -> dict[str, Any]:
         for sub in storage.list_user_subs()[:100]:
             stubs = storage.list_user_runs(sub)
             latest = stubs[0] if stubs else {}
+            profile = storage.load_user_profile(sub) or {}
             users.append(
                 {
                     "sub": sub[:10] + "…",
-                    "email": latest.get("owner_email", ""),
-                    "name": latest.get("owner_name", ""),
+                    "email": profile.get("email") or latest.get("owner_email", ""),
+                    "name": profile.get("name") or latest.get("owner_name", ""),
                     "runs": len(stubs),
                     "latest_title": latest.get("title", ""),
                     "latest_at": latest.get("generated_at", ""),

@@ -92,6 +92,24 @@ def list_user_runs(sub: str) -> list[dict[str, Any]]:
         return []
 
 
+def save_user_profile(sub: str, profile: dict[str, Any]) -> bool:
+    try:
+        _bucket().blob(f"users/{sub}/profile.json").upload_from_string(
+            json.dumps(profile), content_type="application/json"
+        )
+        return True
+    except Exception:
+        return False
+
+
+def load_user_profile(sub: str) -> dict[str, Any] | None:
+    try:
+        blob = _bucket().blob(f"users/{sub}/profile.json")
+        return json.loads(blob.download_as_text()) if blob.exists() else None
+    except Exception:
+        return None
+
+
 def list_user_subs() -> list[str]:
     """Distinct user ids that own at least one run (users/{sub}/... prefixes)."""
     try:
