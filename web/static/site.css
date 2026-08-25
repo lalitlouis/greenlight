@@ -901,20 +901,30 @@ body.show-detail .detail-only { display: grid; margin-top: 12px; }
 .btn-google { display: inline-flex; align-items: center; gap: 9px; white-space: nowrap; }
 .btn-google svg { flex: none; }
 
-/* ---------- home showcase carousel ---------- */
-.carousel { padding: 0; overflow: hidden; }
-.car-frame { position: relative; background: #07130c; }
-.car-img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; transition: opacity 0.35s ease; }
+/* ---------- home showcase carousel: a dark "screen" the cream UI sits inside,
+   so the screenshot reads as an image of the product, not more page. ---------- */
+.carousel { background: #07130c; border-radius: 22px; overflow: hidden; box-shadow: 0 18px 50px rgba(7, 19, 12, 0.28); }
+.car-chrome { display: flex; align-items: center; gap: 7px; padding: 13px 18px; }
+.car-tl { width: 11px; height: 11px; border-radius: 50%; background: rgba(255, 255, 255, 0.16); }
+.car-url { margin-left: 12px; font-size: 12.5px; color: rgba(245, 245, 247, 0.55); background: rgba(255, 255, 255, 0.07); border-radius: 980px; padding: 4px 16px; letter-spacing: 0.02em; }
+.car-frame { position: relative; padding: 0 14px; }
+.car-img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; border-radius: 10px; transition: opacity 0.35s ease; }
 .car-img.fading { opacity: 0; }
-.car-bar { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-top: 1px solid var(--line); }
-.car-caption { flex: 1; margin: 0; font-size: 15px; line-height: 1.5; color: var(--ink-2); min-height: 44px; display: flex; align-items: center; }
-.car-caption b { color: var(--ink); font-weight: 650; }
-.car-arrow { flex: none; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line-2); background: var(--surface); color: var(--ink-2); font-size: 22px; line-height: 1; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; padding-bottom: 3px; }
-.car-arrow:hover { border-color: var(--green); color: var(--green-deep); }
-.car-dots { display: flex; justify-content: center; gap: 8px; padding: 0 0 16px; }
-.car-dot { width: 8px; height: 8px; border-radius: 50%; border: 0; padding: 0; background: var(--line-2); cursor: pointer; transition: background 0.2s ease, transform 0.2s ease; }
-.car-dot.active { background: var(--green); transform: scale(1.35); }
+.car-arrow { position: absolute; top: 50%; transform: translateY(-50%); left: 28px; width: 48px; height: 48px; border-radius: 50%; border: 0; background: #0e2a1c; color: #f5f5f7; font-size: 28px; line-height: 1; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; padding-bottom: 4px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45); opacity: 0.92; transition: background 0.15s ease, opacity 0.15s ease; }
+.car-arrow:hover { background: var(--green); color: #04150c; opacity: 1; }
+.car-next { left: auto; right: 28px; }
+.car-bar { display: flex; align-items: center; gap: 20px; padding: 16px 22px 18px; }
+.car-caption { flex: 1; margin: 0; font-size: 15px; line-height: 1.55; color: rgba(245, 245, 247, 0.72); min-height: 46px; display: flex; align-items: center; }
+.car-caption b { color: #f5f5f7; font-weight: 650; margin-right: 6px; }
+.car-dots { display: flex; gap: 9px; flex: none; }
+.car-dot { width: 9px; height: 9px; border-radius: 50%; border: 0; padding: 0; background: rgba(255, 255, 255, 0.22); cursor: pointer; transition: background 0.2s ease, transform 0.2s ease; }
+.car-dot:hover { background: rgba(255, 255, 255, 0.45); }
+.car-dot.active { background: #e3b341; transform: scale(1.35); }
 @media (max-width: 640px) {
-  .car-caption { font-size: 13.5px; }
+  .car-caption { font-size: 13px; min-height: 56px; }
   .car-img { aspect-ratio: 4 / 3; }
+  .car-arrow { width: 40px; height: 40px; font-size: 24px; left: 20px; }
+  .car-next { left: auto; right: 20px; }
+  .car-bar { flex-direction: column; gap: 10px; align-items: flex-start; }
+  .car-dots { align-self: center; }
 }

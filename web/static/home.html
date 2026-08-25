@@ -112,16 +112,20 @@
         finding — what you're seeing below is a real analysis, including the flag that got thrown
         out.</p>
       </div>
-      <div class="carousel card" id="shot-carousel" data-reveal>
+      <div class="carousel" id="shot-carousel" data-reveal>
+        <div class="car-chrome" aria-hidden="true">
+          <span class="car-tl"></span><span class="car-tl"></span><span class="car-tl"></span>
+          <span class="car-url">scriptrisk.com</span>
+        </div>
         <div class="car-frame">
           <img class="car-img" id="car-img" src="/static/shots/reject.webp" alt="ScriptRisk product view" loading="lazy">
+          <button class="car-arrow" id="car-prev" type="button" aria-label="Previous">‹</button>
+          <button class="car-arrow car-next" id="car-next" type="button" aria-label="Next">›</button>
         </div>
         <div class="car-bar">
-          <button class="car-arrow" id="car-prev" type="button" aria-label="Previous">‹</button>
           <p class="car-caption" id="car-caption"></p>
-          <button class="car-arrow" id="car-next" type="button" aria-label="Next">›</button>
+          <div class="car-dots" id="car-dots" role="tablist"></div>
         </div>
-        <div class="car-dots" id="car-dots" role="tablist"></div>
       </div>
     </section>
 
