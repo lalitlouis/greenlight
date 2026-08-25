@@ -29,7 +29,7 @@ from fastapi import FastAPI, HTTPException, UploadFile
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
-from greenlight import parser
+from greenlight import parser, storage
 from greenlight.pdf import screenplay_text
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -125,6 +125,7 @@ async def _run_live(handle: RunHandle, script_path: Path) -> None:
         record = await pipeline.run(script_path, on_event=handle.publish)
         handle.record = record
         handle.status = "error" if record.get("error") else "done"
+        await asyncio.to_thread(storage.save_record, handle.run_id, record)
         if record.get("error"):
             handle.publish({"type": "error", "message": record["error"], "partial": True})
         handle.publish({"type": "result", "record": record})
@@ -147,6 +148,7 @@ async def create_run(screenplay: UploadFile) -> dict[str, str]:
 
     handle = RunHandle(run_id=run_id, mode="live", source=source, script_path=str(path))
     RUNS[run_id] = handle
+    await asyncio.to_thread(storage.save_script, run_id, source)
     title = (screenplay.filename or "screenplay").rsplit(".", 1)[0]
     handle.publish({"type": "meta", "run_id": run_id, "mode": "live", "script_title": title})
     asyncio.get_running_loop().create_task(_run_live(handle, path))
@@ -392,6 +394,7 @@ async def _run_writer(run_id: str, path: Path) -> None:
         from greenlight.writer import pipeline as writer_pipeline
 
         record = await writer_pipeline.run(path, on_stage=on_stage)
+        await asyncio.to_thread(storage.save_record, run_id, record)
         WRITER_RUNS[run_id] = {
             "status": "error" if record.get("error") else "done",
             "record": record,
@@ -429,6 +432,8 @@ async def writer_status(run_id: str) -> dict[str, Any]:
     if run_id in WRITER_RUNS:
         return {"id": run_id, **WRITER_RUNS[run_id]}
     if (record := _disk_writer_record(run_id)) is not None:
+        return {"id": run_id, "status": "done", "record": record}
+    if (record := await asyncio.to_thread(storage.load_record, run_id)) is not None:
         return {"id": run_id, "status": "done", "record": record}
     raise HTTPException(404, f"Unknown writer run {run_id!r}")
 
@@ -523,6 +528,8 @@ async def get_record(run_id: str) -> dict[str, Any]:
         return {"id": run_id, "kind": "session", "record": handle.record}
     if (record := _disk_record(run_id)) is not None:
         return {"id": run_id, "kind": "recorded", "record": record}
+    if (record := await asyncio.to_thread(storage.load_record, run_id)) is not None:
+        return {"id": run_id, "kind": "stored", "record": record}
     raise HTTPException(404, f"Unknown record {run_id!r}")
 
 
@@ -588,9 +595,13 @@ async def run_script(run_id: str) -> dict[str, Any]:
     handle = RUNS.get(run_id)
     if handle is None:
         disk = _disk_record(run_id)
-        if disk is None:
-            raise HTTPException(404, f"Unknown run {run_id!r}")
-        handle = RunHandle(run_id=run_id, mode="recorded", script_path=disk.get("script_path"))
+        if disk is not None:
+            handle = RunHandle(run_id=run_id, mode="recorded", script_path=disk.get("script_path"))
+        else:
+            stored = await asyncio.to_thread(storage.load_script, run_id)
+            if stored is None:
+                raise HTTPException(404, f"Unknown run {run_id!r}")
+            handle = RunHandle(run_id=run_id, mode="stored", source=stored)
     source = handle.source
     if source is None and handle.script_path:
         path = Path(handle.script_path)
