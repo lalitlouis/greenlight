@@ -73,7 +73,7 @@ def rows(m: dict, actuals: dict) -> list[tuple]:
         ),
         (
             "gcp-infra",
-            "Cloud Run 2vCPU/2Gi, CPU always-on while warm (~$0.14/hr warm, scales to 0 idle) + registry + DNS",
+            "Cloud Run 2vCPU/2Gi, ~$0.14/hr while warm, scales to 0 idle; + registry + DNS",
             round(PRICE["artifact_registry_gb_month"] * 0.7 + PRICE["dns_zone_month"], 2),
             actuals.get("gcp-infra"),
             "same console; per month, absorbed by the $100 credit",
