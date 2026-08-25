@@ -214,9 +214,10 @@ function render(record) {
         const main = el("div", "comp-main");
         main.appendChild(el("span", "comp-title", `${c.title}${c.year ? " (" + c.year + ")" : ""}`));
         if (c.blurb) main.appendChild(el("span", "comp-quote", c.blurb));
-        if (c.source_url) {
+        const compUrl = safeUrl(c.source_url);
+        if (compUrl) {
           const a = el("a", "comp-src", "source");
-          a.href = c.source_url;
+          a.href = compUrl;
           a.target = "_blank";
           a.rel = "noopener noreferrer";
           main.appendChild(a);

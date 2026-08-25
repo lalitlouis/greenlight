@@ -28,6 +28,17 @@ function money(range) {
   return `${f(range[0])}–${f(range[1])}`;
 }
 
+function safeUrl(url) {
+  /* Citation and comp URLs originate from web results — render links only for
+     http(s), never javascript: or anything else exotic. */
+  try {
+    const u = new URL(url);
+    return u.protocol === "http:" || u.protocol === "https:" ? u.href : null;
+  } catch {
+    return null;
+  }
+}
+
 function prettyCat(cat) {
   return (cat || "").replace(/_/g, " ");
 }

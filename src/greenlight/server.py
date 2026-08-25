@@ -71,6 +71,98 @@ app = FastAPI(title="ScriptRisk")
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 
+# ---------------------------------------------------------------- hardening
+
+MAX_UPLOAD_BYTES = 5 * 1024 * 1024  # a feature screenplay is well under 1MB; PDFs a few
+MAX_TRACKED_RUNS = 60  # in-memory handles trimmed oldest-first; storage keeps the rest
+MAX_CONCURRENT_LIVE = 3  # a live run costs real money and minutes; queue-jumping is a 429
+RATE_LIMIT_PER_HOUR = 8  # expensive-endpoint starts per client IP
+RATE_WINDOW_S = 3600
+MAX_TRACKED_IPS = 10000
+MAX_ID_LEN = 64
+
+_rate: dict[str, list[float]] = {}
+
+
+def _client_ip(request: Request) -> str:
+    fwd = request.headers.get("x-forwarded-for", "")
+    return fwd.split(",")[0].strip() if fwd else (request.client.host if request.client else "?")
+
+
+def _check_rate(request: Request) -> None:
+    """Cost control, not bot defense: analyses spend API credit, so each IP gets a
+    reasonable hourly allowance and the service caps concurrent live pipelines."""
+    import time as _time
+
+    now = _time.time()
+    ip = _client_ip(request)
+    window = [ts for ts in _rate.get(ip, []) if now - ts < RATE_WINDOW_S]
+    if len(window) >= RATE_LIMIT_PER_HOUR:
+        raise HTTPException(
+            429, "Rate limit: that's a lot of screenplays in one hour. Try again later."
+        )
+    window.append(now)
+    _rate[ip] = window
+    if len(_rate) > MAX_TRACKED_IPS:  # forgotten IPs must not accumulate forever
+        for stale in [k for k, v in _rate.items() if not v or now - v[-1] > RATE_WINDOW_S][
+            : MAX_TRACKED_IPS // 2
+        ]:
+            _rate.pop(stale, None)
+
+    running = sum(1 for h in RUNS.values() if h.mode == "live" and h.status == "running")
+    running += sum(1 for h in WRITER_RUNS.values() if h.get("status") == "running")
+    if running >= MAX_CONCURRENT_LIVE:
+        raise HTTPException(
+            429,
+            "All analysis desks are busy right now — try again in a few minutes, "
+            "or watch a recorded analysis meanwhile.",
+        )
+
+
+async def _read_upload(screenplay: UploadFile) -> bytes:
+    data = await screenplay.read(MAX_UPLOAD_BYTES + 1)
+    if len(data) > MAX_UPLOAD_BYTES:
+        raise HTTPException(413, "Screenplay too large — 5MB max.")
+    if not data.strip():
+        raise HTTPException(422, "That file looks empty.")
+    return data
+
+
+def _safe_id(run_id: str) -> str:
+    """Run ids are ours (hex / our file stems). Anything else never reaches a
+    storage path — belt for the GCS fallbacks, suspenders for the disk ones."""
+    if (
+        not run_id
+        or len(run_id) > MAX_ID_LEN
+        or not run_id.replace("_", "").replace("-", "").isalnum()
+    ):
+        raise HTTPException(404, "Unknown run.")
+    return run_id
+
+
+def _trim_tracked() -> None:
+    while len(RUNS) > MAX_TRACKED_RUNS:
+        oldest = next(iter(RUNS))
+        RUNS.pop(oldest, None)
+    while len(WRITER_RUNS) > MAX_TRACKED_RUNS:
+        WRITER_RUNS.pop(next(iter(WRITER_RUNS)), None)
+
+
+@app.middleware("http")
+async def security_headers(request, call_next):
+    response = await call_next(request)
+    response.headers.setdefault("X-Content-Type-Options", "nosniff")
+    response.headers.setdefault("X-Frame-Options", "DENY")
+    response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+    response.headers.setdefault(
+        "Content-Security-Policy",
+        "default-src 'self'; img-src 'self' data: https://*.googleusercontent.com; "
+        "style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; "
+        "frame-ancestors 'none'; base-uri 'self'; form-action 'self' https://accounts.google.com",
+    )
+    return response
+
+
 @app.middleware("http")
 async def cache_control(request, call_next):
     """The site iterates fast; a stale cached app.js renders a page that never
@@ -197,6 +289,7 @@ async def delete_my_run(run_id: str, request: Request) -> dict[str, bool]:
     user = _current_user(request)
     if user is None:
         raise HTTPException(401, "Sign in first.")
+    run_id = _safe_id(run_id)
     ok = await asyncio.to_thread(storage.delete_user_run, user["sub"], run_id)
     if not ok:
         raise HTTPException(404, "Not one of your reports.")
@@ -242,8 +335,10 @@ async def _run_live(handle: RunHandle, script_path: Path) -> None:
 
 @app.post("/api/runs")
 async def create_run(screenplay: UploadFile, request: Request) -> dict[str, str]:
+    _check_rate(request)
     owner = _current_user(request)
-    source = screenplay_text(screenplay.filename or "", await screenplay.read())
+    source = screenplay_text(screenplay.filename or "", await _read_upload(screenplay))
+    _trim_tracked()
     run_id = uuid.uuid4().hex[:12]
     upload_dir = RUNS_DIR / "uploads"
     upload_dir.mkdir(parents=True, exist_ok=True)
@@ -519,8 +614,10 @@ async def _run_writer(run_id: str, path: Path, owner: str | None = None) -> None
 
 @app.post("/api/writer")
 async def create_writer_run(screenplay: UploadFile, request: Request) -> dict[str, str]:
+    _check_rate(request)
     owner = _current_user(request)
-    source = screenplay_text(screenplay.filename or "", await screenplay.read())
+    source = screenplay_text(screenplay.filename or "", await _read_upload(screenplay))
+    _trim_tracked()
     run_id = "w" + uuid.uuid4().hex[:11]
     upload_dir = RUNS_DIR / "uploads"
     upload_dir.mkdir(parents=True, exist_ok=True)
@@ -546,6 +643,7 @@ def _disk_writer_record(run_id: str) -> dict[str, Any] | None:
 @app.get("/api/writer/{run_id}")
 async def writer_status(run_id: str) -> dict[str, Any]:
     """Poll target for the writer page: {status, record}. Memory first, then disk."""
+    run_id = _safe_id(run_id)
     if run_id in WRITER_RUNS:
         return {"id": run_id, **WRITER_RUNS[run_id]}
     if (record := _disk_writer_record(run_id)) is not None:
@@ -640,6 +738,7 @@ def _disk_record(run_id: str) -> dict[str, Any] | None:
 @app.get("/api/records/{run_id}")
 async def get_record(run_id: str) -> dict[str, Any]:
     """One record by id — memory first (live sessions), then disk (cached runs)."""
+    run_id = _safe_id(run_id)
     handle = RUNS.get(run_id)
     if handle is not None and handle.record is not None:
         return {"id": run_id, "kind": "session", "record": handle.record}
@@ -711,6 +810,7 @@ async def run_script(run_id: str) -> dict[str, Any]:
     the parser saw — hence re-reading the original file, never a re-assembly."""
     handle = RUNS.get(run_id)
     if handle is None:
+        run_id = _safe_id(run_id)
         disk = _disk_record(run_id)
         if disk is not None:
             handle = RunHandle(run_id=run_id, mode="recorded", script_path=disk.get("script_path"))

@@ -129,7 +129,18 @@ def test_index_serves_static_ui():
 
 
 def test_all_pages_serve():
-    for route in ["/", "/home", "/how-it-works", "/faq", "/contact", "/run", "/report", "/script", "/compare", "/my"]:
+    for route in [
+        "/",
+        "/home",
+        "/how-it-works",
+        "/faq",
+        "/contact",
+        "/run",
+        "/report",
+        "/script",
+        "/compare",
+        "/my",
+    ]:
         res = client.get(route)
         assert res.status_code == 200, route
         assert "ScriptRisk" in res.text, route
@@ -188,3 +199,29 @@ def test_writer_page_and_latest_record():
     assert body["record"]["coverage"]["verdict"] in {"PASS", "CONSIDER", "RECOMMEND"}
     assert body["record"]["format"]["checks"]
     assert body["record"]["pitch"]["comps"], "comps must be retrieved, and shipped in the demo"
+
+
+def test_oversized_upload_rejected():
+    res = client.post(
+        "/api/runs", files={"screenplay": ("big.fountain", b"A" * (5 * 1024 * 1024 + 10))}
+    )
+    assert res.status_code == 413
+
+
+def test_empty_upload_rejected():
+    res = client.post("/api/writer", files={"screenplay": ("empty.fountain", b"   ")})
+    assert res.status_code == 422
+
+
+def test_hostile_run_ids_rejected_everywhere():
+    for bad in ["..%2fetc", "a/b", "x" * 80, "run_1;drop"]:
+        assert client.get(f"/api/records/{bad}").status_code == 404
+        assert client.get(f"/api/writer/{bad}").status_code == 404
+        assert client.get(f"/api/script/{bad}").status_code == 404
+
+
+def test_security_headers_present():
+    res = client.get("/")
+    assert res.headers["X-Content-Type-Options"] == "nosniff"
+    assert res.headers["X-Frame-Options"] == "DENY"
+    assert "default-src 'self'" in res.headers["Content-Security-Policy"]

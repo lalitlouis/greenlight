@@ -741,3 +741,4 @@ a.step-card:hover { text-decoration: none; box-shadow: var(--shadow-lg); }
 .compare-table tbody th { font-weight: 650; color: var(--ink-2); width: 190px; }
 .compare-table .us { background: var(--green-tint); font-weight: 550; }
 .compare-table thead .us { color: var(--green-deep); }
+.scene-link.inert { cursor: default; opacity: 0.75; }

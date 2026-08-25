@@ -17,5 +17,9 @@ COPY runs ./runs
 ENV PYTHONPATH=/app/src \
     PYTHONUNBUFFERED=1
 
+# Run as a non-root user; the app writes only under /app/runs/uploads.
+RUN useradd --create-home appuser && chown -R appuser /app/runs
+USER appuser
+
 # Cloud Run injects PORT. Single worker: SSE broadcast state is in-process.
 CMD exec uvicorn greenlight.server:app --host 0.0.0.0 --port ${PORT:-8080}

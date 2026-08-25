@@ -5,6 +5,7 @@
 "use strict";
 
 let RUN_ID = null;
+let IS_CASE = false;
 
 function gotoScene(sid) {
   window.location.href = `/script?run=${encodeURIComponent(RUN_ID)}#scene-${sid}`;
@@ -19,9 +20,10 @@ function citationCard(c, idx, total) {
   src.appendChild(
     el("span", "via", (c.via || c.source_type || "source").replace("_", " "))
   );
-  if (c.url) {
-    const a = el("a", null, c.url.replace(/^https?:\/\//, "").slice(0, 60));
-    a.href = c.url;
+  const citeUrl = safeUrl(c.url);
+  if (citeUrl) {
+    const a = el("a", null, citeUrl.replace(/^https?:\/\//, "").slice(0, 60));
+    a.href = citeUrl;
     a.target = "_blank";
     a.rel = "noopener noreferrer";
     src.appendChild(a);
@@ -70,6 +72,10 @@ function flagRow(f, opts) {
   const scenes = el("div", "scenes");
   scenes.appendChild(el("span", null, f.flag_id));
   for (const sid of f.scene_ids || []) {
+    if (IS_CASE) {
+      scenes.appendChild(el("span", "scene-link inert", sid));
+      continue;
+    }
     const b = el("button", "scene-link", sid);
     b.type = "button";
     b.title = "Show in script";
@@ -159,9 +165,10 @@ function renderPrediction(root, pred) {
     const main = el("div", "comp-main");
     main.appendChild(el("span", "comp-title", `${c.title}${c.year ? " (" + c.year + ")" : ""}`));
     if (c.rationale) main.appendChild(el("span", "comp-quote", c.rationale));
-    if (c.source_url) {
+    const compUrl = safeUrl(c.source_url);
+    if (compUrl) {
       const a = el("a", "comp-src", "source");
-      a.href = c.source_url;
+      a.href = compUrl;
       a.target = "_blank";
       a.rel = "noopener noreferrer";
       main.appendChild(a);
@@ -202,6 +209,7 @@ function renderReport(record) {
 
   $("rpt-title").textContent = record.script_title || "Report";
 
+  IS_CASE = record.kind === "case_study";
   if (record.kind === "case_study" && record.case) {
     $("script-link")?.classList.add("hidden"); // the screenplay text is not reproduced
     const strip = el("div", "case-strip");

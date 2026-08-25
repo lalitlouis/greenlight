@@ -10,14 +10,17 @@ from __future__ import annotations
 
 import io
 
+MAX_PDF_PAGES = 400  # the longest shooting scripts are ~200pp; 400 is generous
+
 
 def pdf_to_text(data: bytes) -> str:
-    """Text from a PDF, page by page, line structure preserved."""
+    """Text from a PDF, page by page, line structure preserved. Page-capped:
+    extraction cost scales with pages, and a crafted PDF should not own the CPU."""
     import pdfplumber  # heavyweight import, only when a PDF actually arrives
 
     lines: list[str] = []
     with pdfplumber.open(io.BytesIO(data)) as pdf:
-        for page in pdf.pages:
+        for page in pdf.pages[:MAX_PDF_PAGES]:
             text = page.extract_text() or ""
             lines.append(text)
     return "\n\n".join(lines)
