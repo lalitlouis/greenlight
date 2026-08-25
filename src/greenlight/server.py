@@ -106,6 +106,20 @@ app.mount("/static/v-{version}", StaticFiles(directory=str(STATIC_DIR)), name="s
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon() -> FileResponse:
+    # Browsers ask for this at the root regardless of <link> tags.
+    headers = {"Cache-Control": "public, max-age=86400"}
+    return FileResponse(STATIC_DIR / "favicon.ico", headers=headers)
+
+
+@app.get("/apple-touch-icon.png", include_in_schema=False)
+@app.get("/apple-touch-icon-precomposed.png", include_in_schema=False)
+async def touch_icon() -> FileResponse:
+    headers = {"Cache-Control": "public, max-age=86400"}
+    return FileResponse(STATIC_DIR / "apple-touch-icon.png", headers=headers)
+
+
 @app.get("/static/v-" + "{rest:path}", include_in_schema=False)
 async def versioned_static(rest: str) -> FileResponse:
     # "/static/v-<version>/path/to/file" -> serve the file; version is only a cache key.
