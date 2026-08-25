@@ -47,25 +47,40 @@ function showProgress() {
   }, 1000);
 }
 
+let pollMisses = 0;
+const POLL_MAX_MISSES = 5;
+
+function progressFailed(message) {
+  clearInterval(progressTimer);
+  $("writer-progress").classList.add("hidden");
+  $("writer-intake").classList.remove("hidden");
+  toast("Writer's Room failed: " + message, true);
+}
+
 async function poll(runId) {
   try {
     const res = await fetch(`/api/writer/${encodeURIComponent(runId)}`);
-    if (!res.ok) throw new Error("run lost");
+    if (!res.ok) throw new Error(`run not found (${res.status})`);
+    pollMisses = 0;
     const body = await res.json();
     if (body.status === "running") {
       setTimeout(() => poll(runId), POLL_MS);
       return;
     }
     if (body.status === "error" && !body.record) {
-      toast("Writer's Room failed: " + (body.message || "unknown error"), true);
-      $("writer-progress").classList.add("hidden");
-      $("writer-intake").classList.remove("hidden");
+      progressFailed(body.message || "unknown error");
       return;
     }
     clearInterval(progressTimer);
     render(body.record);
   } catch (e) {
-    toast(e.message, true);
+    // Transient blips (redeploy, network) get retries; only give up after several.
+    pollMisses += 1;
+    if (pollMisses >= POLL_MAX_MISSES) {
+      progressFailed(e.message + " — please upload again.");
+    } else {
+      setTimeout(() => poll(runId), POLL_MS * 2);
+    }
   }
 }
 
