@@ -286,9 +286,9 @@ function renderPrediction(root, pred) {
 
   if ((pred.beats_to_cut || []).length) {
     const cuts = el("div", "cuts");
-    cuts.appendChild(el("div", "blk-label", `The cut list to ${pred.target || "your target"} — try it`));
+    cuts.appendChild(el("div", "blk-label", `The cut list toward ${pred.target || "your target"} — test each cut`));
     cuts.appendChild(
-      el("p", "cuts-hint", "Check cuts to re-run the comparables search on the revised content profile — live against all 2,487 films.")
+      el("p", "cuts-hint", "Check cuts to re-run the comparables search on your revised content profile — live against all 2,487 films. Cuts are levers, not guarantees: the simulator measures how far each one actually moves the rating.")
     );
     const ol = el("ol", "cuts-list");
     pred.beats_to_cut.forEach((b, i) => {
@@ -332,7 +332,22 @@ function initWhatIf(cutsRoot, pred) {
     }
     out.classList.remove("hidden");
     out.textContent = "";
-    out.appendChild(el("p", "wi-loading", "Re-running the comparables search on the revised profile…"));
+    const loadWrap = el("div", "wi-loadwrap");
+    const stage = el("p", "wi-loading", "Rewriting the content profile without those beats…");
+    const bar = el("div", "wi-bar");
+    const fill = el("div", "wi-fill");
+    bar.appendChild(fill);
+    loadWrap.appendChild(stage);
+    loadWrap.appendChild(bar);
+    out.appendChild(loadWrap);
+    const t0 = Date.now();
+    const tick = setInterval(() => {
+      const s = (Date.now() - t0) / 1000;
+      // paced against the typical ~8s round trip; holds at 92% until the result lands
+      fill.style.width = Math.min(92, s * 12) + "%";
+      if (s > 3) stage.textContent = "Searching 2,487 released films for the new nearest comparables…";
+      if (s > 8) stage.textContent = "Almost there — ranking comparables…";
+    }, 200);
     try {
       const res = await fetch("/api/whatif", {
         method: "POST",
@@ -342,9 +357,11 @@ function initWhatIf(cutsRoot, pred) {
       if (!res.ok) throw new Error((await res.json()).detail || res.statusText);
       const d = await res.json();
       if (seq !== _whatifSeq) return; // a newer toggle superseded this one
+      clearInterval(tick);
       renderWhatIf(out, d, pred, baseTarget, total, cuts.length);
       setProjectedBadge(d.projected);
     } catch (e) {
+      clearInterval(tick);
       if (seq !== _whatifSeq) return;
       out.textContent = "";
       out.appendChild(el("p", "wi-err", "Could not project: " + e.message));
@@ -382,13 +399,18 @@ function renderWhatIf(out, d, pred, baseTarget, total, nCuts) {
   if (d.projected === pred.target) {
     verdict = `These ${nCuts} cut${nCuts === 1 ? "" : "s"} flip the projection: ${newTarget} of ${total} nearest comparables now rate ${pred.target}.`;
   } else if (moved > 0) {
-    verdict = `Closer, not clear: ${pred.target} comparables move ${baseTarget} → ${newTarget} of ${total}, but the plurality still rates ${d.projected}.`;
+    verdict = `Closer, not clear: ${pred.target} comparables move ${baseTarget} → ${newTarget} of ${total}. What remains in the profile still patterns with ${d.projected} films.`;
   } else {
-    verdict = `No movement — ${d.tally?.[d.projected] || 0} of ${total} nearest comparables still rate ${d.projected}.`;
+    verdict = `No movement — ${d.tally?.[d.projected] || 0} of ${total} nearest comparables still rate ${d.projected}. These beats weren't what was driving it.`;
   }
   head.appendChild(el("p", "wi-verdict", verdict));
   out.appendChild(head);
   if (d.revised_rationale) out.appendChild(el("p", "wi-rationale", "Revised profile: “" + d.revised_rationale + "”"));
+  if (d.projected !== pred.target) {
+    out.appendChild(
+      el("p", "wi-note", "The rating hinges on the whole content profile, not only the flagged beats — the simulator re-runs the real comparables search, so it will disagree with the cut list when the remaining content still patterns higher. That honesty is the product.")
+    );
+  }
   const row = el("div", "wi-comps");
   for (const c of (d.comparables || []).slice(0, 5)) {
     const chipEl = el("span", "wi-comp r-line-" + c.rating);
