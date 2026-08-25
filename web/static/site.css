@@ -187,6 +187,8 @@ main { min-height: 60vh; padding: 56px 0 96px; }
 .sev-MEDIUM { color: var(--medium); }
 .sev-LOW { color: var(--low); }
 .sev-FYI { color: var(--fyi); }
+/* the bare .sev-* color classes above must not repaint chip text red-on-red */
+.sev-chip.sev-BLOCKER, .sev-chip.sev-HIGH, .sev-chip.sev-MEDIUM, .sev-chip.sev-LOW, .sev-chip.sev-FYI { color: #fff; }
 
 /* ================= HOME ================= */
 .hero-band {
