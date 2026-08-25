@@ -3,6 +3,7 @@ Disallow: /admin
 Disallow: /my
 Disallow: /run
 Disallow: /report
+Disallow: /onesheet
 Disallow: /script
 Disallow: /api/
 Allow: /

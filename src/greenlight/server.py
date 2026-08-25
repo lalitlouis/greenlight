@@ -332,6 +332,7 @@ PAGES = {
     "/run": "run.html",
     "/report": "report.html",
     "/script": "script.html",
+    "/onesheet": "onesheet.html",
     "/terms": "terms.html",
     "/privacy": "privacy.html",
 }
@@ -1085,6 +1086,42 @@ async def _load_source_any(run_id: str, record: dict[str, Any]) -> str | None:
         if path.exists():
             return path.read_text()
     return await asyncio.to_thread(storage.load_script, run_id)
+
+
+WHATIF_RATE_PER_HOUR = 60
+_whatif_rate: dict[str, list[float]] = {}
+
+
+class WhatIfBody(BaseModel):
+    run_id: str
+    cuts: list[int]
+
+
+@app.post("/api/whatif")
+async def whatif_rating(body: WhatIfBody, request: Request) -> dict[str, Any]:
+    """Projected rating with selected cut-list beats applied — the same
+    profile -> embed -> comparables pipeline re-run on the revised rationale."""
+    import time as _time
+
+    ip = _client_ip(request)
+    now = _time.time()
+    window = [ts for ts in _whatif_rate.get(ip, []) if now - ts < RATE_WINDOW_S]
+    if len(window) >= WHATIF_RATE_PER_HOUR:
+        raise HTTPException(429, "What-if limit reached for this hour — try again later.")
+    window.append(now)
+    _whatif_rate[ip] = window
+
+    run_id = _safe_id(body.run_id)
+    record = await _load_record_any(run_id)
+    if record is None:
+        raise HTTPException(404, "Unknown run.")
+    from greenlight import whatif as whatif_mod
+
+    result = await asyncio.to_thread(whatif_mod.project, record, run_id, body.cuts[:12])
+    if "error" in result:
+        raise HTTPException(400, result["error"])
+    _log("whatif", run_id=run_id, cuts=len(body.cuts), projected=result.get("projected"))
+    return result
 
 
 @app.post("/api/fix")

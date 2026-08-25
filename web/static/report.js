@@ -286,13 +286,117 @@ function renderPrediction(root, pred) {
 
   if ((pred.beats_to_cut || []).length) {
     const cuts = el("div", "cuts");
-    cuts.appendChild(el("div", "blk-label", `The cut list to ${pred.target || "your target"}`));
-    const ol = el("ol");
-    for (const b of pred.beats_to_cut) ol.appendChild(el("li", null, b));
+    cuts.appendChild(el("div", "blk-label", `The cut list to ${pred.target || "your target"} — try it`));
+    cuts.appendChild(
+      el("p", "cuts-hint", "Check cuts to re-run the comparables search on the revised content profile — live against all 2,487 films.")
+    );
+    const ol = el("ol", "cuts-list");
+    pred.beats_to_cut.forEach((b, i) => {
+      const li = el("li");
+      const lab = el("label", "cut-item");
+      const cb = el("input");
+      cb.type = "checkbox";
+      cb.dataset.beat = String(i);
+      lab.appendChild(cb);
+      lab.appendChild(el("span", null, b));
+      li.appendChild(lab);
+      ol.appendChild(li);
+    });
     cuts.appendChild(ol);
+    const out = el("div", "whatif-out hidden");
+    out.id = "whatif-out";
+    cuts.appendChild(out);
     card.appendChild(cuts);
+    initWhatIf(cuts, pred);
   }
   root.appendChild(card);
+}
+
+/* ---------- what-if: re-run the evidence with cuts applied ---------- */
+let _whatifSeq = 0;
+
+function initWhatIf(cutsRoot, pred) {
+  const boxes = [...cutsRoot.querySelectorAll("input[type=checkbox]")];
+  const out = cutsRoot.querySelector("#whatif-out");
+  const baseTarget = (pred.comparables || []).filter((c) => c.rating === pred.target).length;
+  const total = (pred.comparables || []).length || 8;
+  let timer = null;
+
+  const run = async () => {
+    const cuts = boxes.filter((b) => b.checked).map((b) => Number(b.dataset.beat));
+    const seq = ++_whatifSeq;
+    if (!cuts.length) {
+      out.classList.add("hidden");
+      setProjectedBadge(null);
+      return;
+    }
+    out.classList.remove("hidden");
+    out.textContent = "";
+    out.appendChild(el("p", "wi-loading", "Re-running the comparables search on the revised profile…"));
+    try {
+      const res = await fetch("/api/whatif", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ run_id: RUN_ID, cuts }),
+      });
+      if (!res.ok) throw new Error((await res.json()).detail || res.statusText);
+      const d = await res.json();
+      if (seq !== _whatifSeq) return; // a newer toggle superseded this one
+      renderWhatIf(out, d, pred, baseTarget, total, cuts.length);
+      setProjectedBadge(d.projected);
+    } catch (e) {
+      if (seq !== _whatifSeq) return;
+      out.textContent = "";
+      out.appendChild(el("p", "wi-err", "Could not project: " + e.message));
+    }
+  };
+
+  boxes.forEach((b) =>
+    b.addEventListener("change", () => {
+      clearTimeout(timer);
+      timer = setTimeout(run, 450);
+    })
+  );
+}
+
+function setProjectedBadge(rating) {
+  document.getElementById("wi-projected-box")?.remove();
+  if (!rating) return;
+  const ratings = document.querySelector(".pred-ratings");
+  if (!ratings) return;
+  const box = el("div", "pred-box wi-proj");
+  box.id = "wi-projected-box";
+  box.appendChild(el("span", "pred-label", "Projected with cuts"));
+  box.appendChild(el("b", "rating-badge wi-badge r-" + rating, rating));
+  ratings.appendChild(box);
+  if (window.FX?.on) gsap.fromTo(box, { scale: 0.7, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.4, ease: "back.out(1.6)" });
+}
+
+function renderWhatIf(out, d, pred, baseTarget, total, nCuts) {
+  out.textContent = "";
+  const newTarget = d.tally?.[pred.target] || 0;
+  const head = el("div", "wi-head");
+  head.appendChild(el("b", "rating-badge sm r-" + d.projected, d.projected));
+  const moved = newTarget - baseTarget;
+  let verdict;
+  if (d.projected === pred.target) {
+    verdict = `These ${nCuts} cut${nCuts === 1 ? "" : "s"} flip the projection: ${newTarget} of ${total} nearest comparables now rate ${pred.target}.`;
+  } else if (moved > 0) {
+    verdict = `Closer, not clear: ${pred.target} comparables move ${baseTarget} → ${newTarget} of ${total}, but the plurality still rates ${d.projected}.`;
+  } else {
+    verdict = `No movement — ${d.tally?.[d.projected] || 0} of ${total} nearest comparables still rate ${d.projected}.`;
+  }
+  head.appendChild(el("p", "wi-verdict", verdict));
+  out.appendChild(head);
+  if (d.revised_rationale) out.appendChild(el("p", "wi-rationale", "Revised profile: “" + d.revised_rationale + "”"));
+  const row = el("div", "wi-comps");
+  for (const c of (d.comparables || []).slice(0, 5)) {
+    const chipEl = el("span", "wi-comp r-line-" + c.rating);
+    chipEl.appendChild(el("b", "wi-r r-" + c.rating, c.rating));
+    chipEl.appendChild(document.createTextNode(`${c.title}${c.year ? " (" + c.year + ")" : ""}`));
+    row.appendChild(chipEl);
+  }
+  out.appendChild(row);
 }
 
 function renderReport(record) {
@@ -536,6 +640,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
   $("script-link").href = `/script?run=${encodeURIComponent(RUN_ID)}`;
   $("replay-link").href = `/run?replay=1&record=${encodeURIComponent(RUN_ID)}`;
+  $("onesheet-link").href = `/onesheet?run=${encodeURIComponent(RUN_ID)}`;
   try {
     renderReport(await fetchRecord(RUN_ID));
   } catch (e) {
