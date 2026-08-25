@@ -151,12 +151,30 @@ function uploadWithProgress(url, file) {
           reject(new Error("bad server response"));
         }
       } else {
-        reject(new Error(xhr.responseText || `upload failed (${xhr.status})`));
+        const err = new Error(xhr.responseText || `upload failed (${xhr.status})`);
+        err.status = xhr.status;
+        reject(err);
       }
     };
     xhr.onerror = () => reject(new Error("network error during upload"));
     xhr.send(form);
   });
+}
+
+/* Running an analysis requires an account. Returns true when it's fine to
+   proceed; otherwise bounces through Google sign-in and back to this page.
+   If the auth status hasn't loaded yet we let the server's 401 do the job. */
+function requireSignIn() {
+  if (window.__authConfigured && !window.__user) {
+    toSignIn();
+    return false;
+  }
+  return true;
+}
+
+function toSignIn() {
+  const next = encodeURIComponent(window.location.pathname + window.location.search);
+  window.location.href = "/auth/login?next=" + next;
 }
 
 async function uploadScreenplay(file) {
@@ -167,11 +185,16 @@ async function uploadScreenplay(file) {
     window.location.href = `/run?id=${run_id}`;
   } catch (e) {
     hideUploadOverlay();
+    if (e.status === 401) {
+      toSignIn();
+      return;
+    }
     toast("upload failed: " + e.message, true);
   }
 }
 
 function promptUpload() {
+  if (!requireSignIn()) return;
   let input = $("gl-file-input");
   if (!input) {
     input = el("input");
@@ -305,6 +328,8 @@ async function hydrateAuth() {
   try {
     const { configured, user, is_admin } = await (await fetch("/api/auth/status")).json();
     window.__isAdmin = is_admin;
+    window.__authConfigured = configured;
+    window.__user = user || null;
     slot.textContent = "";
     if (!configured) return; // sign-in simply isn't offered until it exists
     if (!user) {

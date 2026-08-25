@@ -384,10 +384,14 @@ async def auth_status(request: Request) -> dict[str, Any]:
 
 
 @app.get("/auth/login")
-async def auth_login(request: Request) -> RedirectResponse:
+async def auth_login(request: Request, next: str = "") -> RedirectResponse:
     if not auth.configured():
         raise HTTPException(503, "Sign-in is not configured yet.")
-    return RedirectResponse(auth.login_url(_redirect_uri(request)))
+    resp = RedirectResponse(auth.login_url(_redirect_uri(request)))
+    # same-site paths only — an absolute URL here would be an open redirect
+    if next.startswith("/") and not next.startswith("//"):
+        resp.set_cookie("gl_next", next, max_age=600, httponly=True, samesite="lax")
+    return resp
 
 
 @app.get("/auth/callback")
@@ -398,7 +402,11 @@ async def auth_callback(request: Request, code: str = "", state: str = "") -> Re
         user = await asyncio.to_thread(auth.exchange_code, code, _redirect_uri(request))
     except Exception as e:
         raise HTTPException(400, f"Sign-in failed: {type(e).__name__}") from e
-    resp = RedirectResponse("/home")
+    dest = request.cookies.get("gl_next", "")
+    if not dest.startswith("/") or dest.startswith("//"):
+        dest = "/home"
+    resp = RedirectResponse(dest)
+    resp.delete_cookie("gl_next")
     resp.set_cookie(
         auth.SESSION_COOKIE,
         auth.make_session(user),
@@ -515,10 +523,20 @@ async def _run_live(handle: RunHandle, script_path: Path) -> None:
             q.put_nowait(None)  # sentinel: stream over
 
 
+def _require_signin(request: Request) -> dict[str, Any]:
+    """Uploads require a signed-in user. Demo replays, case studies, and report
+    views stay public — only running an analysis is gated. When OAuth is not
+    configured (local dev), the gate stands down rather than locking everyone out."""
+    owner = _current_user(request)
+    if owner is None and auth.configured():
+        raise HTTPException(401, "Sign in with Google to analyze a screenplay.")
+    return owner
+
+
 @app.post("/api/runs")
 async def create_run(screenplay: UploadFile, request: Request) -> dict[str, str]:
     _check_rate(request)
-    owner = _current_user(request)
+    owner = _require_signin(request)
     source = screenplay_text(screenplay.filename or "", await _read_upload(screenplay))
     _trim_tracked()
     run_id = uuid.uuid4().hex[:12]
@@ -825,7 +843,7 @@ async def _run_writer(run_id: str, path: Path, owner: dict[str, Any] | None = No
 @app.post("/api/writer")
 async def create_writer_run(screenplay: UploadFile, request: Request) -> dict[str, str]:
     _check_rate(request)
-    owner = _current_user(request)
+    owner = _require_signin(request)
     source = screenplay_text(screenplay.filename or "", await _read_upload(screenplay))
     _trim_tracked()
     run_id = "w" + uuid.uuid4().hex[:11]

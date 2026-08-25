@@ -14,6 +14,10 @@ async function uploadForWriter(file) {
     poll(run_id);
   } catch (e) {
     hideUploadOverlay();
+    if (e.status === 401) {
+      toSignIn();
+      return;
+    }
     toast("upload failed: " + e.message, true);
   }
 }
@@ -282,6 +286,7 @@ function render(record) {
 
 /* dedicated picker: the nav CTA routes to the clearance pipeline; this one stays here */
 function promptUpload2() {
+  if (!requireSignIn()) return;
   let input = $("wr-file-input");
   if (!input) {
     input = el("input");
