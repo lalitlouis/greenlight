@@ -52,18 +52,25 @@ def _revise_rationale(rationale: str, cuts: list[str]) -> str:
     return (res.text or "").strip() or rationale
 
 
-def project(record: dict[str, Any], run_id: str, cut_indices: list[int]) -> dict[str, Any]:
-    """Projected rating for `record` with the given beats_to_cut indices applied."""
+def project(
+    record: dict[str, Any],
+    run_id: str,
+    cut_indices: list[int],
+    extra_cuts: list[str] | None = None,
+) -> dict[str, Any]:
+    """Projected rating for `record` with the given beats_to_cut indices applied,
+    plus any simulator-suggested extra cuts the user opted into."""
     pred = (record.get("report") or {}).get("rating_prediction") or {}
     beats = pred.get("beats_to_cut") or []
     rationale = pred.get("rationale") or ""
     if not beats or not rationale:
         return {"error": "This run has no cut list to simulate."}
-    cuts = [beats[i] for i in sorted(set(cut_indices)) if 0 <= i < len(beats)]
+    extras = [e.strip()[:220] for e in (extra_cuts or []) if e.strip()][:4]
+    cuts = [beats[i] for i in sorted(set(cut_indices)) if 0 <= i < len(beats)] + extras
     if not cuts:
         return {"error": "No cuts selected."}
 
-    mask = ",".join(str(i) for i in sorted(set(cut_indices)))
+    mask = ",".join(str(i) for i in sorted(set(cut_indices))) + "|" + "|".join(extras)
     key = "whatif:" + hashlib.sha256(f"{run_id}|{mask}|{rationale}".encode()).hexdigest()[:24]
     if (cached := storage.load_research(key)) is not None:
         return cached
@@ -105,5 +112,80 @@ def project(record: dict[str, Any], run_id: str, cut_indices: list[int]) -> dict
         "comparables": comparables,
         "cuts_applied": len(cuts),
     }
+    storage.save_research(key, result)
+    return result
+
+
+_SUGGEST_PROMPT = """A screenplay's content profile is being edited toward a target MPA rating.
+
+CURRENT (revised) CONTENT PROFILE:
+{revised}
+
+TARGET RATING: {target}
+Of its 8 nearest released comparables, {n_higher} still rate {projected}.
+
+ALREADY-PLANNED CUTS (do not repeat these):
+{cuts}
+
+Identify which elements of the current profile most separate it from typical {target}
+films, then propose up to 3 additional, concrete, minimal script-level adjustments
+that address exactly those elements. Rules:
+- Each suggestion is one imperative line a screenwriter could act on
+  (e.g. "Move the drinking off-screen: characters reference it, we never see impairment").
+- Prefer softening/reframing over deleting whole subject matter; themes like grief
+  are {target}-compatible and should not be cut.
+- Never invent scene numbers or content not implied by the profile.
+Output one suggestion per line, no numbering, no commentary."""
+
+
+def suggest(
+    record: dict[str, Any],
+    run_id: str,
+    cut_indices: list[int],
+    extra_cuts: list[str] | None = None,
+) -> dict[str, Any]:
+    """Additional levers toward the target — grounded in the revised profile the
+    simulator just tested, each returned as a testable cut candidate."""
+    pred = (record.get("report") or {}).get("rating_prediction") or {}
+    target = pred.get("target") or ""
+    if not target:
+        return {"error": "This run has no target rating."}
+    base = project(record, run_id, cut_indices, extra_cuts)
+    if "error" in base:
+        return base
+    revised = base["revised_rationale"]
+    key = "whatifsug:" + hashlib.sha256(f"{run_id}|{revised}|{target}".encode()).hexdigest()[:24]
+    if (cached := storage.load_research(key)) is not None:
+        return cached
+
+    beats = pred.get("beats_to_cut") or []
+    planned = [beats[i] for i in sorted(set(cut_indices)) if 0 <= i < len(beats)] + list(
+        extra_cuts or []
+    )
+    n_higher = base["tally"].get(base["projected"], 0)
+
+    from google import genai
+    from google.genai import types
+
+    client = genai.Client(
+        vertexai=True,
+        project=os.environ["GOOGLE_CLOUD_PROJECT"],
+        location=os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1"),
+    )
+    res = client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=_SUGGEST_PROMPT.format(
+            revised=revised,
+            target=target,
+            n_higher=n_higher,
+            projected=base["projected"],
+            cuts="\n".join(f"- {c}" for c in planned) or "- (none)",
+        ),
+        config=types.GenerateContentConfig(temperature=0.0),
+    )
+    min_chars = 15  # shorter lines are fragments, not actionable cuts
+    lines = [ln.strip("-• ").strip() for ln in (res.text or "").splitlines()]
+    suggestions = [ln for ln in lines if len(ln) > min_chars][:3]
+    result = {"suggestions": suggestions, "based_on": revised}
     storage.save_research(key, result)
     return result

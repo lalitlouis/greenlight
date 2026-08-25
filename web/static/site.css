@@ -1042,3 +1042,9 @@ body.show-detail .detail-only { display: grid; margin-top: 12px; }
 .fix-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
 .fix-cols .diff-box { margin-bottom: 0; }
 @media (max-width: 760px) { .fix-cols { grid-template-columns: 1fr; } .report-nav { border-radius: 16px; top: 58px; } }
+
+.cut-suggested { border-style: dashed; border-color: var(--gold); background: var(--gold-tint); }
+.cut-suggested:has(input:checked) { border-style: solid; }
+.cut-tag { flex: none; font-size: 12px; font-style: normal; font-weight: 650; color: var(--gold); align-self: center; }
+.wi-suggest { margin-top: 14px; }
+.wi-suggest-btn { font-size: 14.5px; }

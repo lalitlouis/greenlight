@@ -1095,6 +1095,7 @@ _whatif_rate: dict[str, list[float]] = {}
 class WhatIfBody(BaseModel):
     run_id: str
     cuts: list[int]
+    extra: list[str] = []
 
 
 @app.post("/api/whatif")
@@ -1117,10 +1118,41 @@ async def whatif_rating(body: WhatIfBody, request: Request) -> dict[str, Any]:
         raise HTTPException(404, "Unknown run.")
     from greenlight import whatif as whatif_mod
 
-    result = await asyncio.to_thread(whatif_mod.project, record, run_id, body.cuts[:12])
+    result = await asyncio.to_thread(
+        whatif_mod.project, record, run_id, body.cuts[:12], body.extra[:4]
+    )
     if "error" in result:
         raise HTTPException(400, result["error"])
     _log("whatif", run_id=run_id, cuts=len(body.cuts), projected=result.get("projected"))
+    return result
+
+
+@app.post("/api/whatif/suggest")
+async def whatif_suggest(body: WhatIfBody, request: Request) -> dict[str, Any]:
+    """More levers toward the target, grounded in the revised profile — each one
+    comes back as a testable cut candidate, not advice."""
+    import time as _time
+
+    ip = _client_ip(request)
+    now = _time.time()
+    window = [ts for ts in _whatif_rate.get(ip, []) if now - ts < RATE_WINDOW_S]
+    if len(window) >= WHATIF_RATE_PER_HOUR:
+        raise HTTPException(429, "What-if limit reached for this hour — try again later.")
+    window.append(now)
+    _whatif_rate[ip] = window
+
+    run_id = _safe_id(body.run_id)
+    record = await _load_record_any(run_id)
+    if record is None:
+        raise HTTPException(404, "Unknown run.")
+    from greenlight import whatif as whatif_mod
+
+    result = await asyncio.to_thread(
+        whatif_mod.suggest, record, run_id, body.cuts[:12], body.extra[:4]
+    )
+    if "error" in result:
+        raise HTTPException(400, result["error"])
+    _log("whatif_suggest", run_id=run_id, n=len(result.get("suggestions", [])))
     return result
 
 

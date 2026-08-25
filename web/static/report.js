@@ -319,16 +319,17 @@ function renderPrediction(root, pred) {
 let _whatifSeq = 0;
 
 function initWhatIf(cutsRoot, pred) {
-  const boxes = [...cutsRoot.querySelectorAll("input[type=checkbox]")];
   const out = cutsRoot.querySelector("#whatif-out");
   const baseTarget = (pred.comparables || []).filter((c) => c.rating === pred.target).length;
   const total = (pred.comparables || []).length || 8;
   let timer = null;
 
   const run = async () => {
-    const cuts = boxes.filter((b) => b.checked).map((b) => Number(b.dataset.beat));
+    const live = [...cutsRoot.querySelectorAll("input[type=checkbox]")];
+    const cuts = live.filter((b) => b.checked && b.dataset.beat != null).map((b) => Number(b.dataset.beat));
+    const extra = live.filter((b) => b.checked && b.dataset.extra).map((b) => b.dataset.extra);
     const seq = ++_whatifSeq;
-    if (!cuts.length) {
+    if (!cuts.length && !extra.length) {
       out.classList.add("hidden");
       setProjectedBadge(null);
       return;
@@ -355,13 +356,14 @@ function initWhatIf(cutsRoot, pred) {
       const res = await fetch("/api/whatif", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ run_id: RUN_ID, cuts }),
+        body: JSON.stringify({ run_id: RUN_ID, cuts, extra }),
       });
       if (!res.ok) throw new Error((await res.json()).detail || res.statusText);
       const d = await res.json();
       if (seq !== _whatifSeq) return; // a newer toggle superseded this one
       clearInterval(tick);
-      renderWhatIf(out, d, pred, baseTarget, total, cuts.length);
+      renderWhatIf(out, d, pred, baseTarget, total, cuts.length + extra.length);
+      maybeOfferSuggestions(out, cutsRoot, pred, d, cuts, extra);
       setProjectedBadge(d.projected);
     } catch (e) {
       clearInterval(tick);
@@ -371,12 +373,64 @@ function initWhatIf(cutsRoot, pred) {
     }
   };
 
-  boxes.forEach((b) =>
-    b.addEventListener("change", () => {
+  cutsRoot.addEventListener("change", (e) => {
+    if (e.target.matches?.("input[type=checkbox]")) {
       clearTimeout(timer);
       timer = setTimeout(run, 450);
-    })
-  );
+    }
+  });
+}
+
+/* When the cuts don't reach the target, the simulator offers to find more
+   levers — each suggestion lands as a new checkbox, testable like any cut. */
+function maybeOfferSuggestions(out, cutsRoot, pred, d, cuts, extra) {
+  if (d.projected === pred.target) return;
+  const wrap = el("div", "wi-suggest");
+  const btn = el("button", "btn btn-secondary wi-suggest-btn", `What else would move it to ${pred.target}?`);
+  btn.type = "button";
+  btn.addEventListener("click", async () => {
+    btn.disabled = true;
+    btn.textContent = "Analyzing what still patterns " + d.projected + "…";
+    try {
+      const res = await fetch("/api/whatif/suggest", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ run_id: RUN_ID, cuts, extra }),
+      });
+      if (!res.ok) throw new Error((await res.json()).detail || res.statusText);
+      const s = await res.json();
+      const fresh = (s.suggestions || []).filter(
+        (txt) => ![...cutsRoot.querySelectorAll(".cut-item span")].some((n) => n.textContent === txt)
+      );
+      if (!fresh.length) {
+        btn.textContent = "No further content levers found — what remains is structural.";
+        return;
+      }
+      const ol = cutsRoot.querySelector(".cuts-list");
+      for (const txt of fresh) {
+        const li = el("li");
+        const lab = el("label", "cut-item cut-suggested");
+        const cb = el("input");
+        cb.type = "checkbox";
+        cb.dataset.extra = txt;
+        lab.appendChild(cb);
+        lab.appendChild(el("span", null, txt));
+        lab.appendChild(el("i", "cut-tag", "simulator suggestion"));
+        li.appendChild(lab);
+        ol.appendChild(li);
+        if (window.FX?.on) gsap.fromTo(li, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.4 });
+      }
+      wrap.replaceChildren(
+        el("p", "cuts-hint", `${fresh.length} suggestion${fresh.length === 1 ? "" : "s"} added to the cut list above — check them to test, same evidence pipeline.`)
+      );
+    } catch (e) {
+      btn.disabled = false;
+      btn.textContent = "What else would move it to " + pred.target + "?";
+      toast("Suggestion failed: " + e.message.slice(0, 140), true);
+    }
+  });
+  wrap.appendChild(btn);
+  out.appendChild(wrap);
 }
 
 function setProjectedBadge(rating) {
