@@ -70,6 +70,20 @@ app = FastAPI(title="ScriptRisk")
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 
+@app.middleware("http")
+async def cache_control(request, call_next):
+    """The site iterates fast; a stale cached app.js renders a page that never
+    hydrates. Vendored libraries and fonts are immutable-ish and may cache for a
+    day; our own JS/CSS/HTML must always revalidate (ETag makes that a cheap 304)."""
+    response = await call_next(request)
+    path = request.url.path
+    if path.startswith("/static/vendor/"):
+        response.headers["Cache-Control"] = "public, max-age=86400"
+    elif path.startswith("/static/") or path in PAGES:
+        response.headers["Cache-Control"] = "no-cache"
+    return response
+
+
 PAGES = {
     "/": "landing.html",
     "/home": "home.html",

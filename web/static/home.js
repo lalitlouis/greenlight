@@ -66,6 +66,10 @@ async function loadHomeCases() {
   try {
     const cases = await (await fetch("/api/cases")).json();
     grid.textContent = "";
+    if (!cases.length) {
+      grid.closest("section")?.classList.add("hidden");
+      return;
+    }
     for (const c of cases.slice(0, 3)) {
       const card = el("a", "card case-card");
       card.href = `/report?run=${encodeURIComponent(c.id)}`;
