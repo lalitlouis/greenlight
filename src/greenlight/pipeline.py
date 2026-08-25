@@ -56,17 +56,16 @@ DEFAULT_BUDGETS = {
 }
 
 
-_RUNNER: InMemoryRunner | None = None
+_runner_cache: dict[str, InMemoryRunner] = {}
 
 
 def get_runner() -> InMemoryRunner:
     """One agent tree + runner per process; each run gets its own session.
     ADK agents are single-parent — rebuilding the tree per run re-parents the
     module-level desks and dies on the second run of a process."""
-    global _RUNNER
-    if _RUNNER is None:
-        _RUNNER = InMemoryRunner(agent=build_root_agent(), app_name=APP_NAME)
-    return _RUNNER
+    if "runner" not in _runner_cache:
+        _runner_cache["runner"] = InMemoryRunner(agent=build_root_agent(), app_name=APP_NAME)
+    return _runner_cache["runner"]
 
 
 def build_root_agent() -> SequentialAgent:
