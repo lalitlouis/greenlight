@@ -12,11 +12,12 @@ function renderOverview(o) {
   const pulse = $("adm-pulse");
   pulse.textContent = "";
   const m = o.metrics || {};
+  const lt = o.lifetime || {};
   const items = [
-    [m.runs, "clearance runs (since boot)"],
-    [m.writer_runs, "writer runs"],
-    [m.fixes, "fix drafts"],
-    [m.errors, "errors"],
+    [lt.runs ?? 0, `clearance runs all-time (${m.runs ?? 0} since boot)`],
+    [lt.writer_runs ?? 0, `writer runs all-time (${m.writer_runs ?? 0})`],
+    [lt.fixes ?? 0, `fix drafts all-time (${m.fixes ?? 0})`],
+    [lt.errors ?? 0, `errors all-time (${m.errors ?? 0})`],
   ];
   for (const [v, label] of items) {
     const div = el("div");

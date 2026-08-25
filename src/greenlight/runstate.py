@@ -30,6 +30,31 @@ def set_state(run_id: str, state: dict[str, Any]) -> bool:
         return False
 
 
+COUNTERS_DOC = ("metrics", "lifetime")
+
+
+def increment(counter: str, by: int = 1) -> bool:
+    """Durable all-time counters (runs, fixes, errors...) — atomic Firestore
+    increments, so restarts and redeploys stop zeroing the history."""
+    try:
+        from google.cloud import firestore
+
+        _db().collection(COUNTERS_DOC[0]).document(COUNTERS_DOC[1]).set(
+            {counter: firestore.Increment(by)}, merge=True
+        )
+        return True
+    except Exception:
+        return False
+
+
+def get_counters() -> dict[str, Any]:
+    try:
+        snap = _db().collection(COUNTERS_DOC[0]).document(COUNTERS_DOC[1]).get()
+        return snap.to_dict() or {}
+    except Exception:
+        return {}
+
+
 def get_state(run_id: str) -> dict[str, Any] | None:
     try:
         snap = _db().collection(COLLECTION).document(run_id).get()

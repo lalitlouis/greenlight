@@ -208,6 +208,15 @@ from collections import deque  # noqa: E402
 RECENT_LOGS: deque = deque(maxlen=300)
 
 
+def _bump(counter: str) -> None:
+    """Count once, in two places: fast in-memory for the pulse, durable in
+    Firestore for all-time totals. Never blocks, never raises."""
+    _metrics[counter] = _metrics.get(counter, 0) + 1
+    with contextlib.suppress(Exception):
+        loop = asyncio.get_running_loop()
+        loop.create_task(asyncio.to_thread(runstate.increment, counter))
+
+
 def _log(kind: str, **fields: Any) -> None:
     """One JSON line per event on stdout — Cloud Run ships stdout to Cloud
     Logging automatically, so this IS the logging system, no agent needed."""
@@ -223,7 +232,7 @@ async def request_logging(request: Request, call_next):
     try:
         response = await call_next(request)
     except Exception as e:
-        _metrics["errors"] += 1
+        _bump("errors")
         _log(
             "http_error",
             path=request.url.path,
@@ -235,7 +244,7 @@ async def request_logging(request: Request, call_next):
     dur_ms = round((_time_module.time() - start) * 1000)
     if not request.url.path.startswith("/static"):
         if response.status_code >= HTTP_ERROR_STATUS:
-            _metrics["errors"] += 1
+            _bump("errors")
         _log(
             "http",
             path=request.url.path,
@@ -506,7 +515,7 @@ async def create_run(screenplay: UploadFile, request: Request) -> dict[str, str]
     RUNS[run_id] = handle
     await asyncio.to_thread(storage.save_script, run_id, source)
     title = (screenplay.filename or "screenplay").rsplit(".", 1)[0]
-    _metrics["runs"] += 1
+    _bump("runs")
     _log("run_started", run_id=run_id, title=title, owner=bool(owner))
     if owner:
         await asyncio.to_thread(
@@ -800,7 +809,7 @@ async def create_writer_run(screenplay: UploadFile, request: Request) -> dict[st
     upload_dir.mkdir(parents=True, exist_ok=True)
     path = upload_dir / f"{run_id}.fountain"
     path.write_text(source)
-    _metrics["writer_runs"] += 1
+    _bump("writer_runs")
     _log("writer_started", run_id=run_id, owner=bool(owner))
     if owner:
         w_title = (screenplay.filename or "screenplay").rsplit(".", 1)[0]
@@ -935,6 +944,7 @@ async def admin_overview(request: Request) -> dict[str, Any]:
             "uptime_s": round(_time_module.time() - _metrics["started_at"]),
             "asset_version": ASSET_VERSION,
         },
+        "lifetime": await asyncio.to_thread(runstate.get_counters),
         "live": {"clearance": live_runs, "writer": writer_live},
         "logs": list(RECENT_LOGS)[-150:][::-1],
         "users": await asyncio.to_thread(_roster),
@@ -966,7 +976,7 @@ async def client_log(body: ClientLog, request: Request) -> dict[str, bool]:
     window.append(now)
     _client_log_rate[ip] = window
     if body.level == "error":
-        _metrics["errors"] += 1
+        _bump("errors")
     _log(
         "client",
         level=body.level[:10],
@@ -1060,7 +1070,7 @@ async def propose_fix(body: FixRequest, request: Request) -> dict[str, Any]:
     if not scene_texts:
         raise HTTPException(400, "The finding's scenes could not be located in the script.")
 
-    _metrics["fixes"] += 1
+    _bump("fixes")
     _log("fix_requested", run_id=run_id, flag_id=body.flag_id)
     result = await fixer.propose_fix(flag, scene_texts)
     if "error" in result:
