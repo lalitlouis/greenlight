@@ -208,13 +208,19 @@ from collections import deque  # noqa: E402
 RECENT_LOGS: deque = deque(maxlen=300)
 
 
+_bump_tasks: set = set()
+
+
 def _bump(counter: str) -> None:
     """Count once, in two places: fast in-memory for the pulse, durable in
     Firestore for all-time totals. Never blocks, never raises."""
     _metrics[counter] = _metrics.get(counter, 0) + 1
     with contextlib.suppress(Exception):
-        loop = asyncio.get_running_loop()
-        loop.create_task(asyncio.to_thread(runstate.increment, counter))
+        task = asyncio.get_running_loop().create_task(
+            asyncio.to_thread(runstate.increment, counter)
+        )
+        _bump_tasks.add(task)
+        task.add_done_callback(_bump_tasks.discard)
 
 
 def _log(kind: str, **fields: Any) -> None:
