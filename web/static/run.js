@@ -191,6 +191,42 @@ function handleDeskEvent(ev) {
   appendTrace(document.querySelector(`#col-${ev.agent} .col-body`), traceLine(ev));
 }
 
+const VERDICT_TONE_RUN = { SUPPORTED: "ok", PARTIAL: "mid", REJECTED: "bad", UNSUPPORTED: "bad" };
+
+function studioCard(fid, category, severity, verdict, reason) {
+  const feed = $("studio-feed");
+  if (!feed) return;
+  const card = el("div", "studio-card sc-" + (VERDICT_TONE_RUN[verdict] || "mid"));
+  const top = el("div", "sc-top");
+  top.appendChild(el("span", `sev-chip sev-${severity}`, severity));
+  if (category) top.appendChild(el("b", null, prettyCat(category)));
+  top.appendChild(el("span", "sc-fid", fid));
+  top.appendChild(el("span", "sc-verdict", verdict === "UNSUPPORTED" ? "REJECTED" : verdict));
+  card.appendChild(top);
+  if (reason) card.appendChild(el("p", "sc-reason", reason));
+  feed.appendChild(card);
+  feed.scrollTop = feed.scrollHeight;
+}
+
+function maybeStudioEvent(ev) {
+  /* Live verdicts arrive as "⚖ F203|category|SEV|VERDICT|reason"; replay's come
+     as verify_flag tool_results "F203 · VERDICT — reason". Both become cards. */
+  if (ev.agent !== "verification_panel") return false;
+  if (ev.type === "text" && (ev.text || "").startsWith("⚖ ")) {
+    const [fid, cat, sev, verdict, reason] = ev.text.slice(2).split("|");
+    studioCard(fid, cat, sev, verdict, reason);
+    return true;
+  }
+  if (ev.type === "tool_result" && ev.tool === "verify_flag") {
+    const m = (ev.brief || "").match(/^(F\d+)\s*·\s*(\w+)\s*(?:—\s*(.*))?$/);
+    if (m) {
+      studioCard(m[1], "", "FYI", m[2], m[3] || "");
+      return true;
+    }
+  }
+  return false;
+}
+
 function handlePipeEvent(ev) {
   if (ev.agent === "verification_panel" || ev.agent === "adjudicator") {
     for (const id of DESK_IDS) {
@@ -305,7 +341,7 @@ function handleEvent(ev) {
       } else {
         if (ev.agent === "verification_panel") setPhase("verify");
         else if (ev.agent === "adjudicator") setPhase("adjudicate");
-        handlePipeEvent(ev);
+        if (!maybeStudioEvent(ev)) handlePipeEvent(ev);
       }
       bumpProgress();
       break;
@@ -416,6 +452,11 @@ function startStream(url) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  $("studio-toggle")?.addEventListener("click", () => {
+    const body = $("studio-body");
+    const hidden = body.classList.toggle("hidden");
+    $("studio-toggle").textContent = hidden ? "Show" : "Hide";
+  });
   const params = new URLSearchParams(window.location.search);
   if (params.get("replay") != null) {
     const record = params.get("record");
