@@ -17,6 +17,7 @@ inside the live-run task only, so replay and tests never touch agent machinery.
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import json
 import logging
 import os
@@ -172,16 +173,18 @@ def _trim_tracked() -> None:
 logger = logging.getLogger("scriptrisk")
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 
+HTTP_ERROR_STATUS = 500
+CLIENT_LOG_WINDOW_S = 60
+CLIENT_LOG_PER_MIN = 30
+
 _metrics = {"started_at": _time_module.time(), "runs": 0, "writer_runs": 0, "errors": 0, "fixes": 0}
 
 
 def _log(kind: str, **fields: Any) -> None:
     """One JSON line per event on stdout — Cloud Run ships stdout to Cloud
     Logging automatically, so this IS the logging system, no agent needed."""
-    try:
+    with contextlib.suppress(Exception):
         logger.info(json.dumps({"kind": kind, **fields}, default=str))
-    except Exception:
-        pass
 
 
 @app.middleware("http")
@@ -201,7 +204,7 @@ async def request_logging(request: Request, call_next):
         raise
     dur_ms = round((_time_module.time() - start) * 1000)
     if not request.url.path.startswith("/static"):
-        if response.status_code >= 500:
+        if response.status_code >= HTTP_ERROR_STATUS:
             _metrics["errors"] += 1
         _log(
             "http",
@@ -786,8 +789,8 @@ async def client_log(body: ClientLog, request: Request) -> dict[str, bool]:
     page' on someone else's machine becomes a log line on ours."""
     ip = _client_ip(request)
     now = _time_module.time()
-    window = [ts for ts in _client_log_rate.get(ip, []) if now - ts < 60]
-    if len(window) >= 30:
+    window = [ts for ts in _client_log_rate.get(ip, []) if now - ts < CLIENT_LOG_WINDOW_S]
+    if len(window) >= CLIENT_LOG_PER_MIN:
         return {"ok": False}
     window.append(now)
     _client_log_rate[ip] = window
