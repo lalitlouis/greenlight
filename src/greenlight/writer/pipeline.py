@@ -68,6 +68,18 @@ def _fetch_comps(synopsis: str) -> list[dict[str, Any]]:
     ]
 
 
+_RUNNER: InMemoryRunner | None = None
+
+
+def get_runner() -> InMemoryRunner:
+    """Single agent tree per process — same single-parent constraint as the
+    clearance pipeline; sessions are per-run."""
+    global _RUNNER
+    if _RUNNER is None:
+        _RUNNER = InMemoryRunner(agent=build_root_agent(), app_name=APP_NAME)
+    return _RUNNER
+
+
 def build_root_agent() -> SequentialAgent:
     room = ParallelAgent(
         name="writers_room",
@@ -93,7 +105,7 @@ async def run(script_path: str | Path, on_stage: Any = None) -> dict[str, Any]:
     fmt = format_report(meta, scenes, source)
     stage("format_done", passes=fmt["counts"]["PASS"], warns=fmt["counts"]["WARN"])
 
-    runner = InMemoryRunner(agent=build_root_agent(), app_name=APP_NAME)
+    runner = get_runner()
     session = await runner.session_service.create_session(
         app_name=APP_NAME,
         user_id=USER_ID,
@@ -115,6 +127,12 @@ async def run(script_path: str | Path, on_stage: Any = None) -> dict[str, Any]:
         app_name=APP_NAME, user_id=USER_ID, session_id=session.id
     )
     coverage = final.state.get("coverage")
+    import contextlib as _ctx
+
+    with _ctx.suppress(Exception):
+        await runner.session_service.delete_session(
+            app_name=APP_NAME, user_id=USER_ID, session_id=session.id
+        )
     pitch = final.state.get("pitch")
     stage("comps")
     if pitch and pitch.get("one_page_synopsis"):

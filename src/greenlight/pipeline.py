@@ -7,6 +7,7 @@ the graph here must not silently become the final architecture.
 
 from __future__ import annotations
 
+import contextlib
 import json
 import os
 import time
@@ -53,6 +54,19 @@ DEFAULT_BUDGETS = {
     "safety_underwriter": 8,
     "territory_censor": 8,
 }
+
+
+_RUNNER: InMemoryRunner | None = None
+
+
+def get_runner() -> InMemoryRunner:
+    """One agent tree + runner per process; each run gets its own session.
+    ADK agents are single-parent — rebuilding the tree per run re-parents the
+    module-level desks and dies on the second run of a process."""
+    global _RUNNER
+    if _RUNNER is None:
+        _RUNNER = InMemoryRunner(agent=build_root_agent(), app_name=APP_NAME)
+    return _RUNNER
 
 
 def build_root_agent() -> SequentialAgent:
@@ -171,7 +185,7 @@ async def run(
     title = meta.get("title", Path(script_path).stem)
     print(f"\n{BOLD}GREENLIGHT{RESET} — {title}: {len(scenes)} scenes parsed\n")
 
-    runner = InMemoryRunner(agent=build_root_agent(), app_name=APP_NAME)
+    runner = get_runner()
     session = await runner.session_service.create_session(
         app_name=APP_NAME,
         user_id=USER_ID,
@@ -224,6 +238,11 @@ async def run(
     the_report = report_mod.build_report(
         title, kept, page_count=page_count, rating_prediction=state.get("rating_prediction")
     )
+
+    with contextlib.suppress(Exception):
+        await runner.session_service.delete_session(
+            app_name=APP_NAME, user_id=USER_ID, session_id=session.id
+        )
 
     record = {
         "script_title": title,
