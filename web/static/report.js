@@ -139,14 +139,15 @@ function renderPrediction(root, pred) {
   const meta = el("div", "pred-meta");
   if (pred.rationale) meta.appendChild(el("p", "pred-rationale", pred.rationale));
   const comps = pred.comparables || [];
-  const same = comps.filter((c) => c.rating === pred.predicted).length;
-  meta.appendChild(
-    el(
-      "p",
-      "pred-evidence",
-      `${same} of your ${comps.length} nearest released comparables are rated ${pred.predicted}.`
-    )
-  );
+  const tallies = {};
+  for (const c of comps) tallies[c.rating] = (tallies[c.rating] || 0) + 1;
+  const majority = Object.entries(tallies).sort((a, b) => b[1] - a[1])[0];
+  const same = tallies[pred.predicted] || 0;
+  let line = `${same} of your ${comps.length} nearest released comparables are rated ${pred.predicted}.`;
+  if (majority && majority[0] !== pred.predicted && majority[1] > same) {
+    line += ` The plurality — ${majority[1]} of ${comps.length} — are rated ${majority[0]}; treat the prediction with caution.`;
+  }
+  meta.appendChild(el("p", "pred-evidence", line));
   head.appendChild(meta);
   card.appendChild(head);
 
@@ -265,6 +266,9 @@ function renderReport(record) {
       cell.appendChild(el("span", null, label));
       dimRow.appendChild(cell);
     }
+    dimRow.appendChild(
+      el("span", "dims-note", "Per-desk scores; the composite compounds all desks' findings.")
+    );
     meta.appendChild(dimRow);
   }
 

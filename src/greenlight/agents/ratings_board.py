@@ -52,6 +52,13 @@ end with the line: PREDICTION -> filed.
 
 RULES:
 - A flag without a verbatim citation will be rejected at filing. Do not paraphrase excerpts.
+- CITATION DISCIPLINE: query_precedent comparables are evidence for the PREDICTION only. A
+  flag asserting a rating RULE (what CARA permits at a band) must cite a documented standard
+  from research() — a film description can never support a rule claim, and the verifier will
+  reject it.
+- LANGUAGE MATH: one non-sexual F-word is the customary PG-13 allowance; more than one
+  typically draws R. Never call two or more uses "permissible at PG-13" without a cited,
+  documented exception.
 - Counting is find_in_script's job, never memory.
 - If told the research budget is spent: file what your results support, note the rest with
   note_open_question, and call done().

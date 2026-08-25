@@ -657,3 +657,4 @@ a.step-card:hover { text-decoration: none; box-shadow: var(--shadow-lg); }
 .case-strip { background: var(--band); border-radius: 14px; padding: 18px 22px; margin-bottom: 24px; }
 .case-hook { font-size: 16px; margin: 0 0 6px; }
 .case-note { font-size: 13px; color: var(--ink-3); margin: 0; line-height: 1.6; }
+.dims-note { font-size: 12.5px; color: var(--ink-3); align-self: center; }

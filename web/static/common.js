@@ -203,7 +203,7 @@ function injectChrome() {
     el(
       "p",
       null,
-      "Cost figures are rule-of-thumb estimates, not quotes. SCRIPTRISK is a research tool, " +
+      "Cost figures are rule-of-thumb estimates, not quotes. ScriptRisk is a research tool, " +
         "not legal advice. Built for the Agentic Cinema hackathon."
     )
   );

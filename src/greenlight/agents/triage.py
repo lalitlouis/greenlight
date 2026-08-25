@@ -85,6 +85,10 @@ surrounding context for a researcher who has not read the script, whether it is 
 negatively, and its prominence (BACKGROUND set dressing, FEATURED, or PLOT_CRITICAL if the story
 depends on it).
 
+A brand a character mocks, insults, or blames IS depicted negatively — dialogue like
+"tastes like X" is disparagement even when the tone is comic; set depicted_negatively
+accordingly, because it flips the clearance posture entirely.
+
 Fictional people and places invented by the script are NOT entities. A real song performed or
 played is. A real person merely mentioned in dialogue still is — note in context that it is a
 verbal mention only.
