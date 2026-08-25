@@ -365,12 +365,29 @@ async def auth_logout() -> dict[str, bool]:
     return resp
 
 
+def _running_stub(run_id: str, kind: str, title: str, who: dict[str, Any]) -> dict[str, Any]:
+    """Registered at start so a user who navigates away can find their way back."""
+    return {
+        "status": "running",
+        "owner_email": who.get("email", ""),
+        "owner_name": who.get("name", ""),
+        "id": run_id,
+        "kind": kind,
+        "title": title,
+        "generated_at": _time_module.strftime("%Y-%m-%dT%H:%M:%S%z"),
+        "score": None,
+        "verdict": None,
+        "flags": 0,
+    }
+
+
 def _stub_from_record(
     run_id: str, kind: str, record: dict[str, Any], who: dict[str, Any] | None = None
 ) -> dict[str, Any]:
     rep = record.get("report") or {}
     cov = record.get("coverage") or {}
     return {
+        "status": "done",
         "owner_email": (who or {}).get("email", ""),
         "owner_name": (who or {}).get("name", ""),
         "id": run_id,
@@ -465,6 +482,10 @@ async def create_run(screenplay: UploadFile, request: Request) -> dict[str, str]
     title = (screenplay.filename or "screenplay").rsplit(".", 1)[0]
     _metrics["runs"] += 1
     _log("run_started", run_id=run_id, title=title, owner=bool(owner))
+    if owner:
+        await asyncio.to_thread(
+            storage.save_user_run, owner["sub"], run_id, _running_stub(run_id, "clearance", title, owner)
+        )
     handle.publish({"type": "meta", "run_id": run_id, "mode": "live", "script_title": title})
     asyncio.get_running_loop().create_task(_run_live(handle, path))
     return {"run_id": run_id}
@@ -724,6 +745,10 @@ async def _run_writer(run_id: str, path: Path, owner: dict[str, Any] | None = No
         }
     except Exception as e:
         WRITER_RUNS[run_id] = {"status": "error", "record": None, "message": str(e)[:300]}
+        if owner:
+            stub = _running_stub(run_id, "writer", run_id, owner)
+            stub["status"] = "error"
+            await asyncio.to_thread(storage.save_user_run, owner["sub"], run_id, stub)
 
 
 @app.post("/api/writer")
@@ -739,6 +764,11 @@ async def create_writer_run(screenplay: UploadFile, request: Request) -> dict[st
     path.write_text(source)
     _metrics["writer_runs"] += 1
     _log("writer_started", run_id=run_id, owner=bool(owner))
+    if owner:
+        w_title = (screenplay.filename or "screenplay").rsplit(".", 1)[0]
+        await asyncio.to_thread(
+            storage.save_user_run, owner["sub"], run_id, _running_stub(run_id, "writer", w_title, owner)
+        )
     WRITER_RUNS[run_id] = {"status": "running", "record": None, "stage": "upload", "stage_info": {}}
     asyncio.get_running_loop().create_task(_run_writer(run_id, path, owner))
     return {"run_id": run_id}

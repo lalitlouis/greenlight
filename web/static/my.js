@@ -4,12 +4,17 @@
 
 function rowFor(r) {
   const row = el("div", "card my-row");
+  const running = r.status === "running";
+  const liveHref = r.kind === "writer" ? `/writer?run=${encodeURIComponent(r.id)}` : `/run?id=${encodeURIComponent(r.id)}`;
+  const doneHref = r.kind === "writer" ? `/writer?run=${encodeURIComponent(r.id)}` : `/report?run=${encodeURIComponent(r.id)}`;
   const main = el("div", "my-main");
   const title = el("a", "my-title", r.title || r.id);
-  title.href = r.kind === "writer" ? `/writer?run=${encodeURIComponent(r.id)}` : `/report?run=${encodeURIComponent(r.id)}`;
+  title.href = running ? liveHref : doneHref;
   main.appendChild(title);
   const meta = el("p", "my-meta");
   const bits = [r.kind === "writer" ? "Writer's Room" : "Clearance report", fmtDate(r.generated_at)];
+  if (running) bits.push("running now");
+  if (r.status === "error") bits.push("failed");
   if (r.score != null) bits.push(`score ${r.score}/100`);
   if (r.verdict) bits.push(r.verdict);
   if (r.flags) bits.push(`${r.flags} findings`);
@@ -17,9 +22,16 @@ function rowFor(r) {
   main.appendChild(meta);
   row.appendChild(main);
 
-  const open = el("a", "btn btn-secondary", "Open");
+  if (running) {
+    const badge = el("span", "my-running");
+    badge.appendChild(el("span", "pulse"));
+    badge.appendChild(el("span", null, "Running"));
+    row.appendChild(badge);
+  }
+  const open = el("a", "btn btn-secondary", running ? "Watch live" : "Open");
   open.href = title.href;
   row.appendChild(open);
+  if (running) return row;
 
   const del = el("button", "btn btn-danger", "Delete");
   del.type = "button";

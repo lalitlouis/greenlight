@@ -761,3 +761,5 @@ mark.d-add { background: rgba(10, 143, 82, 0.16); color: var(--green-deep); bord
 .col-head .spotlight { margin: 6px 0 0; font-size: 13px; color: var(--green-deep); font-weight: 550; min-height: 18px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .adm-mono { font-family: var(--mono); font-size: 12.5px; }
 .adm-err td { background: rgba(224, 52, 42, 0.06); }
+.my-running { display: inline-flex; align-items: center; gap: 8px; color: var(--high); font-size: 13.5px; font-weight: 600; }
+.my-running .pulse { animation: pulse 1.2s ease-in-out infinite; }
