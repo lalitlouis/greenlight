@@ -277,6 +277,8 @@ function injectChrome() {
     mkCol("Project", [
       ["https://github.com/lalitlouis/greenlight", "GitHub", true],
       ["/contact", "Contact the team"],
+      ["/terms", "Terms of service"],
+      ["/privacy", "Privacy policy"],
     ])
   );
   footer.appendChild(finner);

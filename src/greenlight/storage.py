@@ -200,6 +200,41 @@ def _cache_client():
     return _cache["client"]
 
 
+def save_owner(run_id: str, sub: str) -> bool:
+    """Ownership marker, separate from the record so API responses never carry
+    the Google subject id. Its absence means the run is anonymous."""
+    try:
+        _bucket().blob(f"owners/{run_id}").upload_from_string(sub, content_type="text/plain")
+        return True
+    except Exception:
+        return False
+
+
+def load_owner(run_id: str) -> str | None:
+    try:
+        blob = _bucket().blob(f"owners/{run_id}")
+        if not blob.exists():
+            return None
+        return blob.download_as_bytes().decode().strip()
+    except Exception:
+        return None
+
+
+def delete_anon_run(run_id: str) -> bool:
+    """Capability delete for anonymous runs: the unguessable run id IS the
+    authorization. The server refuses to route owned runs here."""
+    try:
+        deleted = False
+        for path in (f"records/{run_id}.json", f"scripts/{run_id}.fountain", f"owners/{run_id}"):
+            blob = _bucket().blob(path)
+            if blob.exists():
+                blob.delete()
+                deleted = True
+        return deleted
+    except Exception:
+        return False
+
+
 def delete_user_run(sub: str, run_id: str) -> bool:
     """Owner-scoped delete: the stub must live under this user's prefix, then the
     record and script go too. Deleting someone else's run is structurally impossible."""
@@ -208,7 +243,7 @@ def delete_user_run(sub: str, run_id: str) -> bool:
         if not stub.exists():
             return False
         stub.delete()
-        for path in (f"records/{run_id}.json", f"scripts/{run_id}.fountain"):
+        for path in (f"records/{run_id}.json", f"scripts/{run_id}.fountain", f"owners/{run_id}"):
             blob = _bucket().blob(path)
             if blob.exists():
                 blob.delete()

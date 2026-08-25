@@ -335,6 +335,14 @@ function renderReport(record) {
         ? "Cleared, with conditions"
         : "Conditional — remedies required";
   meta.appendChild(el("span", "verdict " + tone, verdict));
+  meta.appendChild(
+    el(
+      "p",
+      "score-caveat",
+      "Scores are directional — independent re-runs typically land within a few points. " +
+        "The cited findings below are the product; the number is a summary of them."
+    )
+  );
   const proj = el("span", "proj");
   proj.appendChild(
     document.createTextNode(
@@ -479,6 +487,33 @@ function renderReport(record) {
     FX.scoreRing(scoreBox, typeof score === "number" ? score : 0);
     FX.growBars(root);
     FX.staggerIn(root.querySelectorAll(".flag"));
+  }
+
+  // Anonymous and owned live runs (hex ids) can be deleted from here; curated
+  // demo records (run_*/case_* stems) cannot — the server refuses those anyway.
+  if (!IS_CASE && /^w?[0-9a-f]{11,12}$/.test(RUN_ID)) {
+    const zone = el("div", "card delete-zone");
+    zone.appendChild(
+      el("p", null, "Done with this analysis? Deleting removes the script, the report, and the run record from our storage.")
+    );
+    const btn = el("button", "btn btn-danger", "Delete this analysis");
+    btn.type = "button";
+    btn.addEventListener("click", async () => {
+      if (!window.confirm("Permanently delete this analysis and its uploaded script?")) return;
+      btn.disabled = true;
+      btn.textContent = "Deleting…";
+      try {
+        const res = await fetch(`/api/runs/${encodeURIComponent(RUN_ID)}`, { method: "DELETE" });
+        if (!res.ok) throw new Error((await res.json()).detail || res.statusText);
+        window.location.href = "/home";
+      } catch (e) {
+        btn.disabled = false;
+        btn.textContent = "Delete this analysis";
+        zone.appendChild(el("p", "delete-err", "Could not delete: " + e.message));
+      }
+    });
+    zone.appendChild(btn);
+    root.appendChild(zone);
   }
 
   if (window.location.hash) {

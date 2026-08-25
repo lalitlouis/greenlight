@@ -320,6 +320,8 @@ PAGES = {
     "/run": "run.html",
     "/report": "report.html",
     "/script": "script.html",
+    "/terms": "terms.html",
+    "/privacy": "privacy.html",
 }
 
 
@@ -491,6 +493,7 @@ async def _run_live(handle: RunHandle, script_path: Path) -> None:
         handle.status = "error" if record.get("error") else "done"
         await asyncio.to_thread(storage.save_record, handle.run_id, record)
         if handle.owner:
+            await asyncio.to_thread(storage.save_owner, handle.run_id, handle.owner)
             await asyncio.to_thread(
                 storage.save_user_run,
                 handle.owner,
@@ -797,6 +800,7 @@ async def _run_writer(run_id: str, path: Path, owner: dict[str, Any] | None = No
             runstate.set_state, run_id, {"status": "error" if record.get("error") else "done"}
         )
         if owner:
+            await asyncio.to_thread(storage.save_owner, run_id, owner["sub"])
             await asyncio.to_thread(
                 storage.save_user_run,
                 owner["sub"],
@@ -1117,21 +1121,51 @@ def _summarize(record: dict[str, Any], run_id: str, kind: str) -> dict[str, Any]
     }
 
 
+# The records the home page shows. Update when the demo record is refreshed.
+HOME_RECORDS = {"run_20260824_113702_demo"}
+
+
 @app.get("/api/runs")
 async def list_runs() -> list[dict[str, Any]]:
-    """Every viewable analysis: cached records on disk plus finished in-memory
-    sessions. Newest first — the home page renders straight from this."""
+    """Curated records only — the demo runs shipped in runs/. A visitor's own
+    analysis is reachable solely through its unguessable run id (their link),
+    or through My reports when signed in. Nobody browses anyone else's run."""
     out: list[dict[str, Any]] = []
     for path in RUNS_DIR.glob("run_*.json"):
+        if path.stem not in HOME_RECORDS:
+            continue  # dev-iteration records stay on disk for `make eval`, unlisted
         try:
             out.append(_summarize(json.loads(path.read_text()), path.stem, "recorded"))
         except (json.JSONDecodeError, OSError):
             continue  # a torn or foreign file must not take the home page down
-    for run_id, handle in RUNS.items():
-        if handle.record is not None and handle.mode == "live":
-            out.append(_summarize(handle.record, run_id, "session"))
     out.sort(key=lambda r: r.get("generated_at") or "", reverse=True)
     return out
+
+
+@app.delete("/api/runs/{run_id}")
+async def delete_run(run_id: str, request: Request) -> dict[str, bool]:
+    """Delete one analysis. Owned runs require the owner's session; anonymous
+    runs are deletable by anyone holding the unguessable id — the link is the
+    capability. Curated demo records are refused outright."""
+    run_id = _safe_id(run_id)
+    if _disk_record(run_id) is not None:
+        raise HTTPException(403, "Curated demo records cannot be deleted")
+    owner = await asyncio.to_thread(storage.load_owner, run_id)
+    if owner:
+        user = _current_user(request)
+        if not user or user["sub"] != owner:
+            raise HTTPException(403, "This run belongs to a signed-in account")
+        ok = await asyncio.to_thread(storage.delete_user_run, owner, run_id)
+    else:
+        ok = await asyncio.to_thread(storage.delete_anon_run, run_id)
+        # a run still finishing lives only in memory — drop that too
+        ok = RUNS.pop(run_id, None) is not None or ok
+    if not ok:
+        raise HTTPException(404, "No such run")
+    if owner:
+        RUNS.pop(run_id, None)
+    _log("run_deleted", run_id=run_id, owned=bool(owner))
+    return {"ok": True}
 
 
 def _disk_record(run_id: str) -> dict[str, Any] | None:

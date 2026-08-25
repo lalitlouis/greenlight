@@ -877,3 +877,19 @@ body.show-detail .detail-only { display: grid; margin-top: 16px; }
   .rt-dot, .rt-ripple { animation: none !important; }
   .scene-strip { scroll-behavior: auto; }
 }
+
+/* ---------- legal pages + report delete zone + score caveat ---------- */
+.legal { max-width: 780px; }
+.legal-card { padding: 30px 34px; }
+.legal-card h2 { font-size: 21px; margin: 26px 0 10px; }
+.legal-card h2:first-child { margin-top: 0; }
+.legal-card p { font-size: 15.5px; line-height: 1.65; color: var(--ink-2); margin: 0 0 12px; }
+.legal-card p b { color: var(--ink); }
+.legal-card .plain-list li { font-size: 15.5px; line-height: 1.6; }
+.score-caveat { flex-basis: 100%; margin: 6px 0 0; font-size: 13px; line-height: 1.5; color: var(--fyi); }
+.delete-zone { margin-top: 20px; padding: 20px 24px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; border-color: rgba(224, 52, 42, 0.25); }
+.delete-zone p { margin: 0; font-size: 14px; color: var(--ink-2); flex: 1; min-width: 240px; }
+.btn-danger { background: none; border: 1px solid var(--blocker); color: var(--blocker); border-radius: 980px; padding: 9px 20px; font: inherit; font-size: 14.5px; font-weight: 600; cursor: pointer; }
+.btn-danger:hover { background: var(--blocker); color: #fff; }
+.btn-danger:disabled { opacity: 0.5; cursor: default; }
+.delete-err { color: var(--blocker); font-size: 13.5px; flex-basis: 100%; }

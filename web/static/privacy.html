@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<title>Privacy — ScriptRisk</title>
+<link rel="stylesheet" href="/static/vendor/fonts/fonts.css">
+<link rel="stylesheet" href="/static/site.css">
+<script defer src="/static/common.js"></script>
+</head>
+<body>
+<main>
+  <div class="container legal">
+    <div class="page-head">
+      <span class="kicker">Privacy</span>
+      <h1>Privacy policy</h1>
+      <p class="lede">Plain English, because your screenplay is your most valuable asset.
+      Last updated August 25, 2026 · ScriptRisk is in beta.</p>
+    </div>
+
+    <div class="card legal-card">
+      <h2>The short version</h2>
+      <ul class="plain-list">
+        <li>Your screenplay stays yours. Uploading it grants us no rights beyond running the analysis you asked for.</li>
+        <li>Scripts are encrypted in transit (TLS) and at rest (application-layer encryption on top of Google Cloud Storage's own encryption).</li>
+        <li>We never use your screenplay to train AI models, and our AI providers process it under terms that do not permit training on it.</li>
+        <li>You can delete any analysis at any time — from <a href="/my">My reports</a> when signed in, or with the delete control on the report page for anonymous runs.</li>
+        <li>We do not sell or share your data with advertisers. There are no ad trackers on this site.</li>
+      </ul>
+
+      <h2>What we collect</h2>
+      <p><b>Your screenplay and its analysis.</b> The uploaded script, the parsed scenes, and the
+      generated report are stored encrypted so you can revisit the report, replay the run, and use
+      the marked-up script view. Anonymous runs are reachable only through their unguessable link;
+      they never appear in any public listing.</p>
+      <p><b>Account basics, if you sign in.</b> Google Sign-In gives us your name, email address,
+      and avatar. We use them to show you your own report history and for nothing else. We never
+      see your Google password.</p>
+      <p><b>Operational logs.</b> Standard request logs (timestamps, IP-derived rate-limit
+      counters, error traces) kept to run and debug the service. Log lines do not contain
+      screenplay text.</p>
+
+      <h2>Who processes your data</h2>
+      <p>Analysis runs on <b>Google Cloud</b> (Vertex AI Gemini models, Cloud Storage, Cloud Run,
+      Firestore) in the United States. Clearance research questions — never your script text
+      itself, only short research queries the desks compose — are sent to the
+      <b>Parallel Search API</b>. Ratings comparisons query our own database of released-film
+      content profiles on <b>ClickHouse Cloud</b>; your script text is not stored there. Each
+      provider processes data under its own enterprise terms.</p>
+
+      <h2>Retention and deletion</h2>
+      <p>Analyses are kept until you delete them. Deleting a run removes the script, the report,
+      and the ownership record from storage. If you want your entire account and history removed,
+      email <a href="mailto:lalitlouis@gmail.com">lalitlouis@gmail.com</a> and we will do it
+      manually within 7 days — a self-serve account deletion is on the roadmap.</p>
+
+      <h2>Cookies</h2>
+      <p>One cookie: a signed session cookie when you sign in. No analytics cookies, no
+      third-party trackers.</p>
+
+      <h2>Changes</h2>
+      <p>If this policy changes materially, the "last updated" date above changes and the beta
+      banner will say so. Questions:
+      <a href="mailto:lalitlouis@gmail.com">lalitlouis@gmail.com</a>.</p>
+    </div>
+  </div>
+</main>
+</body>
+</html>
