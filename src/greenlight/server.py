@@ -28,8 +28,9 @@ from typing import Any
 from fastapi import FastAPI, HTTPException, Request, UploadFile
 from fastapi.responses import FileResponse, JSONResponse, RedirectResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
 
-from greenlight import auth, parser, storage
+from greenlight import auth, fixer, parser, storage
 from greenlight.pdf import screenplay_text
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -684,6 +685,83 @@ async def list_cases() -> list[dict[str, Any]]:
         )
     out.sort(key=lambda c: c.get("year") or 0)
     return out
+
+
+# ---------------------------------------------------------------- fixes
+
+FIX_RATE_PER_HOUR = 20
+_fix_rate: dict[str, list[float]] = {}
+
+
+class FixRequest(BaseModel):
+    run_id: str
+    flag_id: str
+
+
+async def _load_record_any(run_id: str) -> dict[str, Any] | None:
+    handle = RUNS.get(run_id)
+    if handle is not None and handle.record is not None:
+        return handle.record
+    if (record := _disk_record(run_id)) is not None:
+        return record
+    return await asyncio.to_thread(storage.load_record, run_id)
+
+
+async def _load_source_any(run_id: str, record: dict[str, Any]) -> str | None:
+    handle = RUNS.get(run_id)
+    if handle is not None and handle.source:
+        return handle.source
+    path_s = record.get("script_path")
+    if path_s:
+        path = Path(path_s)
+        if not path.is_absolute():
+            path = ROOT / path
+        if path.exists():
+            return path.read_text()
+    return await asyncio.to_thread(storage.load_script, run_id)
+
+
+@app.post("/api/fix")
+async def propose_fix(body: FixRequest, request: Request) -> dict[str, Any]:
+    """Draft minimal patches for one finding — the diff the report shows. Free
+    during beta; this is the future paid surface, so it gets its own rate lane."""
+    import time as _time
+
+    ip = _client_ip(request)
+    now = _time.time()
+    window = [ts for ts in _fix_rate.get(ip, []) if now - ts < RATE_WINDOW_S]
+    if len(window) >= FIX_RATE_PER_HOUR:
+        raise HTTPException(429, "Fix limit reached for this hour — try again later.")
+    window.append(now)
+    _fix_rate[ip] = window
+
+    run_id = _safe_id(body.run_id)
+    record = await _load_record_any(run_id)
+    if record is None:
+        raise HTTPException(404, "Unknown run.")
+    if record.get("kind") == "case_study":
+        raise HTTPException(400, "Case studies are read-only — their scripts are not stored.")
+    flag = next((f for f in record.get("flags", []) if f.get("flag_id") == body.flag_id), None)
+    if flag is None:
+        raise HTTPException(404, "Unknown finding.")
+    source = await _load_source_any(run_id, record)
+    if source is None:
+        raise HTTPException(404, "Script source unavailable for this run.")
+
+    _, scenes = parser.parse_fountain(source)
+    by_id = {s["scene_id"]: s for s in scenes}
+    scene_texts = {
+        sid: source[by_id[sid]["raw_span"][0] : by_id[sid]["raw_span"][1]]
+        for sid in flag.get("scene_ids", [])
+        if sid in by_id
+    }
+    if not scene_texts:
+        raise HTTPException(400, "The finding's scenes could not be located in the script.")
+
+    result = await fixer.propose_fix(flag, scene_texts)
+    if "error" in result:
+        raise HTTPException(502, result["error"])
+    return result
 
 
 # ---------------------------------------------------------------- run index

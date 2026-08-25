@@ -225,3 +225,10 @@ def test_security_headers_present():
     assert res.headers["X-Content-Type-Options"] == "nosniff"
     assert res.headers["X-Frame-Options"] == "DENY"
     assert "default-src 'self'" in res.headers["Content-Security-Policy"]
+
+
+def test_fix_rejects_case_studies_and_unknown_flags():
+    res = client.post("/api/fix", json={"run_id": "case_clerks", "flag_id": "F101"})
+    assert res.status_code == 400
+    res = client.post("/api/fix", json={"run_id": "nonexistent_run", "flag_id": "F101"})
+    assert res.status_code == 404

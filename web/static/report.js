@@ -34,6 +34,99 @@ function citationCard(c, idx, total) {
   return wrap;
 }
 
+/* Word-level diff: LCS over words so the before/after highlights exactly what
+   changed. Patches are short (scene lines), so O(n*m) is nothing. */
+function wordDiff(a, b) {
+  const A = a.split(/(\s+)/), B = b.split(/(\s+)/);
+  const n = A.length, m = B.length;
+  const dp = Array.from({ length: n + 1 }, () => new Array(m + 1).fill(0));
+  for (let i = n - 1; i >= 0; i--) {
+    for (let j = m - 1; j >= 0; j--) {
+      dp[i][j] = A[i] === B[j] ? dp[i + 1][j + 1] + 1 : Math.max(dp[i + 1][j], dp[i][j + 1]);
+    }
+  }
+  const out = [];
+  let i = 0, j = 0;
+  while (i < n && j < m) {
+    if (A[i] === B[j]) { out.push({ t: "same", w: A[i] }); i++; j++; }
+    else if (dp[i + 1][j] >= dp[i][j + 1]) { out.push({ t: "del", w: A[i] }); i++; }
+    else { out.push({ t: "add", w: B[j] }); j++; }
+  }
+  while (i < n) out.push({ t: "del", w: A[i++] });
+  while (j < m) out.push({ t: "add", w: B[j++] });
+  return out;
+}
+
+function diffBox(label, diff, keep) {
+  const box = el("div", "diff-box " + (keep === "del" ? "diff-before" : "diff-after"));
+  box.appendChild(el("span", "diff-label", label));
+  const pre = el("pre", "diff-text");
+  for (const part of diff) {
+    if (part.t === "same") pre.appendChild(document.createTextNode(part.w));
+    else if (part.t === keep) pre.appendChild(el("mark", "d-" + keep, part.w));
+  }
+  box.appendChild(pre);
+  return box;
+}
+
+function renderFix(container, fix) {
+  container.textContent = "";
+  container.appendChild(el("p", "fix-summary", fix.summary || ""));
+  for (const patch of fix.patches || []) {
+    const card = el("div", "fix-patch");
+    const head = el("div", "fix-patch-head");
+    head.appendChild(el("span", "scene-link inert", patch.scene_id));
+    head.appendChild(el("span", "fix-rationale", patch.rationale || ""));
+    card.appendChild(head);
+    const diff = wordDiff(patch.find, patch.replace);
+    card.appendChild(diffBox("Before", diff, "del"));
+    card.appendChild(diffBox("After", diff, "add"));
+    const copy = el("button", "cite-toggle", "Copy the new text");
+    copy.type = "button";
+    copy.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(patch.replace);
+        copy.textContent = "Copied ✓";
+        setTimeout(() => { copy.textContent = "Copy the new text"; }, 2000);
+      } catch { toast("Copy failed — select the text manually.", true); }
+    });
+    card.appendChild(copy);
+    container.appendChild(card);
+  }
+}
+
+function fixControls(f) {
+  const wrap = el("div", "fix-wrap");
+  const row = el("div", "fix-row");
+  const btn = el("button", "btn btn-secondary fix-btn", "Propose a fix");
+  btn.type = "button";
+  row.appendChild(btn);
+  row.appendChild(el("span", "fix-beta", "Free during beta · $39/script after"));
+  wrap.appendChild(row);
+  const result = el("div", "fix-result");
+  wrap.appendChild(result);
+  btn.addEventListener("click", async () => {
+    btn.disabled = true;
+    btn.textContent = "Drafting a fix — ~20s…";
+    try {
+      const res = await fetch("/api/fix", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ run_id: RUN_ID, flag_id: f.flag_id }),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      renderFix(result, await res.json());
+      btn.textContent = "Draft another fix";
+    } catch (e) {
+      toast("Fix failed: " + e.message.slice(0, 160), true);
+      btn.textContent = "Propose a fix";
+    } finally {
+      btn.disabled = false;
+    }
+  });
+  return wrap;
+}
+
 function flagExpand(f) {
   const ex = el("div", "expand");
   const cites = f.citations || [];
@@ -53,6 +146,9 @@ function flagExpand(f) {
 
   if (f.confidence != null) {
     ex.appendChild(el("span", "conf", `desk confidence ${Math.round(f.confidence * 100)}%`));
+  }
+  if (!IS_CASE && !f.rejection_reason && ["REPLACE", "CUT", "RESHOOT"].includes(r.action)) {
+    ex.appendChild(fixControls(f));
   }
   if (f.rejection_reason) {
     const rej = el("div", "rejection");
