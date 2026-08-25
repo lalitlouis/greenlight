@@ -685,7 +685,8 @@ function startStream(url) {
 document.addEventListener("DOMContentLoaded", () => {
   $("detail-toggle")?.addEventListener("click", () => {
     const on = document.body.classList.toggle("show-detail");
-    $("detail-toggle").textContent = on ? "Hide detail" : "Detail view";
+    const arrow = document.querySelector("#detail-toggle .dd-arrow");
+    if (arrow) arrow.textContent = on ? "▾" : "▸";
   });
   $("studio-toggle")?.addEventListener("click", () => {
     const body = $("studio-body");
