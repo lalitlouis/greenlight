@@ -19,6 +19,7 @@
       <h1 id="run-title">Analysis</h1>
       <span id="mode-chip" class="chip hidden"></span>
       <span id="elapsed"></span>
+      <button class="detail-toggle" id="detail-toggle" type="button">Detail view</button>
     </div>
 
     <div class="card progress-strip">
@@ -40,7 +41,22 @@
       <p class="run-status" id="run-status">Connecting to the analysis…</p>
     </div>
 
-    <div class="panel" id="panel"></div>
+    <div class="readthrough">
+      <div class="card scene-strip-wrap">
+        <div class="strip-head">
+          <span class="label">Your script — the desks read it live; findings pin to their scenes</span>
+          <button class="follow-chip hidden" id="follow-chip" type="button">Resume following</button>
+        </div>
+        <div class="scene-strip" id="scene-strip">
+          <p class="runs-empty" style="padding: 24px;">Preparing the scene strip…</p>
+        </div>
+      </div>
+      <div class="rt-rail">
+        <div class="card desk-rail" id="desk-rail"></div>
+      </div>
+    </div>
+
+    <div class="panel detail-only" id="panel"></div>
 
     <div class="card pipe-strip">
       <div class="pipe-head studio-head">

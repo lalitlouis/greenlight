@@ -798,3 +798,79 @@ mark.d-add { background: rgba(10, 143, 82, 0.16); color: var(--green-deep); bord
 .sc-mid .sc-verdict { color: var(--high); }
 .sc-bad .sc-verdict { color: var(--blocker); }
 .sc-reason { margin: 6px 0 0; font-size: 13.5px; color: var(--ink-2); line-height: 1.55; }
+
+/* ---------- The Read-Through: the scene strip is the run page's centerpiece.
+   Desk dots walk down the script, findings pin to their scenes, verdicts
+   confirm or strike the pins. The old four-column feed becomes "Detail view". ---------- */
+.readthrough { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 16px; align-items: start; }
+@media (max-width: 980px) { .readthrough { grid-template-columns: 1fr; } .rt-rail { order: -1; } }
+
+.scene-strip-wrap { padding: 0; overflow: hidden; }
+.strip-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 20px; border-bottom: 1px solid var(--line); }
+.strip-head .label { font-size: 13px; font-weight: 650; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-2); }
+.follow-chip { border: 1px solid var(--line-2); background: var(--band); color: var(--ink-2); font: inherit; font-size: 12.5px; font-weight: 600; border-radius: 980px; padding: 4px 12px; cursor: pointer; }
+.follow-chip:hover { color: var(--green-deep); border-color: var(--green); }
+
+.scene-strip { max-height: 66vh; overflow-y: auto; padding: 14px 16px 18px; display: flex; flex-direction: column; gap: 8px; scroll-behavior: smooth; }
+.rt-scene { position: relative; border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; background: var(--surface); transition: border-color 0.3s ease, box-shadow 0.4s ease; }
+.rts-head { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
+.rts-num { font-size: 11.5px; font-weight: 700; color: var(--fyi); font-variant-numeric: tabular-nums; flex: none; }
+.rts-heading { font-size: 13.5px; font-weight: 650; color: var(--ink-2); letter-spacing: 0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.rts-page { margin-left: auto; font-size: 11.5px; color: var(--fyi); flex: none; }
+.rts-dots { position: absolute; top: -7px; right: 12px; display: flex; gap: 5px; }
+.rt-dot { width: 13px; height: 13px; border-radius: 50%; border: 2px solid var(--surface); box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25); animation: dot-in 0.35s ease; }
+@keyframes dot-in { from { transform: scale(0.2); opacity: 0; } }
+.dot-clearance_counsel { background: var(--desk-clearance); }
+.dot-ratings_board { background: var(--desk-ratings); }
+.dot-safety_underwriter { background: var(--desk-safety); }
+.dot-territory_censor { background: var(--desk-territory); }
+.rt-ripple { font-size: 12px; animation: ripple 2.4s ease-in-out; }
+@keyframes ripple { 0%, 100% { opacity: 0; } 15%, 70% { opacity: 1; } 50% { transform: translateY(-2px); } }
+
+.rt-scene.glow-clearance_counsel { border-color: var(--desk-clearance); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12); }
+.rt-scene.glow-ratings_board { border-color: var(--desk-ratings); box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.12); }
+.rt-scene.glow-safety_underwriter { border-color: var(--desk-safety); box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.14); }
+.rt-scene.glow-territory_censor { border-color: var(--desk-territory); box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.12); }
+
+.rts-pins { display: flex; flex-wrap: wrap; gap: 6px; }
+.rts-pins:not(:empty) { margin-top: 8px; }
+.rt-pin { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; border-radius: 980px; padding: 2.5px 10px 2.5px 8px; background: var(--band); border: 1px solid var(--line-2); color: var(--ink-2); transition: opacity 0.4s ease; }
+.rt-pin b { font-weight: 800; letter-spacing: 0.04em; font-size: 10px; }
+.rt-pin.sev-BLOCKER { border-color: var(--blocker); } .rt-pin.sev-BLOCKER b { color: var(--blocker); }
+.rt-pin.sev-HIGH { border-color: var(--high); } .rt-pin.sev-HIGH b { color: var(--high); }
+.rt-pin.sev-MEDIUM { border-color: var(--medium); } .rt-pin.sev-MEDIUM b { color: var(--medium); }
+.rt-pin.sev-LOW b { color: var(--low); }
+.rt-pin.sev-FYI b { color: var(--fyi); }
+.rt-pin.pin-ok::after { content: "✓"; color: var(--green-deep); font-weight: 800; }
+.rt-pin.pin-partial::after { content: "◐"; color: var(--high); }
+.rt-pin.pin-rejected { opacity: 0.45; border-style: dashed; }
+.rt-pin.pin-rejected span { text-decoration: line-through; }
+
+.desk-rail { padding: 8px 0; position: sticky; top: 76px; }
+.rail-row { padding: 11px 18px; border-left: 3px solid transparent; transition: background 0.3s ease; }
+.rail-row + .rail-row { border-top: 1px solid var(--line); }
+.rail-top { display: flex; align-items: center; gap: 9px; font-size: 14px; }
+.rail-top b { font-weight: 650; }
+.rail-dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+.rail-clearance_counsel .rail-dot { background: var(--desk-clearance); }
+.rail-ratings_board .rail-dot { background: var(--desk-ratings); }
+.rail-safety_underwriter .rail-dot { background: var(--desk-safety); }
+.rail-territory_censor .rail-dot { background: var(--desk-territory); }
+.rail-status { margin-left: auto; font-size: 12px; color: var(--fyi); font-variant-numeric: tabular-nums; }
+.rail-working { background: rgba(14, 124, 74, 0.04); }
+.rail-working.rail-clearance_counsel { border-left-color: var(--desk-clearance); }
+.rail-working.rail-ratings_board { border-left-color: var(--desk-ratings); }
+.rail-working.rail-safety_underwriter { border-left-color: var(--desk-safety); }
+.rail-working.rail-territory_censor { border-left-color: var(--desk-territory); }
+.rail-done .rail-status { color: var(--green-deep); font-weight: 650; }
+.rail-spot { margin: 4px 0 0 18px; font-size: 12.5px; line-height: 1.45; color: var(--ink-2); min-height: 18px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+
+.detail-toggle { margin-left: auto; border: 1px solid var(--line-2); background: none; color: var(--ink-2); font: inherit; font-size: 13.5px; font-weight: 550; border-radius: 980px; padding: 6px 16px; cursor: pointer; }
+.detail-toggle:hover { color: var(--green-deep); border-color: var(--green); }
+.detail-only { display: none; }
+body.show-detail .detail-only { display: grid; margin-top: 16px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .rt-dot, .rt-ripple { animation: none !important; }
+  .scene-strip { scroll-behavior: auto; }
+}

@@ -6,6 +6,14 @@
 
 const MAX_TRACE_LINES = 250;
 let SCENE_HEADINGS = {}; // scene_id -> heading, for narrating which scene is being read
+const rt = {
+  built: false,
+  backlog: [], // ops that arrived before the strip existed
+  lastScene: {}, // desk -> scene_id
+  pendingPin: {}, // desk -> pin element awaiting its flag id
+  pins: {}, // flag_id -> pin element
+  autoFollow: true,
+};
 
 async function loadSceneHeadings(id) {
   try {
@@ -13,9 +21,118 @@ async function loadSceneHeadings(id) {
     if (!res.ok) return;
     const data = await res.json();
     for (const s of data.scenes || []) SCENE_HEADINGS[s.scene_id] = s.heading;
+    buildSceneStrip(data.scenes || []);
   } catch {
     /* narration degrades to bare scene ids */
   }
+}
+
+function buildSceneStrip(scenes) {
+  const strip = $("scene-strip");
+  if (!strip || !scenes.length) return;
+  strip.textContent = "";
+  for (const s of scenes) {
+    const card = el("div", "rt-scene");
+    card.id = "rts-" + s.scene_id;
+    const head = el("div", "rts-head");
+    head.appendChild(el("span", "rts-num", s.scene_id));
+    head.appendChild(el("span", "rts-heading", s.heading.slice(0, 60)));
+    head.appendChild(el("span", "rts-page", "p." + s.page));
+    card.appendChild(head);
+    card.appendChild(el("div", "rts-dots"));
+    card.appendChild(el("div", "rts-pins"));
+    strip.appendChild(card);
+  }
+  rt.built = true;
+  const ops = rt.backlog.splice(0);
+  for (const op of ops) op();
+  strip.addEventListener("wheel", pauseFollow, { passive: true });
+  strip.addEventListener("touchstart", pauseFollow, { passive: true });
+}
+
+function pauseFollow() {
+  if (!rt.autoFollow) return;
+  rt.autoFollow = false;
+  $("follow-chip")?.classList.remove("hidden");
+}
+
+function followTo(node) {
+  if (!rt.autoFollow || !node) return;
+  node.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+function rtOp(fn) {
+  if (rt.built) fn();
+  else rt.backlog.push(fn);
+}
+
+function moveDeskDot(agent, sceneId) {
+  rtOp(() => {
+    document.querySelectorAll(`.rt-dot.dot-${agent}`).forEach((d) => d.remove());
+    const card = $("rts-" + sceneId);
+    if (!card) return;
+    const dot = el("span", `rt-dot dot-${agent}`);
+    dot.title = (DESKS.find((d) => d[0] === agent) || [])[1] || agent;
+    card.querySelector(".rts-dots").appendChild(dot);
+    card.classList.add("rts-active", "glow-" + agent);
+    setTimeout(() => card.classList.remove("glow-" + agent), 1800);
+    rt.lastScene[agent] = sceneId;
+    followTo(card);
+  });
+}
+
+function rippleScene(agent, title) {
+  rtOp(() => {
+    const card = $("rts-" + (rt.lastScene[agent] || ""));
+    if (!card) return;
+    const rip = el("span", "rt-ripple", "🔎");
+    rip.title = title || "researching";
+    card.querySelector(".rts-dots").appendChild(rip);
+    setTimeout(() => rip.remove(), 2600);
+  });
+}
+
+function dropPin(agent, severity, category, sceneIds) {
+  rtOp(() => {
+    const ids = (String(sceneIds || "").match(/S\d+/g) || []);
+    const card = $("rts-" + ids[0]);
+    if (!card) return;
+    const pin = el("span", `rt-pin sev-${severity}`);
+    pin.appendChild(el("b", null, severity));
+    pin.appendChild(el("span", null, prettyCat(category) + (ids.length > 1 ? ` +${ids.length - 1}` : "")));
+    card.querySelector(".rts-pins").appendChild(pin);
+    rt.pendingPin[agent] = pin;
+    if (window.FX?.on) {
+      gsap.fromTo(pin, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.45, ease: "back.out(1.8)" });
+    }
+    followTo(card);
+  });
+}
+
+function assignPinId(agent, brief) {
+  const m = (brief || "").match(/F\d+/);
+  rtOp(() => {
+    const pin = rt.pendingPin[agent];
+    if (!pin) return;
+    delete rt.pendingPin[agent];
+    if (m) rt.pins[m[0]] = pin;
+    else pin.remove(); // the filing was rejected by validation — never landed
+  });
+}
+
+function pinVerdict(fid, verdict) {
+  rtOp(() => {
+    const pin = rt.pins[fid];
+    if (!pin) return;
+    if (verdict === "SUPPORTED") {
+      pin.classList.add("pin-ok");
+    } else if (verdict === "PARTIAL") {
+      pin.classList.add("pin-partial");
+    } else {
+      pin.classList.add("pin-rejected");
+      if (window.FX?.on) gsap.to(pin, { opacity: 0.45, duration: 0.6 });
+    }
+  });
 }
 
 function sceneLabel(sid) {
@@ -75,7 +192,25 @@ function bumpProgress() {
 
 /* ---------- desk panel ---------- */
 
+function buildDeskRail() {
+  const rail = $("desk-rail");
+  if (!rail) return;
+  rail.textContent = "";
+  for (const [id, name] of DESKS) {
+    const row = el("div", "rail-row rail-" + id);
+    row.id = "rail-" + id;
+    const top = el("div", "rail-top");
+    top.appendChild(el("span", "rail-dot"));
+    top.appendChild(el("b", null, name));
+    top.appendChild(el("span", "rail-status", "Waiting"));
+    row.appendChild(top);
+    row.appendChild(el("p", "rail-spot", "…"));
+    rail.appendChild(row);
+  }
+}
+
 function buildPanel() {
+  buildDeskRail();
   const panel = $("panel");
   panel.textContent = "";
   $("pipe-log").textContent = "";
@@ -103,13 +238,21 @@ function setDeskStatus(id) {
   const d = state.desks[id];
   const st = document.querySelector(`#col-${id} .st`);
   const txt = document.querySelector(`#col-${id} .st-txt`);
-  if (!st || !txt) return;
-  if (d.done) {
-    st.className = "st done";
-    txt.textContent = `Done · ${d.calls} calls · ${d.flags} flags`;
-  } else if (d.started) {
-    st.className = "st running";
-    txt.textContent = `Working · ${d.calls} calls · ${d.flags} flags`;
+  if (st && txt) {
+    if (d.done) {
+      st.className = "st done";
+      txt.textContent = `Done · ${d.calls} calls · ${d.flags} flags`;
+    } else if (d.started) {
+      st.className = "st running";
+      txt.textContent = `Working · ${d.calls} calls · ${d.flags} flags`;
+    }
+  }
+  const rail = document.querySelector(`#rail-${id} .rail-status`);
+  const row = $("rail-" + id);
+  if (rail) {
+    rail.textContent = d.done ? `Done · ${d.flags} flags` : d.started ? `${d.calls} calls` : "Waiting";
+    row?.classList.toggle("rail-working", d.started && !d.done);
+    row?.classList.toggle("rail-done", d.done);
   }
 }
 
@@ -167,6 +310,8 @@ function traceLine(ev) {
 function setDeskSpotlight(agent, text) {
   const node = document.querySelector(`#col-${agent} .spotlight`);
   if (node) node.textContent = text;
+  const railNode = document.querySelector(`#rail-${agent} .rail-spot`);
+  if (railNode) railNode.textContent = text;
 }
 
 function handleDeskEvent(ev) {
@@ -177,14 +322,19 @@ function handleDeskEvent(ev) {
     d.calls += 1;
     if (ev.tool === "file_flag") d.flags += 1;
     const a = ev.args || {};
+    if (ev.tool === "read_scene") moveDeskDot(ev.agent, a.scene_id);
+    else if (ev.tool === "research") rippleScene(ev.agent, trim(a.objective, 80));
+    else if (ev.tool === "file_flag") dropPin(ev.agent, a.severity || "FYI", a.category, a.scene_ids);
     if (ev.tool === "read_scene") setDeskSpotlight(ev.agent, `Now reading ${sceneLabel(a.scene_id)}`);
     else if (ev.tool === "research") setDeskSpotlight(ev.agent, `Researching: ${trim(a.objective, 60)}`);
     else if (ev.tool === "query_precedent") setDeskSpotlight(ev.agent, "Consulting released-film comparables…");
     else if (ev.tool === "file_flag") setDeskSpotlight(ev.agent, `Filed ${a.severity || ""} — ${prettyCat(a.category)}`);
   }
+  if (ev.type === "tool_result" && ev.tool === "file_flag") assignPinId(ev.agent, ev.brief);
   if (ev.type === "text" && /^done\b/i.test(ev.text || "")) {
     d.done = true;
     setDeskSpotlight(ev.agent, "Desk closed.");
+    document.querySelectorAll(`.rt-dot.dot-${ev.agent}`).forEach((n) => n.remove());
   }
   if (ev.type === "text" && /^done\b/i.test(ev.text || "")) d.done = true;
   setDeskStatus(ev.agent);
@@ -215,12 +365,14 @@ function maybeStudioEvent(ev) {
   if (ev.type === "text" && (ev.text || "").startsWith("⚖ ")) {
     const [fid, cat, sev, verdict, reason] = ev.text.slice(2).split("|");
     studioCard(fid, cat, sev, verdict, reason);
+    pinVerdict(fid, verdict);
     return true;
   }
   if (ev.type === "tool_result" && ev.tool === "verify_flag") {
     const m = (ev.brief || "").match(/^(F\d+)\s*·\s*(\w+)\s*(?:—\s*(.*))?$/);
     if (m) {
       studioCard(m[1], "", "FYI", m[2], m[3] || "");
+      pinVerdict(m[1], m[2]);
       return true;
     }
   }
@@ -452,6 +604,14 @@ function startStream(url) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  $("detail-toggle")?.addEventListener("click", () => {
+    const on = document.body.classList.toggle("show-detail");
+    $("detail-toggle").textContent = on ? "Hide detail" : "Detail view";
+  });
+  $("follow-chip")?.addEventListener("click", () => {
+    rt.autoFollow = true;
+    $("follow-chip").classList.add("hidden");
+  });
   $("studio-toggle")?.addEventListener("click", () => {
     const body = $("studio-body");
     const hidden = body.classList.toggle("hidden");
