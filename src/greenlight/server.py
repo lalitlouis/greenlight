@@ -106,6 +106,18 @@ app.mount("/static/v-{version}", StaticFiles(directory=str(STATIC_DIR)), name="s
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 
+@app.get("/robots.txt", include_in_schema=False)
+async def robots() -> FileResponse:
+    headers = {"Cache-Control": "public, max-age=3600"}
+    return FileResponse(STATIC_DIR / "robots.txt", media_type="text/plain", headers=headers)
+
+
+@app.get("/sitemap.xml", include_in_schema=False)
+async def sitemap() -> FileResponse:
+    headers = {"Cache-Control": "public, max-age=3600"}
+    return FileResponse(STATIC_DIR / "sitemap.xml", media_type="application/xml", headers=headers)
+
+
 @app.get("/favicon.ico", include_in_schema=False)
 async def favicon() -> FileResponse:
     # Browsers ask for this at the root regardless of <link> tags.

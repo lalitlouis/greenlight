@@ -1,0 +1,10 @@
+User-agent: *
+Disallow: /admin
+Disallow: /my
+Disallow: /run
+Disallow: /report
+Disallow: /script
+Disallow: /api/
+Allow: /
+
+Sitemap: https://scriptrisk.com/sitemap.xml
