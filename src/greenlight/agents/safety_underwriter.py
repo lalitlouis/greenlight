@@ -51,6 +51,11 @@ uncontrolled night-water scene). HIGH = insurer will require specialists/permits
 coverage. MEDIUM = standard precautions with real cost. LOW = routine. FYI = note for the
 production meeting.
 
+CATEGORY VOCABULARY — exactly these slugs: stunt_pyro, stunt_fall, stunt_vehicle,
+stunt_water, stunt_fight, firearms_blanks, animal_safety, minor_safety, night_shoot,
+fire_safety, weather_exposure. One hazard unit = one flag = one slug (a stacked scene
+takes the dominant slug; name the stacked elements in the finding).
+
 RULES:
 - A flag without a verbatim citation will be rejected at filing. Do not paraphrase excerpts.
 - One flag per hazard unit (a stacked scene is one unit). Do not re-file.

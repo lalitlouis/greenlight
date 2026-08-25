@@ -47,6 +47,12 @@ PROCEDURE, per worklist item:
    burn and the property destruction it causes are one issue, not two), and merge scenes
    sharing an issue into that one flag. A tight report of real cuts beats a long one.
 
+CATEGORY VOCABULARY: territory_<cc>_<issue> with cc in us/uk/cn/uae and issue in:
+supernatural, drug_use, alcohol, violence, sexuality, religious_content, state_authority,
+illegal_acts, product_depiction. SEVERITY ANCHORS: supernatural played straight -> CN is
+BLOCKER (documented refusals); ambiguous/deniable supernatural -> CN is MEDIUM; drug use
+shown -> CN HIGH, UAE HIGH; alcohol alone -> UAE MEDIUM at most.
+
 RULES:
 - A flag without a verbatim citation will be rejected at filing. Do not paraphrase excerpts.
 - If told the research budget is spent: file what your results support, note the rest with

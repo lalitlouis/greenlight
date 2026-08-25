@@ -17,7 +17,7 @@ RETRY = RetryConfig(max_attempts=6, initial_delay=10, max_delay=60, backoff_fact
 
 # Desks are research clerks, not novelists. Low temperature narrows run-to-run
 # variance in worklist coverage — the eval harness measures exactly that.
-GEN_CONFIG = types.GenerateContentConfig(temperature=0.2)
+GEN_CONFIG = types.GenerateContentConfig(temperature=0.0)
 
 
 COVERAGE_RULE = """

@@ -87,6 +87,34 @@ agent = LlmAgent(
 )
 
 
+def merge_exact_duplicates(flags: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Code-level dedupe BEFORE the model sees anything: same desk + same
+    category + overlapping scenes is one finding, full stop. Keeps the higher
+    severity, unions scenes and citations. (A run shipped two identical
+    territory_cn_supernatural flags — the model adjudicator is a judgment
+    layer, not a uniqueness guarantee; this is.)"""
+    sev_rank = {"BLOCKER": 0, "HIGH": 1, "MEDIUM": 2, "LOW": 3, "FYI": 4}
+    kept: list[dict[str, Any]] = []
+    for flag in flags:
+        merged = False
+        for existing in kept:
+            if (
+                existing["agent"] == flag["agent"]
+                and existing["category"] == flag["category"]
+                and set(existing["scene_ids"]) & set(flag["scene_ids"])
+            ):
+                existing["scene_ids"] = sorted(set(existing["scene_ids"]) | set(flag["scene_ids"]))
+                seen = {c["excerpt"] for c in existing["citations"]}
+                existing["citations"] += [c for c in flag["citations"] if c["excerpt"] not in seen]
+                if sev_rank[flag["severity"]] < sev_rank[existing["severity"]]:
+                    existing["severity"] = flag["severity"]
+                merged = True
+                break
+        if not merged:
+            kept.append(dict(flag))
+    return kept
+
+
 def apply_plan(
     flags: list[dict[str, Any]], plan: dict[str, Any]
 ) -> tuple[list[dict[str, Any]], list[str]]:

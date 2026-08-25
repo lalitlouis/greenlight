@@ -214,6 +214,7 @@ async def run(
         kept, rejected = state["verified_flags"], state.get("rejected_flags", [])
     else:  # verification did not run (aborted run) — fall back, fail open
         kept, rejected = apply_verdicts(filed, verdicts)
+    kept = adjudicator.merge_exact_duplicates(kept)
     adjudication_notes: list[str] = []
     if plan := state.get("adjudication"):
         kept, adjudication_notes = adjudicator.apply_plan(kept, plan)

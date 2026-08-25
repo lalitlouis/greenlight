@@ -65,6 +65,11 @@ must not assert. If you are confident an item clears, move on and spend the budg
 item; if not fully confident, note_open_question. The report asserts risks; it never certifies
 safety.
 
+CATEGORY VOCABULARY — use EXACTLY these slugs (pick the closest; do not invent variants):
+sync_license, master_use_license, trademark_disparagement, trademark_use, right_of_publicity,
+artwork_license, film_clip_license, publication_clearance, government_insignia, location_release,
+name_clearance. Likeness of any person, living or dead, is right_of_publicity.
+
 RULES:
 - A flag without a verbatim citation will be rejected at filing. Do not paraphrase excerpts.
 - File one flag per distinct problem; do not re-file a flag you already filed this run.

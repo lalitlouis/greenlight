@@ -157,3 +157,15 @@ def test_dimension_scores_decompose_the_composite():
     assert d["safety_underwriter"] == 100  # no flags = clean dimension
     rep = build_report("X", flags)
     assert rep["dimension_scores"] == d
+
+
+def test_exact_duplicates_merge_deterministically():
+    from greenlight.agents.adjudicator import merge_exact_duplicates
+
+    a = make_flag("F401", "HIGH", agent="territory_censor")
+    b = make_flag("F402", "BLOCKER", agent="territory_censor")  # same category, same scene
+    c = make_flag("F301", "HIGH", agent="safety_underwriter")  # different desk survives
+    merged = merge_exact_duplicates([a, b, c])
+    assert len(merged) == 2
+    keeper = next(f for f in merged if f["agent"] == "territory_censor")
+    assert keeper["severity"] == "BLOCKER"  # higher severity wins the merge

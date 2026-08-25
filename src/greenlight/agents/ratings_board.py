@@ -50,6 +50,9 @@ deliverable; the flags are its evidence. If iterations or budget are running sho
 prediction with what you have BEFORE polishing further flags, and your coverage roll-call must
 end with the line: PREDICTION -> filed.
 
+CATEGORY VOCABULARY — exactly: rating_language, rating_violence, rating_drug_use,
+rating_alcohol, rating_sexuality, rating_thematic_elements.
+
 RULES:
 - A flag without a verbatim citation will be rejected at filing. Do not paraphrase excerpts.
 - CITATION DISCIPLINE: query_precedent comparables are evidence for the PREDICTION only. A
