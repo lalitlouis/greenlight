@@ -79,8 +79,10 @@ function renderFix(container, fix) {
     head.appendChild(el("span", "fix-rationale", patch.rationale || ""));
     card.appendChild(head);
     const diff = wordDiff(patch.find, patch.replace);
-    card.appendChild(diffBox("Before", diff, "del"));
-    card.appendChild(diffBox("After", diff, "add"));
+    const cols = el("div", "fix-cols");
+    cols.appendChild(diffBox("As written", diff, "del"));
+    cols.appendChild(diffBox("Proposed rewrite", diff, "add"));
+    card.appendChild(cols);
     const copy = el("button", "cite-toggle", "Copy the new text");
     copy.type = "button";
     copy.addEventListener("click", async () => {
@@ -219,6 +221,7 @@ function flagRow(f, opts) {
 function renderPrediction(root, pred) {
   if (!pred || !(pred.comparables || []).length) return;
   const sec = el("div", "section-head");
+  sec.id = "sec-rating";
   sec.appendChild(el("h2", null, "Rating prediction"));
   sec.appendChild(el("p", "lede", "Evidence, not opinion — your nearest comparables from 2,487 released films (corpus updated Aug 2026)."));
   root.appendChild(sec);
@@ -421,6 +424,56 @@ function renderWhatIf(out, d, pred, baseTarget, total, nCuts) {
   out.appendChild(row);
 }
 
+/* Sticky "on this page" navigator: the whole report visible from the top.
+   Built from what this record actually contains — no dead links. */
+function buildReportNav(record, rep) {
+  const cited = (record.flags || []).filter((f) => (f.citations || []).length > 0);
+  const oqCount = Object.values(record.open_questions || {}).flat().length;
+  const entries = [
+    rep.est_clearance_cost_usd ? ["sec-cost", "Cost exposure", null] : null,
+    rep.rating_prediction?.predicted ? ["sec-rating", "Rating + simulator", null] : null,
+    ["sec-findings", "Findings", cited.length],
+    (record.rejected_flags || []).length ? ["sec-rejected", "Rejected", record.rejected_flags.length] : null,
+    oqCount ? ["sec-questions", "Open questions", oqCount] : null,
+    (record.adjudication_notes || []).length ? ["sec-adjudication", "Adjudication", null] : null,
+  ].filter(Boolean);
+
+  const nav = el("nav", "report-nav");
+  nav.setAttribute("aria-label", "Report sections");
+  nav.appendChild(el("span", "rn-label", "In this report"));
+  const chips = [];
+  for (const [id, label, count] of entries) {
+    const a = el("a", "rn-chip");
+    a.href = "#" + id;
+    a.appendChild(document.createTextNode(label));
+    if (count != null) a.appendChild(el("b", null, String(count)));
+    a.addEventListener("click", (e) => {
+      e.preventDefault();
+      const node = $(id);
+      if (!node) return;
+      node.scrollIntoView({ behavior: "smooth", block: "start" });
+      history.replaceState(null, "", "#" + id);
+    });
+    chips.push([a, id]);
+    nav.appendChild(a);
+  }
+  // active highlight follows the scroll
+  let raf = 0;
+  window.addEventListener("scroll", () => {
+    if (raf) return;
+    raf = requestAnimationFrame(() => {
+      raf = 0;
+      let current = null;
+      for (const [, id] of chips) {
+        const node = $(id);
+        if (node && node.getBoundingClientRect().top < 140) current = id;
+      }
+      for (const [a, id] of chips) a.classList.toggle("active", id === current);
+    });
+  }, { passive: true });
+  return nav;
+}
+
 function renderReport(record) {
   const root = $("report");
   root.textContent = "";
@@ -516,10 +569,24 @@ function renderReport(record) {
     const cell = el("div");
     cell.appendChild(el("b", "sev-" + sev, String(counts[sev] || 0)));
     cell.appendChild(el("span", null, sev));
+    if (counts[sev]) {
+      cell.classList.add("tally-link");
+      cell.title = "Jump to the first " + sev + " finding";
+      cell.addEventListener("click", () => {
+        const target = (record.flags || []).find((f) => f.severity === sev);
+        const node = target && $("flag-" + target.flag_id);
+        if (!node) return;
+        node.querySelector(".expand")?.classList.remove("hidden");
+        node.scrollIntoView({ behavior: "smooth", block: "center" });
+        node.classList.add("hilite");
+        setTimeout(() => node.classList.remove("hilite"), 2200);
+      });
+    }
     tally.appendChild(cell);
   }
   head.appendChild(tally);
   root.appendChild(head);
+  root.appendChild(buildReportNav(record, rep));
 
   const drivers = (record.flags || [])
     .filter((f) => f.remedy?.est_cost_usd)
@@ -527,6 +594,7 @@ function renderReport(record) {
     .slice(0, 3);
   if (drivers.length && rep.est_clearance_cost_usd) {
     const card = el("div", "card drivers-card");
+    card.id = "sec-cost";
     const h = el("div", "drivers-head");
     h.appendChild(el("h3", null, "Estimated clearance exposure"));
     h.appendChild(el("b", "drivers-total", money(rep.est_clearance_cost_usd)));
@@ -556,6 +624,7 @@ function renderReport(record) {
 
   const cited = (record.flags || []).filter((f) => (f.citations || []).length > 0);
   const secFlags = el("div", "section-head");
+  secFlags.id = "sec-findings";
   secFlags.appendChild(el("h2", null, `Findings — ${cited.length}, every one cited`));
   root.appendChild(secFlags);
   const flags = el("div", "flags");
@@ -565,6 +634,7 @@ function renderReport(record) {
   const rejectedFlags = record.rejected_flags || [];
   if (rejectedFlags.length) {
     const sec = el("div", "section-head");
+    sec.id = "sec-rejected";
     sec.appendChild(el("h2", null, `Rejected in verification — ${rejectedFlags.length}`));
     const rate = Math.round(
       (100 * rejectedFlags.length) / Math.max(1, rejectedFlags.length + (record.flags || []).length)
@@ -587,6 +657,7 @@ function renderReport(record) {
   const oqItems = Object.entries(oq).flatMap(([desk, qs]) => qs.map((q) => [desk, q]));
   if (oqItems.length) {
     const sec = el("div", "section-head");
+    sec.id = "sec-questions";
     sec.appendChild(el("h2", null, `Open questions — ${oqItems.length} honest unknowns`));
     root.appendChild(sec);
     const ul = el("ul", "plain-list");
@@ -602,6 +673,7 @@ function renderReport(record) {
   const notes = record.adjudication_notes || [];
   if (notes.length) {
     const sec = el("div", "section-head");
+    sec.id = "sec-adjudication";
     sec.appendChild(el("h2", null, "Adjudication — merges and conflict resolutions"));
     root.appendChild(sec);
     const ul = el("ul", "plain-list");

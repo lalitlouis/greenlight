@@ -1015,3 +1015,18 @@ body.show-detail .detail-only { display: grid; margin-top: 12px; }
 .wi-bar { height: 6px; border-radius: 980px; background: var(--band); overflow: hidden; }
 .wi-fill { height: 100%; width: 4%; border-radius: 980px; background: linear-gradient(90deg, var(--green), #34d399); transition: width 0.25s ease; }
 .wi-note { margin: 12px 0 0; font-size: 12.5px; line-height: 1.55; color: var(--fyi); border-left: 3px solid var(--line-2); padding-left: 12px; }
+
+/* ---------- report sticky navigator + fix columns ---------- */
+.report-nav { position: sticky; top: 66px; z-index: 30; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; background: rgba(250, 247, 238, 0.92); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid var(--line); border-radius: 980px; padding: 8px 14px; margin: 18px 0 26px; }
+.rn-label { font-size: 11.5px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--fyi); margin-right: 4px; }
+.rn-chip { display: inline-flex; align-items: center; gap: 7px; font-size: 13.5px; font-weight: 550; color: var(--ink-2); text-decoration: none; border-radius: 980px; padding: 5px 13px; transition: background 0.15s ease, color 0.15s ease; }
+.rn-chip:hover { background: var(--band); color: var(--ink); }
+.rn-chip.active { background: var(--green); color: #fff; }
+.rn-chip b { font-size: 11.5px; font-weight: 750; background: rgba(0, 0, 0, 0.08); border-radius: 980px; padding: 1px 7px; }
+.rn-chip.active b { background: rgba(255, 255, 255, 0.22); }
+.tally-link { cursor: pointer; border-radius: 12px; transition: background 0.15s ease; }
+.tally-link:hover { background: var(--band); }
+#sec-cost, #sec-rating, #sec-findings, #sec-rejected, #sec-questions, #sec-adjudication { scroll-margin-top: 128px; }
+.fix-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+.fix-cols .diff-box { margin-bottom: 0; }
+@media (max-width: 760px) { .fix-cols { grid-template-columns: 1fr; } .report-nav { border-radius: 16px; top: 58px; } }
