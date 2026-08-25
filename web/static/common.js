@@ -213,7 +213,11 @@ function injectChrome() {
   cta.type = "button";
   cta.addEventListener("click", promptUpload);
   actions.appendChild(cta);
+  const authSlot = el("span", "auth-slot");
+  authSlot.id = "auth-slot";
+  actions.appendChild(authSlot);
   inner.appendChild(actions);
+  hydrateAuth();
 
   header.appendChild(inner);
   document.body.prepend(header);
@@ -278,6 +282,44 @@ function injectChrome() {
   fine.appendChild(el("p", null, "© 2026 SCRIPTRISK"));
   footer.appendChild(fine);
   document.body.appendChild(footer);
+}
+
+async function hydrateAuth() {
+  const slot = $("auth-slot");
+  if (!slot) return;
+  try {
+    const { configured, user } = await (await fetch("/api/auth/status")).json();
+    slot.textContent = "";
+    if (!configured) return; // sign-in simply isn't offered until it exists
+    if (!user) {
+      const a = el("a", "btn btn-secondary", "Sign in");
+      a.href = "/auth/login";
+      slot.appendChild(a);
+      return;
+    }
+    const me = el("a", "auth-me");
+    me.href = "/my";
+    me.title = user.email;
+    if (user.picture) {
+      const img = el("img", "auth-pic");
+      img.src = user.picture;
+      img.alt = "";
+      img.referrerPolicy = "no-referrer";
+      me.appendChild(img);
+    }
+    me.appendChild(el("span", null, "My reports"));
+    slot.appendChild(me);
+    const out = el("button", "auth-out", "Sign out");
+    out.type = "button";
+    out.title = "Sign out";
+    out.addEventListener("click", async () => {
+      await fetch("/auth/logout", { method: "POST" });
+      window.location.href = "/home";
+    });
+    slot.appendChild(out);
+  } catch {
+    /* nav works without auth */
+  }
 }
 
 document.addEventListener("DOMContentLoaded", injectChrome);

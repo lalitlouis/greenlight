@@ -25,11 +25,11 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from fastapi import FastAPI, HTTPException, UploadFile
-from fastapi.responses import FileResponse, StreamingResponse
+from fastapi import FastAPI, HTTPException, Request, UploadFile
+from fastapi.responses import FileResponse, JSONResponse, RedirectResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
-from greenlight import parser, storage
+from greenlight import auth, parser, storage
 from greenlight.pdf import screenplay_text
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -55,6 +55,7 @@ class RunHandle:
     source: str | None = None  # fountain text, for /api/script
     script_path: str | None = None
     record: dict[str, Any] | None = None
+    owner: str | None = None  # user sub when a signed-in user started it
     history: list[dict[str, Any]] = field(default_factory=list)
     subscribers: list[asyncio.Queue] = field(default_factory=list)
 
@@ -89,6 +90,7 @@ PAGES = {
     "/home": "home.html",
     "/writer": "writer.html",
     "/cases": "cases.html",
+    "/my": "my.html",
     "/how-it-works": "how-it-works.html",
     "/faq": "faq.html",
     "/contact": "contact.html",
@@ -109,6 +111,99 @@ for route, filename in PAGES.items():
     app.get(route)(_page(filename))
 
 
+# ---------------------------------------------------------------- auth
+
+
+def _current_user(request: Request) -> dict[str, Any] | None:
+    return auth.read_session(request.cookies.get(auth.SESSION_COOKIE))
+
+
+def _redirect_uri(request: Request) -> str:
+    proto = request.headers.get("x-forwarded-proto", request.url.scheme)
+    return f"{proto}://{request.headers.get('host', request.url.netloc)}/auth/callback"
+
+
+@app.get("/api/auth/status")
+async def auth_status(request: Request) -> dict[str, Any]:
+    user = _current_user(request)
+    return {
+        "configured": auth.configured(),
+        "user": {"email": user["email"], "name": user["name"], "picture": user.get("picture", "")}
+        if user
+        else None,
+    }
+
+
+@app.get("/auth/login")
+async def auth_login(request: Request) -> RedirectResponse:
+    if not auth.configured():
+        raise HTTPException(503, "Sign-in is not configured yet.")
+    return RedirectResponse(auth.login_url(_redirect_uri(request)))
+
+
+@app.get("/auth/callback")
+async def auth_callback(request: Request, code: str = "", state: str = "") -> RedirectResponse:
+    if not auth.configured() or not code or not auth.check_state(state):
+        raise HTTPException(400, "Sign-in failed — please try again.")
+    try:
+        user = await asyncio.to_thread(auth.exchange_code, code, _redirect_uri(request))
+    except Exception as e:
+        raise HTTPException(400, f"Sign-in failed: {type(e).__name__}") from e
+    resp = RedirectResponse("/home")
+    resp.set_cookie(
+        auth.SESSION_COOKIE,
+        auth.make_session(user),
+        max_age=auth.SESSION_TTL_S,
+        httponly=True,
+        secure=request.headers.get("x-forwarded-proto") == "https",
+        samesite="lax",
+    )
+    return resp
+
+
+@app.post("/auth/logout")
+async def auth_logout() -> dict[str, bool]:
+
+    resp = JSONResponse({"ok": True})
+    resp.delete_cookie(auth.SESSION_COOKIE)
+    return resp
+
+
+def _stub_from_record(run_id: str, kind: str, record: dict[str, Any]) -> dict[str, Any]:
+    rep = record.get("report") or {}
+    cov = record.get("coverage") or {}
+    return {
+        "id": run_id,
+        "kind": kind,
+        "title": record.get("script_title", run_id),
+        "generated_at": record.get("generated_at"),
+        "score": rep.get("greenlight_score"),
+        "verdict": cov.get("verdict"),
+        "flags": len(record.get("flags", [])),
+    }
+
+
+@app.get("/api/my/runs")
+async def my_runs(request: Request) -> list[dict[str, Any]]:
+    user = _current_user(request)
+    if user is None:
+        raise HTTPException(401, "Sign in to see your history.")
+    return await asyncio.to_thread(storage.list_user_runs, user["sub"])
+
+
+@app.delete("/api/my/runs/{run_id}")
+async def delete_my_run(run_id: str, request: Request) -> dict[str, bool]:
+    user = _current_user(request)
+    if user is None:
+        raise HTTPException(401, "Sign in first.")
+    ok = await asyncio.to_thread(storage.delete_user_run, user["sub"], run_id)
+    if not ok:
+        raise HTTPException(404, "Not one of your reports.")
+    RUNS.pop(run_id, None)
+    WRITER_RUNS.pop(run_id, None)
+    return {"ok": True}
+
+
 # ---------------------------------------------------------------- live runs
 
 
@@ -126,6 +221,13 @@ async def _run_live(handle: RunHandle, script_path: Path) -> None:
         handle.record = record
         handle.status = "error" if record.get("error") else "done"
         await asyncio.to_thread(storage.save_record, handle.run_id, record)
+        if handle.owner:
+            await asyncio.to_thread(
+                storage.save_user_run,
+                handle.owner,
+                handle.run_id,
+                _stub_from_record(handle.run_id, "clearance", record),
+            )
         if record.get("error"):
             handle.publish({"type": "error", "message": record["error"], "partial": True})
         handle.publish({"type": "result", "record": record})
@@ -138,7 +240,8 @@ async def _run_live(handle: RunHandle, script_path: Path) -> None:
 
 
 @app.post("/api/runs")
-async def create_run(screenplay: UploadFile) -> dict[str, str]:
+async def create_run(screenplay: UploadFile, request: Request) -> dict[str, str]:
+    owner = _current_user(request)
     source = screenplay_text(screenplay.filename or "", await screenplay.read())
     run_id = uuid.uuid4().hex[:12]
     upload_dir = RUNS_DIR / "uploads"
@@ -146,7 +249,13 @@ async def create_run(screenplay: UploadFile) -> dict[str, str]:
     path = upload_dir / f"{run_id}.fountain"
     path.write_text(source)
 
-    handle = RunHandle(run_id=run_id, mode="live", source=source, script_path=str(path))
+    handle = RunHandle(
+        run_id=run_id,
+        mode="live",
+        source=source,
+        script_path=str(path),
+        owner=owner["sub"] if owner else None,
+    )
     RUNS[run_id] = handle
     await asyncio.to_thread(storage.save_script, run_id, source)
     title = (screenplay.filename or "screenplay").rsplit(".", 1)[0]
@@ -382,7 +491,7 @@ async def replay(pace: float = 1.0, record: str = "") -> StreamingResponse:
 WRITER_RUNS: dict[str, dict[str, Any]] = {}  # id -> {"status", "record"}
 
 
-async def _run_writer(run_id: str, path: Path) -> None:
+async def _run_writer(run_id: str, path: Path, owner: str | None = None) -> None:
     def on_stage(name: str, info: dict[str, Any]) -> None:
         handle = WRITER_RUNS.get(run_id)
         if handle is not None:
@@ -395,6 +504,10 @@ async def _run_writer(run_id: str, path: Path) -> None:
 
         record = await writer_pipeline.run(path, on_stage=on_stage)
         await asyncio.to_thread(storage.save_record, run_id, record)
+        if owner:
+            await asyncio.to_thread(
+                storage.save_user_run, owner, run_id, _stub_from_record(run_id, "writer", record)
+            )
         WRITER_RUNS[run_id] = {
             "status": "error" if record.get("error") else "done",
             "record": record,
@@ -404,7 +517,8 @@ async def _run_writer(run_id: str, path: Path) -> None:
 
 
 @app.post("/api/writer")
-async def create_writer_run(screenplay: UploadFile) -> dict[str, str]:
+async def create_writer_run(screenplay: UploadFile, request: Request) -> dict[str, str]:
+    owner = _current_user(request)
     source = screenplay_text(screenplay.filename or "", await screenplay.read())
     run_id = "w" + uuid.uuid4().hex[:11]
     upload_dir = RUNS_DIR / "uploads"
@@ -412,7 +526,9 @@ async def create_writer_run(screenplay: UploadFile) -> dict[str, str]:
     path = upload_dir / f"{run_id}.fountain"
     path.write_text(source)
     WRITER_RUNS[run_id] = {"status": "running", "record": None, "stage": "upload", "stage_info": {}}
-    asyncio.get_running_loop().create_task(_run_writer(run_id, path))
+    asyncio.get_running_loop().create_task(
+        _run_writer(run_id, path, owner["sub"] if owner else None)
+    )
     return {"run_id": run_id}
 
 

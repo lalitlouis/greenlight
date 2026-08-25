@@ -715,3 +715,18 @@ a.step-card:hover { text-decoration: none; box-shadow: var(--shadow-lg); }
 .wr-stages li.active .ws-mark { border-color: var(--green); animation: pulse 1.3s ease-in-out infinite; }
 .wr-stages li.done .ws-mark { background: var(--green); border-color: var(--green); }
 .wr-stages li.done .ws-mark::after { content: "✓"; }
+
+/* auth + my reports */
+.auth-slot { display: flex; align-items: center; gap: 10px; }
+.auth-me { display: flex; align-items: center; gap: 8px; color: var(--ink); font-weight: 550; font-size: 14.5px; white-space: nowrap; }
+.auth-me:hover { text-decoration: none; color: var(--green-deep); }
+.auth-pic { width: 28px; height: 28px; border-radius: 50%; }
+.auth-out { border: 0; background: none; color: var(--ink-3); font-size: 13.5px; cursor: pointer; padding: 4px; }
+.auth-out:hover { color: var(--blocker); }
+.btn-danger { background: transparent; color: var(--blocker); border: 1px solid rgba(224, 52, 42, 0.4); }
+.btn-danger:hover { background: rgba(224, 52, 42, 0.07); }
+.my-row { display: flex; align-items: center; gap: 14px; padding: 20px 24px; margin-bottom: 14px; }
+.my-main { flex: 1; min-width: 0; }
+.my-title { font-family: var(--display); font-size: 21px; font-weight: 620; color: var(--ink); }
+.my-title:hover { color: var(--green-deep); text-decoration: none; }
+.my-meta { margin: 2px 0 0; font-size: 14px; color: var(--ink-3); }

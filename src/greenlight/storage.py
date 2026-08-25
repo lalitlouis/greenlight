@@ -62,3 +62,47 @@ def load_script(run_id: str) -> str | None:
         return blob.download_as_text()
     except Exception:
         return None
+
+
+# ---- per-user history: small stubs under users/{sub}/runs/ for cheap listing ----
+
+
+def save_user_run(sub: str, run_id: str, stub: dict[str, Any]) -> bool:
+    try:
+        _bucket().blob(f"users/{sub}/runs/{run_id}.json").upload_from_string(
+            json.dumps(stub), content_type="application/json"
+        )
+        return True
+    except Exception:
+        return False
+
+
+def list_user_runs(sub: str) -> list[dict[str, Any]]:
+    try:
+        out = []
+        for blob in _bucket().list_blobs(prefix=f"users/{sub}/runs/"):
+            try:
+                out.append(json.loads(blob.download_as_text()))
+            except Exception:
+                continue
+        out.sort(key=lambda r: r.get("generated_at") or "", reverse=True)
+        return out
+    except Exception:
+        return []
+
+
+def delete_user_run(sub: str, run_id: str) -> bool:
+    """Owner-scoped delete: the stub must live under this user's prefix, then the
+    record and script go too. Deleting someone else's run is structurally impossible."""
+    try:
+        stub = _bucket().blob(f"users/{sub}/runs/{run_id}.json")
+        if not stub.exists():
+            return False
+        stub.delete()
+        for path in (f"records/{run_id}.json", f"scripts/{run_id}.fountain"):
+            blob = _bucket().blob(path)
+            if blob.exists():
+                blob.delete()
+        return True
+    except Exception:
+        return False
