@@ -67,6 +67,7 @@ class RunHandle:
     script_path: str | None = None
     record: dict[str, Any] | None = None
     owner: str | None = None  # user sub when a signed-in user started it
+    owner_info: dict[str, Any] | None = None
     history: list[dict[str, Any]] = field(default_factory=list)
     subscribers: list[asyncio.Queue] = field(default_factory=list)
 
@@ -180,11 +181,18 @@ CLIENT_LOG_PER_MIN = 30
 _metrics = {"started_at": _time_module.time(), "runs": 0, "writer_runs": 0, "errors": 0, "fixes": 0}
 
 
+from collections import deque  # noqa: E402
+
+RECENT_LOGS: deque = deque(maxlen=300)
+
+
 def _log(kind: str, **fields: Any) -> None:
     """One JSON line per event on stdout — Cloud Run ships stdout to Cloud
     Logging automatically, so this IS the logging system, no agent needed."""
     with contextlib.suppress(Exception):
-        logger.info(json.dumps({"kind": kind, **fields}, default=str))
+        entry = {"ts": _time_module.strftime("%H:%M:%S"), "kind": kind, **fields}
+        RECENT_LOGS.append(entry)
+        logger.info(json.dumps(entry, default=str))
 
 
 @app.middleware("http")
@@ -301,6 +309,7 @@ async def auth_status(request: Request) -> dict[str, Any]:
     user = _current_user(request)
     return {
         "configured": auth.configured(),
+        "is_admin": auth.is_admin(user),
         "user": {"email": user["email"], "name": user["name"], "picture": user.get("picture", "")}
         if user
         else None,
@@ -342,10 +351,14 @@ async def auth_logout() -> dict[str, bool]:
     return resp
 
 
-def _stub_from_record(run_id: str, kind: str, record: dict[str, Any]) -> dict[str, Any]:
+def _stub_from_record(
+    run_id: str, kind: str, record: dict[str, Any], who: dict[str, Any] | None = None
+) -> dict[str, Any]:
     rep = record.get("report") or {}
     cov = record.get("coverage") or {}
     return {
+        "owner_email": (who or {}).get("email", ""),
+        "owner_name": (who or {}).get("name", ""),
         "id": run_id,
         "kind": kind,
         "title": record.get("script_title", run_id),
@@ -400,7 +413,7 @@ async def _run_live(handle: RunHandle, script_path: Path) -> None:
                 storage.save_user_run,
                 handle.owner,
                 handle.run_id,
-                _stub_from_record(handle.run_id, "clearance", record),
+                _stub_from_record(handle.run_id, "clearance", record, handle.owner_info),
             )
         if record.get("error"):
             handle.publish({"type": "error", "message": record["error"], "partial": True})
@@ -431,6 +444,7 @@ async def create_run(screenplay: UploadFile, request: Request) -> dict[str, str]
         source=source,
         script_path=str(path),
         owner=owner["sub"] if owner else None,
+        owner_info=owner,
     )
     RUNS[run_id] = handle
     await asyncio.to_thread(storage.save_script, run_id, source)
@@ -670,7 +684,7 @@ async def replay(pace: float = 1.0, record: str = "") -> StreamingResponse:
 WRITER_RUNS: dict[str, dict[str, Any]] = {}  # id -> {"status", "record"}
 
 
-async def _run_writer(run_id: str, path: Path, owner: str | None = None) -> None:
+async def _run_writer(run_id: str, path: Path, owner: dict[str, Any] | None = None) -> None:
     def on_stage(name: str, info: dict[str, Any]) -> None:
         handle = WRITER_RUNS.get(run_id)
         if handle is not None:
@@ -685,7 +699,10 @@ async def _run_writer(run_id: str, path: Path, owner: str | None = None) -> None
         await asyncio.to_thread(storage.save_record, run_id, record)
         if owner:
             await asyncio.to_thread(
-                storage.save_user_run, owner, run_id, _stub_from_record(run_id, "writer", record)
+                storage.save_user_run,
+                owner["sub"],
+                run_id,
+                _stub_from_record(run_id, "writer", record, owner),
             )
         WRITER_RUNS[run_id] = {
             "status": "error" if record.get("error") else "done",
@@ -709,9 +726,7 @@ async def create_writer_run(screenplay: UploadFile, request: Request) -> dict[st
     _metrics["writer_runs"] += 1
     _log("writer_started", run_id=run_id, owner=bool(owner))
     WRITER_RUNS[run_id] = {"status": "running", "record": None, "stage": "upload", "stage_info": {}}
-    asyncio.get_running_loop().create_task(
-        _run_writer(run_id, path, owner["sub"] if owner else None)
-    )
+    asyncio.get_running_loop().create_task(_run_writer(run_id, path, owner))
     return {"run_id": run_id}
 
 
@@ -769,6 +784,72 @@ async def list_cases() -> list[dict[str, Any]]:
         )
     out.sort(key=lambda c: c.get("year") or 0)
     return out
+
+
+# ---------------------------------------------------------------- admin
+
+
+def _require_admin(request: Request) -> dict[str, Any]:
+    user = _current_user(request)
+    if not auth.is_admin(user):
+        # 404, not 403: the admin surface shouldn't advertise its existence.
+        raise HTTPException(404, "Not found")
+    return user
+
+
+@app.get("/admin")
+async def admin_page(request: Request) -> HTMLResponse:
+    user = _current_user(request)
+    if user is None and auth.configured():
+        return RedirectResponse("/auth/login")
+    _require_admin(request)
+    html = (STATIC_DIR / "admin.html").read_text()
+    html = html.replace('href="/static/', f'href="/static/v-{ASSET_VERSION}/')
+    html = html.replace('src="/static/', f'src="/static/v-{ASSET_VERSION}/')
+    return HTMLResponse(html)
+
+
+@app.get("/api/admin/overview")
+async def admin_overview(request: Request) -> dict[str, Any]:
+    _require_admin(request)
+    live_runs = [
+        {"id": rid, "status": h.status, "mode": h.mode, "owner": bool(h.owner)}
+        for rid, h in RUNS.items()
+        if h.mode == "live"
+    ]
+    writer_live = [
+        {"id": rid, "status": h.get("status"), "stage": h.get("stage")}
+        for rid, h in WRITER_RUNS.items()
+    ]
+
+    def _roster() -> list[dict[str, Any]]:
+        users = []
+        for sub in storage.list_user_subs()[:100]:
+            stubs = storage.list_user_runs(sub)
+            latest = stubs[0] if stubs else {}
+            users.append(
+                {
+                    "sub": sub[:10] + "…",
+                    "email": latest.get("owner_email", ""),
+                    "name": latest.get("owner_name", ""),
+                    "runs": len(stubs),
+                    "latest_title": latest.get("title", ""),
+                    "latest_at": latest.get("generated_at", ""),
+                }
+            )
+        users.sort(key=lambda u: u.get("latest_at") or "", reverse=True)
+        return users
+
+    return {
+        "metrics": {
+            **_metrics,
+            "uptime_s": round(_time_module.time() - _metrics["started_at"]),
+            "asset_version": ASSET_VERSION,
+        },
+        "live": {"clearance": live_runs, "writer": writer_live},
+        "logs": list(RECENT_LOGS)[-150:][::-1],
+        "users": await asyncio.to_thread(_roster),
+    }
 
 
 # ---------------------------------------------------------------- client telemetry

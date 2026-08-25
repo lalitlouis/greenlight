@@ -39,3 +39,13 @@ def test_unconfigured_status(monkeypatch):
     monkeypatch.delenv("SESSION_SECRET", raising=False)
     importlib.reload(auth_module)
     assert not auth_module.configured()
+
+
+def test_admin_allowlist(monkeypatch):
+    monkeypatch.setenv("ADMIN_EMAILS", "boss@example.com, second@example.com")
+    import importlib
+
+    importlib.reload(auth_module)
+    assert auth_module.is_admin({"email": "Boss@Example.com"})
+    assert not auth_module.is_admin({"email": "rando@example.com"})
+    assert not auth_module.is_admin(None)

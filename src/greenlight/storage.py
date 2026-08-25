@@ -11,6 +11,7 @@ import json
 import os
 from typing import Any
 
+_USER_PATH_PARTS = 3  # users/{sub}/runs...
 BUCKET = os.getenv("GREENLIGHT_BUCKET", "greenlight-clearance-2026-staging")
 
 _cache: dict = {}
@@ -89,6 +90,28 @@ def list_user_runs(sub: str) -> list[dict[str, Any]]:
         return out
     except Exception:
         return []
+
+
+def list_user_subs() -> list[str]:
+    """Distinct user ids that own at least one run (users/{sub}/... prefixes)."""
+    try:
+        it = _cache_client().list_blobs(BUCKET, prefix="users/", delimiter=None)
+        subs = set()
+        for blob in it:
+            parts = blob.name.split("/")
+            if len(parts) >= _USER_PATH_PARTS:
+                subs.add(parts[1])
+        return sorted(subs)
+    except Exception:
+        return []
+
+
+def _cache_client():
+    if "client" not in _cache:
+        from google.cloud import storage as gcs
+
+        _cache["client"] = gcs.Client()
+    return _cache["client"]
 
 
 def delete_user_run(sub: str, run_id: str) -> bool:

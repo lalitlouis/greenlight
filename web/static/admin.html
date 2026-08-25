@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin — ScriptRisk</title>
+<link rel="stylesheet" href="/static/vendor/fonts/fonts.css">
+<link rel="stylesheet" href="/static/site.css">
+<script defer src="/static/common.js"></script>
+<script defer src="/static/admin.js"></script>
+</head>
+<body>
+<main>
+  <div class="container">
+    <div class="page-head">
+      <span class="kicker">Admin</span>
+      <h1>Operations</h1>
+      <p class="lede" id="adm-sub">Live pulse, activity log, and users. Refreshes every 10 seconds.</p>
+    </div>
+    <div class="counter-strip" id="adm-pulse" style="margin-top: 0;"></div>
+    <div class="section-head"><h2>Running now</h2></div>
+    <div id="adm-live" class="card wr-card" style="padding: 20px 26px;"></div>
+    <div class="section-head"><h2>Users</h2></div>
+    <div class="compare-scroll"><table class="compare-table" id="adm-users"></table></div>
+    <div class="section-head"><h2>Activity log</h2><p class="lede">Server events and browser beacons, newest first.</p></div>
+    <div class="compare-scroll"><table class="compare-table" id="adm-logs"></table></div>
+  </div>
+</main>
+</body>
+</html>

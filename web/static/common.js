@@ -297,7 +297,8 @@ async function hydrateAuth() {
   const slot = $("auth-slot");
   if (!slot) return;
   try {
-    const { configured, user } = await (await fetch("/api/auth/status")).json();
+    const { configured, user, is_admin } = await (await fetch("/api/auth/status")).json();
+    window.__isAdmin = is_admin;
     slot.textContent = "";
     if (!configured) return; // sign-in simply isn't offered until it exists
     if (!user) {
@@ -305,6 +306,11 @@ async function hydrateAuth() {
       a.href = "/auth/login";
       slot.appendChild(a);
       return;
+    }
+    if (arguments.length === 0 && window.__isAdmin) {
+      const adm = el("a", "auth-me", "Admin");
+      adm.href = "/admin";
+      slot.appendChild(adm);
     }
     const me = el("a", "auth-me");
     me.href = "/my";

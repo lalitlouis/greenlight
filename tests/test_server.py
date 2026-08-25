@@ -237,3 +237,10 @@ def test_fix_rejects_case_studies_and_unknown_flags():
 def test_replay_404s_cleanly_on_unknown_record():
     res = client.get("/api/replay?pace=0&record=doesnotexist123")
     assert res.status_code == 404
+
+
+def test_admin_surface_hidden_from_anonymous():
+    assert client.get("/api/admin/overview").status_code == 404
+    # /admin redirects to sign-in when auth is configured, 404s when not
+    res = client.get("/admin", follow_redirects=False)
+    assert res.status_code in (404, 307)

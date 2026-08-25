@@ -29,6 +29,17 @@ AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth"
 TOKEN_URL = "https://oauth2.googleapis.com/token"
 
 
+ADMIN_EMAILS = {
+    e.strip().lower()
+    for e in os.getenv("ADMIN_EMAILS", "lalitlouis@gmail.com").split(",")
+    if e.strip()
+}
+
+
+def is_admin(user: dict[str, Any] | None) -> bool:
+    return bool(user and user.get("email", "").lower() in ADMIN_EMAILS)
+
+
 def configured() -> bool:
     return bool(CLIENT_ID and CLIENT_SECRET and SESSION_SECRET)
 
