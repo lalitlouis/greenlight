@@ -381,10 +381,16 @@ WRITER_RUNS: dict[str, dict[str, Any]] = {}  # id -> {"status", "record"}
 
 
 async def _run_writer(run_id: str, path: Path) -> None:
+    def on_stage(name: str, info: dict[str, Any]) -> None:
+        handle = WRITER_RUNS.get(run_id)
+        if handle is not None:
+            handle["stage"] = name
+            handle["stage_info"] = info
+
     try:
         from greenlight.writer import pipeline as writer_pipeline
 
-        record = await writer_pipeline.run(path)
+        record = await writer_pipeline.run(path, on_stage=on_stage)
         WRITER_RUNS[run_id] = {
             "status": "error" if record.get("error") else "done",
             "record": record,
@@ -401,7 +407,7 @@ async def create_writer_run(screenplay: UploadFile) -> dict[str, str]:
     upload_dir.mkdir(parents=True, exist_ok=True)
     path = upload_dir / f"{run_id}.fountain"
     path.write_text(source)
-    WRITER_RUNS[run_id] = {"status": "running", "record": None}
+    WRITER_RUNS[run_id] = {"status": "running", "record": None, "stage": "upload", "stage_info": {}}
     asyncio.get_running_loop().create_task(_run_writer(run_id, path))
     return {"run_id": run_id}
 

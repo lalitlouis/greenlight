@@ -77,12 +77,21 @@ def build_root_agent() -> SequentialAgent:
     return SequentialAgent(name="writer_pipeline", sub_agents=[room])
 
 
-async def run(script_path: str | Path) -> dict[str, Any]:
+async def run(script_path: str | Path, on_stage: Any = None) -> dict[str, Any]:
+    """on_stage(name, info) fires at real checkpoints — the page's progress is
+    truth, not a timer: parsed -> format_done -> desks -> comps -> (caller: done)."""
+
+    def stage(name: str, **info: Any) -> None:
+        if on_stage is not None:
+            on_stage(name, info)
+
     source = Path(script_path).read_text()
     meta, scenes = parser.parse_fountain(source)
     title = meta.get("title", Path(script_path).stem)
+    stage("parsed", title=title, scenes=len(scenes), pages=scenes[-1]["page"] if scenes else 0)
 
     fmt = format_report(meta, scenes, source)
+    stage("format_done", passes=fmt["counts"]["PASS"], warns=fmt["counts"]["WARN"])
 
     runner = InMemoryRunner(agent=build_root_agent(), app_name=APP_NAME)
     session = await runner.session_service.create_session(
@@ -90,6 +99,7 @@ async def run(script_path: str | Path) -> dict[str, Any]:
         user_id=USER_ID,
         state={"script_annotated": parser.annotated_script(source, scenes)},
     )
+    stage("desks")
     message = types.Content(role="user", parts=[types.Part(text="Read the screenplay.")])
     t0 = time.time()
     error: str | None = None
@@ -106,6 +116,7 @@ async def run(script_path: str | Path) -> dict[str, Any]:
     )
     coverage = final.state.get("coverage")
     pitch = final.state.get("pitch")
+    stage("comps")
     if pitch and pitch.get("one_page_synopsis"):
         pitch["comps"] = _fetch_comps(pitch["one_page_synopsis"])
 

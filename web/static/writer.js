@@ -3,7 +3,7 @@
 
 "use strict";
 
-const POLL_MS = 3000;
+const POLL_MS = 1500;
 
 async function uploadForWriter(file) {
   showUploadOverlay(file);
@@ -20,41 +20,66 @@ async function uploadForWriter(file) {
 
 let progressStart = null;
 let progressTimer = null;
-const WR_EXPECTED_S = 80; // typical room read; the bar eases toward 92% and waits
+let deskStageStart = null;
+const DESK_STAGE_S = 55; // typical read; the bar eases across this stage's span only
+
+// Real checkpoints from the server; percent is anchored to truth at each stage.
+const STAGE_PCT = { upload: 4, parsed: 12, format_done: 18, desks: 20, comps: 88, done: 100 };
+const STAGE_ORDER = ["upload", "parsed", "format_done", "desks", "comps"];
 
 function showProgress() {
   $("writer-intake").classList.add("hidden");
   $("writer-progress").classList.remove("hidden");
   progressStart = Date.now();
   clearInterval(progressTimer);
-  progressTimer = setInterval(() => {
-    const s = (Date.now() - progressStart) / 1000;
-    const pct = Math.min(92, (s / WR_EXPECTED_S) * 100);
-    const fill = $("wr-bar-fill");
-    if (fill) fill.style.width = pct.toFixed(1) + "%";
-    const elapsed = $("wr-elapsed");
-    if (elapsed) elapsed.textContent = `${Math.floor(s)}s`;
-    const steps = [
-      [0, "Format check complete — it runs instantly."],
-      [8, "Coverage desk is reading your script…"],
-      [25, "Pitch desk is drafting loglines and the synopsis…"],
-      [45, "Matching your story against 2,487 released films…"],
-      [70, "Almost there — assembling the three reports…"],
-    ];
-    const line = steps.filter(([at]) => s >= at).pop();
-    const status = $("wr-progress-line");
-    if (status && line) status.textContent = line[1];
-  }, 1000);
+  progressTimer = setInterval(renderProgress, 1000);
 }
 
-let pollMisses = 0;
-const POLL_MAX_MISSES = 5;
+let currentStage = "upload";
+let currentInfo = {};
 
-function progressFailed(message) {
-  clearInterval(progressTimer);
-  $("writer-progress").classList.add("hidden");
-  $("writer-intake").classList.remove("hidden");
-  toast("Writer's Room failed: " + message, true);
+function setStage(stage, info) {
+  if (STAGE_ORDER.indexOf(stage) < STAGE_ORDER.indexOf(currentStage)) return;
+  if (stage === "desks" && currentStage !== "desks") deskStageStart = Date.now();
+  currentStage = stage;
+  currentInfo = info || {};
+
+  const texts = {
+    upload: ["Received."],
+    parsed: [
+      `${currentInfo.title || "Screenplay"} — ${currentInfo.scenes ?? "?"} scenes, ~${currentInfo.pages ?? "?"} pages.`,
+    ],
+    format_done: [
+      `${currentInfo.passes ?? "?"} checks passed, ${currentInfo.warns ?? 0} warnings — ready in the report.`,
+    ],
+    desks: ["Both desks are reading now — long thoughts are normal…"],
+    comps: ["Embedding your synopsis and searching the corpus…"],
+  };
+  const idx = STAGE_ORDER.indexOf(stage);
+  document.querySelectorAll("#wr-stages li").forEach((li) => {
+    const liIdx = STAGE_ORDER.indexOf(li.dataset.stage);
+    li.classList.toggle("done", liIdx < idx || stage === "done");
+    li.classList.toggle("active", liIdx === idx && stage !== "done");
+  });
+  for (const [s, lines] of Object.entries(texts)) {
+    const node = $("ws-" + (s === "format_done" ? "format" : s));
+    if (node && STAGE_ORDER.indexOf(s) <= idx) node.textContent = lines[0];
+  }
+}
+
+function renderProgress() {
+  const s = (Date.now() - progressStart) / 1000;
+  let pct = STAGE_PCT[currentStage] ?? 4;
+  if (currentStage === "desks" && deskStageStart) {
+    const ds = (Date.now() - deskStageStart) / 1000;
+    pct += Math.min(0.95, ds / DESK_STAGE_S) * (STAGE_PCT.comps - STAGE_PCT.desks);
+  }
+  const fill = $("wr-bar-fill");
+  if (fill) fill.style.width = pct.toFixed(1) + "%";
+  const pctNode = $("wr-pct");
+  if (pctNode) pctNode.textContent = Math.round(pct) + "%";
+  const elapsed = $("wr-elapsed");
+  if (elapsed) elapsed.textContent = `${Math.floor(s)}s`;
 }
 
 async function poll(runId) {
@@ -63,6 +88,7 @@ async function poll(runId) {
     if (!res.ok) throw new Error(`run not found (${res.status})`);
     pollMisses = 0;
     const body = await res.json();
+    if (body.stage) setStage(body.stage, body.stage_info);
     if (body.status === "running") {
       setTimeout(() => poll(runId), POLL_MS);
       return;
@@ -71,6 +97,11 @@ async function poll(runId) {
       progressFailed(body.message || "unknown error");
       return;
     }
+    setStage("comps", {});
+    const fill = $("wr-bar-fill");
+    if (fill) fill.style.width = "100%";
+    const pctNode = $("wr-pct");
+    if (pctNode) pctNode.textContent = "100%";
     clearInterval(progressTimer);
     render(body.record);
   } catch (e) {

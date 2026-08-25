@@ -688,3 +688,30 @@ a.step-card:hover { text-decoration: none; box-shadow: var(--shadow-lg); }
 .wr-progress-top h3 { margin-bottom: 2px; }
 .wr-progress-top p { margin: 0; color: var(--ink-2); }
 .wr-elapsed { margin-left: auto; font-size: 15px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+
+/* writer stage checklist + visible bar */
+.wr-pbar { background: #e3dbc6; height: 10px; }
+.wr-meter { margin-left: auto; display: flex; align-items: baseline; gap: 12px; }
+.wr-meter b { font-family: var(--display); font-size: 30px; font-weight: 640; color: var(--green-deep); font-variant-numeric: tabular-nums; }
+.wr-stages { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.wr-stages li { display: flex; gap: 14px; align-items: flex-start; opacity: 0.45; transition: opacity 0.3s; }
+.wr-stages li.active, .wr-stages li.done { opacity: 1; }
+.wr-stages b { font-size: 15.5px; display: block; }
+.wr-stages p { margin: 1px 0 0; font-size: 14px; color: var(--ink-2); }
+.ws-mark {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--line-2);
+  margin-top: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 800;
+  color: #fff;
+}
+.wr-stages li.active .ws-mark { border-color: var(--green); animation: pulse 1.3s ease-in-out infinite; }
+.wr-stages li.done .ws-mark { background: var(--green); border-color: var(--green); }
+.wr-stages li.done .ws-mark::after { content: "✓"; }
