@@ -102,7 +102,8 @@ def _humanize_result(tool: str, response: Any) -> str:
             cached = " (cached)" if inner.get("cached") else ""
             return f"{n} sourced results{cached}"
         if tool == "find_in_script":
-            return f"{inner.get('total_matches', 0)} matches across {len(inner.get('scenes', []))} scenes"
+            n_scenes = len(inner.get("scenes", []))
+            return f"{inner.get('total_matches', 0)} matches across {n_scenes} scenes"
         if tool == "query_precedent":
             comps = inner.get("comparables", [])
             if comps:
