@@ -329,6 +329,7 @@ function handleEvent(ev) {
 
 function onResult(record) {
   state.gotResult = true;
+  beacon("info", "stream_result", state.mode || "");
   const statusNode = $("run-status");
   if (statusNode) statusNode.textContent = "Done — opening your report.";
   setPhase("report");
@@ -364,13 +365,25 @@ function startStream(url) {
   const es = new EventSource(url);
   state.es = es;
   let receivedAny = false;
+  beacon("info", "stream_open", url);
+  setTimeout(() => {
+    if (!receivedAny) beacon("error", "stream_no_events_10s", url);
+  }, 10000);
   es.onopen = () => {
     if (receivedAny) buildPanel(); // server resends history on reconnect
   };
   es.onerror = () => {
-    if (!state.gotResult) toast("stream interrupted — reconnecting…", true);
+    if (!state.gotResult) {
+      beacon("error", "stream_error", url + " readyState=" + es.readyState);
+      toast("stream interrupted — reconnecting…", true);
+    }
   };
+  let firstEvent = true;
   es.onmessage = (msg) => {
+    if (firstEvent) {
+      firstEvent = false;
+      beacon("info", "stream_first_event", url);
+    }
     receivedAny = true;
     let ev;
     try {

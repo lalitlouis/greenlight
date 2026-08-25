@@ -331,7 +331,26 @@ async function hydrateAuth() {
   }
 }
 
+function beacon(level, event, detail) {
+  try {
+    fetch("/api/client-log", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        level,
+        event,
+        detail: String(detail || "").slice(0, 300),
+        page: window.location.pathname + window.location.search,
+      }),
+      keepalive: true,
+    });
+  } catch {
+    /* telemetry must never break the page */
+  }
+}
+
 window.addEventListener("error", (e) => {
+  beacon("error", "js_error", (e.message || "") + " @ " + (e.filename || "") + ":" + (e.lineno || ""));
   /* A silent JS error looks like a frozen page. Make it a report instead. */
   try {
     toast("Page error: " + (e.message || "unknown") + " — try a hard refresh (Cmd+Shift+R).", true);

@@ -15,6 +15,9 @@ serve:          ## web UI (upload / live stream / replay) on :8080
 test:
 	.venv/bin/pytest -q
 
+logs:           ## tail production logs (structured JSON lines)
+	gcloud beta run services logs read greenlight --region us-central1 --limit 80
+
 costs:          ## local spend tracker across GCP / Parallel / ClickHouse / domain
 	.venv/bin/python scripts/costs.py
 

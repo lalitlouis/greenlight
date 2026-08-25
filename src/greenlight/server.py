@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import logging
 import os
 import random
 import time as _time_module
@@ -166,6 +167,51 @@ def _trim_tracked() -> None:
         RUNS.pop(oldest, None)
     while len(WRITER_RUNS) > MAX_TRACKED_RUNS:
         WRITER_RUNS.pop(next(iter(WRITER_RUNS)), None)
+
+
+logger = logging.getLogger("scriptrisk")
+logging.basicConfig(level=logging.INFO, format="%(message)s")
+
+_metrics = {"started_at": _time_module.time(), "runs": 0, "writer_runs": 0, "errors": 0, "fixes": 0}
+
+
+def _log(kind: str, **fields: Any) -> None:
+    """One JSON line per event on stdout — Cloud Run ships stdout to Cloud
+    Logging automatically, so this IS the logging system, no agent needed."""
+    try:
+        logger.info(json.dumps({"kind": kind, **fields}, default=str))
+    except Exception:
+        pass
+
+
+@app.middleware("http")
+async def request_logging(request: Request, call_next):
+    start = _time_module.time()
+    try:
+        response = await call_next(request)
+    except Exception as e:
+        _metrics["errors"] += 1
+        _log(
+            "http_error",
+            path=request.url.path,
+            method=request.method,
+            error=f"{type(e).__name__}: {e}",
+            ip=_client_ip(request),
+        )
+        raise
+    dur_ms = round((_time_module.time() - start) * 1000)
+    if not request.url.path.startswith("/static"):
+        if response.status_code >= 500:
+            _metrics["errors"] += 1
+        _log(
+            "http",
+            path=request.url.path,
+            method=request.method,
+            status=response.status_code,
+            ms=dur_ms,
+            ip=_client_ip(request),
+        )
+    return response
 
 
 @app.middleware("http")
@@ -386,6 +432,8 @@ async def create_run(screenplay: UploadFile, request: Request) -> dict[str, str]
     RUNS[run_id] = handle
     await asyncio.to_thread(storage.save_script, run_id, source)
     title = (screenplay.filename or "screenplay").rsplit(".", 1)[0]
+    _metrics["runs"] += 1
+    _log("run_started", run_id=run_id, title=title, owner=bool(owner))
     handle.publish({"type": "meta", "run_id": run_id, "mode": "live", "script_title": title})
     asyncio.get_running_loop().create_task(_run_live(handle, path))
     return {"run_id": run_id}
@@ -608,7 +656,7 @@ async def replay(pace: float = 1.0, record: str = "") -> StreamingResponse:
     return StreamingResponse(
         _replay_stream(handle, record_obj, pace),
         media_type="text/event-stream",
-        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+        headers={"Cache-Control": "no-cache, no-transform", "X-Accel-Buffering": "no"},
     )
 
 
@@ -654,6 +702,8 @@ async def create_writer_run(screenplay: UploadFile, request: Request) -> dict[st
     upload_dir.mkdir(parents=True, exist_ok=True)
     path = upload_dir / f"{run_id}.fountain"
     path.write_text(source)
+    _metrics["writer_runs"] += 1
+    _log("writer_started", run_id=run_id, owner=bool(owner))
     WRITER_RUNS[run_id] = {"status": "running", "record": None, "stage": "upload", "stage_info": {}}
     asyncio.get_running_loop().create_task(
         _run_writer(run_id, path, owner["sub"] if owner else None)
@@ -715,6 +765,54 @@ async def list_cases() -> list[dict[str, Any]]:
         )
     out.sort(key=lambda c: c.get("year") or 0)
     return out
+
+
+# ---------------------------------------------------------------- client telemetry
+
+
+class ClientLog(BaseModel):
+    level: str = "info"
+    event: str
+    detail: str = ""
+    page: str = ""
+
+
+_client_log_rate: dict[str, list[float]] = {}
+
+
+@app.post("/api/client-log")
+async def client_log(body: ClientLog, request: Request) -> dict[str, bool]:
+    """Browser beacons: page errors and stream milestones. This is how a 'stuck
+    page' on someone else's machine becomes a log line on ours."""
+    ip = _client_ip(request)
+    now = _time_module.time()
+    window = [ts for ts in _client_log_rate.get(ip, []) if now - ts < 60]
+    if len(window) >= 30:
+        return {"ok": False}
+    window.append(now)
+    _client_log_rate[ip] = window
+    if body.level == "error":
+        _metrics["errors"] += 1
+    _log(
+        "client",
+        level=body.level[:10],
+        event=body.event[:60],
+        detail=body.detail[:300],
+        page=body.page[:120],
+        ip=ip,
+        ua=request.headers.get("user-agent", "")[:120],
+    )
+    return {"ok": True}
+
+
+@app.get("/api/metrics-lite")
+async def metrics_lite() -> dict[str, Any]:
+    return {
+        **_metrics,
+        "uptime_s": round(_time_module.time() - _metrics["started_at"]),
+        "tracked_runs": len(RUNS),
+        "tracked_writer_runs": len(WRITER_RUNS),
+    }
 
 
 # ---------------------------------------------------------------- fixes
@@ -788,6 +886,8 @@ async def propose_fix(body: FixRequest, request: Request) -> dict[str, Any]:
     if not scene_texts:
         raise HTTPException(400, "The finding's scenes could not be located in the script.")
 
+    _metrics["fixes"] += 1
+    _log("fix_requested", run_id=run_id, flag_id=body.flag_id)
     result = await fixer.propose_fix(flag, scene_texts)
     if "error" in result:
         raise HTTPException(502, result["error"])
@@ -901,7 +1001,7 @@ async def run_events(run_id: str) -> StreamingResponse:
     return StreamingResponse(
         stream(),
         media_type="text/event-stream",
-        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+        headers={"Cache-Control": "no-cache, no-transform", "X-Accel-Buffering": "no"},
     )
 
 
