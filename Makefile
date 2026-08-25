@@ -24,6 +24,9 @@ eval:           ## score the latest run against fixtures/SEEDS.md
 lint:
 	.venv/bin/ruff check src && .venv/bin/ruff format --check src
 
+audit:          ## dependency CVE scan (network)
+	.venv/bin/pip-audit --skip-editable
+
 check: lint     ## lint + contest-rule dependency scan
 	./scripts/check_forbidden_deps.sh && echo "compliance: OK"
 
