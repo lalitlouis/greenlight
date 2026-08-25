@@ -484,7 +484,10 @@ async def create_run(screenplay: UploadFile, request: Request) -> dict[str, str]
     _log("run_started", run_id=run_id, title=title, owner=bool(owner))
     if owner:
         await asyncio.to_thread(
-            storage.save_user_run, owner["sub"], run_id, _running_stub(run_id, "clearance", title, owner)
+            storage.save_user_run,
+            owner["sub"],
+            run_id,
+            _running_stub(run_id, "clearance", title, owner),
         )
     handle.publish({"type": "meta", "run_id": run_id, "mode": "live", "script_title": title})
     asyncio.get_running_loop().create_task(_run_live(handle, path))
@@ -767,7 +770,10 @@ async def create_writer_run(screenplay: UploadFile, request: Request) -> dict[st
     if owner:
         w_title = (screenplay.filename or "screenplay").rsplit(".", 1)[0]
         await asyncio.to_thread(
-            storage.save_user_run, owner["sub"], run_id, _running_stub(run_id, "writer", w_title, owner)
+            storage.save_user_run,
+            owner["sub"],
+            run_id,
+            _running_stub(run_id, "writer", w_title, owner),
         )
     WRITER_RUNS[run_id] = {"status": "running", "record": None, "stage": "upload", "stage_info": {}}
     asyncio.get_running_loop().create_task(_run_writer(run_id, path, owner))
