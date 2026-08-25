@@ -758,3 +758,4 @@ a.step-card:hover { text-decoration: none; box-shadow: var(--shadow-lg); }
 .diff-text { margin: 0; font-family: var(--mono); font-size: 13px; line-height: 1.65; white-space: pre-wrap; overflow-wrap: anywhere; color: var(--ink-2); }
 mark.d-del { background: rgba(224, 52, 42, 0.18); color: var(--blocker); text-decoration: line-through; border-radius: 3px; }
 mark.d-add { background: rgba(10, 143, 82, 0.16); color: var(--green-deep); border-radius: 3px; font-weight: 600; }
+.col-head .spotlight { margin: 6px 0 0; font-size: 13px; color: var(--green-deep); font-weight: 550; min-height: 18px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

@@ -41,8 +41,8 @@ DESKS = ("clearance_counsel", "ratings_board", "safety_underwriter", "territory_
 
 # Replay pacing (seconds). The 60-250ms band is a demo requirement: fast enough to
 # feel autonomous, slow enough that a viewer can read the tool calls streaming by.
-_DELAY_DESK = (0.06, 0.25)
-_DELAY_VERIFY = (0.03, 0.12)
+_DELAY_DESK = (0.14, 0.5)
+_DELAY_VERIFY = (0.06, 0.2)
 
 
 @dataclass

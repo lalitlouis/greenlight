@@ -89,6 +89,32 @@ def _initial_state(
     return state
 
 
+def _humanize_result(tool: str, response: Any) -> str:
+    """Tool results as sentences, not reprs — the run page reads these aloud."""
+    inner = response.get("result", response) if isinstance(response, dict) else response
+    if isinstance(inner, str):
+        return inner[:180]
+    if isinstance(inner, dict):
+        if tool == "research":
+            if "error" in inner:
+                return "Research budget spent — filing from existing sources."
+            n = len(inner.get("results", []))
+            cached = " (cached)" if inner.get("cached") else ""
+            return f"{n} sourced results{cached}"
+        if tool == "find_in_script":
+            return f"{inner.get('total_matches', 0)} matches across {len(inner.get('scenes', []))} scenes"
+        if tool == "query_precedent":
+            comps = inner.get("comparables", [])
+            if comps:
+                ratings: dict[str, int] = {}
+                for c in comps:
+                    ratings[c["rating"]] = ratings.get(c["rating"], 0) + 1
+                top = max(ratings.items(), key=lambda kv: kv[1])
+                return f"{len(comps)} comparables — {top[1]} of them rated {top[0]}"
+            return inner.get("error", "no comparables")[:140]
+    return str(inner)[:180]
+
+
 def structured_events(event: Any) -> list[dict[str, Any]]:
     """Typed events for the UI stream. The four desk columns render from these —
     author is the agent name, so desk attribution is free."""
@@ -104,7 +130,7 @@ def structured_events(event: Any) -> list[dict[str, Any]]:
                     "type": "tool_result",
                     "agent": event.author,
                     "tool": fr.name,
-                    "brief": str(fr.response)[:200],
+                    "brief": _humanize_result(fr.name, fr.response),
                 }
             )
         elif (text := getattr(part, "text", None)) and text.strip():

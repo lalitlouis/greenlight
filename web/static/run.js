@@ -5,6 +5,23 @@
 "use strict";
 
 const MAX_TRACE_LINES = 250;
+let SCENE_HEADINGS = {}; // scene_id -> heading, for narrating which scene is being read
+
+async function loadSceneHeadings(id) {
+  try {
+    const res = await fetch(`/api/script/${encodeURIComponent(id)}`);
+    if (!res.ok) return;
+    const data = await res.json();
+    for (const s of data.scenes || []) SCENE_HEADINGS[s.scene_id] = s.heading;
+  } catch {
+    /* narration degrades to bare scene ids */
+  }
+}
+
+function sceneLabel(sid) {
+  const h = SCENE_HEADINGS[sid];
+  return h ? `${sid} · ${h.slice(0, 44)}` : sid;
+}
 
 const state = {
   es: null,
@@ -74,6 +91,7 @@ function buildPanel() {
     st.appendChild(el("span", "pulse"));
     st.appendChild(el("span", "st-txt", "Waiting"));
     head.appendChild(st);
+    head.appendChild(el("p", "spotlight", "Waiting for the worklist…"));
     col.appendChild(head);
     col.appendChild(el("div", "col-body"));
     panel.appendChild(col);
@@ -103,33 +121,52 @@ function appendTrace(container, line) {
   container.scrollTop = container.scrollHeight;
 }
 
+function trim(s, n) {
+  s = String(s || "").replace(/^\[?['"]?|['"]?\]?$/g, "");
+  return s.length > n ? s.slice(0, n) + "…" : s;
+}
+
+/* Every event becomes a sentence a filmmaker can read — no function-call syntax. */
 function traceLine(ev) {
   if (ev.type === "tool_call") {
-    if (ev.tool === "file_flag") {
-      const sev = (ev.args && ev.args.severity) || "FYI";
-      return el(
-        "span",
-        `tr t-flag sev-${sev}`,
-        `flag filed · ${sev} · ${prettyCat(ev.args?.category)} · ${ev.args?.scene_ids || ""}`
-      );
+    const a = ev.args || {};
+    switch (ev.tool) {
+      case "read_scene":
+        return el("span", "tr t-call", `Reading ${sceneLabel(a.scene_id)}`);
+      case "find_in_script":
+        return el("span", "tr t-call", `Searching the script for “${trim(a.pattern, 40)}”`);
+      case "research":
+        return el("span", "tr t-call", `Researching: ${trim(a.objective, 90)}`);
+      case "query_precedent":
+        return el("span", "tr t-call", `Matching against released films: ${trim(a.text, 70)}`);
+      case "file_rating_prediction":
+        return el("span", "tr t-flag", `Filing the rating prediction: ${a.predicted || ""}`);
+      case "file_flag": {
+        const sev = a.severity || "FYI";
+        return el(
+          "span",
+          `tr t-flag sev-${sev}`,
+          `Filing a ${sev} finding — ${prettyCat(a.category)} (${trim(a.scene_ids, 30)})`
+        );
+      }
+      case "note_open_question":
+        return el("span", "tr t-q", `Noting an open question — ${trim(a.question || a.note, 80)}`);
+      case "done":
+        return el("span", "tr t-done", `Closing the desk: ${trim(a.reason, 90)}`);
+      default:
+        return el("span", "tr t-call", `${prettyCat(ev.tool)}…`);
     }
-    if (ev.tool === "note_open_question") {
-      return el("span", "tr t-q", `open question — ${ev.args?.note || ""}`);
-    }
-    const args = Object.values(ev.args || {})
-      .map((v) => String(v))
-      .join(", ");
-    const line = el("span", "tr t-call", `${ev.tool}(`);
-    const em = el("em", null, args.length > 90 ? args.slice(0, 90) + "…" : args);
-    line.appendChild(em);
-    line.appendChild(document.createTextNode(")"));
-    return line;
   }
   if (ev.type === "tool_result") {
     return el("span", "tr t-out", ev.brief || "");
   }
   const done = /^done\b/i.test(ev.text || "");
   return el("span", done ? "tr t-done" : "tr t-text", ev.text || "");
+}
+
+function setDeskSpotlight(agent, text) {
+  const node = document.querySelector(`#col-${agent} .spotlight`);
+  if (node) node.textContent = text;
 }
 
 function handleDeskEvent(ev) {
@@ -139,6 +176,15 @@ function handleDeskEvent(ev) {
   if (ev.type === "tool_call") {
     d.calls += 1;
     if (ev.tool === "file_flag") d.flags += 1;
+    const a = ev.args || {};
+    if (ev.tool === "read_scene") setDeskSpotlight(ev.agent, `Now reading ${sceneLabel(a.scene_id)}`);
+    else if (ev.tool === "research") setDeskSpotlight(ev.agent, `Researching: ${trim(a.objective, 60)}`);
+    else if (ev.tool === "query_precedent") setDeskSpotlight(ev.agent, "Consulting released-film comparables…");
+    else if (ev.tool === "file_flag") setDeskSpotlight(ev.agent, `Filed ${a.severity || ""} — ${prettyCat(a.category)}`);
+  }
+  if (ev.type === "text" && /^done\b/i.test(ev.text || "")) {
+    d.done = true;
+    setDeskSpotlight(ev.agent, "Desk closed.");
   }
   if (ev.type === "text" && /^done\b/i.test(ev.text || "")) d.done = true;
   setDeskStatus(ev.agent);
@@ -239,6 +285,7 @@ function handleEvent(ev) {
       state.runId = ev.run_id;
       state.mode = ev.mode;
       state.reportId = ev.mode === "replay" ? ev.record_id || ev.run_id : ev.run_id;
+      loadSceneHeadings(state.reportId);
       $("run-title").textContent = ev.script_title || "Analysis";
       const chip = $("mode-chip");
       chip.textContent = ev.mode === "replay" ? "Replay · recorded run" : "Live";
