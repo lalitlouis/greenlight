@@ -22,6 +22,7 @@ import json
 import logging
 import os
 import random
+import signal
 import time as _time_module
 import uuid
 from collections.abc import AsyncIterator
@@ -40,7 +41,7 @@ from fastapi.responses import (
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from greenlight import auth, fixer, parser, storage
+from greenlight import auth, fixer, parser, runstate, storage
 from greenlight.pdf import screenplay_text
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -78,6 +79,27 @@ class RunHandle:
 
 
 RUNS: dict[str, RunHandle] = {}
+
+
+def _handle_sigterm(*_args: Any) -> None:
+    """Cloud Run gives ~10s of grace: mark everything in flight as failed so no
+    stub is stranded 'running' and pollers get a terminal state."""
+    for rid, h in list(WRITER_RUNS.items()):
+        if h.get("status") == "running":
+            h["status"] = "error"
+            h["message"] = "instance shut down mid-run"
+            with contextlib.suppress(Exception):
+                runstate.set_state(rid, {"status": "error", "message": "instance shut down"})
+    for rid, handle in list(RUNS.items()):
+        if handle.mode == "live" and handle.status == "running" and handle.owner:
+            stub = _running_stub(rid, "clearance", rid, handle.owner_info or {})
+            stub["status"] = "error"
+            with contextlib.suppress(Exception):
+                storage.save_user_run(handle.owner, rid, stub)
+    _log("sigterm", in_flight=len(RUNS) + len(WRITER_RUNS))
+
+
+signal.signal(signal.SIGTERM, _handle_sigterm)
 
 app = FastAPI(title="ScriptRisk")
 app.mount("/static/v-{version}", StaticFiles(directory=str(STATIC_DIR)), name="static_versioned")
@@ -733,12 +755,18 @@ async def _run_writer(run_id: str, path: Path, owner: dict[str, Any] | None = No
             handle["stage"] = name
             handle["stage_info"] = info
             handle.setdefault("stages", {})[name] = info  # fast stages outlive the poll gap
+            runstate.set_state(
+                run_id, {"status": "running", "stage": name, "stages": handle["stages"]}
+            )
 
     try:
         from greenlight.writer import pipeline as writer_pipeline
 
         record = await writer_pipeline.run(path, on_stage=on_stage)
         await asyncio.to_thread(storage.save_record, run_id, record)
+        await asyncio.to_thread(
+            runstate.set_state, run_id, {"status": "error" if record.get("error") else "done"}
+        )
         if owner:
             await asyncio.to_thread(
                 storage.save_user_run,
@@ -752,6 +780,9 @@ async def _run_writer(run_id: str, path: Path, owner: dict[str, Any] | None = No
         }
     except Exception as e:
         WRITER_RUNS[run_id] = {"status": "error", "record": None, "message": str(e)[:300]}
+        await asyncio.to_thread(
+            runstate.set_state, run_id, {"status": "error", "message": str(e)[:200]}
+        )
         if owner:
             stub = _running_stub(run_id, "writer", run_id, owner)
             stub["status"] = "error"
@@ -804,6 +835,9 @@ async def writer_status(run_id: str) -> dict[str, Any]:
         return {"id": run_id, "status": "done", "record": record}
     if (record := await asyncio.to_thread(storage.load_record, run_id)) is not None:
         return {"id": run_id, "status": "done", "record": record}
+    # Cross-instance / post-restart: durable status while a run is in flight.
+    if (state := await asyncio.to_thread(runstate.get_state, run_id)) is not None:
+        return {"id": run_id, "record": None, **state}
     raise HTTPException(404, f"Unknown writer run {run_id!r}")
 
 

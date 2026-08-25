@@ -180,3 +180,26 @@ visible or it may as well not exist.
 | Agent Engine deploy fights us | Cloud Run fallback; ADK runs either way |
 | Live demo network failure | Pre-computed run committed to `runs/` |
 | Latency on a feature script | Concurrent desks; per-entity research cache |
+
+## Scaling architecture (ADR-1, 2026-08-25)
+
+**Constraint today:** one Cloud Run instance holds run state, SSE queues, and rate limits in
+process memory; `max-instances=1` with session affinity. Ceiling ≈ a few concurrent runs and
+hundreds of visitors/day — sufficient for judging and early beta.
+
+**Target shape** (invest ~2 focused weeks when triggered):
+1. **State**: run status/stages/stubs in **Firestore** (Phase 1, shipping now for writer runs);
+   rate limits follow.
+2. **Work**: pipelines execute in a worker service fed by **Cloud Tasks**; the web tier only
+   enqueues and serves. Idempotent tasks, retry with checkpoints.
+3. **Events**: SSE replaced by Firestore-backed polling (the Writer's Room already proved the
+   polling UX); or Pub/Sub → SSE bridge if live streaming stays a demo requirement.
+4. **Shutdown**: SIGTERM marks in-flight runs failed (Phase 1b, shipping now); with Cloud
+   Tasks, runs resume instead.
+
+**Triggers to invest:** first paying commitment, a partnership pilot, or sustained >50
+runs/day. Until then, phases ship incrementally behind graceful fallbacks — every phase is
+independently deployable and reversible.
+
+**Deliberately kept:** GCS as the document store (now app-layer encrypted), signed-cookie
+sessions (stateless by design), record-by-id addressing — all already multi-instance safe.

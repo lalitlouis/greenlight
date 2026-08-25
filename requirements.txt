@@ -3,6 +3,7 @@ google-adk>=2.7.1,<3  # 2.7 deprecates Sequential/Loop/Parallel agents for Workf
 google-genai>=2.19.0
 google-cloud-aiplatform[agent-engines]>=1.60.0
 google-cloud-storage>=2.16.0
+google-cloud-firestore>=2.16.0
 
 # --- Parallel: partner track requirement, Search API called at runtime ---
 parallel-web>=1.3.0

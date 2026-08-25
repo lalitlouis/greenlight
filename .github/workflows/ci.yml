@@ -1,0 +1,25 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -r requirements-dev.txt
+      - name: Lint
+        run: ruff check src tests scripts && ruff format --check src tests
+      - name: Contest compliance (no non-Google AI SDKs)
+        run: ./scripts/check_forbidden_deps.sh
+      - name: Tests (offline)
+        run: pytest -q
+      - name: Dependency CVE audit
+        run: pip install pip-audit && pip-audit --skip-editable
+        continue-on-error: true
