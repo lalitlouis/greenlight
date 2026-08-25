@@ -900,3 +900,21 @@ body.show-detail .detail-only { display: grid; margin-top: 12px; }
 
 .btn-google { display: inline-flex; align-items: center; gap: 9px; white-space: nowrap; }
 .btn-google svg { flex: none; }
+
+/* ---------- home showcase carousel ---------- */
+.carousel { padding: 0; overflow: hidden; }
+.car-frame { position: relative; background: #07130c; }
+.car-img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; transition: opacity 0.35s ease; }
+.car-img.fading { opacity: 0; }
+.car-bar { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-top: 1px solid var(--line); }
+.car-caption { flex: 1; margin: 0; font-size: 15px; line-height: 1.5; color: var(--ink-2); min-height: 44px; display: flex; align-items: center; }
+.car-caption b { color: var(--ink); font-weight: 650; }
+.car-arrow { flex: none; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line-2); background: var(--surface); color: var(--ink-2); font-size: 22px; line-height: 1; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; padding-bottom: 3px; }
+.car-arrow:hover { border-color: var(--green); color: var(--green-deep); }
+.car-dots { display: flex; justify-content: center; gap: 8px; padding: 0 0 16px; }
+.car-dot { width: 8px; height: 8px; border-radius: 50%; border: 0; padding: 0; background: var(--line-2); cursor: pointer; transition: background 0.2s ease, transform 0.2s ease; }
+.car-dot.active { background: var(--green); transform: scale(1.35); }
+@media (max-width: 640px) {
+  .car-caption { font-size: 13.5px; }
+  .car-img { aspect-ratio: 4 / 3; }
+}
