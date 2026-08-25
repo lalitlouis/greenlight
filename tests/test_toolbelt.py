@@ -95,6 +95,8 @@ def test_rejection_reports_all_errors_at_once():
 
 
 def test_research_budget_and_cache(monkeypatch):
+    monkeypatch.setattr(toolbelt, "_durable_cache_load", lambda k: None)
+    monkeypatch.setattr(toolbelt, "_durable_cache_store", lambda k, r: None)
     calls = []
 
     def fake_search(objective, queries):
@@ -118,7 +120,22 @@ def test_research_budget_and_cache(monkeypatch):
     assert len(calls) == 2
 
 
+def test_durable_cache_is_consulted_before_spending(monkeypatch):
+    hits = {}
+    monkeypatch.setattr(
+        toolbelt, "_durable_cache_load", lambda k: {"results": [{"ok": 1}], "search_id": "s1"}
+    )
+    monkeypatch.setattr(toolbelt, "_live_search", lambda o, q: hits.setdefault("live", True))
+    ctx = make_ctx(**{"research_budget:clearance_counsel": 2})
+    r = toolbelt.research("cached question", ["q"], "E001", ctx)
+    assert r["cached"] is True and r["search_id"] == "s1"
+    assert "live" not in hits  # no API spend on a durable hit
+    assert ctx.state["research_budget:clearance_counsel"] == 2  # budget untouched
+
+
 def test_research_dedups_case_variant_urls(monkeypatch):
+    monkeypatch.setattr(toolbelt, "_durable_cache_load", lambda k: None)
+    monkeypatch.setattr(toolbelt, "_durable_cache_store", lambda k, r: None)
     doubled = {
         "results": [
             {"url": "https://x.com/Library/page", "title": "a", "excerpts": ["one"]},

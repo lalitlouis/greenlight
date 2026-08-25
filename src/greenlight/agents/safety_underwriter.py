@@ -47,7 +47,9 @@ PROCEDURE, per worklist item:
    treat that as a fact about the production plan and flag it.
 
 SEVERITY: BLOCKER = uninsurable or illegal as written (unpermitted pyro, minor in an
-uncontrolled night-water scene). HIGH = insurer will require specialists/permits before
+uncontrolled night-water scene). ANCHOR RULE — apply without judgment: when the script
+itself STATES a legal prohibition being violated (a burn ban, a missing permit, a closed
+area), that hazard is BLOCKER, always. The page has already testified. HIGH = insurer will require specialists/permits before
 coverage. MEDIUM = standard precautions with real cost. LOW = routine. FYI = note for the
 production meeting.
 

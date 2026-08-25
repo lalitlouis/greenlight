@@ -65,6 +65,39 @@ def load_script(run_id: str) -> str | None:
         return None
 
 
+RESEARCH_TTL_S = 7 * 24 * 3600  # a week: fresh enough for citations, stable for reruns
+
+
+def load_research(key: str) -> dict[str, Any] | None:
+    """Cross-run research cache: the same clearance question re-asks the web at
+    most weekly. Stabilizes reruns (same sources -> same verifier outcomes) and
+    stops paying twice for the same question."""
+    try:
+        blob = _bucket().blob(f"research/{key}.json")
+        if not blob.exists():
+            return None
+        data = json.loads(blob.download_as_text())
+        import time as _t
+
+        if _t.time() - data.get("_cached_at", 0) > RESEARCH_TTL_S:
+            return None
+        return data
+    except Exception:
+        return None
+
+
+def save_research(key: str, record: dict[str, Any]) -> bool:
+    try:
+        import time as _t
+
+        _bucket().blob(f"research/{key}.json").upload_from_string(
+            json.dumps({**record, "_cached_at": _t.time()}), content_type="application/json"
+        )
+        return True
+    except Exception:
+        return False
+
+
 # ---- per-user history: small stubs under users/{sub}/runs/ for cheap listing ----
 
 

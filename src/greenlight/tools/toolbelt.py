@@ -116,6 +116,25 @@ def _live_search(objective: str, queries: list[str]) -> dict[str, Any]:
     return res.model_dump()
 
 
+def _durable_cache_load(key: str):
+    """Indirection so tests replace it; production reads the GCS research cache."""
+    try:
+        from greenlight import storage
+
+        return storage.load_research(key)
+    except Exception:
+        return None
+
+
+def _durable_cache_store(key: str, record: dict[str, Any]) -> None:
+    try:
+        from greenlight import storage
+
+        storage.save_research(key, record)
+    except Exception:
+        pass
+
+
 def _normalize_url(url: str) -> str:
     p = urlparse(url)
     return f"{p.netloc.lower()}{p.path.rstrip('/').lower()}"
@@ -173,6 +192,14 @@ def research(
     if cached is not None:
         return {"cached": True, "results": cached["results"], "search_id": cached["search_id"]}
 
+    # Cross-run cache: identical questions reuse identical sources for a week.
+    # Reruns of the same script then show the verifier the same evidence —
+    # score stability — and the API is paid once per question, not per run.
+    stored = _durable_cache_load(q_hash if not entity_id else f"{entity_id}-{q_hash}")
+    if stored is not None:
+        tool_context.state[key] = {k: v for k, v in stored.items() if not k.startswith("_")}
+        return {"cached": True, "results": stored["results"], "search_id": stored["search_id"]}
+
     budget_key = f"research_budget:{_desk(tool_context)}"
     budget = int(tool_context.state.get(budget_key, 0))
     if budget <= 0:
@@ -193,6 +220,7 @@ def research(
         "results": compacted,
     }
     tool_context.state[key] = record
+    _durable_cache_store(q_hash if not entity_id else f"{entity_id}-{q_hash}", record)
     return {
         "cached": False,
         "budget_remaining": budget - 1,
