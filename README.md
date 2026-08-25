@@ -4,6 +4,8 @@
 *(repo codename: greenlight — the product is ScriptRisk; its score kept the old name)*
 Live at **[scriptrisk.com](https://scriptrisk.com)** · built for the Agentic Cinema hackathon, Parallel track.
 
+![The Production Risk Report — score, blockers, and clearance cost](docs/assets/shot-report-hero.png)
+
 Before a single frame is shot, a studio spends weeks clearing a screenplay: four separate desks —
 rights counsel, the ratings board, the safety underwriter, and territory censors — each read the
 same script looking for different ways it will cost money or fail to release. The work is manual,
@@ -16,6 +18,28 @@ up in the report, with the reason.
 
 > **The one non-negotiable rule:** a finding without a citation does not render. It is enforced
 > in the `file_flag` tool's schema validation, not requested in a prompt.
+
+## Architecture
+
+```mermaid
+flowchart TD
+    A[Screenplay<br/>Fountain / PDF] --> B[ScriptParser<br/>deterministic Python]
+    B --> C[Triage · LlmAgent<br/>entities → per-desk worklists]
+    C --> D1[Clearance Counsel<br/>LoopAgent]
+    C --> D2[Ratings Board<br/>LoopAgent]
+    C --> D3[Safety Underwriter<br/>LoopAgent]
+    C --> D4[Territory Censor<br/>LoopAgent]
+    D1 & D2 & D3 & D4 -->|file_flag rejects<br/>uncited findings| V[Verification Panel<br/>one blinded verifier per flag<br/>can REJECT]
+    V --> J[Adjudicator · LoopAgent<br/>merge · resolve · re-enter desks]
+    J --> R[ReportWriter<br/>deterministic Python]
+    R --> O[Risk report · marked-up script<br/>rating prediction]
+    P[(Parallel Search<br/>live web citations)] -.-> D1 & D2 & D3 & D4
+    K[(ClickHouse<br/>2,487-film corpus)] -.-> D2
+```
+
+The four desks run concurrently (`ParallelAgent`); each is a `LoopAgent` deciding for itself
+what to investigate and when to stop. Gemini judges; Parallel retrieves the outside world;
+ClickHouse holds the comparison set — the model never asserts what a tool can retrieve.
 
 ## What it produces
 
