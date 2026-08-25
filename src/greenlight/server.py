@@ -18,7 +18,9 @@ from __future__ import annotations
 
 import asyncio
 import json
+import os
 import random
+import time as _time_module
 import uuid
 from collections.abc import AsyncIterator
 from dataclasses import dataclass, field
@@ -26,7 +28,13 @@ from pathlib import Path
 from typing import Any
 
 from fastapi import FastAPI, HTTPException, Request, UploadFile
-from fastapi.responses import FileResponse, JSONResponse, RedirectResponse, StreamingResponse
+from fastapi.responses import (
+    FileResponse,
+    HTMLResponse,
+    JSONResponse,
+    RedirectResponse,
+    StreamingResponse,
+)
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
@@ -69,7 +77,18 @@ class RunHandle:
 RUNS: dict[str, RunHandle] = {}
 
 app = FastAPI(title="ScriptRisk")
+app.mount("/static/v-{version}", StaticFiles(directory=str(STATIC_DIR)), name="static_versioned")
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+
+
+@app.get("/static/v-" + "{rest:path}", include_in_schema=False)
+async def versioned_static(rest: str) -> FileResponse:
+    # "/static/v-<version>/path/to/file" -> serve the file; version is only a cache key.
+    _, _, path = rest.partition("/")
+    target = (STATIC_DIR / path).resolve()
+    if not str(target).startswith(str(STATIC_DIR.resolve())) or not target.is_file():
+        raise HTTPException(404, "Not found")
+    return FileResponse(target)
 
 
 # ---------------------------------------------------------------- hardening
@@ -171,7 +190,9 @@ async def cache_control(request, call_next):
     day; our own JS/CSS/HTML must always revalidate (ETag makes that a cheap 304)."""
     response = await call_next(request)
     path = request.url.path
-    if path.startswith("/static/vendor/"):
+    if path.startswith("/static/v-"):
+        response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
+    elif path.startswith("/static/vendor/"):
         response.headers["Cache-Control"] = "public, max-age=86400"
     elif path.startswith("/static/") or path in PAGES:
         response.headers["Cache-Control"] = "no-cache"
@@ -194,9 +215,18 @@ PAGES = {
 }
 
 
+# Cloud Run sets K_REVISION per deploy; locally we fall back to process start time.
+ASSET_VERSION = os.getenv("K_REVISION", str(int(_time_module.time())))
+
+
 def _page(name: str):
-    async def serve() -> FileResponse:
-        return FileResponse(STATIC_DIR / name)
+    async def serve() -> HTMLResponse:
+        """Serve the page with version-stamped asset URLs: a new deploy gets new
+        URLs, so a browser can never mix cached files from two revisions."""
+        html = (STATIC_DIR / name).read_text()
+        html = html.replace('href="/static/', f'href="/static/v-{ASSET_VERSION}/')
+        html = html.replace('src="/static/', f'src="/static/v-{ASSET_VERSION}/')
+        return HTMLResponse(html)
 
     return serve
 

@@ -331,4 +331,13 @@ async function hydrateAuth() {
   }
 }
 
+window.addEventListener("error", (e) => {
+  /* A silent JS error looks like a frozen page. Make it a report instead. */
+  try {
+    toast("Page error: " + (e.message || "unknown") + " — try a hard refresh (Cmd+Shift+R).", true);
+  } catch {
+    /* toast itself failed; nothing more to do */
+  }
+});
+
 document.addEventListener("DOMContentLoaded", injectChrome);
