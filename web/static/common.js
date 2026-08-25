@@ -253,6 +253,7 @@ function injectChrome() {
     mkCol("Product", [
       ["/how-it-works", "How it works"],
       ["/cases", "Case studies"],
+      ["/compare", "Compare tools"],
       ["/writer", "Writer's Room"],
       ["/run?replay=1", "Watch a recorded analysis"],
       ["/faq", "FAQ"],

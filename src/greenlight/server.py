@@ -91,6 +91,7 @@ PAGES = {
     "/writer": "writer.html",
     "/cases": "cases.html",
     "/my": "my.html",
+    "/compare": "compare.html",
     "/how-it-works": "how-it-works.html",
     "/faq": "faq.html",
     "/contact": "contact.html",

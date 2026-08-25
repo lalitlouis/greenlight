@@ -732,3 +732,12 @@ a.step-card:hover { text-decoration: none; box-shadow: var(--shadow-lg); }
 .my-title { font-family: var(--display); font-size: 21px; font-weight: 620; color: var(--ink); }
 .my-title:hover { color: var(--green-deep); text-decoration: none; }
 .my-meta { margin: 2px 0 0; font-size: 14px; color: var(--ink-3); }
+
+/* compare table */
+.compare-scroll { overflow-x: auto; }
+.compare-table { border-collapse: collapse; width: 100%; min-width: 880px; background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+.compare-table th, .compare-table td { padding: 13px 16px; font-size: 14px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; line-height: 1.5; }
+.compare-table thead th { font-family: var(--display); font-size: 16px; font-weight: 640; background: var(--band); }
+.compare-table tbody th { font-weight: 650; color: var(--ink-2); width: 190px; }
+.compare-table .us { background: var(--green-tint); font-weight: 550; }
+.compare-table thead .us { color: var(--green-deep); }
