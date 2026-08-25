@@ -206,9 +206,6 @@ function injectChrome() {
   inner.appendChild(nav);
 
   const actions = el("div", "header-actions");
-  const replayBtn = el("a", "btn btn-secondary", "Watch a demo");
-  replayBtn.href = "/run?replay=1";
-  actions.appendChild(replayBtn);
   const cta = el("button", "btn btn-primary", "Analyze a screenplay");
   cta.type = "button";
   cta.addEventListener("click", promptUpload);
