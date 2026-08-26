@@ -786,8 +786,9 @@ function noteActivity(ev) {
 
 /* ---------- clock ---------- */
 
-function startClock() {
-  state.startedAt = Date.now();
+function startClock(startedAtEpoch) {
+  // a rejoin anchors to the run's TRUE start — the timer must never lie 00:00
+  state.startedAt = startedAtEpoch ? startedAtEpoch * 1000 : Date.now();
   clearInterval(state.timer);
   state.timer = setInterval(() => {
     const s = Math.floor((Date.now() - state.startedAt) / 1000);
@@ -809,7 +810,7 @@ function handleEvent(ev) {
       const chip = $("mode-chip");
       chip.textContent = ev.mode === "replay" ? "Replay · recorded run" : "Live";
       chip.className = "chip " + (ev.mode === "replay" ? "replay" : "live");
-      startClock();
+      startClock(ev.mode === "replay" ? null : ev.started_at);
       setPhase("triage");
       bumpProgress();
       if (ev.mode !== "replay") {

@@ -620,7 +620,12 @@ async def create_run(screenplay: UploadFile, request: Request) -> dict[str, str]
     await asyncio.to_thread(
         runstate.run_set,
         run_id,
-        {"status": "running", "owner": owner["sub"] if owner else "", "title": title},
+        {
+            "status": "running",
+            "owner": owner["sub"] if owner else "",
+            "title": title,
+            "started_at": _time_module.time(),
+        },
     )
     if RUN_MODE == "worker":
         RUNS.pop(run_id, None)  # the worker owns this run; no in-process shadow
@@ -653,7 +658,15 @@ async def create_run(screenplay: UploadFile, request: Request) -> dict[str, str]
             run_id,
             _running_stub(run_id, "clearance", title, owner),
         )
-    handle.publish({"type": "meta", "run_id": run_id, "mode": "live", "script_title": title})
+    handle.publish(
+        {
+            "type": "meta",
+            "run_id": run_id,
+            "mode": "live",
+            "script_title": title,
+            "started_at": _time_module.time(),
+        }
+    )
     asyncio.get_running_loop().create_task(_run_live(handle, path))
     return {"run_id": run_id}
 
@@ -1555,6 +1568,7 @@ async def _journal_relay(run_id: str) -> AsyncIterator[str]:
             "run_id": run_id,
             "mode": "live",
             "script_title": state0.get("title") or "Analysis",
+            "started_at": state0.get("started_at"),
         }
     )
     while True:
