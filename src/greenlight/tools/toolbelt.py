@@ -647,10 +647,42 @@ def note_open_question(question: str, tool_context: ToolContext) -> str:
 # --- done -------------------------------------------------------------------
 
 
+_DONE_MAX_REFUSALS = 2
+_DONE_MIN_BUDGET = 3
+_DONE_COVERAGE = 0.5
+
+
 def done(reason: str, tool_context: ToolContext) -> str:
     """Close your desk. Call when every worklist item is either flagged, cleared, or
     noted as an open question — or when told your research budget is spent. reason is
-    one sentence on why the desk is finished."""
+    one sentence on why the desk is finished.
+
+    Closing is refused when substantial worklist coverage is missing while research
+    budget remains — address the remaining items or note them as open questions first.
+    """
+    desk = _desk(tool_context)
+    state = tool_context.state
+    # Mechanical closing contract: a desk that filed dispositions for less than
+    # half its worklist, with budget still in hand, is quitting early — a failure
+    # mode the eval kept catching. Enforce it here, not in prose. Two refusals
+    # max: after that, close (the LoopAgent iteration cap is the hard stop).
+    refusals = int(state.get(f"done_refusals:{desk}", 0))
+    tri = state.get("triage") or {}
+    if hasattr(tri, "model_dump"):
+        tri = tri.model_dump()
+    worklist = tri.get(desk) or []
+    budget_left = int(state.get(f"research_budget:{desk}", 0))
+    dispositions = len(state.get(f"flags:{desk}", []) or []) + len(
+        state.get(f"open_questions:{desk}", []) or []
+    )
+    underworked = worklist and dispositions < _DONE_COVERAGE * len(worklist)
+    if underworked and budget_left >= _DONE_MIN_BUDGET and refusals < _DONE_MAX_REFUSALS:
+        state[f"done_refusals:{desk}"] = refusals + 1
+        return (
+            f"NOT CLOSED: you have addressed {dispositions} of {len(worklist)} worklist "
+            f"items and {budget_left} research budget remains. Work the remaining items — "
+            "file, or note_open_question each one — then call done() again."
+        )
     tool_context.actions.escalate = True
     return f"Desk closed: {reason}"
 
