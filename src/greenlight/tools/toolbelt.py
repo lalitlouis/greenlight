@@ -280,6 +280,11 @@ def _prov_bucket(tool_context: ToolContext) -> list[str]:
 def _register_provenance(tool_context: ToolContext, texts: list[str]) -> None:
     bucket = _prov_bucket(tool_context)
     bucket.extend(_norm_for_match(x) for x in texts if x)
+    # excerpts arrive as storage chunks; a desk quoting across a chunk boundary
+    # is still verbatim — register the joined text as well
+    joined = " ".join(x for x in texts if x)
+    if joined:
+        bucket.append(_norm_for_match(joined))
 
 
 def _index_research_key(tool_context: ToolContext, key: str) -> None:

@@ -142,7 +142,14 @@ ADDITIONAL SWEEPS (standard clearance practice):
   outside the cleared entertainment range (555-0100 through 555-0199) is a finding —
   real numbers ring real phones. Real domain names, e-mail addresses, or social handles
   used by fictional characters likewise need clearing or fictionalizing.
-- ART ON SCREEN: non-public-domain paintings, murals, sculptures, posters, and DISTINCT
+- ART ON SCREEN: run find_in_script with a pattern like
+  "tattoo|mural|painting|portrait|poster|sculpture|print of" as part of this sweep —
+  visual works hide in action lines and may be missing from your worklist. A NAMED
+  artwork or a distinctive described design NEVER silent-clears: it yields either an
+  artwork_license flag or a note_open_question about its copyright status — casual web
+  claims that a famous work is public domain are not sufficient to clear it silently
+  (renewal status is murky for mid-century works; that murk is the producer's to know).
+  Non-public-domain paintings, murals, sculptures, posters, and DISTINCT
   CUSTOM TATTOOS described on characters are copyrighted works — artwork_license, with a
   visual-artist release or replacement art as the remedy. THE ROGERS DOCTRINE DOES NOT
   APPLY HERE: showing identifiable copyrighted art on camera is use-level REPRODUCTION,
