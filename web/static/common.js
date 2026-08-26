@@ -82,7 +82,13 @@ async function fetchRecord(id) {
   }
   const res = await fetch(`/api/records/${encodeURIComponent(id)}`);
   if (!res.ok) throw new Error(`record ${id} not found`);
-  return (await res.json()).record;
+  const data = await res.json();
+  if (data.kind === "running") {
+    const err = new Error("This analysis is still running.");
+    err.running = true;
+    throw err;
+  }
+  return data.record;
 }
 
 /* ---------- upload with visible progress ---------- */

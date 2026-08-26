@@ -869,6 +869,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     renderReport(await fetchRecord(RUN_ID));
   } catch (e) {
     $("report").textContent = "";
+    if (e.running) {
+      const card = el("div", "card runs-empty");
+      card.appendChild(el("p", null, "This analysis is still running — taking you to the live view…"));
+      $("report").appendChild(card);
+      setTimeout(() => {
+        window.location.href = `/run?id=${encodeURIComponent(RUN_ID)}`;
+      }, 1200);
+      return;
+    }
     $("report").appendChild(el("div", "card runs-empty", "Could not load this report: " + e.message));
   }
 });

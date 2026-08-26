@@ -1376,6 +1376,10 @@ async def get_record(run_id: str) -> dict[str, Any]:
     handle = RUNS.get(run_id)
     if handle is not None and handle.record is not None:
         return {"id": run_id, "kind": "session", "record": handle.record}
+    if handle is not None and handle.mode == "live":
+        # still running: no record yet, but very much not unknown — the client
+        # sends the viewer to the live stream instead of an error
+        return {"id": run_id, "kind": "running", "status": handle.status}
     if (record := _disk_record(run_id)) is not None:
         return {"id": run_id, "kind": "recorded", "record": record}
     if (record := await asyncio.to_thread(storage.load_record, run_id)) is not None:
