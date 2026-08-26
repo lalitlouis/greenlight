@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 /* ---------- showcase carousel ---------- */
 const SLIDES = [
-  ["reject", "<b>The cross-examination.</b> A blinded verifier challenges every finding — here it REJECTS F201, whose source didn't support the claim. Rejected flags never reach the report."],
+  ["reject", "<b>The cross-examination.</b> A blinded verifier challenges every finding — the REJECTED verdict here is a flag whose source didn't support the claim. Rejected flags never reach the report."],
   ["report", "<b>The verdict, with the money.</b> Not cleared — 2 blockers, 21 findings, $104,500–$413,500 of estimated clearance exposure, priced finding by finding."],
   ["read", "<b>The analysis, live on your script.</b> Four desks read concurrently; findings pin to their scenes the moment they're filed."],
   ["citation", "<b>Receipts, not opinions.</b> Every finding quotes its sources verbatim — a flag without a citation is structurally impossible."],
