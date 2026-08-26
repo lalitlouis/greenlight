@@ -1228,3 +1228,6 @@ tr.bd-sev-BLOCKER { background: rgba(224, 52, 42, 0.045); }
 .sp-open { display: block; width: 100%; border: 0; border-top: 1px solid var(--line); background: var(--band); color: var(--green-deep); font: inherit; font-size: 13px; font-weight: 650; padding: 9px 16px; text-align: left; cursor: pointer; }
 .sp-open:hover { background: var(--green-tint); }
 @media (hover: none) { .scene-pop { display: none !important; } }
+
+.lang-caveat { margin-top: 6px; border: 1px solid var(--high); background: rgba(233, 124, 0, 0.07); border-radius: 10px; padding: 10px 14px; font-size: 13.5px; line-height: 1.5; color: var(--ink-2); }
+.lang-caveat b { color: var(--high); }

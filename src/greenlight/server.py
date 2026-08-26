@@ -42,7 +42,7 @@ from fastapi.responses import (
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from greenlight import auth, firstlook, fixer, parser, runstate, storage
+from greenlight import auth, firstlook, fixer, langguard, parser, runstate, storage
 from greenlight.pdf import screenplay_text
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -596,6 +596,9 @@ async def create_run(screenplay: UploadFile, request: Request) -> dict[str, str]
     _check_rate(request)
     owner = _require_signin(request)
     source = screenplay_text(screenplay.filename or "", await _read_upload(screenplay))
+    english_ok = langguard.probably_english(source)
+    if not english_ok:
+        _log("non_english_upload", pages=len(source) // 3200)
     _trim_tracked()
     run_id = uuid.uuid4().hex[:12]
     upload_dir = RUNS_DIR / "uploads"
@@ -625,6 +628,7 @@ async def create_run(screenplay: UploadFile, request: Request) -> dict[str, str]
             "owner": owner["sub"] if owner else "",
             "title": title,
             "started_at": _time_module.time(),
+            "english_ok": english_ok,
         },
     )
     if RUN_MODE == "worker":
@@ -665,6 +669,7 @@ async def create_run(screenplay: UploadFile, request: Request) -> dict[str, str]
             "mode": "live",
             "script_title": title,
             "started_at": _time_module.time(),
+            "english_ok": english_ok,
         }
     )
     asyncio.get_running_loop().create_task(_run_live(handle, path))
@@ -1569,6 +1574,7 @@ async def _journal_relay(run_id: str) -> AsyncIterator[str]:
             "mode": "live",
             "script_title": state0.get("title") or "Analysis",
             "started_at": state0.get("started_at"),
+            "english_ok": state0.get("english_ok", True),
         }
     )
     while True:

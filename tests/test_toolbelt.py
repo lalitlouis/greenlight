@@ -288,3 +288,18 @@ def test_build_profile_from_fixture():
     assert p["cast_size"] >= 1 and p["top_cast"][0]["lines"] >= 1
     assert 0 <= p["dialogue_pct"] <= 100
     assert p["location_count"] >= 1
+
+
+def test_language_guard():
+    from greenlight import langguard
+
+    assert langguard.probably_english(SOURCE)
+    spanish = (
+        "INT. CASA DE MARTA - DIA\n\nMarta entra despacio y mira por la ventana rota. "
+        "El viento mueve las cortinas viejas mientras ella busca las llaves perdidas "
+        "entre los papeles del escritorio de su abuela. Nadie responde cuando llama. "
+    ) * 8
+    assert not langguard.probably_english(spanish)
+    chinese = "内景 老宅 夜 王梅走进房间，看着窗外的雨。她慢慢坐下，拿起桌上的旧照片。" * 30
+    assert not langguard.probably_english(chinese)
+    assert langguard.probably_english("too short to judge")

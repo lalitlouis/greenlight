@@ -253,6 +253,23 @@ function gPulse(a, b, tone) {
 
 /* Long runs shouldn't chain the user to the tab: opt-in browser notification
    plus a tab-title flash when the report lands. */
+function showLanguageCaveat() {
+  if ($("lang-caveat")) return;
+  const bar = document.querySelector(".now-bar");
+  if (!bar) return;
+  const note = el("div", "lang-caveat");
+  note.id = "lang-caveat";
+  note.appendChild(el("b", null, "This script doesn't appear to be in English. "));
+  note.appendChild(
+    document.createTextNode(
+      "The analysis is calibrated for English-language screenplays under US clearance " +
+        "doctrine — findings, ratings, and costs for this script may be unreliable. " +
+        "Multilingual support is on the roadmap."
+    )
+  );
+  bar.appendChild(note);
+}
+
 function offerNotify() {
   if (!("Notification" in window) || Notification.permission === "granted") return;
   if (Notification.permission === "denied") return;
@@ -816,6 +833,7 @@ function handleEvent(ev) {
       if (ev.mode !== "replay") {
         startTriageTicker();
         offerNotify();
+        if (ev.english_ok === false) showLanguageCaveat();
       }
       break;
     }

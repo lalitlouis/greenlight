@@ -6,6 +6,25 @@ them. Append-only; newest entries at the top. Bigger architecture decisions live
 
 ---
 
+## 2026-08-26 — Multilingual screenplays: roadmap, plus a shipped language guard
+
+Question: support non-English scripts? Three problems of different sizes. (1) Reading:
+Gemini handles 40+ languages; INT./EXT. sluglines are fairly international; Romance/
+Germanic need per-language parser tweaks (time-words, cues); CJK/Arabic are real projects
+(no uppercase, RTL). (2) In-language research: Parallel + provenance machinery are
+language-agnostic — mostly free. (3) THE BLOCKER — legal/ratings calibration: our
+doctrine is US law (Rogers, CARA math, MPA comparables corpus on an English-optimized
+embedding model). A French script for a French production lives under droit moral/CNC
+where our calibrations are confidently wrong. Roadmap: phase 1 "non-English script, US
+production" (parser only, doctrine unchanged); phase 2 per-jurisdiction calibration,
+market by market, like the territory-expansion model. SHIPPED NOW: a deterministic
+language guard (langguard.py — common-word smoke test + non-Latin detection) that stamps
+english_ok on the run and shows an honest amber caveat on the run page instead of
+silently serving Anglo-calibrated analysis for a non-English script. Related decision
+same day: territory selection deliberately NOT built (user choice: keep evaluating all
+four calibrated markets for every run); territory expansion criteria logged with the
+selector design in this file's future entries if revisited.
+
 ## 2026-08-26 — Switchback re-run: burn-ban doctrine validated; recounted-stunt fix
 
 Sixth external review, on the corrected Switchback log: the script-cites-a-rule doctrine
