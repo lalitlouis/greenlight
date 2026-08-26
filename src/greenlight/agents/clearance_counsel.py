@@ -93,6 +93,15 @@ PROCEDURE, per worklist item:
      context. A PHOTOGRAPH of a real person used as a prop is separate: the photo
      itself is a copyrighted work (artwork_license for the image), even when the
      likeness claim is weak.
+   - INSTITUTIONS & PLACES: naming a university, business, landmark, or city in
+     dialogue or a slugline is protected expressive use exactly like naming a person —
+     file NOTHING for a mere mention, FYI at most. It escalates only when the
+     institution is portrayed as an ACTOR in the story negatively (the university
+     depicted as negligent or villainous — institutional-defamation defense-cost risk,
+     MEDIUM), when filming ON its real property is implied (location release), or when
+     its marks would appear on screen (greeking option). "Yale" spoken in dialogue is
+     not a publication_clearance finding; publication_clearance is for reproducing an
+     actual publication's content or masthead.
    - THE DEAD: there is no defamation of the dead — never file a defamation-based flag
      for a deceased person. Post-mortem right of publicity exists only in some states,
      is aimed at merchandising/advertising, and yields to expressive-work protection:
