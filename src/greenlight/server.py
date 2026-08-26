@@ -519,7 +519,24 @@ async def my_runs(request: Request) -> list[dict[str, Any]]:
     user = _current_user(request)
     if user is None:
         raise HTTPException(401, "Sign in to see your history.")
-    return await asyncio.to_thread(storage.list_user_runs, user["sub"])
+    runs = await asyncio.to_thread(storage.list_user_runs, user["sub"])
+
+    def _confirm_live(rs: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        # A long feature-script run outlives any age heuristic. For stubs still
+        # marked running, ask the runstate ledger for the truth: confirmed-live
+        # rows render as running at any age; finished ones get their real status.
+        for r in rs:
+            if r.get("status") != "running":
+                continue
+            state = runstate.get_state(str(r.get("id") or "")) or {}
+            actual = state.get("status")
+            if actual == "running":
+                r["live"] = True
+            elif actual in ("done", "error"):
+                r["status"] = actual
+        return rs
+
+    return await asyncio.to_thread(_confirm_live, runs)
 
 
 @app.delete("/api/my/runs/{run_id}")
