@@ -22,6 +22,8 @@ researching real entities is the product.
 | Fenway Park story | Pier scene dialogue | LOCATION, dialogue-only | Verbal reference, not depicted — LOW/FYI at most. A desk that files this as HIGH is over-flagging. |
 | U.S. Coast Guard — uniform, marked vehicle, Reyes | Boatyard scene | ORGANIZATION | Federal insignia depiction rules; also an officer shown bending rules — expect a flag. |
 
+| **Crow's schooner tattoo** | S002 — "Teddy Krane's design, inked at his Rockland parlor" | A distinctive custom tattoo by a NAMED artist, prominently described on camera — a copyrighted visual work (the Whitmill v. Warner Bros. scenario). Expect artwork_license with a visual-artist release remedy. Tests the ART ON SCREEN sweep against a depicted (not recounted) design. |
+
 ### Verifier traps (harvest the rejected-flag demo moment here)
 
 | Trap | Where | Why the obvious flag is wrong |

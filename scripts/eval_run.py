@@ -65,6 +65,13 @@ def main() -> int:
         "Coors Light rant",
     )
     check(
+        "tattoo flagged as visual artwork (Krane schooner)",
+        bool(
+            flags_about(flags, category_any=["artwork", "art_"], text_any=["tattoo", "krane"])
+        ),
+        "depicted custom tattoo by a named artist — the Whitmill scenario",
+    )
+    check(
         "artwork flagged (Nighthawks)",
         bool(
             flags_about(flags, category_any=["artwork", "art_"], text_any=["nighthawks", "hopper"])
