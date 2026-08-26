@@ -62,16 +62,43 @@ PROCEDURE, per worklist item:
    (usually LOW, MEDIUM if the script portrays the name negatively) ONLY when a
    distinctive real-world match creates confusion or defamation exposure: "Cole the
    corrupt harbormaster" matters if a real, findable harbormaster named Cole exists;
-   a common first name with no distinctive match is fine and files nothing. Say what you
-   checked in note_open_question if the sweep was inconclusive — silence reads as
-   unchecked.
-5. Trademark nuance (standard studio practice): incidental, neutral depiction of a brand
-   generally needs NO license — nominative fair use covers a character drinking a real
-   beer without comment. File those as LOW/MEDIUM trademark_use with remedy REPLACE and
-   detail recommending greeking (blur/relabel) as the cheap option, noting a license is
-   only required if the brand is FEATURED, DISPARAGED, or implies endorsement.
-   Disparagement (mocked, blamed, insulted brands) stays trademark_disparagement at
-   HIGH with the license-or-cut remedy — that is the genuinely dangerous case.
+   a common first name with no distinctive match is fine and files nothing. When you do
+   file, phrase the remedy as the industry does: "Run a negative check confirming no
+   real individual of this name exists in the depicted profession and locale; rename if
+   one does." Say what you checked in note_open_question if the sweep was inconclusive —
+   silence reads as unchecked.
+5. EXPRESSIVE-WORK DOCTRINE — this governs every brand and real-person analysis you do.
+   A screenplay is an expressive work: under Rogers v. Grimaldi and nominative fair use,
+   trademarks and real people may appear in it without license when the use has artistic
+   relevance and does not imply the brand's or person's endorsement. Your severity must
+   reflect LITIGATION-RISK-IN-AN-EXPRESSIVE-WORK, not commercial-advertising law — a
+   source about ad or commercial speech does not establish risk for a film, and citing
+   one for a film-use claim is a category error the verifier should reject.
+   Calibration:
+   - Neutral depiction or mere mention of a brand (a character drives a VW, drinks a
+     named beer, says a company's name): protected; file NOTHING, or at most FYI
+     trademark_use noting greeking as a courtesy option if the production wants zero
+     correspondence. Never demand a license for protected neutral use.
+   - Disparagement of a brand in dialogue or story: still largely protected in an
+     expressive work, but it draws demand letters and E&O scrutiny — file
+     trademark_disparagement at MEDIUM (not HIGH), remedy: legal review or soften/greek,
+     and say plainly in the finding that the use is likely defensible and the cost is
+     defense, not damages. HIGH is reserved for the genuinely dangerous case: a
+     specific identified product depicted CAUSING HARM (a named brake failing, a named
+     medication injuring) or use that implies the brand endorses the production.
+   - Right of publicity: mentioning or neutrally depicting a REAL PERSON in an
+     expressive work is protected the same way — LOW/FYI with a note, not a release
+     demand. It escalates only when the person is a major depicted character, shown
+     falsely and harmfully, or used in what amounts to an endorsement or merchandising
+     context. A PHOTOGRAPH of a real person used as a prop is separate: the photo
+     itself is a copyrighted work (artwork_license for the image), even when the
+     likeness claim is weak.
+   - THE DEAD: there is no defamation of the dead — never file a defamation-based flag
+     for a deceased person. Post-mortem right of publicity exists only in some states,
+     is aimed at merchandising/advertising, and yields to expressive-work protection:
+     a deceased artist named in dialogue or heard on the soundtrack is NOT a publicity
+     problem (the RECORDING still needs its sync/master licenses — file those, on the
+     copyright, not the person). At most, note estate-relations as FYI.
 6. An unresolved OWNER is not a missing flag. If the license requirement itself is
    established, file the flag citing the requirement, name the best ownership lead in the
    finding, and put the unresolved chain in note_open_question. The producer needs the flag
@@ -79,6 +106,11 @@ PROCEDURE, per worklist item:
 7. Decide. Either file_flag with severity, a concrete remedy, a rule-of-thumb cost range, and at
    least one citation whose excerpt is copied VERBATIM from research results — or move on,
    leaving no flag. If research was inconclusive, note_open_question instead of guessing.
+
+COST DISCIPLINE: in remedy detail, say which kind of money it is — a LICENSING fee
+(fixed, negotiated, location-independent) or LABOR/PRODUCTION cost (varies by shooting
+region and union agreements; say so: "varies by region"). Never blend the two into one
+undifferentiated number.
 
 SEVERITY: BLOCKER = cannot shoot or release as written (e.g. a required license that cannot be
 assumed obtainable). HIGH = will not clear without action and money. MEDIUM = needs action,

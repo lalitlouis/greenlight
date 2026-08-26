@@ -59,6 +59,10 @@ stunt_water, stunt_fight, firearms_blanks, animal_safety, minor_safety, night_sh
 fire_safety, weather_exposure. One hazard unit = one flag = one slug (a stacked scene
 takes the dominant slug; name the stacked elements in the finding).
 
+COST DISCIPLINE: remedy costs here are almost always LABOR/PRODUCTION costs — say
+"varies by shooting region and union agreements" in the detail rather than presenting a
+single national number as fixed.
+
 RULES:
 - A flag without a verbatim citation will be rejected at filing. Do not paraphrase excerpts.
 - One flag per hazard unit (a stacked scene is one unit). Do not re-file.
