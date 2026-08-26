@@ -27,6 +27,14 @@ opinions, but desks that research, cite, and get checked?
   content profiles in ClickHouse ("7 of 8 nearest comparables are R"), with the exact cut list
   to hit a target rating.
 - A Pro-tier adjudicator merges duplicates and resolves conflicting remedies deterministically.
+- **The What-If simulator**: the cut list is interactive — checking cuts re-runs the real
+  evidence pipeline (rationale rewritten, re-embedded, re-searched against all 2,487 films),
+  and it will honestly disagree with its own cut list ("closer, not clear: 1 → 3 of 8").
+- **Production artifacts**: a downloadable Clearance Binder (the standard studio clearance
+  log as PDF/CSV), a one-sheet PDF poster, and accepted fixes exported as a revised
+  .fountain or Final Draft .fdx with revision marks.
+- **Anti-hallucination at the tool layer**: filed citation excerpts must exist VERBATIM in
+  material the run actually retrieved — a confabulated quote is structurally unfileable.
 - The Writer's Room adds coverage (PASS/CONSIDER/RECOMMEND), a pitch package with retrieved,
   cited comparables, and a format check.
 
@@ -35,8 +43,11 @@ opinions, but desks that research, cite, and get checked?
 Google ADK on Vertex AI Gemini (Flash for desks, Pro for adjudication/coverage);
 `parallel-web` for every web citation; ClickHouse Cloud for the comparables corpus (Wikidata
 CC0 ratings + Wikipedia content profiles via official APIs, embedded with text-embedding-005);
-FastAPI + SSE on Cloud Run. The demo screenplay is an original short film seeded with every flag
-category and two deliberate traps for the verifier.
+FastAPI + SSE on Cloud Run — analyses execute as **Cloud Run Jobs** (deploy-immune workers)
+journaling every event to Firestore, so runs survive deploys, restarts, and closed laptops,
+and any instance can relay any run's live stream. The demo screenplay is an original short
+film seeded with every flag category and deliberate traps for the verifier, graded by an
+answer key (`make eval`).
 
 ## Challenges
 
@@ -52,10 +63,29 @@ An eval harness (`make eval`) that scores runs against the fixture's seeded grou
 18/18 on the shipped demo record, including both traps correctly declined and real rejections
 on camera. Deployed day 3 of 16.
 
+## External review (adversarial testing)
+
+We put the pipeline through seven rounds of external review on real feature-length scripts
+(The Social Network, The Hangover spec draft, and indie two-handers), fixing what each
+round exposed and re-running to validate. Quotes from the reviews, in sequence:
+
+- *"This is a night-and-day difference… The prompt overrides did exactly what they needed
+  to do."* — after the worker architecture + doctrine overhaul
+- *"Flawless deduplication… the right of publicity filter is now flawless."*
+- *"This output is exactly the high-signal, low-noise data that production managers look
+  for… you have transitioned this from a neat AI trick into a viable commercial product."*
+- *"This corrected report looks like a legitimate, professional-grade coverage output."*
+
+The last two "misses" reviewers reported turned out not to exist in the analyzed drafts —
+verified against the actual uploaded text. The full decision log of every fix is in
+`docs/DECISIONS.md`.
+
 ## What's next
 
-More territories, FDX import, budget-line export to Movie Magic, and carrier integrations for
-real underwriting quotes.
+Per-jurisdiction expansion (more territories and non-English screenplays, each calibrated
+and eval-gated before shipping — see DECISIONS.md for the roadmap), budget-line export to
+Movie Magic, draft-over-draft change tracking on stable finding IDs, and carrier
+integrations for real underwriting quotes.
 
 ## Try it (judges)
 
