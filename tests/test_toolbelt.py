@@ -32,6 +32,7 @@ def make_ctx(agent_name="clearance_counsel", **state):
         "research_budget:clearance_counsel": 3,
         "research_budget:territory_censor": 3,
         # provenance: filed excerpts must exist in retrieved material
+        "research_keys": ["research:E001:seeded"],
         "research:E001:seeded": {
             "objective": "seeded",
             "search_id": "s0",
@@ -88,6 +89,47 @@ def test_flag_without_citation_is_rejected():
     msg = file_good_flag(ctx, citations=[])
     assert msg.startswith("REJECTED")
     assert "flags:clearance_counsel" not in ctx.state
+
+
+class _AdkishState:
+    """Mimics ADK State: get/set/contains but NO .keys()/iteration — the shape
+    that crashed provenance in production."""
+
+    def __init__(self, base):
+        self._d = dict(base)
+
+    def get(self, k, default=None):
+        return self._d.get(k, default)
+
+    def __getitem__(self, k):
+        return self._d[k]
+
+    def __setitem__(self, k, v):
+        self._d[k] = v
+
+    def __contains__(self, k):
+        return k in self._d
+
+
+def test_provenance_survives_enumeration_hostile_state():
+    from types import SimpleNamespace
+
+    _, scenes = parser.parse_fountain(SOURCE)
+    state = _AdkishState(
+        {
+            "script_text": SOURCE,
+            "scenes": scenes,
+            "research_keys": ["research:E001:seeded"],
+            "research:E001:seeded": {
+                "results": [{"url": "u", "title": "t", "excerpts": [RESEARCH_EXCERPT]}]
+            },
+        }
+    )
+    ctx = SimpleNamespace(
+        agent_name="clearance_counsel", state=state, actions=SimpleNamespace(escalate=False)
+    )
+    msg = file_good_flag(ctx)
+    assert "Filed F" in msg, msg
 
 
 def test_flag_with_fabricated_excerpt_is_rejected():

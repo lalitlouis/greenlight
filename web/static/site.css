@@ -1214,3 +1214,7 @@ tr.bd-sev-BLOCKER { background: rgba(224, 52, 42, 0.045); }
 .notify-chip { margin-top: 4px; align-self: flex-start; border: 1px solid var(--line-2); background: var(--band); color: var(--ink-2); font: inherit; font-size: 13.5px; font-weight: 550; border-radius: 980px; padding: 6px 16px; cursor: pointer; }
 .notify-chip:hover:not(:disabled) { border-color: var(--gold); color: var(--ink); }
 .notify-chip:disabled { color: var(--go-deep); cursor: default; }
+
+.run-error-banner { border-color: var(--blocker); background: rgba(224, 52, 42, 0.05); padding: 18px 22px; margin-bottom: 18px; }
+.run-error-banner b { color: var(--blocker); font-size: 16.5px; }
+.run-error-banner p { margin: 6px 0 0; font-size: 14.5px; color: var(--ink-2); }

@@ -207,6 +207,7 @@ async def research(
     )
     if stored is not None:
         tool_context.state[key] = {k: v for k, v in stored.items() if not k.startswith("_")}
+        _index_research_key(tool_context, key)
         return {"cached": True, "results": stored["results"], "search_id": stored["search_id"]}
 
     budget_key = f"research_budget:{_desk(tool_context)}"
@@ -232,6 +233,7 @@ async def research(
         "results": compacted,
     }
     tool_context.state[key] = record
+    _index_research_key(tool_context, key)
     await asyncio.to_thread(
         _durable_cache_store, q_hash if not entity_id else f"{entity_id}-{q_hash}", record
     )
@@ -244,6 +246,16 @@ async def research(
 
 
 # --- file_flag --------------------------------------------------------------
+
+
+def _index_research_key(tool_context: ToolContext, key: str) -> None:
+    """Explicit shared index of research state keys. ADK's State object does not
+    support enumeration (.keys() crashed every file_flag in production), so the
+    provenance check reads this list instead of walking the state."""
+    keys = list(tool_context.state.get("research_keys", []))
+    if key not in keys:
+        keys.append(key)
+        tool_context.state["research_keys"] = keys
 
 
 def _norm_for_match(s: str) -> str:
@@ -276,20 +288,20 @@ def _excerpt_exists(excerpt: str, tool_context: ToolContext) -> bool:
     source = state.get("source") or ""
     if needle in _norm_for_match(source):
         return True
-    # 2. research results (shared across desks) — keys "research:*"
-    for key in list(state.keys()):
-        if str(key).startswith("research:"):
-            rec = state.get(key) or {}
-            for r in rec.get("results", []):
-                for ex in r.get("excerpts", []):
-                    if needle in _norm_for_match(ex):
-                        return True
-                if needle in _norm_for_match(r.get("title", "")):
+    # 2. research results, via the explicit index (never enumerate ADK State)
+    for key in state.get("research_keys", []):
+        rec = state.get(key) or {}
+        for r in rec.get("results", []):
+            for ex in r.get("excerpts", []):
+                if needle in _norm_for_match(ex):
                     return True
-        elif str(key).startswith("last_precedent:"):
-            for comp in state.get(key) or []:
-                if needle in _norm_for_match(comp.get("rationale", "")):
-                    return True
+            if needle in _norm_for_match(r.get("title", "")):
+                return True
+    # 3. precedent rationales, per desk
+    for desk in DESKS:
+        for comp in state.get(f"last_precedent:{desk}") or []:
+            if needle in _norm_for_match(comp.get("rationale", "")):
+                return True
     return False
 
 

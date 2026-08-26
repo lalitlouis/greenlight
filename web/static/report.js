@@ -691,6 +691,17 @@ function renderReport(record) {
   CURRENT_RECORD = record;
   const root = $("report");
   root.textContent = "";
+  if (record.error) {
+    const warn = el("div", "card run-error-banner");
+    warn.appendChild(el("b", null, "This analysis did not complete."));
+    warn.appendChild(
+      el("p", null,
+        "The run hit an internal error before the desks finished, so what follows is a partial " +
+        "record — the score is not meaningful. Re-run the script for a real report; this run " +
+        "does not count against you.")
+    );
+    root.appendChild(warn);
+  }
   const rep = record.report || {};
   const counts = rep.counts || {};
   const score = rep.greenlight_score ?? "—";
