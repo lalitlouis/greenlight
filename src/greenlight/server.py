@@ -1438,7 +1438,7 @@ def _summarize(record: dict[str, Any], run_id: str, kind: str) -> dict[str, Any]
 
 
 # The records the home page shows. Update when the demo record is refreshed.
-HOME_RECORDS = {"run_20260824_113702_demo"}
+HOME_RECORDS = {"run_20260826_demo"}
 
 
 @app.get("/api/runs")

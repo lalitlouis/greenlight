@@ -100,10 +100,10 @@ document.addEventListener("DOMContentLoaded", () => {
 /* ---------- showcase carousel ---------- */
 const SLIDES = [
   ["reject", "<b>The cross-examination.</b> A blinded verifier challenges every finding — here it REJECTS F201, whose source didn't support the claim. Rejected flags never reach the report."],
-  ["report", "<b>The verdict, with the money.</b> Not cleared — 2 blockers, 21 findings, $184,500–$822,500 of estimated clearance exposure, priced finding by finding."],
+  ["report", "<b>The verdict, with the money.</b> Not cleared — 2 blockers, 21 findings, $104,500–$413,500 of estimated clearance exposure, priced finding by finding."],
   ["read", "<b>The analysis, live on your script.</b> Four desks read concurrently; findings pin to their scenes the moment they're filed."],
   ["citation", "<b>Receipts, not opinions.</b> Every finding quotes its sources verbatim — a flag without a citation is structurally impossible."],
-  ["rating", "<b>Your rating, predicted from evidence.</b> Seven of the eight nearest released comparables are rated R — with sources for each."],
+  ["rating", "<b>Your rating, predicted from evidence.</b> Five of the eight nearest released comparables are rated R — with sources for each."],
   ["script", "<b>The marked-up script.</b> Every finding anchored to its scene in the margin, severity-tagged, one click from note to full report."],
 ];
 
