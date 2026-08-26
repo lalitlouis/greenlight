@@ -197,6 +197,10 @@ async def research(
     key = f"research:{entity_id}:{q_hash}" if entity_id else f"research:{q_hash}"
     cached = tool_context.state.get(key)
     if cached is not None:
+        _register_provenance(
+            tool_context,
+            [x for r in cached["results"] for x in [r.get("title", ""), *r.get("excerpts", [])]],
+        )
         return {"cached": True, "results": cached["results"], "search_id": cached["search_id"]}
 
     # Cross-run cache: identical questions reuse identical sources for a week.
@@ -208,6 +212,10 @@ async def research(
     if stored is not None:
         tool_context.state[key] = {k: v for k, v in stored.items() if not k.startswith("_")}
         _index_research_key(tool_context, key)
+        _register_provenance(
+            tool_context,
+            [x for r in stored["results"] for x in [r.get("title", ""), *r.get("excerpts", [])]],
+        )
         return {"cached": True, "results": stored["results"], "search_id": stored["search_id"]}
 
     budget_key = f"research_budget:{_desk(tool_context)}"
@@ -234,6 +242,10 @@ async def research(
     }
     tool_context.state[key] = record
     _index_research_key(tool_context, key)
+    _register_provenance(
+        tool_context,
+        [x for r in compacted for x in [r.get("title", ""), *r.get("excerpts", [])]],
+    )
     await asyncio.to_thread(
         _durable_cache_store, q_hash if not entity_id else f"{entity_id}-{q_hash}", record
     )
@@ -246,6 +258,28 @@ async def research(
 
 
 # --- file_flag --------------------------------------------------------------
+
+
+# Provenance registry, OUT of ADK state: session-state deltas merge last-writer-
+# wins even for parallel tool calls in one turn, so any mutable index there loses
+# entries under concurrency (49 false provenance rejections in one eval run). A
+# run executes in a single process (worker job or in-process task), so a plain
+# module dict keyed by invocation id is race-free on the event loop and shared
+# by every desk. State-based indices remain as a secondary source.
+_PROV_TEXTS: dict[str, list[str]] = {}
+_PROV_MAX_RUNS = 8
+
+
+def _prov_bucket(tool_context: ToolContext) -> list[str]:
+    inv = str(getattr(tool_context, "invocation_id", "") or "run")
+    if inv not in _PROV_TEXTS and len(_PROV_TEXTS) >= _PROV_MAX_RUNS:
+        _PROV_TEXTS.pop(next(iter(_PROV_TEXTS)))  # drop the oldest run's registry
+    return _PROV_TEXTS.setdefault(inv, [])
+
+
+def _register_provenance(tool_context: ToolContext, texts: list[str]) -> None:
+    bucket = _prov_bucket(tool_context)
+    bucket.extend(_norm_for_match(x) for x in texts if x)
 
 
 def _index_research_key(tool_context: ToolContext, key: str) -> None:
@@ -288,13 +322,18 @@ def _excerpt_exists(excerpt: str, tool_context: ToolContext) -> bool:
     needle = _norm_for_match(excerpt).strip(" \"'.…-")
     if len(needle) < _MIN_PROVENANCE_CHARS:
         return True
-    state = tool_context.state
-    # 1. the script itself
-    source = state.get("source") or ""
-    if needle in _norm_for_match(source):
+    # 1. the process-local registry — the authoritative source
+    for text in _PROV_TEXTS.get(str(getattr(tool_context, "invocation_id", "") or "run"), []):
+        if needle in text:
+            return True
+    return _exists_in_state(needle, tool_context.state)
+
+
+def _exists_in_state(needle: str, state: Any) -> bool:
+    """Secondary provenance sources kept in session state: the script itself,
+    per-desk research indices, and precedent rationales."""
+    if needle in _norm_for_match(state.get("source") or ""):
         return True
-    # 2. research results, via the per-desk indices (never enumerate ADK State;
-    # union all desks — research is shared, and this desk may cite a cache hit)
     seen: set[str] = set()
     for desk in DESKS:
         for key in state.get(f"research_keys:{desk}", []):
@@ -308,7 +347,6 @@ def _excerpt_exists(excerpt: str, tool_context: ToolContext) -> bool:
                         return True
                 if needle in _norm_for_match(r.get("title", "")):
                     return True
-    # 3. precedent rationales, per desk
     for desk in DESKS:
         for comp in state.get(f"last_precedent:{desk}") or []:
             if needle in _norm_for_match(comp.get("rationale", "")):
@@ -513,6 +551,7 @@ async def query_precedent(text: str, k: int, tool_context: ToolContext) -> dict[
     # The prediction tool assembles the report's rating_prediction from the most
     # recent comparables — stored here so the desk never re-types them.
     tool_context.state[f"last_precedent:{_desk(tool_context)}"] = comparables
+    _register_provenance(tool_context, [c.get("rationale", "") for c in comparables])
     return {"comparables": comparables}
 
 
