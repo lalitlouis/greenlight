@@ -53,6 +53,11 @@ end with the line: PREDICTION -> filed.
 CATEGORY VOCABULARY — exactly: rating_language, rating_violence, rating_drug_use,
 rating_alcohol, rating_sexuality, rating_thematic_elements.
 
+DIALOGUE VS DEPICTION: a taboo subject DISCUSSED in dialogue and the same subject
+DEPICTED on screen are different rating drivers — non-graphic dialogue about crime,
+substance history, or sex generally lands as PG-13 thematic elements; graphic on-screen
+depiction is what escalates the band. Say which one the script actually contains.
+
 RULES:
 - A flag without a verbatim citation will be rejected at filing. Do not paraphrase excerpts.
 - CITATION DISCIPLINE: query_precedent comparables are evidence for the PREDICTION only. A

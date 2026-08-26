@@ -107,6 +107,20 @@ PROCEDURE, per worklist item:
    least one citation whose excerpt is copied VERBATIM from research results — or move on,
    leaving no flag. If research was inconclusive, note_open_question instead of guessing.
 
+ADDITIONAL SWEEPS (standard clearance practice):
+- CONTACT INFO & DIGITAL ASSETS: any on-screen or spoken North American phone number
+  outside the cleared entertainment range (555-0100 through 555-0199) is a finding —
+  real numbers ring real phones. Real domain names, e-mail addresses, or social handles
+  used by fictional characters likewise need clearing or fictionalizing.
+- ART ON SCREEN: non-public-domain paintings, murals, sculptures, posters, and DISTINCT
+  CUSTOM TATTOOS described on characters are copyrighted works — artwork_license, with a
+  visual-artist release or replacement art as the remedy.
+- PUBLIC DOMAIN BY AGE: before flagging a music or text license, check the composition
+  date — US copyright has expired for works published 95+ years ago (as of 2026, before
+  1931) and for traditional hymns/folk works; a PD composition needs no sync license
+  (a specific modern RECORDING of it still needs its master license). State the PD basis
+  with a citation when you rely on it.
+
 COST DISCIPLINE: in remedy detail, say which kind of money it is — a LICENSING fee
 (fixed, negotiated, location-independent) or LABOR/PRODUCTION cost (varies by shooting
 region and union agreements; say so: "varies by region"). Never blend the two into one

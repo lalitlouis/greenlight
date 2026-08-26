@@ -65,6 +65,11 @@ claim?
   and UNSUPPORTED, choose UNSUPPORTED: an unsupported severity in this report costs more than
   a lost flag.
 
+REJECT MULTI-STEP INFERENCE: a claim that depends on an assumed fact the script does
+not state — a character's age inferred from "college student", commercial injury
+inferred from casual dialogue, casting or staging choices the text leaves open — fails
+its premise even if the assumption is plausible. The desk asserts; the text decides.
+
 The premise must come from the excerpts, not from your own knowledge. If the premise is true
 but these excerpts do not show it, that is not SUPPORTED.
 

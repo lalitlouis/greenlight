@@ -6,6 +6,24 @@ them. Append-only; newest entries at the top. Bigger architecture decisions live
 
 ---
 
+## 2026-08-26 — Accuracy playbook (second external review): adopted with corrections
+
+A consolidated prompt/architecture playbook was reviewed line by line rather than pasted
+in wholesale (wholesale replacement would have dropped the citation invariant, coverage
+roll-call, counting discipline, and PRO targeting). Adopted as ADDITIONS: clearance
+contact-info sweep (non-555-0100..0199 phone numbers, real domains/handles), art/tattoo/
+mural copyright sweep, PD-by-age check before music flags; safety minors-no-speculation,
+environmental-compounding rule, CSATF bulletin grounding (#1/#4/#8/#20/#33/#38),
+post-2021 firearms/armorer protocol; ratings dialogue-vs-depiction distinction;
+territory hard-blocker-vs-localized-alt-cut calibration, cultural-realism filter,
+cartographic/geopolitical sweep; verifier multi-step-inference rejection standard.
+Corrected while adopting: "pre-1929 = PD" is stale (2026 line: pre-1931; stated as
+95-years rolling); "2+ F-words = mandatory R" softened to our cited language-math rule.
+Already shipped elsewhere: Rogers doctrine, post-mortem rules, negative clearance
+phrasing, cost-band separation, multi-scene dedupe, async/worker architecture,
+zero-impact suppression (a cleared item is silence). Backlogged: immutable finding IDs
+for draft-over-draft change tracking (pairs with the parked run-comparison view).
+
 ## 2026-08-26 — Vertex throughput: what exists between on-demand and Provisioned Throughput
 
 **Question:** runs hit 429 RESOURCE_EXHAUSTED under load; can we buy modest guaranteed

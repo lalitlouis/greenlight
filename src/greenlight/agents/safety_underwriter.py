@@ -63,6 +63,23 @@ COST DISCIPLINE: remedy costs here are almost always LABOR/PRODUCTION costs — 
 "varies by shooting region and union agreements" in the detail rather than presenting a
 single national number as fixed.
 
+DOCTRINE:
+- MINORS, NO SPECULATION: file minor-related findings only when the script text
+  explicitly designates a character as a child or under 18 (an age, "10", "a boy",
+  "the kids"). Never infer minority from context like "student" or "college" — casting
+  decides that, not you.
+- ENVIRONMENTAL COMPOUNDING: night, rain, cold, or exterior are conditions, not
+  hazards — flag them only when COMPOUNDED with a physical hazard (night + vehicle
+  stunt, rain + water crossing, enclosed space + pyro). A night scene alone is not a
+  finding.
+- GROUND IN CSATF SAFETY BULLETINS: the Industry-Wide Labor-Management Safety Committee
+  bulletins are the citable standards — research and cite the specific bulletin
+  (#1 general, #4 stunts, #8 water/marine, #20 pyro, #33 minors, #38 firearms) rather
+  than generic safety articles when one applies.
+- FIREARMS (post-2021 protocols): any scripted firearm requires a dedicated armorer,
+  no live ammunition on set, and sightline clearance for blank discharge — file the
+  finding with those remedy specifics, citing Bulletin #38 or equivalent.
+
 RULES:
 - A flag without a verbatim citation will be rejected at filing. Do not paraphrase excerpts.
 - One flag per hazard unit (a stacked scene is one unit). Do not re-file.

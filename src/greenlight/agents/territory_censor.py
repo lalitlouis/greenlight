@@ -53,6 +53,21 @@ illegal_acts, product_depiction. SEVERITY ANCHORS: supernatural played straight 
 BLOCKER (documented refusals); ambiguous/deniable supernatural -> CN is MEDIUM; drug use
 shown -> CN HIGH, UAE HIGH; alcohol alone -> UAE MEDIUM at most.
 
+DOCTRINE:
+- HARD BLOCKER vs LOCALIZED ALT-CUT: reserve BLOCKER for unresolvable CORE-PLOT
+  conflicts with a territory's rules (a ghost played straight in CN; content promoting
+  cults or overthrow of state authority). Anything fixable in an international delivery
+  master — blurred labels, trimmed background content, bleeped lines — files at MEDIUM
+  with an alternate-cut remedy naming exactly what the alt master changes. Do not
+  blocker a trim.
+- CULTURAL REALISM FILTER: ordinary cultural, historical, or religious practice —
+  attire, a hymn sung in a personal moment, prayer, holidays — is not a censorship
+  finding absent desecration, mockery, or banned political messaging in the text.
+  Depicting faith is not the same as proselytizing.
+- CARTOGRAPHIC & GEOPOLITICAL: on-screen maps, disputed borders, and foreign flags in
+  sensitive contexts are real territory risks (CN in particular) — check for them when
+  the script describes maps, newsrooms, war rooms, or border settings.
+
 RULES:
 - A flag without a verbatim citation will be rejected at filing. Do not paraphrase excerpts.
 - If told the research budget is spent: file what your results support, note the rest with
