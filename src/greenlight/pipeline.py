@@ -182,7 +182,11 @@ async def run(
     source = Path(script_path).read_text()
     meta, scenes = parser.parse_fountain(source)
     title = meta.get("title", Path(script_path).stem)
-    print(f"\n{BOLD}GREENLIGHT{RESET} — {title}: {len(scenes)} scenes parsed\n")
+    verbose = on_event is None  # CLI runs narrate to the console; server runs must
+    # keep script-derived text (titles, findings, excerpts) OUT of stdout — stdout
+    # is Cloud Logging in production, and the privacy page promises logs are clean.
+    if verbose:
+        print(f"\n{BOLD}GREENLIGHT{RESET} — {title}: {len(scenes)} scenes parsed\n")
 
     runner = get_runner()
     session = await runner.session_service.create_session(
@@ -203,14 +207,15 @@ async def run(
             if on_event is not None:
                 for ev in structured_events(event):
                     on_event(ev)
-            for line in _describe_event(event):
-                print(line)
+            if verbose:
+                for line in _describe_event(event):
+                    print(line)
     except Exception as e:
         cause: BaseException = e
         while isinstance(cause, BaseExceptionGroup) and cause.exceptions:
             cause = cause.exceptions[0]  # the group message hides the real failure
         error = f"{type(cause).__name__}: {str(cause)[:300]}"
-        print(f"\n{BOLD}RUN ABORTED{RESET} — {error}\nSalvaging partial results.\n")
+        print(f"\n{BOLD}RUN ABORTED{RESET} — {type(cause).__name__}\nSalvaging partial results.\n")
 
     final = await runner.session_service.get_session(
         app_name=APP_NAME, user_id=USER_ID, session_id=session.id

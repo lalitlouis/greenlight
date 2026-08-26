@@ -572,7 +572,9 @@ async def create_run(screenplay: UploadFile, request: Request) -> dict[str, str]
     await asyncio.to_thread(storage.save_script, run_id, source)
     title = (screenplay.filename or "screenplay").rsplit(".", 1)[0]
     _bump("runs")
-    _log("run_started", run_id=run_id, title=title, owner=bool(owner))
+    # no title in logs: a screenplay's name is the user's content, and the
+    # privacy page promises log lines carry no screenplay text
+    _log("run_started", run_id=run_id, pages=len(source) // 3200, owner=bool(owner))
     if owner:
         await asyncio.to_thread(
             storage.save_user_run,
