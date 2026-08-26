@@ -220,7 +220,9 @@ async def research(
     # questions still share across desks. Geo/domain modifiers change the answer
     # set, so they join the key — but only when set, preserving old cache keys.
     modifiers = (
-        f"|{country}|{sorted(restrict_to_domains)}" if (country or restrict_to_domains) else ""
+        f"|{country}|{sorted(restrict_to_domains or [])}"
+        if (country or restrict_to_domains)
+        else ""
     )
     q_hash = hashlib.sha1((objective + modifiers).encode()).hexdigest()[:12]
     key = f"research:{entity_id}:{q_hash}" if entity_id else f"research:{q_hash}"
@@ -262,14 +264,21 @@ async def research(
     # Decrement BEFORE the await: when a desk issues several research calls in
     # one turn they run concurrently, and the budget must count each of them.
     tool_context.state[budget_key] = budget - 1
-    raw = await asyncio.to_thread(
-        _live_search,
-        objective,
-        queries,
-        session_id=session_id,
-        country=country,
-        include_domains=restrict_to_domains,
-    )
+    try:
+        raw = await asyncio.to_thread(
+            _live_search,
+            objective,
+            queries,
+            session_id=session_id,
+            country=country,
+            include_domains=restrict_to_domains,
+        )
+    except Exception as exc:  # a failed search must cost nothing and abort nothing
+        tool_context.state[budget_key] = budget
+        return {
+            "error": f"search failed: {type(exc).__name__}",
+            "guidance": "Try again with different queries, or note an open question.",
+        }
     compacted = _compact(raw)
     record = {
         "objective": objective,

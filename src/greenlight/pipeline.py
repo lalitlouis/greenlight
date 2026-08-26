@@ -10,6 +10,7 @@ from __future__ import annotations
 import contextlib
 import json
 import os
+import sys
 import time
 from pathlib import Path
 from typing import Any
@@ -258,6 +259,10 @@ async def run(
             cause = cause.exceptions[0]  # the group message hides the real failure
         error = f"{type(cause).__name__}: {str(cause)[:300]}"
         print(f"\n{BOLD}RUN ABORTED{RESET} — {type(cause).__name__}\nSalvaging partial results.\n")
+        if os.getenv("GREENLIGHT_TRACE"):  # local debugging only: full chain, stderr
+            import traceback
+
+            traceback.print_exception(e, file=sys.stderr)
 
     final = await runner.session_service.get_session(
         app_name=APP_NAME, user_id=USER_ID, session_id=session.id

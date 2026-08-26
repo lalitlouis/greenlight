@@ -461,3 +461,28 @@ def test_research_geo_and_domain_modifiers_reach_live_search(monkeypatch):
         )
     )
     assert seen == {"country": "CN", "domains": ["gov.cn"]}
+
+
+def test_research_country_alone_does_not_crash(monkeypatch):
+    # The Social Network outage, 2026-08-26: country="CN" with no domain list hit
+    # sorted(None) in the cache-key modifier and the TypeError aborted the run.
+    monkeypatch.setattr(toolbelt, "_durable_cache_load", lambda k: None)
+    monkeypatch.setattr(toolbelt, "_durable_cache_store", lambda k, r: None)
+    monkeypatch.setattr(toolbelt, "_live_search", lambda o, q, **kw: CASSETTE)
+    ctx = make_ctx(agent_name="territory_censor")
+    r = asyncio.run(toolbelt.research("CN standard", ["china film rule"], "E001", ctx, country="CN"))
+    assert r["cached"] is False and r["results"]
+
+
+def test_research_live_failure_refunds_and_returns_error(monkeypatch):
+    monkeypatch.setattr(toolbelt, "_durable_cache_load", lambda k: None)
+    monkeypatch.setattr(toolbelt, "_durable_cache_store", lambda k, r: None)
+
+    def boom(*a, **kw):
+        raise RuntimeError("api down")
+
+    monkeypatch.setattr(toolbelt, "_live_search", boom)
+    ctx = make_ctx(**{"research_budget:clearance_counsel": 3})
+    r = asyncio.run(toolbelt.research("q", ["q"], "E001", ctx))
+    assert "error" in r
+    assert ctx.state["research_budget:clearance_counsel"] == 3
