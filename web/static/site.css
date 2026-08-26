@@ -1218,3 +1218,13 @@ tr.bd-sev-BLOCKER { background: rgba(224, 52, 42, 0.045); }
 .run-error-banner { border-color: var(--blocker); background: rgba(224, 52, 42, 0.05); padding: 18px 22px; margin-bottom: 18px; }
 .run-error-banner b { color: var(--blocker); font-size: 16.5px; }
 .run-error-banner p { margin: 6px 0 0; font-size: 14.5px; color: var(--ink-2); }
+
+/* ---------- scene hover preview ---------- */
+.scene-pop { position: absolute; z-index: 70; width: min(560px, calc(100vw - 32px)); background: var(--surface); border: 1px solid var(--line-2); border-radius: 14px; box-shadow: 0 18px 50px rgba(0, 0, 0, 0.22); overflow: hidden; }
+.sp-head { display: flex; align-items: baseline; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--line); }
+.sp-head b { font-size: 12.5px; font-weight: 800; color: var(--green-deep); }
+.sp-head span { font-size: 13px; font-weight: 650; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sp-text { margin: 0; padding: 14px 18px; max-height: 300px; overflow-y: auto; font-family: var(--mono); font-size: 12.5px; line-height: 1.6; white-space: pre-wrap; color: var(--ink); background: #fffdf6; }
+.sp-open { display: block; width: 100%; border: 0; border-top: 1px solid var(--line); background: var(--band); color: var(--green-deep); font: inherit; font-size: 13px; font-weight: 650; padding: 9px 16px; text-align: left; cursor: pointer; }
+.sp-open:hover { background: var(--green-tint); }
+@media (hover: none) { .scene-pop { display: none !important; } }

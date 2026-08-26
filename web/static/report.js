@@ -7,6 +7,85 @@
 let RUN_ID = null;
 let IS_CASE = false;
 
+/* ---------- scene hover preview: the script text, right on the finding ---------- */
+let SCRIPT_DATA = null; // { scenes: {sid: {heading, text}} } — fetched once, on first hover
+let scriptFetch = null;
+let popHideTimer = null;
+
+async function ensureScript() {
+  if (SCRIPT_DATA) return SCRIPT_DATA;
+  scriptFetch =
+    scriptFetch ||
+    fetch(`/api/script/${encodeURIComponent(RUN_ID)}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (!d) return null;
+        const scenes = {};
+        for (const s of d.scenes || []) {
+          const [a, b] = s.raw_span || [0, 0];
+          scenes[s.scene_id] = { heading: s.heading, text: d.source.slice(a, b).trim() };
+        }
+        SCRIPT_DATA = { scenes };
+        return SCRIPT_DATA;
+      })
+      .catch(() => null);
+  return scriptFetch;
+}
+
+function scenePopover() {
+  let pop = document.getElementById("scene-pop");
+  if (pop) return pop;
+  pop = el("div", "scene-pop hidden");
+  pop.id = "scene-pop";
+  pop.addEventListener("mouseenter", () => clearTimeout(popHideTimer));
+  pop.addEventListener("mouseleave", hideScenePop);
+  document.body.appendChild(pop);
+  return pop;
+}
+
+function hideScenePop() {
+  clearTimeout(popHideTimer);
+  popHideTimer = setTimeout(() => {
+    document.getElementById("scene-pop")?.classList.add("hidden");
+  }, 180);
+}
+
+async function showScenePop(anchor, sid) {
+  clearTimeout(popHideTimer);
+  const data = await ensureScript();
+  const scene = data && data.scenes[sid];
+  const pop = scenePopover();
+  pop.textContent = "";
+  const head = el("div", "sp-head");
+  head.appendChild(el("b", null, sid));
+  head.appendChild(el("span", null, scene ? scene.heading : "script text unavailable"));
+  pop.appendChild(head);
+  if (scene) {
+    pop.appendChild(el("pre", "sp-text", scene.text));
+    const open = el("button", "sp-open", "Open in marked-up script →");
+    open.type = "button";
+    open.addEventListener("click", () => gotoScene(sid));
+    pop.appendChild(open);
+  }
+  pop.classList.remove("hidden");
+  const r = anchor.getBoundingClientRect();
+  const pw = Math.min(560, window.innerWidth - 32);
+  let left = r.left + window.scrollX;
+  if (left + pw > window.scrollX + window.innerWidth - 16) {
+    left = window.scrollX + window.innerWidth - pw - 16;
+  }
+  pop.style.left = left + "px";
+  const below = r.bottom + window.scrollY + 8;
+  pop.style.top = below + "px";
+  // flip above the anchor if the popover would fall off the viewport bottom
+  requestAnimationFrame(() => {
+    const ph = pop.offsetHeight;
+    if (r.bottom + ph + 16 > window.innerHeight) {
+      pop.style.top = r.top + window.scrollY - ph - 8 + "px";
+    }
+  });
+}
+
 function gotoScene(sid) {
   window.location.href = `/script?run=${encodeURIComponent(RUN_ID)}#scene-${sid}`;
 }
@@ -332,8 +411,12 @@ function flagRow(f, opts) {
     }
     const b = el("button", "scene-link", sid);
     b.type = "button";
-    b.title = "Show in script";
+    b.title = "Hover to preview · click to open in the script";
     b.addEventListener("click", () => gotoScene(sid));
+    b.addEventListener("mouseenter", () => showScenePop(b, sid));
+    b.addEventListener("mouseleave", hideScenePop);
+    b.addEventListener("focus", () => showScenePop(b, sid));
+    b.addEventListener("blur", hideScenePop);
     scenes.appendChild(b);
   }
   row.appendChild(scenes);
