@@ -101,7 +101,26 @@ def main() -> int:
         storage.save_user_run(owner, run_id, _stub(run_id, record, state))
     runstate.run_set(run_id, {"status": status, "record_saved": True})
     runstate.increment("runs_completed")
-    print(f"worker: {run_id} {status} ({record.get('elapsed_s')}s)")
+    # Structured run summary — the one log line that powers duration/quality
+    # monitoring. Deliberately carries NO title and no script-derived text.
+    import json as _json
+
+    budgets = pipeline.scaled_budgets(record.get("report", {}).get("page_count") or 1)
+    left = record.get("research_budget_left") or {}
+    summary = {
+        "kind": "run_summary",
+        "run_id": run_id,
+        "status": status,
+        "elapsed_s": record.get("elapsed_s"),
+        "scenes": record.get("scenes"),
+        "pages": record.get("report", {}).get("page_count"),
+        "entities": len(record.get("entities", [])),
+        "flags": len(record.get("flags", [])),
+        "rejected": len(record.get("rejected_flags", [])),
+        "score": record.get("report", {}).get("greenlight_score"),
+        "searches_spent": sum(max(0, budgets.get(d, 0) - (left.get(d) or 0)) for d in budgets),
+    }
+    print(_json.dumps(summary))
     return 0
 
 
