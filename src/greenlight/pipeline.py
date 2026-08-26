@@ -183,6 +183,22 @@ def _describe_event(event: Any) -> list[str]:
     return lines
 
 
+async def _salvage_verify(filed, verdicts, state, on_event):
+    """A partial report must still be a VERIFIED partial report: when a run aborts
+    after desks filed but before verification, run the blinded fan-out directly —
+    its per-call backoff usually succeeds once the quota burst has passed."""
+    if not filed or verdicts or os.getenv("GREENLIGHT_SKIP_SALVAGE_VERIFY"):
+        return verdicts
+    try:
+        verdicts = await verification.verify_standalone(filed, state)
+        if on_event is not None:
+            brief = f"Salvage: verified {len(verdicts)} filed flags after the abort."
+            on_event({"type": "text", "agent": "verification_panel", "text": brief})
+    except Exception:
+        pass  # truly unavailable — apply_verdicts fails open with markers
+    return verdicts
+
+
 async def run(
     script_path: str | Path,
     budgets: dict[str, int] | None = None,
@@ -247,7 +263,8 @@ async def run(
     }
     if "verified_flags" in state:
         kept, rejected = state["verified_flags"], state.get("rejected_flags", [])
-    else:  # verification did not run (aborted run) — fall back, fail open
+    else:
+        verdicts = await _salvage_verify(filed, verdicts, state, on_event)
         kept, rejected = apply_verdicts(filed, verdicts)
     kept = adjudicator.merge_exact_duplicates(kept)
     adjudication_notes: list[str] = []

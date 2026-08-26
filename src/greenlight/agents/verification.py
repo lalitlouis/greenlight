@@ -149,6 +149,55 @@ def apply_verdicts(
     return kept, rejected
 
 
+async def _verify_flag(
+    client: Any, flag: dict[str, Any], script_context: str, sem: asyncio.Semaphore
+) -> dict:
+    async with sem:
+        delay = 10.0
+        for attempt in range(_MAX_ATTEMPTS):
+            try:
+                res = await client.aio.models.generate_content(
+                    model=MODEL,
+                    contents=_blinded_prompt(flag, script_context),
+                    config=types.GenerateContentConfig(
+                        response_mime_type="application/json",
+                        response_schema=Verdict,
+                        temperature=0.0,
+                    ),
+                )
+                v = Verdict.model_validate_json(res.text)
+                return {"verdict": v.verdict, "reason": v.reason}
+            except Exception:
+                if attempt == _MAX_ATTEMPTS - 1:
+                    # Fail open with a marker: never silently drop a flag
+                    # because the VERIFIER errored.
+                    return {"verdict": "SUPPORTED", "reason": "verifier unavailable"}
+                await asyncio.sleep(delay)
+                delay = min(delay * 2, 60)
+
+
+async def verify_standalone(
+    flags: list[dict[str, Any]], state: dict[str, Any]
+) -> dict[str, dict[str, Any]]:
+    """The same blinded fan-out, runnable outside the agent tree. The salvage
+    path uses this when a run aborts after desks filed but before verification —
+    a partial report must still be a VERIFIED partial report."""
+    from google import genai
+
+    client = genai.Client(
+        vertexai=True,
+        project=os.environ["GOOGLE_CLOUD_PROJECT"],
+        location=os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1"),
+    )
+    sem = asyncio.Semaphore(_CONCURRENCY)
+
+    async def _one(f: dict[str, Any]) -> tuple[str, dict[str, Any]]:
+        return f["flag_id"], await _verify_flag(client, f, _scene_context(f, state), sem)
+
+    results = await asyncio.gather(*[_one(f) for f in flags])
+    return dict(results)
+
+
 class VerificationPanel(BaseAgent):
     """Runtime fan-out: one Gemini verifier per flag, concurrently, blinded."""
 
