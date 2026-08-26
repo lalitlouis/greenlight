@@ -331,7 +331,8 @@ def _word_overlap_hit(needle: str, texts: list[str]) -> bool:
     """Secondary standard: a quote stitched or elided from ONE real source keeps
     ~all its words; a fabricated quote does not. >=90% of the needle's words in
     a single registered text = provenance, exact ordering not required."""
-    words = [w for w in needle.split() if len(w) > 2]
+    min_word_len = 3  # skip stopword-length tokens
+    words = [w for w in needle.split() if len(w) >= min_word_len]
     if len(words) < _OVERLAP_MIN_WORDS:
         return False
     need = set(words)
