@@ -32,7 +32,7 @@ def make_ctx(agent_name="clearance_counsel", **state):
         "research_budget:clearance_counsel": 3,
         "research_budget:territory_censor": 3,
         # provenance: filed excerpts must exist in retrieved material
-        "research_keys": ["research:E001:seeded"],
+        "research_keys:clearance_counsel": ["research:E001:seeded"],
         "research:E001:seeded": {
             "objective": "seeded",
             "search_id": "s0",
@@ -119,7 +119,7 @@ def test_provenance_survives_enumeration_hostile_state():
         {
             "script_text": SOURCE,
             "scenes": scenes,
-            "research_keys": ["research:E001:seeded"],
+            "research_keys:clearance_counsel": ["research:E001:seeded"],
             "research:E001:seeded": {
                 "results": [{"url": "u", "title": "t", "excerpts": [RESEARCH_EXCERPT]}]
             },
@@ -300,6 +300,6 @@ def test_language_guard():
         "entre los papeles del escritorio de su abuela. Nadie responde cuando llama. "
     ) * 8
     assert not langguard.probably_english(spanish)
-    chinese = "内景 老宅 夜 王梅走进房间，看着窗外的雨。她慢慢坐下，拿起桌上的旧照片。" * 30
+    chinese = "内景 老宅 夜 王梅走进房间 看着窗外的雨 她慢慢坐下 拿起桌上的旧照片" * 30
     assert not langguard.probably_english(chinese)
     assert langguard.probably_english("too short to judge")

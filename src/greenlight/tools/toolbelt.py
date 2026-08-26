@@ -249,13 +249,18 @@ async def research(
 
 
 def _index_research_key(tool_context: ToolContext, key: str) -> None:
-    """Explicit shared index of research state keys. ADK's State object does not
-    support enumeration (.keys() crashed every file_flag in production), so the
-    provenance check reads this list instead of walking the state."""
-    keys = list(tool_context.state.get("research_keys", []))
+    """Explicit index of research state keys, ONE PER DESK. ADK State cannot be
+    enumerated (.keys() crashed in production), and a single shared list gets
+    clobbered by concurrent desk branches (last-writer-wins on parallel state
+    deltas — desks were erasing each other's entries, making legitimate
+    excerpts fail provenance). Per-desk keys mean no two branches ever write
+    the same key; the read side unions all four. This function is sync with no
+    awaits, so same-desk concurrent tool calls can't interleave the append."""
+    index_key = f"research_keys:{_desk(tool_context)}"
+    keys = list(tool_context.state.get(index_key, []))
     if key not in keys:
         keys.append(key)
-        tool_context.state["research_keys"] = keys
+        tool_context.state[index_key] = keys
 
 
 def _norm_for_match(s: str) -> str:
@@ -288,15 +293,21 @@ def _excerpt_exists(excerpt: str, tool_context: ToolContext) -> bool:
     source = state.get("source") or ""
     if needle in _norm_for_match(source):
         return True
-    # 2. research results, via the explicit index (never enumerate ADK State)
-    for key in state.get("research_keys", []):
-        rec = state.get(key) or {}
-        for r in rec.get("results", []):
-            for ex in r.get("excerpts", []):
-                if needle in _norm_for_match(ex):
+    # 2. research results, via the per-desk indices (never enumerate ADK State;
+    # union all desks — research is shared, and this desk may cite a cache hit)
+    seen: set[str] = set()
+    for desk in DESKS:
+        for key in state.get(f"research_keys:{desk}", []):
+            if key in seen:
+                continue
+            seen.add(key)
+            rec = state.get(key) or {}
+            for r in rec.get("results", []):
+                for ex in r.get("excerpts", []):
+                    if needle in _norm_for_match(ex):
+                        return True
+                if needle in _norm_for_match(r.get("title", "")):
                     return True
-            if needle in _norm_for_match(r.get("title", "")):
-                return True
     # 3. precedent rationales, per desk
     for desk in DESKS:
         for comp in state.get(f"last_precedent:{desk}") or []:
