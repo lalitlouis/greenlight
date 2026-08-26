@@ -837,7 +837,7 @@ function onResult(record) {
       particleCount: 110,
       spread: 75,
       origin: { y: 0.7 },
-      colors: ["#22c55e", "#34d399", "#a5b4fc", "#fcd34d", "#7dd3fc"],
+      colors: ["#e8b64c", "#f4cd66", "#a5b4fc", "#fcd34d", "#7dd3fc"],
       disableForReducedMotion: true,
     });
   }
