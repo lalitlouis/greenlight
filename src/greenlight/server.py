@@ -1265,6 +1265,10 @@ async def case_page(slug: str) -> HTMLResponse:
         raise HTTPException(404, "Unknown case study")
     record_id, title, desc = entry
     html = _versioned_html("report.html")
+    # report.html is noindex by design (private per-run pages) — case studies
+    # are the public, indexable exception
+    html = html.replace('<meta name="robots" content="noindex">\n', "")
+    html = html.replace('<meta name="robots" content="noindex">', "")
     html = html.replace(
         "<title>", f'<link rel="canonical" href="https://scriptrisk.com/cases/{slug}">\n<title>'
     )
