@@ -542,39 +542,102 @@ def test_tool_error_shield_corrects_hallucinated_tools_but_lets_runabort_kill():
     assert tool_error_shield(None, {}, None, toolbelt.RunAbortError("api down")) is None
 
 
-def test_prune_stale_tool_results_bounds_history():
-    # The 537s-p99 outage: old bulky tool payloads must collapse to stubs while
-    # recent exchanges and small results (file_flag confirmations) stay intact.
+def test_prune_disposition_aware():
+    """Archive closed case files; never touch open ones; ceiling bounds monsters."""
     from types import SimpleNamespace as NS
 
     from google.genai import types as gt
 
     from greenlight.agents import common
 
-    def turn(i, big):
-        resp = {"results": ["x" * 2000]} if big else {"ok": f"Filed F{i}"}
-        return gt.Content(
-            role="user",
-            parts=[gt.Part(function_response=gt.FunctionResponse(name="research", response=resp))],
+    def pair(entity, i):
+        call = gt.Content(
+            role="model",
+            parts=[
+                gt.Part(
+                    function_call=gt.FunctionCall(
+                        name="research", args={"entity_id": entity, "objective": f"q{i}"}
+                    )
+                )
+            ],
         )
+        resp = gt.Content(
+            role="user",
+            parts=[
+                gt.Part(
+                    function_response=gt.FunctionResponse(
+                        name="research", response={"results": [f"{entity}-" + "x" * 4000]}
+                    )
+                )
+            ],
+        )
+        return [call, resp]
 
+    # 18 exchanges: alternating FILED (E1) and OPEN (E2) entities
     contents = []
-    for i in range(14):
-        contents.append(gt.Content(role="model", parts=[gt.Part(text=f"turn {i}")]))
-        contents.append(turn(i, big=(i % 2 == 0)))
-    originals = list(contents)
-    req = NS(contents=contents)
-    assert common.prune_stale_tool_results(None, req) is None
+    for i in range(18):
+        contents.extend(pair("E1" if i % 2 == 0 else "E2", i))
+    ctx = NS(
+        agent_name="clearance_counsel", state={"flags:clearance_counsel": [{"entity_id": "E1"}]}
+    )
+    req = NS(contents=list(contents))
+    assert common.prune_stale_tool_results(ctx, req) is None
 
     def payload(c):
         return str(c.parts[0].function_response.response)
 
-    resp_contents = [c for c in req.contents if c.parts[0].function_response is not None]
-    stale, recent = resp_contents[:-8], resp_contents[-8:]
-    assert all("pruned" in payload(c) or len(payload(c)) <= 600 for c in stale)
-    assert any("pruned" in payload(c) for c in stale)  # the big ones got stubbed
-    assert all("pruned" not in payload(c) for c in recent)  # recent stay verbatim
-    # small results are never stubbed, even when stale
-    assert all("Filed F" in payload(c) for c in stale if "pruned" not in payload(c))
-    # session history objects were not mutated in place
-    assert any(a is not b for a, b in zip(originals, req.contents))
+    resps = [c for c in req.contents if c.parts[0].function_response is not None]
+    stale, recent = resps[:-12], resps[-12:]
+    # dispositioned entity E1: old bulky results trimmed, head preserved
+    e1_stale = [c for c in stale if "E1-" in payload(c) or "E1" in payload(c)[:40]]
+    assert e1_stale and all("trimmed" in payload(c) for c in e1_stale)
+    assert all(payload(c).count("x") >= 200 for c in e1_stale)
+    # open entity E2: untouched at any age (below the hard ceiling)
+    e2_stale = [c for c in stale if "E2-" in payload(c)]
+    assert e2_stale and all("trimmed" not in payload(c) for c in e2_stale)
+    # recency floor: nothing recent is touched
+    assert all("trimmed" not in payload(c) for c in recent)
+
+
+def test_prune_hard_ceiling_bounds_open_items():
+    from types import SimpleNamespace as NS
+
+    from google.genai import types as gt
+
+    from greenlight.agents import common
+
+    contents = []
+    for i in range(50):  # all OPEN (no flags filed) — only the ceiling applies
+        contents.append(
+            gt.Content(
+                role="model",
+                parts=[
+                    gt.Part(
+                        function_call=gt.FunctionCall(name="research", args={"entity_id": f"E{i}"})
+                    )
+                ],
+            )
+        )
+        contents.append(
+            gt.Content(
+                role="user",
+                parts=[
+                    gt.Part(
+                        function_response=gt.FunctionResponse(
+                            name="research", response={"results": ["y" * 4000]}
+                        )
+                    )
+                ],
+            )
+        )
+    ctx = NS(agent_name="clearance_counsel", state={})
+    req = NS(contents=list(contents))
+    common.prune_stale_tool_results(ctx, req)
+
+    def payload(c):
+        return str(c.parts[0].function_response.response)
+
+    resps = [c for c in req.contents if c.parts[0].function_response is not None]
+    trimmed = [c for c in resps if "trimmed" in payload(c)]
+    assert len(trimmed) == 10  # 50 exchanges - 40 ceiling = oldest 10 trimmed
+    assert all("trimmed" not in payload(c) for c in resps[-12:])

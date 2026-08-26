@@ -19,6 +19,23 @@ MPA-rated film since 1968 with a citable source." Embedding cost ~$1.30 one-time
 
 ---
 
+## 2026-08-27 — Pruning v2: disposition-aware, because age is the wrong signal
+
+The first cut (keep last 8 exchanges) shipped, then a graded fixture run caught it
+pruning results the desk had researched but NOT YET FILED from — the desk forgot the
+Nighthawks and tattoo work it had paid for (16/21 vs the 19/21 baseline). Age says
+nothing about need; the tools already know when a result dies: the desk works case
+files, and once an entity has a FILED flag its research is never read again (verifiers
+use session state + the provenance registry, not the conversation). Policy now:
+(1) trim bulky results for entities this desk has already flagged — closed case files
+go to the archive; (2) open case files are untouchable regardless of age; (3) last 12
+exchanges always verbatim; (4) hard ceiling at 40 exchanges bounds monster scripts even
+for open items. Trims keep a 300-char head + free-re-ask note. Rejected: LLM-summarized
+compression — it puts a model in charge of rewriting the evidence trail, against the
+product's core thesis, and adds calls to the path we're trying to make cheaper.
+
+---
+
 ## 2026-08-27 — History pruning: the slowdown was us, not Vertex
 
 Diagnosed the crawling Social Network run with data: Parallel searches 2-5s, ClickHouse

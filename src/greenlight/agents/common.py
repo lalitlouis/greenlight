@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from typing import Any
 
 from google.adk.agents import LlmAgent, LoopAgent
 from google.adk.models.google_llm import Gemini
@@ -64,39 +65,97 @@ def tool_error_shield(tool, args, tool_context, error):
 # collapse older bulky tool payloads to a stub. Filed flags, budgets, and the
 # provenance registry live OUTSIDE the conversation, so nothing auditable is
 # lost — and a re-asked research question is a free cache hit.
-_KEEP_RECENT_TOOL_RESULTS = 8
-_PRUNE_OVER_CHARS = 600
-_PRUNE_STUB = {
-    "result": (
-        "[pruned: this result was already used earlier in the session. If you "
-        "genuinely need it again, call the tool again — repeated identical "
-        "research questions are answered from cache at no budget cost.]"
-    )
-}
+# History pruning, disposition-aware. The desk works case files: research an
+# entity, file (or open-question) it, move on. Once an entity has a FILED flag,
+# its research payloads are dead weight — verifiers read evidence from session
+# state and the provenance registry, never from this conversation. So: archive
+# closed case files, never touch open ones. Measured motivation: a 420-entity
+# run drove per-call p99 to 537s (prefill scales with input) and pushed the
+# model into long-context failure. A first age-based cut (keep last 8) pruned
+# results the desk had not yet filed FROM and it forgot paid-for work — the
+# graded eval caught it. Disposition is the signal age cannot see.
+_PRUNE_RECENCY_FLOOR = 12  # newest exchanges are untouchable: turns in flight
+_PRUNE_HARD_CEILING = 40  # beyond this, even open items trim — the monster-script bound
+_PRUNE_OVER_CHARS = 2000  # small payloads (file confirmations, briefs) always survive
+_PRUNE_NOTE = (
+    " …[trimmed: already used. Re-call the tool if you need the full result — "
+    "identical research questions are answered from cache at no budget cost.]"
+)
+
+
+def _map_responses_to_entities(contents) -> dict[tuple[int, int], Any]:
+    """(content_idx, part_idx) of each function_response -> entity_id of its call.
+
+    Calls precede responses; matched by tool name, first-in-first-out."""
+    pending: list[tuple[str, Any]] = []
+    out: dict[tuple[int, int], Any] = {}
+    for ci, c in enumerate(contents):
+        for pi, part in enumerate(c.parts or []):
+            fc = getattr(part, "function_call", None)
+            if fc is not None:
+                args = fc.args if isinstance(fc.args, dict) else {}
+                pending.append((fc.name or "", args.get("entity_id")))
+            fr = getattr(part, "function_response", None)
+            if fr is not None:
+                ent = None
+                for qi, (nm, e) in enumerate(pending):
+                    if nm == (fr.name or ""):
+                        ent = e
+                        pending.pop(qi)
+                        break
+                out[(ci, pi)] = ent
+    return out
 
 
 def prune_stale_tool_results(callback_context, llm_request):
-    """before_model_callback: bound per-turn input size on long desk loops."""
+    """before_model_callback: bound per-turn input on long desk loops.
+
+    Trims the bulk (keeping a 300-char head) of tool responses whose entity this
+    desk has already dispositioned with a filed flag, plus — as a hard ceiling —
+    anything older than _PRUNE_HARD_CEILING exchanges. Operates on copies;
+    session history and the run journal are never mutated.
+    """
     contents = llm_request.contents or []
     resp_idx = [
         i
         for i, c in enumerate(contents)
         if any(getattr(part, "function_response", None) for part in (c.parts or []))
     ]
-    if len(resp_idx) <= _KEEP_RECENT_TOOL_RESULTS:
+    if len(resp_idx) <= _PRUNE_RECENCY_FLOOR:
         return None
-    for i in resp_idx[:-_KEEP_RECENT_TOOL_RESULTS]:
-        pruned = contents[i].model_copy(deep=True)  # never mutate session history
-        changed = False
-        for part in pruned.parts or []:
+
+    desk = getattr(callback_context, "agent_name", "") or ""
+    try:
+        filed = callback_context.state.get(f"flags:{desk}") or []
+    except Exception:
+        filed = []
+    done_entities = {
+        f.get("entity_id") for f in filed if isinstance(f, dict) and f.get("entity_id")
+    }
+
+    resp_entity = _map_responses_to_entities(contents)
+
+    protected = set(resp_idx[-_PRUNE_RECENCY_FLOOR:])
+    over = len(resp_idx) - _PRUNE_HARD_CEILING
+    ceiling_zone = set(resp_idx[:over]) if over > 0 else set()
+    for ci in resp_idx:
+        if ci in protected:
+            continue
+        pruned = None
+        for pi, part in enumerate(contents[ci].parts or []):
             fr = getattr(part, "function_response", None)
             if fr is None or fr.response is None:
                 continue
-            if len(str(fr.response)) > _PRUNE_OVER_CHARS:
-                fr.response = dict(_PRUNE_STUB)
-                changed = True
-        if changed:
-            contents[i] = pruned
+            raw = str(fr.response)
+            if len(raw) <= _PRUNE_OVER_CHARS:
+                continue
+            ent = resp_entity.get((ci, pi))
+            if (ent is not None and ent in done_entities) or ci in ceiling_zone:
+                if pruned is None:
+                    pruned = contents[ci].model_copy(deep=True)
+                pruned.parts[pi].function_response.response = {"result": raw[:300] + _PRUNE_NOTE}
+        if pruned is not None:
+            contents[ci] = pruned
     return None
 
 
