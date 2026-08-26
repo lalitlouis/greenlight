@@ -160,7 +160,14 @@ def structured_events(event: Any) -> list[dict[str, Any]]:
                 }
             )
         elif (text := getattr(part, "text", None)) and text.strip():
-            out.append({"type": "text", "agent": event.author, "text": text.strip()[:400]})
+            stripped = text.strip()
+            if event.author == "triage" and stripped.startswith("{"):
+                # the structured worklist JSON is for the desks, not the viewer
+                n = stripped.count('"entity_id"')
+                brief = f"{n} entities extracted — worklists out to all four desks"
+                out.append({"type": "text", "agent": "triage", "text": brief})
+            else:
+                out.append({"type": "text", "agent": event.author, "text": stripped[:400]})
     return out
 
 

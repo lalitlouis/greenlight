@@ -1,5 +1,6 @@
 """Toolbelt tests. No live APIs — research is monkeypatched with the real cassette."""
 
+import asyncio
 import json
 from pathlib import Path
 from types import SimpleNamespace
@@ -106,16 +107,16 @@ def test_research_budget_and_cache(monkeypatch):
     monkeypatch.setattr(toolbelt, "_live_search", fake_search)
     ctx = make_ctx(**{"research_budget:clearance_counsel": 2})
 
-    r1 = toolbelt.research("Is the brand cleared?", ["brand clearance film"], "E001", ctx)
+    r1 = asyncio.run(toolbelt.research("Is the brand cleared?", ["brand clearance film"], "E001", ctx))
     assert r1["cached"] is False and r1["budget_remaining"] == 1
     assert r1["results"] and r1["results"][0]["excerpts"]
 
-    r2 = toolbelt.research("Is the brand cleared?", ["brand clearance film"], "E001", ctx)
+    r2 = asyncio.run(toolbelt.research("Is the brand cleared?", ["brand clearance film"], "E001", ctx))
     assert r2["cached"] is True
     assert len(calls) == 1  # cache hit did not spend budget
 
-    toolbelt.research("q2", ["q"], "E002", ctx)
-    r4 = toolbelt.research("q3", ["q"], "E003", ctx)
+    asyncio.run(toolbelt.research("q2", ["q"], "E002", ctx))
+    r4 = asyncio.run(toolbelt.research("q3", ["q"], "E003", ctx))
     assert "error" in r4 and "budget" in r4["error"]
     assert len(calls) == 2
 
@@ -127,7 +128,7 @@ def test_durable_cache_is_consulted_before_spending(monkeypatch):
     )
     monkeypatch.setattr(toolbelt, "_live_search", lambda o, q, **kw: hits.setdefault("live", True))
     ctx = make_ctx(**{"research_budget:clearance_counsel": 2})
-    r = toolbelt.research("cached question", ["q"], "E001", ctx)
+    r = asyncio.run(toolbelt.research("cached question", ["q"], "E001", ctx))
     assert r["cached"] is True and r["search_id"] == "s1"
     assert "live" not in hits  # no API spend on a durable hit
     assert ctx.state["research_budget:clearance_counsel"] == 2  # budget untouched
@@ -145,7 +146,7 @@ def test_research_dedups_case_variant_urls(monkeypatch):
     }
     monkeypatch.setattr(toolbelt, "_live_search", lambda o, q, **kw: doubled)
     ctx = make_ctx()
-    r = toolbelt.research("q", ["q"], "E009", ctx)
+    r = asyncio.run(toolbelt.research("q", ["q"], "E009", ctx))
     assert len(r["results"]) == 1
 
 
@@ -181,7 +182,7 @@ def test_flag_ids_are_partitioned_per_desk():
 def test_query_precedent_degrades_gracefully(monkeypatch):
     monkeypatch.delenv("CLICKHOUSE_HOST", raising=False)
     monkeypatch.delenv("CLICKHOUSE_PASSWORD", raising=False)
-    out = toolbelt.query_precedent("strong language throughout", 8, make_ctx())
+    out = asyncio.run(toolbelt.query_precedent("strong language throughout", 8, make_ctx()))
     assert "error" in out and "research()" in out["guidance"]
 
 

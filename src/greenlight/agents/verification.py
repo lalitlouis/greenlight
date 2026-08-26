@@ -29,7 +29,7 @@ from pydantic import BaseModel
 from greenlight.tools.toolbelt import DESKS
 
 MODEL = "gemini-2.5-flash"
-_CONCURRENCY = 6
+_CONCURRENCY = 10
 _MAX_ATTEMPTS = 5
 
 SEVERITY_ORDER = ["BLOCKER", "HIGH", "MEDIUM", "LOW", "FYI"]

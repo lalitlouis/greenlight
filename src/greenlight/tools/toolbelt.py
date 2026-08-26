@@ -11,6 +11,7 @@ Design rules (see docs/TECH_SPEC.md):
 
 from __future__ import annotations
 
+import asyncio
 import hashlib
 import os
 import re
@@ -174,7 +175,7 @@ def _compact(raw: dict[str, Any]) -> list[dict[str, Any]]:
     return out
 
 
-def research(
+async def research(
     objective: str, queries: list[str], entity_id: str, tool_context: ToolContext
 ) -> dict[str, Any]:
     """Research a clearance question on the live web. Returns sourced, verbatim excerpts.
@@ -201,7 +202,9 @@ def research(
     # Cross-run cache: identical questions reuse identical sources for a week.
     # Reruns of the same script then show the verifier the same evidence —
     # score stability — and the API is paid once per question, not per run.
-    stored = _durable_cache_load(q_hash if not entity_id else f"{entity_id}-{q_hash}")
+    stored = await asyncio.to_thread(
+        _durable_cache_load, q_hash if not entity_id else f"{entity_id}-{q_hash}"
+    )
     if stored is not None:
         tool_context.state[key] = {k: v for k, v in stored.items() if not k.startswith("_")}
         return {"cached": True, "results": stored["results"], "search_id": stored["search_id"]}
@@ -218,8 +221,10 @@ def research(
         }
 
     session_id = f"scriptrisk-{getattr(tool_context, 'invocation_id', '') or 'run'}"[:64]
-    raw = _live_search(objective, queries, session_id=session_id)
+    # Decrement BEFORE the await: when a desk issues several research calls in
+    # one turn they run concurrently, and the budget must count each of them.
     tool_context.state[budget_key] = budget - 1
+    raw = await asyncio.to_thread(_live_search, objective, queries, session_id=session_id)
     compacted = _compact(raw)
     record = {
         "objective": objective,
@@ -227,7 +232,9 @@ def research(
         "results": compacted,
     }
     tool_context.state[key] = record
-    _durable_cache_store(q_hash if not entity_id else f"{entity_id}-{q_hash}", record)
+    await asyncio.to_thread(
+        _durable_cache_store, q_hash if not entity_id else f"{entity_id}-{q_hash}", record
+    )
     return {
         "cached": False,
         "budget_remaining": budget - 1,
@@ -364,7 +371,7 @@ def _embed(text: str) -> list[float]:
     return list(res.embeddings[0].values)
 
 
-def query_precedent(text: str, k: int, tool_context: ToolContext) -> dict[str, Any]:
+async def query_precedent(text: str, k: int, tool_context: ToolContext) -> dict[str, Any]:
     """Find the k nearest released films by MPA/CARA rating rationale.
 
     text: a capsule content profile of THIS script — the rating-relevant facts in the
@@ -384,20 +391,22 @@ def query_precedent(text: str, k: int, tool_context: ToolContext) -> dict[str, A
             "guidance": "Fall back to research() on documented CARA standards.",
         }
     try:
-        vec = _embed(text)
-        rows = (
-            _clickhouse_client()
-            .query(
-                """
+        vec = await asyncio.to_thread(_embed, text)
+        rows = await asyncio.to_thread(
+            lambda: (
+                _clickhouse_client()
+                .query(
+                    """
             SELECT title, year, rating, rationale, source_url,
                    cosineDistance(embedding, %(vec)s) AS distance
             FROM rating_rationales
             ORDER BY distance ASC
             LIMIT %(k)s
             """,
-                parameters={"vec": vec, "k": max(1, min(int(k), 20))},
+                    parameters={"vec": vec, "k": max(1, min(int(k), 20))},
+                )
+                .result_rows
             )
-            .result_rows
         )
     except Exception as e:
         return {
