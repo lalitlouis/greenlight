@@ -1044,7 +1044,7 @@ function renderReport(record) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  RUN_ID = new URLSearchParams(window.location.search).get("run");
+  RUN_ID = new URLSearchParams(window.location.search).get("run") || window.CASE_RUN_ID || null;
   if (!RUN_ID) {
     $("report").textContent = "";
     $("report").appendChild(el("div", "card runs-empty", "No analysis specified."));

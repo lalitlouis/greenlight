@@ -354,6 +354,8 @@ PAGES = {
     "/home": "home.html",
     "/writer": "writer.html",
     "/cases": "cases.html",
+    # per-case URLs resolve below with case-specific meta — long-tail SEO
+    # ("reservoir dogs clearance analysis") plus a clean shareable link each
     "/my": "my.html",
     "/compare": "compare.html",
     "/how-it-works": "how-it-works.html",
@@ -371,6 +373,13 @@ PAGES = {
 
 # Cloud Run sets K_REVISION per deploy; locally we fall back to process start time.
 ASSET_VERSION = os.getenv("K_REVISION", str(int(_time_module.time())))
+
+
+def _versioned_html(name: str) -> str:
+    html = (STATIC_DIR / name).read_text()
+    html = html.replace('href="/static/', f'href="/static/v-{ASSET_VERSION}/')
+    html = html.replace('src="/static/', f'src="/static/v-{ASSET_VERSION}/')
+    return html
 
 
 def _page(name: str):
@@ -1222,6 +1231,54 @@ async def binder_csv(run_id: str) -> Response:
         media_type="text/csv",
         headers={"Content-Disposition": f'attachment; filename="{fname}-clearance-log.csv"'},
     )
+
+
+CASE_SEO = {
+    "reservoir-dogs": (
+        "case_reservoir_dogs",
+        "Reservoir Dogs — clearance & production-risk analysis | ScriptRisk",
+        "What would Reservoir Dogs score today? Four AI clearance desks analyze the "
+        "1992 screenplay — the needle-drops, the violence, the brands — every finding "
+        "cited to the page.",
+    ),
+    "clerks": (
+        "case_clerks",
+        "Clerks — clearance & rating analysis of the NC-17 that became R | ScriptRisk",
+        "Clerks drew an NC-17 purely for language, overturned on appeal. ScriptRisk "
+        "calls the rating drivers from the page — cited, verified, priced.",
+    ),
+    "little-miss-sunshine": (
+        "case_little_miss_sunshine",
+        "Little Miss Sunshine — the family film with an R problem | ScriptRisk",
+        "Super Freak, a minor on stage, and the language math: ScriptRisk analyzes the "
+        "Little Miss Sunshine screenplay's clearance and rating exposure, cited to the page.",
+    ),
+}
+
+
+@app.get("/cases/{slug}")
+async def case_page(slug: str) -> HTMLResponse:
+    """One URL per case study, with case-specific title/description/canonical.
+    The page body is the report view for the case record."""
+    entry = CASE_SEO.get(slug)
+    if entry is None:
+        raise HTTPException(404, "Unknown case study")
+    record_id, title, desc = entry
+    html = _versioned_html("report.html")
+    html = html.replace(
+        "<title>", f'<link rel="canonical" href="https://scriptrisk.com/cases/{slug}">\n<title>'
+    )
+    import re as _re
+
+    html = _re.sub(r"<title>.*?</title>", f"<title>{title}</title>", html, count=1)
+    html = html.replace(
+        '<meta name="viewport" content="width=device-width, initial-scale=1">',
+        '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
+        f'<meta name="description" content="{desc}">',
+        1,
+    )
+    html = html.replace("</head>", f'<script>window.CASE_RUN_ID={record_id!r};</script></head>', 1)
+    return HTMLResponse(html)
 
 
 @app.get("/api/binder/{run_id}.pdf")

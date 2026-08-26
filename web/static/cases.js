@@ -19,7 +19,8 @@ async function loadCases() {
     }
     for (const c of cases) {
       const card = el("a", "card case-card");
-      card.href = `/report?run=${encodeURIComponent(c.id)}`;
+      const slugs = { case_reservoir_dogs: "reservoir-dogs", case_clerks: "clerks", case_little_miss_sunshine: "little-miss-sunshine" };
+      card.href = slugs[c.id] ? `/cases/${slugs[c.id]}` : `/report?run=${encodeURIComponent(c.id)}`;
       const top = el("div", "rc-top");
       top.appendChild(el("span", "case-title", `${c.title} (${c.year})`));
       if (c.score != null) {
