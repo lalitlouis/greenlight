@@ -6,6 +6,19 @@ them. Append-only; newest entries at the top. Bigger architecture decisions live
 
 ---
 
+## 2026-08-27 — Ratings corpus: 2,487 → 6,302 (the complete MPA era, not 10,000)
+
+Target was "increase to 10,000." Measured the universe first: Wikidata holds 6,760 films
+with an MPA rating (P1657), 6,625 of them with an English Wikipedia article — 10,000 does
+not exist in any clean-provenance source, and the alternatives (IMDb datasets, TMDB) carry
+license terms we don't want under a commercial product. Instead: relaxed the year cutoff
+from 1985 to 1968 — the year the MPA rating system began — and ingested the complete era:
+6,302 usable content profiles (46 stubs skipped), same CC0/official-API provenance, every
+row with a source URL. The claim improved from a bigger number to a complete one: "every
+MPA-rated film since 1968 with a citable source." Embedding cost ~$1.30 one-time.
+
+---
+
 ## 2026-08-27 — Parallel, used in depth: Search upgrades + Extract + Task API
 
 Decision: leverage the partner API as far as its surface allows, since the track rewards

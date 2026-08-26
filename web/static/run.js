@@ -145,7 +145,7 @@ const G_NODES = {
   safety_underwriter: { x: 475, y: 370, w: 170, label: "Safety Underwriter", cls: "gn-safety" },
   territory_censor:   { x: 475, y: 510, w: 170, label: "Territory Censor",  cls: "gn-territory" },
   parallel:    { x: 730, y: 60,  w: 150, label: "Parallel · web",    cls: "gn-data" },
-  clickhouse:  { x: 730, y: 540, w: 150, label: "ClickHouse · 2,487 films", cls: "gn-data" },
+  clickhouse:  { x: 730, y: 540, w: 150, label: "ClickHouse · 6,302 films", cls: "gn-data" },
   verifier:    { x: 730, y: 300, w: 150, label: "Blinded Verifier",  cls: "gn-verifier" },
   adjudicator: { x: 900, y: 300, w: 150, label: "Adjudicator",       cls: "gn-adj" },
 };

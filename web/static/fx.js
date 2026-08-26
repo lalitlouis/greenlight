@@ -30,7 +30,7 @@ const FX = (() => {
     });
   }
 
-  /* data-count="2487" counts up when scrolled into view. */
+  /* data-count="6302" counts up when scrolled into view. */
   function counters(scope) {
     (scope || document).querySelectorAll("[data-count]").forEach((node) => {
       const to = parseFloat(node.dataset.count);

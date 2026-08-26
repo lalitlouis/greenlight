@@ -80,8 +80,8 @@ def fetch_film_list(limit: int) -> list[dict]:
         # Wikidata labels vary ("R", "PG-13 (USA)", ...) — normalize to the bare mark.
         m = re.search(r"\b(PG-13|NC-17|PG|G|R)\b", rating)
         year = int(row["year"]["value"]) if "year" in row else 0
-        # Modern era only: the MPA rating system and its rationale practice.
-        if not m or title in seen or year < 1985:
+        # The MPA rating system began in 1968 — the corpus is the complete era.
+        if not m or title in seen or year < 1968:
             continue
         seen.add(title)
         films.append({"title": title, "rating": m.group(1), "year": year})
@@ -192,7 +192,7 @@ def _display_quote(lead: str) -> str:
 
 def fetch(limit: int) -> int:
     films = fetch_film_list(limit)
-    print(f"Wikidata: {len(films)} rated films (1985+, top by sitelinks)")
+    print(f"Wikidata: {len(films)} rated films (1968+, top by sitelinks)")
     rows, skipped = [], 0
     for i, film in enumerate(films, 1):
         text = fetch_article_text(film["title"])

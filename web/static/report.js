@@ -465,7 +465,7 @@ function renderPrediction(root, pred) {
   const sec = el("div", "section-head");
   sec.id = "sec-rating";
   sec.appendChild(el("h2", null, "Rating prediction"));
-  sec.appendChild(el("p", "lede", "Evidence, not opinion — your nearest comparables from 2,487 released films (corpus updated Aug 2026)."));
+  sec.appendChild(el("p", "lede", "Evidence, not opinion — your nearest comparables from 6,302 released films (corpus updated Aug 2026)."));
   root.appendChild(sec);
 
   const card = el("div", "card pred-card");
@@ -533,7 +533,7 @@ function renderPrediction(root, pred) {
     const cuts = el("div", "cuts");
     cuts.appendChild(el("div", "blk-label", `The cut list toward ${pred.target || "your target"} — test each cut`));
     cuts.appendChild(
-      el("p", "cuts-hint", "Check cuts to re-run the comparables search on your revised content profile — live against all 2,487 films. Cuts are levers, not guarantees: the simulator measures how far each one actually moves the rating.")
+      el("p", "cuts-hint", "Check cuts to re-run the comparables search on your revised content profile — live against all 6,302 films. Cuts are levers, not guarantees: the simulator measures how far each one actually moves the rating.")
     );
     const ol = el("ol", "cuts-list");
     pred.beats_to_cut.forEach((b, i) => {
@@ -591,7 +591,7 @@ function initWhatIf(cutsRoot, pred) {
       const s = (Date.now() - t0) / 1000;
       // paced against the typical ~8s round trip; holds at 92% until the result lands
       fill.style.width = Math.min(92, s * 12) + "%";
-      if (s > 3) stage.textContent = "Searching 2,487 released films for the new nearest comparables…";
+      if (s > 3) stage.textContent = "Searching 6,302 released films for the new nearest comparables…";
       if (s > 8) stage.textContent = "Almost there — ranking comparables…";
     }, 200);
     try {

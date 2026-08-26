@@ -26,12 +26,12 @@ opinions, but desks that research, cite, and get checked?
   structurally rejects any flag without a citation.
 - An independent, blinded verifier re-reads every citation and rejects unsupported claims —
   rejections appear in the report with reasons.
-- The Ratings Board predicts the MPA rating from evidence: kNN over 2,487 released films'
+- The Ratings Board predicts the MPA rating from evidence: kNN over 6,302 released films'
   content profiles in ClickHouse ("7 of 8 nearest comparables are R"), with the exact cut list
   to hit a target rating.
 - A Pro-tier adjudicator merges duplicates and resolves conflicting remedies deterministically.
 - **The What-If simulator**: the cut list is interactive — checking cuts re-runs the real
-  evidence pipeline (rationale rewritten, re-embedded, re-searched against all 2,487 films),
+  evidence pipeline (rationale rewritten, re-embedded, re-searched against all 6,302 films),
   and it will honestly disagree with its own cut list ("closer, not clear: 1 → 3 of 8").
 - **Production artifacts**: a downloadable Clearance Binder (the standard studio clearance
   log as PDF/CSV), a one-sheet PDF poster, and accepted fixes exported as a revised

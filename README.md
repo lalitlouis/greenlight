@@ -34,7 +34,7 @@ flowchart TD
     J --> R[ReportWriter<br/>deterministic Python]
     R --> O[Risk report · marked-up script<br/>rating prediction]
     P[(Parallel Search<br/>live web citations)] -.-> D1 & D2 & D3 & D4
-    K[(ClickHouse<br/>2,487-film corpus)] -.-> D2
+    K[(ClickHouse<br/>6,302-film corpus)] -.-> D2
 ```
 
 The four desks run concurrently (`ParallelAgent`); each is a `LoopAgent` deciding for itself
@@ -46,7 +46,7 @@ ClickHouse holds the comparison set — the model never asserts what a tool can 
 - A **Production Risk Report** — severity-ranked findings, each cited, each with a remedy and a
   rule-of-thumb cost range; a deterministic **Greenlight Score**; honest open questions.
 - An **MPA rating prediction with evidence** — your script's content profile against a corpus of
-  2,487 released films: "7 of your 8 nearest comparables are rated R," plus the exact beats to
+  6,302 released films: "7 of your 8 nearest comparables are rated R," plus the exact beats to
   cut for your target rating.
 - A **marked-up script** — every finding anchored to its scene by character offsets, both ways.
 - The **What-If rating simulator** — check cuts and the *actual evidence pipeline* re-runs
@@ -103,7 +103,7 @@ model assert what you could retrieve.**
 |---|---|
 | Agents | **Google ADK** (`google-adk`) on **Vertex AI Gemini** — Flash for the desks, Pro for adjudication & coverage |
 | Live web research / citations | **Parallel Search + Extract + Task APIs** (`parallel-web`) |
-| Ratings corpus (2,487 films) | **ClickHouse Cloud** kNN over `text-embedding-005` embeddings; facts from Wikidata (CC0) + Wikipedia via official APIs, every row with a source URL |
+| Ratings corpus (6,302 films — the complete MPA-rating era, 1968+) | **ClickHouse Cloud** kNN over `text-embedding-005` embeddings; facts from Wikidata (CC0) + Wikipedia via official APIs, every row with a source URL |
 | Web app | FastAPI + SSE on **Cloud Run**, vanilla JS + GSAP (vendored) |
 
 No AI SDK other than Google's is used at runtime — enforced by `scripts/check_forbidden_deps.sh`
