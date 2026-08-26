@@ -302,6 +302,7 @@ async def run(
         "generated_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
         "elapsed_s": round(time.time() - t0, 1),
         "error": error,
+        "research_failures": int(state.get("research_failures", 0)),
         "scenes": len(scenes),
         "entities": state.get("triage", {}).get("entities", []),
         "flags": kept,

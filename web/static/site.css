@@ -1215,6 +1215,8 @@ tr.bd-sev-BLOCKER { background: rgba(224, 52, 42, 0.045); }
 .notify-chip:hover:not(:disabled) { border-color: var(--gold); color: var(--ink); }
 .notify-chip:disabled { color: var(--go-deep); cursor: default; }
 
+.run-degraded-note { border-left: 4px solid var(--warn, #e97c00); padding: 14px 18px; margin-bottom: 18px; }
+.run-degraded-note p { margin: 6px 0 0; color: var(--muted, #6e6e73); font-size: 13.5px; }
 .run-error-banner { border-color: var(--blocker); background: rgba(224, 52, 42, 0.05); padding: 18px 22px; margin-bottom: 18px; }
 .run-error-banner b { color: var(--blocker); font-size: 16.5px; }
 .run-error-banner p { margin: 6px 0 0; font-size: 14.5px; color: var(--ink-2); }

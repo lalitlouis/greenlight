@@ -19,6 +19,23 @@ MPA-rated film since 1968 with a citable source." Embedding cost ~$1.30 one-time
 
 ---
 
+## 2026-08-27 — Live-dependency error regime: fail loud, degrade with disclosure, alert always
+
+The Social Network outage (a sorted(None) TypeError in research()'s new cache-key
+modifier aborted the whole run — ADK propagates tool exceptions) forced the question of
+what a paid product should do when a live call fails. Three tiers, now mechanical:
+(1) dependency down — >=4 consecutive live-API failures with zero successes trips a
+circuit breaker that aborts the run with an explicit "research API unreachable" error;
+an unresearched report that looks real is worse than an honest failure. (2) transient
+blip — the failing call returns an error to the desk, refunds its budget, and the
+count is disclosed on the report ("N research calls failed during this run"). (3) every
+failure logs a structured warning (exception type only, never script text) for log-based
+alerting. Health counters live in a process-local registry, not ADK state — same
+last-writer-wins race as the provenance saga. Regression tests pin the crash, the
+breaker, and the stays-open-after-success behavior.
+
+---
+
 ## 2026-08-27 — Parallel, used in depth: Search upgrades + Extract + Task API
 
 Decision: leverage the partner API as far as its surface allows, since the track rewards

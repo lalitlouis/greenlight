@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import asyncio
 import hashlib
+import logging
 import os
 import re
 from typing import Any
@@ -34,6 +35,50 @@ FLAG_ID_OFFSET = {
 }
 
 _MAX_RESULTS_TO_MODEL = 8
+
+_LOG = logging.getLogger("greenlight.tools")
+
+# Live-API health, process-local for the same reason as _PROV_TEXTS (state
+# deltas race under parallel tool calls). One bucket per run. The circuit
+# breaker exists because a report produced with zero successful retrievals is
+# worse than an honest failure — it looks real and is empty.
+_LIVE_STATS: dict[str, dict[str, int]] = {}
+_LIVE_STATS_MAX_RUNS = 8
+_BREAKER_CONSECUTIVE = 4
+
+
+def _live_stats(tool_context: ToolContext) -> dict[str, int]:
+    inv = str(getattr(tool_context, "invocation_id", "") or "run")
+    if inv not in _LIVE_STATS and len(_LIVE_STATS) >= _LIVE_STATS_MAX_RUNS:
+        _LIVE_STATS.pop(next(iter(_LIVE_STATS)))
+    return _LIVE_STATS.setdefault(inv, {"ok": 0, "fail": 0, "consecutive": 0})
+
+
+def _live_call_succeeded(tool_context: ToolContext) -> None:
+    stats = _live_stats(tool_context)
+    stats["ok"] += 1
+    stats["consecutive"] = 0
+
+
+def _live_call_failed(tool_context: ToolContext, api: str, exc: Exception) -> None:
+    """Account one live-API failure: operator log, run-visible counter, breaker.
+
+    Raises when the dependency looks down (consecutive failures, zero successes)
+    so the run aborts honestly instead of shipping an unresearched report.
+    """
+    stats = _live_stats(tool_context)
+    stats["fail"] += 1
+    stats["consecutive"] += 1
+    _LOG.warning("live %s call failed: %s", api, type(exc).__name__)
+    state = tool_context.state
+    state["research_failures"] = int(state.get("research_failures", 0)) + 1
+    if stats["consecutive"] >= _BREAKER_CONSECUTIVE and stats["ok"] == 0:
+        raise RuntimeError(
+            f"research API unreachable ({stats['consecutive']} consecutive failures, "
+            "none succeeded) — aborting rather than producing an unresearched report"
+        ) from exc
+
+
 _MAX_EXCERPT_CHARS = 1200
 _MAX_EXTRACT_CHARS = 4000  # fetch_page returns one page, so it may run longer
 
@@ -273,12 +318,14 @@ async def research(
             country=country,
             include_domains=restrict_to_domains,
         )
-    except Exception as exc:  # a failed search must cost nothing and abort nothing
+    except Exception as exc:  # a failed search costs nothing; the failure is accounted
         tool_context.state[budget_key] = budget
+        _live_call_failed(tool_context, "search", exc)
         return {
             "error": f"search failed: {type(exc).__name__}",
             "guidance": "Try again with different queries, or note an open question.",
         }
+    _live_call_succeeded(tool_context)
     compacted = _compact(raw)
     record = {
         "objective": objective,
@@ -362,10 +409,12 @@ async def fetch_page(url: str, objective: str, tool_context: ToolContext) -> dic
         raw = await asyncio.to_thread(_live_extract, [url], objective, session_id=session_id)
     except Exception as exc:  # page fetch can fail on robots/paywalls — refund, keep working
         tool_context.state[budget_key] = budget
+        _live_call_failed(tool_context, "extract", exc)
         return {
             "error": f"fetch failed: {type(exc).__name__}",
             "guidance": "Use the research() excerpts you already have, or try another source.",
         }
+    _live_call_succeeded(tool_context)
     results = []
     for r in raw.get("results", []):
         excerpts, used = [], 0
@@ -483,12 +532,14 @@ async def deep_research(question: str, entity_id: str, tool_context: ToolContext
     processor = os.getenv("PARALLEL_TASK_PROCESSOR", "core")
     try:
         raw = await asyncio.to_thread(_live_task, question, processor)
-    except Exception as exc:  # slow-path API: never let it sink the desk
-        tool_context.state[budget_key] = budget  # refund; the allowance stays spent
+    except Exception as exc:  # slow-path API failure: refund; the allowance stays spent
+        tool_context.state[budget_key] = budget
+        _live_call_failed(tool_context, "task", exc)
         return {
             "error": f"deep research failed: {type(exc).__name__}",
             "guidance": "Fall back to research(), or note an open question.",
         }
+    _live_call_succeeded(tool_context)
     output = raw.get("output") or {}
     answer = output.get("content") if isinstance(output.get("content"), str) else ""
     citations, seen = [], set()

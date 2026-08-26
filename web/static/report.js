@@ -785,6 +785,17 @@ function renderReport(record) {
     );
     root.appendChild(warn);
   }
+  if (!record.error && record.research_failures > 0) {
+    const note = el("div", "card run-degraded-note");
+    note.appendChild(el("b", null, `${record.research_failures} research call${record.research_failures === 1 ? "" : "s"} failed during this run.`));
+    note.appendChild(
+      el("p", null,
+        "The desks worked around the failures and every finding below is still cited, but " +
+        "coverage may be thinner than usual. If the number is high, re-run the script — " +
+        "a failed run never counts against you.")
+    );
+    root.appendChild(note);
+  }
   const rep = record.report || {};
   const counts = rep.counts || {};
   const score = rep.greenlight_score ?? "—";

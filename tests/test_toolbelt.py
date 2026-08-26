@@ -404,7 +404,7 @@ def _fake_task(question, processor):
 def test_deep_research_costs_caps_and_registers_provenance(monkeypatch):
     monkeypatch.setattr(toolbelt, "_durable_cache_load", lambda k: None)
     monkeypatch.setattr(toolbelt, "_durable_cache_store", lambda k, r: None)
-    monkeypatch.setattr(toolbelt, "_live_task", lambda q, p: _fake_task(q, p))
+    monkeypatch.setattr(toolbelt, "_live_task", _fake_task)
     ctx = make_ctx(**{"research_budget:clearance_counsel": 8})
     ctx.invocation_id = "inv-deep-test"
 
@@ -470,7 +470,9 @@ def test_research_country_alone_does_not_crash(monkeypatch):
     monkeypatch.setattr(toolbelt, "_durable_cache_store", lambda k, r: None)
     monkeypatch.setattr(toolbelt, "_live_search", lambda o, q, **kw: CASSETTE)
     ctx = make_ctx(agent_name="territory_censor")
-    r = asyncio.run(toolbelt.research("CN standard", ["china film rule"], "E001", ctx, country="CN"))
+    r = asyncio.run(
+        toolbelt.research("CN standard", ["china film rule"], "E001", ctx, country="CN")
+    )
     assert r["cached"] is False and r["results"]
 
 
@@ -486,3 +488,45 @@ def test_research_live_failure_refunds_and_returns_error(monkeypatch):
     r = asyncio.run(toolbelt.research("q", ["q"], "E001", ctx))
     assert "error" in r
     assert ctx.state["research_budget:clearance_counsel"] == 3
+
+
+def test_breaker_aborts_when_api_is_down(monkeypatch):
+    # Dependency down = fail loud: consecutive failures with zero successes
+    # must raise so the run aborts honestly instead of shipping empty research.
+    import pytest
+
+    monkeypatch.setattr(toolbelt, "_durable_cache_load", lambda k: None)
+    monkeypatch.setattr(toolbelt, "_durable_cache_store", lambda k, r: None)
+
+    def boom(*a, **kw):
+        raise RuntimeError("api down")
+
+    monkeypatch.setattr(toolbelt, "_live_search", boom)
+    ctx = make_ctx(**{"research_budget:clearance_counsel": 20})
+    ctx.invocation_id = "inv-breaker-test"
+    for i in range(toolbelt._BREAKER_CONSECUTIVE - 1):
+        r = asyncio.run(toolbelt.research(f"q{i}", ["q"], f"E00{i}", ctx))
+        assert "error" in r
+    with pytest.raises(RuntimeError, match="unreachable"):
+        asyncio.run(toolbelt.research("q-last", ["q"], "E009", ctx))
+    assert ctx.state["research_failures"] == toolbelt._BREAKER_CONSECUTIVE
+
+
+def test_breaker_stays_open_after_any_success(monkeypatch):
+    monkeypatch.setattr(toolbelt, "_durable_cache_load", lambda k: None)
+    monkeypatch.setattr(toolbelt, "_durable_cache_store", lambda k, r: None)
+    calls = {"n": 0}
+
+    def flaky(*a, **kw):
+        calls["n"] += 1
+        if calls["n"] == 1:
+            return CASSETTE
+        raise RuntimeError("api down")
+
+    monkeypatch.setattr(toolbelt, "_live_search", flaky)
+    ctx = make_ctx(**{"research_budget:clearance_counsel": 20})
+    ctx.invocation_id = "inv-breaker-open-test"
+    assert asyncio.run(toolbelt.research("good", ["q"], "E001", ctx))["cached"] is False
+    for i in range(toolbelt._BREAKER_CONSECUTIVE + 2):  # never raises: one success this run
+        r = asyncio.run(toolbelt.research(f"bad{i}", ["q"], f"E01{i}", ctx))
+        assert "error" in r
