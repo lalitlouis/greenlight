@@ -19,6 +19,11 @@ class FakeState(dict):
     pass
 
 
+RESEARCH_EXCERPT = (
+    "If the product appears in a negative light, you may be sued for product disparagement."
+)
+
+
 def make_ctx(agent_name="clearance_counsel", **state):
     _, scenes = parser.parse_fountain(SOURCE)
     base = {
@@ -26,6 +31,18 @@ def make_ctx(agent_name="clearance_counsel", **state):
         "scenes": scenes,
         "research_budget:clearance_counsel": 3,
         "research_budget:territory_censor": 3,
+        # provenance: filed excerpts must exist in retrieved material
+        "research:E001:seeded": {
+            "objective": "seeded",
+            "search_id": "s0",
+            "results": [
+                {
+                    "url": "https://example.com/clearance",
+                    "title": "Clearance overview",
+                    "excerpts": [RESEARCH_EXCERPT],
+                }
+            ],
+        },
     }
     base.update(state)
     return SimpleNamespace(
@@ -36,9 +53,7 @@ def make_ctx(agent_name="clearance_counsel", **state):
 GOOD_CITATION = {
     "title": "Clearance overview",
     "url": "https://example.com/clearance",
-    "excerpt": (
-        "If the product appears in a negative light, you may be sued for product disparagement."
-    ),
+    "excerpt": RESEARCH_EXCERPT,
 }
 
 
@@ -73,6 +88,16 @@ def test_flag_without_citation_is_rejected():
     msg = file_good_flag(ctx, citations=[])
     assert msg.startswith("REJECTED")
     assert "flags:clearance_counsel" not in ctx.state
+
+
+def test_flag_with_fabricated_excerpt_is_rejected():
+    ctx = make_ctx()
+    msg = file_good_flag(
+        ctx,
+        citations=[{**GOOD_CITATION, "excerpt": "A confabulated quote that no tool returned."}],
+    )
+    assert "not filed" in msg and "verbatim" in msg
+    assert ctx.state.get("flags:clearance_counsel") in (None, [])
 
 
 def test_flag_with_empty_excerpt_is_rejected():

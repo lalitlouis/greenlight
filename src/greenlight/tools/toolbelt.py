@@ -246,6 +246,53 @@ async def research(
 # --- file_flag --------------------------------------------------------------
 
 
+def _norm_for_match(s: str) -> str:
+    """Whitespace/quote-insensitive form for provenance matching: collapse runs of
+    whitespace, normalize curly quotes and dashes, lowercase. Deliberately NOT
+    fuzzy beyond that — paraphrase must fail."""
+    pairs = (
+        ("\u201c", '"'),
+        ("\u201d", '"'),
+        ("\u2018", "'"),
+        ("\u2019", "'"),
+        ("\u2014", "-"),
+        ("\u2013", "-"),
+        ("\u2026", "..."),
+    )
+    for a, b in pairs:
+        s = s.replace(a, b)
+    return " ".join(s.split()).lower()
+
+
+_MIN_PROVENANCE_CHARS = 12  # shorter quotes match anything; the verifier judges those
+
+
+def _excerpt_exists(excerpt: str, tool_context: ToolContext) -> bool:
+    needle = _norm_for_match(excerpt).strip(" \"'.…-")
+    if len(needle) < _MIN_PROVENANCE_CHARS:
+        return True
+    state = tool_context.state
+    # 1. the script itself
+    source = state.get("source") or ""
+    if needle in _norm_for_match(source):
+        return True
+    # 2. research results (shared across desks) — keys "research:*"
+    for key in list(state.keys()):
+        if str(key).startswith("research:"):
+            rec = state.get(key) or {}
+            for r in rec.get("results", []):
+                for ex in r.get("excerpts", []):
+                    if needle in _norm_for_match(ex):
+                        return True
+                if needle in _norm_for_match(r.get("title", "")):
+                    return True
+        elif str(key).startswith("last_precedent:"):
+            for comp in state.get(key) or []:
+                if needle in _norm_for_match(comp.get("rationale", "")):
+                    return True
+    return False
+
+
 def file_flag(
     scene_ids: list[str],
     severity: str,
@@ -330,6 +377,22 @@ def file_flag(
     if not all(c["excerpt"].strip() for c in cits):
         tool_context.state[seq_key] = seq - 1
         return "REJECTED, not filed: every citation needs a non-empty verbatim excerpt."
+
+    # Excerpt provenance: a citation's excerpt must exist VERBATIM in material this
+    # run actually retrieved (research results, precedent rationales, or the script
+    # itself). A model deep in a long run can confabulate a plausible "quote"; this
+    # check is deterministic and closes that door — the verifier judges relevance,
+    # this judges existence.
+    fabricated = [
+        c["excerpt"][:60] for c in cits if not _excerpt_exists(c["excerpt"], tool_context)
+    ]
+    if fabricated:
+        tool_context.state[seq_key] = seq - 1
+        return (
+            "REJECTED, not filed: these excerpts do not appear verbatim in any research "
+            "result, precedent rationale, or the script — re-copy them exactly from your "
+            "tool results, character for character:\n- " + "\n- ".join(fabricated)
+        )
 
     known = {s["scene_id"] for s in tool_context.state.get("scenes", [])}
     if bad := [s for s in scene_ids if s not in known]:
