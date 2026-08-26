@@ -45,6 +45,7 @@ function buildSceneStrip(scenes) {
     strip.appendChild(card);
   }
   rt.built = true;
+  gState("script", "working", scenes.length + " scenes");
   const ops = rt.backlog.splice(0);
   for (const op of ops) op();
   const noteScroll = () => { rt.userScrollAt = Date.now(); };
@@ -57,6 +58,122 @@ function buildSceneStrip(scenes) {
 function gentleFollow(node) {
   if (!node || Date.now() - (rt.userScrollAt || 0) < 8000) return;
   node.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+/* ---------- the agent network graph: nodes for every actor, pulses for every
+   hop. Driven entirely by the same SSE events as the rest of the page. ---------- */
+const SVG_NS = "http://www.w3.org/2000/svg";
+const G_NODES = {
+  script:      { x: 90,  y: 300, w: 120, label: "SCRIPT",            cls: "gn-script" },
+  triage:      { x: 265, y: 300, w: 120, label: "Triage",            cls: "gn-triage" },
+  clearance_counsel:  { x: 475, y: 90,  w: 170, label: "Clearance Counsel", cls: "gn-clearance" },
+  ratings_board:      { x: 475, y: 230, w: 170, label: "Ratings Board",     cls: "gn-ratings" },
+  safety_underwriter: { x: 475, y: 370, w: 170, label: "Safety Underwriter", cls: "gn-safety" },
+  territory_censor:   { x: 475, y: 510, w: 170, label: "Territory Censor",  cls: "gn-territory" },
+  parallel:    { x: 730, y: 60,  w: 150, label: "Parallel · web",    cls: "gn-data" },
+  clickhouse:  { x: 730, y: 540, w: 150, label: "ClickHouse · 2,487 films", cls: "gn-data" },
+  verifier:    { x: 730, y: 300, w: 150, label: "Blinded Verifier",  cls: "gn-verifier" },
+  adjudicator: { x: 900, y: 300, w: 150, label: "Adjudicator",       cls: "gn-adj" },
+};
+const G_EDGES = [
+  ["script", "triage"],
+  ["triage", "clearance_counsel"], ["triage", "ratings_board"],
+  ["triage", "safety_underwriter"], ["triage", "territory_censor"],
+  ["clearance_counsel", "parallel"], ["ratings_board", "parallel"],
+  ["safety_underwriter", "parallel"], ["territory_censor", "parallel"],
+  ["ratings_board", "clickhouse"], ["clearance_counsel", "clickhouse"],
+  ["clearance_counsel", "verifier"], ["ratings_board", "verifier"],
+  ["safety_underwriter", "verifier"], ["territory_censor", "verifier"],
+  ["verifier", "adjudicator"],
+];
+const graph = { built: false, svg: null, paths: {}, counts: {}, pulsedTriage: {} };
+
+function gBuild() {
+  const host = $("agent-graph");
+  if (!host || graph.built) return;
+  graph.built = true;
+  const svg = document.createElementNS(SVG_NS, "svg");
+  svg.setAttribute("viewBox", "0 0 990 600");
+  svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+  for (const [a, b] of G_EDGES) {
+    const na = G_NODES[a], nb = G_NODES[b];
+    const pathEl = document.createElementNS(SVG_NS, "path");
+    const mx = (na.x + nb.x) / 2;
+    pathEl.setAttribute("d", `M ${na.x} ${na.y} C ${mx} ${na.y}, ${mx} ${nb.y}, ${nb.x} ${nb.y}`);
+    pathEl.setAttribute("class", "g-edge");
+    svg.appendChild(pathEl);
+    graph.paths[a + ">" + b] = pathEl;
+  }
+  for (const [id, n] of Object.entries(G_NODES)) {
+    const g = document.createElementNS(SVG_NS, "g");
+    g.setAttribute("class", "g-node " + n.cls);
+    g.setAttribute("id", "gn-" + id);
+    const rect = document.createElementNS(SVG_NS, "rect");
+    rect.setAttribute("x", n.x - n.w / 2);
+    rect.setAttribute("y", n.y - 26);
+    rect.setAttribute("width", n.w);
+    rect.setAttribute("height", 52);
+    rect.setAttribute("rx", 14);
+    g.appendChild(rect);
+    const label = document.createElementNS(SVG_NS, "text");
+    label.setAttribute("x", n.x);
+    label.setAttribute("y", n.y - 2);
+    label.setAttribute("class", "g-label");
+    label.textContent = n.label;
+    g.appendChild(label);
+    const sub = document.createElementNS(SVG_NS, "text");
+    sub.setAttribute("x", n.x);
+    sub.setAttribute("y", n.y + 16);
+    sub.setAttribute("class", "g-sub");
+    sub.setAttribute("id", "gs-" + id);
+    sub.textContent = "waiting";
+    g.appendChild(sub);
+    svg.appendChild(g);
+  }
+  host.appendChild(svg);
+  graph.svg = svg;
+  gState("script", "working", "parsing…");
+}
+
+function gState(id, state, subText) {
+  const node = document.getElementById("gn-" + id);
+  if (!node) return;
+  node.classList.remove("g-waiting", "g-working", "g-done");
+  node.classList.add("g-" + state);
+  const sub = document.getElementById("gs-" + id);
+  if (sub && subText != null) sub.textContent = subText;
+  else if (sub && state === "working" && sub.textContent === "waiting") sub.textContent = "working";
+}
+
+function gCount(id, key, label) {
+  graph.counts[key] = (graph.counts[key] || 0) + 1;
+  const sub = document.getElementById("gs-" + id);
+  if (sub) sub.textContent = graph.counts[key] + " " + label;
+}
+
+function gPulse(a, b, tone) {
+  const pathEl = graph.paths[a + ">" + b];
+  if (!pathEl || !graph.svg) return;
+  pathEl.classList.add("g-hot" + (tone === "bad" ? " g-bad" : ""));
+  setTimeout(() => pathEl.classList.remove("g-hot", "g-bad"), 900);
+  if (!window.FX?.on || typeof pathEl.getTotalLength !== "function") return;
+  const dot = document.createElementNS(SVG_NS, "circle");
+  dot.setAttribute("r", "6");
+  dot.setAttribute("class", "g-dot" + (tone === "bad" ? " g-dot-bad" : ""));
+  graph.svg.appendChild(dot);
+  const len = pathEl.getTotalLength();
+  const obj = { t: 0 };
+  gsap.to(obj, {
+    t: 1,
+    duration: 0.8,
+    ease: "power1.inOut",
+    onUpdate: () => {
+      const pt = pathEl.getPointAtLength(obj.t * len);
+      dot.setAttribute("cx", pt.x);
+      dot.setAttribute("cy", pt.y);
+    },
+    onComplete: () => dot.remove(),
+  });
 }
 
 /* One narrated beat at a time. Events arrive in bursts no human can read, so
@@ -256,6 +373,7 @@ function bumpProgress() {
 /* ---------- desk panel ---------- */
 
 function buildDeskRail() {
+  gBuild();
   const rail = $("desk-rail");
   if (!rail) return;
   rail.textContent = "";
@@ -380,14 +498,32 @@ function setDeskSpotlight(agent, text) {
 function handleDeskEvent(ev) {
   const d = state.desks[ev.agent];
   if (!d) return;
+  if (!d.started && !graph.pulsedTriage[ev.agent]) {
+    graph.pulsedTriage[ev.agent] = true;
+    gPulse("triage", ev.agent);
+    gState("triage", "done", "worklists out");
+    gState(ev.agent, "working");
+  }
   d.started = true;
   if (ev.type === "tool_call") {
     d.calls += 1;
     if (ev.tool === "file_flag") d.flags += 1;
     const a = ev.args || {};
     if (ev.tool === "read_scene") moveDeskDot(ev.agent, a.scene_id);
-    else if (ev.tool === "research") rippleScene(ev.agent, trim(a.objective, 80));
-    else if (ev.tool === "file_flag") dropPin(ev.agent, a.severity || "FYI", a.category, a.scene_ids);
+    else if (ev.tool === "research") {
+      rippleScene(ev.agent, trim(a.objective, 80));
+      gPulse(ev.agent, "parallel");
+      gCount("parallel", "research", "searches");
+    } else if (ev.tool === "query_precedent") {
+      gPulse(ev.agent, "clickhouse");
+      gCount("clickhouse", "precedent", "queries");
+    } else if (ev.tool === "file_flag") {
+      dropPin(ev.agent, a.severity || "FYI", a.category, a.scene_ids);
+      gPulse(ev.agent, "verifier");
+      gCount("verifier", "filed", "to verify");
+      const gsub = document.getElementById("gs-" + ev.agent);
+      if (gsub) gsub.textContent = d.flags + " flags";
+    }
     if (ev.tool === "read_scene") setDeskSpotlight(ev.agent, `Now reading ${sceneLabel(a.scene_id)}`);
     else if (ev.tool === "research") setDeskSpotlight(ev.agent, `Researching: ${trim(a.objective, 60)}`);
     else if (ev.tool === "query_precedent") setDeskSpotlight(ev.agent, "Consulting released-film comparables…");
@@ -397,6 +533,7 @@ function handleDeskEvent(ev) {
   if (ev.type === "text" && /^done\b/i.test(ev.text || "")) {
     d.done = true;
     setDeskSpotlight(ev.agent, "Desk closed.");
+    gState(ev.agent, "done", d.flags + " flags filed");
     document.querySelectorAll(`.rt-dot.dot-${ev.agent}`).forEach((n) => n.remove());
   }
   if (ev.type === "text" && /^done\b/i.test(ev.text || "")) d.done = true;
@@ -429,6 +566,9 @@ function maybeStudioEvent(ev) {
     const [fid, cat, sev, verdict, reason] = ev.text.slice(2).split("|");
     studioCard(fid, cat, sev, verdict, reason);
     pinVerdict(fid, verdict);
+    gState("verifier", "working");
+    gPulse("verifier", "adjudicator", verdict === "REJECTED" || verdict === "UNSUPPORTED" ? "bad" : "ok");
+    gCount("adjudicator", "verdicts", "verdicts in");
     enqueueBeat("verification_panel", `${fid} ${prettyCat(cat)} — ${verdict}`);
     return true;
   }
@@ -437,6 +577,9 @@ function maybeStudioEvent(ev) {
     if (m) {
       studioCard(m[1], "", "FYI", m[2], m[3] || "");
       pinVerdict(m[1], m[2]);
+      gState("verifier", "working");
+      gPulse("verifier", "adjudicator", m[2] === "REJECTED" || m[2] === "UNSUPPORTED" ? "bad" : "ok");
+      gCount("adjudicator", "verdicts", "verdicts in");
       enqueueBeat("verification_panel", `${m[1]} — ${m[2]}`);
       return true;
     }
@@ -557,7 +700,13 @@ function handleEvent(ev) {
         handleDeskEvent(ev);
       } else {
         if (ev.agent === "verification_panel") setPhase("verify");
-        else if (ev.agent === "adjudicator") setPhase("adjudicate");
+        else if (ev.agent === "adjudicator") {
+          setPhase("adjudicate");
+          gState("verifier", "done");
+          gState("adjudicator", "working", "reconciling");
+        } else if (ev.agent === "triage") {
+          gState("triage", "working", "reading script");
+        }
         if (!maybeStudioEvent(ev)) handlePipeEvent(ev);
       }
       bumpProgress();
@@ -594,6 +743,9 @@ function sweepSceneStates() {
 function onResult(record) {
   state.gotResult = true;
   sweepSceneStates();
+  gState("script", "done");
+  gState("adjudicator", "done", "report ready");
+  for (const id of ["verifier", "triage", ...DESK_IDS]) gState(id, "done");
   nowBar.queue.length = 0;
   renderBeat({ agent: "system", text: "Done — your marked-up script is ready. Opening the report…" });
   beacon("info", "stream_result", state.mode || "");

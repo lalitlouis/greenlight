@@ -70,7 +70,85 @@ function diffBox(label, diff, keep) {
 }
 
 /* Accepted patches accumulate here; the floating bar exports them. */
-const ACCEPTED = new Map(); // key -> patch
+const ACCEPTED = new Map(); // key -> patch (carries flag_id)
+let CURRENT_RECORD = null; // the rendered record — reference updates recompute from it
+
+/* Every mention of a flag id anywhere in the report is a live reference:
+   click scrolls to the finding; state changes (fix accepted) repaint every
+   reference at once, so later sections never go stale. */
+function linkifyRefs(text) {
+  const frag = document.createDocumentFragment();
+  const parts = String(text).split(/\b(F\d{3})\b/);
+  parts.forEach((part, i) => {
+    if (i % 2 === 0) {
+      if (part) frag.appendChild(document.createTextNode(part));
+      return;
+    }
+    const chip = el("button", "flag-ref", part);
+    chip.type = "button";
+    chip.dataset.fid = part;
+    chip.addEventListener("click", () => {
+      const node = $("flag-" + part);
+      if (!node) return;
+      node.querySelector(".expand")?.classList.remove("hidden");
+      node.scrollIntoView({ behavior: "smooth", block: "center" });
+      node.classList.add("hilite");
+      setTimeout(() => node.classList.remove("hilite"), 2200);
+    });
+    frag.appendChild(chip);
+  });
+  return frag;
+}
+
+function addressedFlagIds() {
+  const ids = new Set();
+  for (const patch of ACCEPTED.values()) if (patch.flag_id) ids.add(patch.flag_id);
+  return ids;
+}
+
+function refreshFlagStates() {
+  const addressed = addressedFlagIds();
+  // finding rows
+  document.querySelectorAll(".flag[id^=flag-]").forEach((row) => {
+    const fid = row.id.slice(5);
+    const on = addressed.has(fid);
+    row.classList.toggle("addressed", on);
+    let badge = row.querySelector(".addr-badge");
+    if (on && !badge) {
+      badge = el("span", "addr-badge", "✓ fix accepted");
+      row.querySelector(".flag-top")?.appendChild(badge);
+    } else if (!on && badge) badge.remove();
+  });
+  // every inline reference, anywhere on the page
+  document.querySelectorAll(".flag-ref").forEach((chip) => {
+    chip.classList.toggle("ref-addressed", addressed.has(chip.dataset.fid));
+  });
+  refreshRemainingExposure(addressed);
+}
+
+function refreshRemainingExposure(addressed) {
+  const card = $("sec-cost");
+  if (!card || !CURRENT_RECORD) return;
+  card.querySelector(".est-remaining")?.remove();
+  if (!addressed.size) return;
+  const total = (CURRENT_RECORD.report || {}).est_clearance_cost_usd;
+  if (!total || total.length < 2) return;
+  let lo = total[0], hi = total[1];
+  for (const f of CURRENT_RECORD.flags || []) {
+    const c = f.remedy?.est_cost_usd;
+    if (addressed.has(f.flag_id) && c && c.length === 2 && c[0] >= 0) {
+      lo = Math.max(0, lo - c[0]);
+      hi = Math.max(0, hi - c[1]);
+    }
+  }
+  const line = el(
+    "p",
+    "est-remaining",
+    `With ${addressed.size} accepted fix${addressed.size === 1 ? "" : "es"}: est. remaining exposure ` +
+      `${money([lo, hi]) || "$0"} — assumes the rewrites hold; the score updates on re-analysis.`
+  );
+  card.appendChild(line);
+}
 
 function patchKey(patch) {
   return patch.scene_id + "|" + patch.find.slice(0, 60);
@@ -126,7 +204,7 @@ async function downloadRevised(format) {
   }
 }
 
-function renderFix(container, fix) {
+function renderFix(container, fix, flagId) {
   container.textContent = "";
   container.appendChild(el("p", "fix-summary", fix.summary || ""));
   for (const patch of fix.patches || []) {
@@ -150,11 +228,17 @@ function renderFix(container, fix) {
         accept.textContent = "Accept this fix";
         accept.classList.remove("accepted");
       } else {
-        ACCEPTED.set(key, { scene_id: patch.scene_id, find: patch.find, replace: patch.replace });
+        ACCEPTED.set(key, {
+          scene_id: patch.scene_id,
+          find: patch.find,
+          replace: patch.replace,
+          flag_id: flagId || "",
+        });
         accept.textContent = "✓ Accepted — in the revised script";
         accept.classList.add("accepted");
       }
       refreshExportBar();
+      refreshFlagStates();
     });
     controls.appendChild(accept);
     const copy = el("button", "cite-toggle", "Copy the new text");
@@ -192,7 +276,7 @@ function fixControls(f) {
         body: JSON.stringify({ run_id: RUN_ID, flag_id: f.flag_id }),
       });
       if (!res.ok) throw new Error(await res.text());
-      renderFix(result, await res.json());
+      renderFix(result, await res.json(), f.flag_id);
       btn.textContent = "Draft another fix";
     } catch (e) {
       toast("Fix failed: " + e.message.slice(0, 160), true);
@@ -227,7 +311,7 @@ function flagExpand(f) {
   if (f.rejection_reason) {
     const rej = el("div", "rejection");
     rej.appendChild(el("b", null, "Rejected in verification — "));
-    rej.appendChild(document.createTextNode(f.rejection_reason));
+    rej.appendChild(linkifyRefs(f.rejection_reason));
     ex.appendChild(rej);
   }
   return ex;
@@ -604,6 +688,7 @@ function buildReportNav(record, rep) {
 }
 
 function renderReport(record) {
+  CURRENT_RECORD = record;
   const root = $("report");
   root.textContent = "";
   const rep = record.report || {};
@@ -806,7 +891,11 @@ function renderReport(record) {
     sec.appendChild(el("h2", null, "Adjudication — merges and conflict resolutions"));
     root.appendChild(sec);
     const ul = el("ul", "plain-list");
-    for (const n of notes) ul.appendChild(el("li", null, n));
+    for (const n of notes) {
+      const li = el("li");
+      li.appendChild(linkifyRefs(n));
+      ul.appendChild(li);
+    }
     root.appendChild(ul);
   }
 
