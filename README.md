@@ -49,6 +49,12 @@ ClickHouse holds the comparison set — the model never asserts what a tool can 
   2,487 released films: "7 of your 8 nearest comparables are rated R," plus the exact beats to
   cut for your target rating.
 - A **marked-up script** — every finding anchored to its scene by character offsets, both ways.
+- The **What-If rating simulator** — check cuts and the *actual evidence pipeline* re-runs
+  (profile rewritten, re-embedded, re-searched against the corpus). It will honestly push back
+  on its own cut list when the remaining content still patterns higher.
+- **Production artifacts** — the standard studio **Clearance Binder** (PDF/CSV), a one-sheet
+  PDF, and accepted fixes exported as revised `.fountain` or Final Draft `.fdx` with revision
+  marks.
 - The **Writer's Room** — professional-style coverage (PASS/CONSIDER/RECOMMEND), a pitch package
   whose comparables are *retrieved* from the corpus with sources (never invented), and a
   deterministic format & readiness check.
