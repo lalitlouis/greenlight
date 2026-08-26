@@ -607,7 +607,7 @@ def test_prune_hard_ceiling_bounds_open_items():
     from greenlight.agents import common
 
     contents = []
-    for i in range(50):  # all OPEN (no flags filed) — only the ceiling applies
+    for i in range(50):  # all OPEN (no flags filed) — protected until the absolute bound
         contents.append(
             gt.Content(
                 role="model",
@@ -638,6 +638,54 @@ def test_prune_hard_ceiling_bounds_open_items():
         return str(c.parts[0].function_response.response)
 
     resps = [c for c in req.contents if c.parts[0].function_response is not None]
-    trimmed = [c for c in resps if "trimmed" in payload(c)]
-    assert len(trimmed) == 10  # 50 exchanges - 40 ceiling = oldest 10 trimmed
-    assert all("trimmed" not in payload(c) for c in resps[-12:])
+    # open-entity research is working memory: the 40-exchange ceiling must NOT
+    # touch it — only the absolute bound (120) may, and 50 < 120.
+    assert all("trimmed" not in payload(c) for c in resps)
+
+
+def test_prune_absolute_bound_and_entityless_ceiling():
+    from types import SimpleNamespace as NS
+
+    from google.genai import types as gt
+
+    from greenlight.agents import common
+
+    def resp_pair(name, args, payload_text):
+        return [
+            gt.Content(
+                role="model",
+                parts=[gt.Part(function_call=gt.FunctionCall(name=name, args=args))],
+            ),
+            gt.Content(
+                role="user",
+                parts=[
+                    gt.Part(
+                        function_response=gt.FunctionResponse(
+                            name=name, response={"result": payload_text}
+                        )
+                    )
+                ],
+            ),
+        ]
+
+    # 130 open-entity exchanges: those beyond the absolute bound trim
+    contents = []
+    for i in range(130):
+        contents.extend(resp_pair("research", {"entity_id": f"E{i}"}, "y" * 4000))
+    ctx = NS(agent_name="clearance_counsel", state={})
+    req = NS(contents=list(contents))
+    common.prune_stale_tool_results(ctx, req)
+    resps = [c for c in req.contents if c.parts[0].function_response is not None]
+
+    def payload(c):
+        return str(c.parts[0].function_response.response)
+
+    assert sum("trimmed" in payload(c) for c in resps) == 10  # 130 - 120
+    # entity-less bulky results (read_scene) DO trim at the 40 ceiling
+    contents = []
+    for i in range(50):
+        contents.extend(resp_pair("read_scene", {"scene_id": f"S{i:03d}"}, "z" * 4000))
+    req = NS(contents=list(contents))
+    common.prune_stale_tool_results(ctx, req)
+    resps = [c for c in req.contents if c.parts[0].function_response is not None]
+    assert sum("trimmed" in payload(c) for c in resps) == 10  # 50 - 40

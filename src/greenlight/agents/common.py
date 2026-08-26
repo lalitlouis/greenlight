@@ -75,7 +75,8 @@ def tool_error_shield(tool, args, tool_context, error):
 # results the desk had not yet filed FROM and it forgot paid-for work — the
 # graded eval caught it. Disposition is the signal age cannot see.
 _PRUNE_RECENCY_FLOOR = 12  # newest exchanges are untouchable: turns in flight
-_PRUNE_HARD_CEILING = 40  # beyond this, even open items trim — the monster-script bound
+_PRUNE_HARD_CEILING = 40  # beyond this, dispositioned/entity-less results trim
+_PRUNE_ABSOLUTE_CEILING = 120  # beyond this, even open-entity results trim
 _PRUNE_OVER_CHARS = 2000  # small payloads (file confirmations, briefs) always survive
 _PRUNE_NOTE = (
     " …[trimmed: already used. Re-call the tool if you need the full result — "
@@ -138,6 +139,8 @@ def prune_stale_tool_results(callback_context, llm_request):
     protected = set(resp_idx[-_PRUNE_RECENCY_FLOOR:])
     over = len(resp_idx) - _PRUNE_HARD_CEILING
     ceiling_zone = set(resp_idx[:over]) if over > 0 else set()
+    over_abs = len(resp_idx) - _PRUNE_ABSOLUTE_CEILING
+    absolute_zone = set(resp_idx[:over_abs]) if over_abs > 0 else set()
     for ci in resp_idx:
         if ci in protected:
             continue
@@ -150,7 +153,14 @@ def prune_stale_tool_results(callback_context, llm_request):
             if len(raw) <= _PRUNE_OVER_CHARS:
                 continue
             ent = resp_entity.get((ci, pi))
-            if (ent is not None and ent in done_entities) or ci in ceiling_zone:
+            # An un-filed entity's research is working memory: the 40-exchange
+            # ceiling caught a PASS-1 result the desk had deferred filing (the
+            # Nighthawks miss, eval run 145721). Open items now survive to the
+            # absolute bound; the 40 ceiling trims only closed/entity-less work.
+            dispositioned = ent is not None and ent in done_entities
+            open_item = ent is not None and not dispositioned
+            trim = dispositioned or (ci in ceiling_zone and not open_item) or ci in absolute_zone
+            if trim:
                 if pruned is None:
                     pruned = contents[ci].model_copy(deep=True)
                 pruned.parts[pi].function_response.response = {"result": raw[:300] + _PRUNE_NOTE}
