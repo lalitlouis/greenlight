@@ -42,7 +42,7 @@ from fastapi.responses import (
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from greenlight import auth, fixer, parser, runstate, storage
+from greenlight import auth, firstlook, fixer, parser, runstate, storage
 from greenlight.pdf import screenplay_text
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -540,6 +540,12 @@ async def _run_live(handle: RunHandle, script_path: Path) -> None:
     try:
         from greenlight import pipeline  # heavyweight (google-adk) — import only here
 
+        def _first_look_then_publish() -> None:
+            data = firstlook.run_first_look(handle.run_id, handle.source or "")
+            if data:
+                handle.publish({"type": "first_look", "data": data})
+
+        asyncio.get_event_loop().run_in_executor(None, _first_look_then_publish)
         record = await pipeline.run(script_path, on_event=handle.publish)
         handle.record = record
         handle.status = "error" if record.get("error") else "done"
@@ -614,6 +620,7 @@ async def create_run(screenplay: UploadFile, request: Request) -> dict[str, str]
     )
     if RUN_MODE == "worker":
         RUNS.pop(run_id, None)  # the worker owns this run; no in-process shadow
+        asyncio.get_event_loop().run_in_executor(None, firstlook.run_first_look, run_id, source)
         try:
             await asyncio.to_thread(_dispatch_worker, run_id)
         except Exception as e:
@@ -1503,6 +1510,7 @@ async def _journal_relay(run_id: str) -> AsyncIterator[str]:
     seq = -1
     idle = 0.0
     state0 = await asyncio.to_thread(runstate.run_get, run_id) or {}
+    sent_first_look = False
     # the journal carries no meta event — synthesize the one the run page boots from
     yield _sse(
         {
@@ -1517,6 +1525,9 @@ async def _journal_relay(run_id: str) -> AsyncIterator[str]:
         for ev in events:
             yield _sse(ev)
         state = await asyncio.to_thread(runstate.run_get, run_id) or {}
+        if not sent_first_look and state.get("first_look"):
+            sent_first_look = True
+            yield _sse({"type": "first_look", "data": state["first_look"]})
         if state.get("status") in ("done", "error"):
             # drain any final chunk that raced the status write
             events, seq = await asyncio.to_thread(runstate.events_read, run_id, seq)
@@ -1615,4 +1626,12 @@ async def run_script(run_id: str) -> dict[str, Any]:
     if source is None:
         raise HTTPException(404, "No script source for this run")
     meta, scenes = parser.parse_fountain(source)
-    return {"run_id": run_id, "title": meta.get("title", ""), "source": source, "scenes": scenes}
+    from greenlight import profile as profile_mod
+
+    return {
+        "run_id": run_id,
+        "title": meta.get("title", ""),
+        "source": source,
+        "scenes": scenes,
+        "profile": profile_mod.build_profile(scenes),
+    }

@@ -23,6 +23,7 @@ async function loadSceneHeadings(id) {
     const data = await res.json();
     for (const s of data.scenes || []) SCENE_HEADINGS[s.scene_id] = s.heading;
     buildSceneStrip(data.scenes || []);
+    if (data.profile && data.profile.scene_count) renderProfile(data.profile);
   } catch {
     /* narration degrades to bare scene ids */
   }
@@ -58,6 +59,71 @@ function buildSceneStrip(scenes) {
 function gentleFollow(node) {
   if (!node || Date.now() - (rt.userScrollAt || 0) < 8000) return;
   node.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+/* ---------- First Look: instant deterministic profile + unverified impressions ---------- */
+function renderProfile(p) {
+  const card = $("firstlook");
+  if (!card) return;
+  card.hidden = false;
+  const stats = $("fl-stats");
+  stats.textContent = "";
+  const chips = [
+    [p.pages + " pages", "~" + p.est_runtime_min + " min runtime"],
+    [p.scene_count + " scenes", p.int_scenes + " INT · " + p.ext_scenes + " EXT"],
+    [p.day_scenes + " day · " + p.night_scenes + " night", p.night_exteriors + " night exteriors"],
+    [p.location_count + " locations", p.cast_size + " speaking parts"],
+    [p.dialogue_pct + "% dialogue", 100 - p.dialogue_pct + "% action"],
+  ];
+  for (const [big, small] of chips) {
+    const c = el("div", "fl-stat");
+    c.appendChild(el("b", null, big));
+    c.appendChild(el("span", null, small));
+    stats.appendChild(c);
+  }
+  const lists = $("fl-lists");
+  lists.textContent = "";
+  const locs = el("div", "fl-list");
+  locs.appendChild(el("b", null, "Top locations"));
+  for (const l of p.top_locations || []) locs.appendChild(el("span", null, `${l.name} ×${l.scenes}`));
+  lists.appendChild(locs);
+  const cast = el("div", "fl-list");
+  cast.appendChild(el("b", null, "Most dialogue"));
+  for (const c of p.top_cast || []) cast.appendChild(el("span", null, `${c.name} (${c.lines})`));
+  lists.appendChild(cast);
+  const elems = Object.entries(p.elements || {});
+  if (elems.length) {
+    const e = el("div", "fl-list");
+    e.appendChild(el("b", null, "Element mentions"));
+    for (const [name, n] of elems) e.appendChild(el("span", "fl-elem", `${name} ×${n}`));
+    lists.appendChild(e);
+  }
+}
+
+function renderImpressions(d) {
+  const box = $("fl-impressions");
+  if (!box || !d) return;
+  $("firstlook").hidden = false;
+  $("fl-unverified").hidden = false;
+  box.hidden = false;
+  box.textContent = "";
+  box.appendChild(el("p", "fl-logline", "“" + d.logline + "”"));
+  box.appendChild(el("p", "fl-genre", d.genre + " · " + d.tone));
+  const ul = el("ul", "fl-obs");
+  for (const o of d.observations || []) ul.appendChild(el("li", null, o));
+  box.appendChild(ul);
+  if ((d.comps || []).length) {
+    const row = el("div", "wi-comps");
+    row.appendChild(el("b", "fl-comps-label", "Nearest released films:"));
+    for (const c of d.comps) {
+      const chip = el("span", "wi-comp");
+      chip.appendChild(el("b", "wi-r r-" + c.rating, c.rating));
+      chip.appendChild(document.createTextNode(`${c.title}${c.year ? " (" + c.year + ")" : ""}`));
+      row.appendChild(chip);
+    }
+    box.appendChild(row);
+  }
+  if (window.FX?.on) gsap.fromTo(box, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.5 });
 }
 
 /* ---------- the agent network graph: nodes for every actor, pulses for every
@@ -692,6 +758,9 @@ function handleEvent(ev) {
       bumpProgress();
       break;
     }
+    case "first_look":
+      renderImpressions(ev.data);
+      break;
     case "tool_call":
     case "tool_result":
     case "text":

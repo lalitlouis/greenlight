@@ -6,6 +6,25 @@ them. Append-only; newest entries at the top. Bigger architecture decisions live
 
 ---
 
+## 2026-08-26 — First Look: filling the triage dead-air (waves 1+2 built; wave 3 planned)
+
+The first ~2-6 minutes of a big run are one giant triage call with no visible output.
+Built: **wave 1** — deterministic script profile (profile.py: pages/runtime, INT-EXT,
+day/night, night exteriors, locations, cast by dialogue share, element keyword hits)
+rendered instantly from /api/script; **wave 2** — one Flash call (firstlook.py) for
+logline/genre/tone/3 observations + corpus comparables, journaled to the run doc and
+emitted over the same SSE stream, rendered under an explicit "first impressions ·
+unverified" label so 40-second opinions never dress like cited findings. Cost ~$0.02/run;
+failure is silent (garnish, never a blocker).
+
+**Wave 3 — planned, not built: parallel Writer's Room worker.** An upload toggle ("also
+run Writer's Room") dispatching a SECOND worker job on the same script — full
+coverage/pitch/format alongside clearance, results panel on the run page, link to the
+full writer report. One upload → breakdown + coverage + cited clearance: the direct
+strike at Prescene's feature set (compare page updates with it). Needs a writer-worker
+entrypoint mirroring greenlight.worker; gate behind the toggle so casual runs don't
+double-spend (~$0.10-0.30/run extra). Build after waves 1+2 prove out.
+
 ## 2026-08-26 — Accuracy playbook (second external review): adopted with corrections
 
 A consolidated prompt/architecture playbook was reviewed line by line rather than pasted

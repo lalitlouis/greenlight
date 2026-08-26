@@ -235,3 +235,14 @@ def test_rating_prediction_requires_comparables_first():
     assert msg.startswith("Prediction filed: R")
     pred = ctx.state["rating_prediction"]
     assert pred["target"] == "PG-13" and pred["comparables"][0]["title"] == "X"
+
+
+def test_build_profile_from_fixture():
+    from greenlight import profile
+
+    _, scenes = parser.parse_fountain(SOURCE)
+    p = profile.build_profile(scenes)
+    assert p["scene_count"] == len(scenes)
+    assert p["cast_size"] >= 1 and p["top_cast"][0]["lines"] >= 1
+    assert 0 <= p["dialogue_pct"] <= 100
+    assert p["location_count"] >= 1
