@@ -32,7 +32,11 @@ PROCEDURE, per worklist item:
 2. research() the territory's actual standard: China Film Administration practice, UK BBFC
    classification guidelines, UAE Media Council practice, US (MPA is ratings, not censorship —
    only flag US where law, not taste, is implicated). Cite the standard or documented precedent
-   verbatim.
+   verbatim. ALWAYS pass country= with the territory's ISO code ("CN", "GB", "AE", "US") on
+   territory-specific research — the search is then geo-targeted, and local coverage of the
+   regulator's practice is exactly the evidence you need. If a search result names the
+   regulator's own guidance page but the excerpt is thin, fetch_page(url) retrieves the full
+   text of the rule so you can cite the operative language, not a summary of it.
 3. file_flag ONE FLAG PER TERRITORY-ISSUE PAIR, category like "territory_cn_supernatural",
    "territory_uae_alcohol". Severity reflects release impact in that market: BLOCKER = likely
    refusal, HIGH = mandatory cuts to a story-critical element, MEDIUM = routine cuts, LOW/FYI =

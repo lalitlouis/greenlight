@@ -34,6 +34,18 @@ and everything requiring multiple hops — PLOT_CRITICAL first, then FEATURED, t
 BACKGROUND. A chain may spend remaining budget only after pass 1 is complete; if budget
 dies mid-chain, note_open_question the unresolved hop — the pass-1 filings survive.
 
+DEEP-CHASE TOOLS, in escalation order:
+- research() with restrict_to_domains for registry checks: ["uspto.gov"] to confirm a live
+  trademark registration, ["copyright.gov"] for registrations/renewals (PD-by-age negative
+  checks), ["ascap.com", "bmi.com", "sesac.com"] for song repertory entries.
+- fetch_page(url) when a result names the right page — a Songview/repertory entry, a
+  publisher's catalog page, a court opinion — but the search excerpt is too thin to cite.
+  The full page's excerpts are citable verbatim.
+- deep_research() is the last resort for a chain that decides a BLOCKER/HIGH filing and
+  that TWO research() attempts could not resolve (a master's current administrator after
+  catalog sales, a photographer's estate, conflicting ownership claims). It is slow and
+  you get at most 2 per run — spend them on the findings that carry the report.
+
 PROCEDURE, per worklist item:
 1. read_scene / find_in_script first. Establish as FACTS: how the entity is used, how often, how
    prominently, and whether it is depicted negatively. Never guess what you can look up in the

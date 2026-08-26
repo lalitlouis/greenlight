@@ -303,3 +303,161 @@ def test_language_guard():
     chinese = "内景 老宅 夜 王梅走进房间 看着窗外的雨 她慢慢坐下 拿起桌上的旧照片" * 30
     assert not langguard.probably_english(chinese)
     assert langguard.probably_english("too short to judge")
+
+
+# --- fetch_page (Parallel Extract) ------------------------------------------
+
+EXTRACT_EXCERPT = (
+    "The repertory entry lists the composition as administered by Harbor Lane Music "
+    "with a fifty percent writer share registered to the estate."
+)
+
+
+def _fake_extract(urls, objective, **kw):
+    return {
+        "extract_id": "ex1",
+        "errors": [],
+        "results": [
+            {
+                "url": urls[0],
+                "title": "Repertory entry",
+                "publish_date": None,
+                "excerpts": [EXTRACT_EXCERPT],
+            }
+        ],
+    }
+
+
+def test_fetch_page_spends_budget_caches_and_registers_provenance(monkeypatch):
+    monkeypatch.setattr(toolbelt, "_durable_cache_load", lambda k: None)
+    monkeypatch.setattr(toolbelt, "_durable_cache_store", lambda k, r: None)
+    calls = []
+
+    def fake(urls, objective, **kw):
+        calls.append(urls)
+        return _fake_extract(urls, objective)
+
+    monkeypatch.setattr(toolbelt, "_live_extract", fake)
+    ctx = make_ctx(**{"research_budget:clearance_counsel": 2})
+    ctx.invocation_id = "inv-extract-test"
+
+    r1 = asyncio.run(toolbelt.fetch_page("https://repertory.example/song", "who administers", ctx))
+    assert r1["cached"] is False and r1["budget_remaining"] == 1
+    assert r1["results"][0]["excerpts"] == [EXTRACT_EXCERPT]
+
+    r2 = asyncio.run(toolbelt.fetch_page("https://repertory.example/song", "who administers", ctx))
+    assert r2["cached"] is True and len(calls) == 1
+
+    # a filed citation quoting the extracted page must pass the provenance gate
+    assert toolbelt._excerpt_exists(EXTRACT_EXCERPT, ctx)
+
+
+def test_fetch_page_refunds_on_empty_result(monkeypatch):
+    monkeypatch.setattr(toolbelt, "_durable_cache_load", lambda k: None)
+    monkeypatch.setattr(toolbelt, "_durable_cache_store", lambda k, r: None)
+    monkeypatch.setattr(
+        toolbelt,
+        "_live_extract",
+        lambda urls, objective, **kw: {
+            "extract_id": "ex2",
+            "errors": [{"url": urls[0], "error_type": "fetch_blocked"}],
+            "results": [],
+        },
+    )
+    ctx = make_ctx(**{"research_budget:clearance_counsel": 2})
+    r = asyncio.run(toolbelt.fetch_page("https://blocked.example/x", "anything", ctx))
+    assert "error" in r
+    assert ctx.state["research_budget:clearance_counsel"] == 2  # refunded
+
+
+# --- deep_research (Parallel Task API) --------------------------------------
+
+DEEP_EXCERPT = (
+    "Catalog records show the master recording rights were acquired by Meridian "
+    "Audio Holdings in 2019 and are administered worldwide by its licensing arm."
+)
+
+
+def _fake_task(question, processor):
+    return {
+        "run": {"run_id": "tr1", "status": "completed"},
+        "output": {
+            "type": "text",
+            "content": "The master is controlled by Meridian Audio Holdings.",
+            "basis": [
+                {
+                    "field": "output",
+                    "reasoning": "traced catalog sale",
+                    "citations": [
+                        {
+                            "url": "https://trade.example/meridian",
+                            "title": "Catalog sale coverage",
+                            "excerpts": [DEEP_EXCERPT],
+                        }
+                    ],
+                }
+            ],
+        },
+    }
+
+
+def test_deep_research_costs_caps_and_registers_provenance(monkeypatch):
+    monkeypatch.setattr(toolbelt, "_durable_cache_load", lambda k: None)
+    monkeypatch.setattr(toolbelt, "_durable_cache_store", lambda k, r: None)
+    monkeypatch.setattr(toolbelt, "_live_task", lambda q, p: _fake_task(q, p))
+    ctx = make_ctx(**{"research_budget:clearance_counsel": 8})
+    ctx.invocation_id = "inv-deep-test"
+
+    r1 = asyncio.run(toolbelt.deep_research("who owns the master of X?", "E001", ctx))
+    assert r1["cached"] is False and r1["budget_remaining"] == 5
+    assert r1["citations"][0]["excerpts"] == [DEEP_EXCERPT]
+    assert toolbelt._excerpt_exists(DEEP_EXCERPT, ctx)
+
+    # same question again: cached, no extra spend
+    r2 = asyncio.run(toolbelt.deep_research("who owns the master of X?", "E001", ctx))
+    assert r2["cached"] is True
+    assert ctx.state["research_budget:clearance_counsel"] == 5
+
+    # allowance: 2 per desk
+    asyncio.run(toolbelt.deep_research("second hard question", "E002", ctx))
+    r4 = asyncio.run(toolbelt.deep_research("third hard question", "E003", ctx))
+    assert "error" in r4 and "allowance" in r4["error"]
+
+
+def test_deep_research_refunds_budget_on_failure(monkeypatch):
+    monkeypatch.setattr(toolbelt, "_durable_cache_load", lambda k: None)
+    monkeypatch.setattr(toolbelt, "_durable_cache_store", lambda k, r: None)
+
+    def boom(q, p):
+        raise RuntimeError("api down")
+
+    monkeypatch.setattr(toolbelt, "_live_task", boom)
+    ctx = make_ctx(**{"research_budget:clearance_counsel": 8})
+    r = asyncio.run(toolbelt.deep_research("hard question", "E001", ctx))
+    assert "error" in r
+    assert ctx.state["research_budget:clearance_counsel"] == 8  # refunded
+
+
+def test_research_geo_and_domain_modifiers_reach_live_search(monkeypatch):
+    monkeypatch.setattr(toolbelt, "_durable_cache_load", lambda k: None)
+    monkeypatch.setattr(toolbelt, "_durable_cache_store", lambda k, r: None)
+    seen = {}
+
+    def fake_search(objective, queries, session_id=None, country="", include_domains=None):
+        seen["country"] = country
+        seen["domains"] = include_domains
+        return CASSETTE
+
+    monkeypatch.setattr(toolbelt, "_live_search", fake_search)
+    ctx = make_ctx(agent_name="territory_censor")
+    asyncio.run(
+        toolbelt.research(
+            "CN censorship of supernatural",
+            ["china film supernatural"],
+            "E009",
+            ctx,
+            country="CN",
+            restrict_to_domains=["gov.cn"],
+        )
+    )
+    assert seen == {"country": "CN", "domains": ["gov.cn"]}

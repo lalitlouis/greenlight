@@ -75,10 +75,25 @@ GreenlightPipeline                  SequentialAgent (Google ADK)
 └── ReportWriter                    deterministic Python -> Report + marked-up script
 ```
 
-Each desk is a genuine research loop: seven tools (`read_scene`, `find_in_script`, `research`,
-`query_precedent`, `file_flag`, `note_open_question`, `done`), its own budget, and the freedom to
-decide what to chase and when to stop. `research()` is the **Parallel Search API** — the source
-of every web citation. Verifiers are blinded to the desks' reasoning; the adjudicator's merge
+Each desk is a genuine research loop: nine tools (`read_scene`, `find_in_script`, `research`,
+`fetch_page`, `deep_research`, `query_precedent`, `file_flag`, `note_open_question`, `done`),
+its own budget, and the freedom to decide what to chase and when to stop. The web side is
+**three Parallel APIs**, used the way a real clearance clerk escalates:
+
+- **Search** (`research()`) — every desk's default instrument, `mode="advanced"`, one
+  session per run so Parallel keeps context across a chained ownership chase. The Territory
+  desk geo-targets its searches (`location="CN"` — it searches *from* the territory), and
+  registry checks pin the allowlist to the authority itself (`uspto.gov`, `copyright.gov`,
+  ASCAP/BMI/SESAC repertories).
+- **Extract** (`fetch_page()`) — when a search result names the right page (a PRO repertory
+  entry, a court opinion, a regulator's guidelines) but the excerpt is too thin to cite, the
+  desk pulls the full page and cites the operative language verbatim.
+- **Task API** (`deep_research()`) — the escalation of last resort: a slow, multi-source
+  investigation for ownership chains that decide a BLOCKER and that two searches couldn't
+  crack. Capped at 2 per desk per run; its citations enter the same provenance registry, so
+  its findings face the same verbatim-excerpt gate as everything else.
+
+Verifiers are blinded to the desks' reasoning; the adjudicator's merge
 plan is applied deterministically with guards. Governing principle throughout: **never let the
 model assert what you could retrieve.**
 
@@ -87,7 +102,7 @@ model assert what you could retrieve.**
 | Piece | Technology |
 |---|---|
 | Agents | **Google ADK** (`google-adk`) on **Vertex AI Gemini** — Flash for the desks, Pro for adjudication & coverage |
-| Live web research / citations | **Parallel Search API** (`parallel-web`) |
+| Live web research / citations | **Parallel Search + Extract + Task APIs** (`parallel-web`) |
 | Ratings corpus (2,487 films) | **ClickHouse Cloud** kNN over `text-embedding-005` embeddings; facts from Wikidata (CC0) + Wikipedia via official APIs, every row with a source URL |
 | Web app | FastAPI + SSE on **Cloud Run**, vanilla JS + GSAP (vendored) |
 

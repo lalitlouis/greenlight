@@ -2,7 +2,9 @@
 
 from greenlight.tools.toolbelt import (
     DESK_TOOLS,
+    deep_research,
     done,
+    fetch_page,
     file_flag,
     file_rating_prediction,
     find_in_script,
@@ -14,7 +16,9 @@ from greenlight.tools.toolbelt import (
 
 __all__ = [
     "DESK_TOOLS",
+    "deep_research",
     "done",
+    "fetch_page",
     "file_flag",
     "file_rating_prediction",
     "find_in_script",

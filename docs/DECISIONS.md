@@ -6,6 +6,40 @@ them. Append-only; newest entries at the top. Bigger architecture decisions live
 
 ---
 
+## 2026-08-27 — Parallel, used in depth: Search upgrades + Extract + Task API
+
+Decision: leverage the partner API as far as its surface allows, since the track rewards
+genuine integration and cost is no longer the binding constraint. Four changes, all on the
+default runtime path, all behind the same provenance gate:
+
+1. **Geo-targeted search** — `research(country="CN")` sets Parallel's `location`; the
+   Territory desk now searches *from* the territory it is judging. Prompt requires it for
+   territory-specific questions.
+2. **Registry-restricted search** — `research(restrict_to_domains=["uspto.gov"])` uses
+   Parallel's `source_policy.include_domains`; live-verified that a bbfc.co.uk-restricted
+   query returns only BBFC pages. For trademark status, copyright renewals, PRO repertories,
+   case law.
+3. **`fetch_page()` = Extract API** — full-page retrieval when a search excerpt is too thin
+   to cite (repertory entries, court opinions, regulators' guideline pages). Costs 1 research
+   credit; refunds on fetch failure; excerpts enter the provenance registry so they are
+   citable verbatim.
+4. **`deep_research()` = Task API** (`core` processor) — the last-resort escalation for
+   ownership chains that decide a BLOCKER/HIGH and that two searches couldn't resolve.
+   Costs 3 credits, hard cap 2 per desk per run (mechanical, in the tool, not the prompt).
+   Task citations carry verbatim excerpts → same provenance gate as Search.
+
+Also: search `max_results` 10→12, `max_chars_total` 8k→10k, results-to-model 6→8 — modest,
+because the 429 saga taught us token appetite is the real budget. Rules check: all three are
+official `parallel-web` SDK products (the sanctioned partner SDK); Search remains the default
+path, so the track requirement is untouched; no non-Google AI SDK enters the repo.
+
+**Not done, deliberately**: giving blinded verifiers their own live searches. It would be a
+strong "survives cross-examination" story, but a verifier that retrieves *different* evidence
+than the desk saw can reject true findings for reasons of retrieval variance, and the demo
+record is already promoted. Parked for after the deadline.
+
+---
+
 ## 2026-08-27 — The overnight demo-refresh saga: six bugs, one mechanical contract
 
 Ten graded eval runs converged the refreshed demo record (promoted: run 8, 19/21 —

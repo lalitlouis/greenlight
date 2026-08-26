@@ -33,8 +33,9 @@ FLAG_ID_OFFSET = {
     "territory_censor": 400,
 }
 
-_MAX_RESULTS_TO_MODEL = 6
+_MAX_RESULTS_TO_MODEL = 8
 _MAX_EXCERPT_CHARS = 1200
+_MAX_EXTRACT_CHARS = 4000  # fetch_page returns one page, so it may run longer
 
 
 def _desk(tool_context: ToolContext) -> str:
@@ -101,24 +102,35 @@ def find_in_script(pattern: str, tool_context: ToolContext) -> dict[str, Any]:
 
 
 def _live_search(
-    objective: str, queries: list[str], session_id: str | None = None
+    objective: str,
+    queries: list[str],
+    session_id: str | None = None,
+    country: str = "",
+    include_domains: list[str] | None = None,
 ) -> dict[str, Any]:
     """The live Parallel Search call. Module-level so tests can monkeypatch it.
 
     This call is the partner-track requirement — it must stay on the default path.
     session_id groups every search in one analysis run: Parallel builds context
     across the chained questions (a song -> its composition owner -> its master),
-    which is exactly how the desks work.
+    which is exactly how the desks work. country geo-targets results (the Territory
+    desk searches FROM the territory); include_domains restricts to registries.
     """
     import parallel
 
     client = parallel.Parallel(api_key=os.environ["PARALLEL_API_KEY"])
+    advanced: dict[str, Any] = {"max_results": 12}
+    if country:
+        advanced["location"] = country
+    if include_domains:
+        advanced["source_policy"] = {"include_domains": include_domains[:20]}
     res = client.search(
         search_queries=queries,
         objective=objective,
         mode="advanced",
-        max_chars_total=8000,
+        max_chars_total=10000,
         session_id=session_id,
+        advanced_settings=advanced,
     )
     return res.model_dump()
 
@@ -176,7 +188,12 @@ def _compact(raw: dict[str, Any]) -> list[dict[str, Any]]:
 
 
 async def research(
-    objective: str, queries: list[str], entity_id: str, tool_context: ToolContext
+    objective: str,
+    queries: list[str],
+    entity_id: str,
+    tool_context: ToolContext,
+    country: str = "",
+    restrict_to_domains: list[str] | None = None,
 ) -> dict[str, Any]:
     """Research a clearance question on the live web. Returns sourced, verbatim excerpts.
 
@@ -185,6 +202,14 @@ async def research(
     queries: 2-3 short keyword retrieval strings, 3-6 words each. Not sentences.
     entity_id: the worklist entity this research is for, e.g. "E003". Pass "" if the
     question is not about a single entity.
+    country: OPTIONAL ISO 3166-1 alpha-2 code ("DE", "IN", "GB"). Set it when the
+    question concerns one territory's rules, market, or sensibilities — the search is
+    then geo-targeted to that country's web.
+    restrict_to_domains: OPTIONAL domain allowlist for registry-grade checks. Use for
+    authoritative-source questions: ["uspto.gov"] trademark status, ["ascap.com",
+    "bmi.com", "sesac.com"] song registrations, ["copyright.gov"] registrations and
+    renewals, ["courtlistener.com", "justia.com"] case law. Only these domains are
+    searched, so never set it for general questions.
 
     Results are shared across desks — researching an already-researched entity is free.
     Every citation you file must copy an excerpt from these results VERBATIM. Never
@@ -192,8 +217,12 @@ async def research(
     """
     # Key on entity AND question: an ownership chase asks several different
     # questions about one entity, and each deserves its own search. Identical
-    # questions still share across desks.
-    q_hash = hashlib.sha1(objective.encode()).hexdigest()[:12]
+    # questions still share across desks. Geo/domain modifiers change the answer
+    # set, so they join the key — but only when set, preserving old cache keys.
+    modifiers = (
+        f"|{country}|{sorted(restrict_to_domains)}" if (country or restrict_to_domains) else ""
+    )
+    q_hash = hashlib.sha1((objective + modifiers).encode()).hexdigest()[:12]
     key = f"research:{entity_id}:{q_hash}" if entity_id else f"research:{q_hash}"
     cached = tool_context.state.get(key)
     if cached is not None:
@@ -233,7 +262,14 @@ async def research(
     # Decrement BEFORE the await: when a desk issues several research calls in
     # one turn they run concurrently, and the budget must count each of them.
     tool_context.state[budget_key] = budget - 1
-    raw = await asyncio.to_thread(_live_search, objective, queries, session_id=session_id)
+    raw = await asyncio.to_thread(
+        _live_search,
+        objective,
+        queries,
+        session_id=session_id,
+        country=country,
+        include_domains=restrict_to_domains,
+    )
     compacted = _compact(raw)
     record = {
         "objective": objective,
@@ -254,6 +290,227 @@ async def research(
         "budget_remaining": budget - 1,
         "search_id": record["search_id"],
         "results": compacted,
+    }
+
+
+# --- fetch_page (Parallel Extract API) --------------------------------------
+
+
+def _live_extract(urls: list[str], objective: str, session_id: str | None = None) -> dict[str, Any]:
+    """The live Parallel Extract call — full-page retrieval. Module-level for tests."""
+    import parallel
+
+    client = parallel.Parallel(api_key=os.environ["PARALLEL_API_KEY"])
+    res = client.extract(
+        urls=urls, objective=objective, max_chars_total=12000, session_id=session_id
+    )
+    return res.model_dump()
+
+
+async def fetch_page(url: str, objective: str, tool_context: ToolContext) -> dict[str, Any]:
+    """Fetch ONE specific web page and return its relevant content as verbatim excerpts.
+
+    Use when a research() result names a promising source but its excerpt is too thin
+    to cite — a PRO repertory entry, a rights-holder or publisher page, a court record,
+    a safety regulation. url: the exact page, copied from a research() result.
+    objective: what you need from that page, one sentence.
+
+    Costs 1 research budget. The excerpts are citable exactly like research() excerpts —
+    copy them VERBATIM when you file.
+    """
+    key = "extract:" + hashlib.sha1(f"{url}|{objective}".encode()).hexdigest()[:12]
+    cached = tool_context.state.get(key)
+    if cached is not None:
+        _register_provenance(
+            tool_context,
+            [x for r in cached["results"] for x in [r.get("title") or "", *r.get("excerpts", [])]],
+        )
+        return {"cached": True, "results": cached["results"]}
+
+    stored = await asyncio.to_thread(_durable_cache_load, key)
+    if stored is not None:
+        tool_context.state[key] = {k: v for k, v in stored.items() if not k.startswith("_")}
+        _index_research_key(tool_context, key)
+        _register_provenance(
+            tool_context,
+            [x for r in stored["results"] for x in [r.get("title") or "", *r.get("excerpts", [])]],
+        )
+        return {"cached": True, "results": stored["results"]}
+
+    budget_key = f"research_budget:{_desk(tool_context)}"
+    budget = int(tool_context.state.get(budget_key, 0))
+    if budget <= 0:
+        return {
+            "error": "research budget spent",
+            "guidance": (
+                "File flags you can already support with earlier results, record what "
+                "you could not resolve with note_open_question, then call done()."
+            ),
+        }
+    tool_context.state[budget_key] = budget - 1
+    session_id = f"scriptrisk-{getattr(tool_context, 'invocation_id', '') or 'run'}"[:64]
+    try:
+        raw = await asyncio.to_thread(_live_extract, [url], objective, session_id=session_id)
+    except Exception as exc:  # page fetch can fail on robots/paywalls — refund, keep working
+        tool_context.state[budget_key] = budget
+        return {
+            "error": f"fetch failed: {type(exc).__name__}",
+            "guidance": "Use the research() excerpts you already have, or try another source.",
+        }
+    results = []
+    for r in raw.get("results", []):
+        excerpts, used = [], 0
+        for ex in r.get("excerpts", []):
+            if used >= _MAX_EXTRACT_CHARS:
+                break
+            excerpts.append(ex[: _MAX_EXTRACT_CHARS - used])
+            used += len(ex)
+        results.append(
+            {
+                "url": r["url"],
+                "title": r.get("title"),
+                "publish_date": r.get("publish_date"),
+                "excerpts": excerpts,
+            }
+        )
+    if not results:
+        tool_context.state[budget_key] = budget  # nothing usable: refund
+        errs = [
+            e.get("error_type") or e.get("message") or "unavailable" for e in raw.get("errors", [])
+        ]
+        return {
+            "error": f"page not retrievable: {'; '.join(str(e) for e in errs) or 'no content'}",
+            "guidance": "Use the research() excerpts you already have, or try another source.",
+        }
+    record = {"objective": objective, "results": results}
+    tool_context.state[key] = record
+    _index_research_key(tool_context, key)
+    _register_provenance(
+        tool_context,
+        [x for r in results for x in [r.get("title") or "", *r.get("excerpts", [])]],
+    )
+    await asyncio.to_thread(_durable_cache_store, key, record)
+    return {"cached": False, "budget_remaining": budget - 1, "results": results}
+
+
+# --- deep_research (Parallel Task API) --------------------------------------
+
+
+def _live_task(question: str, processor: str) -> dict[str, Any]:
+    """The live Parallel Task API call — deep multi-source research. Module-level for tests."""
+    import parallel
+
+    client = parallel.Parallel(api_key=os.environ["PARALLEL_API_KEY"])
+    res = client.task_run.execute(
+        input=question,
+        processor=processor,
+        output=(
+            "A clearance research memo that directly answers the question. State the "
+            "resolved facts (owners, registrations, status, dates) plainly, say what "
+            "could not be verified, and support every fact with source citations "
+            "carrying verbatim excerpts."
+        ),
+        timeout=900,
+    )
+    return res.model_dump()
+
+
+_DEEP_COST = 3  # a deep run replaces several searches; price it that way
+_DEEP_MAX_PER_DESK = 2
+
+
+async def deep_research(question: str, entity_id: str, tool_context: ToolContext) -> dict[str, Any]:
+    """Escalate ONE hard, unresolved question to a deep multi-source web investigation.
+
+    Slow (several minutes) and thorough — a research analyst, not a search. Use ONLY
+    when research() has twice failed to resolve a question that decides a potential
+    BLOCKER or HIGH finding: an ownership chain (composition vs master, publisher
+    splits, PRO registration), a rights-holder plain search cannot locate, a
+    conflicting-rights puzzle. Never for a first pass, never for LOW/FYI questions.
+
+    question: fully self-contained prose — all script context, what you already know,
+    and exactly which facts would resolve it. entity_id: the worklist entity ("E003"),
+    or "" if not entity-specific.
+
+    Costs 3 research budget; at most 2 calls per desk per run. Citation excerpts in
+    the result are citable exactly like research() excerpts — copy them VERBATIM.
+    """
+    desk = _desk(tool_context)
+    key = "deep:" + hashlib.sha1(question.encode()).hexdigest()[:12]
+    cached = tool_context.state.get(key)
+    if cached is None:
+        cached = await asyncio.to_thread(_durable_cache_load, key)
+        if cached is not None:
+            tool_context.state[key] = {k: v for k, v in cached.items() if not k.startswith("_")}
+            _index_research_key(tool_context, key)
+    if cached is not None:
+        _register_provenance(
+            tool_context,
+            [cached.get("answer", "")]
+            + [x for c in cached.get("citations", []) for x in c.get("excerpts", [])],
+        )
+        return {
+            "cached": True,
+            "answer": cached.get("answer"),
+            "citations": cached.get("citations"),
+        }
+
+    used_key = f"deep_used:{desk}"
+    used = int(tool_context.state.get(used_key, 0))
+    if used >= _DEEP_MAX_PER_DESK:
+        return {
+            "error": "deep research allowance spent for this desk",
+            "guidance": "Use research(), or note the question with note_open_question.",
+        }
+    budget_key = f"research_budget:{desk}"
+    budget = int(tool_context.state.get(budget_key, 0))
+    if budget < _DEEP_COST:
+        return {
+            "error": f"deep research costs {_DEEP_COST} budget; {budget} remains",
+            "guidance": "Note the question with note_open_question and finish the worklist.",
+        }
+    tool_context.state[used_key] = used + 1
+    tool_context.state[budget_key] = budget - _DEEP_COST
+    processor = os.getenv("PARALLEL_TASK_PROCESSOR", "core")
+    try:
+        raw = await asyncio.to_thread(_live_task, question, processor)
+    except Exception as exc:  # slow-path API: never let it sink the desk
+        tool_context.state[budget_key] = budget  # refund; the allowance stays spent
+        return {
+            "error": f"deep research failed: {type(exc).__name__}",
+            "guidance": "Fall back to research(), or note an open question.",
+        }
+    output = raw.get("output") or {}
+    answer = output.get("content") if isinstance(output.get("content"), str) else ""
+    citations, seen = [], set()
+    for basis in output.get("basis") or []:
+        for cit in basis.get("citations") or []:
+            u = _normalize_url(cit.get("url", ""))
+            if not u or u in seen:
+                continue
+            seen.add(u)
+            excerpts, used_c = [], 0
+            for ex in cit.get("excerpts") or []:
+                if used_c >= _MAX_EXCERPT_CHARS:
+                    break
+                excerpts.append(ex[: _MAX_EXCERPT_CHARS - used_c])
+                used_c += len(ex)
+            citations.append(
+                {"url": cit.get("url"), "title": cit.get("title"), "excerpts": excerpts}
+            )
+    record = {"question": question, "answer": answer, "citations": citations}
+    tool_context.state[key] = record
+    _index_research_key(tool_context, key)
+    _register_provenance(
+        tool_context,
+        [answer] + [x for c in citations for x in [c.get("title") or "", *c.get("excerpts", [])]],
+    )
+    await asyncio.to_thread(_durable_cache_store, key, record)
+    return {
+        "cached": False,
+        "budget_remaining": budget - _DEEP_COST,
+        "answer": answer,
+        "citations": citations,
     }
 
 
@@ -691,6 +948,8 @@ DESK_TOOLS = [
     read_scene,
     find_in_script,
     research,
+    fetch_page,
+    deep_research,
     query_precedent,
     file_rating_prediction,
     file_flag,

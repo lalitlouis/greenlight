@@ -1281,7 +1281,7 @@ async def case_page(slug: str) -> HTMLResponse:
         f'<meta name="description" content="{desc}">',
         1,
     )
-    html = html.replace("</head>", f'<script>window.CASE_RUN_ID={record_id!r};</script></head>', 1)
+    html = html.replace("</head>", f"<script>window.CASE_RUN_ID={record_id!r};</script></head>", 1)
     return HTMLResponse(html)
 
 

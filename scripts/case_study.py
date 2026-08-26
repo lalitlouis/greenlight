@@ -31,8 +31,12 @@ def main() -> int:
     ap.add_argument("--year", type=int, required=True)
     ap.add_argument("--target", default="R")
     ap.add_argument("--hook", required=True)
-    ap.add_argument("--clearance-budget", type=int, default=0,
-                    help="Raise the clearance desk's research budget for entity-dense scripts")
+    ap.add_argument(
+        "--clearance-budget",
+        type=int,
+        default=0,
+        help="Raise the clearance desk's research budget for entity-dense scripts",
+    )
     args = ap.parse_args()
 
     import sys

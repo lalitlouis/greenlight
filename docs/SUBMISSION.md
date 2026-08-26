@@ -18,9 +18,12 @@ opinions, but desks that research, cite, and get checked?
 ## What it does
 
 - Parses a screenplay (Fountain or PDF) deterministically; triages every entity to four desks.
-- The desks run concurrently as ADK LoopAgents, researching on the live web via **Parallel
-  Search** — music ownership chains, insurer requirements, censorship rules — and file findings
-  through a tool that structurally rejects any flag without a citation.
+- The desks run concurrently as ADK LoopAgents, researching on the live web via **three
+  Parallel APIs** — Search (geo-targeted for the Territory desk, registry-restricted for
+  USPTO/PRO/copyright checks), Extract (full-page retrieval of repertory entries and
+  regulators' rules), and the Task API (deep multi-source investigation for ownership chains
+  that decide a blocker, capped 2 per desk) — and file findings through a tool that
+  structurally rejects any flag without a citation.
 - An independent, blinded verifier re-reads every citation and rejects unsupported claims —
   rejections appear in the report with reasons.
 - The Ratings Board predicts the MPA rating from evidence: kNN over 2,487 released films'
@@ -91,8 +94,9 @@ integrations for real underwriting quotes.
 
 - **Live**: https://scriptrisk.com — *Watch a recorded analysis* needs no credentials.
 - **Repo**: https://github.com/lalitlouis/greenlight — `make install && make serve`.
-- The Parallel Search integration is `research()` in `src/greenlight/tools/toolbelt.py`
-  (`_live_search`), on the default path of every live run.
+- The Parallel integration is `research()` / `fetch_page()` / `deep_research()` in
+  `src/greenlight/tools/toolbelt.py` (`_live_search`, `_live_extract`, `_live_task` —
+  Search, Extract, and Task APIs), on the default path of every live run.
 
 ## Checklist before submitting
 
