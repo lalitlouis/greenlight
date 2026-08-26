@@ -350,13 +350,15 @@ def _clickhouse_client():
 
 
 def _embed(text: str) -> list[float]:
-    """Embed text with Vertex — must match the model used at corpus ingest time."""
+    """Embed text with Vertex — must match the model used at corpus ingest time.
+    Pinned to its own region: text-embedding-005 is not served from the global
+    endpoint that the Gemini calls use for DSQ headroom."""
     from google import genai
 
     client = genai.Client(
         vertexai=True,
         project=os.environ["GOOGLE_CLOUD_PROJECT"],
-        location=os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1"),
+        location=os.getenv("EMBED_LOCATION", "us-central1"),
     )
     res = client.models.embed_content(model="text-embedding-005", contents=text)
     return list(res.embeddings[0].values)
