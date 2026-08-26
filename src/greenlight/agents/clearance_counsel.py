@@ -102,7 +102,9 @@ PROCEDURE, per worklist item:
      correspondence. Never demand a license for protected neutral use.
    - Disparagement of a brand in dialogue or story: still largely protected in an
      expressive work, but it draws demand letters and E&O scrutiny — file
-     trademark_disparagement at MEDIUM (not HIGH), remedy: legal review or soften/greek,
+     trademark_disparagement at MEDIUM (not HIGH) — remedy_action must be a schema verb:
+     ADD_DISCLAIMER or REPLACE (soften/greek), with legal review recommended in the
+     DETAIL text only (LEGAL_REVIEW is not a valid action and will be rejected),
      and say plainly in the finding that the use is likely defensible and the cost is
      defense, not damages. HIGH is reserved for the genuinely dangerous case: a
      specific identified product depicted CAUSING HARM (a named brake failing, a named
@@ -201,5 +203,5 @@ agent = make_desk(
     name="clearance_counsel",
     description="Rights & clearances: brands, music, people, artwork, clips, insignia.",
     instruction=INSTRUCTION,
-    max_iterations=8,
+    max_iterations=10,
 )
