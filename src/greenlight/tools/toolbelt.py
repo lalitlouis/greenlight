@@ -34,7 +34,7 @@ FLAG_ID_OFFSET = {
     "territory_censor": 400,
 }
 
-_MAX_RESULTS_TO_MODEL = 8
+_MAX_RESULTS_TO_MODEL = 6
 
 _LOG = logging.getLogger("greenlight.tools")
 
@@ -164,7 +164,7 @@ def _live_search(
     import parallel
 
     client = parallel.Parallel(api_key=os.environ["PARALLEL_API_KEY"])
-    advanced: dict[str, Any] = {"max_results": 12}
+    advanced: dict[str, Any] = {"max_results": 10}
     if country:
         advanced["location"] = country
     if include_domains:
@@ -173,7 +173,7 @@ def _live_search(
         search_queries=queries,
         objective=objective,
         mode="advanced",
-        max_chars_total=10000,
+        max_chars_total=8000,
         session_id=session_id,
         advanced_settings=advanced,
     )

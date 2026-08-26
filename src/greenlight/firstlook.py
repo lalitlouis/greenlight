@@ -9,7 +9,6 @@ this card is company for the wait.
 
 from __future__ import annotations
 
-import os
 from typing import Any
 
 from pydantic import BaseModel
@@ -69,14 +68,11 @@ def run_first_look(run_id: str, source: str) -> dict[str, Any] | None:
     """Compute and persist the first-look card. Synchronous — callers thread it.
     Failure is silent by design: this card is garnish, never a run blocker."""
     try:
-        from google import genai
         from google.genai import types
 
-        client = genai.Client(
-            vertexai=True,
-            project=os.environ["GOOGLE_CLOUD_PROJECT"],
-            location=os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1"),
-        )
+        from greenlight.llmclient import vertex_client
+
+        client = vertex_client()
         res = client.models.generate_content(
             model="gemini-2.5-flash",
             contents=_PROMPT.format(script=source[:_MAX_SCRIPT_CHARS]),

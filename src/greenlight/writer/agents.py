@@ -14,7 +14,7 @@ from typing import Literal
 from google.adk.agents import LlmAgent
 from pydantic import BaseModel, Field
 
-from greenlight.agents.common import GEN_CONFIG, PRO, RETRY
+from greenlight.agents.common import GEN_CONFIG, PRO
 
 
 class AnchoredNote(BaseModel):
@@ -69,7 +69,6 @@ coverage_agent = LlmAgent(
     output_schema=Coverage,
     output_key="coverage",
     include_contents="none",
-    retry_config=RETRY,
     generate_content_config=GEN_CONFIG,
 )
 
@@ -110,6 +109,5 @@ pitch_agent = LlmAgent(
     output_schema=Pitch,
     output_key="pitch",
     include_contents="none",
-    retry_config=RETRY,
     generate_content_config=GEN_CONFIG,
 )

@@ -51,13 +51,9 @@ def check_google_cloud() -> Result:
     if miss := _missing("GOOGLE_CLOUD_PROJECT"):
         return Result(name, False, f"missing in .env: {', '.join(miss)}", gate=True)
     try:
-        from google import genai
+        from greenlight.llmclient import vertex_client
 
-        client = genai.Client(
-            vertexai=True,
-            project=os.environ["GOOGLE_CLOUD_PROJECT"],
-            location=os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1"),
-        )
+        client = vertex_client()
         resp = client.models.generate_content(
             model="gemini-2.5-flash",
             contents="Reply with the single word: ready",

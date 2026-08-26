@@ -28,6 +28,14 @@ from pydantic import BaseModel
 
 from greenlight.tools.toolbelt import DESKS
 
+# Same HTTP-layer 429 ladder as the agents (see agents/common.py): the genai
+# client defaults to NO retries, and a verifier 429 must not sink a run.
+_RETRY_HTTP = types.HttpOptions(
+    retry_options=types.HttpRetryOptions(
+        attempts=8, initial_delay=10, max_delay=120, exp_base=2, jitter=0.5
+    )
+)
+
 MODEL = "gemini-2.5-flash"
 _CONCURRENCY = 10
 _MAX_ATTEMPTS = 5
@@ -198,6 +206,7 @@ async def verify_standalone(
         vertexai=True,
         project=os.environ["GOOGLE_CLOUD_PROJECT"],
         location=os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1"),
+        http_options=_RETRY_HTTP,
     )
     sem = asyncio.Semaphore(_CONCURRENCY)
 
@@ -254,6 +263,7 @@ class VerificationPanel(BaseAgent):
             vertexai=True,
             project=os.environ["GOOGLE_CLOUD_PROJECT"],
             location=os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1"),
+            http_options=_RETRY_HTTP,
         )
         sem = asyncio.Semaphore(_CONCURRENCY)
 

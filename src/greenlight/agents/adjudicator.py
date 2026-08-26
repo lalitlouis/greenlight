@@ -19,7 +19,7 @@ from typing import Any, Literal
 from google.adk.agents import LlmAgent
 from pydantic import BaseModel, Field
 
-from greenlight.agents.common import GEN_CONFIG, PRO, RETRY
+from greenlight.agents.common import GEN_CONFIG, PRO
 
 
 class MergeAction(BaseModel):
@@ -82,7 +82,6 @@ agent = LlmAgent(
     output_schema=AdjudicationPlan,
     output_key="adjudication",
     include_contents="none",
-    retry_config=RETRY,
     generate_content_config=GEN_CONFIG,
 )
 

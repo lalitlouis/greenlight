@@ -19,6 +19,30 @@ MPA-rated film since 1968 with a citable source." Embedding cost ~$1.30 one-time
 
 ---
 
+## 2026-08-27 — The retry ladder that never ran: 429 resilience moved to the HTTP layer
+
+Social Network's re-run died on a Vertex 429 after 262s despite our "8 attempts / 120s
+backoff" RetryConfig — because that config NEVER APPLIED: `retry_config` is consumed only
+by ADK's Workflow system, and LlmAgent silently ignores the unknown kwarg. The genai
+client's real knob (`retry_options`) defaults to None = zero retries, and ADK converts a
+surfaced 429 into _ResourceExhaustedError instantly. Every 429 since day one has been
+run-fatal; the Long Haul "fix" survived on the global endpoint's headroom alone.
+
+Fix: retries now live where requests are made — `Gemini(model=..., retry_options=
+HttpRetryOptions(attempts=8, initial_delay=10, max_delay=120))` for all agents, the same
+ladder on both verifier clients, and a shorter interactive ladder (4 attempts, ~30s worst
+case) via the shared `llmclient.vertex_client()` for First Look / What-If / checks where
+a user is watching. Dead `retry_config` kwargs removed everywhere so the code no longer
+claims patience it doesn't have. Also reverted the speculative search-payload bump
+(10k chars / 8 results back to 8k / 6) — it added ~25-30% token pressure per research
+turn on the quota that was already the binding constraint.
+
+Lesson, logged for good: an ignored kwarg is worse than a missing feature — verify that a
+resilience setting actually fires (kill a call and watch it retry), don't trust that it
+exists.
+
+---
+
 ## 2026-08-27 — Live-dependency error regime: fail loud, degrade with disclosure, alert always
 
 The Social Network outage (a sorted(None) TypeError in research()'s new cache-key

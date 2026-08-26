@@ -11,7 +11,6 @@ evidence — never a model asserting "that would probably be PG-13."
 from __future__ import annotations
 
 import hashlib
-import os
 from typing import Any
 
 from greenlight import storage
@@ -34,14 +33,11 @@ text only."""
 
 
 def _revise_rationale(rationale: str, cuts: list[str]) -> str:
-    from google import genai
     from google.genai import types
 
-    client = genai.Client(
-        vertexai=True,
-        project=os.environ["GOOGLE_CLOUD_PROJECT"],
-        location=os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1"),
-    )
+    from greenlight.llmclient import vertex_client
+
+    client = vertex_client()
     res = client.models.generate_content(
         model="gemini-2.5-flash",
         contents=_REWRITE_PROMPT.format(
@@ -164,14 +160,11 @@ def suggest(
     )
     n_higher = base["tally"].get(base["projected"], 0)
 
-    from google import genai
     from google.genai import types
 
-    client = genai.Client(
-        vertexai=True,
-        project=os.environ["GOOGLE_CLOUD_PROJECT"],
-        location=os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1"),
-    )
+    from greenlight.llmclient import vertex_client
+
+    client = vertex_client()
     res = client.models.generate_content(
         model="gemini-2.5-flash",
         contents=_SUGGEST_PROMPT.format(

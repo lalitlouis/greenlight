@@ -11,7 +11,7 @@ from typing import Literal
 from google.adk.agents import LlmAgent
 from pydantic import BaseModel, Field
 
-from greenlight.agents.common import GEN_CONFIG, RETRY
+from greenlight.agents.common import GEN_CONFIG
 
 MODEL = "gemini-2.5-flash"
 
@@ -127,7 +127,6 @@ agent = LlmAgent(
     instruction=INSTRUCTION,
     output_schema=TriageOutput,
     output_key="triage",
-    retry_config=RETRY,
     generate_content_config=GEN_CONFIG,
     include_contents="none",
 )
