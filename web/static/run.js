@@ -154,7 +154,8 @@ function gCount(id, key, label) {
 function gPulse(a, b, tone) {
   const pathEl = graph.paths[a + ">" + b];
   if (!pathEl || !graph.svg) return;
-  pathEl.classList.add("g-hot" + (tone === "bad" ? " g-bad" : ""));
+  pathEl.classList.add("g-hot");
+  if (tone === "bad") pathEl.classList.add("g-bad");
   setTimeout(() => pathEl.classList.remove("g-hot", "g-bad"), 900);
   if (!window.FX?.on || typeof pathEl.getTotalLength !== "function") return;
   const dot = document.createElementNS(SVG_NS, "circle");

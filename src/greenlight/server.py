@@ -1479,7 +1479,10 @@ def _dispatch_worker(run_id: str) -> None:
             name=f"projects/{project}/locations/{region}/jobs/{WORKER_JOB}",
             overrides=run_v2.RunJobRequest.Overrides(
                 container_overrides=[
-                    run_v2.RunJobRequest.Overrides.ContainerOverride(args=[run_id])
+                    # overrides REPLACE the job's args entirely — carry the module too
+                    run_v2.RunJobRequest.Overrides.ContainerOverride(
+                        args=["-m", "greenlight.worker", run_id]
+                    )
                 ]
             ),
         )

@@ -9,6 +9,7 @@ can never kill a run again — jobs run to completion on their own revision.
 from __future__ import annotations
 
 import asyncio
+import os
 import sys
 import time
 from pathlib import Path
@@ -61,10 +62,10 @@ def _stub(run_id: str, record: dict[str, Any], state: dict[str, Any]) -> dict[st
 
 def main() -> int:
     argc_needed = 2  # program name + run id
-    if len(sys.argv) < argc_needed:
-        print("usage: python -m greenlight.worker <run_id>", file=sys.stderr)
+    run_id = sys.argv[1] if len(sys.argv) >= argc_needed else os.getenv("RUN_ID", "")
+    if not run_id:
+        print("usage: python -m greenlight.worker <run_id>  (or RUN_ID env)", file=sys.stderr)
         return 2
-    run_id = sys.argv[1]
     state = runstate.run_get(run_id) or {}
     source = storage.load_script(run_id)
     if source is None:
