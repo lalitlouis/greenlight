@@ -50,14 +50,19 @@ def build(record: dict[str, Any], scene_meta: dict[str, dict[str, Any]]) -> dict
     """The binder as data: header block + one row per finding per scene, with
     explicit no-known-issue rows so the log covers the whole script."""
     entities = {e.get("entity_id"): e.get("surface") for e in record.get("entities", [])}
+    # One line item per finding, anchored at its first scene with a multi-scene
+    # reference — repeating a finding per scene reads as duplicate exposure and
+    # artificially inflates the log.
     by_scene: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    touched: set[str] = set()
     for f in record.get("flags", []):
         if not f.get("citations"):
             continue  # the invariant, applied here too: uncited findings do not exist
-        for sid in f.get("scene_ids") or ["(script-wide)"]:
-            by_scene[sid].append(f)
+        sids = sorted(f.get("scene_ids") or ["(script-wide)"], key=_scene_sort_key)
+        touched.update(sids)
+        by_scene[sids[0]].append({**f, "_all_scenes": sids})
 
-    all_sids = sorted(set(scene_meta) | set(by_scene), key=_scene_sort_key)
+    all_sids = sorted(set(scene_meta) | touched, key=_scene_sort_key)
     rows: list[dict[str, str]] = []
     for sid in all_sids:
         meta = scene_meta.get(sid, {})
@@ -70,6 +75,8 @@ def build(record: dict[str, Any], scene_meta: dict[str, dict[str, Any]]) -> dict
             by_scene.get(sid, []),
             key=lambda f: list(STATUS_BY_SEVERITY).index(f.get("severity", "FYI")),
         )
+        if not flags and sid in touched:
+            continue  # covered by a finding anchored at an earlier scene
         if not flags:
             rows.append(
                 {
@@ -86,6 +93,8 @@ def build(record: dict[str, Any], scene_meta: dict[str, dict[str, Any]]) -> dict
             )
             continue
         for f in flags:
+            all_sids_f = f.get("_all_scenes") or [sid]
+            scene_ref = ", ".join(all_sids_f)
             r = f.get("remedy") or {}
             note_parts = []
             if r.get("action"):
@@ -104,6 +113,7 @@ def build(record: dict[str, Any], scene_meta: dict[str, dict[str, Any]]) -> dict
             rows.append(
                 {
                     **base,
+                    "Scene": scene_ref,
                     "Item": entities.get(f.get("entity_id")) or _pretty(f.get("category", "")),
                     "Category": _pretty(f.get("category", "")),
                     "Severity": f.get("severity", ""),

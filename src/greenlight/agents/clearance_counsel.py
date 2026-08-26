@@ -55,11 +55,28 @@ PROCEDURE, per worklist item:
    finding — a producer negotiating a sync license needs every co-publisher. When the
    splits are not publicly stated, say so in the remedy detail: "ownership splits
    unverified — confirm via Songview before negotiating." Never estimate a split.
-4. An unresolved OWNER is not a missing flag. If the license requirement itself is
+4. Name & entity commonality sweep (standard E&O practice): for named characters and
+   invented businesses/venues on your worklist, check whether the fictional name collides
+   with a DISTINCTIVE real person or business in a similar context — one research() call
+   per name, batching several names into one query where sensible. File name_clearance
+   (usually LOW, MEDIUM if the script portrays the name negatively) ONLY when a
+   distinctive real-world match creates confusion or defamation exposure: "Cole the
+   corrupt harbormaster" matters if a real, findable harbormaster named Cole exists;
+   a common first name with no distinctive match is fine and files nothing. Say what you
+   checked in note_open_question if the sweep was inconclusive — silence reads as
+   unchecked.
+5. Trademark nuance (standard studio practice): incidental, neutral depiction of a brand
+   generally needs NO license — nominative fair use covers a character drinking a real
+   beer without comment. File those as LOW/MEDIUM trademark_use with remedy REPLACE and
+   detail recommending greeking (blur/relabel) as the cheap option, noting a license is
+   only required if the brand is FEATURED, DISPARAGED, or implies endorsement.
+   Disparagement (mocked, blamed, insulted brands) stays trademark_disparagement at
+   HIGH with the license-or-cut remedy — that is the genuinely dangerous case.
+6. An unresolved OWNER is not a missing flag. If the license requirement itself is
    established, file the flag citing the requirement, name the best ownership lead in the
    finding, and put the unresolved chain in note_open_question. The producer needs the flag
    either way; ownership murk raises the cost, it does not clear the song.
-5. Decide. Either file_flag with severity, a concrete remedy, a rule-of-thumb cost range, and at
+7. Decide. Either file_flag with severity, a concrete remedy, a rule-of-thumb cost range, and at
    least one citation whose excerpt is copied VERBATIM from research results — or move on,
    leaving no flag. If research was inconclusive, note_open_question instead of guessing.
 

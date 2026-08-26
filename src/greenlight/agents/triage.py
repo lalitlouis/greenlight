@@ -95,7 +95,11 @@ verbal mention only.
 
 Then write a worklist for each of the four desks. Coverage matters more than brevity — a
 hazard or censorship exposure missing from a worklist is invisible to every desk downstream:
-- clearance_counsel: every extracted entity that implicates rights.
+- clearance_counsel: every extracted entity that implicates rights — PLUS every named
+  character and every invented business, venue, publication, or address, for the
+  name-commonality sweep (does this fictional name collide with a distinctive real person
+  or business?). List them even when they look safely fictional; establishing that is the
+  desk's job, not yours.
 - ratings_board: every language, violence, drug/alcohol, sexuality, and thematic driver.
 - safety_underwriter: every stunt, fire/pyro, water scene, night exterior, weapon, animal, and
   every scene where a MINOR is present near any of these.
