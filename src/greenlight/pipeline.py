@@ -209,6 +209,7 @@ async def _salvage_verify(filed, verdicts, state, on_event):
 async def run(
     script_path: str | Path,
     budgets: dict[str, int] | None = None,
+    title_hint: str | None = None,
     on_event: Any = None,
     target_rating: str = "PG-13",
 ) -> dict[str, Any]:
@@ -216,7 +217,8 @@ async def run(
     (see structured_events) as it happens — this is the UI's live stream."""
     source = Path(script_path).read_text()
     meta, scenes = parser.parse_fountain(source)
-    title = meta.get("title", Path(script_path).stem)
+    # a worker's script file is named by run id — never let that become the title
+    title = meta.get("title") or title_hint or Path(script_path).stem
     verbose = on_event is None  # CLI runs narrate to the console; server runs must
     # keep script-derived text (titles, findings, excerpts) OUT of stdout — stdout
     # is Cloud Logging in production, and the privacy page promises logs are clean.

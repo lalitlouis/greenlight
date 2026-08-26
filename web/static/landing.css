@@ -24,10 +24,10 @@
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: #30d158;
+  background: #e8b64c;
   animation: beacon 2.6s ease-in-out infinite;
 }
-@keyframes beacon { 50% { box-shadow: 0 0 22px rgba(48, 209, 88, 0.8); } }
+@keyframes beacon { 50% { box-shadow: 0 0 22px rgba(232, 182, 76, 0.8); } }
 .skip { color: #86868b; font-size: 15px; text-decoration: none; }
 .skip:hover { color: #f5f5f7; }
 
@@ -59,7 +59,7 @@
 }
 .grad-text {
   font-style: italic;
-  background: linear-gradient(94deg, #34d399 10%, #e3b341 90%);
+  background: linear-gradient(94deg, #e8b64c 10%, #e3b341 90%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -75,9 +75,9 @@
 
 .land-ctas { display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; align-items: center; margin-bottom: 56px; }
 .btn { border-radius: 980px; font-size: 18px; padding: 13px 30px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: background 0.15s ease; }
-.btn-glow { background: #30d158; color: #04150c; font-weight: 600; border: 0; }
-.btn-glow:hover { background: #4ade80; }
-.btn-ghost { background: none; color: #30d158; border: 0; font-weight: 500; }
+.btn-glow { background: #e8b64c; color: #081020; font-weight: 600; border: 0; }
+.btn-glow:hover { background: #f4cd66; }
+.btn-ghost { background: none; color: #e8b64c; border: 0; font-weight: 500; }
 .btn-ghost:hover { text-decoration: underline; }
 
 .land-stats { display: flex; align-items: center; gap: 30px; flex-wrap: wrap; justify-content: center; margin-bottom: 44px; }

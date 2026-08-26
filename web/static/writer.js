@@ -287,19 +287,12 @@ function render(record) {
 /* dedicated picker: the nav CTA routes to the clearance pipeline; this one stays here */
 function promptUpload2() {
   if (!requireSignIn()) return;
-  let input = $("wr-file-input");
-  if (!input) {
-    input = el("input");
-    input.type = "file";
-    input.accept = ".fountain,.txt,.pdf,text/plain,application/pdf";
-    input.id = "wr-file-input";
-    input.hidden = true;
-    input.addEventListener("change", (e) => {
-      if (e.target.files[0]) uploadForWriter(e.target.files[0]);
-    });
-    document.body.appendChild(input);
-  }
-  input.click();
+  openUploadModal({
+    title: "Writer's Room — read my screenplay",
+    note: "Fountain, plain text, or PDF · coverage, pitch, and format check in one pass",
+    action: "Start the read",
+    onFile: uploadForWriter,
+  });
 }
 
 document.addEventListener("DOMContentLoaded", async () => {

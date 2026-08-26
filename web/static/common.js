@@ -199,21 +199,119 @@ async function uploadScreenplay(file) {
   }
 }
 
+/* Modern upload dialog: a dropzone modal with drag & drop, a styled browse
+   button, and a confirm step — the native OS picker only appears on Browse. */
+function openUploadModal(opts) {
+  const { title, note, action, onFile } = opts;
+  document.getElementById("upload-modal")?.remove();
+  const overlay = el("div", "um-overlay");
+  overlay.id = "upload-modal";
+  const modal = el("div", "um-modal");
+  const head = el("div", "um-head");
+  head.appendChild(el("h3", null, title));
+  const x = el("button", "um-close", "✕");
+  x.type = "button";
+  x.setAttribute("aria-label", "Close");
+  head.appendChild(x);
+  modal.appendChild(head);
+
+  const zone = el("div", "um-zone");
+  const zoneIdle = el("div", "um-zone-idle");
+  zoneIdle.appendChild(el("span", "um-icon", "🎬"));
+  zoneIdle.appendChild(el("p", "um-cta", "Drag your screenplay here"));
+  zoneIdle.appendChild(el("p", "um-sub", note));
+  const browse = el("button", "btn btn-secondary um-browse", "Browse files");
+  browse.type = "button";
+  zoneIdle.appendChild(browse);
+  zone.appendChild(zoneIdle);
+  const picked = el("div", "um-picked hidden");
+  zone.appendChild(picked);
+  modal.appendChild(zone);
+
+  const foot = el("div", "um-foot");
+  const go = el("button", "btn btn-primary um-go", action);
+  go.type = "button";
+  go.disabled = true;
+  foot.appendChild(el("p", "um-fine", "🔒 Encrypted in transit and at rest · never used to train models"));
+  foot.appendChild(go);
+  modal.appendChild(foot);
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
+
+  const input = el("input");
+  input.type = "file";
+  input.accept = ".fountain,.txt,.pdf,text/plain,application/pdf";
+  input.hidden = true;
+  overlay.appendChild(input);
+
+  let file = null;
+  const setFile = (f) => {
+    if (!f) return;
+    const okTypes = /\.(fountain|txt|pdf)$/i;
+    if (!okTypes.test(f.name)) {
+      toast("Fountain, plain text, or PDF only.", true);
+      return;
+    }
+    file = f;
+    picked.textContent = "";
+    picked.classList.remove("hidden");
+    zoneIdle.classList.add("hidden");
+    const card = el("div", "um-file");
+    card.appendChild(el("span", "um-file-icon", f.name.toLowerCase().endsWith(".pdf") ? "📕" : "📄"));
+    const meta = el("div", "um-file-meta");
+    meta.appendChild(el("b", null, f.name));
+    meta.appendChild(el("span", null, (f.size / 1024).toFixed(0) + " KB"));
+    card.appendChild(meta);
+    const swap = el("button", "cite-toggle", "Choose a different file");
+    swap.type = "button";
+    swap.addEventListener("click", () => input.click());
+    card.appendChild(swap);
+    picked.appendChild(card);
+    go.disabled = false;
+    go.focus();
+  };
+
+  browse.addEventListener("click", () => input.click());
+  input.addEventListener("change", (e) => setFile(e.target.files[0]));
+  ["dragover", "dragenter"].forEach((evt) =>
+    zone.addEventListener(evt, (e) => {
+      e.preventDefault();
+      zone.classList.add("um-drag");
+    })
+  );
+  ["dragleave", "drop"].forEach((evt) =>
+    zone.addEventListener(evt, (e) => {
+      e.preventDefault();
+      zone.classList.remove("um-drag");
+    })
+  );
+  zone.addEventListener("drop", (e) => setFile(e.dataTransfer.files[0]));
+  const close = () => overlay.remove();
+  x.addEventListener("click", close);
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) close();
+  });
+  document.addEventListener("keydown", function esc(e) {
+    if (e.key === "Escape") {
+      close();
+      document.removeEventListener("keydown", esc);
+    }
+  });
+  go.addEventListener("click", () => {
+    if (!file) return;
+    close();
+    onFile(file);
+  });
+}
+
 function promptUpload() {
   if (!requireSignIn()) return;
-  let input = $("gl-file-input");
-  if (!input) {
-    input = el("input");
-    input.type = "file";
-    input.accept = ".fountain,.txt,.pdf,text/plain,application/pdf";
-    input.id = "gl-file-input";
-    input.hidden = true;
-    input.addEventListener("change", (e) => {
-      if (e.target.files[0]) uploadScreenplay(e.target.files[0]);
-    });
-    document.body.appendChild(input);
-  }
-  input.click();
+  openUploadModal({
+    title: "Analyze a screenplay",
+    note: "Fountain, plain text, or PDF · up to 5 MB · about five minutes",
+    action: "Start the analysis",
+    onFile: uploadScreenplay,
+  });
 }
 
 /* ---------- shared header / footer ---------- */

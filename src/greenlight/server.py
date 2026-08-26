@@ -546,7 +546,9 @@ async def _run_live(handle: RunHandle, script_path: Path) -> None:
                 handle.publish({"type": "first_look", "data": data})
 
         asyncio.get_event_loop().run_in_executor(None, _first_look_then_publish)
-        record = await pipeline.run(script_path, on_event=handle.publish)
+        record = await pipeline.run(
+            script_path, on_event=handle.publish, title_hint=getattr(handle, "title_hint", None)
+        )
         handle.record = record
         handle.status = "error" if record.get("error") else "done"
         handle.flush_events()
@@ -613,6 +615,8 @@ async def create_run(screenplay: UploadFile, request: Request) -> dict[str, str]
     RUNS[run_id] = handle
     await asyncio.to_thread(storage.save_script, run_id, source)
     title = (screenplay.filename or "screenplay").rsplit(".", 1)[0]
+    title = title.replace("-", " ").replace("_", " ").strip().title() or "Screenplay"
+    handle.title_hint = title
     await asyncio.to_thread(
         runstate.run_set,
         run_id,

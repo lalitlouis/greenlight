@@ -82,7 +82,9 @@ def main() -> int:
     from greenlight import pipeline  # heavyweight import, after the cheap failures
 
     try:
-        record = asyncio.run(pipeline.run(script_path, on_event=publish))
+        record = asyncio.run(
+            pipeline.run(script_path, on_event=publish, title_hint=state.get("title"))
+        )
     except Exception as e:  # pipeline.run salvages internally; this is belt+braces
         publish.flush()
         runstate.run_set(run_id, {"status": "error", "message": f"{type(e).__name__}"})
