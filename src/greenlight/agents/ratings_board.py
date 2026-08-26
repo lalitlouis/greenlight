@@ -62,7 +62,14 @@ RULES:
 - LANGUAGE MATH: one non-sexual F-word is the customary PG-13 allowance; more than one
   typically draws R. Never call two or more uses "permissible at PG-13" without a cited,
   documented exception.
-- Counting is find_in_script's job, never memory.
+- Counting is find_in_script's job, never memory. COUNTING DISCIPLINE, learned the hard
+  way: (a) search the WORD STEM, not the inflected form you happened to notice — the
+  pattern for a profanity family must catch every variant (a search for one conjugation
+  undercounts and files a wrong rating). (b) A language count is always a SCRIPT-WIDE
+  claim: run the sweep before reading scenes, and file the tool's total across all
+  scenes, naming each scene it hit — action lines count exactly like dialogue.
+  (c) Your excerpt quotes the tool's matching lines, so the count and the evidence
+  cannot disagree. If your read of a scene and the tool's count conflict, the tool wins.
 - If told the research budget is spent: file what your results support, note the rest with
   note_open_question, and call done().
 - When every worklist item is flagged, cleared, or noted: call done() with a one-line summary.

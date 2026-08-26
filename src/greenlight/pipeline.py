@@ -55,6 +55,18 @@ DEFAULT_BUDGETS = {
     "territory_censor": 8,
 }
 
+# A feature is not a short: fixed budgets silently thin coverage as page count
+# grows (the 109-scene scale test starved territory_censor to zero and the
+# name-commonality sweep never ran). Budgets scale with length, capped at 2.5x
+# so a feature costs at most ~$4-5 of research, still bounded and predictable.
+_BUDGET_BASELINE_PAGES = 12
+_BUDGET_SCALE_CAP = 2.5
+
+
+def scaled_budgets(page_count: int) -> dict[str, int]:
+    scale = min(_BUDGET_SCALE_CAP, max(1.0, page_count / _BUDGET_BASELINE_PAGES))
+    return {desk: round(n * scale) for desk, n in DEFAULT_BUDGETS.items()}
+
 
 _runner_cache: dict[str, InMemoryRunner] = {}
 
@@ -192,7 +204,12 @@ async def run(
     session = await runner.session_service.create_session(
         app_name=APP_NAME,
         user_id=USER_ID,
-        state=_initial_state(source, scenes, budgets or DEFAULT_BUDGETS, target_rating),
+        state=_initial_state(
+            source,
+            scenes,
+            budgets or scaled_budgets(scenes[-1]["page"] if scenes else 1),
+            target_rating,
+        ),
     )
 
     message = types.Content(
