@@ -6,6 +6,7 @@
 
 const MAX_TRACE_LINES = 250;
 let SCENE_HEADINGS = {}; // scene_id -> heading, for narrating which scene is being read
+let SCENE_TEXT = {}; // scene_id -> script text, for the hover preview
 const rt = {
   built: false,
   backlog: [], // ops that arrived before the strip existed
@@ -21,12 +22,64 @@ async function loadSceneHeadings(id) {
     const res = await fetch(`/api/script/${encodeURIComponent(id)}`);
     if (!res.ok) return;
     const data = await res.json();
-    for (const s of data.scenes || []) SCENE_HEADINGS[s.scene_id] = s.heading;
+    for (const s of data.scenes || []) {
+      SCENE_HEADINGS[s.scene_id] = s.heading;
+      const [a, b] = s.raw_span || [0, 0];
+      if (data.source) SCENE_TEXT[s.scene_id] = data.source.slice(a, b).trim();
+    }
     buildSceneStrip(data.scenes || []);
     if (data.profile && data.profile.scene_count) renderProfile(data.profile);
   } catch {
     /* narration degrades to bare scene ids */
   }
+}
+
+let popHideTimer = null;
+
+function scenePopover() {
+  let pop = document.getElementById("scene-pop");
+  if (pop) return pop;
+  pop = el("div", "scene-pop hidden");
+  pop.id = "scene-pop";
+  pop.addEventListener("mouseenter", () => clearTimeout(popHideTimer));
+  pop.addEventListener("mouseleave", hideScenePop);
+  document.body.appendChild(pop);
+  return pop;
+}
+
+function hideScenePop() {
+  clearTimeout(popHideTimer);
+  popHideTimer = setTimeout(() => {
+    document.getElementById("scene-pop")?.classList.add("hidden");
+  }, 180);
+}
+
+function showScenePop(anchor, sid) {
+  const text = SCENE_TEXT[sid];
+  if (!text) return; // source not loaded (or not visible to this viewer): no popover
+  clearTimeout(popHideTimer);
+  const pop = scenePopover();
+  pop.textContent = "";
+  const head = el("div", "sp-head");
+  head.appendChild(el("b", null, sid));
+  head.appendChild(el("span", null, SCENE_HEADINGS[sid] || ""));
+  pop.appendChild(head);
+  pop.appendChild(el("pre", "sp-text", text));
+  pop.classList.remove("hidden");
+  const r = anchor.getBoundingClientRect();
+  const pw = Math.min(560, window.innerWidth - 32);
+  let left = r.left + window.scrollX;
+  if (left + pw > window.scrollX + window.innerWidth - 16) {
+    left = window.scrollX + window.innerWidth - pw - 16;
+  }
+  pop.style.left = left + "px";
+  pop.style.top = r.bottom + window.scrollY + 8 + "px";
+  requestAnimationFrame(() => {
+    const ph = pop.offsetHeight;
+    if (r.bottom + ph + 16 > window.innerHeight) {
+      pop.style.top = r.top + window.scrollY - ph - 8 + "px";
+    }
+  });
 }
 
 function buildSceneStrip(scenes) {
@@ -43,6 +96,8 @@ function buildSceneStrip(scenes) {
     card.appendChild(head);
     card.appendChild(el("div", "rts-dots"));
     card.appendChild(el("div", "rts-pins"));
+    card.addEventListener("mouseenter", () => showScenePop(card, s.scene_id));
+    card.addEventListener("mouseleave", hideScenePop);
     strip.appendChild(card);
   }
   rt.built = true;
