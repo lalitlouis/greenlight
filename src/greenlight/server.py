@@ -1135,6 +1135,58 @@ async def binder_json(run_id: str) -> dict[str, Any]:
     return await _binder_data(run_id)
 
 
+class ReviseBody(BaseModel):
+    run_id: str
+    format: str = "fountain"
+    patches: list[dict[str, str]]
+
+
+@app.post("/api/revise")
+async def revise_script(body: ReviseBody, request: Request) -> Response:
+    """Accepted fix patches applied to the source — download as Fountain with
+    revision stars, or Final Draft .fdx with revision marks. Deterministic."""
+    run_id = _safe_id(body.run_id)
+    record = await _load_record_any(run_id)
+    if record is None:
+        raise HTTPException(404, "Unknown run.")
+    if record.get("kind") == "case_study":
+        raise HTTPException(400, "Case studies are read-only — their scripts are not stored.")
+    source = await _load_source_any(run_id, record)
+    if not source:
+        raise HTTPException(404, "Script source unavailable for this run.")
+
+    from greenlight import export as export_mod
+
+    revised, applied, skipped = export_mod.apply_patches(source, body.patches)
+    if not applied:
+        raise HTTPException(400, "No patch applied cleanly: " + "; ".join(skipped[:4]))
+    changed = export_mod.changed_lines(source, revised)
+    title = record.get("script_title") or "screenplay"
+    stem = title.lower().replace(" ", "-")[:40]
+    _log(
+        "revise_export", run_id=run_id, fmt=body.format, applied=len(applied), skipped=len(skipped)
+    )
+    if body.format == "fdx":
+        return Response(
+            export_mod.to_fdx(revised, changed, title),
+            media_type="application/xml",
+            headers={
+                "Content-Disposition": f'attachment; filename="{stem}-revised.fdx"',
+                "X-Patches-Applied": str(len(applied)),
+                "X-Patches-Skipped": str(len(skipped)),
+            },
+        )
+    return Response(
+        export_mod.to_fountain(revised, changed),
+        media_type="text/plain; charset=utf-8",
+        headers={
+            "Content-Disposition": f'attachment; filename="{stem}-revised.fountain"',
+            "X-Patches-Applied": str(len(applied)),
+            "X-Patches-Skipped": str(len(skipped)),
+        },
+    )
+
+
 @app.post("/api/whatif")
 async def whatif_rating(body: WhatIfBody, request: Request) -> dict[str, Any]:
     """Projected rating with selected cut-list beats applied — the same

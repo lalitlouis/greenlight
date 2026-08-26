@@ -69,6 +69,63 @@ function diffBox(label, diff, keep) {
   return box;
 }
 
+/* Accepted patches accumulate here; the floating bar exports them. */
+const ACCEPTED = new Map(); // key -> patch
+
+function patchKey(patch) {
+  return patch.scene_id + "|" + patch.find.slice(0, 60);
+}
+
+function refreshExportBar() {
+  let bar = $("export-bar");
+  if (!ACCEPTED.size) {
+    bar?.remove();
+    return;
+  }
+  if (!bar) {
+    bar = el("div", "export-bar");
+    bar.id = "export-bar";
+    const label = el("span", "eb-label");
+    label.id = "eb-label";
+    bar.appendChild(label);
+    const dlF = el("button", "btn btn-primary eb-btn", "Download .fountain");
+    dlF.type = "button";
+    dlF.addEventListener("click", () => downloadRevised("fountain"));
+    const dlX = el("button", "btn btn-secondary eb-btn", "Download .fdx (beta)");
+    dlX.type = "button";
+    dlX.addEventListener("click", () => downloadRevised("fdx"));
+    bar.appendChild(dlF);
+    bar.appendChild(dlX);
+    document.body.appendChild(bar);
+    if (window.FX?.on) gsap.fromTo(bar, { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "power3.out" });
+  }
+  $("eb-label").textContent =
+    ACCEPTED.size + (ACCEPTED.size === 1 ? " fix accepted" : " fixes accepted") + " — revised script with revision marks:";
+}
+
+async function downloadRevised(format) {
+  try {
+    const res = await fetch("/api/revise", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ run_id: RUN_ID, format, patches: [...ACCEPTED.values()] }),
+    });
+    if (!res.ok) throw new Error((await res.json()).detail || res.statusText);
+    const blob = await res.blob();
+    const skipped = Number(res.headers.get("X-Patches-Skipped") || 0);
+    const cd = res.headers.get("Content-Disposition") || "";
+    const name = (cd.match(/filename="([^"]+)"/) || [])[1] || "revised." + format;
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    a.click();
+    URL.revokeObjectURL(a.href);
+    if (skipped) toast(skipped + " patch(es) no longer applied cleanly and were skipped.", true);
+  } catch (e) {
+    toast("Export failed: " + e.message.slice(0, 140), true);
+  }
+}
+
 function renderFix(container, fix) {
   container.textContent = "";
   container.appendChild(el("p", "fix-summary", fix.summary || ""));
@@ -83,6 +140,23 @@ function renderFix(container, fix) {
     cols.appendChild(diffBox("As written", diff, "del"));
     cols.appendChild(diffBox("Proposed rewrite", diff, "add"));
     card.appendChild(cols);
+    const controls = el("div", "fix-controls");
+    const accept = el("button", "btn btn-secondary accept-btn", "Accept this fix");
+    accept.type = "button";
+    const key = patchKey(patch);
+    accept.addEventListener("click", () => {
+      if (ACCEPTED.has(key)) {
+        ACCEPTED.delete(key);
+        accept.textContent = "Accept this fix";
+        accept.classList.remove("accepted");
+      } else {
+        ACCEPTED.set(key, { scene_id: patch.scene_id, find: patch.find, replace: patch.replace });
+        accept.textContent = "✓ Accepted — in the revised script";
+        accept.classList.add("accepted");
+      }
+      refreshExportBar();
+    });
+    controls.appendChild(accept);
     const copy = el("button", "cite-toggle", "Copy the new text");
     copy.type = "button";
     copy.addEventListener("click", async () => {
@@ -92,7 +166,8 @@ function renderFix(container, fix) {
         setTimeout(() => { copy.textContent = "Copy the new text"; }, 2000);
       } catch { toast("Copy failed — select the text manually.", true); }
     });
-    card.appendChild(copy);
+    controls.appendChild(copy);
+    card.appendChild(controls);
     container.appendChild(card);
   }
 }

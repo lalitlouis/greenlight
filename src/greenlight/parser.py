@@ -37,6 +37,11 @@ def _is_heading(stripped: str) -> bool:
     return True
 
 
+def is_scene_heading(stripped: str) -> bool:
+    """Public form of the heading test — the exporter classifies lines with it."""
+    return _is_heading(stripped)
+
+
 _TIME_WORDS = {
     "DAY",
     "NIGHT",
