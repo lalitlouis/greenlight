@@ -540,3 +540,41 @@ def test_tool_error_shield_corrects_hallucinated_tools_but_lets_runabort_kill():
     r = tool_error_shield(None, {}, None, ValueError("Tool 'run_code' not found."))
     assert r is not None and "no code execution" in r["guidance"]
     assert tool_error_shield(None, {}, None, toolbelt.RunAbortError("api down")) is None
+
+
+def test_prune_stale_tool_results_bounds_history():
+    # The 537s-p99 outage: old bulky tool payloads must collapse to stubs while
+    # recent exchanges and small results (file_flag confirmations) stay intact.
+    from types import SimpleNamespace as NS
+
+    from google.genai import types as gt
+
+    from greenlight.agents import common
+
+    def turn(i, big):
+        resp = {"results": ["x" * 2000]} if big else {"ok": f"Filed F{i}"}
+        return gt.Content(
+            role="user",
+            parts=[gt.Part(function_response=gt.FunctionResponse(name="research", response=resp))],
+        )
+
+    contents = []
+    for i in range(14):
+        contents.append(gt.Content(role="model", parts=[gt.Part(text=f"turn {i}")]))
+        contents.append(turn(i, big=(i % 2 == 0)))
+    originals = list(contents)
+    req = NS(contents=contents)
+    assert common.prune_stale_tool_results(None, req) is None
+
+    def payload(c):
+        return str(c.parts[0].function_response.response)
+
+    resp_contents = [c for c in req.contents if c.parts[0].function_response is not None]
+    stale, recent = resp_contents[:-8], resp_contents[-8:]
+    assert all("pruned" in payload(c) or len(payload(c)) <= 600 for c in stale)
+    assert any("pruned" in payload(c) for c in stale)  # the big ones got stubbed
+    assert all("pruned" not in payload(c) for c in recent)  # recent stay verbatim
+    # small results are never stubbed, even when stale
+    assert all("Filed F" in payload(c) for c in stale if "pruned" not in payload(c))
+    # session history objects were not mutated in place
+    assert any(a is not b for a, b in zip(originals, req.contents))

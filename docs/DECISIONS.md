@@ -19,6 +19,23 @@ MPA-rated film since 1968 with a citable source." Embedding cost ~$1.30 one-time
 
 ---
 
+## 2026-08-27 — History pruning: the slowdown was us, not Vertex
+
+Diagnosed the crawling Social Network run with data: Parallel searches 2-5s, ClickHouse
+sub-second, ZERO 429s in the window — but Vertex p99 request latency 183s -> 220s ->
+537s as the run progressed, tracking conversation growth exactly. The clearance desk's
+AFC loop carried every research result ever retrieved on every turn; prefill scales
+with input, so turns went quadratic. The same bloat explains the morning's TPM 429s
+(giant requests) and the long-context degradation (run_code hallucination, "I will
+continue" loops). Fix: before_model_callback `prune_stale_tool_results` on every desk —
+last 8 tool exchanges stay verbatim, older tool payloads >600 chars collapse to a stub
+telling the model a re-ask is a free cache hit. Small results (file_flag confirmations)
+survive at any age; pruning operates on deep copies so session history and the journal
+stay intact; flags/budgets/provenance live outside the conversation and are untouched.
+User cancelled attempt 4 for this fix; TSN re-run is the validation.
+
+---
+
 ## 2026-08-27 — The tool-error shield: a hallucinated tool name must not kill a run
 
 Third Social Network failure, 43 minutes in, 37 findings filed: Gemini slipped into its

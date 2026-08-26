@@ -57,6 +57,49 @@ def tool_error_shield(tool, args, tool_context, error):
     }
 
 
+# History pruning: a 420-entity script drove the clearance desk's conversation
+# past the point where single Flash calls took 9 minutes (p99 537s, measured
+# 2026-08-26) — prefill scales with input, and every research result ever
+# retrieved was riding along on every turn. Keep the recent exchanges verbatim;
+# collapse older bulky tool payloads to a stub. Filed flags, budgets, and the
+# provenance registry live OUTSIDE the conversation, so nothing auditable is
+# lost — and a re-asked research question is a free cache hit.
+_KEEP_RECENT_TOOL_RESULTS = 8
+_PRUNE_OVER_CHARS = 600
+_PRUNE_STUB = {
+    "result": (
+        "[pruned: this result was already used earlier in the session. If you "
+        "genuinely need it again, call the tool again — repeated identical "
+        "research questions are answered from cache at no budget cost.]"
+    )
+}
+
+
+def prune_stale_tool_results(callback_context, llm_request):
+    """before_model_callback: bound per-turn input size on long desk loops."""
+    contents = llm_request.contents or []
+    resp_idx = [
+        i
+        for i, c in enumerate(contents)
+        if any(getattr(part, "function_response", None) for part in (c.parts or []))
+    ]
+    if len(resp_idx) <= _KEEP_RECENT_TOOL_RESULTS:
+        return None
+    for i in resp_idx[:-_KEEP_RECENT_TOOL_RESULTS]:
+        pruned = contents[i].model_copy(deep=True)  # never mutate session history
+        changed = False
+        for part in pruned.parts or []:
+            fr = getattr(part, "function_response", None)
+            if fr is None or fr.response is None:
+                continue
+            if len(str(fr.response)) > _PRUNE_OVER_CHARS:
+                fr.response = dict(_PRUNE_STUB)
+                changed = True
+        if changed:
+            contents[i] = pruned
+    return None
+
+
 COVERAGE_RULE = """
 
 COVERAGE ROLL-CALL — the contract for finishing. Immediately before calling done(), write out
@@ -97,6 +140,7 @@ def make_desk(name: str, description: str, instruction: str, max_iterations: int
         tools=list(DESK_TOOLS),
         generate_content_config=GEN_CONFIG,
         on_tool_error_callback=tool_error_shield,
+        before_model_callback=prune_stale_tool_results,
     )
     return LoopAgent(
         name=f"{name}_desk",
