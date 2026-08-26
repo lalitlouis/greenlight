@@ -49,7 +49,7 @@ SEV_ORDER = {"BLOCKER": 0, "HIGH": 1, "MEDIUM": 2, "LOW": 3, "FYI": 4}
 # Per-desk live research() budgets. Clearance chases ownership chains and gets more;
 # ratings leans on query_precedent once the corpus lands.
 DEFAULT_BUDGETS = {
-    "clearance_counsel": 24,
+    "clearance_counsel": 28,
     "ratings_board": 5,
     "safety_underwriter": 8,
     "territory_censor": 8,
