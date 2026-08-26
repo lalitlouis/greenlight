@@ -6,6 +6,18 @@ them. Append-only; newest entries at the top. Bigger architecture decisions live
 
 ---
 
+## 2026-08-26 — Switchback re-run: burn-ban doctrine validated; recounted-stunt fix
+
+Sixth external review, on the corrected Switchback log: the script-cites-a-rule doctrine
+fired exactly as designed (burn-ban campfire = MEDIUM with fire-marshal permit remedy),
+CCR sync+master captured with Concord Music as the master holder, motorcycle/water
+logistics filed sanely. One remaining quirk, same shape as earlier ratings fixes: the
+safety desk flagged a cliff jump characters only TALK about (past-tense anecdote) as an
+active $50-250k stunt. Fix: DEPICTED vs RECOUNTED on the safety desk — underwrite only
+what the production must stage; recounted events file nothing unless a flashback, a
+re-attempt, or later-depicted setup stages them. Counterweight shipped in the same
+commit per the pendulum lesson.
+
 ## 2026-08-26 — Switchback validation + the "script cites a rule" principle
 
 Fifth external review (Switchback, a quiet two-hander): 100/100 with correct restraint —
