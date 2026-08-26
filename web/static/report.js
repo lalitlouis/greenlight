@@ -789,6 +789,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   $("script-link").href = `/script?run=${encodeURIComponent(RUN_ID)}`;
   $("replay-link").href = `/run?replay=1&record=${encodeURIComponent(RUN_ID)}`;
   $("onesheet-link").href = `/onesheet?run=${encodeURIComponent(RUN_ID)}`;
+  $("binder-link").href = `/binder?run=${encodeURIComponent(RUN_ID)}`;
   try {
     renderReport(await fetchRecord(RUN_ID));
   } catch (e) {

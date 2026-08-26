@@ -4,6 +4,7 @@ Disallow: /my
 Disallow: /run
 Disallow: /report
 Disallow: /onesheet
+Disallow: /binder
 Disallow: /script
 Disallow: /api/
 Allow: /

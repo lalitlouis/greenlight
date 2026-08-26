@@ -223,7 +223,7 @@ const NAV_LINKS = [
 
 function injectChrome() {
   // The one-sheet is a standalone artifact page — no site chrome around the poster.
-  if (document.body.classList.contains("os-body")) return;
+  if (document.body.classList.contains("os-body") || document.body.classList.contains("bd-body")) return;
   const path = window.location.pathname;
 
   const header = el("header", "site-header");

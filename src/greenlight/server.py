@@ -36,6 +36,7 @@ from fastapi.responses import (
     HTMLResponse,
     JSONResponse,
     RedirectResponse,
+    Response,
     StreamingResponse,
 )
 from fastapi.staticfiles import StaticFiles
@@ -333,6 +334,7 @@ PAGES = {
     "/report": "report.html",
     "/script": "script.html",
     "/onesheet": "onesheet.html",
+    "/binder": "binder.html",
     "/terms": "terms.html",
     "/privacy": "privacy.html",
 }
@@ -1096,6 +1098,41 @@ class WhatIfBody(BaseModel):
     run_id: str
     cuts: list[int]
     extra: list[str] = []
+
+
+async def _binder_data(run_id: str) -> dict[str, Any]:
+    run_id = _safe_id(run_id)
+    record = await _load_record_any(run_id)
+    if record is None:
+        raise HTTPException(404, "Unknown run.")
+    scene_meta: dict[str, dict[str, Any]] = {}
+    source = await _load_source_any(run_id, record)
+    if source:
+        _, scenes = parser.parse_fountain(source)
+        scene_meta = {s["scene_id"]: {"heading": s["heading"], "page": s["page"]} for s in scenes}
+    from greenlight import binder as binder_mod
+
+    return binder_mod.build(record, scene_meta)
+
+
+@app.get("/api/binder/{run_id}.csv")
+async def binder_csv(run_id: str) -> Response:
+    """The same log as a CSV a legal team can file or import."""
+    from greenlight import binder as binder_mod
+
+    data = await _binder_data(run_id)
+    fname = (data["title"] or "clearance-log").lower().replace(" ", "-")[:40]
+    return Response(
+        binder_mod.to_csv(data),
+        media_type="text/csv",
+        headers={"Content-Disposition": f'attachment; filename="{fname}-clearance-log.csv"'},
+    )
+
+
+@app.get("/api/binder/{run_id}")
+async def binder_json(run_id: str) -> dict[str, Any]:
+    """The clearance log as data — the /binder page renders from this."""
+    return await _binder_data(run_id)
 
 
 @app.post("/api/whatif")
