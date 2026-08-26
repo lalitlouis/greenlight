@@ -6,6 +6,27 @@ them. Append-only; newest entries at the top. Bigger architecture decisions live
 
 ---
 
+## 2026-08-26 — Hangover stress test: the pendulum correction
+
+Fourth external review (The Hangover run) caught two regressions the doctrine overhaul
+introduced. (1) Clearance flatlined — ZERO flags, zero open questions, 19/45 budget
+unspent on the script containing film history's most famous tattoo-copyright suit, a
+Tyson cameo, a stolen police cruiser, and a performed Phil Collins track: the desk read
+"expressive works are protected" as blanket IP suppression. Fix: the MENTION vs USE
+rule — Rogers protects references; the production must still clear what it PHOTOGRAPHS,
+PERFORMS, or FEATURES (cameos → publicity agreement; played/performed songs →
+sync/master; recognizable custom tattoos → artwork_license, the litigated case; real
+branded property as story vehicle → trademark_use/location at MEDIUM) — plus a zero-flag
+self-check: never close entity-dense scripts with no flags, no questions, unspent
+budget. (2) Ghost flags: 10 NO_ACTION findings across three desks describing ABSENT
+elements ("no chicken present; if added...") — the "cleared item is silence" rule had
+only ever been written into clearance's prompt. Now on all four desks, with an explicit
+ban on speculative if/then filings, and a verifier backstop: absence-premised or
+conditional-on-unwritten-changes claims are REJECTED regardless of citations.
+Lesson worth keeping: every doctrine correction needs a counterweight rule in the same
+commit, or the pendulum swings; and desk-shared discipline belongs in COMMON text, not
+one desk's prompt.
+
 ## 2026-08-26 — First Look: filling the triage dead-air (waves 1+2 built; wave 3 planned)
 
 The first ~2-6 minutes of a big run are one giant triage call with no visible output.

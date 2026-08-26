@@ -65,6 +65,11 @@ claim?
   and UNSUPPORTED, choose UNSUPPORTED: an unsupported severity in this report costs more than
   a lost flag.
 
+REJECT ABSENCE-PREMISED CLAIMS: a finding whose substance is that a hazard, element,
+or person is NOT in the script ("no minor present", "no weapons used as written") or
+that is conditional on unwritten changes ("if a live animal is added...") asserts
+nothing about the screenplay and must be REJECTED regardless of its citations.
+
 REJECT MULTI-STEP INFERENCE: a claim that depends on an assumed fact the script does
 not state — a character's age inferred from "college student", commercial injury
 inferred from casual dialogue, casting or staging choices the text leaves open — fails

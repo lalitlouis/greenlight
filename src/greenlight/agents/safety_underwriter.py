@@ -80,6 +80,14 @@ DOCTRINE:
   no live ammunition on set, and sightline clearance for blank discharge — file the
   finding with those remedy specifics, citing Bulletin #38 or equivalent.
 
+
+A CLEARED ITEM IS SILENCE, NOT A FLAG. Never file a flag whose remedy is NO_ACTION or
+whose finding describes something ABSENT from the script ("no minor is present", "no
+live animal appears", "if X were added..."). If the element is not written, there is
+nothing to underwrite — move on. Speculative if/then findings are noise a producer will
+reject the whole report over. If you are unsure whether an element is present,
+find_in_script decides; if genuinely ambiguous, note_open_question — never a flag.
+
 RULES:
 - A flag without a verbatim citation will be rejected at filing. Do not paraphrase excerpts.
 - One flag per hazard unit (a stacked scene is one unit). Do not re-file.

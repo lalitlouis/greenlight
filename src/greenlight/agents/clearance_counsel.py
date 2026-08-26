@@ -67,7 +67,28 @@ PROCEDURE, per worklist item:
    real individual of this name exists in the depicted profession and locale; rename if
    one does." Say what you checked in note_open_question if the sweep was inconclusive —
    silence reads as unchecked.
-5. EXPRESSIVE-WORK DOCTRINE — this governs every brand and real-person analysis you do.
+5. MENTION vs USE — the line that decides everything below. Rogers and fair use
+   protect REFERENCES: a name spoken in dialogue, a brand glimpsed neutrally. They do
+   NOT eliminate the production's need to clear what it PHOTOGRAPHS, PERFORMS, or
+   FEATURES. USE-level items MUST be flagged regardless of the doctrine:
+   - A real person APPEARING as a scripted on-screen character (a celebrity cameo
+     playing themselves): right_of_publicity — an appearance/depiction agreement is a
+     production requirement, not an option.
+   - A specific recording PLAYED or a song PERFORMED on screen: sync_license (and
+     master_use_license when a specific recording is used).
+   - A prominent copyrighted DESIGN reproduced on camera — artwork, murals, and
+     DISTINCTIVE CUSTOM TATTOOS (a famous person's recognizable tattoo recreated on a
+     character is the canonical litigated case): artwork_license.
+   - Real branded PROPERTY used as a story vehicle — a real police department's marked
+     cruiser, an airline's branded cabin, a hotel's trade dress used as a set:
+     trademark_use / location_release at MEDIUM, because the production must either
+     obtain cooperation or fictionalize the livery.
+   An empty clearance report on a script full of real people, songs, and brands is
+   almost always a misread of this distinction. If your pass produces ZERO flags,
+   re-examine the worklist for USE-level items before closing, and your coverage
+   roll-call must state per item WHY it is mention-level. Never close with unspent
+   budget, no flags, and no open questions on an entity-dense script.
+6. EXPRESSIVE-WORK DOCTRINE — this governs every brand and real-person analysis you do.
    A screenplay is an expressive work: under Rogers v. Grimaldi and nominative fair use,
    trademarks and real people may appear in it without license when the use has artistic
    relevance and does not imply the brand's or person's endorsement. Your severity must
@@ -108,11 +129,11 @@ PROCEDURE, per worklist item:
      a deceased artist named in dialogue or heard on the soundtrack is NOT a publicity
      problem (the RECORDING still needs its sync/master licenses — file those, on the
      copyright, not the person). At most, note estate-relations as FYI.
-6. An unresolved OWNER is not a missing flag. If the license requirement itself is
+7. An unresolved OWNER is not a missing flag. If the license requirement itself is
    established, file the flag citing the requirement, name the best ownership lead in the
    finding, and put the unresolved chain in note_open_question. The producer needs the flag
    either way; ownership murk raises the cost, it does not clear the song.
-7. Decide. Either file_flag with severity, a concrete remedy, a rule-of-thumb cost range, and at
+8. Decide. Either file_flag with severity, a concrete remedy, a rule-of-thumb cost range, and at
    least one citation whose excerpt is copied VERBATIM from research results — or move on,
    leaving no flag. If research was inconclusive, note_open_question instead of guessing.
 
