@@ -72,11 +72,33 @@ class RunHandle:
     owner_info: dict[str, Any] | None = None
     history: list[dict[str, Any]] = field(default_factory=list)
     subscribers: list[asyncio.Queue] = field(default_factory=list)
+    durable: bool = False  # live runs journal to Firestore; replays do not
+    _pending: list[dict[str, Any]] = field(default_factory=list)
+    _flushed_seq: int = 0
+    _flusher: Any = None
 
     def publish(self, event: dict[str, Any]) -> None:
         self.history.append(event)
         for q in self.subscribers:
             q.put_nowait(event)
+        if self.durable and event.get("type") != "result":  # records live in GCS
+            self._pending.append(event)
+            if self._flusher is None or self._flusher.done():
+                self._flusher = asyncio.get_event_loop().create_task(self._flush_soon())
+
+    async def _flush_soon(self) -> None:
+        await asyncio.sleep(1.5)  # coalesce a burst into one journal chunk
+        self.flush_events()
+
+    def flush_events(self) -> None:
+        if not self._pending:
+            return
+        batch, self._pending = self._pending, []
+        first = self._flushed_seq
+        self._flushed_seq += len(batch)
+        asyncio.get_event_loop().run_in_executor(
+            None, runstate.events_append, self.run_id, first, batch
+        )
 
 
 RUNS: dict[str, RunHandle] = {}
@@ -147,7 +169,11 @@ async def versioned_static(rest: str) -> FileResponse:
 
 MAX_UPLOAD_BYTES = 5 * 1024 * 1024  # a feature screenplay is well under 1MB; PDFs a few
 MAX_TRACKED_RUNS = 60  # in-memory handles trimmed oldest-first; storage keeps the rest
-MAX_CONCURRENT_LIVE = 3  # a live run costs real money and minutes; queue-jumping is a 429
+# a live run costs real money and minutes; queue-jumping is a 429. Tunable now
+# that workers carry the load (ADR-1 Phase 2/3) — raise with quota, not hope.
+MAX_CONCURRENT_LIVE = int(os.getenv("MAX_CONCURRENT_LIVE", "5"))
+RUN_MODE = os.getenv("RUN_MODE", "inprocess")  # "worker" dispatches Cloud Run Jobs
+WORKER_JOB = os.getenv("WORKER_JOB", "greenlight-worker")
 RATE_LIMIT_PER_HOUR = 8  # expensive-endpoint starts per client IP
 RATE_WINDOW_S = 3600
 MAX_TRACKED_IPS = 10000
@@ -183,6 +209,9 @@ def _check_rate(request: Request) -> None:
 
     running = sum(1 for h in RUNS.values() if h.mode == "live" and h.status == "running")
     running += sum(1 for h in WRITER_RUNS.values() if h.get("status") == "running")
+    if RUN_MODE == "worker":
+        # the cap must see the whole fleet, not this instance's memory
+        running = max(running, _fleet_running())
     if running >= MAX_CONCURRENT_LIVE:
         raise HTTPException(
             429,
@@ -514,6 +543,10 @@ async def _run_live(handle: RunHandle, script_path: Path) -> None:
         record = await pipeline.run(script_path, on_event=handle.publish)
         handle.record = record
         handle.status = "error" if record.get("error") else "done"
+        handle.flush_events()
+        await asyncio.to_thread(
+            runstate.run_set, handle.run_id, {"status": handle.status, "record_saved": True}
+        )
         await asyncio.to_thread(storage.save_record, handle.run_id, record)
         if handle.owner:
             await asyncio.to_thread(storage.save_owner, handle.run_id, handle.owner)
@@ -529,6 +562,8 @@ async def _run_live(handle: RunHandle, script_path: Path) -> None:
     except Exception as e:
         handle.status = "error"
         handle.publish({"type": "error", "message": f"{type(e).__name__}: {e}", "partial": False})
+        handle.flush_events()
+        await asyncio.to_thread(runstate.run_set, handle.run_id, {"status": "error"})
         if handle.owner:
             stub = _running_stub(handle.run_id, "clearance", handle.run_id, handle.owner_info or {})
             stub["status"] = "error"
@@ -567,10 +602,35 @@ async def create_run(screenplay: UploadFile, request: Request) -> dict[str, str]
         script_path=str(path),
         owner=owner["sub"] if owner else None,
         owner_info=owner,
+        durable=True,
     )
     RUNS[run_id] = handle
     await asyncio.to_thread(storage.save_script, run_id, source)
     title = (screenplay.filename or "screenplay").rsplit(".", 1)[0]
+    await asyncio.to_thread(
+        runstate.run_set,
+        run_id,
+        {"status": "running", "owner": owner["sub"] if owner else "", "title": title},
+    )
+    if RUN_MODE == "worker":
+        RUNS.pop(run_id, None)  # the worker owns this run; no in-process shadow
+        try:
+            await asyncio.to_thread(_dispatch_worker, run_id)
+        except Exception as e:
+            await asyncio.to_thread(runstate.run_set, run_id, {"status": "error"})
+            _log("worker_dispatch_failed", run_id=run_id, err=type(e).__name__)
+            raise HTTPException(503, "Could not start the analysis worker — try again.") from e
+        _bump("runs")
+        pages = len(source) // 3200
+        _log("run_started", run_id=run_id, pages=pages, owner=bool(owner), via="worker")
+        if owner:
+            await asyncio.to_thread(
+                storage.save_user_run,
+                owner["sub"],
+                run_id,
+                _running_stub(run_id, "clearance", title, owner),
+            )
+        return {"run_id": run_id}
     _bump("runs")
     # no title in logs: a screenplay's name is the user's content, and the
     # privacy page promises log lines carry no screenplay text
@@ -1382,6 +1442,9 @@ async def get_record(run_id: str) -> dict[str, Any]:
         # still running: no record yet, but very much not unknown — the client
         # sends the viewer to the live stream instead of an error
         return {"id": run_id, "kind": "running", "status": handle.status}
+    fleet_state = await asyncio.to_thread(runstate.run_get, run_id)
+    if fleet_state is not None and fleet_state.get("status") == "running":
+        return {"id": run_id, "kind": "running", "status": "running"}
     if (record := _disk_record(run_id)) is not None:
         return {"id": run_id, "kind": "recorded", "record": record}
     if (record := await asyncio.to_thread(storage.load_record, run_id)) is not None:
@@ -1392,6 +1455,33 @@ async def get_record(run_id: str) -> dict[str, Any]:
 # ---------------------------------------------------------------- shared endpoints
 
 
+def _fleet_running() -> int:
+    try:
+        return runstate.count_running()
+    except Exception:
+        return 0
+
+
+def _dispatch_worker(run_id: str) -> None:
+    """Fire one Cloud Run Job execution for this run. Synchronous call to the
+    Jobs API; the execution itself is fully detached from this process."""
+    from google.cloud import run_v2
+
+    project = os.environ["GOOGLE_CLOUD_PROJECT"]
+    region = os.getenv("WORKER_REGION", "us-central1")
+    client = run_v2.JobsClient()
+    client.run_job(
+        request=run_v2.RunJobRequest(
+            name=f"projects/{project}/locations/{region}/jobs/{WORKER_JOB}",
+            overrides=run_v2.RunJobRequest.Overrides(
+                container_overrides=[
+                    run_v2.RunJobRequest.Overrides.ContainerOverride(args=[run_id])
+                ]
+            ),
+        )
+    )
+
+
 def _handle_or_404(run_id: str) -> RunHandle:
     handle = RUNS.get(run_id)
     if handle is None:
@@ -1399,11 +1489,49 @@ def _handle_or_404(run_id: str) -> RunHandle:
     return handle
 
 
+async def _journal_relay(run_id: str) -> AsyncIterator[str]:
+    """Tail the Firestore journal for a run this process does not hold — a run
+    on another instance, a worker job, or one that survived our restart. Same
+    SSE contract; the client cannot tell the difference."""
+    seq = -1
+    idle = 0.0
+    while True:
+        events, seq = await asyncio.to_thread(runstate.events_read, run_id, seq)
+        for ev in events:
+            yield _sse(ev)
+        state = await asyncio.to_thread(runstate.run_get, run_id) or {}
+        if state.get("status") in ("done", "error"):
+            # drain any final chunk that raced the status write
+            events, seq = await asyncio.to_thread(runstate.events_read, run_id, seq)
+            for ev in events:
+                yield _sse(ev)
+            record = await _load_record_any(run_id)
+            if record is not None:
+                yield _sse({"type": "result", "record": record})
+            else:
+                msg = {"type": "error", "message": "run ended; record unavailable", "partial": True}
+                yield _sse(msg)
+            return
+        idle = min(idle + 0.25, 2.0) if not events else 0.5
+        await asyncio.sleep(idle)
+
+
 @app.get("/api/runs/{run_id}/events")
 async def run_events(run_id: str) -> StreamingResponse:
     """SSE stream for a live run. History first, then the live broadcast, so a
     client that connects mid-run still sees the whole story."""
-    handle = _handle_or_404(run_id)
+    handle = RUNS.get(run_id)
+    if handle is None:
+        # not in this process's memory — if the journal knows it, relay from there
+        safe = _safe_id(run_id)
+        state = await asyncio.to_thread(runstate.run_get, safe)
+        if state is None:
+            raise HTTPException(404, f"Unknown run {run_id!r}")
+        return StreamingResponse(
+            _journal_relay(safe),
+            media_type="text/event-stream",
+            headers={"Cache-Control": "no-cache, no-transform", "X-Accel-Buffering": "no"},
+        )
 
     async def stream() -> AsyncIterator[str]:
         queue: asyncio.Queue = asyncio.Queue()

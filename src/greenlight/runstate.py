@@ -61,3 +61,83 @@ def get_state(run_id: str) -> dict[str, Any] | None:
         return snap.to_dict() if snap.exists else None
     except Exception:
         return None
+
+
+# ---------------------------------------------------------------- clearance runs
+# ADR-1 Phase 2: clearance-run state + an append-only event journal, so a run's
+# progress survives instance restarts and can be relayed from ANY instance (or
+# written by a worker job that shares nothing with the web tier).
+
+RUNS_COLLECTION = "clearance_runs"
+
+# One journal doc per flush, not per event: Firestore sustains ~1 write/sec per
+# document, and a desk burst emits far more events than that. Chunks keep the
+# write rate safe and the read path a simple ordered scan.
+
+
+def run_set(run_id: str, state: dict[str, Any]) -> bool:
+    try:
+        _db().collection(RUNS_COLLECTION).document(run_id).set(state, merge=True)
+        return True
+    except Exception:
+        return False
+
+
+def run_get(run_id: str) -> dict[str, Any] | None:
+    try:
+        snap = _db().collection(RUNS_COLLECTION).document(run_id).get()
+        return snap.to_dict() if snap.exists else None
+    except Exception:
+        return None
+
+
+def events_append(run_id: str, first_seq: int, events: list[dict[str, Any]]) -> bool:
+    """One chunk of the journal. first_seq orders chunks; ids are zero-padded so
+    lexicographic order equals numeric order."""
+    try:
+        (
+            _db()
+            .collection(RUNS_COLLECTION)
+            .document(run_id)
+            .collection("events")
+            .document(f"{first_seq:08d}")
+            .set({"first_seq": first_seq, "events": events})
+        )
+        return True
+    except Exception:
+        return False
+
+
+def events_read(run_id: str, after_seq: int = -1) -> tuple[list[dict[str, Any]], int]:
+    """Every event with seq > after_seq, in order, plus the new high-water mark."""
+    try:
+        chunks = (
+            _db()
+            .collection(RUNS_COLLECTION)
+            .document(run_id)
+            .collection("events")
+            .order_by("first_seq")
+            .stream()
+        )
+        out: list[dict[str, Any]] = []
+        seq = after_seq
+        for chunk in chunks:
+            data = chunk.to_dict() or {}
+            first = data.get("first_seq", 0)
+            for i, ev in enumerate(data.get("events", [])):
+                if first + i > after_seq:
+                    out.append(ev)
+                    seq = first + i
+        return out, seq
+    except Exception:
+        return [], after_seq
+
+
+def count_running() -> int:
+    """Live clearance runs across ALL instances and workers — the concurrency
+    cap must see the whole fleet, not one process's memory."""
+    try:
+        docs = _db().collection(RUNS_COLLECTION).where("status", "==", "running").limit(25).stream()
+        return sum(1 for _ in docs)
+    except Exception:
+        return 0
