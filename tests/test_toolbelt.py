@@ -107,11 +107,15 @@ def test_research_budget_and_cache(monkeypatch):
     monkeypatch.setattr(toolbelt, "_live_search", fake_search)
     ctx = make_ctx(**{"research_budget:clearance_counsel": 2})
 
-    r1 = asyncio.run(toolbelt.research("Is the brand cleared?", ["brand clearance film"], "E001", ctx))
+    r1 = asyncio.run(
+        toolbelt.research("Is the brand cleared?", ["brand clearance film"], "E001", ctx)
+    )
     assert r1["cached"] is False and r1["budget_remaining"] == 1
     assert r1["results"] and r1["results"][0]["excerpts"]
 
-    r2 = asyncio.run(toolbelt.research("Is the brand cleared?", ["brand clearance film"], "E001", ctx))
+    r2 = asyncio.run(
+        toolbelt.research("Is the brand cleared?", ["brand clearance film"], "E001", ctx)
+    )
     assert r2["cached"] is True
     assert len(calls) == 1  # cache hit did not spend budget
 
