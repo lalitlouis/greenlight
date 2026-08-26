@@ -696,6 +696,7 @@ def test_provenance_rejection_hands_back_quotable_excerpts(monkeypatch):
     # and fails the verbatim gate forever. The rejection must now include the
     # entity's REAL registered excerpts so the next attempt can copy them.
     ctx = make_ctx()
+    ctx.invocation_id = "inv-handback-isolated"  # own registry bucket
     msg = toolbelt.file_flag(
         scene_ids=["S002"],
         severity="MEDIUM",
@@ -717,3 +718,63 @@ def test_provenance_rejection_hands_back_quotable_excerpts(monkeypatch):
     assert msg.startswith("REJECTED")
     assert "VERBATIM excerpts on record" in msg
     assert RESEARCH_EXCERPT[:80] in msg  # the seeded registered excerpt is offered back
+
+
+def test_file_flag_auto_repairs_near_miss_citation():
+    # The Winklevoss loop: a paraphrase of a REAL retrieval must be repaired to
+    # the registered verbatim text and FILED — form must not kill substance.
+    ctx = make_ctx()
+    ctx.invocation_id = "inv-repair-isolated"
+    toolbelt._register_provenance(ctx, [RESEARCH_EXCERPT])
+    # ~70% of the original words survive: below the 90% pass-through tolerance,
+    # inside the 60% repair band — the Winklevoss shape.
+    near_miss = (
+        "If the product appears in a negative light on screen, you may be "
+        "sued for product disparagement by them."
+    )
+    msg = toolbelt.file_flag(
+        scene_ids=["S002"],
+        severity="MEDIUM",
+        category="trademark_disparagement",
+        finding="The product is disparaged on screen.",
+        citations=[
+            {"source_type": "web", "url": "https://example.com/clearance", "excerpt": near_miss}
+        ],
+        remedy_action="REPLACE",
+        remedy_detail="Swap the prop.",
+        confidence=0.8,
+        tool_context=ctx,
+        entity_id="E001",
+    )
+    assert msg.startswith("Filed F") and "auto-corrected" in msg
+    flag = ctx.state["flags:clearance_counsel"][-1]
+    assert flag["citations"][0]["excerpt"] in RESEARCH_EXCERPT  # verbatim by construction
+
+
+def test_file_flag_retry_limit_breaks_rejection_loops():
+    ctx = make_ctx()
+    ctx.invocation_id = "inv-retry-limit"
+
+    def attempt():
+        return toolbelt.file_flag(
+            scene_ids=["S002"],
+            severity="LOW",
+            category="trademark_use",
+            finding="x",
+            citations=[
+                {
+                    "source_type": "web",
+                    "url": "https://x.example",
+                    "excerpt": "words that resemble nothing retrieved at all in this run whatsoever",
+                }
+            ],
+            remedy_action="NO_ACTION",
+            remedy_detail="n/a",
+            confidence=0.5,
+            tool_context=ctx,
+            entity_id="E077",
+        )
+
+    msgs = [attempt() for _ in range(toolbelt._PROV_RETRY_LIMIT)]
+    assert all(m.startswith("REJECTED") for m in msgs)
+    assert "DO NOT retry" in msgs[-1] and "note_open_question" in msgs[-1]

@@ -667,6 +667,62 @@ def _word_overlap_hit(needle: str, texts: list[str]) -> bool:
     return False
 
 
+def _overlap_ratio(needle: str, candidate: str) -> float:
+    """Share of the needle's substantive words present in the candidate."""
+    min_word_len = 3
+    words = [w for w in _norm_for_match(needle).split() if len(w) >= min_word_len]
+    if len(words) < 6:
+        return 0.0
+    need = set(words)
+    cand = set(_norm_for_match(candidate).split())
+    return len(need & cand) / len(need)
+
+
+def _best_registry_match(attempt: str, tool_context: ToolContext) -> str | None:
+    """The registered text the model was clearly reaching for, if any.
+
+    >=60% of the attempted quote's words in one registered text means the model
+    paraphrased a real retrieval (markdown stripped, line breaks normalized, a
+    word dropped) — hand the true verbatim text back so the FINDING survives the
+    FORMALITY. Below that, nothing retrieved resembles the quote: no repair.
+    """
+    best, best_r = None, 0.0
+    for text in _prov_bucket(tool_context):
+        r = _overlap_ratio(attempt, text)
+        if r > best_r:
+            best, best_r = text, r
+    return best[:800] if best is not None and best_r >= 0.6 else None
+
+
+def _handback_candidates(attempts: list[str], tool_context: ToolContext) -> list[str]:
+    """Closest registered texts to the failed quotes — race-free, from the
+    process registry — offered back in the rejection for verbatim copying."""
+    scored: list[tuple[float, str]] = []
+    for text in _prov_bucket(tool_context):
+        r = max((_overlap_ratio(a, text) for a in attempts), default=0.0)
+        if r >= 0.25:
+            scored.append((r, text))
+    scored.sort(key=lambda x: -x[0])
+    return [t[:400] for _, t in scored[:3]]
+
+
+# Same-flag retry ledger, process-local (state counters race under parallel
+# tool calls — the provenance saga). Bounds the worst case: 33 consecutive
+# rejections of one Winklevoss filing burned a desk's whole tail (2026-08-26).
+_REJECT_COUNTS: dict[str, int] = {}
+_REJECT_MAX_RUNS = 4096
+_PROV_RETRY_LIMIT = 4
+
+
+def _reject_count_bump(tool_context: ToolContext, entity_id: str, category: str) -> int:
+    inv = str(getattr(tool_context, "invocation_id", "") or "run")
+    key = f"{inv}:{_desk(tool_context)}:{entity_id}:{category}"
+    if key not in _REJECT_COUNTS and len(_REJECT_COUNTS) >= _REJECT_MAX_RUNS:
+        _REJECT_COUNTS.pop(next(iter(_REJECT_COUNTS)))
+    _REJECT_COUNTS[key] = _REJECT_COUNTS.get(key, 0) + 1
+    return _REJECT_COUNTS[key]
+
+
 def _quotable_excerpts(entity_id: str, tool_context: ToolContext, limit: int = 3) -> list[str]:
     """The registered research excerpts for one entity, for rejection self-healing.
 
@@ -829,27 +885,47 @@ def file_flag(
     # itself). A model deep in a long run can confabulate a plausible "quote"; this
     # check is deterministic and closes that door — the verifier judges relevance,
     # this judges existence.
-    fabricated = [
-        c["excerpt"][:60] for c in cits if not _excerpt_exists(c["excerpt"], tool_context)
-    ]
-    if fabricated:
+    # Excerpt provenance with AUTO-REPAIR: the desk's finding must not die on a
+    # transcription formality. A near-miss quote (>=60% of its words in one
+    # registered text) is the model paraphrasing a real retrieval — substitute
+    # the true verbatim text and file; the blinded verifier still judges whether
+    # that text supports the claim. Only quotes resembling NOTHING retrieved are
+    # rejected — and after _PROV_RETRY_LIMIT tries, retrying is refused so a
+    # desk can never again burn its tail on one filing.
+    repaired = 0
+    still_bad: list[str] = []
+    for c in cits:
+        if _excerpt_exists(c["excerpt"], tool_context):
+            continue
+        fix = _best_registry_match(c["excerpt"], tool_context)
+        if fix is not None:
+            c["excerpt"] = fix
+            repaired += 1
+        else:
+            still_bad.append(c["excerpt"][:60])
+    if still_bad:
         tool_context.state[seq_key] = seq - 1
+        tries = _reject_count_bump(tool_context, entity_id, category)
+        if tries >= _PROV_RETRY_LIMIT:
+            return (
+                "REJECTED, not filed — and DO NOT retry this flag: after "
+                f"{tries} attempts, the quoted material still matches nothing this run "
+                "retrieved, so it cannot be verified. Record the issue with "
+                "note_open_question (state what you believe and what could not be "
+                "verified) and move to your next worklist item NOW."
+            )
         msg = (
             "REJECTED, not filed: these excerpts do not appear verbatim in any research "
             "result, precedent rationale, or the script — re-copy them exactly from your "
-            "tool results, character for character:\n- " + "\n- ".join(fabricated)
+            "tool results, character for character:\n- " + "\n- ".join(still_bad)
         )
-        # Self-healing: hand back the entity's REAL registered excerpts so the next
-        # attempt can copy verbatim text instead of reconstructing from memory. A
-        # desk quoting a result that history pruning trimmed paraphrases what it
-        # half-remembers and loops on rejection (145 rejections in one run) — the
-        # registry still holds the full text, so give it back at the point of need.
-        quotable = _quotable_excerpts(entity_id, tool_context)
+        quotable = _handback_candidates(still_bad, tool_context) or _quotable_excerpts(
+            entity_id, tool_context
+        )
         if quotable:
             msg += (
-                "\n\nVERBATIM excerpts on record for this entity — copy from these "
-                "EXACTLY (you may quote any contiguous part):\n"
-                + "\n".join(f"<<{q}>>" for q in quotable)
+                "\n\nVERBATIM excerpts on record — copy from these EXACTLY (any "
+                "contiguous part):\n" + "\n".join(f"<<{q}>>" for q in quotable)
             )
         return msg
 
@@ -859,7 +935,13 @@ def file_flag(
         return f"REJECTED, not filed: unknown scene ids {bad}. Use ids from your worklist."
 
     _state_append(tool_context, f"flags:{desk}", flag)
-    return f"Filed {flag['flag_id']} ({severity} {category})."
+    note = (
+        f" ({repaired} citation excerpt{'s' if repaired != 1 else ''} auto-corrected "
+        "to the verbatim source text)"
+        if repaired
+        else ""
+    )
+    return f"Filed {flag['flag_id']} ({severity} {category}).{note}"
 
 
 # --- query_precedent --------------------------------------------------------
