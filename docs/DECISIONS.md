@@ -19,6 +19,22 @@ MPA-rated film since 1968 with a citable source." Embedding cost ~$1.30 one-time
 
 ---
 
+## 2026-08-27 — Self-healing citations: the rejection hands back the real excerpts
+
+TSN re-run exposed the flaw in "archive after first flag": desks legitimately file
+SEVERAL flags per entity (sync+master per song; publicity+name per person). Flag #2 for
+an archived entity meant quoting from memory -> verbatim gate rejection -> retry loop
+(157 attempts, 145 rejections in one run; killed by user). The registry never lost the
+text — only the model's view of it. Fix at the point of need: a provenance rejection now
+looks up the entity's registered research excerpts (via the per-desk research-key
+indices — NEVER by iterating ADK state keys) and returns 400-char verbatim heads in the
+rejection message: "copy from these EXACTLY." A head is a substring of registered text,
+so a citation copied from it passes the gate. Also: the run page's desk chips now count
+FILINGS (tool results saying "Filed F…"), not attempts — the 157-vs-35 counter mismatch
+was the tell that found this bug.
+
+---
+
 ## 2026-08-27 — Pruning v2: disposition-aware, because age is the wrong signal
 
 The first cut (keep last 8 exchanges) shipped, then a graded fixture run caught it

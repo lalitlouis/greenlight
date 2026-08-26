@@ -667,6 +667,34 @@ def _word_overlap_hit(needle: str, texts: list[str]) -> bool:
     return False
 
 
+def _quotable_excerpts(entity_id: str, tool_context: ToolContext, limit: int = 3) -> list[str]:
+    """The registered research excerpts for one entity, for rejection self-healing.
+
+    Reads via the per-desk research-key indices — NEVER by iterating state keys
+    (ADK's State does not support it; see the provenance saga). Excerpts are
+    returned as 400-char heads: a head is a substring of the registered text, so
+    a citation copied from it passes the verbatim gate.
+    """
+    if not entity_id:
+        return []
+    state = tool_context.state
+    keys: list[str] = []
+    for d in DESKS:
+        for k in state.get(f"research_keys:{d}") or []:
+            if isinstance(k, str) and k.startswith(f"research:{entity_id}:") and k not in keys:
+                keys.append(k)
+    out: list[str] = []
+    for k in keys:
+        rec = state.get(k) or {}
+        for r in rec.get("results", []):
+            for ex in r.get("excerpts", []):
+                if ex and ex.strip():
+                    out.append(ex[:400])
+                    if len(out) >= limit:
+                        return out
+    return out
+
+
 def _excerpt_exists(excerpt: str, tool_context: ToolContext) -> bool:
     needle = _norm_for_match(excerpt).strip(" \"'.…-")
     if len(needle) < _MIN_PROVENANCE_CHARS:
@@ -806,11 +834,24 @@ def file_flag(
     ]
     if fabricated:
         tool_context.state[seq_key] = seq - 1
-        return (
+        msg = (
             "REJECTED, not filed: these excerpts do not appear verbatim in any research "
             "result, precedent rationale, or the script — re-copy them exactly from your "
             "tool results, character for character:\n- " + "\n- ".join(fabricated)
         )
+        # Self-healing: hand back the entity's REAL registered excerpts so the next
+        # attempt can copy verbatim text instead of reconstructing from memory. A
+        # desk quoting a result that history pruning trimmed paraphrases what it
+        # half-remembers and loops on rejection (145 rejections in one run) — the
+        # registry still holds the full text, so give it back at the point of need.
+        quotable = _quotable_excerpts(entity_id, tool_context)
+        if quotable:
+            msg += (
+                "\n\nVERBATIM excerpts on record for this entity — copy from these "
+                "EXACTLY (you may quote any contiguous part):\n"
+                + "\n".join(f"<<{q}>>" for q in quotable)
+            )
+        return msg
 
     known = {s["scene_id"] for s in tool_context.state.get("scenes", [])}
     if bad := [s for s in scene_ids if s not in known]:

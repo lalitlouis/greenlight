@@ -689,3 +689,31 @@ def test_prune_absolute_bound_and_entityless_ceiling():
     common.prune_stale_tool_results(ctx, req)
     resps = [c for c in req.contents if c.parts[0].function_response is not None]
     assert sum("trimmed" in payload(c) for c in resps) == 10  # 50 - 40
+
+
+def test_provenance_rejection_hands_back_quotable_excerpts(monkeypatch):
+    # The 145-rejection loop: after pruning trims a result the desk paraphrases
+    # and fails the verbatim gate forever. The rejection must now include the
+    # entity's REAL registered excerpts so the next attempt can copy them.
+    ctx = make_ctx()
+    msg = toolbelt.file_flag(
+        scene_ids=["S002"],
+        severity="MEDIUM",
+        category="trademark_use",
+        finding="A brand appears prominently.",
+        citations=[
+            {
+                "source_type": "web",
+                "url": "https://example.com/clearance",
+                "excerpt": "a paraphrased memory of the rule that was never retrieved verbatim",
+            }
+        ],
+        remedy_action="REPLACE",
+        remedy_detail="Swap the prop.",
+        confidence=0.8,
+        tool_context=ctx,
+        entity_id="E001",
+    )
+    assert msg.startswith("REJECTED")
+    assert "VERBATIM excerpts on record" in msg
+    assert RESEARCH_EXCERPT[:80] in msg  # the seeded registered excerpt is offered back

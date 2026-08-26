@@ -702,7 +702,6 @@ function handleDeskEvent(ev) {
   d.started = true;
   if (ev.type === "tool_call") {
     d.calls += 1;
-    if (ev.tool === "file_flag") d.flags += 1;
     const a = ev.args || {};
     if (ev.tool === "read_scene") moveDeskDot(ev.agent, a.scene_id);
     else if (ev.tool === "research") {
@@ -715,16 +714,22 @@ function handleDeskEvent(ev) {
     } else if (ev.tool === "file_flag") {
       dropPin(ev.agent, a.severity || "FYI", a.category, a.scene_ids);
       gPulse(ev.agent, "verifier");
-      gCount("verifier", "filed", "to verify");
-      const gsub = document.getElementById("gs-" + ev.agent);
-      if (gsub) gsub.textContent = d.flags + " flags";
     }
     if (ev.tool === "read_scene") setDeskSpotlight(ev.agent, `Now reading ${sceneLabel(a.scene_id)}`);
     else if (ev.tool === "research") setDeskSpotlight(ev.agent, `Researching: ${trim(a.objective, 60)}`);
     else if (ev.tool === "query_precedent") setDeskSpotlight(ev.agent, "Consulting released-film comparables…");
     else if (ev.tool === "file_flag") setDeskSpotlight(ev.agent, `Filed ${a.severity || ""} — ${prettyCat(a.category)}`);
   }
-  if (ev.type === "tool_result" && ev.tool === "file_flag") assignPinId(ev.agent, ev.brief);
+  if (ev.type === "tool_result" && ev.tool === "file_flag") {
+    assignPinId(ev.agent, ev.brief);
+    // count FILINGS, not attempts — a provenance-rejected try is not a flag
+    if (/Filed F\d+/.test(ev.brief || "")) {
+      d.flags += 1;
+      gCount("verifier", "filed", "to verify");
+      const gsub = document.getElementById("gs-" + ev.agent);
+      if (gsub) gsub.textContent = d.flags + " flags";
+    }
+  }
   if (ev.type === "text" && /^done\b/i.test(ev.text || "")) {
     d.done = true;
     setDeskSpotlight(ev.agent, "Desk closed.");
