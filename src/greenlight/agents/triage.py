@@ -95,7 +95,11 @@ verbal mention only.
 
 Then write a worklist for each of the four desks. Coverage matters more than brevity — a
 hazard or censorship exposure missing from a worklist is invisible to every desk downstream:
-- clearance_counsel: every extracted entity that implicates rights — PLUS every named
+- clearance_counsel: every extracted entity that implicates rights — including VISUAL
+  WORKS described in action lines: named paintings/prints on walls, murals, sculptures,
+  posters, and DISTINCTIVE CUSTOM TATTOOS on characters (especially with a named artist).
+  Extract each as an ARTWORK entity; set dressing is still a copyrighted reproduction.
+  PLUS every named
   character and every invented business, venue, publication, or address, for the
   name-commonality sweep (does this fictional name collide with a distinctive real person
   or business?). List them even when they look safely fictional; establishing that is the

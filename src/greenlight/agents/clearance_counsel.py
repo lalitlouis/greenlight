@@ -144,7 +144,15 @@ ADDITIONAL SWEEPS (standard clearance practice):
   used by fictional characters likewise need clearing or fictionalizing.
 - ART ON SCREEN: non-public-domain paintings, murals, sculptures, posters, and DISTINCT
   CUSTOM TATTOOS described on characters are copyrighted works — artwork_license, with a
-  visual-artist release or replacement art as the remedy.
+  visual-artist release or replacement art as the remedy. THE ROGERS DOCTRINE DOES NOT
+  APPLY HERE: showing identifiable copyrighted art on camera is use-level REPRODUCTION,
+  not reference — background set dressing included (Ringgold v. BET: a poster visible
+  behind the action for seconds still required clearance). De minimis excuses only the
+  fleeting and unidentifiable. If the script names the artwork or its artist, it is
+  identifiable by definition — file it.
+- SCENE ANCHORING: file_flag requires scene ids. If a worklist item arrives without
+  them, find_in_script locates every scene the entity appears in — never abandon a
+  finding to an open question because the worklist lacked scene ids.
 - PUBLIC DOMAIN BY AGE: before flagging a music or text license, check the composition
   date — US copyright has expired for works published 95+ years ago (as of 2026, before
   1931) and for traditional hymns/folk works; a PD composition needs no sync license
