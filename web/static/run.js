@@ -84,7 +84,7 @@ function renderProfile(p) {
     c.appendChild(txt);
     stats.appendChild(c);
   }
-  if (state.mode !== "replay") $("fl-pending").hidden = false;
+  if (state.mode !== "replay" && $("fl-impressions").hidden) $("fl-pending").hidden = false;
   clearTimeout(rt.flPendingTimer);
   rt.flPendingTimer = setTimeout(() => {
     const pend = $("fl-pending");
@@ -92,21 +92,18 @@ function renderProfile(p) {
   }, 180000);
   const lists = $("fl-lists");
   lists.textContent = "";
-  const locs = el("div", "fl-list");
-  locs.appendChild(el("b", null, "Top locations"));
-  for (const l of p.top_locations || []) locs.appendChild(el("span", null, `${l.name} ×${l.scenes}`));
-  lists.appendChild(locs);
-  const cast = el("div", "fl-list");
-  cast.appendChild(el("b", null, "Most dialogue"));
-  for (const c of p.top_cast || []) cast.appendChild(el("span", null, `${c.name} (${c.lines})`));
-  lists.appendChild(cast);
-  const elems = Object.entries(p.elements || {});
-  if (elems.length) {
-    const e = el("div", "fl-list");
-    e.appendChild(el("b", null, "Element mentions"));
-    for (const [name, n] of elems) e.appendChild(el("span", "fl-elem", `${name} ×${n}`));
-    lists.appendChild(e);
-  }
+  const addRow = (label, items, cls) => {
+    if (!items.length) return;
+    const row = el("div", "fl-list");
+    row.appendChild(el("b", null, label));
+    const wrap = el("div", "fl-list-items");
+    for (const [text, extra] of items) wrap.appendChild(el("span", extra || cls || null, text));
+    row.appendChild(wrap);
+    lists.appendChild(row);
+  };
+  addRow("Locations", (p.top_locations || []).map((l) => [`${l.name} ×${l.scenes}`]));
+  addRow("Dialogue", (p.top_cast || []).map((c) => [`${c.name} · ${c.lines} lines`]));
+  addRow("Elements", Object.entries(p.elements || {}).map(([name, n]) => [`${name} ×${n}`, "fl-elem"]));
 }
 
 function renderImpressions(d) {
@@ -252,6 +249,26 @@ function gPulse(a, b, tone) {
     },
     onComplete: () => dot.remove(),
   });
+}
+
+/* Long runs shouldn't chain the user to the tab: opt-in browser notification
+   plus a tab-title flash when the report lands. */
+function offerNotify() {
+  if (!("Notification" in window) || Notification.permission === "granted") return;
+  if (Notification.permission === "denied") return;
+  const bar = document.querySelector(".now-bar");
+  if (!bar || $("notify-chip")) return;
+  const chip = el("button", "notify-chip", "🔔 Notify me when the report is ready");
+  chip.id = "notify-chip";
+  chip.type = "button";
+  chip.addEventListener("click", async () => {
+    const perm = await Notification.requestPermission();
+    chip.textContent = perm === "granted"
+      ? "✓ You'll get a notification — safe to switch tabs"
+      : "Notifications blocked in your browser settings";
+    chip.disabled = true;
+  });
+  bar.appendChild(chip);
 }
 
 /* One narrated beat at a time. Events arrive in bursts no human can read, so
@@ -787,7 +804,7 @@ function handleEvent(ev) {
       state.runId = ev.run_id;
       state.mode = ev.mode;
       state.reportId = ev.mode === "replay" ? ev.record_id || ev.run_id : ev.run_id;
-      loadSceneHeadings(state.reportId);
+      if (!rt.built) loadSceneHeadings(state.reportId); // usually pre-fetched from the URL
       $("run-title").textContent = ev.script_title || "Analysis";
       const chip = $("mode-chip");
       chip.textContent = ev.mode === "replay" ? "Replay · recorded run" : "Live";
@@ -795,7 +812,10 @@ function handleEvent(ev) {
       startClock();
       setPhase("triage");
       bumpProgress();
-      if (ev.mode !== "replay") startTriageTicker();
+      if (ev.mode !== "replay") {
+        startTriageTicker();
+        offerNotify();
+      }
       break;
     }
     case "first_look":
@@ -850,8 +870,22 @@ function sweepSceneStates() {
   });
 }
 
+function announceDone(record) {
+  const title = (record && record.script_title) || "Your analysis";
+  document.title = "✓ Report ready — ScriptRisk";
+  if ("Notification" in window && Notification.permission === "granted") {
+    try {
+      new Notification("ScriptRisk — report ready", {
+        body: title + " has finished analysis. Opening your report.",
+        icon: "/apple-touch-icon.png",
+      });
+    } catch { /* notification is a courtesy, never an error */ }
+  }
+}
+
 function onResult(record) {
   state.gotResult = true;
+  announceDone(record);
   sweepSceneStates();
   gState("script", "done");
   gState("adjudicator", "done", "report ready");
@@ -956,6 +990,8 @@ document.addEventListener("DOMContentLoaded", () => {
     $("studio-toggle").textContent = hidden ? "Show" : "Hide";
   });
   const params = new URLSearchParams(window.location.search);
+  const liveId = params.get("id");
+  if (liveId) loadSceneHeadings(liveId); // profile + strip render before the stream even opens
   if (params.get("replay") != null) {
     const record = params.get("record");
     startStream("/api/replay" + (record ? `?record=${encodeURIComponent(record)}` : ""));

@@ -50,7 +50,7 @@ class JournalPublisher:
 def _stub(run_id: str, record: dict[str, Any], state: dict[str, Any]) -> dict[str, Any]:
     rep = record.get("report") or {}
     return {
-        "run_id": run_id,
+        "id": run_id,  # my.js keys every link off "id" — "run_id" broke report links
         "kind": "clearance",
         "title": record.get("script_title") or state.get("title") or run_id,
         "status": "error" if record.get("error") else "done",

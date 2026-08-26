@@ -1206,6 +1206,39 @@ async def binder_csv(run_id: str) -> Response:
     )
 
 
+@app.get("/api/binder/{run_id}.pdf")
+async def binder_pdf_dl(run_id: str) -> Response:
+    """The clearance log as a real PDF download — no print dialog."""
+    from greenlight import pdfgen
+
+    data = await _binder_data(run_id)
+    pdf = await asyncio.to_thread(pdfgen.binder_pdf, data)
+    fname = (data["title"] or "clearance-log").lower().replace(" ", "-")[:40]
+    return Response(
+        pdf,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="{fname}-clearance-log.pdf"'},
+    )
+
+
+@app.get("/api/onesheet/{run_id}.pdf")
+async def onesheet_pdf_dl(run_id: str) -> Response:
+    """The one-sheet poster as a real PDF download."""
+    from greenlight import pdfgen
+
+    run_id = _safe_id(run_id)
+    record = await _load_record_any(run_id)
+    if record is None:
+        raise HTTPException(404, "Unknown run.")
+    pdf = await asyncio.to_thread(pdfgen.onesheet_pdf, record)
+    fname = (record.get("script_title") or "one-sheet").lower().replace(" ", "-")[:40]
+    return Response(
+        pdf,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="{fname}-one-sheet.pdf"'},
+    )
+
+
 @app.get("/api/binder/{run_id}")
 async def binder_json(run_id: str) -> dict[str, Any]:
     """The clearance log as data — the /binder page renders from this."""

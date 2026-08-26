@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
   $("bd-back").href = `/report?run=${encodeURIComponent(id)}`;
   $("bd-csv").href = `/api/binder/${encodeURIComponent(id)}.csv`;
-  $("bd-print").addEventListener("click", () => window.print());
+  $("bd-pdf").href = `/api/binder/${encodeURIComponent(id)}.pdf`;
   try {
     const res = await fetch(`/api/binder/${encodeURIComponent(id)}`);
     if (!res.ok) throw new Error((await res.json()).detail || res.statusText);

@@ -915,7 +915,13 @@ function renderReport(record) {
     const btn = el("button", "btn btn-danger", "Delete this analysis");
     btn.type = "button";
     btn.addEventListener("click", async () => {
-      if (!window.confirm("Permanently delete this analysis and its uploaded script?")) return;
+      const sure = await confirmDialog({
+        title: "Delete this analysis?",
+        message: "The report, the run record, and your uploaded script are removed from our storage permanently. This cannot be undone.",
+        confirmLabel: "Delete permanently",
+        danger: true,
+      });
+      if (!sure) return;
       btn.disabled = true;
       btn.textContent = "Deleting…";
       try {

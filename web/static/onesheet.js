@@ -132,7 +132,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
   $("os-back").href = `/report?run=${encodeURIComponent(id)}`;
-  $("os-print").addEventListener("click", () => window.print());
+  $("os-pdf").href = `/api/onesheet/${encodeURIComponent(id)}.pdf`;
   try {
     osRender(await fetchRecord(id));
   } catch (e) {

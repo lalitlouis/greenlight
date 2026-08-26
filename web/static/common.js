@@ -304,6 +304,44 @@ function openUploadModal(opts) {
   });
 }
 
+/* Styled confirm dialog — replaces window.confirm. Resolves true/false. */
+function confirmDialog({ title, message, confirmLabel, danger }) {
+  return new Promise((resolve) => {
+    document.getElementById("confirm-modal")?.remove();
+    const overlay = el("div", "um-overlay");
+    overlay.id = "confirm-modal";
+    const modal = el("div", "um-modal cd-modal");
+    modal.appendChild(el("h3", "cd-title", title));
+    modal.appendChild(el("p", "cd-msg", message));
+    const row = el("div", "cd-row");
+    const cancel = el("button", "btn btn-secondary", "Cancel");
+    cancel.type = "button";
+    const ok = el("button", "btn " + (danger ? "btn-danger-solid" : "btn-primary"), confirmLabel);
+    ok.type = "button";
+    row.appendChild(cancel);
+    row.appendChild(ok);
+    modal.appendChild(row);
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+    const done = (v) => {
+      overlay.remove();
+      resolve(v);
+    };
+    cancel.addEventListener("click", () => done(false));
+    ok.addEventListener("click", () => done(true));
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) done(false);
+    });
+    document.addEventListener("keydown", function esc(e) {
+      if (e.key === "Escape") {
+        done(false);
+        document.removeEventListener("keydown", esc);
+      }
+    });
+    cancel.focus();
+  });
+}
+
 function promptUpload() {
   if (!requireSignIn()) return;
   openUploadModal({

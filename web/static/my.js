@@ -41,7 +41,13 @@ function rowFor(r) {
   const del = el("button", "btn btn-danger", "Delete");
   del.type = "button";
   del.addEventListener("click", async () => {
-    if (!confirm(`Delete "${r.title}" permanently? The report and script text are removed.`)) return;
+    const sure = await confirmDialog({
+      title: `Delete "${r.title || r.id}"?`,
+      message: "The report and your uploaded script are removed from our storage permanently. This cannot be undone.",
+      confirmLabel: "Delete permanently",
+      danger: true,
+    });
+    if (!sure) return;
     const res = await fetch(`/api/my/runs/${encodeURIComponent(r.id)}`, { method: "DELETE" });
     if (res.ok) {
       row.remove();
