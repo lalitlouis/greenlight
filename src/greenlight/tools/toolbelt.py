@@ -323,14 +323,41 @@ def _norm_for_match(s: str) -> str:
 _MIN_PROVENANCE_CHARS = 12  # shorter quotes match anything; the verifier judges those
 
 
+_OVERLAP_MIN_WORDS = 8
+_OVERLAP_RATIO = 0.9
+
+
+def _word_overlap_hit(needle: str, texts: list[str]) -> bool:
+    """Secondary standard: a quote stitched or elided from ONE real source keeps
+    ~all its words; a fabricated quote does not. >=90% of the needle's words in
+    a single registered text = provenance, exact ordering not required."""
+    words = [w for w in needle.split() if len(w) > 2]
+    if len(words) < _OVERLAP_MIN_WORDS:
+        return False
+    need = set(words)
+    for text in texts:
+        tw = set(text.split())
+        if len(need & tw) / len(need) >= _OVERLAP_RATIO:
+            return True
+    return False
+
+
 def _excerpt_exists(excerpt: str, tool_context: ToolContext) -> bool:
     needle = _norm_for_match(excerpt).strip(" \"'.…-")
     if len(needle) < _MIN_PROVENANCE_CHARS:
         return True
     # 1. the process-local registry — the authoritative source
-    for text in _PROV_TEXTS.get(str(getattr(tool_context, "invocation_id", "") or "run"), []):
+    bucket = _PROV_TEXTS.get(str(getattr(tool_context, "invocation_id", "") or "run"), [])
+    for text in bucket:
         if needle in text:
             return True
+    if _word_overlap_hit(needle, bucket):
+        return True
+    if os.getenv("GREENLIGHT_PROV_DEBUG"):
+        with open("/tmp/prov_debug.jsonl", "a") as fh:
+            import json as _json
+
+            fh.write(_json.dumps({"needle": needle[:400], "bucket_n": len(bucket)}) + "\n")
     return _exists_in_state(needle, tool_context.state)
 
 
