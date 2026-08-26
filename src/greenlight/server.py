@@ -1502,6 +1502,16 @@ async def _journal_relay(run_id: str) -> AsyncIterator[str]:
     SSE contract; the client cannot tell the difference."""
     seq = -1
     idle = 0.0
+    state0 = await asyncio.to_thread(runstate.run_get, run_id) or {}
+    # the journal carries no meta event — synthesize the one the run page boots from
+    yield _sse(
+        {
+            "type": "meta",
+            "run_id": run_id,
+            "mode": "live",
+            "script_title": state0.get("title") or "Analysis",
+        }
+    )
     while True:
         events, seq = await asyncio.to_thread(runstate.events_read, run_id, seq)
         for ev in events:
