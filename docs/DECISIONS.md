@@ -6,6 +6,29 @@ them. Append-only; newest entries at the top. Bigger architecture decisions live
 
 ---
 
+## 2026-08-27 — The overnight demo-refresh saga: six bugs, one mechanical contract
+
+Ten graded eval runs converged the refreshed demo record (promoted: run 8, 19/21 —
+every visual USE item including the new Krane-tattoo trap, sync, all safety/territory).
+The night's bug ledger, each earned from a failing run: (1) State.keys() crash;
+(2) shared provenance index clobbered across desk branches; (3) same clobbering within
+one turn's parallel tool calls — ANY mutable index in ADK session state loses writes
+(deltas merge last-writer-wins) → registry moved to process memory keyed by invocation;
+(4) chunk-boundary excerpt stitching → joined-text registration + word-overlap fallback
+(residual rejections proved to be the check WORKING: desks quoting regulations from
+model memory before sourcing them); (5) clearance priority inversion → two-pass order
+(cheap USE-level certainties before deep ownership chains) + budget 18→24→28,
+iterations 8→10, enum-safe remedy verbs (my own doctrine text had induced LEGAL_REVIEW);
+(6) the early-quit failure mode (three sightings: desks closing with worklists
+unaddressed and budget unspent) → done() now MECHANICALLY refuses closure below 50%
+worklist coverage with ≥3 budget left (max 2 refusals) — never let the model promise
+what a tool can verify. Case regens under the final doctrine: Reservoir Dogs 0→24
+(needle-drop master filed, brands at FYI; the closing contract doubled its findings),
+Little Miss Sunshine 13→2 after adjudicator consolidation was extended: rating_* AND
+territory_* categories are script-wide claims that merge across disjoint scenes (a run
+had filed 17 rating_language flags, one per F-bomb). Old fixture-based records purged —
+the tattoo edit shifted raw_span offsets.
+
 ## 2026-08-26 — Multilingual screenplays: roadmap, plus a shipped language guard
 
 Question: support non-English scripts? Three problems of different sizes. (1) Reading:

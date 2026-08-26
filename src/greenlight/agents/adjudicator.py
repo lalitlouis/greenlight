@@ -98,11 +98,14 @@ def merge_exact_duplicates(flags: list[dict[str, Any]]) -> list[dict[str, Any]]:
     for flag in flags:
         merged = False
         for existing in kept:
-            if (
-                existing["agent"] == flag["agent"]
-                and existing["category"] == flag["category"]
-                and set(existing["scene_ids"]) & set(flag["scene_ids"])
-            ):
+            same_cat = (
+                existing["agent"] == flag["agent"] and existing["category"] == flag["category"]
+            )
+            # rating drivers are SCRIPT-WIDE claims by nature — same category
+            # consolidates even across disjoint scenes (a run filed 17 separate
+            # rating_language flags, one per instance; the count is one finding)
+            script_wide = flag["category"].startswith(("rating_", "territory_"))
+            if same_cat and (script_wide or set(existing["scene_ids"]) & set(flag["scene_ids"])):
                 existing["scene_ids"] = sorted(set(existing["scene_ids"]) | set(flag["scene_ids"]))
                 seen = {c["excerpt"] for c in existing["citations"]}
                 existing["citations"] += [c for c in flag["citations"] if c["excerpt"] not in seen]
