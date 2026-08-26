@@ -530,3 +530,13 @@ def test_breaker_stays_open_after_any_success(monkeypatch):
     for i in range(toolbelt._BREAKER_CONSECUTIVE + 2):  # never raises: one success this run
         r = asyncio.run(toolbelt.research(f"bad{i}", ["q"], f"E01{i}", ctx))
         assert "error" in r
+
+
+def test_tool_error_shield_corrects_hallucinated_tools_but_lets_runabort_kill():
+    # The run_code outage: an unknown-tool ValueError must become a corrective
+    # message to the model; the deliberate RunAbortError must still abort the run.
+    from greenlight.agents.common import tool_error_shield
+
+    r = tool_error_shield(None, {}, None, ValueError("Tool 'run_code' not found."))
+    assert r is not None and "no code execution" in r["guidance"]
+    assert tool_error_shield(None, {}, None, toolbelt.RunAbortError("api down")) is None

@@ -19,7 +19,7 @@ from typing import Any, Literal
 from google.adk.agents import LlmAgent
 from pydantic import BaseModel, Field
 
-from greenlight.agents.common import GEN_CONFIG, PRO
+from greenlight.agents.common import GEN_CONFIG, PRO, tool_error_shield
 
 
 class MergeAction(BaseModel):
@@ -83,6 +83,7 @@ agent = LlmAgent(
     output_key="adjudication",
     include_contents="none",
     generate_content_config=GEN_CONFIG,
+    on_tool_error_callback=tool_error_shield,
 )
 
 

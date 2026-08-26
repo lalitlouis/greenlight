@@ -11,7 +11,7 @@ from typing import Literal
 from google.adk.agents import LlmAgent
 from pydantic import BaseModel, Field
 
-from greenlight.agents.common import GEN_CONFIG
+from greenlight.agents.common import GEN_CONFIG, tool_error_shield
 
 MODEL = "gemini-2.5-flash"
 
@@ -128,5 +128,6 @@ agent = LlmAgent(
     output_schema=TriageOutput,
     output_key="triage",
     generate_content_config=GEN_CONFIG,
+    on_tool_error_callback=tool_error_shield,
     include_contents="none",
 )

@@ -38,10 +38,17 @@ _MAX_RESULTS_TO_MODEL = 6
 
 _LOG = logging.getLogger("greenlight.tools")
 
+
 # Live-API health, process-local for the same reason as _PROV_TEXTS (state
 # deltas race under parallel tool calls). One bucket per run. The circuit
 # breaker exists because a report produced with zero successful retrievals is
 # worse than an honest failure — it looks real and is empty.
+class RunAbortError(RuntimeError):
+    """Deliberate whole-run abort. The tool-error shield lets this through:
+    it exists precisely for failures where continuing would produce a report
+    that looks real and is not (research API down)."""
+
+
 _LIVE_STATS: dict[str, dict[str, int]] = {}
 _LIVE_STATS_MAX_RUNS = 8
 _BREAKER_CONSECUTIVE = 4
@@ -73,7 +80,7 @@ def _live_call_failed(tool_context: ToolContext, api: str, exc: Exception) -> No
     state = tool_context.state
     state["research_failures"] = int(state.get("research_failures", 0)) + 1
     if stats["consecutive"] >= _BREAKER_CONSECUTIVE and stats["ok"] == 0:
-        raise RuntimeError(
+        raise RunAbortError(
             f"research API unreachable ({stats['consecutive']} consecutive failures, "
             "none succeeded) — aborting rather than producing an unresearched report"
         ) from exc

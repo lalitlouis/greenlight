@@ -19,6 +19,21 @@ MPA-rated film since 1968 with a citable source." Embedding cost ~$1.30 one-time
 
 ---
 
+## 2026-08-27 — The tool-error shield: a hallucinated tool name must not kill a run
+
+Third Social Network failure, 43 minutes in, 37 findings filed: Gemini slipped into its
+code-execution dialect and called a nonexistent `run_code` tool; ADK raises ValueError on
+unknown tool names, and the raise sank the whole run. Fix: `on_tool_error_callback` on
+every LlmAgent (`tool_error_shield` in agents/common.py) converts any tool error —
+unknown name, bad args, tool exception — into a corrective message the model sees
+("only the listed tools exist; there is no code execution"), so the desk self-corrects
+and the loop continues. The deliberate abort stays deliberate: the research-API circuit
+breaker now raises a typed `RunAbortError`, which the shield passes through untouched.
+The error-regime hierarchy is now complete: model mistakes are conversation, dependency
+outages are aborts, and nothing else can end a paid run.
+
+---
+
 ## 2026-08-27 — The retry ladder that never ran: 429 resilience moved to the HTTP layer
 
 Social Network's re-run died on a Vertex 429 after 262s despite our "8 attempts / 120s

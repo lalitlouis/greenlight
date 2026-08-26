@@ -9,6 +9,7 @@ from google.adk.models.google_llm import Gemini
 from google.genai import types
 
 from greenlight.tools import DESK_TOOLS
+from greenlight.tools.toolbelt import RunAbortError
 
 # New GCP projects carry tight per-minute Gemini quotas; a 429 mid-loop must not
 # kill a run that has live research in session state. The retry MUST live at the
@@ -35,6 +36,25 @@ PRO = _pro()
 # Desks are research clerks, not novelists. Low temperature narrows run-to-run
 # variance in worklist coverage — the eval harness measures exactly that.
 GEN_CONFIG = types.GenerateContentConfig(temperature=0.0)
+
+
+def tool_error_shield(tool, args, tool_context, error):
+    """One hallucinated tool name must not kill a 43-minute paid run.
+
+    ADK raises on unknown tools and on tool exceptions unless this callback
+    returns a response; the model then sees the error and self-corrects (the
+    'run_code' outage, 2026-08-26). RunAbortError passes through — that one is ours,
+    and it means the run SHOULD die."""
+    if isinstance(error, RunAbortError) or isinstance(error.__cause__, RunAbortError):
+        return None
+    return {
+        "error": f"{type(error).__name__}: {str(error)[:200]}",
+        "guidance": (
+            "That tool call failed. Only the tools in your declaration exist — "
+            "there is no code execution. Continue with the listed tools; if the "
+            "call was malformed, correct the arguments and retry it."
+        ),
+    }
 
 
 COVERAGE_RULE = """
@@ -76,6 +96,7 @@ def make_desk(name: str, description: str, instruction: str, max_iterations: int
         instruction=_instruction,
         tools=list(DESK_TOOLS),
         generate_content_config=GEN_CONFIG,
+        on_tool_error_callback=tool_error_shield,
     )
     return LoopAgent(
         name=f"{name}_desk",
