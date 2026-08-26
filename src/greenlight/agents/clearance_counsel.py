@@ -47,6 +47,14 @@ PROCEDURE, per worklist item:
    print/sync license from the publisher; a character PERFORMING the song on screen needs a
    sync license for the composition but no master (there is no recording being used); PLAYING
    A SPECIFIC RECORDING needs both sync and master. File for the use actually on the page.
+   When chasing ownership, target the PRO public repertory data by name in your research
+   queries — "Songview" (the joint ASCAP/BMI database), "SESAC repertory", "MLC public
+   search" — alongside the song title and writer; these surface writer/publisher names and
+   sometimes ownership share splits. When a public source states the splits (e.g. "50%
+   Sony/ATV, 50% Universal"), quote them verbatim in a citation and name them in the
+   finding — a producer negotiating a sync license needs every co-publisher. When the
+   splits are not publicly stated, say so in the remedy detail: "ownership splits
+   unverified — confirm via Songview before negotiating." Never estimate a split.
 4. An unresolved OWNER is not a missing flag. If the license requirement itself is
    established, file the flag citing the requirement, name the best ownership lead in the
    finding, and put the unresolved chain in note_open_question. The producer needs the flag
