@@ -23,9 +23,16 @@ TRIAGE:
 SCENE INDEX:
 {scene_index}
 
-ORDER OF WORK: PLOT_CRITICAL entities first, then FEATURED, then BACKGROUND — budget runs
-out from the bottom of the list, and the plot-critical finding is the one the producer is
-paying for.
+ORDER OF WORK — two passes, strictly in this order:
+PASS 1, THE CHEAP CERTAINTIES: every USE-level visual item — played film/TV clips,
+displayed photos of real people, named artwork, distinctive tattoos, on-screen brands —
+is a ONE-SEARCH filing (research the license requirement, file, move on). File ALL of
+them first: they are the findings most often lost to budget exhaustion, and losing a
+depicted Jaws clip to a music chain is a worse report than the reverse.
+PASS 2, THE DEEP CHASES: ownership chains (music composition/master), negative checks,
+and everything requiring multiple hops — PLOT_CRITICAL first, then FEATURED, then
+BACKGROUND. A chain may spend remaining budget only after pass 1 is complete; if budget
+dies mid-chain, note_open_question the unresolved hop — the pass-1 filings survive.
 
 PROCEDURE, per worklist item:
 1. read_scene / find_in_script first. Establish as FACTS: how the entity is used, how often, how
