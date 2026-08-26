@@ -69,18 +69,27 @@ function renderProfile(p) {
   const stats = $("fl-stats");
   stats.textContent = "";
   const chips = [
-    [p.pages + " pages", "~" + p.est_runtime_min + " min runtime"],
-    [p.scene_count + " scenes", p.int_scenes + " INT · " + p.ext_scenes + " EXT"],
-    [p.day_scenes + " day · " + p.night_scenes + " night", p.night_exteriors + " night exteriors"],
-    [p.location_count + " locations", p.cast_size + " speaking parts"],
-    [p.dialogue_pct + "% dialogue", 100 - p.dialogue_pct + "% action"],
+    ["📄", p.pages, "pages · ~" + p.est_runtime_min + " min", ""],
+    ["🎬", p.scene_count, "scenes · " + p.int_scenes + " INT / " + p.ext_scenes + " EXT", ""],
+    ["🌙", p.night_scenes, "night scenes · " + p.night_exteriors + " night ext.", p.night_exteriors > 0 ? "fl-warn" : ""],
+    ["📍", p.location_count, "locations · " + p.cast_size + " speaking parts", ""],
+    ["💬", p.dialogue_pct + "%", "dialogue vs " + (100 - p.dialogue_pct) + "% action", ""],
   ];
-  for (const [big, small] of chips) {
-    const c = el("div", "fl-stat");
-    c.appendChild(el("b", null, big));
-    c.appendChild(el("span", null, small));
+  for (const [icon, big, small, extra] of chips) {
+    const c = el("div", "fl-stat " + extra);
+    c.appendChild(el("span", "fl-stat-ico", icon));
+    const txt = el("div", "fl-stat-txt");
+    txt.appendChild(el("b", null, String(big)));
+    txt.appendChild(el("span", null, small));
+    c.appendChild(txt);
     stats.appendChild(c);
   }
+  if (state.mode !== "replay") $("fl-pending").hidden = false;
+  clearTimeout(rt.flPendingTimer);
+  rt.flPendingTimer = setTimeout(() => {
+    const pend = $("fl-pending");
+    if (pend && $("fl-impressions").hidden) pend.hidden = true; // gave up quietly
+  }, 180000);
   const lists = $("fl-lists");
   lists.textContent = "";
   const locs = el("div", "fl-list");
@@ -105,6 +114,8 @@ function renderImpressions(d) {
   if (!box || !d) return;
   $("firstlook").hidden = false;
   $("fl-unverified").hidden = false;
+  $("fl-pending").hidden = true;
+  clearTimeout(rt.flPendingTimer);
   box.hidden = false;
   box.textContent = "";
   box.appendChild(el("p", "fl-logline", "“" + d.logline + "”"));
@@ -396,6 +407,33 @@ const state = {
 
 const PHASE_ORDER = ["triage", "desks", "verify", "adjudicate", "report"];
 
+/* The triage call is one long model request with no visible output — without
+   a heartbeat the page looks dead for minutes on a feature. */
+const TRIAGE_BEATS = [
+  "Triage is reading the entire script in a single pass…",
+  "Extracting every clearance-relevant entity — people, brands, songs, hazards…",
+  "Deciding which desk owns each finding-to-be…",
+  "Building the four desks' worklists — the desks open the moment they land…",
+  "Still reading — a feature-length script takes a few minutes to absorb…",
+];
+let triageTicker = null;
+let triageBeatIdx = 0;
+
+function startTriageTicker() {
+  stopTriageTicker();
+  triageTicker = setInterval(() => {
+    enqueueBeat("triage", TRIAGE_BEATS[triageBeatIdx % TRIAGE_BEATS.length]);
+    triageBeatIdx += 1;
+  }, 9000);
+}
+
+function stopTriageTicker() {
+  if (triageTicker) {
+    clearInterval(triageTicker);
+    triageTicker = null;
+  }
+}
+
 const PHASE_BEATS = {
   triage: "Reading the script and building each desk's worklist…",
   desks: "The four desks take the script — each investigates on its own.",
@@ -565,6 +603,7 @@ function setDeskSpotlight(agent, text) {
 function handleDeskEvent(ev) {
   const d = state.desks[ev.agent];
   if (!d) return;
+  stopTriageTicker();
   if (!d.started && !graph.pulsedTriage[ev.agent]) {
     graph.pulsedTriage[ev.agent] = true;
     gPulse("triage", ev.agent);
@@ -756,6 +795,7 @@ function handleEvent(ev) {
       startClock();
       setPhase("triage");
       bumpProgress();
+      if (ev.mode !== "replay") startTriageTicker();
       break;
     }
     case "first_look":
