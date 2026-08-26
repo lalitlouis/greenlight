@@ -1,4 +1,4 @@
-.PHONY: install dev run serve test lint check clean
+.PHONY: install dev run serve test lint check clean deploy
 
 install:
 	python3 -m venv .venv && .venv/bin/pip install -q -U pip && .venv/bin/pip install -r requirements-dev.txt
@@ -14,6 +14,9 @@ serve:          ## web UI (upload / live stream / replay) on :8080
 
 test:
 	.venv/bin/pytest -q
+
+deploy:         ## guarded deploy: refuses while analyses are in flight; syncs worker image
+	./scripts/safe_deploy.sh
 
 logs:           ## tail production logs (structured JSON lines)
 	gcloud beta run services logs read greenlight --region us-central1 --limit 80

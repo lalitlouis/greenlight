@@ -1110,11 +1110,15 @@ async def client_log(body: ClientLog, request: Request) -> dict[str, bool]:
 
 @app.get("/api/metrics-lite")
 async def metrics_lite() -> dict[str, Any]:
+    running = sum(1 for h in RUNS.values() if h.mode == "live" and h.status == "running")
+    running += sum(1 for h in WRITER_RUNS.values() if h.get("status") == "running")
+    fleet = await asyncio.to_thread(_fleet_running)
     return {
         **_metrics,
         "uptime_s": round(_time_module.time() - _metrics["started_at"]),
         "tracked_runs": len(RUNS),
         "tracked_writer_runs": len(WRITER_RUNS),
+        "running_now": max(running, fleet),
     }
 
 
