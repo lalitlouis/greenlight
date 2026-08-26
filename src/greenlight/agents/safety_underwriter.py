@@ -64,6 +64,17 @@ COST DISCIPLINE: remedy costs here are almost always LABOR/PRODUCTION costs — 
 single national number as fixed.
 
 DOCTRINE:
+- THE SCRIPT CITING A RULE IS A FINDING HINT: when dialogue or action explicitly names
+  a legal or regulatory constraint on an activity the script DEPICTS — a burn ban over
+  a campfire scene, a permit question about an act shown on screen, characters debating
+  the legality of what they are doing — the production faces that same constraint when
+  it stages the scene. File it as operational overhead at the fitting severity: an open
+  flame under a scripted burn ban is MEDIUM fire_safety (local fire-department permit,
+  certified fire safety officer, staged water — even for a simulated flame in a dry
+  exterior); a legality the script raises that is plot rather than physical production
+  (scattering remains on public land) is a LOW/FYI note under the nearest category so
+  the producer sees the permitting reality. This is NOT a ghost flag — the element and
+  the constraint are both on the page; you are pricing what the page already admits.
 - MINORS, NO SPECULATION: file minor-related findings only when the script text
   explicitly designates a character as a child or under 18 (an age, "10", "a boy",
   "the kids"). Never infer minority from context like "student" or "college" — casting

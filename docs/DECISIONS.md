@@ -6,6 +6,20 @@ them. Append-only; newest entries at the top. Bigger architecture decisions live
 
 ---
 
+## 2026-08-26 — Switchback validation + the "script cites a rule" principle
+
+Fifth external review (Switchback, a quiet two-hander): 100/100 with correct restraint —
+mention-vs-use held (CCR recording and a Jack Daniel's bottle processed as standard cues
+without false-positive tantrums), zero ghost flags, anxiety scaled to the script. Two
+soft misses shared one missing principle, now in the safety desk's doctrine: WHEN THE
+SCRIPT ITSELF CITES A RULE, THE PRODUCTION FACES THAT RULE — dialogue naming a burn ban
+over a depicted campfire = MEDIUM fire_safety (fire permit, certified FSO, staged water,
+even simulated); script-raised legality that is plot rather than physical production
+(scattering remains) = LOW/FYI permitting note. Distinct from ghost flags: element and
+constraint are both on the page. Also reverted the SCRIPT MONO typewriter theme same day
+(user verdict: no) — clean two-commit revert back to midnight-navy/gold; the mono
+experiment's assets live in git history if ever revisited.
+
 ## 2026-08-26 — Hangover stress test: the pendulum correction
 
 Fourth external review (The Hangover run) caught two regressions the doctrine overhaul
