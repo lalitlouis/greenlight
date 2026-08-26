@@ -1,6 +1,41 @@
 # Status
 
-Last updated: **2026-08-24** (night). Deadline **2026-09-09, 2:00 PM PT** — treat Sept 8 as real.
+Last updated: **2026-08-27** (overnight autonomous sprint). Deadline **2026-09-09, 2:00 PM PT** —
+treat Sept 8 as real.
+
+## Current state (2026-08-27)
+
+Everything below the architecture section describes the Aug-24 build; this block is what
+changed since. Full decision-by-decision history: `docs/DECISIONS.md`.
+
+- **Worker architecture live (ADR-1 Phase 2/3):** analyses run as Cloud Run Jobs
+  (`greenlight-worker`), deploy-immune, journaling events to Firestore
+  (`clearance_runs/{id}/events`); any instance relays any run's SSE stream. Deploys go
+  through `make deploy` (`scripts/safe_deploy.sh` — refuses while `running_now > 0`,
+  syncs the worker image). Fleet cap `MAX_CONCURRENT_LIVE=5`.
+- **Feature-length proven:** 109-scene original stress script (341s clean, 11/12 trap key)
+  and 189-scene The Social Network (22 min, 171 entities). 429s fixed by per-desk triage
+  slicing, the Vertex **global endpoint** (`GOOGLE_CLOUD_LOCATION=global`; embeddings pinned
+  regional via `EMBED_LOCATION`), patient retries, and salvage that runs verification itself.
+- **Doctrine hardened by 7 external reviews:** Rogers/expressive-work calibration,
+  mention-vs-USE (cameos/played songs/depicted tattoos/branded property must flag),
+  cleared-item-is-silence on ALL desks, depicted-vs-recounted for stunts,
+  script-cites-a-rule for permits, counting discipline (stem search, script-wide),
+  name-commonality negative checks, PRO repertory targeting, cost-kind labeling.
+- **Anti-hallucination:** citation excerpts must exist verbatim in retrieved material
+  (index-based provenance check in `file_flag`); verifier rejects absence-premised and
+  multi-step-inference claims; language guard warns on non-English uploads.
+- **Product since Aug 24:** What-If rating simulator (+ suggestions), Clearance Binder
+  (page/CSV/PDF), one-sheet (page/PDF), revised-script export (.fountain/.fdx), First Look
+  (instant profile + unverified impressions), mission-control run page (scene strip +
+  agent-network graph + narrator), report section nav + scene hover previews + live
+  cross-references, sign-in required to run, Secret Manager for all credentials, page-scaled
+  research budgets, real PDF downloads, styled dialogs, notify-on-done.
+- **Theme:** midnight navy + marquee gold (green retired from chrome; semantic go-green
+  kept). A typewriter/Courier experiment was tried and reverted same-day — in git history.
+- **Remaining before submission:** demo-record refresh (in progress tonight — new
+  depicted-tattoo trap, 21-check eval), case-study regens (Reservoir Dogs, LMS), the
+  3-minute video (docs/DEMO.md), Devpost form completion.
 
 ## Architecture changed on 2026-08-23 — read this first
 
