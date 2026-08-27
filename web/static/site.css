@@ -245,9 +245,9 @@ main:has(> .hero-band:first-child) { padding-top: 0; }
   margin-top: 0;
   padding-top: 56px;
   background:
-    radial-gradient(760px 420px at 85% -10%, rgba(227, 179, 65, 0.25), transparent 55%),
-    radial-gradient(700px 420px at 0% 110%, rgba(52, 211, 153, 0.14), transparent 55%),
-    linear-gradient(155deg, #0a1424 0%, #122a4a 60%, #1a3a66 115%);
+    radial-gradient(760px 420px at 85% -10%, rgba(227, 179, 65, 0.16), transparent 55%),
+    radial-gradient(700px 420px at 0% 110%, rgba(52, 211, 153, 0.1), transparent 55%),
+    linear-gradient(155deg, #0a0d14 0%, #0e1420 60%, #131c2e 115%);
   border-bottom: 0;
 }
 .hero-band .hero h1 { color: #f8f4e9; }
@@ -366,8 +366,8 @@ a.step-card:hover { text-decoration: none; box-shadow: var(--shadow-lg); }
   padding: 72px 40px;
   text-align: center;
   background:
-    radial-gradient(560px 300px at 88% 0%, rgba(200, 153, 31, 0.22), transparent 60%),
-    linear-gradient(135deg, #0c1524, #16305a);
+    radial-gradient(560px 300px at 88% 0%, rgba(200, 153, 31, 0.18), transparent 60%),
+    linear-gradient(135deg, #0b0f18, #131d30);
   border-radius: 28px;
   color: #f7f4ea;
 }
