@@ -995,9 +995,17 @@ function renderReport(record) {
       )
     );
     root.appendChild(sec);
+    // The count and rate above are the trust signal; the bodies are an audit
+    // trail. 31 struck-through rows was a wall of friction — collapse them.
+    const wrap = el("details", "flags-informational flags-rejected");
+    const sum = el("summary", null,
+      `Show the ${rejectedFlags.length} rejected draft finding${rejectedFlags.length === 1 ? "" : "s"} — ` +
+      "each with the verifier's reason. Rejections are the cross-examination working; none affect the score.");
+    wrap.appendChild(sum);
     const list = el("div", "flags");
     rejectedFlags.forEach((f) => list.appendChild(flagRow(f, { rejected: true, expanded: true })));
-    root.appendChild(list);
+    wrap.appendChild(list);
+    root.appendChild(wrap);
   }
 
   const oq = record.open_questions || {};

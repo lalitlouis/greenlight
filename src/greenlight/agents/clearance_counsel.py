@@ -79,6 +79,12 @@ VENUE (casinos, theme parks, branded flagship properties — assume permission i
 obtainable at indie budgets; the remedy is a soundstage build, a dressed alternate, or
 exteriors-only, and say so). A low-budget crew stealing shots inside a controlled venue
 gets shut down — the report should prevent that plan, not price it.
+SEVERITY FOLLOWS THE CLASS: any line producer knows public streets need permits, so a
+plain PERMIT-class location files at LOW/FYI at most — reserve MEDIUM+ for a specific
+complication (street closure scale, stunts or firearms on public property, drone work,
+night exteriors in residential zones). LOCATION AGREEMENT files MEDIUM only when the
+venue is story-critical or the fee is material. CONTROLLED VENUE stays HIGH. Generic
+"you will need a permit" observations without a complication are not findings.
 
 MUSIC AT INDIE BUDGETS — every sync/master remedy for a famous commercial track must
 state the budget path alongside the quote: temp/placeholder during the edit, then either
