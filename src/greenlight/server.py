@@ -379,17 +379,17 @@ def _versioned_html(name: str) -> str:
     html = (STATIC_DIR / name).read_text()
     html = html.replace('href="/static/', f'href="/static/v-{ASSET_VERSION}/')
     html = html.replace('src="/static/', f'src="/static/v-{ASSET_VERSION}/')
-    return html
+    # theme boot runs before stylesheets paint (no parchment flash for dark
+    # users); an external file because CSP script-src is 'self', no inline
+    boot = f'<script src="/static/v-{ASSET_VERSION}/theme-boot.js"></script>'
+    return html.replace("<head>", "<head>" + boot, 1)
 
 
 def _page(name: str):
     async def serve() -> HTMLResponse:
         """Serve the page with version-stamped asset URLs: a new deploy gets new
         URLs, so a browser can never mix cached files from two revisions."""
-        html = (STATIC_DIR / name).read_text()
-        html = html.replace('href="/static/', f'href="/static/v-{ASSET_VERSION}/')
-        html = html.replace('src="/static/', f'src="/static/v-{ASSET_VERSION}/')
-        return HTMLResponse(html)
+        return HTMLResponse(_versioned_html(name))
 
     return serve
 

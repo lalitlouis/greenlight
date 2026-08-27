@@ -406,6 +406,28 @@ function injectChrome() {
   inner.appendChild(nav);
 
   const actions = el("div", "header-actions");
+  const theme = el("button", "theme-toggle");
+  theme.type = "button";
+  const applyThemeIcon = () => {
+    const dark = document.documentElement.dataset.theme === "dark";
+    theme.textContent = dark ? "☀" : "☾";
+    theme.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
+    theme.title = theme.getAttribute("aria-label");
+  };
+  applyThemeIcon();
+  theme.addEventListener("click", () => {
+    const next = document.documentElement.dataset.theme === "dark" ? "" : "dark";
+    if (next) document.documentElement.dataset.theme = next;
+    else delete document.documentElement.dataset.theme;
+    try {
+      if (next) localStorage.setItem("sr-theme", next);
+      else localStorage.removeItem("sr-theme");
+    } catch (e) {
+      /* private mode: theme just won't persist */
+    }
+    applyThemeIcon();
+  });
+  actions.appendChild(theme);
   const cta = el("button", "btn btn-primary", "Analyze a screenplay");
   cta.type = "button";
   cta.addEventListener("click", promptUpload);
