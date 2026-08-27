@@ -170,6 +170,7 @@ function linkifyRefs(text) {
       const node = $("flag-" + part);
       if (!node) return;
       node.querySelector(".expand")?.classList.remove("hidden");
+      revealInDetails(node);
       node.scrollIntoView({ behavior: "smooth", block: "center" });
       node.classList.add("hilite");
       setTimeout(() => node.classList.remove("hilite"), 2200);
@@ -770,6 +771,14 @@ function buildReportNav(record, rep) {
   return nav;
 }
 
+function revealInDetails(node) {
+  let d = node?.closest?.("details");
+  while (d) {
+    d.open = true;
+    d = d.parentElement?.closest?.("details");
+  }
+}
+
 function renderReport(record) {
   CURRENT_RECORD = record;
   const root = $("report");
@@ -896,7 +905,8 @@ function renderReport(record) {
         const node = target && $("flag-" + target.flag_id);
         if (!node) return;
         node.querySelector(".expand")?.classList.remove("hidden");
-        node.scrollIntoView({ behavior: "smooth", block: "center" });
+        revealInDetails(node);
+      node.scrollIntoView({ behavior: "smooth", block: "center" });
         node.classList.add("hilite");
         setTimeout(() => node.classList.remove("hilite"), 2200);
       });
@@ -925,6 +935,7 @@ function renderReport(record) {
       row.addEventListener("click", () => {
         const node = $("flag-" + f.flag_id);
         node?.querySelector(".expand")?.classList.remove("hidden");
+        revealInDetails(node);
         node?.scrollIntoView({ behavior: "smooth", block: "center" });
       });
       row.appendChild(el("span", "driver-rank", String(i + 1)));
@@ -946,9 +957,26 @@ function renderReport(record) {
   secFlags.id = "sec-findings";
   secFlags.appendChild(el("h2", null, `Findings — ${cited.length}, every one cited`));
   root.appendChild(secFlags);
+  // A producer's screen belongs to what can sue them or crash the budget:
+  // actionable severities render up front; FYI/LOW informational rows (mostly
+  // protected expressive-use mentions) collapse behind one honest line.
+  const actionable = cited.filter((f) => f.severity !== "FYI" && f.severity !== "LOW");
+  const informational = cited.filter((f) => f.severity === "FYI" || f.severity === "LOW");
   const flags = el("div", "flags");
-  cited.forEach((f) => flags.appendChild(flagRow(f, { expanded: f.severity === "BLOCKER" })));
+  actionable.forEach((f) => flags.appendChild(flagRow(f, { expanded: f.severity === "BLOCKER" })));
   root.appendChild(flags);
+  if (informational.length) {
+    const wrap = el("details", "flags-informational");
+    wrap.id = "sec-informational";
+    const sum = el("summary", null,
+      `${informational.length} informational item${informational.length === 1 ? "" : "s"} (LOW / FYI) — ` +
+      "background mentions and protected expressive use; nothing here blocks production");
+    wrap.appendChild(sum);
+    const list = el("div", "flags");
+    informational.forEach((f) => list.appendChild(flagRow(f, {})));
+    wrap.appendChild(list);
+    root.appendChild(wrap);
+  }
 
   const rejectedFlags = record.rejected_flags || [];
   if (rejectedFlags.length) {
@@ -1047,6 +1075,7 @@ function renderReport(record) {
     const node = document.querySelector(window.location.hash);
     if (node) {
       node.querySelector(".expand")?.classList.remove("hidden");
+      revealInDetails(node);
       node.scrollIntoView({ behavior: "smooth", block: "center" });
       node.classList.add("hilite");
       setTimeout(() => node.classList.remove("hilite"), 2200);

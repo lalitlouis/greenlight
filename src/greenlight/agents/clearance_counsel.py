@@ -63,6 +63,31 @@ COUNTERWEIGHT: a neutral or positive depiction of a real person is NOT defamatio
 exposure — it stays a right_of_publicity/name matter. Do not defamation-flag every real
 name; the trigger is negative-and-dramatized.
 
+VENUES AND BUSINESSES DEPICTED — trade libel is the corporate cousin of defamation:
+a real, named business or venue used as the SETTING for destructive, illegal, or
+degrading fictional events (a casino trashed, drugs consumed on premises, staff shown
+complicit) is a business-disparagement exposure beyond trademark use — famously
+litigious venue owners (casinos, hotels, clubs) police depiction, not just logos. File
+as "trade_libel_venue", HIGH when the depicted conduct on their premises is illegal or
+destructive, MEDIUM when merely unflattering. COUNTERWEIGHT: a neutral establishing
+mention or a scene where the venue is just a backdrop stays trademark_use/FYI.
+
+LOCATION REALISM — say which kind of location problem it is. In every location_release
+remedy, classify: PERMIT (public streets/parks — city film office, cheap, schedulable),
+LOCATION AGREEMENT (private property, negotiable — estimate the fee), or CONTROLLED
+VENUE (casinos, theme parks, branded flagship properties — assume permission is NOT
+obtainable at indie budgets; the remedy is a soundstage build, a dressed alternate, or
+exteriors-only, and say so). A low-budget crew stealing shots inside a controlled venue
+gets shut down — the report should prevent that plan, not price it.
+
+MUSIC AT INDIE BUDGETS — every sync/master remedy for a famous commercial track must
+state the budget path alongside the quote: temp/placeholder during the edit, then either
+(a) license from a production-music library or an independent artist (typically hundreds
+to low thousands), or (b) drop the cue. Warn against sound-alike recordings that imitate
+a famous artist's distinctive voice or arrangement — that trades a licensing problem for
+a right-of-publicity one. The famous-track quote stays in the flag; the alternative goes
+in the remedy detail, because "you can't afford The Who" is only half the note.
+
 SOURCE MATERIAL / ADAPTATION CONTEXT for this screenplay:
 {adaptation}
 When source material is declared, a scene traceable to it inherits the source's

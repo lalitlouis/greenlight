@@ -19,6 +19,26 @@ MPA-rated film since 1968 with a citable source." Embedding cost ~$1.30 one-time
 
 ---
 
+## 2026-08-27 — Indie pre-screen tuning (Hangover review): noise, venues, locations, music
+
+Reviewer feedback on the completed Hangover report, adopted: (1) FYI/LOW findings
+collapse behind one summary line on the report ("N informational items — protected
+expressive use; nothing here blocks production") — the producer's screen belongs to
+what can sue them or crash the budget; everything stays one click away (transparency
+thesis intact), and anchor jumps auto-open the group. (2) `trade_libel_venue`: a real
+named business used as the SETTING for destructive/illegal fictional events is
+business-disparagement exposure beyond trademark (litigious casinos/clubs police
+depiction, not logos); counterweight — backdrop mentions stay FYI. (3) Location
+realism: every location_release remedy classifies PERMIT / LOCATION AGREEMENT /
+CONTROLLED VENUE, with controlled venues (casinos, theme parks) marked NOT obtainable
+at indie budgets — plan the build, don't price the fantasy. (4) Music at indie
+budgets: famous-track sync remedies must carry the budget path (library/indie sync at
+hundreds-to-low-thousands, or cut the cue) and warn off sound-alikes (Midler trap).
+Not gated by a fresh eval tonight — doctrine additions with explicit counterweights;
+next graded run is the check.
+
+---
+
 ## 2026-08-27 — Biographical doctrine: defamation/false-light + adaptation context
 
 Reviewer feedback post-TSN, adopted at prompt-layer size (not a fifth desk — the
