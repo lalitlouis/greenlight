@@ -184,7 +184,13 @@ main { min-height: 60vh; padding: 56px 0 96px; }
   .site-nav a { padding: 8px 7px; font-size: 15px; }
   .header-actions .btn-primary { display: none; }
   .auth-me span { display: none; }
+  /* the nav swipes WITHIN the header on phones — the page itself never pans */
+  .site-nav { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .site-nav::-webkit-scrollbar { display: none; }
 }
+
+/* nothing may make the page pan sideways — wide content scrolls in its own box */
+html, body { overflow-x: clip; }
 
 /* ---------- footer ---------- */
 .site-footer { background: #101b2e32; background: #101b2e; border-top: 0; margin-top: 60px; color: #e9e4d4; }
@@ -1349,3 +1355,6 @@ tr.bd-sev-BLOCKER { background: rgba(224, 52, 42, 0.045); }
 .arch-rail { border: 1px dashed var(--line-2); border-radius: 12px; padding: 11px 13px; font-size: 12.5px; }
 .arch-rail b { display: block; margin-bottom: 3px; font-size: 12.5px; }
 .arch-rail span { color: var(--ink-3); font-size: 11.5px; line-height: 1.45; }
+
+/* writer start card: hero-ctas is centered for the hero — inside a card it aligns left */
+.wr-start .hero-ctas { justify-content: flex-start; }
