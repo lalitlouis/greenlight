@@ -12,6 +12,7 @@ explain before shipping a change to an instruction or the verifier.
 from __future__ import annotations
 
 import glob
+import os
 import json
 import sys
 
@@ -51,7 +52,7 @@ def main() -> int:
     path = (
         sys.argv[1]
         if len(sys.argv) > 1
-        else max(glob.glob("runs/run_*.json"), key=lambda p: __import__("os").path.getmtime(p))
+        else max(glob.glob("runs/run_*.json"), key=os.path.getmtime)
     )
     with open(path) as fh:
         r = json.load(fh)
