@@ -1081,7 +1081,23 @@ function startStream(url) {
   };
 }
 
+function wireFirstLookCollapse() {
+  const btn = $("fl-collapse");
+  const card = $("firstlook");
+  if (!btn || !card) return;
+  const apply = (min) => {
+    card.classList.toggle("fl-min", min);
+    btn.textContent = min ? "Show" : "Hide";
+    try { sessionStorage.setItem("fl-min", min ? "1" : ""); } catch (e) { /* fine */ }
+  };
+  let min = false;
+  try { min = sessionStorage.getItem("fl-min") === "1"; } catch (e) { /* fine */ }
+  apply(min);
+  btn.addEventListener("click", () => apply(!card.classList.contains("fl-min")));
+}
+
 document.addEventListener("DOMContentLoaded", () => {
+  wireFirstLookCollapse();
   $("detail-toggle")?.addEventListener("click", () => {
     const on = document.body.classList.toggle("show-detail");
     const arrow = document.querySelector("#detail-toggle .dd-arrow");
