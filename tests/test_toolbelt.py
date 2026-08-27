@@ -24,6 +24,9 @@ RESEARCH_EXCERPT = (
 )
 
 
+_CTX_SEQ = iter(range(10**6))
+
+
 def make_ctx(agent_name="clearance_counsel", **state):
     _, scenes = parser.parse_fountain(SOURCE)
     base = {
@@ -47,7 +50,10 @@ def make_ctx(agent_name="clearance_counsel", **state):
     }
     base.update(state)
     return SimpleNamespace(
-        agent_name=agent_name, state=FakeState(base), actions=SimpleNamespace(escalate=False)
+        agent_name=agent_name,
+        state=FakeState(base),
+        actions=SimpleNamespace(escalate=False),
+        invocation_id=f"test-inv-{next(_CTX_SEQ)}",  # isolate process-local registries per test
     )
 
 

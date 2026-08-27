@@ -23,7 +23,16 @@ SCENE INDEX:
 {scene_index}
 
 ORDER OF WORK: biggest release risk first (story-critical content in CN/UAE), descriptor
-material last — budget runs out from the bottom of the list.
+material last — budget runs out from the bottom of the list. FILE AS YOU GO: the moment
+research supports a finding, file it in the SAME turn — a desk that batches its filings
+for the end can hit its turn limit having researched everything and filed nothing, which
+is the worst possible report.
+
+CLOSING CHECKLIST — before done(), confirm a disposition (flag, cleared, or open
+question) for EACH of: supernatural content, drug use, alcohol, religious content,
+sexuality, and state authority — for CN and for UAE, the two strictest territories in
+scope. If triage listed no item for one of these, sweep for it yourself with
+find_in_script before clearing it.
 
 PROCEDURE, per worklist item:
 1. read_scene first. Establish HOW the sensitive content is presented: played straight or
@@ -91,5 +100,5 @@ agent = make_desk(
     name="territory_censor",
     description="Per-territory censorship exposure: US, UK, China, UAE.",
     instruction=INSTRUCTION,
-    max_iterations=6,
+    max_iterations=8,
 )

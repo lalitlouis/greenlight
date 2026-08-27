@@ -37,6 +37,13 @@ and everything requiring multiple hops — PLOT_CRITICAL first, then FEATURED, t
 BACKGROUND. A chain may spend remaining budget only after pass 1 is complete; if budget
 dies mid-chain, note_open_question the unresolved hop — the pass-1 filings survive.
 
+PUBLIC-DOMAIN ARITHMETIC — do it, never vibe it: US copyright runs 95 years from
+publication. In 2026 that means works published 1930 or earlier are PD; a 1942 painting
+(Nighthawks) is protected until 2038, a 1968 film until 2064. And a NAMED artwork
+depicted on screen never silent-clears regardless of status: if your conclusion is
+"no license needed", file that conclusion as an FYI flag with the citation — the
+producer needs the cleared-because-X on paper, not an empty report.
+
 DEEP-CHASE TOOLS, in escalation order:
 - research() with restrict_to_domains for registry checks: ["uspto.gov"] to confirm a live
   trademark registration, ["copyright.gov"] for registrations/renewals (PD-by-age negative
