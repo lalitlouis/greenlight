@@ -47,6 +47,16 @@ CASES = {
 }
 
 
+CASE_TIMEOUT_S = 35 * 60  # a stalled model/API call must fail loudly, not hang the batch
+
+
+async def _run_case_with_timeout(path, target, title):
+    return await asyncio.wait_for(
+        pipeline.run(path, budgets=dict(CASE_BUDGETS), target_rating=target, title_hint=title),
+        timeout=CASE_TIMEOUT_S,
+    )
+
+
 def wait_for_quiet() -> None:
     while True:
         try:
@@ -60,6 +70,7 @@ def wait_for_quiet() -> None:
 
 
 def main() -> int:
+    failures = []
     for slug, (src, target) in CASES.items():
         out = ROOT / "runs" / f"case_{slug}.json"
         existing = json.loads(out.read_text()) if out.exists() else {}
@@ -81,9 +92,20 @@ def main() -> int:
         wait_for_quiet()
         print(f"=== {title}: running with case budgets {CASE_BUDGETS} ===")
         t0 = time.time()
-        record = asyncio.run(
-            pipeline.run(path, budgets=dict(CASE_BUDGETS), target_rating=target, title_hint=title)
-        )
+        record = None
+        for attempt in (1, 2):
+            try:
+                record = asyncio.run(_run_case_with_timeout(path, target, title))
+                break
+            except TimeoutError:
+                print(
+                    f"{slug}: TIMEOUT after {CASE_TIMEOUT_S // 60} min (attempt {attempt}) — "
+                    + ("retrying once" if attempt == 1 else "giving up, existing case kept"),
+                    flush=True,
+                )
+        if record is None:
+            failures.append(slug)
+            continue
         mins = (time.time() - t0) / 60
         if record.get("error"):
             print(f"{slug}: RUN ERROR {record['error']!r} — existing case kept")
@@ -108,6 +130,9 @@ def main() -> int:
             f"rating {(rep.get('rating_prediction') or {}).get('predicted')}, "
             f"open questions {len(oq)} (budget-phrased: {budget_leak}), {mins:.1f} min"
         )
+    if failures:
+        print(f"FAILED CASES: {', '.join(failures)}", flush=True)
+        return 1
     return 0
 
 
