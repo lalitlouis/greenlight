@@ -227,7 +227,8 @@ def onesheet_pdf(record: dict[str, Any]) -> bytes:
         if rc and len(rc) == 2 and rc[0] >= 0:
             c.setFont("Helvetica-Bold", 9)
             c.setFillColor(CREAM)
-            c.drawRightString(w - margin, y, f"${rc[0]:,.0f}–${rc[1]:,.0f}")
+            label = "no fee expected" if rc == [0, 0] else f"${rc[0]:,.0f}–${rc[1]:,.0f}"
+            c.drawRightString(w - margin, y, label)
         y -= 0.52 * inch
 
     # rating strip

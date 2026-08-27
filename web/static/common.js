@@ -24,6 +24,7 @@ function el(tag, cls, text) {
 
 function money(range) {
   if (!range || range.length < 2) return null;
+  if (range[0] === 0 && range[1] === 0) return "no fee expected";
   const f = (n) => "$" + Math.round(n).toLocaleString("en-US");
   return `${f(range[0])}–${f(range[1])}`;
 }
