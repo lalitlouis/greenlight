@@ -146,3 +146,11 @@ const FX = (() => {
 })();
 
 window.FX = FX;
+
+/* Self-boot: hero/reveal/counter effects attach wherever their targets exist.
+   Inline boot scripts were CSP-dead (script-src 'self'); pages need none. */
+document.addEventListener("DOMContentLoaded", () => {
+  window.FX?.hero();
+  window.FX?.reveals();
+  window.FX?.counters();
+});

@@ -23,12 +23,7 @@
 <script defer src="/static/vendor/ScrollTrigger.min.js"></script>
 <script defer src="/static/common.js"></script>
 <script defer src="/static/fx.js"></script>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  window.FX?.hero();
-  window.FX?.reveals();
-});
-</script>
+<script defer src="/static/carousel.js"></script>
 </head>
 <body>
 <main>
@@ -176,6 +171,31 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
     </div>
 
+    <section class="home-section" id="showcase">
+      <div class="section-head" data-reveal>
+        <span class="kicker">See it work</span>
+        <h2>Findings that survive cross-examination</h2>
+        <p class="lede">Every desk must cite its sources, and a blinded verifier challenges every
+        finding — what you're seeing below is a real analysis, including the flag that got thrown
+        out.</p>
+      </div>
+      <div class="carousel" id="shot-carousel" data-reveal>
+        <div class="car-chrome" aria-hidden="true">
+          <span class="car-tl"></span><span class="car-tl"></span><span class="car-tl"></span>
+          <span class="car-url">scriptrisk.com</span>
+        </div>
+        <div class="car-frame">
+          <img class="car-img" id="car-img" src="/static/shots/reject.webp" alt="ScriptRisk product view" loading="lazy">
+          <button class="car-arrow" id="car-prev" type="button" aria-label="Previous">‹</button>
+          <button class="car-arrow car-next" id="car-next" type="button" aria-label="Next">›</button>
+        </div>
+        <div class="car-bar">
+          <p class="car-caption" id="car-caption"></p>
+          <div class="car-dots" id="car-dots" role="tablist"></div>
+        </div>
+      </div>
+    </section>
+
     <div class="hiw-actions" data-reveal>
       <h2>Do this now</h2>
       <div class="action-grid">
@@ -186,7 +206,7 @@ document.addEventListener("DOMContentLoaded", () => {
           understand everything above.</p>
           <span class="stage-cta">Watch now →</span>
         </a>
-        <a class="card action-card" href="#" onclick="promptUpload(); return false;">
+        <a class="card action-card" href="#" id="hiw-upload">
           <span class="ac-num">2</span>
           <h3>Run your screenplay</h3>
           <p>Fountain format, about five minutes, nothing stored between sessions. Watch the
