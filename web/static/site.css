@@ -1233,3 +1233,7 @@ tr.bd-sev-BLOCKER { background: rgba(224, 52, 42, 0.045); }
 
 .lang-caveat { margin-top: 6px; border: 1px solid var(--high); background: rgba(233, 124, 0, 0.07); border-radius: 10px; padding: 10px 14px; font-size: 13.5px; line-height: 1.5; color: var(--ink-2); }
 .lang-caveat b { color: var(--high); }
+
+.um-context { padding: 0 22px 4px; }
+.um-context-label { display: block; font-size: 11.5px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted, #6e6e73); margin-bottom: 6px; }
+.um-context-input { width: 100%; resize: vertical; min-height: 44px; border: 1px solid var(--line, #d9d2bf); border-radius: 10px; padding: 9px 11px; font: inherit; font-size: 13px; background: var(--surface, #fffdf6); color: inherit; }

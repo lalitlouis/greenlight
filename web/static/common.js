@@ -135,10 +135,13 @@ function hideUploadOverlay() {
 }
 
 /* fetch() cannot report upload progress; XHR can. Resolves with parsed JSON. */
-function uploadWithProgress(url, file) {
+function uploadWithProgress(url, file, extraFields) {
   return new Promise((resolve, reject) => {
     const form = new FormData();
     form.append("screenplay", file, file.name);
+    for (const [k, v] of Object.entries(extraFields || {})) {
+      if (v) form.append(k, v);
+    }
     const xhr = new XMLHttpRequest();
     xhr.open("POST", url);
     xhr.upload.onprogress = (e) => {
@@ -184,10 +187,12 @@ function toSignIn() {
   window.location.href = "/auth/login?next=" + next;
 }
 
-async function uploadScreenplay(file) {
+async function uploadScreenplay(file, sourceContext) {
   showUploadOverlay(file);
   try {
-    const { run_id } = await uploadWithProgress("/api/runs", file);
+    const { run_id } = await uploadWithProgress("/api/runs", file, {
+      source_context: sourceContext || "",
+    });
     setUploadProgress(100, "Desks are opening the script — taking you to the live run…");
     window.location.href = `/run?id=${run_id}`;
   } catch (e) {
@@ -228,6 +233,18 @@ function openUploadModal(opts) {
   const picked = el("div", "um-picked hidden");
   zone.appendChild(picked);
   modal.appendChild(zone);
+
+  const ctxWrap = el("div", "um-context");
+  const ctxLabel = el("label", "um-context-label", "Source material / life rights (optional)");
+  const ctxInput = document.createElement("textarea");
+  ctxInput.className = "um-context-input";
+  ctxInput.maxLength = 2000;
+  ctxInput.rows = 2;
+  ctxInput.placeholder =
+    'e.g. "Based on The Accidental Billionaires by Ben Mezrich; life rights: none" — helps the clearance desk separate adapted fact from invented scenes';
+  ctxWrap.appendChild(ctxLabel);
+  ctxWrap.appendChild(ctxInput);
+  modal.appendChild(ctxWrap);
 
   const foot = el("div", "um-foot");
   const go = el("button", "btn btn-primary um-go", action);
@@ -300,8 +317,9 @@ function openUploadModal(opts) {
   });
   go.addEventListener("click", () => {
     if (!file) return;
+    const context = ctxInput.value.trim();
     close();
-    onFile(file);
+    onFile(file, context);
   });
 }
 

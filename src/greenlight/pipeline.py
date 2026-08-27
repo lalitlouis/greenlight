@@ -100,8 +100,28 @@ def build_root_agent() -> SequentialAgent:
     )
 
 
+def adaptation_context(meta: dict[str, Any], provided: str | None) -> str:
+    """The 'based on what?' context: user-provided life-rights/source note plus
+    anything the title page declares (Source:, or any 'based on...' line).
+    Adapted-from-source scenes and pure invention carry very different
+    defamation exposure — the clearance desk calibrates on this."""
+    parts: list[str] = []
+    if provided and provided.strip():
+        parts.append(provided.strip())
+    for k, v in (meta or {}).items():
+        if not isinstance(v, str) or not v.strip():
+            continue
+        if k.lower() in ("source", "adaptation") or "based on" in v.lower():
+            parts.append(v.strip())
+    return "\n".join(dict.fromkeys(parts))  # dedupe, keep order
+
+
 def _initial_state(
-    text: str, scenes: list[dict[str, Any]], budgets: dict[str, int], target_rating: str
+    text: str,
+    scenes: list[dict[str, Any]],
+    budgets: dict[str, int],
+    target_rating: str,
+    adaptation: str = "",
 ) -> dict[str, Any]:
     scene_index = "\n".join(f"{s['scene_id']}  p{s['page']:>2}  {s['heading']}" for s in scenes)
     state: dict[str, Any] = {
@@ -110,6 +130,7 @@ def _initial_state(
         "script_annotated": parser.annotated_script(text, scenes),
         "scene_index": scene_index,
         "target_rating": target_rating,
+        "adaptation_context": adaptation,
     }
     for desk, budget in budgets.items():
         state[f"research_budget:{desk}"] = budget
@@ -227,6 +248,7 @@ async def run(
     title_hint: str | None = None,
     on_event: Any = None,
     target_rating: str = "PG-13",
+    source_context: str | None = None,
 ) -> dict[str, Any]:
     """Run the pipeline. on_event, if given, receives each structured event dict
     (see structured_events) as it happens — this is the UI's live stream."""

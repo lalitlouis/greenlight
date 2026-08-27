@@ -30,7 +30,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from fastapi import FastAPI, HTTPException, Request, UploadFile
+from fastapi import FastAPI, Form, HTTPException, Request, UploadFile
 from fastapi.responses import (
     FileResponse,
     HTMLResponse,
@@ -573,7 +573,10 @@ async def _run_live(handle: RunHandle, script_path: Path) -> None:
 
         asyncio.get_event_loop().run_in_executor(None, _first_look_then_publish)
         record = await pipeline.run(
-            script_path, on_event=handle.publish, title_hint=getattr(handle, "title_hint", None)
+            script_path,
+            on_event=handle.publish,
+            title_hint=getattr(handle, "title_hint", None),
+            source_context=getattr(handle, "source_context", None),
         )
         handle.record = record
         handle.status = "error" if record.get("error") else "done"
@@ -618,8 +621,11 @@ def _require_signin(request: Request) -> dict[str, Any]:
 
 
 @app.post("/api/runs")
-async def create_run(screenplay: UploadFile, request: Request) -> dict[str, str]:
+async def create_run(
+    screenplay: UploadFile, request: Request, source_context: str = Form("")
+) -> dict[str, str]:
     _check_rate(request)
+    source_context = (source_context or "").strip()[:2000]
     owner = _require_signin(request)
     source = screenplay_text(screenplay.filename or "", await _read_upload(screenplay))
     english_ok = langguard.probably_english(source)
@@ -646,6 +652,7 @@ async def create_run(screenplay: UploadFile, request: Request) -> dict[str, str]
     title = (screenplay.filename or "screenplay").rsplit(".", 1)[0]
     title = title.replace("-", " ").replace("_", " ").strip().title() or "Screenplay"
     handle.title_hint = title
+    handle.source_context = source_context
     await asyncio.to_thread(
         runstate.run_set,
         run_id,
@@ -655,6 +662,7 @@ async def create_run(screenplay: UploadFile, request: Request) -> dict[str, str]
             "title": title,
             "started_at": _time_module.time(),
             "english_ok": english_ok,
+            "source_context": source_context,
         },
     )
     if RUN_MODE == "worker":

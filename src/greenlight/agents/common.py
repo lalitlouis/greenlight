@@ -229,6 +229,11 @@ def make_desk(
         text = instruction + batch_note + COVERAGE_RULE
         text = text.replace("{triage}", json.dumps(sliced, ensure_ascii=False))
         text = text.replace("{scene_index}", str(ctx.state.get("scene_index", "")))
+        adaptation = str(ctx.state.get("adaptation_context") or "").strip() or (
+            "None provided — treat every dramatization of a real person as "
+            "unverified against any source material."
+        )
+        text = text.replace("{adaptation}", adaptation)
         return text
 
     worker = LlmAgent(

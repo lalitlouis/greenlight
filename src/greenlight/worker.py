@@ -83,7 +83,12 @@ def main() -> int:
 
     try:
         record = asyncio.run(
-            pipeline.run(script_path, on_event=publish, title_hint=state.get("title"))
+            pipeline.run(
+                script_path,
+                on_event=publish,
+                title_hint=state.get("title"),
+                source_context=state.get("source_context"),
+            )
         )
     except Exception as e:  # pipeline.run salvages internally; this is belt+braces
         publish.flush()

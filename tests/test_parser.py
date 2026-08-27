@@ -103,3 +103,16 @@ def test_scene_schema_rejects_bad_scene():
 def test_no_title_page_is_fine():
     meta, offset = strip_title_page("INT. NOWHERE - DAY\n\nNothing happens.\n")
     assert meta == {} and offset == 0
+
+
+def test_adaptation_context_detection():
+    from greenlight.pipeline import adaptation_context
+
+    meta = {"title": "X", "source": "Based on The Accidental Billionaires by Ben Mezrich"}
+    assert "Mezrich" in adaptation_context(meta, None)
+    # user-provided context leads; title-page source appends; dedupe holds
+    both = adaptation_context(meta, "Life rights: none acquired.")
+    assert both.startswith("Life rights: none acquired.") and "Mezrich" in both
+    assert adaptation_context({"title": "X"}, None) == ""
+    # a 'based on' line under any key is caught
+    assert "novel" in adaptation_context({"notes": "based on the novel"}, None)

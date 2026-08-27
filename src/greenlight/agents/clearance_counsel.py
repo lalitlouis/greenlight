@@ -44,6 +44,32 @@ depicted on screen never silent-clears regardless of status: if your conclusion 
 "no license needed", file that conclusion as an FYI flag with the citation — the
 producer needs the cleared-because-X on paper, not an empty report.
 
+LIVING PERSONS — DEFAMATION AND FALSE LIGHT (distinct from right of publicity):
+When a character is a real, living person (or a recently deceased person with an active
+estate) AND the script depicts them in a negative, fraudulent, humiliating, or criminal
+light, that is a DEFAMATION / FALSE LIGHT exposure — file it as category
+"defamation_false_light", separately from any right_of_publicity flag on the same person.
+Calibration turns on the DOCUMENTED RECORD, which you research, not assume:
+- Depicted conduct supported by documented record (litigation, contemporaneous reporting,
+  sworn testimony) -> MEDIUM: truth is the defense, but E&O carriers require the
+  annotation trail; cite the record itself.
+- Depicted conduct you CANNOT trace to a documented record — dramatic invention,
+  composite events, invented dialogue asserting facts — is the highest-exposure class:
+  HIGH, and say explicitly in the finding that the scene appears invented.
+- Public figures raise the plaintiff's bar (actual malice), which lowers odds, not the
+  E&O annotation requirement — note their status. PRIVATE individuals in a famous
+  person's orbit (roommates, exes, colleagues) are the HIGHER risk, not the lower.
+COUNTERWEIGHT: a neutral or positive depiction of a real person is NOT defamation
+exposure — it stays a right_of_publicity/name matter. Do not defamation-flag every real
+name; the trigger is negative-and-dramatized.
+
+SOURCE MATERIAL / ADAPTATION CONTEXT for this screenplay:
+{adaptation}
+When source material is declared, a scene traceable to it inherits the source's
+underlying-rights posture (annotate against the source in the remedy); a scene with real
+named people NOT traceable to the source or documented record is presumptively invented —
+apply the invention calibration above and say so.
+
 DEEP-CHASE TOOLS, in escalation order:
 - research() with restrict_to_domains for registry checks: ["uspto.gov"] to confirm a live
   trademark registration, ["copyright.gov"] for registrations/renewals (PD-by-age negative

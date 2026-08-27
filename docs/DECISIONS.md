@@ -19,6 +19,24 @@ MPA-rated film since 1968 with a citable source." Embedding cost ~$1.30 one-time
 
 ---
 
+## 2026-08-27 — Biographical doctrine: defamation/false-light + adaptation context
+
+Reviewer feedback post-TSN, adopted at prompt-layer size (not a fifth desk — the
+four-desk architecture mirrors the domain and stays): (1) Clearance now separates
+DEFAMATION / FALSE LIGHT (`defamation_false_light`) from right of publicity for real
+living persons depicted negatively — calibrated on the DOCUMENTED RECORD the desk must
+research: record-supported conduct MEDIUM (truth defense, annotation trail), untraceable
+dramatic invention HIGH with the invention named; public figures noted (actual malice
+raises the bar, not the annotation duty), private orbit-individuals ranked HIGHER.
+Counterweight: neutral/positive depictions never defamation-flag. (2) An adaptation
+channel end-to-end: optional "source material / life rights" field on upload + title-page
+Source/"based on" auto-detection -> `adaptation_context` state -> clearance instruction;
+scenes traceable to declared source inherit its rights posture, untraceable
+real-person scenes are presumptively invented. TSN's own findings (Saverin ouster,
+Erica Albright composite) are exactly this class.
+
+---
+
 ## 2026-08-27 — Clearance batching: the department hires associates
 
 Large-script fix, architecture-true: the clearance desk is now a ParallelAgent of up to
