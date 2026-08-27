@@ -181,25 +181,151 @@ visible or it may as well not exist.
 | Live demo network failure | Pre-computed run committed to `runs/` |
 | Latency on a feature script | Concurrent desks; per-entity research cache |
 
-## Scaling architecture (ADR-1, 2026-08-25)
+## Scaling architecture (ADR-1) — as built, 2026-08-26
 
-**Constraint today:** one Cloud Run instance holds run state, SSE queues, and rate limits in
-process memory; `max-instances=1` with session affinity. Ceiling ≈ a few concurrent runs and
-hundreds of visitors/day — sufficient for judging and early beta.
+ADR-1's "target shape" shipped ahead of its triggers. Current execution model:
 
-**Target shape** (invest ~2 focused weeks when triggered):
-1. **State**: run status/stages/stubs in **Firestore** (Phase 1, shipping now for writer runs);
-   rate limits follow.
-2. **Work**: pipelines execute in a worker service fed by **Cloud Tasks**; the web tier only
-   enqueues and serves. Idempotent tasks, retry with checkpoints.
-3. **Events**: SSE replaced by Firestore-backed polling (the Writer's Room already proved the
-   polling UX); or Pub/Sub → SSE bridge if live streaming stays a demo requirement.
-4. **Shutdown**: SIGTERM marks in-flight runs failed (Phase 1b, shipping now); with Cloud
-   Tasks, runs resume instead.
+- **Web tier**: Cloud Run service (`greenlight`), stateless for everything durable;
+  autoscales, `min-instances=1` to kill cold starts for visitors.
+- **Analysis execution**: one **Cloud Run Job** execution per run (`greenlight-worker`,
+  `RUN_MODE=worker`). Runs are **deploy-immune** — replacing the web service never
+  touches an in-flight analysis. Fleet cap `MAX_CONCURRENT_LIVE=5` enforced against the
+  Firestore ledger, not process memory.
+- **Event stream**: the worker journals structured events to Firestore
+  (`clearance_runs/{id}/events`, ordered chunk docs, ~1.5s cadence). ANY web instance
+  serves any run's live view by tailing the journal (`_journal_relay`); a page refresh
+  or instance restart replays the full journal — the client cannot tell the difference.
+- **Records**: immutable JSON in GCS after completion; the web tier serves them by id.
+- `scripts/safe_deploy.sh` is the only sanctioned deploy path: refuses while runs are in
+  flight, runs the unit suite and compliance scan first, and keeps the worker job pinned
+  to the same image as the service.
 
-**Triggers to invest:** first paying commitment, a partnership pilot, or sustained >50
-runs/day. Until then, phases ship incrementally behind graceful fallbacks — every phase is
-independently deployable and reversible.
+## Systems fundamentals (review edition)
 
-**Deliberately kept:** GCS as the document store (now app-layer encrypted), signed-cookie
-sessions (stateless by design), record-by-id addressing — all already multi-instance safe.
+The section a systems reviewer should read first. Claims here are load-bearing; the
+incident log backing them is `docs/DECISIONS.md` (2026-08-26/27 entries), and the
+capacity roadmap is `docs/SCALING.md`.
+
+### Authentication & authorization
+
+- **Users**: Google OAuth 2.0 authorization-code flow. Sessions are **stateless signed
+  cookies** (HMAC over `SESSION_SECRET`; no server-side session store to scale or lose).
+  Running an analysis requires sign-in; anonymous visitors get replays and case studies.
+- **Authorization** is owner-scoped: run records, scripts, deletion, and history are
+  keyed by the Google `sub` claim; a non-owner id guesses nothing because record ids are
+  128-bit random and every owner-gated route re-checks the session. Admin surface is
+  allowlisted by account.
+- **Services**: the worker job and web service run as least-privilege service accounts;
+  secrets (Parallel key, ClickHouse credentials, session/encryption keys, OAuth client)
+  live in **Secret Manager**, injected at deploy, never in the image or repo. The
+  browser never sees any third-party key — all external calls are server-side.
+
+### Security posture
+
+- **Transport**: TLS end to end (Cloud Run managed certs on scriptrisk.com).
+- **At rest**: GCS/Firestore encrypt by default; uploaded screenplays are additionally
+  **app-layer encrypted (Fernet: AES-128-CBC + HMAC) before they reach the bucket**, so
+  a bucket-level leak yields ciphertext. Key rotation strategy: key-version prefix on
+  blobs, re-encrypt on read (designed, not yet needed).
+- **Browser**: strict CSP (`script-src 'self'`, no inline scripts — enforced in anger:
+  the dark-mode boot script had to become an external file to comply), `frame-ancestors
+  'none'`, nosniff, restricted `form-action`.
+- **Abuse controls**: 5MB upload cap, MIME/extension allowlist, per-IP rate limits on
+  expensive endpoints, sign-in required for anything that spends money.
+- **Log privacy invariant**: log lines never contain screenplay text or titles
+  (exception types and counts only) — the privacy page promises it, `pipeline.py`
+  enforces it, and the run journal (which does carry excerpts) lives in Firestore
+  behind IAM rather than in logs.
+- **Supply chain**: `scripts/check_forbidden_deps.sh` blocks non-Google AI SDKs by name
+  on every `make check` and inside every deploy.
+
+### Caching (five layers, each with an owner and an invalidation story)
+
+| Layer | Scope | TTL / invalidation |
+|---|---|---|
+| Session research cache (`research:{entity}:{qhash}` in run state) | one run, all desks & batches | dies with the run |
+| Durable research cache (GCS) | cross-run, cross-user | 7 days; key = question hash, so identical questions share sources (score stability + cost moat) |
+| Provenance registry | process-local, one run | dies with the worker; deliberately NOT in shared state (parallel delta races, see incidents) |
+| Ratings corpus (ClickHouse) | global | rebuilt only by explicit re-ingest |
+| Static assets | browser/CDN-ready | version-stamped URLs per deploy (`/static/v-N/...`) — a browser can never mix two revisions |
+
+Records are immutable after completion, so report/binder/one-sheet reads are trivially
+cacheable; generated PDFs moving to write-once-at-completion is P0 in SCALING.md.
+
+### Resource usage (measured, per feature-length run)
+
+- 200–400 Gemini Flash calls (+1 Pro adjudication), 30–70 Parallel searches, ~$1–3 API
+  cost, 10–30 min wall clock. Concurrency inside a run: 4 desks (clearance further split
+  into ≤4 parallel batch agents with bounded context), verification semaphore = 10.
+- Fleet: ≤5 concurrent runs (ledger-enforced); worker container is CPU-light (the work
+  is remote LLM calls); web instance ~100–200 RPS for pages.
+- Hard ceilings that protect the bill: page-scaled research budgets per desk,
+  `deep_research` ≤2/desk at 3 credits each, LoopAgent iteration caps, retry caps on
+  every rejection path.
+
+### Monitoring & observability
+
+- **Structured logs**: `run_summary` (status/pages/timing, no content) per run;
+  warning-level lines for every live-API failure (exception type only).
+- **Live metrics**: `/api/metrics-lite` (uptime, runs, errors, `running_now`) +
+  durable all-time counters in Firestore.
+- **Audit trail**: the journal is a complete, replayable record of every tool call and
+  verdict in every run — debugging today's six production incidents used nothing else.
+- **External uptime checks** on the public site.
+- **Known gap (P0)**: log-based alerting (run failures, 429 bursts, journal stalls) is
+  designed but needs console setup; today a human watches.
+
+### Redundancy & availability
+
+- Web: multi-instance capable, `min-instances=1`; deploys are gated (tests + no-runs) and
+  roll atomically with version-stamped assets.
+- Runs: isolated per-Job; a web-tier crash or deploy cannot kill one. A page refresh
+  reattaches to the journal from event zero.
+- Data: GCS + Firestore are regionally replicated managed services; ClickHouse Cloud is
+  managed HA; all state that matters survives any single instance dying.
+- **Single-region honesty**: everything lives in us-central1 (embeddings are pinned
+  there; Gemini uses the global endpoint). A regional outage takes the product down —
+  accepted at this stage; multi-region is P2 in SCALING.md. RTO for that event =
+  redeploy elsewhere (~30 min, scripted path exists); RPO ≈ 0 for completed records
+  (durable in replicated storage), in-flight runs would need re-running.
+
+### Consistency model
+
+- **Firestore ledger/journal**: strongly consistent; journal chunks are append-ordered
+  with monotonic sequence — the relay never reorders or drops within a connection, and
+  reconnects replay from zero (idempotent client rendering).
+- **Records**: write-once at completion; readers see either "running" (live view) or
+  the complete record — never a partial.
+- **User history stubs**: eventually consistent by design (written at dispatch and at
+  completion); the reports page cross-checks any "running" stub against the ledger, so
+  a stale stub self-corrects on read.
+- **ADK session state**: deltas from concurrent branches merge **last-writer-wins** —
+  the sharpest edge in the system. Standing rule, paid for three times: NO mutable
+  shared value lives in a state key that two parallel agents write. Budgets, flag
+  lists, open questions, and research indices are per-agent keys; flag-id sequence,
+  provenance registry, retry ledgers, and live-API health are process-local keyed by
+  invocation (a run executes in exactly one process, which makes this sound).
+
+### Partition tolerance & failure modes (graceful-degradation matrix)
+
+| Dependency down | Behavior |
+|---|---|
+| Vertex Gemini (transient 429/5xx) | HTTP-layer retry ladder (8 attempts, 10→120s, jitter) on every model call incl. verifiers; the run breathes instead of dying |
+| Vertex (sustained) | circuit breaker: ≥4 consecutive failures with zero successes aborts the run LOUDLY (`RunAbortError`) — an unresearched report that looks real is worse than an honest failure |
+| Parallel API (one call) | error returned to the desk, budget refunded, failure counted and disclosed on the report ("N research calls failed") |
+| Parallel (sustained) | same circuit breaker |
+| ClickHouse | rating prediction degrades to explicit "comparables unavailable"; clearance work unaffected |
+| Firestore (journal write fails) | worker continues the analysis; the live view stales but the record still lands in GCS at completion |
+| Model misbehavior (hallucinated tool, malformed args, fabricated quote) | tool-error shield converts to corrective feedback; citation auto-repair substitutes registered verbatim text; per-flag retry caps prevent loops; the blinded verifier is the final gate |
+| Worker killed mid-run | salvage path verifies and persists everything filed; run marked failed honestly; resume-from-journal is the designed successor (P1) |
+
+The error-handling hierarchy, in one line: **model mistakes are conversation, transient
+faults are patience, dependency outages are loud aborts, and nothing else may end a
+paid run.**
+
+### Data lifecycle
+
+Upload → app-encrypted script + run ledger entry → journal (audit) → immutable record →
+user-initiated deletion removes record, script, and ownership marker permanently.
+Research cache entries expire at 7 days; journals persist for replay until deleted with
+the run.
