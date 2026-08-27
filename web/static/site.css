@@ -250,6 +250,23 @@ main:has(> .hero-band:first-child) { padding-top: 0; }
     linear-gradient(155deg, #0a0d14 0%, #0e1420 60%, #131c2e 115%);
   border-bottom: 0;
 }
+:root[data-theme="light"] .hero-band {
+  background:
+    radial-gradient(760px 420px at 85% -10%, rgba(200, 153, 31, 0.18), transparent 55%),
+    radial-gradient(700px 420px at 0% 110%, rgba(14, 124, 74, 0.08), transparent 55%),
+    linear-gradient(155deg, #f6f0e1 0%, #efe7d2 60%, #e9dfc6 115%);
+}
+:root[data-theme="light"] .hero-band .hero h1 { color: var(--ink); }
+:root[data-theme="light"] .hero-band .hero .sub { color: var(--ink-2); }
+:root[data-theme="light"] .hero-band .hero-note { color: var(--ink-3); }
+:root[data-theme="light"] .hero-band .btn-secondary { color: var(--ink); border-color: var(--line-2); }
+:root[data-theme="light"] .cta-band {
+  background:
+    radial-gradient(560px 300px at 88% 0%, rgba(200, 153, 31, 0.2), transparent 60%),
+    linear-gradient(135deg, #efe7d2, #e5d9ba);
+  color: var(--ink);
+}
+:root[data-theme="light"] .cta-band h2 { color: var(--ink); }
 .hero-band .hero h1 { color: #f8f4e9; }
 .hero-band .hero .sub { color: rgba(248, 244, 233, 0.82); }
 .hero-band .hero-note { color: rgba(248, 244, 233, 0.55); }
@@ -833,6 +850,7 @@ mark.d-add { background: rgba(10, 143, 82, 0.16); color: var(--green-deep); bord
   font-weight: 500;
 }
 .trust-strip span::before { content: "✓"; color: var(--gold); font-weight: 700; }
+:root[data-theme="light"] .trust-strip span { color: var(--ink-2); border-color: var(--line-2); background: rgba(255, 252, 244, 0.6); }
 .secure-note { font-size: 15px; color: var(--ink-3); margin: 10px 0 0; }
 
 /* the studio room */

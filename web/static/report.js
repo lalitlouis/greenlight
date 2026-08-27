@@ -424,7 +424,7 @@ function flagRow(f, opts) {
 
   const main = el("div", "flag-main");
   const top = el("div", "flag-top");
-  top.appendChild(el("span", `sev-chip sev-${f.severity}`, f.severity));
+  top.appendChild(glossTip(el("span", `sev-chip sev-${f.severity}`, f.severity), f.severity));
   top.appendChild(el("span", "cat", prettyCat(f.category)));
   top.appendChild(el("span", "by by-" + f.agent, prettyCat(f.agent)));
   main.appendChild(top);
@@ -455,7 +455,7 @@ function flagRow(f, opts) {
     costBox.appendChild(el("b", null, cost));
     costBox.appendChild(document.createTextNode("estimate"));
   } else {
-    costBox.appendChild(el("b", null, f.remedy?.action || ""));
+    costBox.appendChild(glossTip(el("b", null, prettyCatSafe(f.remedy?.action)), f.remedy?.action));
   }
   row.appendChild(costBox);
   return row;
@@ -769,6 +769,33 @@ function buildReportNav(record, rep) {
     });
   }, { passive: true });
   return nav;
+}
+
+const GLOSSARY = {
+  // remedy verbs
+  REPLACE: "Swap the element for a cleared or fictional alternative (a prop, a name, a track).",
+  OBTAIN_LICENSE: "Negotiate permission from the rights holder — the estimate is the going rate, not a quote.",
+  OBTAIN_RELEASE: "Get a signed release (location, person, artwork) before shooting.",
+  RESHOOT: "Solve it in production: reframe, day-for-night, VFX, or an alternate take.",
+  ADD_DISCLAIMER: "Add the standard on-screen disclaimer — an adjunct, rarely sufficient alone.",
+  ADD_SPECIALIST: "Hire the named specialist (stunt coordinator, armorer, animal handler) and budget their prep.",
+  CUT: "Remove the element or scene from the script — the zero-cost remedy when the beat isn't load-bearing.",
+  NO_ACTION: "No step needed — recorded so the clearance log shows it was considered, not missed.",
+  // severities
+  BLOCKER: "Will stop production, distribution, or insurance until resolved.",
+  HIGH: "Significant legal or budget exposure — resolve before principal photography.",
+  MEDIUM: "Real but routine — handle in normal pre-production.",
+  LOW: "Minor; fix opportunistically.",
+  FYI: "No action required — on the record so the log shows it was considered.",
+};
+
+function prettyCatSafe(v) {
+  return (v || "").replace(/_/g, " ");
+}
+
+function glossTip(node, term) {
+  if (GLOSSARY[term]) node.title = GLOSSARY[term];
+  return node;
 }
 
 function revealInDetails(node) {
