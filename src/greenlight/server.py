@@ -1306,7 +1306,9 @@ async def case_page(slug: str) -> HTMLResponse:
         f'<meta name="description" content="{desc}">',
         1,
     )
-    html = html.replace("</head>", f"<script>window.CASE_RUN_ID={record_id!r};</script></head>", 1)
+    # CSP forbids inline scripts (script-src 'self'), so the case's run id rides
+    # a meta tag that report.js reads — the inline version was silently blocked.
+    html = html.replace("</head>", f'<meta name="case-run-id" content="{record_id}"></head>', 1)
     return HTMLResponse(html)
 
 
