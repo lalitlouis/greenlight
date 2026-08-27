@@ -19,6 +19,24 @@ MPA-rated film since 1968 with a citable source." Embedding cost ~$1.30 one-time
 
 ---
 
+## 2026-08-27 — Phase 1 delivered: the scale gate, and what its first run caught
+
+`make scale-gate`: a deterministic generator (scripts/gen_scale_fixture.py) produces
+fixtures/scale_gate.fountain — an original 100-scene, ~95-entity band-tour feature that
+forces all four clearance batches — and scripts/eval_scale.py grades 21 checks: one per
+structural failure class of 2026-08-26 (abort, id collision, rejection loop, missing
+rating, wall clock, rejection-rate band) plus seeded traps for every doctrine layer.
+First run: structural tier 7/7 clean in 10 minutes; final 19/21. The gate immediately
+earned its keep by catching three bugs in its own tooling (mtime vs name-sorted "latest"
+record — eval_run had it too; flags_about unioning ALL flags on single-param calls —
+spurious passes/misses in both directions) and two genuine desk gaps for tomorrow:
+(1) ratings desk missed the clustered F-bombs (no rating_language flag at all),
+(2) trade_libel_venue doctrine did not fire on its first live casino-destruction test
+and no controlled-venue location classification attached. Discipline going forward:
+desk/tool/doctrine changes pass BOTH gates before deploy.
+
+---
+
 ## 2026-08-27 — Indie pre-screen tuning (Hangover review): noise, venues, locations, music
 
 Reviewer feedback on the completed Hangover report, adopted: (1) FYI/LOW findings

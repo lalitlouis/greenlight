@@ -33,8 +33,12 @@ def flags_matching(flags, *, category_any=None, scenes_any=None, desk=None, text
 
 def flags_about(flags, *, category_any=(), text_any=(), desk=None):
     """Category OR finding-text match — desks drift category slugs run to run."""
-    by_cat = flags_matching(flags, category_any=list(category_any), desk=desk)
-    by_text = flags_matching(flags, text_any=list(text_any), desk=desk)
+    # an empty filter must contribute NOTHING, not everything — a single-param
+    # call once unioned in every flag and graded garbage (scale gate, 2026-08-26)
+    by_cat = (
+        flags_matching(flags, category_any=list(category_any), desk=desk) if category_any else []
+    )
+    by_text = flags_matching(flags, text_any=list(text_any), desk=desk) if text_any else []
     seen, out = set(), []
     for f in by_cat + by_text:
         if f["flag_id"] not in seen:
@@ -44,7 +48,11 @@ def flags_about(flags, *, category_any=(), text_any=(), desk=None):
 
 
 def main() -> int:
-    path = sys.argv[1] if len(sys.argv) > 1 else sorted(glob.glob("runs/run_*.json"))[-1]
+    path = (
+        sys.argv[1]
+        if len(sys.argv) > 1
+        else max(glob.glob("runs/run_*.json"), key=lambda p: __import__("os").path.getmtime(p))
+    )
     with open(path) as fh:
         r = json.load(fh)
     flags = r["flags"]

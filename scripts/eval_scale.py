@@ -29,7 +29,11 @@ def check(name: str, ok: bool, note: str = "") -> None:
 
 
 def main() -> int:
-    path = sys.argv[1] if len(sys.argv) > 1 else sorted(glob.glob("runs/run_*.json"))[-1]
+    path = (
+        sys.argv[1]
+        if len(sys.argv) > 1
+        else max(glob.glob("runs/run_*.json"), key=lambda p: __import__("os").path.getmtime(p))
+    )
     r = json.load(open(path))
     rep = r.get("report") or {}
     flags = r.get("flags") or []
