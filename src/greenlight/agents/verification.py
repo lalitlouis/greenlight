@@ -250,7 +250,9 @@ class VerificationPanel(BaseAgent):
         from google import genai
 
         state = ctx.session.state
-        flags = [f for d in DESKS for f in state.get(f"flags:{d}", [])]
+        from greenlight.tools.toolbelt import desk_flags
+
+        flags = [f for d in DESKS for f in desk_flags(state, d)]
         if not flags:
             yield Event(
                 invocation_id=ctx.invocation_id,

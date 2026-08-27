@@ -34,6 +34,95 @@ FLAG_ID_OFFSET = {
     "territory_censor": 400,
 }
 
+# --- clearance batching -----------------------------------------------------
+# On entity-dense scripts one clearance conversation carrying 100+ case files
+# went quadratic (p99 537s) and hallucination-prone. The desk now runs as up to
+# CLEARANCE_MAX_BATCHES parallel batch agents named "clearance_counsel__bN",
+# each with a bounded slice of the worklist and a FRESH conversation. Identity
+# (_desk) stays "clearance_counsel"; every mutable per-desk key becomes
+# per-AGENT to avoid the parallel state-delta races this codebase keeps paying
+# for; readers aggregate with the desk_* helpers below.
+CLEARANCE_BATCH_SIZE = 25
+CLEARANCE_MAX_BATCHES = 4
+_PROMINENCE_RANK = {"PLOT_CRITICAL": 0, "FEATURED": 1, "BACKGROUND": 2}
+
+
+def _desk_name_of(agent_name: str) -> str:
+    """Base desk enum for a desk or batch-agent name; the name itself otherwise."""
+    for desk in DESKS:
+        if agent_name.startswith(desk):
+            return desk
+    return agent_name
+
+
+def batch_agent_names(desk: str) -> list[str]:
+    """The base desk name plus its possible batch-agent names."""
+    return [desk] + [f"{desk}__b{i}" for i in range(1, CLEARANCE_MAX_BATCHES + 1)]
+
+
+def desk_flags(state: Any, desk: str) -> list[dict[str, Any]]:
+    out: list[dict[str, Any]] = []
+    for name in batch_agent_names(desk):
+        out.extend(state.get(f"flags:{name}") or [])
+    return out
+
+
+def desk_open_questions(state: Any, desk: str) -> list[Any]:
+    out: list[Any] = []
+    for name in batch_agent_names(desk):
+        out.extend(state.get(f"open_questions:{name}") or [])
+    return out
+
+
+def desk_budget_left(state: Any, desk: str) -> int:
+    batch_keys = [f"research_budget:{n}" for n in batch_agent_names(desk)[1:]]
+    batch_vals = [state.get(k) for k in batch_keys]
+    if any(v is not None for v in batch_vals):
+        return sum(int(v) for v in batch_vals if v is not None)
+    return int(state.get(f"research_budget:{desk}") or 0)
+
+
+def _triage_dict(state: Any) -> dict[str, Any]:
+    tri = state.get("triage") or {}
+    if hasattr(tri, "model_dump"):
+        tri = tri.model_dump()
+    return tri
+
+
+def clearance_batch_slices(state: Any) -> list[list[dict[str, Any]]]:
+    """Deterministic partition of the clearance worklist: priority-sorted
+    (PLOT_CRITICAL entities first), contiguous chunks, at most
+    CLEARANCE_MAX_BATCHES — so batch 1 starts on the highest-stakes chases."""
+    tri = _triage_dict(state)
+    worklist = tri.get("clearance_counsel") or []
+    rank = {
+        e.get("entity_id"): _PROMINENCE_RANK.get(e.get("prominence"), 2)
+        for e in tri.get("entities") or []
+        if isinstance(e, dict)
+    }
+    ordered = sorted(
+        list(worklist),
+        key=lambda it: rank.get((it or {}).get("entity_id") or "", 1),
+    )
+    if not ordered:
+        return []
+    import math
+
+    n_batches = min(CLEARANCE_MAX_BATCHES, max(1, math.ceil(len(ordered) / CLEARANCE_BATCH_SIZE)))
+    size = math.ceil(len(ordered) / n_batches)
+    return [ordered[i * size : (i + 1) * size] for i in range(n_batches)]
+
+
+def batch_index(agent_name: str) -> int | None:
+    """0-based batch index for a batch agent name; None for a plain desk."""
+    if "__b" in agent_name:
+        try:
+            return int(agent_name.rsplit("__b", 1)[1]) - 1
+        except ValueError:
+            return None
+    return None
+
+
 _MAX_RESULTS_TO_MODEL = 6
 
 _LOG = logging.getLogger("greenlight.tools")
@@ -96,6 +185,33 @@ def _desk(tool_context: ToolContext) -> str:
         if name.startswith(desk):
             return desk
     raise RuntimeError(f"tool called from unknown desk agent {name!r}")
+
+
+def _agent_key(tool_context: ToolContext) -> str:
+    """Full agent name — the write-scope for every mutable per-desk key.
+    Batch agents get their own keys; parallel writers never share one."""
+    return tool_context.agent_name
+
+
+def _budget_key(tool_context: ToolContext) -> str:
+    """Per-agent research budget key; batch agents lazily take their share of
+    the desk budget, proportional to their slice of the worklist."""
+    name = _agent_key(tool_context)
+    desk = _desk(tool_context)
+    if name == desk:
+        return f"research_budget:{desk}"
+    key = f"research_budget:{name}"
+    state = tool_context.state
+    if state.get(key) is None:
+        import math
+
+        slices = clearance_batch_slices(state)
+        idx = batch_index(name)
+        total_items = sum(len(x) for x in slices) or 1
+        mine = len(slices[idx]) if idx is not None and idx < len(slices) else 0
+        total_budget = int(state.get(f"research_budget:{desk}") or 0)
+        state[key] = math.ceil(total_budget * mine / total_items) if mine else 0
+    return key
 
 
 def _state_append(tool_context: ToolContext, key: str, item: Any) -> None:
@@ -301,7 +417,7 @@ async def research(
         )
         return {"cached": True, "results": stored["results"], "search_id": stored["search_id"]}
 
-    budget_key = f"research_budget:{_desk(tool_context)}"
+    budget_key = _budget_key(tool_context)
     budget = int(tool_context.state.get(budget_key, 0))
     if budget <= 0:
         return {
@@ -400,7 +516,7 @@ async def fetch_page(url: str, objective: str, tool_context: ToolContext) -> dic
         )
         return {"cached": True, "results": stored["results"]}
 
-    budget_key = f"research_budget:{_desk(tool_context)}"
+    budget_key = _budget_key(tool_context)
     budget = int(tool_context.state.get(budget_key, 0))
     if budget <= 0:
         return {
@@ -500,7 +616,6 @@ async def deep_research(question: str, entity_id: str, tool_context: ToolContext
     Costs 3 research budget; at most 2 calls per desk per run. Citation excerpts in
     the result are citable exactly like research() excerpts — copy them VERBATIM.
     """
-    desk = _desk(tool_context)
     key = "deep:" + hashlib.sha1(question.encode()).hexdigest()[:12]
     cached = tool_context.state.get(key)
     if cached is None:
@@ -520,14 +635,14 @@ async def deep_research(question: str, entity_id: str, tool_context: ToolContext
             "citations": cached.get("citations"),
         }
 
-    used_key = f"deep_used:{desk}"
+    used_key = f"deep_used:{_agent_key(tool_context)}"
     used = int(tool_context.state.get(used_key, 0))
     if used >= _DEEP_MAX_PER_DESK:
         return {
             "error": "deep research allowance spent for this desk",
             "guidance": "Use research(), or note the question with note_open_question.",
         }
-    budget_key = f"research_budget:{desk}"
+    budget_key = _budget_key(tool_context)
     budget = int(tool_context.state.get(budget_key, 0))
     if budget < _DEEP_COST:
         return {
@@ -612,14 +727,14 @@ def _register_provenance(tool_context: ToolContext, texts: list[str]) -> None:
 
 
 def _index_research_key(tool_context: ToolContext, key: str) -> None:
-    """Explicit index of research state keys, ONE PER DESK. ADK State cannot be
+    """Explicit index of research state keys, ONE PER AGENT. ADK State cannot be
     enumerated (.keys() crashed in production), and a single shared list gets
     clobbered by concurrent desk branches (last-writer-wins on parallel state
     deltas — desks were erasing each other's entries, making legitimate
     excerpts fail provenance). Per-desk keys mean no two branches ever write
     the same key; the read side unions all four. This function is sync with no
     awaits, so same-desk concurrent tool calls can't interleave the append."""
-    index_key = f"research_keys:{_desk(tool_context)}"
+    index_key = f"research_keys:{_agent_key(tool_context)}"
     keys = list(tool_context.state.get(index_key, []))
     if key not in keys:
         keys.append(key)
@@ -714,6 +829,22 @@ def _handback_candidates(attempts: list[str], tool_context: ToolContext) -> list
 # Same-flag retry ledger, process-local (state counters race under parallel
 # tool calls — the provenance saga). Bounds the worst case: 33 consecutive
 # rejections of one Winklevoss filing burned a desk's whole tail (2026-08-26).
+# Flag ids allocated process-locally: a run executes in one process, and a
+# state-based counter loses increments under parallel batch writers. Gaps from
+# rejected filings are harmless; collisions are not.
+_FLAG_SEQ: dict[str, int] = {}
+_FLAG_SEQ_MAX = 4096
+
+
+def _next_flag_seq(tool_context: ToolContext, desk: str) -> int:
+    inv = str(getattr(tool_context, "invocation_id", "") or "run")
+    key = f"{inv}:{id(tool_context.state)}:{desk}"
+    if key not in _FLAG_SEQ and len(_FLAG_SEQ) >= _FLAG_SEQ_MAX:
+        _FLAG_SEQ.pop(next(iter(_FLAG_SEQ)))
+    _FLAG_SEQ[key] = _FLAG_SEQ.get(key, 0) + 1
+    return _FLAG_SEQ[key]
+
+
 _REJECT_COUNTS: dict[str, int] = {}
 _REJECT_MAX_RUNS = 4096
 _PROV_RETRY_LIMIT = 4
@@ -741,9 +872,10 @@ def _quotable_excerpts(entity_id: str, tool_context: ToolContext, limit: int = 3
     state = tool_context.state
     keys: list[str] = []
     for d in DESKS:
-        for k in state.get(f"research_keys:{d}") or []:
-            if isinstance(k, str) and k.startswith(f"research:{entity_id}:") and k not in keys:
-                keys.append(k)
+        for n in batch_agent_names(d):
+            for k in state.get(f"research_keys:{n}") or []:
+                if isinstance(k, str) and k.startswith(f"research:{entity_id}:") and k not in keys:
+                    keys.append(k)
     out: list[str] = []
     for k in keys:
         rec = state.get(k) or {}
@@ -782,21 +914,27 @@ def _exists_in_state(needle: str, state: Any) -> bool:
         return True
     seen: set[str] = set()
     for desk in DESKS:
-        for key in state.get(f"research_keys:{desk}", []):
-            if key in seen:
-                continue
-            seen.add(key)
-            rec = state.get(key) or {}
-            for r in rec.get("results", []):
-                for ex in r.get("excerpts", []):
-                    if needle in _norm_for_match(ex):
+        for name in batch_agent_names(desk):
+            for key in state.get(f"research_keys:{name}", []):
+                if key in seen:
+                    continue
+                seen.add(key)
+                rec = state.get(key) or {}
+                for r in rec.get("results", []):
+                    for ex in r.get("excerpts", []):
+                        if needle in _norm_for_match(ex):
+                            return True
+                    if needle in _norm_for_match(r.get("title", "")):
                         return True
-                if needle in _norm_for_match(r.get("title", "")):
-                    return True
+    return _precedent_has(needle, state)
+
+
+def _precedent_has(needle: str, state: Any) -> bool:
     for desk in DESKS:
-        for comp in state.get(f"last_precedent:{desk}") or []:
-            if needle in _norm_for_match(comp.get("rationale", "")):
-                return True
+        for name in batch_agent_names(desk):
+            for comp in state.get(f"last_precedent:{name}") or []:
+                if needle in _norm_for_match(comp.get("rationale", "")):
+                    return True
     return False
 
 
@@ -837,9 +975,7 @@ def file_flag(
     On rejection you get every validation error at once — fix them all and refile once.
     """
     desk = _desk(tool_context)
-    seq_key = f"flag_seq:{desk}"
-    seq = int(tool_context.state.get(seq_key, 0)) + 1
-    tool_context.state[seq_key] = seq
+    seq = _next_flag_seq(tool_context, desk)
 
     cits = []
     for c in citations:
@@ -878,11 +1014,9 @@ def file_flag(
     try:
         validate("flag", flag)
     except ContractViolation as e:
-        tool_context.state[seq_key] = seq - 1
         return "REJECTED, not filed. Fix ALL of these and refile once:\n- " + "\n- ".join(e.errors)
 
     if not all(c["excerpt"].strip() for c in cits):
-        tool_context.state[seq_key] = seq - 1
         return "REJECTED, not filed: every citation needs a non-empty verbatim excerpt."
 
     # Excerpt provenance: a citation's excerpt must exist VERBATIM in material this
@@ -909,7 +1043,6 @@ def file_flag(
         else:
             still_bad.append(c["excerpt"][:60])
     if still_bad:
-        tool_context.state[seq_key] = seq - 1
         tries = _reject_count_bump(tool_context, entity_id, category)
         if tries >= _PROV_RETRY_LIMIT:
             return (
@@ -936,10 +1069,9 @@ def file_flag(
 
     known = {s["scene_id"] for s in tool_context.state.get("scenes", [])}
     if bad := [s for s in scene_ids if s not in known]:
-        tool_context.state[seq_key] = seq - 1
         return f"REJECTED, not filed: unknown scene ids {bad}. Use ids from your worklist."
 
-    _state_append(tool_context, f"flags:{desk}", flag)
+    _state_append(tool_context, f"flags:{_agent_key(tool_context)}", flag)
     note = (
         f" ({repaired} citation excerpt{'s' if repaired != 1 else ''} auto-corrected "
         "to the verbatim source text)"
@@ -1035,7 +1167,7 @@ async def query_precedent(text: str, k: int, tool_context: ToolContext) -> dict[
     ]
     # The prediction tool assembles the report's rating_prediction from the most
     # recent comparables — stored here so the desk never re-types them.
-    tool_context.state[f"last_precedent:{_desk(tool_context)}"] = comparables
+    tool_context.state[f"last_precedent:{_agent_key(tool_context)}"] = comparables
     _register_provenance(tool_context, [c.get("rationale", "") for c in comparables])
     return {"comparables": comparables}
 
@@ -1091,8 +1223,7 @@ def note_open_question(question: str, tool_context: ToolContext) -> str:
     """Record something you could not resolve. Surfaced in the report as an honest
     unknown — an honest unknown beats a confident guess. Use when research was
     inconclusive or the answer needs a human (e.g. ownership deeper than 3 hops)."""
-    desk = _desk(tool_context)
-    _state_append(tool_context, f"open_questions:{desk}", question)
+    _state_append(tool_context, f"open_questions:{_agent_key(tool_context)}", question)
     return "Noted."
 
 
@@ -1113,23 +1244,27 @@ def done(reason: str, tool_context: ToolContext) -> str:
     budget remains — address the remaining items or note them as open questions first.
     """
     desk = _desk(tool_context)
+    name = _agent_key(tool_context)
     state = tool_context.state
     # Mechanical closing contract: a desk that filed dispositions for less than
     # half its worklist, with budget still in hand, is quitting early — a failure
     # mode the eval kept catching. Enforce it here, not in prose. Two refusals
     # max: after that, close (the LoopAgent iteration cap is the hard stop).
-    refusals = int(state.get(f"done_refusals:{desk}", 0))
-    tri = state.get("triage") or {}
-    if hasattr(tri, "model_dump"):
-        tri = tri.model_dump()
-    worklist = tri.get(desk) or []
-    budget_left = int(state.get(f"research_budget:{desk}", 0))
-    dispositions = len(state.get(f"flags:{desk}", []) or []) + len(
-        state.get(f"open_questions:{desk}", []) or []
+    # A clearance batch is judged against ITS slice, with its own keys.
+    refusals = int(state.get(f"done_refusals:{name}", 0))
+    idx = batch_index(name)
+    if idx is not None:
+        slices = clearance_batch_slices(state)
+        worklist = slices[idx] if idx < len(slices) else []
+    else:
+        worklist = _triage_dict(state).get(desk) or []
+    budget_left = int(state.get(_budget_key(tool_context), 0))
+    dispositions = len(state.get(f"flags:{name}", []) or []) + len(
+        state.get(f"open_questions:{name}", []) or []
     )
     underworked = worklist and dispositions < _DONE_COVERAGE * len(worklist)
     if underworked and budget_left >= _DONE_MIN_BUDGET and refusals < _DONE_MAX_REFUSALS:
-        state[f"done_refusals:{desk}"] = refusals + 1
+        state[f"done_refusals:{name}"] = refusals + 1
         return (
             f"NOT CLOSED: you have addressed {dispositions} of {len(worklist)} worklist "
             f"items and {budget_left} research budget remains. Work the remaining items — "

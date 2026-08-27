@@ -19,6 +19,23 @@ MPA-rated film since 1968 with a citable source." Embedding cost ~$1.30 one-time
 
 ---
 
+## 2026-08-27 — Clearance batching: the department hires associates
+
+Large-script fix, architecture-true: the clearance desk is now a ParallelAgent of up to
+4 batch agents, each holding a bounded, priority-ordered slice (~25 items, PLOT_CRITICAL
+first) of the worklist with a FRESH conversation — per-call context is bounded by
+construction, killing both the quadratic-prefill slowdown and the long-context
+hallucination zone. Shared across batches: session research cache, durable GCS cache,
+provenance registry (all pre-existing). Isolated per batch: every mutable state key —
+budgets (lazy proportional partition of the desk budget), flag lists, open questions,
+research-key indices, done-refusals — because parallel writers to one ADK state key
+lose updates (paid for that lesson three times). Flag ids moved to a process-local
+counter (gaps on rejection are harmless; collisions are not). Batch agent names
+normalize to the base desk in journal events, so the four-desk UI contract is
+unchanged. Small scripts: one real batch, three one-turn empty closes.
+
+---
+
 ## 2026-08-27 — Self-healing citations: the rejection hands back the real excerpts
 
 TSN re-run exposed the flaw in "archive after first flag": desks legitimately file

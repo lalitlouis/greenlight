@@ -7,7 +7,10 @@ where the citation invariant is enforced.
 
 from __future__ import annotations
 
+from google.adk.agents import ParallelAgent
+
 from greenlight.agents.common import make_desk
+from greenlight.tools.toolbelt import CLEARANCE_MAX_BATCHES
 
 INSTRUCTION = """\
 You are Clearance Counsel, the rights and clearances desk of a film production's script
@@ -218,9 +221,24 @@ RULES:
 - When every worklist item is flagged, cleared, or noted: call done() with a one-line summary.
 """
 
-agent = make_desk(
-    name="clearance_counsel",
+# The clearance department runs as parallel BATCH agents (see toolbelt's
+# clearance batching block): on entity-dense scripts one conversation carrying
+# the whole worklist went quadratic in context and hallucination-prone. Each
+# batch takes a bounded, priority-ordered slice with a fresh conversation;
+# research caches and the provenance registry are shared across batches, and
+# every mutable per-desk state key is per-batch by construction. On small
+# scripts every item lands in batch 1 and batches 2-4 close in one cheap turn.
+agent = ParallelAgent(
+    name="clearance_department",
     description="Rights & clearances: brands, music, people, artwork, clips, insignia.",
-    instruction=INSTRUCTION,
-    max_iterations=10,
+    sub_agents=[
+        make_desk(
+            name=f"clearance_counsel__b{i + 1}",
+            description=f"Clearance batch {i + 1}: a bounded slice of the rights worklist.",
+            instruction=INSTRUCTION,
+            max_iterations=10,
+            batch=i,
+        )
+        for i in range(CLEARANCE_MAX_BATCHES)
+    ],
 )

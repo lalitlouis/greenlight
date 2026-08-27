@@ -38,7 +38,8 @@ from greenlight.agents import (  # noqa: E402
     verification,
 )
 from greenlight.agents.verification import apply_verdicts  # noqa: E402
-from greenlight.tools.toolbelt import DESKS  # noqa: E402
+from greenlight.tools import toolbelt  # noqa: E402
+from greenlight.tools.toolbelt import DESKS, _desk_name_of  # noqa: E402
 
 APP_NAME = "greenlight"
 USER_ID = "producer"
@@ -144,31 +145,42 @@ def _humanize_result(tool: str, response: Any) -> str:
 
 def structured_events(event: Any) -> list[dict[str, Any]]:
     """Typed events for the UI stream. The four desk columns render from these —
-    author is the agent name, so desk attribution is free."""
+    author is the agent name, so desk attribution is free. Clearance batch
+    agents (clearance_counsel__bN) are normalized to the base desk so the UI's
+    four desk columns stay the contract."""
     out: list[dict[str, Any]] = []
     content = getattr(event, "content", None)
     for part in getattr(content, "parts", None) or []:
         if fc := getattr(part, "function_call", None):
             args = {k: str(v)[:200] for k, v in (fc.args or {}).items() if k != "tool_context"}
-            out.append({"type": "tool_call", "agent": event.author, "tool": fc.name, "args": args})
+            out.append(
+                {
+                    "type": "tool_call",
+                    "agent": _desk_name_of(event.author),
+                    "tool": fc.name,
+                    "args": args,
+                }
+            )
         elif fr := getattr(part, "function_response", None):
             out.append(
                 {
                     "type": "tool_result",
-                    "agent": event.author,
+                    "agent": _desk_name_of(event.author),
                     "tool": fr.name,
                     "brief": _humanize_result(fr.name, fr.response),
                 }
             )
         elif (text := getattr(part, "text", None)) and text.strip():
             stripped = text.strip()
-            if event.author == "triage" and stripped.startswith("{"):
+            if _desk_name_of(event.author) == "triage" and stripped.startswith("{"):
                 # the structured worklist JSON is for the desks, not the viewer
                 n = stripped.count('"entity_id"')
                 brief = f"{n} entities extracted — worklists out to all four desks"
                 out.append({"type": "text", "agent": "triage", "text": brief})
             else:
-                out.append({"type": "text", "agent": event.author, "text": stripped[:400]})
+                out.append(
+                    {"type": "text", "agent": _desk_name_of(event.author), "text": stripped[:400]}
+                )
     return out
 
 
@@ -182,12 +194,14 @@ def _describe_event(event: Any) -> list[str]:
             brief = ", ".join(
                 f"{k}={str(v)[:60]!r}" for k, v in list(args.items())[:3] if k != "tool_context"
             )
-            lines.append(f"{DIM}[{event.author}]{RESET} -> {BOLD}{fc.name}{RESET}({brief})")
+            lines.append(
+                f"{DIM}[{_desk_name_of(event.author)}]{RESET} -> {BOLD}{fc.name}{RESET}({brief})"
+            )
         elif fr := getattr(part, "function_response", None):
             resp = str(fr.response)[:100].replace("\n", " ")
-            lines.append(f"{DIM}[{event.author}]    {fr.name} => {resp}{RESET}")
+            lines.append(f"{DIM}[{_desk_name_of(event.author)}]    {fr.name} => {resp}{RESET}")
         elif (text := getattr(part, "text", None)) and text.strip():
-            lines.append(f"{DIM}[{event.author}]{RESET} {text.strip()[:200]}")
+            lines.append(f"{DIM}[{_desk_name_of(event.author)}]{RESET} {text.strip()[:200]}")
     return lines
 
 
@@ -269,7 +283,7 @@ async def run(
     )
     state = final.state
 
-    filed = [f for d in DESKS for f in state.get(f"flags:{d}", [])]
+    filed = [f for d in DESKS for f in toolbelt.desk_flags(state, d)]
     verdicts = {
         f["flag_id"]: state[f"verdicts:{f['flag_id']}"]
         for f in filed
@@ -310,8 +324,8 @@ async def run(
         "verdicts": verdicts,
         "report": the_report,
         "adjudication_notes": adjudication_notes,
-        "open_questions": {d: state.get(f"open_questions:{d}", []) for d in DESKS},
-        "research_budget_left": {d: state.get(f"research_budget:{d}") for d in DESKS},
+        "open_questions": {d: toolbelt.desk_open_questions(state, d) for d in DESKS},
+        "research_budget_left": {d: toolbelt.desk_budget_left(state, d) for d in DESKS},
         "research": {
             k: v for k, v in state.items() if isinstance(k, str) and k.startswith("research:")
         },

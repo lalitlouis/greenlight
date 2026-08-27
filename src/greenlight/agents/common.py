@@ -125,9 +125,11 @@ def prune_stale_tool_results(callback_context, llm_request):
     if len(resp_idx) <= _PRUNE_RECENCY_FLOOR:
         return None
 
-    desk = getattr(callback_context, "agent_name", "") or ""
+    from greenlight.tools.toolbelt import _desk_name_of, desk_flags
+
+    agent = getattr(callback_context, "agent_name", "") or ""
     try:
-        filed = callback_context.state.get(f"flags:{desk}") or []
+        filed = desk_flags(callback_context.state, _desk_name_of(agent))
     except Exception:
         filed = []
     done_entities = {
@@ -179,7 +181,13 @@ is spent, its disposition is an open question, never silence.
 """
 
 
-def make_desk(name: str, description: str, instruction: str, max_iterations: int) -> LoopAgent:
+def make_desk(
+    name: str,
+    description: str,
+    instruction: str,
+    max_iterations: int,
+    batch: int | None = None,
+) -> LoopAgent:
     """One gatekeeper desk: a LoopAgent over an LlmAgent with the shared toolbelt.
 
     Desks differ only in instruction and iteration ceiling — the toolbelt is
@@ -192,11 +200,33 @@ def make_desk(name: str, description: str, instruction: str, max_iterations: int
         desks' worklists to every desk on every turn multiplied token traffic by
         roughly 4x and was the main driver of 429s on feature-length scripts —
         each desk now carries the shared entity table plus ONLY its own worklist."""
+        from greenlight.tools.toolbelt import _desk_name_of, clearance_batch_slices
+
         tri = ctx.state.get("triage") or {}
         if hasattr(tri, "model_dump"):
             tri = tri.model_dump()
-        sliced = {"entities": tri.get("entities", []), name: tri.get(name, [])}
-        text = instruction + COVERAGE_RULE
+        desk = _desk_name_of(name)
+        if batch is not None:
+            slices = clearance_batch_slices(ctx.state)
+            my_items = slices[batch] if batch < len(slices) else []
+            if not my_items:
+                return (
+                    "Your batch of the clearance worklist is EMPTY — other batch "
+                    "agents hold every item. Call done() immediately with reason "
+                    "'empty batch'. Do not research anything."
+                )
+            sliced = {"entities": tri.get("entities", []), desk: my_items}
+            batch_note = (
+                f"\n\nBATCH NOTE: you are batch {batch + 1} of the clearance "
+                f"department — your worklist below is YOUR slice ({len(my_items)} "
+                "items) of the full clearance worklist. Other batch agents hold the "
+                "rest; never work an item that is not on your slice. Research results "
+                "are shared across batches (identical questions are free cache hits)."
+            )
+        else:
+            sliced = {"entities": tri.get("entities", []), desk: tri.get(desk, [])}
+            batch_note = ""
+        text = instruction + batch_note + COVERAGE_RULE
         text = text.replace("{triage}", json.dumps(sliced, ensure_ascii=False))
         text = text.replace("{scene_index}", str(ctx.state.get("scene_index", "")))
         return text

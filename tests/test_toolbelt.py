@@ -152,8 +152,9 @@ def test_flag_with_bogus_scene_is_rejected():
     ctx = make_ctx()
     msg = file_good_flag(ctx, scene_ids=["S999"])
     assert msg.startswith("REJECTED")
-    # and the sequence number was returned, so the next flag is still F101
-    assert file_good_flag(ctx).startswith("Filed F101")
+    # ids are allocated process-locally (parallel batch writers can't share a
+    # state counter); a rejection leaves a harmless gap, never a collision
+    assert file_good_flag(ctx).startswith("Filed F102")
 
 
 def test_rejection_reports_all_errors_at_once():
@@ -779,3 +780,108 @@ def test_file_flag_retry_limit_breaks_rejection_loops():
     msgs = [attempt() for _ in range(toolbelt._PROV_RETRY_LIMIT)]
     assert all(m.startswith("REJECTED") for m in msgs)
     assert "DO NOT retry" in msgs[-1] and "note_open_question" in msgs[-1]
+
+
+# --- clearance batching -----------------------------------------------------
+
+
+def _worklist(n):
+    return [{"entity_id": f"E{i:03d}", "note": f"item {i}"} for i in range(1, n + 1)]
+
+
+def test_clearance_batch_slices_priority_and_bounds():
+    entities = [
+        {"entity_id": f"E{i:03d}", "prominence": ("PLOT_CRITICAL" if i > 55 else "BACKGROUND")}
+        for i in range(1, 61)
+    ]
+    state = {"triage": {"entities": entities, "clearance_counsel": _worklist(60)}}
+    slices = toolbelt.clearance_batch_slices(state)
+    assert len(slices) == 3  # ceil(60/25)
+    assert sum(len(x) for x in slices) == 60
+    # PLOT_CRITICAL items (E056-E060) lead batch 1
+    assert [it["entity_id"] for it in slices[0][:5]] == ["E056", "E057", "E058", "E059", "E060"]
+    # small worklists stay a single batch
+    small = {"triage": {"entities": entities[:10], "clearance_counsel": _worklist(10)}}
+    assert len(toolbelt.clearance_batch_slices(small)) == 1
+
+
+def test_batch_budget_partition_and_isolation(monkeypatch):
+    monkeypatch.setattr(toolbelt, "_durable_cache_load", lambda k: None)
+    monkeypatch.setattr(toolbelt, "_durable_cache_store", lambda k, r: None)
+    monkeypatch.setattr(toolbelt, "_live_search", lambda o, q, **kw: CASSETTE)
+    shared = FakeState(
+        {
+            "triage": {"entities": [], "clearance_counsel": _worklist(50)},
+            "research_budget:clearance_counsel": 40,
+            "scenes": [],
+        }
+    )
+    from types import SimpleNamespace
+
+    b1 = SimpleNamespace(
+        agent_name="clearance_counsel__b1", state=shared, actions=SimpleNamespace(escalate=False)
+    )
+    b2 = SimpleNamespace(
+        agent_name="clearance_counsel__b2", state=shared, actions=SimpleNamespace(escalate=False)
+    )
+    asyncio.run(toolbelt.research("q1", ["q"], "E001", b1))
+    asyncio.run(toolbelt.research("q2", ["q"], "E002", b2))
+    # 50 items -> 2 batches of 25 -> each gets ceil(40*25/50)=20, minus one spent
+    assert shared["research_budget:clearance_counsel__b1"] == 19
+    assert shared["research_budget:clearance_counsel__b2"] == 19
+    assert shared["research_budget:clearance_counsel"] == 40  # base pool untouched
+
+
+def test_batch_flags_isolated_and_aggregated():
+    from types import SimpleNamespace
+
+    shared = FakeState(make_ctx().state)  # seeded provenance etc.
+    b1 = SimpleNamespace(
+        agent_name="clearance_counsel__b1", state=shared, actions=SimpleNamespace(escalate=False)
+    )
+    b2 = SimpleNamespace(
+        agent_name="clearance_counsel__b2", state=shared, actions=SimpleNamespace(escalate=False)
+    )
+    for ctx in (b1, b2):
+        msg = toolbelt.file_flag(
+            scene_ids=["S002"],
+            severity="MEDIUM",
+            category="trademark_use",
+            finding="brand appears",
+            citations=[dict(GOOD_CITATION)],
+            remedy_action="REPLACE",
+            remedy_detail="swap",
+            confidence=0.8,
+            tool_context=ctx,
+            entity_id="E001",
+        )
+        assert msg.startswith("Filed F1")
+    assert len(shared.get("flags:clearance_counsel__b1")) == 1
+    assert len(shared.get("flags:clearance_counsel__b2")) == 1
+    agg = toolbelt.desk_flags(shared, "clearance_counsel")
+    assert len(agg) == 2
+    ids = {f["flag_id"] for f in agg}
+    assert len(ids) == 2  # no id collision across parallel batches
+
+
+def test_done_judges_batch_against_its_slice():
+    from types import SimpleNamespace
+
+    state = FakeState(
+        {
+            "triage": {"entities": [], "clearance_counsel": _worklist(50)},
+            "research_budget:clearance_counsel": 40,
+            "flags:clearance_counsel__b1": [{"flag_id": f"F{i}"} for i in range(101, 121)],
+        }
+    )
+    b1 = SimpleNamespace(
+        agent_name="clearance_counsel__b1", state=state, actions=SimpleNamespace(escalate=False)
+    )
+    # 20 dispositions of a 25-item slice = 80% coverage -> closes
+    assert toolbelt.done("batch finished", b1).startswith("Desk closed")
+    assert b1.actions.escalate is True
+    # a fresh batch with nothing done and budget in hand is refused
+    b2 = SimpleNamespace(
+        agent_name="clearance_counsel__b2", state=state, actions=SimpleNamespace(escalate=False)
+    )
+    assert toolbelt.done("lazy", b2).startswith("NOT CLOSED")
