@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign in | ScriptRisk</title>
+<meta name="description" content="Sign in to ScriptRisk with Google to analyze screenplays, keep your reports, and delete them anytime.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="stylesheet" href="/static/vendor/fonts/fonts.css">
+<link rel="stylesheet" href="/static/site.css">
+<script defer src="/static/common.js"></script>
+<script defer src="/static/signin.js"></script>
+</head>
+<body>
+<main>
+  <div class="container signin-wrap">
+    <div class="card signin-card" data-reveal>
+      <span class="brand"><span class="brand-dot"></span><span class="brand-name"><span class="brand-script">SCRIPT</span><span class="brand-risk">RISK</span></span></span>
+      <h1>Sign in</h1>
+      <p class="lede">Analyses run under your account so your reports are yours — to keep,
+      to share, and to delete.</p>
+      <a class="btn btn-primary btn-google-big" id="google-btn" href="/auth/login">
+        Continue with Google
+      </a>
+      <ul class="signin-notes">
+        <li>🔒 Scripts are encrypted in transit and at rest, and never used to train models.</li>
+        <li>🗑 Delete any report — and its script — permanently, anytime, from My reports.</li>
+        <li>💳 Free during beta. No card, no spam; your email only identifies your reports.</li>
+      </ul>
+      <p class="signin-fine">By continuing you agree to the
+      <a href="/terms">Terms</a> and <a href="/privacy">Privacy policy</a>.</p>
+    </div>
+  </div>
+</main>
+</body>
+</html>

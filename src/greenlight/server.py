@@ -360,6 +360,7 @@ PAGES = {
     "/compare": "compare.html",
     "/how-it-works": "how-it-works.html",
     "/desks": "desks.html",
+    "/signin": "signin.html",
     "/faq": "faq.html",
     "/contact": "contact.html",
     "/run": "run.html",
