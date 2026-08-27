@@ -14,6 +14,7 @@ import hashlib
 from typing import Any
 
 from greenlight import storage
+from greenlight.models import FLASH_MODEL
 from greenlight.tools import toolbelt
 
 _REWRITE_PROMPT = """You are revising an MPA/CARA-style content rationale after script cuts.
@@ -67,7 +68,7 @@ def _revise_rationale(rationale: str, cuts: list[str]) -> str:
 
     client = vertex_client()
     res = client.models.generate_content(
-        model="gemini-2.5-flash",
+        model=FLASH_MODEL,
         contents=_REWRITE_PROMPT.format(
             rationale=rationale, cuts="\n".join(f"- {c}" for c in cuts)
         ),
@@ -194,7 +195,7 @@ def suggest(
 
     client = vertex_client()
     res = client.models.generate_content(
-        model="gemini-2.5-flash",
+        model=FLASH_MODEL,
         contents=_SUGGEST_PROMPT.format(
             revised=revised,
             target=target,

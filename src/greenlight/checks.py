@@ -16,6 +16,8 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
+from greenlight.models import FLASH_MODEL
+
 ROOT = Path(__file__).resolve().parents[2]
 load_dotenv(ROOT / ".env")
 
@@ -55,11 +57,11 @@ def check_google_cloud() -> Result:
 
         client = vertex_client()
         resp = client.models.generate_content(
-            model="gemini-2.5-flash",
+            model=FLASH_MODEL,
             contents="Reply with the single word: ready",
         )
         text = (resp.text or "").strip()
-        return Result(name, bool(text), f"gemini-2.5-flash replied: {text[:40]!r}", gate=True)
+        return Result(name, bool(text), f"{FLASH_MODEL} replied: {text[:40]!r}", gate=True)
     except Exception as e:
         hint = ""
         if "default credentials" in str(e).lower():

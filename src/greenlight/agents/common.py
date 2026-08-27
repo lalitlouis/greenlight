@@ -9,6 +9,7 @@ from google.adk.agents import LlmAgent, LoopAgent
 from google.adk.models.google_llm import Gemini
 from google.genai import types
 
+from greenlight.models import FLASH_MODEL, PRO_MODEL
 from greenlight.tools import DESK_TOOLS
 from greenlight.tools.toolbelt import RunAbortError
 
@@ -23,12 +24,18 @@ _RETRY_HTTP = types.HttpRetryOptions(
 )
 
 
+# Model generation is a config knob so the eval gates can trial newer Gemini
+# releases without a code change. 3.x models serve only from the global
+# endpoint (GOOGLE_CLOUD_LOCATION=global, already prod's setting); the flash
+# default is gated on the 21-check fixture eval before any change lands.
+
+
 def _flash() -> Gemini:
-    return Gemini(model="gemini-2.5-flash", retry_options=_RETRY_HTTP)
+    return Gemini(model=FLASH_MODEL, retry_options=_RETRY_HTTP)
 
 
 def _pro() -> Gemini:
-    return Gemini(model="gemini-2.5-pro", retry_options=_RETRY_HTTP)
+    return Gemini(model=PRO_MODEL, retry_options=_RETRY_HTTP)
 
 
 FLASH = _flash()

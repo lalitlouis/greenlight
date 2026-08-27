@@ -24,7 +24,8 @@ LEDGER = ROOT / "costs" / "ledger.json"
 # ---- unit prices (USD) — rules of thumb, keep current with invoices ----------
 PRICE = {
     "parallel_search_advanced": 0.009,  # per search, advanced processor
-    "clearance_run_gemini": 0.90,  # Flash desks+verifiers + one Pro adjudication
+    "clearance_run_gemini": 2.20,  # 3.7-flash desks+verifiers + one 2.5-pro adjudication
+    # (3.7-flash intro pricing $0.75/$3.75 per MTok through 2026-12-31, then doubles)
     "writer_run_gemini": 0.30,  # two Pro calls + comps embedding
     "corpus_embedding_once": 1.30,  # 6,302 profiles through text-embedding-005
     "dns_zone_month": 0.20,

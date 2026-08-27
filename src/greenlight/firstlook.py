@@ -14,6 +14,7 @@ from typing import Any
 from pydantic import BaseModel
 
 from greenlight import runstate
+from greenlight.models import FLASH_MODEL
 
 _PROMPT = """You are giving a fast first read of a screenplay — the impressions a
 seasoned reader forms in the first pass, before any research.
@@ -74,7 +75,7 @@ def run_first_look(run_id: str, source: str) -> dict[str, Any] | None:
 
         client = vertex_client()
         res = client.models.generate_content(
-            model="gemini-2.5-flash",
+            model=FLASH_MODEL,
             contents=_PROMPT.format(script=source[:_MAX_SCRIPT_CHARS]),
             config=types.GenerateContentConfig(
                 temperature=0.0,

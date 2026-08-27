@@ -147,8 +147,8 @@ first answer back.)
 
 | Component | Model | Why |
 |---|---|---|
-| Triage | Flash | High-volume extraction |
-| The desks | Flash | Many tool-calling turns; Flash is the default and cost driver |
+| Triage | Flash (`gemini-3.7-flash`) | High-volume extraction |
+| The desks | Flash (`gemini-3.7-flash`) | Many tool-calling turns; Flash is the default and cost driver |
 | Verifiers | Flash | Narrow, single-question judgement |
 | Adjudicator | Pro | The only task reasoning across four desks' conflicting output |
 
@@ -270,7 +270,7 @@ cacheable; generated PDFs moving to write-once-at-completion is P0 in SCALING.md
 
 ### Resource usage (measured, per feature-length run)
 
-- 200–400 Gemini Flash calls (+1 Pro adjudication), 30–70 Parallel searches, ~$1–3 API
+- 200–400 Gemini Flash calls (+1 Pro adjudication), 30–70 Parallel searches, ~$2–5 API
   cost, 10–30 min wall clock. Concurrency inside a run: 4 desks (clearance further split
   into ≤4 parallel batch agents with bounded context), verification semaphore = 10.
 - Fleet: ≤5 concurrent runs (ledger-enforced); worker container is CPU-light (the work

@@ -14,7 +14,9 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-MODEL = "gemini-2.5-pro"
+from greenlight.models import PRO_MODEL
+
+MODEL = PRO_MODEL
 MAX_SCENE_CHARS = 9000
 _ATTEMPTS = 2
 

@@ -464,3 +464,18 @@ The original extract→search-once→four-prompts→dedupe design was killed: it
 ownership chains or decide depth. Replaced with LoopAgent desks + blinded verification +
 adjudicator. Governing principle, applied everywhere since: **never let the model assert
 what a tool can retrieve.** (Full reasoning: `docs/TECH_SPEC.md`.)
+
+## 2026-08-27 — Flash tier upgraded to gemini-3.7-flash
+
+Gemini 3.x Flash went GA on Vertex (global endpoint only; prod was already on
+`GOOGLE_CLOUD_LOCATION=global`, embeddings stay pinned via `EMBED_LOCATION`).
+Gated before adoption: two 21-check fixture evals on 3.7-flash scored 21/21 and
+20/21 (the one miss, a merged sync/master flag, did not reproduce) at 260–297s —
+matching our best fully-calibrated 2.5-flash run cold, with visibly richer remedy
+prose. Adjudicator stays on `gemini-2.5-pro`: 3.x Pro is preview-only, and
+previews don't ship in a paid product. All model names now live in
+`greenlight/models.py` (env-overridable via `GREENLIGHT_FLASH_MODEL` /
+`GREENLIGHT_PRO_MODEL`); any future change gates on the same eval. Cost: intro
+pricing $0.75/$3.75 per MTok roughly doubles per-run model spend (~$2 → ~$4–5);
+accepted deliberately — the case library and demo should showcase the best
+engine available. Pricing doubles again 2027-01-01; revisit then.

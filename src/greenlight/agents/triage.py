@@ -12,8 +12,9 @@ from google.adk.agents import LlmAgent
 from pydantic import BaseModel, Field
 
 from greenlight.agents.common import GEN_CONFIG, tool_error_shield
+from greenlight.models import FLASH_MODEL
 
-MODEL = "gemini-2.5-flash"
+MODEL = FLASH_MODEL
 
 EntityType = Literal[
     "BRAND",

@@ -26,6 +26,7 @@ from google.adk.events import Event, EventActions
 from google.genai import types
 from pydantic import BaseModel
 
+from greenlight.models import FLASH_MODEL
 from greenlight.tools.toolbelt import DESKS
 
 # Same HTTP-layer 429 ladder as the agents (see agents/common.py): the genai
@@ -36,7 +37,8 @@ _RETRY_HTTP = types.HttpOptions(
     )
 )
 
-MODEL = "gemini-2.5-flash"
+
+MODEL = FLASH_MODEL
 _CONCURRENCY = 10
 _MAX_ATTEMPTS = 5
 
