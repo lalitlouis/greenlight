@@ -27,11 +27,14 @@ URL" is not a guarantee. A separate agent that re-reads the source and can *reje
 GreenlightPipeline                  SequentialAgent
 ├── ScriptParser                    deterministic — screenplay -> Scene[]
 ├── Triage                          LlmAgent  -> Entity[] + per-desk worklists
-├── GatekeeperPanel                 ParallelAgent — four desks, concurrent
-│   ├── ClearanceCounsel            LoopAgent(max_iterations=8)
+├── GatekeeperPanel                 ParallelAgent — the desks, concurrent
+│   ├── ClearanceDepartment         ParallelAgent — up to 4 batch agents
+│   │   └── clearance_counsel__bN   LoopAgent(max_iterations=10) each, over a
+│   │                               bounded ~25-item slice with a FRESH
+│   │                               conversation (context bounded by construction)
 │   ├── RatingsBoard                LoopAgent(max_iterations=4)
 │   ├── SafetyUnderwriter           LoopAgent(max_iterations=6)
-│   └── TerritoryCensor             LoopAgent(max_iterations=6)
+│   └── TerritoryCensor             LoopAgent(max_iterations=8)
 ├── VerificationPanel               ParallelAgent — one verifier per filed flag
 ├── Adjudicator                     LoopAgent(max_iterations=3)
 └── ReportWriter                    deterministic -> Report + marked-up script
@@ -49,8 +52,10 @@ Every desk gets the same tools; they differ only in instruction and worklist.
 | `read_scene(scene_id)` | Full scene text. Desks go back to the script rather than working from a dump. |
 | `find_in_script(pattern)` | Where and how often something appears. Prominence is a fact, not a guess. |
 | `research(objective, queries)` | Parallel Search. `objective` is the clearance question in prose. |
-| `query_precedent(text, k)` | ClickHouse kNN over MPA rating rationales. |
-| `file_flag(flag)` | Emit a finding. Schema-validated on the way in; a flag without a citation is rejected at the tool boundary. |
+| `fetch_page(url, objective)` | Parallel Extract — full-page retrieval when a search excerpt is too thin to cite. |
+| `deep_research(question)` | Parallel Task API — last-resort multi-source investigation for BLOCKER-deciding chains; ≤2 per desk, 3 budget credits. |
+| `query_precedent(text, k)` | ClickHouse kNN over released-film content profiles. |
+| `file_flag(flag)` | Emit a finding. Schema-validated; a flag without a citation is rejected; cited excerpts must exist VERBATIM in retrieved material (near-misses are auto-repaired from the provenance registry, and every rejection path is retry-capped). |
 | `note_open_question(text)` | Record something the desk could not resolve. Surfaced in the report — an honest unknown beats a confident guess. |
 | `done(reason)` | Self-terminate. Sets `tool_context.actions.escalate = True`, which is how a `LoopAgent` exits early. |
 
@@ -61,7 +66,9 @@ docstrings are written for a model, not a human.
 
 Three independent stops, because a research loop that cannot end is a bill:
 
-1. **Self-termination** — the desk calls `done()` and escalates.
+1. **Self-termination** — the desk calls `done()` and escalates. The tool REFUSES
+   closure (twice, max) below 50% worklist coverage while budget remains — early
+   quitting is a measured failure mode, so the contract is mechanical, not prose.
 2. **`max_iterations`** — a hard ceiling per desk.
 3. **Research budget** — a per-run cap on `research()` calls, enforced in the tool. When exhausted
    the tool returns "budget spent, file what you have," which the desk handles gracefully.
@@ -141,9 +148,18 @@ first answer back.)
 | Component | Model | Why |
 |---|---|---|
 | Triage | Flash | High-volume extraction |
-| The four desks | Flash | Many tool-calling turns; Flash is the default and cost driver |
+| The desks | Flash | Many tool-calling turns; Flash is the default and cost driver |
 | Verifiers | Flash | Narrow, single-question judgement |
 | Adjudicator | Pro | The only task reasoning across four desks' conflicting output |
+
+All agents use `Gemini` model instances with **HTTP-layer retry**
+(`HttpRetryOptions`: 8 attempts, 10→120s backoff, jitter) — the ONLY layer where
+retries actually run. ADK's `retry_config` kwarg is silently ignored by
+`LlmAgent`, and the genai client defaults to zero retries; we shipped for weeks
+believing in a ladder that never fired (see DECISIONS.md, 2026-08-27). Desks
+also carry `before_model_callback` history pruning (disposition-aware) and an
+`on_tool_error_callback` shield (hallucinated tool names become corrective
+feedback, not crashes).
 
 ## Cost
 
@@ -272,8 +288,10 @@ cacheable; generated PDFs moving to write-once-at-completion is P0 in SCALING.md
 - **Audit trail**: the journal is a complete, replayable record of every tool call and
   verdict in every run — debugging today's six production incidents used nothing else.
 - **External uptime checks** on the public site.
-- **Known gap (P0)**: log-based alerting (run failures, 429 bursts, journal stalls) is
-  designed but needs console setup; today a human watches.
+- **Alerting (shipped 2026-08-27)**: a log-based metric (`run_failures`: run_summary
+  status=error or RUN ABORTED in worker logs) drives a Cloud Monitoring policy that
+  emails on any failure within 5 minutes, auto-closing after 30. Journal-stall and
+  429-burst alerts remain candidates if failure modes recur.
 
 ### Redundancy & availability
 

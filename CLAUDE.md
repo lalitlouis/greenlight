@@ -66,11 +66,14 @@ authoritative spec; if this diagram and TECH_SPEC ever disagree, TECH_SPEC wins.
 GreenlightPipeline                  SequentialAgent
 ├── ScriptParser                    deterministic Python, not an LLM — Fountain/PDF -> Scene[]
 ├── Triage                          LlmAgent -> Entity[] + per-desk worklists
-├── GatekeeperPanel                 ParallelAgent — the four desks run concurrently
-│   ├── ClearanceCounsel            LoopAgent(max_iterations=8)
+├── GatekeeperPanel                 ParallelAgent — the desks run concurrently
+│   ├── ClearanceDepartment         ParallelAgent of ≤4 batch LoopAgents
+│   │                               (clearance_counsel__bN, ~25-item slices,
+│   │                               fresh conversations; caches/provenance shared,
+│   │                               all mutable state keys per-agent)
 │   ├── RatingsBoard                LoopAgent(max_iterations=4)
 │   ├── SafetyUnderwriter           LoopAgent(max_iterations=6)
-│   └── TerritoryCensor             LoopAgent(max_iterations=6)
+│   └── TerritoryCensor             LoopAgent(max_iterations=8)
 ├── VerificationPanel               fan-out — one blinded verifier per filed flag; can REJECT
 ├── Adjudicator                     LoopAgent(max_iterations=3) — merge, resolve conflicts,
 │                                   re-enter a desk via AgentTool when remedies interact
