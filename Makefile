@@ -9,6 +9,10 @@ dev:            ## local ADK dev UI
 run:            ## end-to-end on the fixture screenplay
 	.venv/bin/python -m greenlight.cli run fixtures/slack_tide.fountain
 
+scale-gate:     ## end-to-end on the LARGE fixture + graded scale checks
+	.venv/bin/python -m greenlight.cli run fixtures/scale_gate.fountain
+	.venv/bin/python scripts/eval_scale.py
+
 serve:          ## web UI (upload / live stream / replay) on :8080
 	.venv/bin/uvicorn greenlight.server:app --reload --port 8080
 
