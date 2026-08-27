@@ -425,9 +425,26 @@ function dropPin(agent, severity, category, sceneIds) {
     const ids = (String(sceneIds || "").match(/S\d+/g) || []);
     const card = $("rts-" + ids[0]);
     if (!card) return;
+    // one chip per severity+category per scene: a second finding with the same
+    // label bumps a ×N counter instead of rendering a duplicate pin
+    const key = severity + "|" + category;
+    const existing = [...card.querySelectorAll(".rt-pin")].find((n) => n.dataset.key === key);
+    if (existing) {
+      const count = (parseInt(existing.dataset.count || "1", 10) || 1) + 1;
+      existing.dataset.count = String(count);
+      const label = existing.querySelector("span");
+      if (label) label.textContent = label.dataset.base + " ×" + count;
+      rt.pendingPin[agent] = existing;
+      bumpPinCount(1);
+      return;
+    }
     const pin = el("span", `rt-pin sev-${severity}`);
+    pin.dataset.key = key;
+    pin.dataset.count = "1";
     pin.appendChild(el("b", null, severity));
-    pin.appendChild(el("span", null, prettyCat(category) + (ids.length > 1 ? ` +${ids.length - 1}` : "")));
+    const label = el("span", null, prettyCat(category) + (ids.length > 1 ? ` +${ids.length - 1}` : ""));
+    label.dataset.base = label.textContent;
+    pin.appendChild(label);
     card.querySelector(".rts-pins").appendChild(pin);
     rt.pendingPin[agent] = pin;
     if (window.FX?.on) {
@@ -453,7 +470,14 @@ function assignPinId(agent, brief) {
     if (m) {
       rt.pins[m[0]] = pin;
     } else {
-      pin.remove(); // the filing was rejected by validation — never landed
+      const count = parseInt(pin.dataset.count || "1", 10) || 1;
+      if (count > 1) {
+        pin.dataset.count = String(count - 1);
+        const label = pin.querySelector("span");
+        if (label) label.textContent = count - 1 > 1 ? label.dataset.base + " ×" + (count - 1) : label.dataset.base;
+      } else {
+        pin.remove(); // the filing was rejected by validation — never landed
+      }
       bumpPinCount(-1);
     }
   });
