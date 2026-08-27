@@ -854,6 +854,22 @@ _REJECT_MAX_RUNS = 4096
 _PROV_RETRY_LIMIT = 4
 
 
+def _reject_or_stop(tool_context: ToolContext, entity_id: str, category: str, msg: str) -> str:
+    """Route EVERY file_flag rejection through one retry ledger. The provenance
+    path was capped but a contract-schema loop ran 62 identical retries
+    (E030, 2026-08-26) through the uncapped branch — any rejection repeated
+    _PROV_RETRY_LIMIT times becomes the hard stop, whatever its cause."""
+    tries = _reject_count_bump(tool_context, entity_id, category)
+    if tries >= _PROV_RETRY_LIMIT:
+        return (
+            "REJECTED, not filed — and DO NOT retry this flag: after "
+            f"{tries} attempts it still fails validation for the same reasons. "
+            "Record the issue with note_open_question (state what you believe and "
+            "why it could not be filed) and move to your next worklist item NOW."
+        )
+    return msg
+
+
 def _reject_count_bump(tool_context: ToolContext, entity_id: str, category: str) -> int:
     inv = str(getattr(tool_context, "invocation_id", "") or "run")
     key = f"{inv}:{_desk(tool_context)}:{entity_id}:{category}"
@@ -1018,10 +1034,20 @@ def file_flag(
     try:
         validate("flag", flag)
     except ContractViolation as e:
-        return "REJECTED, not filed. Fix ALL of these and refile once:\n- " + "\n- ".join(e.errors)
+        return _reject_or_stop(
+            tool_context,
+            entity_id,
+            category,
+            "REJECTED, not filed. Fix ALL of these and refile once:\n- " + "\n- ".join(e.errors),
+        )
 
     if not all(c["excerpt"].strip() for c in cits):
-        return "REJECTED, not filed: every citation needs a non-empty verbatim excerpt."
+        return _reject_or_stop(
+            tool_context,
+            entity_id,
+            category,
+            "REJECTED, not filed: every citation needs a non-empty verbatim excerpt.",
+        )
 
     # Excerpt provenance: a citation's excerpt must exist VERBATIM in material this
     # run actually retrieved (research results, precedent rationales, or the script
@@ -1047,15 +1073,6 @@ def file_flag(
         else:
             still_bad.append(c["excerpt"][:60])
     if still_bad:
-        tries = _reject_count_bump(tool_context, entity_id, category)
-        if tries >= _PROV_RETRY_LIMIT:
-            return (
-                "REJECTED, not filed — and DO NOT retry this flag: after "
-                f"{tries} attempts, the quoted material still matches nothing this run "
-                "retrieved, so it cannot be verified. Record the issue with "
-                "note_open_question (state what you believe and what could not be "
-                "verified) and move to your next worklist item NOW."
-            )
         msg = (
             "REJECTED, not filed: these excerpts do not appear verbatim in any research "
             "result, precedent rationale, or the script — re-copy them exactly from your "
@@ -1069,11 +1086,16 @@ def file_flag(
                 "\n\nVERBATIM excerpts on record — copy from these EXACTLY (any "
                 "contiguous part):\n" + "\n".join(f"<<{q}>>" for q in quotable)
             )
-        return msg
+        return _reject_or_stop(tool_context, entity_id, category, msg)
 
     known = {s["scene_id"] for s in tool_context.state.get("scenes", [])}
     if bad := [s for s in scene_ids if s not in known]:
-        return f"REJECTED, not filed: unknown scene ids {bad}. Use ids from your worklist."
+        return _reject_or_stop(
+            tool_context,
+            entity_id,
+            category,
+            f"REJECTED, not filed: unknown scene ids {bad}. Use ids from your worklist.",
+        )
 
     _state_append(tool_context, f"flags:{_agent_key(tool_context)}", flag)
     note = (

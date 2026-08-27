@@ -922,3 +922,30 @@ def test_flag_ids_stable_across_fresh_state_wrappers():
         assert msg.startswith("Filed F")
         ids.append(msg.split()[1])
     assert len(set(ids)) == 3, ids
+
+
+def test_contract_rejections_hit_the_retry_cap_too():
+    # The E030 loop: 62 identical schema-invalid retries sailed past the
+    # provenance-only cap. Every rejection path now shares one ledger.
+    ctx = make_ctx()
+
+    def attempt():
+        return toolbelt.file_flag(
+            scene_ids=["S002"],
+            severity="FYI",
+            category="organization_clearance",
+            finding="x",
+            citations=[
+                {"source_type": "instruction", "url": "https://x", "excerpt": RESEARCH_EXCERPT}
+            ],
+            remedy_action="NO_ACTION",
+            remedy_detail="n/a",
+            confidence=0.5,
+            tool_context=ctx,
+            entity_id="E030",
+        )
+
+    msgs = [attempt() for _ in range(toolbelt._PROV_RETRY_LIMIT + 1)]
+    assert all(m.startswith("REJECTED") for m in msgs)
+    assert "DO NOT retry" in msgs[toolbelt._PROV_RETRY_LIMIT - 1]
+    assert "DO NOT retry" in msgs[-1]
