@@ -70,6 +70,26 @@ def save_record(run_id: str, record: dict[str, Any]) -> bool:
         return False
 
 
+def save_pdf(run_id: str, kind: str, pdf: bytes) -> bool:
+    """Write-once PDF artifacts (binder/one-sheet), sealed like the record —
+    generated at run completion so downloads never cost web-tier CPU."""
+    try:
+        _bucket().blob(f"pdfs/{run_id}.{kind}.pdf").upload_from_string(
+            _seal(pdf), content_type="application/octet-stream"
+        )
+        return True
+    except Exception:
+        return False
+
+
+def load_pdf(run_id: str, kind: str) -> bytes | None:
+    try:
+        blob = _bucket().blob(f"pdfs/{run_id}.{kind}.pdf")
+        return _unseal(blob.download_as_bytes()) if blob.exists() else None
+    except Exception:
+        return None
+
+
 def load_record(run_id: str) -> dict[str, Any] | None:
     try:
         blob = _bucket().blob(f"records/{run_id}.json")
@@ -225,7 +245,13 @@ def delete_anon_run(run_id: str) -> bool:
     authorization. The server refuses to route owned runs here."""
     try:
         deleted = False
-        for path in (f"records/{run_id}.json", f"scripts/{run_id}.fountain", f"owners/{run_id}"):
+        for path in (
+            f"records/{run_id}.json",
+            f"scripts/{run_id}.fountain",
+            f"owners/{run_id}",
+            f"pdfs/{run_id}.binder.pdf",
+            f"pdfs/{run_id}.onesheet.pdf",
+        ):
             blob = _bucket().blob(path)
             if blob.exists():
                 blob.delete()
@@ -243,7 +269,13 @@ def delete_user_run(sub: str, run_id: str) -> bool:
         if not stub.exists():
             return False
         stub.delete()
-        for path in (f"records/{run_id}.json", f"scripts/{run_id}.fountain", f"owners/{run_id}"):
+        for path in (
+            f"records/{run_id}.json",
+            f"scripts/{run_id}.fountain",
+            f"owners/{run_id}",
+            f"pdfs/{run_id}.binder.pdf",
+            f"pdfs/{run_id}.onesheet.pdf",
+        ):
             blob = _bucket().blob(path)
             if blob.exists():
                 blob.delete()

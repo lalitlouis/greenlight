@@ -55,9 +55,13 @@ Two units of work with different physics:
 
 ## Phases
 
-- **P0 — before the hackathon demo** (smooth experience at demo scale): generate
-  binder/one-sheet PDFs at run completion instead of in-request; SSE per-instance
-  fan-out; log-based alerts. Everything else holds at demo scale.
+- **P0 — before the hackathon demo** (smooth experience at demo scale):
+  ~~generate binder/one-sheet PDFs at run completion~~ (SHIPPED 2026-08-27: worker
+  renders both at completion, sealed in GCS under pdfs/; routes serve the artifact
+  and fall back to on-demand for old records); ~~What-If embed cache~~ (SHIPPED:
+  rationale-hash memo + GCS, repeated cuts never re-bill the embed quota); SSE
+  per-instance fan-out; log-based alerts. Upload-time PDF parsing stays web-tier
+  for now — seconds each, contended only at tens of concurrent uploads.
 - **P1 — first real users**: dispatch queue + queue-position UX; workerize Writer's
   Room; shared rate limits; sharded metrics; embed caching for What-If; CDN for public
   pages; resume-from-journal.

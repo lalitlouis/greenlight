@@ -1315,6 +1315,17 @@ async def binder_pdf_dl(run_id: str) -> Response:
     """The clearance log as a real PDF download — no print dialog."""
     from greenlight import pdfgen
 
+    cached = await asyncio.to_thread(storage.load_pdf, _safe_id(run_id), "binder")
+    if cached is not None:
+        data = {"title": "clearance-log"}
+        pdf = cached
+        rec = await _load_record_any(_safe_id(run_id))
+        fname = ((rec or {}).get("script_title") or "clearance-log").lower().replace(" ", "-")[:40]
+        return Response(
+            pdf,
+            media_type="application/pdf",
+            headers={"Content-Disposition": f'attachment; filename="{fname}-clearance-log.pdf"'},
+        )
     data = await _binder_data(run_id)
     pdf = await asyncio.to_thread(pdfgen.binder_pdf, data)
     fname = (data["title"] or "clearance-log").lower().replace(" ", "-")[:40]
@@ -1334,7 +1345,9 @@ async def onesheet_pdf_dl(run_id: str) -> Response:
     record = await _load_record_any(run_id)
     if record is None:
         raise HTTPException(404, "Unknown run.")
-    pdf = await asyncio.to_thread(pdfgen.onesheet_pdf, record)
+    pdf = await asyncio.to_thread(storage.load_pdf, run_id, "onesheet")
+    if pdf is None:
+        pdf = await asyncio.to_thread(pdfgen.onesheet_pdf, record)
     fname = (record.get("script_title") or "one-sheet").lower().replace(" ", "-")[:40]
     return Response(
         pdf,

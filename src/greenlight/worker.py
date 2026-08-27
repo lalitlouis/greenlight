@@ -47,6 +47,27 @@ class JournalPublisher:
         self._last_flush = time.monotonic()
 
 
+def _publish_pdfs(run_id: str, record: dict) -> None:
+    """Binder + one-sheet rendered ONCE here, at completion, cached in GCS —
+    downloads become file reads instead of web-tier reportlab CPU. Non-fatal:
+    the routes fall back to on-demand rendering for anything missing."""
+    try:
+        from greenlight import binder as binder_mod
+        from greenlight import parser, pdfgen
+
+        source = storage.load_script(run_id)
+        scene_meta: dict = {}
+        if source:
+            _, scenes = parser.parse_fountain(source)
+            scene_meta = {
+                s["scene_id"]: {"heading": s["heading"], "page": s["page"]} for s in scenes
+            }
+        storage.save_pdf(run_id, "binder", pdfgen.binder_pdf(binder_mod.build(record, scene_meta)))
+        storage.save_pdf(run_id, "onesheet", pdfgen.onesheet_pdf(record))
+    except Exception as e:
+        print(f"worker: pdf pre-render skipped: {type(e).__name__}", file=sys.stderr)
+
+
 def _stub(run_id: str, record: dict[str, Any], state: dict[str, Any]) -> dict[str, Any]:
     rep = record.get("report") or {}
     return {
@@ -99,6 +120,7 @@ def main() -> int:
     record.pop("script_path", None)  # a worker-local path is meaningless elsewhere
 
     storage.save_record(run_id, record)
+    _publish_pdfs(run_id, record)
     status = "error" if record.get("error") else "done"
     owner = state.get("owner") or ""
     if owner:

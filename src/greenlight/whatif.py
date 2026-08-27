@@ -32,6 +32,34 @@ wording (e.g. "multiple uses" -> "a use"). 1-2 sentences, output the rationale
 text only."""
 
 
+_EMBED_MEMO: dict[str, list[float]] = {}
+_EMBED_MEMO_MAX = 512
+
+
+def _embed_cached(text: str) -> list[float]:
+    """Rationale embeddings are pure functions of their text — repeated What-If
+    cuts (users toggle the same boxes) must not re-bill the pinned us-central1
+    embed quota. In-process memo first, then the GCS research-cache namespace."""
+    import hashlib
+
+    from greenlight import storage
+    from greenlight.tools import toolbelt
+
+    key = "embed-" + hashlib.sha1(text.encode()).hexdigest()[:16]
+    if key in _EMBED_MEMO:
+        return _EMBED_MEMO[key]
+    stored = storage.load_research(key)
+    if stored and isinstance(stored.get("vec"), list):
+        vec = stored["vec"]
+    else:
+        vec = toolbelt._embed(text)
+        storage.save_research(key, {"vec": vec})
+    if len(_EMBED_MEMO) >= _EMBED_MEMO_MAX:
+        _EMBED_MEMO.pop(next(iter(_EMBED_MEMO)))
+    _EMBED_MEMO[key] = vec
+    return vec
+
+
 def _revise_rationale(rationale: str, cuts: list[str]) -> str:
     from google.genai import types
 
@@ -72,7 +100,7 @@ def project(
         return cached
 
     revised = _revise_rationale(rationale, cuts)
-    vec = toolbelt._embed(revised)
+    vec = _embed_cached(revised)
     rows = (
         toolbelt._clickhouse_client()
         .query(
