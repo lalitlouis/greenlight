@@ -1278,6 +1278,26 @@ CASE_SEO = {
         "Super Freak, a minor on stage, and the language math: ScriptRisk analyzes the "
         "Little Miss Sunshine screenplay's clearance and rating exposure, cited to the page.",
     ),
+    "the-social-network": (
+        "case_the_social_network",
+        "The Social Network — defamation, publicity & the biographical minefield | ScriptRisk",
+        "Every character is a real person. ScriptRisk's clearance desks separate the "
+        "documented record from dramatic invention across 47 cited findings — the "
+        "biographical script stress test.",
+    ),
+    "the-wolf-of-wall-street": (
+        "case_the_wolf_of_wall_street",
+        "The Wolf of Wall Street — where docudrama meets actionable defamation | ScriptRisk",
+        "Real people, real firms, real fraud on the page. 57 cited findings, "
+        "$300k–$1.4M estimated clearance exposure, and the record-vs-invention line "
+        "drawn scene by scene.",
+    ),
+    "the-hangover": (
+        "case_the_hangover",
+        "The Hangover — brands, casinos, stunts and a tiger, priced from the page | ScriptRisk",
+        "A Vegas gauntlet of trademark, venue, and stunt exposure: ScriptRisk reads The "
+        "Hangover the way a line producer's early-warning system would — cited and priced.",
+    ),
 }
 
 
