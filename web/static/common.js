@@ -554,7 +554,7 @@ async function hydrateAuth() {
       img.referrerPolicy = "no-referrer";
       me.appendChild(img);
     }
-    me.appendChild(el("span", null, "My reports"));
+    me.appendChild(el("span", "auth-label", "My reports"));
     slot.appendChild(me);
     const out = el("button", "auth-out", "Sign out");
     out.type = "button";
