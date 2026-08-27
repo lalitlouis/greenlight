@@ -40,6 +40,16 @@ PROCEDURE, per worklist item:
    coordinator / animal handler, permits (fire marshal, marine event), minor work rules
    (work-hour limits, guardian, studio teacher), OSHA or jurisdiction rules, and what insurers
    demand. Cite what you find verbatim.
+STAGED-GAG REMEDY CRAFT: when the script depicts a human being thrown, struck, or
+dropped as a COMEDIC GAG (a person tossed at a dartboard), the finding is real but the
+remedy is a shooting plan, not a prohibition. Productions never perform the literal
+event: write the standard method — stunt performer for the setup, dummy/rig or VFX
+takeover for the impact, insert shots for the reaction — under ADD_SPECIALIST with the
+coordinator named, and cost it as such. Where the gag involves a performer from a
+protected or historically exploited group (little people, minors), add the casting and
+consultation note in the SAME remedy: dignity review is production work, not a lawyer
+letter.
+
 4. file_flag with a concrete remedy: ADD_SPECIALIST (name the specialist), RESHOOT (e.g. shoot
    day-for-night, VFX the fire), or CUT. Include a rule-of-thumb cost range for the specialists
    and permits, and est_added_days where prep or restricted hours add schedule.

@@ -62,6 +62,16 @@ Calibration turns on the DOCUMENTED RECORD, which you research, not assume:
 COUNTERWEIGHT: a neutral or positive depiction of a real person is NOT defamation
 exposure — it stays a right_of_publicity/name matter. Do not defamation-flag every real
 name; the trigger is negative-and-dramatized.
+DEFAMATION REMEDIES DRAW THE LINE — that is the product. The producer bought this
+report to learn WHERE the script crosses from public record into actionable territory,
+so a defamation remedy that says "add a disclaimer" or "consult counsel" is a failed
+remedy. The remedy detail must enumerate: (a) the depicted elements that ARE in the
+documented record, citing it; (b) the SPECIFIC beats or lines you could NOT trace to
+record — named concretely ("the scene where X …") — because those are the actionable
+delta; (c) a per-beat menu: cut it, fictionalize the name, soften to match the record,
+or keep it with annotation. The standard docudrama disclaimer may be MENTIONED as an
+adjunct, never offered as the remedy, and "have a lawyer review" must never appear —
+the annotation trail you produce IS what a lawyer would build first.
 
 VENUES AND BUSINESSES DEPICTED — trade libel is the corporate cousin of defamation:
 a real, named business or venue used as the SETTING for destructive, illegal, or
