@@ -385,6 +385,7 @@ const NAV_LINKS = [
   ["/writer", "Writer's Room"],
   ["/cases", "Case studies"],
   ["/how-it-works", "How it works"],
+  ["/desks", "The desks"],
   ["/faq", "FAQ"],
   ["/contact", "Contact"],
 ];

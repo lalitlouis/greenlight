@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Four Desks — how ScriptRisk reads a screenplay | ScriptRisk</title>
+<meta name="description" content="Clearance Counsel, Ratings Board, Safety Underwriter, Territory Censor — what each AI desk investigates, how the architecture works, and how verbatim citations and blinded verification keep hallucinations out of the report.">
+<link rel="canonical" href="https://scriptrisk.com/desks">
+<link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="stylesheet" href="/static/vendor/fonts/fonts.css">
+<link rel="stylesheet" href="/static/site.css">
+<script defer src="/static/common.js"></script>
+<script defer src="/static/fx.js"></script>
+</head>
+<body>
+<main>
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <span class="kicker">The department</span>
+      <h1>Four desks, one producer's answer</h1>
+      <p class="lede">A studio doesn't ask one person "is this script risky?" — it runs four
+      independent departments that never talk to each other, then reconciles them. ScriptRisk
+      mirrors that, desk for desk.</p>
+    </div>
+
+    <div class="desk-grid" data-reveal>
+      <div class="card desk-card dk-clearance">
+        <h2>Clearance Counsel</h2>
+        <p class="dk-scope">Rights &amp; clearances — the desk that keeps you out of court.</p>
+        <ul>
+          <li><b>Music</b>: a played recording needs TWO licenses — sync for the composition,
+          master for the recording — from different owners. The desk chases both chains.</li>
+          <li><b>Brands</b>: neutral background use vs. disparagement ("tastes like a wet
+          sock") — only one of those is a problem, and it knows which.</li>
+          <li><b>Real people</b>: right of publicity, and for negative depictions the
+          defamation / false-light line — what's in the documented record vs. what the
+          script invented.</li>
+          <li><b>Artwork, tattoos, film clips</b>: anything depicted on camera that someone
+          else created — including the 95-year public-domain arithmetic.</li>
+          <li><b>Venues &amp; locations</b>: permit vs. location agreement vs. "that casino
+          will never say yes — plan a set."</li>
+        </ul>
+        <p class="dk-files">Files: sync_license, master_use_license, right_of_publicity,
+        defamation_false_light, trademark_use, trade_libel_venue, artwork_license…</p>
+      </div>
+      <div class="card desk-card dk-ratings">
+        <h2>Ratings Board</h2>
+        <p class="dk-scope">What will the MPA actually rate this — and what would move it?</p>
+        <ul>
+          <li>Counts the drivers on the page: language (every F-bomb, cited by scene),
+          violence, drug use, sexuality, thematic elements.</li>
+          <li>Predicts the rating from <b>evidence, not opinion</b>: your script's content
+          profile against 6,302 released films — "5 of your 8 nearest comparables are
+          rated R," each with a source.</li>
+          <li>Feeds the What-If simulator: check cuts, and the comparables re-run live.</li>
+        </ul>
+        <p class="dk-files">Files: rating_language, rating_violence, rating_drug_use… plus
+        the rating prediction with its comparables.</p>
+      </div>
+      <div class="card desk-card dk-safety">
+        <h2>Safety Underwriter</h2>
+        <p class="dk-scope">The line producer's early-warning system for physical risk.</p>
+        <ul>
+          <li>Stunts, pyro, water work, vehicles, firearms, animals, minors near any of the
+          above — with the insurer and CSATF-bulletin rules cited.</li>
+          <li>Remedies read like a shooting plan: which specialist to hire (stunt
+          coordinator, armorer, animal handler), what it costs, what it adds to the
+          schedule.</li>
+          <li>Comedic gags get the real method — rig, dummy, VFX takeover — not a
+          prohibition.</li>
+        </ul>
+        <p class="dk-files">Files: stunt_*, fire_safety, minor_safety, animal_safety,
+        firearms_blanks… with est. costs and added days.</p>
+      </div>
+      <div class="card desk-card dk-territory">
+        <h2>Territory Censor</h2>
+        <p class="dk-scope">What gets cut or banned, market by market — US · UK · CN · UAE.</p>
+        <ul>
+          <li>Researches each territory's actual rules with geo-targeted search — the CN
+          questions are asked from China's web, the UAE's from theirs.</li>
+          <li>Distinguishes depicted from merely recounted (a ghost story told in dialogue
+          is not a ghost on screen), and story-critical content from an easy localized cut.</li>
+          <li>A mandatory closing checklist sweeps six sensitive axes per strict territory
+          so nothing slips: supernatural, drugs, alcohol, religion, sexuality, state
+          authority.</li>
+        </ul>
+        <p class="dk-files">Files: territory_cn_*, territory_uae_*, territory_uk_*,
+        territory_us_* — each citing the regulator's practice.</p>
+      </div>
+    </div>
+
+    <div class="section-head" data-reveal style="margin-top: 56px;">
+      <span class="kicker">Under the hood</span>
+      <h2>The architecture, honestly</h2>
+      <p class="lede">Agents decide what to investigate; tools decide what's allowed to be
+      true. Every box below is real and running — nothing in this diagram is aspirational.</p>
+    </div>
+
+    <div class="arch-diagram card" data-reveal>
+      <div class="arch-row">
+        <div class="arch-node an-plain">Your script<span>parsed deterministically — no model</span></div>
+        <span class="arch-arrow">→</span>
+        <div class="arch-node an-plain">Triage<span>every entity onto a desk's worklist</span></div>
+        <span class="arch-arrow">→</span>
+        <div class="arch-node an-desks">Four desks in parallel<span>clearance splits into batch agents on big scripts — bounded context by construction</span></div>
+        <span class="arch-arrow">→</span>
+        <div class="arch-node an-verify">Blinded verifier<span>sees only claim + citation — rejects what the source doesn't support</span></div>
+        <span class="arch-arrow">→</span>
+        <div class="arch-node an-plain">Adjudicator<span>merges duplicates, resolves conflicting remedies</span></div>
+        <span class="arch-arrow">→</span>
+        <div class="arch-node an-report">Your report<span>every finding cited, priced, fixed</span></div>
+      </div>
+      <div class="arch-rails">
+        <div class="arch-rail"><b>Parallel Search · Extract · Task API</b><span>the desks' only window to the world — live web retrieval with verbatim excerpts</span></div>
+        <div class="arch-rail"><b>ClickHouse · 6,302 films</b><span>the ratings evidence — nearest released comparables, each with a source URL</span></div>
+        <div class="arch-rail"><b>Provenance registry</b><span>every retrieved excerpt, logged — the citation gate checks against THIS, not the model's memory</span></div>
+      </div>
+    </div>
+
+    <div class="section-head" data-reveal style="margin-top: 56px;">
+      <span class="kicker">Why you can trust it</span>
+      <h2>Accuracy is enforced by code, not requested by prompt</h2>
+    </div>
+    <div class="steps-grid" data-reveal>
+      <div class="card step-card"><span class="step-num">1</span><h3>No citation, no finding</h3><p>The filing tool structurally rejects any flag without a citation. A finding the model "just knows" cannot exist in your report.</p></div>
+      <div class="card step-card"><span class="step-num">2</span><h3>Quotes must be real</h3><p>Every cited excerpt is checked character-for-character against what was actually retrieved this run. Paraphrase or invent, and the filing bounces.</p></div>
+      <div class="card step-card"><span class="step-num">3</span><h3>Blinded cross-examination</h3><p>An independent verifier re-reads each citation without the desk's reasoning. Rejected findings never touch the score — and they're shown, struck through, with the reason.</p></div>
+      <div class="card step-card"><span class="step-num">4</span><h3>Numbers come from data</h3><p>The rating prediction is a nearest-neighbor search over released films, not a model's opinion — and each comparable carries its own source.</p></div>
+      <div class="card step-card"><span class="step-num">5</span><h3>Honest unknowns</h3><p>What can't be verified becomes an open question, not a confident guess. "We couldn't prove it" appears in your report exactly that way.</p></div>
+    </div>
+  </div>
+</main>
+</body>
+</html>
