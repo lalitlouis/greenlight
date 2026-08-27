@@ -371,6 +371,13 @@ function promptUpload() {
   });
 }
 
+function brandName() {
+  const n = el("span", "brand-name");
+  n.appendChild(el("span", "brand-script", "SCRIPT"));
+  n.appendChild(el("span", "brand-risk", "RISK"));
+  return n;
+}
+
 /* ---------- shared header / footer ---------- */
 
 const NAV_LINKS = [
@@ -393,7 +400,7 @@ function injectChrome() {
   const brand = el("a", "brand");
   brand.href = "/home";
   brand.appendChild(el("span", "brand-dot"));
-  brand.appendChild(el("span", "brand-name", "SCRIPTRISK"));
+  brand.appendChild(brandName());
   inner.appendChild(brand);
 
   const nav = el("nav", "site-nav");
@@ -446,7 +453,7 @@ function injectChrome() {
   const col1 = el("div", "footer-col");
   const fbrand = el("div", "brand");
   fbrand.appendChild(el("span", "brand-dot"));
-  fbrand.appendChild(el("span", "brand-name", "SCRIPTRISK"));
+  fbrand.appendChild(brandName());
   col1.appendChild(fbrand);
   col1.appendChild(
     el(

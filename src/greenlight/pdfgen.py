@@ -116,7 +116,11 @@ def onesheet_pdf(record: dict[str, Any]) -> bytes:
     c.circle(margin + 5, y + 4, 5, stroke=0, fill=1)
     c.setFont("Times-Bold", 15)
     c.setFillColor(CREAM)
-    c.drawString(margin + 18, y, "SCRIPTRISK")
+    c.drawString(margin + 18, y, "SCRIPT")
+    from reportlab.pdfbase.pdfmetrics import stringWidth
+
+    c.setFillColor(colors.HexColor("#ff5f54"))
+    c.drawString(margin + 18 + stringWidth("SCRIPT", "Times-Bold", 15), y, "RISK")
     c.setFont("Helvetica-Bold", 8.5)
     c.setFillColor(GOLD)
     c.drawRightString(w - margin, y, "PRODUCTION RISK ONE-SHEET")

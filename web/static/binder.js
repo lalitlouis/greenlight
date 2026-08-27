@@ -22,7 +22,7 @@ function bdRender(data) {
   head.appendChild(left);
   const brand = el("div", "bd-brand");
   brand.appendChild(el("span", "bd-dot"));
-  brand.appendChild(el("span", null, "SCRIPTRISK"));
+  brand.appendChild(brandName());
   head.appendChild(brand);
   page.appendChild(head);
 

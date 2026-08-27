@@ -1285,3 +1285,7 @@ tr.bd-sev-BLOCKER { background: rgba(224, 52, 42, 0.045); }
 .fl-collapse { background: none; border: 1px solid var(--line-2); border-radius: 999px; padding: 4px 12px; font-size: 12px; font-weight: 700; color: var(--ink-2); cursor: pointer; white-space: nowrap; }
 .fl-collapse:hover { border-color: var(--ink-3); }
 .firstlook.fl-min .fl-stats, .firstlook.fl-min .fl-lists, .firstlook.fl-min .fl-pending, .firstlook.fl-min .fl-impressions, .firstlook.fl-min .fl-why { display: none; }
+
+/* the wordmark: SCRIPT in ink, RISK in red — the product promise in one glance */
+.brand-risk { color: var(--blocker); }
+.site-header .brand-risk, .os-toolbar .brand-risk { color: #ff5f54; }

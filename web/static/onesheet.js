@@ -23,7 +23,7 @@ function osRender(record) {
   const head = el("header", "os-head");
   const brand = el("div", "os-brand");
   brand.appendChild(el("span", "os-dot"));
-  brand.appendChild(el("span", null, "SCRIPTRISK"));
+  brand.appendChild(brandName());
   head.appendChild(brand);
   head.appendChild(el("span", "os-kind", "Production Risk One-Sheet"));
   page.appendChild(head);
