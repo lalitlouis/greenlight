@@ -1289,7 +1289,7 @@ CASE_SEO = {
         "case_the_wolf_of_wall_street",
         "The Wolf of Wall Street — where docudrama meets actionable defamation | ScriptRisk",
         "Real people, real firms, real fraud on the page. 57 cited findings, "
-        "$300k–$1.4M estimated clearance exposure, and the record-vs-invention line "
+        "USD 300k to 1.4M estimated clearance exposure, and the record-vs-invention line "
         "drawn scene by scene.",
     ),
     "the-hangover": (

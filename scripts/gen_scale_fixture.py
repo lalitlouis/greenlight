@@ -247,7 +247,8 @@ def gen() -> str:
         extra = ""
         who = CHARACTERS[i % len(CHARACTERS)]
         body = (
-            f"The van rolls into {town} past a shuttered {BRANDS_NEUTRAL[(i + 31) % len(BRANDS_NEUTRAL)]} "
+            f"The van rolls into {town} past a shuttered "
+            f"{BRANDS_NEUTRAL[(i + 31) % len(BRANDS_NEUTRAL)]} "
             f"franchise and a working {brand} sign that hums over the hall's counter. "
             f"Load-in. The local promoter, {who.upper()}, meets them at the dock with a "
             "clipboard and a story about the last band that came through — a story that "
@@ -264,7 +265,10 @@ def gen() -> str:
             )
         if i % 13 == 0:
             song = SONGS_TITLE_ONLY[(i // 13) % len(SONGS_TITLE_ONLY)]
-            extra = f'OTIS\nRequest bucket says "{song}" again.\n\nRENATA\nTitle drop only. We play originals.'
+            extra = (
+                f'OTIS\nRequest bucket says "{song}" again.\n\n'
+                "RENATA\nTitle drop only. We play originals."
+            )
         day = "NIGHT" if i % 3 else "DAY"
         add(f"INT. {town.upper()} GRANGE HALL - {day}", body, extra)
 

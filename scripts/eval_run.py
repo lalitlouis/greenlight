@@ -12,8 +12,8 @@ explain before shipping a change to an instruction or the verifier.
 from __future__ import annotations
 
 import glob
-import os
 import json
+import os
 import sys
 
 

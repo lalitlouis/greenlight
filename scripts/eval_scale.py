@@ -13,8 +13,8 @@ counterweight). Every MISS is a scale regression to explain before deploying.
 from __future__ import annotations
 
 import glob
-import os
 import json
+import os
 import sys
 
 sys.path.insert(0, __file__.rsplit("/", 2)[0] + "/scripts")
