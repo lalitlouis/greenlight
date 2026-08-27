@@ -8,6 +8,13 @@ set -euo pipefail
 REGION="${REGION:-us-central1}"
 SERVICE="${SERVICE:-greenlight}"
 
+# Gate on green: a red test or lint error must stop a deploy MECHANICALLY.
+# "pytest | tail" has hidden a failing exit code from a human twice now —
+# the guard belongs in the tool, not in discipline.
+echo "safe_deploy: running tests + checks first..."
+.venv/bin/python -m pytest -q || { echo "safe_deploy: TESTS RED — refusing to deploy."; exit 1; }
+make check || { echo "safe_deploy: CHECKS RED — refusing to deploy."; exit 1; }
+
 busy=$(curl -sf --max-time 10 https://scriptrisk.com/api/metrics-lite \
   | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('running_now', 0))" \
   2>/dev/null || echo "unknown")

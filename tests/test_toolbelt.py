@@ -748,7 +748,8 @@ def test_file_flag_auto_repairs_near_miss_citation():
     )
     assert msg.startswith("Filed F") and "auto-corrected" in msg
     flag = ctx.state["flags:clearance_counsel"][-1]
-    assert flag["citations"][0]["excerpt"] in RESEARCH_EXCERPT  # verbatim by construction
+    # verbatim by construction (registry stores whitespace/case-normalized text)
+    assert flag["citations"][0]["excerpt"].lower() in RESEARCH_EXCERPT.lower()
 
 
 def test_file_flag_retry_limit_breaks_rejection_loops():

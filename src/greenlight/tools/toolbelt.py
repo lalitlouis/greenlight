@@ -667,11 +667,16 @@ def _word_overlap_hit(needle: str, texts: list[str]) -> bool:
     return False
 
 
+_REPAIR_MIN_WORDS = 6
+_REPAIR_RATIO = 0.6  # 60-90%% overlap = paraphrase of a real retrieval; repairable
+_HANDBACK_RATIO = 0.25
+
+
 def _overlap_ratio(needle: str, candidate: str) -> float:
     """Share of the needle's substantive words present in the candidate."""
     min_word_len = 3
     words = [w for w in _norm_for_match(needle).split() if len(w) >= min_word_len]
-    if len(words) < 6:
+    if len(words) < _REPAIR_MIN_WORDS:
         return 0.0
     need = set(words)
     cand = set(_norm_for_match(candidate).split())
@@ -691,7 +696,7 @@ def _best_registry_match(attempt: str, tool_context: ToolContext) -> str | None:
         r = _overlap_ratio(attempt, text)
         if r > best_r:
             best, best_r = text, r
-    return best[:800] if best is not None and best_r >= 0.6 else None
+    return best[:800] if best is not None and best_r >= _REPAIR_RATIO else None
 
 
 def _handback_candidates(attempts: list[str], tool_context: ToolContext) -> list[str]:
@@ -700,7 +705,7 @@ def _handback_candidates(attempts: list[str], tool_context: ToolContext) -> list
     scored: list[tuple[float, str]] = []
     for text in _prov_bucket(tool_context):
         r = max((_overlap_ratio(a, text) for a in attempts), default=0.0)
-        if r >= 0.25:
+        if r >= _HANDBACK_RATIO:
             scored.append((r, text))
     scored.sort(key=lambda x: -x[0])
     return [t[:400] for _, t in scored[:3]]
