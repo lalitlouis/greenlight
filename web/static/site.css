@@ -1382,3 +1382,8 @@ tr.bd-sev-BLOCKER { background: rgba(224, 52, 42, 0.045); }
 .signin-notes li { font-size: 13px; color: var(--ink-2); padding: 6px 0; border-bottom: 1px dashed var(--line); }
 .signin-notes li:last-child { border-bottom: 0; }
 .signin-fine { font-size: 12px; color: var(--ink-3); margin: 12px 0 0; }
+
+/* case-card stat line: segments separated, never run together */
+.rc-stats { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; row-gap: 3px; font-size: 13.5px; color: var(--ink-2); margin: 10px 0 4px; }
+.rc-stats > span { white-space: nowrap; }
+.rc-stats > span + span::before { content: "\00b7\00a0"; color: var(--ink-3); margin-right: 2px; }
