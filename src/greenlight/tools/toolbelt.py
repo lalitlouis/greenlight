@@ -837,8 +837,12 @@ _FLAG_SEQ_MAX = 4096
 
 
 def _next_flag_seq(tool_context: ToolContext, desk: str) -> int:
-    inv = str(getattr(tool_context, "invocation_id", "") or "run")
-    key = f"{inv}:{id(tool_context.state)}:{desk}"
+    # Key by invocation id ONLY: the ADK runtime hands tools a FRESH state
+    # wrapper per call, so id(state) reset the counter on every filing and one
+    # run shipped every safety flag as F301 (2026-08-26). The invocation id is
+    # stable for the whole run; id(state) survives only as the test fallback.
+    inv = str(getattr(tool_context, "invocation_id", "") or "")
+    key = f"{inv}:{desk}" if inv else f"{id(tool_context.state)}:{desk}"
     if key not in _FLAG_SEQ and len(_FLAG_SEQ) >= _FLAG_SEQ_MAX:
         _FLAG_SEQ.pop(next(iter(_FLAG_SEQ)))
     _FLAG_SEQ[key] = _FLAG_SEQ.get(key, 0) + 1

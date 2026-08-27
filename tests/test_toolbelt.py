@@ -885,3 +885,34 @@ def test_done_judges_batch_against_its_slice():
         agent_name="clearance_counsel__b2", state=state, actions=SimpleNamespace(escalate=False)
     )
     assert toolbelt.done("lazy", b2).startswith("NOT CLOSED")
+
+
+def test_flag_ids_stable_across_fresh_state_wrappers():
+    # ADK hands tools a fresh state wrapper per call; ids must not reset.
+    from types import SimpleNamespace
+
+    base = make_ctx().state
+    ids = []
+    for i in range(3):
+        ctx = SimpleNamespace(
+            agent_name="clearance_counsel",
+            state=FakeState(base),  # new wrapper object each call, same content
+            actions=SimpleNamespace(escalate=False),
+        )
+        ctx.invocation_id = "inv-stable-ids"
+        base = ctx.state
+        msg = toolbelt.file_flag(
+            scene_ids=["S002"],
+            severity="LOW",
+            category="trademark_use",
+            finding=f"finding {i}",
+            citations=[dict(GOOD_CITATION)],
+            remedy_action="NO_ACTION",
+            remedy_detail="n/a",
+            confidence=0.5,
+            tool_context=ctx,
+            entity_id="E001",
+        )
+        assert msg.startswith("Filed F")
+        ids.append(msg.split()[1])
+    assert len(set(ids)) == 3, ids
