@@ -416,14 +416,14 @@ function injectChrome() {
   const theme = el("button", "theme-toggle");
   theme.type = "button";
   const applyThemeIcon = () => {
-    const dark = document.documentElement.dataset.theme === "dark";
-    theme.textContent = dark ? "☀" : "☾";
-    theme.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
+    const light = document.documentElement.dataset.theme === "light";
+    theme.textContent = light ? "☾" : "☀";
+    theme.setAttribute("aria-label", light ? "Switch to dark mode" : "Switch to light mode");
     theme.title = theme.getAttribute("aria-label");
   };
   applyThemeIcon();
   theme.addEventListener("click", () => {
-    const next = document.documentElement.dataset.theme === "dark" ? "" : "dark";
+    const next = document.documentElement.dataset.theme === "light" ? "" : "light";
     if (next) document.documentElement.dataset.theme = next;
     else delete document.documentElement.dataset.theme;
     try {

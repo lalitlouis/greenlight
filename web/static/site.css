@@ -6,54 +6,17 @@
    Self-contained: system fonts, vendored libs, works offline. */
 
 :root {
-  --bg: #f6f0e1;
-  --band: #eee6d1;
-  --surface: #fffcf4;
-  --ink: #211d15;
-  --ink-2: #544e3e;
-  --ink-3: #8d8570;
-  --line: #e4dbc4;
-  --line-2: #d6ccb4;
-  /* --green is the PRIMARY ACCENT (midnight navy) — historic token name kept so
-     every interactive use restyles at once. True "go" green lives in --go. */
-  --green: #1d3f6b;
-  --gold: #c8991f;
-  --gold-tint: #f7edd2;
-  --green-deep: #16334f;
-  --green-tint: #e7edf5;
-  --go: #0e7c4a;
-  --go-deep: #0a6239;
-  --go-tint: #e6f2e6;
-  --blocker: #e0342a;
-  --high: #e97c00;
-  --medium: #b08a00;
-  --low: #6e6e73;
-  --fyi: #a1a1a6;
-  --desk-clearance: #4f46e5;
-  --desk-ratings: #9333ea;
-  --desk-safety: #d97706;
-  --desk-territory: #0284c7;
-  --sans: "Outfit", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-  --display: "Fraunces", Georgia, "Times New Roman", serif;
-  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-  --radius: 18px;
-  --radius-sm: 12px;
-  --glass: rgba(246, 240, 225, 0.94);
-  --shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.1);
-}
-
-:root { color-scheme: light; }
-:root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #10151f;
-  --band: #151c29;
+  --bg: #0d1119;
+  --band: #131a26;
   --surface: #1a2232;
   --ink: #edeff4;
   --ink-2: #b7bfcd;
   --ink-3: #828b9c;
   --line: #2a3447;
   --line-2: #3a4660;
+  /* --green is the PRIMARY ACCENT — historic token name kept so every
+     interactive use restyles at once. True "go" green lives in --go. */
   --green: #82a8dc;
   --gold: #e2b850;
   --gold-tint: #2b281a;
@@ -71,9 +34,45 @@
   --desk-ratings: #c084fc;
   --desk-safety: #fbbf24;
   --desk-territory: #38bdf8;
+  --sans: "Outfit", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  --display: "Fraunces", Georgia, "Times New Roman", serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --radius: 18px;
+  --radius-sm: 12px;
   --glass: rgba(18, 24, 36, 0.92);
   --shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
   --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.55);
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f6f0e1;
+  --band: #eee6d1;
+  --surface: #fffcf4;
+  --ink: #211d15;
+  --ink-2: #544e3e;
+  --ink-3: #8d8570;
+  --line: #e4dbc4;
+  --line-2: #d6ccb4;
+  --green: #1d3f6b;
+  --gold: #c8991f;
+  --gold-tint: #f7edd2;
+  --green-deep: #16334f;
+  --green-tint: #e7edf5;
+  --go: #0e7c4a;
+  --go-deep: #0a6239;
+  --go-tint: #e6f2e6;
+  --blocker: #e0342a;
+  --high: #e97c00;
+  --medium: #b08a00;
+  --low: #6e6e73;
+  --fyi: #a1a1a6;
+  --desk-clearance: #4f46e5;
+  --desk-ratings: #9333ea;
+  --desk-safety: #d97706;
+  --desk-territory: #0284c7;
+  --glass: rgba(246, 240, 225, 0.94);
+  --shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.1);
 }
 
 * { box-sizing: border-box; }
@@ -1287,5 +1286,7 @@ tr.bd-sev-BLOCKER { background: rgba(224, 52, 42, 0.045); }
 .firstlook.fl-min .fl-stats, .firstlook.fl-min .fl-lists, .firstlook.fl-min .fl-pending, .firstlook.fl-min .fl-impressions, .firstlook.fl-min .fl-why { display: none; }
 
 /* the wordmark: SCRIPT in ink, RISK in red — the product promise in one glance */
+.brand-script { color: var(--go); }
 .brand-risk { color: var(--blocker); }
+.site-header .brand-script, .os-toolbar .brand-script { color: #45c986; }
 .site-header .brand-risk, .os-toolbar .brand-risk { color: #ff5f54; }

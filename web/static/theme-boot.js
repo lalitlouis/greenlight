@@ -3,7 +3,8 @@
    every page — inline would violate our CSP (script-src 'self'). */
 try {
   var t = localStorage.getItem("sr-theme");
-  if (t) document.documentElement.dataset.theme = t;
+  /* dark is the default; only "light" is a stored override (legacy "dark" = default) */
+  if (t === "light") document.documentElement.dataset.theme = "light";
 } catch (e) {
-  /* storage unavailable: default light */
+  /* storage unavailable: default dark */
 }
