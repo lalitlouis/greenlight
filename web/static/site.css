@@ -1308,3 +1308,12 @@ tr.bd-sev-BLOCKER { background: rgba(224, 52, 42, 0.045); }
 .brand-risk { color: var(--blocker); }
 .site-header .brand-script, .os-toolbar .brand-script { color: #45c986; }
 .site-header .brand-risk, .os-toolbar .brand-risk { color: #ff5f54; }
+
+/* the full-loop workflow strip */
+.flow-strip { display: flex; align-items: stretch; gap: 8px; overflow-x: auto; padding: 6px 2px 14px; }
+.flow-step { flex: 1 1 0; min-width: 138px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 12px 13px; }
+.flow-step h3 { margin: 8px 0 5px; font-size: 14.5px; }
+.flow-step p { margin: 0; font-size: 12px; line-height: 1.45; color: var(--ink-2); }
+.flow-num { display: inline-flex; width: 24px; height: 24px; align-items: center; justify-content: center; border-radius: 50%; background: var(--green-tint); color: var(--green-deep); font-size: 12.5px; font-weight: 800; }
+.flow-arrow { align-self: center; color: var(--ink-3); font-size: 15px; flex: 0 0 auto; }
+@media (max-width: 900px) { .flow-strip { flex-wrap: nowrap; } }
