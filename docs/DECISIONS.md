@@ -623,3 +623,28 @@ membership + self-assessment after Devpost (MPA-native trust, weeks not
 months); SOC 2 Type 1 via a compliance platform when the first enterprise
 conversation gets serious, Type 2 following. Operator action items: 2FA on
 all provider accounts; one-page incident-response note.
+
+## 2026-08-28 — THE PIVOT: business, not hackathon
+
+The Devpost/Agentic Cinema submission is abandoned; ScriptRisk is a business.
+Actions taken same-day: repo made PRIVATE (history was public since day one —
+privacy applies going forward, not retroactively; the real moats — harvested
+regulator datasets, eval calibration history, measured numbers — never lived
+in the repo); CLAUDE.md rewritten from contest rules to operating principles.
+
+What dissolves: the Gemini-only runtime rule, the Parallel-required rule, the
+public-repo/MIT requirement, the 3-minute-video constraints, the Sept 9 wall.
+
+What deliberately survives: the current stack (measured and working — changes
+go through gates, not through freedom), the forbidden-deps scan as stack
+discipline, the demo-fixture-is-original-work rule, safe_deploy as the only
+deploy path, and deadline discipline replaced by weekly measured milestones.
+
+What the freedom unlocks, first in line: CROSS-MODEL verification and k-pass
+diversity (a non-Gemini desk/verifier pass) to attack correlated blindness —
+the measured cause of the useless recall bound. Structurally forbidden under
+contest rules; now the most interesting available architecture change.
+
+Business path (from the reviews): Wave 2's three published numbers, then the
+revision-aware rescan as the subscription product, then TPN Blue. The
+'cannot honestly charge before this point' line is the roadmap's spine.
