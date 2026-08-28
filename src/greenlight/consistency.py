@@ -19,6 +19,7 @@ from typing import Any
 
 _FUZZY_THRESHOLD = 0.8
 _TOKEN_JACCARD = 0.75  # a wholly different token (Cameron vs Tyler) is a different entity
+_NEAR_MISS_FLOOR = 0.55  # unmerged pairs above this get logged for hand review
 _MIN_RATERS = 2  # a row needs two observations to say anything about agreement
 
 
@@ -66,6 +67,7 @@ def match_runs(records: list[dict[str, Any]]) -> dict[str, Any]:
     canon: list[tuple[str, str]] = []
     alias: dict[tuple[str, str], tuple[str, str]] = {}
     fuzzy_merges = 0
+    near_misses: list[dict[str, Any]] = []
 
     def resolve(key: tuple[str, str]) -> tuple[str, str]:
         nonlocal fuzzy_merges
@@ -80,6 +82,13 @@ def match_runs(records: list[dict[str, Any]]) -> dict[str, Any]:
                     alias[key] = (c_surface, c_cat)
                     fuzzy_merges += 1
                     return alias[key]
+                ratio = difflib.SequenceMatcher(None, surface, c_surface).ratio()
+                if ratio >= _NEAR_MISS_FLOOR:
+                    # if this fills with Zuckerberg/Mark Zuckerberg pairs, a low
+                    # alpha is a matcher artifact — read this BEFORE alpha
+                    near_misses.append(
+                        {"a": surface, "b": c_surface, "category": cat, "ratio": round(ratio, 3)}
+                    )
         canon.append(key)
         alias[key] = key
         return key
@@ -107,6 +116,7 @@ def match_runs(records: list[dict[str, Any]]) -> dict[str, Any]:
     return {
         "groups": groups,
         "fuzzy_merges": fuzzy_merges,
+        "near_misses": near_misses,
         "union_size": len(groups),
         "total_findings": total,
     }

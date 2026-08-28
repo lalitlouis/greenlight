@@ -76,6 +76,7 @@ def search(title: str, year: int | None) -> list[tuple[str, str]]:
         if not fields.get("reason"):
             continue
         sm = STUDIO.search(body)
+        known = {"reason", "year rated", "certificate #", "alternate titles"}
         out.append(
             {
                 "fr_title": fr_title,
@@ -84,6 +85,7 @@ def search(title: str, year: int | None) -> list[tuple[str, str]]:
                 "certificate": fields.get("certificate #", ""),
                 "alternate_titles": fields.get("alternate titles", ""),
                 "studio": sm.group(1).strip() if sm else "",
+                "extra": {k: v for k, v in fields.items() if k not in known},
             }
         )
     return out
@@ -123,6 +125,31 @@ def best_match(
     return None
 
 
+def _apply_match(entry: dict, match: dict, hits: list[dict], corpus_rating: str) -> None:
+    same_title = [e for e in hits if norm_title(e["fr_title"]) == norm_title(match["fr_title"])]
+    if len(same_title) > 1:
+        # multiple certificates on one title = a rating EVENT trail
+        # (resubmissions, edited versions) — the cut simulator's closest
+        # public ground truth; flagged as a cohort for B2 validation
+        entry["all_certs"] = [
+            {
+                "certificate": e["certificate"],
+                "year_rated": e["year_rated"],
+                "reason": e["reason"],
+                "studio": e["studio"],
+            }
+            for e in same_title
+        ]
+    entry["fr_title"] = match["fr_title"]
+    entry["rationale"] = match["reason"]  # verbatim, unparsed
+    entry["year_rated"] = match["year_rated"]
+    entry["certificate"] = match["certificate"]
+    entry["studio"] = match["studio"]
+    m = RATED.search(match["reason"])
+    if m and m.group(1) != corpus_rating:
+        entry["rating_in_text"] = m.group(1)
+
+
 def main() -> int:
     rows = [json.loads(line) for line in CORPUS.read_text().splitlines() if line.strip()]
     done: dict[str, dict] = {}
@@ -142,6 +169,8 @@ def main() -> int:
                 "year": r["year"],
                 "rating": r["rating"],
                 "rationale": None,
+                "source": "filmratings.com search-results",
+                "harvested_at": time.strftime("%Y-%m-%d"),
             }
             try:
                 # CARA's "year rated" can differ from release year by one
@@ -165,14 +194,7 @@ def main() -> int:
                             *(t["certificate"] for t in twins),
                         ]
                 if match:
-                    entry["fr_title"] = match["fr_title"]
-                    entry["rationale"] = match["reason"]  # verbatim, unparsed
-                    entry["year_rated"] = match["year_rated"]
-                    entry["certificate"] = match["certificate"]
-                    entry["studio"] = match["studio"]
-                    m = RATED.search(match["reason"])
-                    if m and m.group(1) != r["rating"]:
-                        entry["rating_in_text"] = m.group(1)
+                    _apply_match(entry, match, hits, r["rating"])
             except Exception as exc:
                 entry["error"] = str(exc)[:80]
             out.write(json.dumps(entry) + "\n")
