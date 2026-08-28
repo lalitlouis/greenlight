@@ -726,3 +726,16 @@ CARA's 4,755 rationales, the corpus now carries two regulators' official
 decisions per film. Overnight harvest total: 12,604 films, 5 errors. The
 cut simulator's validation set and the cross-jurisdiction feature space
 both exist as of tonight.
+
+## 2026-08-28 — Feature-scale k=3 PARKED (owner call)
+
+The feature-length k=3 measurement (three full passes on The Social Network,
+~$45 — the publishable consistency alpha plus A3's capture-recapture
+validation against the hand-labeled list) is deliberately deferred, to be
+brought back later. Consequences, stated for the record: Wave 2's exit
+criterion stays open — the consistency number remains fixture-scale
+(alpha 0.932, 12 rated rows — too thin to publish) and recall remains
+unbounded pending A3's validation. The k=3 harness, the matcher, and the
+hand-label sources are ready; resuming is one command
+(scripts/consistency_k3.py <script> 3). The methodology page will state
+these two numbers as pending rather than claiming them.
