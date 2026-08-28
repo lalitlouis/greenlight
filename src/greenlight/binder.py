@@ -113,6 +113,49 @@ def _cost_label(cost: list[Any]) -> str:
     return f"{cost[0]:,}-{cost[1]:,}"
 
 
+def _note(f: dict[str, Any]) -> str:
+    r = f.get("remedy") or {}
+    note_parts = []
+    if f.get("finding"):
+        note_parts.append(_clip(str(f["finding"]), 240))
+    remedy_bits = []
+    if r.get("action"):
+        remedy_bits.append(r["action"].replace("_", " ").title())
+    if r.get("detail"):
+        remedy_bits.append(r["detail"])
+    if remedy_bits:
+        note_parts.append("Remedy: " + " — ".join(remedy_bits))
+    return _clip("  \u2027  ".join(note_parts), 620)
+
+
+def _hosts(f: dict[str, Any]) -> list[str]:
+    hosts: list[str] = []
+    for c in f.get("citations", []):
+        seg = (c.get("url") or "").split("/")[2:3]
+        host = seg[0].removeprefix("www.") if seg else ""
+        if host and host not in hosts:
+            hosts.append(host)
+    return hosts
+
+
+def _flag_row(
+    f: dict[str, Any], base: dict[str, str], entities: dict[str, Any], sid: str
+) -> dict[str, str]:
+    item = _unescape(entities.get(f.get("entity_id")) or "")
+    return {
+        **base,
+        "Scene": _compact_scene_ref(f.get("_all_scenes") or [sid]),
+        "Item": item or "\u2014",
+        "Category": _label(f),
+        "Severity": f.get("severity", ""),
+        "Clearance status": STATUS_BY_SEVERITY.get(f.get("severity", ""), "Review"),
+        "Remedy / licensing note": _note(f),
+        "Est. cost (USD)": _cost_label((f.get("remedy") or {}).get("est_cost_usd") or []),
+        "Sources": "; ".join(_hosts(f)[:4]),
+        "Finding": f.get("flag_id", ""),
+    }
+
+
 def build(record: dict[str, Any], scene_meta: dict[str, dict[str, Any]]) -> dict[str, Any]:
     """The binder as data: header block + one row per finding per scene, with
     explicit no-known-issue rows so the log covers the whole script."""
@@ -160,41 +203,7 @@ def build(record: dict[str, Any], scene_meta: dict[str, dict[str, Any]]) -> dict
             )
             continue
         for f in flags:
-            all_sids_f = f.get("_all_scenes") or [sid]
-            scene_ref = _compact_scene_ref(all_sids_f)
-            r = f.get("remedy") or {}
-            note_parts = []
-            if f.get("finding"):
-                note_parts.append(_clip(str(f["finding"]), 240))
-            remedy_bits = []
-            if r.get("action"):
-                remedy_bits.append(r["action"].replace("_", " ").title())
-            if r.get("detail"):
-                remedy_bits.append(r["detail"])
-            if remedy_bits:
-                note_parts.append("Remedy: " + " — ".join(remedy_bits))
-            cost_s = _cost_label(r.get("est_cost_usd") or [])
-            hosts = []
-            for c in f.get("citations", []):
-                seg = (c.get("url") or "").split("/")[2:3]
-                host = seg[0].removeprefix("www.") if seg else ""
-                if host and host not in hosts:
-                    hosts.append(host)
-            item = _unescape(entities.get(f.get("entity_id")) or "")
-            rows.append(
-                {
-                    **base,
-                    "Scene": scene_ref,
-                    "Item": item or "\u2014",
-                    "Category": _label(f),
-                    "Severity": f.get("severity", ""),
-                    "Clearance status": STATUS_BY_SEVERITY.get(f.get("severity", ""), "Review"),
-                    "Remedy / licensing note": _clip("  \u2027  ".join(note_parts), 620),
-                    "Est. cost (USD)": cost_s,
-                    "Sources": "; ".join(hosts[:4]),
-                    "Finding": f.get("flag_id", ""),
-                }
-            )
+            rows.append(_flag_row(f, base, entities, sid))
 
     rep = record.get("report") or {}
     counts: dict[str, int] = {}
