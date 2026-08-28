@@ -1148,6 +1148,7 @@ th.bd-col-sources { width: 11.5%; }
 th.bd-col-finding { width: 5.5%; }
 td.bd-col-scene { overflow-wrap: normal; }  /* wrap between ranges, never inside S001-S005 */
 td.bd-col-sources { white-space: pre-line; font-size: 11px; }  /* one source per line */
+td.bd-col-remedy { white-space: pre-line; }  /* finding, then remedy, as separate paragraphs */
 td.bd-col-finding { overflow-wrap: normal; }
 .bd-table th { text-align: left; font-size: 10.5px; letter-spacing: 0.05em; text-transform: uppercase; color: #6d6653; border-bottom: 1.5px solid #1a1712; padding: 6px 8px; overflow-wrap: normal; word-break: normal; hyphens: none; }
 .bd-table td { border-bottom: 1px solid #e5e0d2; padding: 7px 8px; vertical-align: top; hyphens: auto; }
@@ -1160,6 +1161,10 @@ td.bd-col-finding { overflow-wrap: normal; }
 .bd-sevcell.sev-LOW, .bd-sevcell.sev-FYI { color: var(--low); }
 tr.bd-sev-BLOCKER { background: rgba(224, 52, 42, 0.045); }
 .flag-ref-gone { color: var(--ink-dim, #8a8271); font-style: italic; }
+.bd-sec-title { margin: 26px 0 6px; font-size: 12px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: #6d6653; border-top: 1.5px solid #1a1712; padding-top: 12px; }
+.bd-back-list { margin: 0; padding-left: 0; list-style: none; font-size: 12.5px; line-height: 1.65; }
+.bd-back-list .who { font-weight: 700; color: #55503f; margin-right: 7px; }
+.bd-back-line { margin: 0; font-size: 12.5px; }
 .bd-disclaimer { margin: 22px 0 0; padding-top: 14px; border-top: 1px solid #e5e0d2; font-size: 11px; line-height: 1.55; color: #8a8271; }
 @media print {
   .bd-body { background: #fff; padding: 0; }

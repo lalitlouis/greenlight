@@ -268,3 +268,24 @@ def annotated_script(text: str, scenes: list[dict[str, Any]]) -> str:
         start, end = scene["raw_span"]
         out.append(f"[{scene['scene_id']}] {text[start:end].rstrip()}")
     return "\n\n".join(out)
+
+
+def draft_identity(
+    source: str, meta: dict[str, Any], scenes: list[dict[str, Any]], title: str
+) -> dict[str, Any]:
+    """Chain of custody: a clearance report is only valid for the exact draft it
+    ran against. Hash, size, page count, and whether the scene numbers are the
+    script's own locked numbers or our generated coordinates."""
+    import hashlib
+
+    numbered = sum(1 for sc in scenes if sc.get("number"))
+    return {
+        "title": title,
+        "draft_date": meta.get("draft date") or meta.get("draft_date") or "",
+        "revision_label": meta.get("revision") or "",
+        "sha256": hashlib.sha256(source.encode()).hexdigest(),
+        "bytes": len(source.encode()),
+        "pages": max((sc.get("page", 1) for sc in scenes), default=1),
+        "scene_count": len(scenes),
+        "scene_numbers": "script" if numbered >= max(1, len(scenes) // 2) else "generated",
+    }

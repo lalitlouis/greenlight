@@ -1243,8 +1243,8 @@ async def _binder_data(run_id: str) -> dict[str, Any]:
     record = await _load_record_any(run_id)
     if record is None:
         raise HTTPException(404, "Unknown run.")
-    scene_meta: dict[str, dict[str, Any]] = {}
-    source = await _load_source_any(run_id, record)
+    scene_meta: dict[str, dict[str, Any]] = record.get("scene_meta") or {}
+    source = None if scene_meta else await _load_source_any(run_id, record)
     if source:
         _, scenes = parser.parse_fountain(source)
         scene_meta = {

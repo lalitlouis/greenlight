@@ -113,11 +113,14 @@ def _cost_label(cost: list[Any]) -> str:
     return f"{cost[0]:,}-{cost[1]:,}"
 
 
+NOTE_CEILING = 2400  # guard against pathological output only — nothing real elides
+
+
 def _note(f: dict[str, Any]) -> str:
     r = f.get("remedy") or {}
     note_parts = []
     if f.get("finding"):
-        note_parts.append(_clip(str(f["finding"]), 240))
+        note_parts.append(str(f["finding"]))
     remedy_bits = []
     if r.get("action"):
         remedy_bits.append(r["action"].replace("_", " ").title())
@@ -125,14 +128,36 @@ def _note(f: dict[str, Any]) -> str:
         remedy_bits.append(r["detail"])
     if remedy_bits:
         note_parts.append("Remedy: " + " — ".join(remedy_bits))
-    return _clip("  \u2027  ".join(note_parts), 620)
+    return _clip("\n".join(note_parts), NOTE_CEILING)
+
+
+BACKGROUND_HOSTS = {
+    "wikipedia.org",
+    "fandom.com",
+    "reddit.com",
+    "quora.com",
+    "discogs.com",
+    "songfacts.com",
+    "secondhandsongs.com",
+    "imdb.com",
+    "tvtropes.org",
+    "writing.stackexchange.com",
+    "writingforums.com",
+    "genius.com",
+}
+
+
+def _tier_label(host: str) -> str:
+    bare = host.removeprefix("www.")
+    root = ".".join(bare.split(".")[-2:])
+    return f"{bare} (background)" if bare in BACKGROUND_HOSTS or root in BACKGROUND_HOSTS else bare
 
 
 def _hosts(f: dict[str, Any]) -> list[str]:
     hosts: list[str] = []
     for c in f.get("citations", []):
         seg = (c.get("url") or "").split("/")[2:3]
-        host = seg[0].removeprefix("www.") if seg else ""
+        host = _tier_label(seg[0]) if seg else ""
         if host and host not in hosts:
             hosts.append(host)
     return hosts
@@ -167,14 +192,89 @@ def _flag_row(
         "Clearance status": STATUS_BY_SEVERITY.get(f.get("severity", ""), "Review"),
         "Remedy / licensing note": _note(f),
         "Est. cost (USD)": _cost_label((f.get("remedy") or {}).get("est_cost_usd") or []),
-        "Sources": "; ".join(_hosts(f)[:4]),
+        "Sources": "\n".join(_hosts(f)[:4]),
         "Finding": f.get("flag_id", ""),
     }
 
 
-def build(record: dict[str, Any], scene_meta: dict[str, dict[str, Any]]) -> dict[str, Any]:
+_DETERMINATION_NEG = (
+    "unclear",
+    "unresolved",
+    "unknown",
+    "unable",
+    "couldn't",
+    "could not",
+    "pending",
+    "unverified",
+    "needs further",
+    "needs manual",
+    "open question",
+)
+
+
+def _is_determination(q: str) -> bool:
+    """A note that states a closed conclusion ("Cleared.", "no license
+    required") rather than an unresolved item. Mirrors report.js."""
+    import re as _re
+
+    t = str(q)
+    if t.rstrip().endswith("?"):
+        return False
+    low = t.lower()
+    if any(neg in low for neg in _DETERMINATION_NEG):
+        return False
+    if _re.search(r"\bcleared\b", low):
+        return True
+    return bool(
+        _re.search(
+            r"\bno (?:synchronization|sync|master(?:[- ]use)?|licen[cs]e|clearance"
+            r"|release|permit|action)\b[^.?]*\b(?:required|needed|necessary)\b",
+            low,
+        )
+    )
+
+
+def _back_matter(record: dict[str, Any]) -> dict[str, Any]:
+    """Everything the report knows beyond the findings table — the binder is
+    the artifact that reaches production counsel, so the verifier rejections,
+    the adjudication, and the cleared determinations travel with it."""
+    oq_all = [(desk, q) for desk, qs in (record.get("open_questions") or {}).items() for q in qs]
+    rep = record.get("report") or {}
+    pred = rep.get("rating_prediction") or {}
+    hosts: list[str] = []
+    for f in record.get("flags", []):
+        for h in _hosts(f):
+            if h not in hosts:
+                hosts.append(h)
+    return {
+        "cleared": [{"desk": _pretty(d), "text": q} for d, q in oq_all if _is_determination(q)],
+        "open_questions": [
+            {"desk": _pretty(d), "text": q} for d, q in oq_all if not _is_determination(q)
+        ],
+        "rejected": [
+            {
+                "finding": f.get("flag_id", ""),
+                "category": _label(f),
+                "reason": _clip(str(f.get("rejection_reason") or ""), 400),
+            }
+            for f in record.get("rejected_flags", [])
+        ],
+        "adjudication": [_clip(str(n), 500) for n in record.get("adjudication_notes", [])],
+        "rating": (
+            {"predicted": pred.get("predicted", ""), "target": pred.get("target", "")}
+            if pred.get("predicted")
+            else {}
+        ),
+        "sources": sorted(hosts),
+    }
+
+
+def build(
+    record: dict[str, Any], scene_meta: dict[str, dict[str, Any]] | None = None
+) -> dict[str, Any]:
     """The binder as data: header block + one row per finding per scene, with
     explicit no-known-issue rows so the log covers the whole script."""
+    scene_meta = scene_meta or record.get("scene_meta") or {}
     entities = {e.get("entity_id"): e.get("surface") for e in record.get("entities", [])}
     numbers = {sid: str(m.get("number") or "") for sid, m in scene_meta.items()}
     # One line item per finding, anchored at its first scene with a multi-scene
@@ -239,6 +339,7 @@ def build(record: dict[str, Any], scene_meta: dict[str, dict[str, Any]]) -> dict
         for r in rows
         if r["Severity"] in ("BLOCKER", "HIGH")
     ]
+    used_columns = [c for c in COLUMNS if any(str(r.get(c, "")).strip() for r in rows)] or COLUMNS
     return {
         "title": record.get("script_title") or "Untitled",
         "generated_at": (record.get("generated_at") or "")[:10],
@@ -246,8 +347,9 @@ def build(record: dict[str, Any], scene_meta: dict[str, dict[str, Any]]) -> dict
         "counts": counts,
         "draft": record.get("draft") or {},
         "top_exposures": top,
+        "back_matter": _back_matter(record),
         "est_cost": rep.get("est_clearance_cost_usd"),
-        "columns": COLUMNS,
+        "columns": used_columns,
         "rows": rows,
         "disclaimer": (
             "Prepared by ScriptRisk (scriptrisk.com). Research tool output, not legal advice; "
@@ -259,7 +361,8 @@ def build(record: dict[str, Any], scene_meta: dict[str, dict[str, Any]]) -> dict
 
 def to_csv(binder: dict[str, Any]) -> str:
     buf = io.StringIO()
-    w = csv.DictWriter(buf, fieldnames=COLUMNS)
+    cols = binder.get("columns") or COLUMNS
+    w = csv.DictWriter(buf, fieldnames=cols, extrasaction="ignore")
     buf.write(f"# {binder['title']} — Clearance Log — generated {binder['generated_at']}\n")
     buf.write(f"# {binder['disclaimer']}\n")
     w.writeheader()

@@ -49,30 +49,71 @@ def binder_pdf(data: dict[str, Any]) -> bytes:
     sub_style = ParagraphStyle("s", fontName="Helvetica", fontSize=8.5, textColor=FAINT)
     story.append(Paragraph(f"{data['title']} — Production Clearance Log", title_style))
     counts = data.get("counts") or {}
+    tiers = ", ".join(
+        f"{counts[t]} {t.lower()}"
+        for t in ("BLOCKER", "HIGH", "MEDIUM", "LOW", "FYI")
+        if counts.get(t)
+    )
     story.append(
         Paragraph(
             f"Generated {data['generated_at']} · Greenlight Score {data.get('score', '—')}/100 · "
-            f"{counts.get('BLOCKER', 0)} blocker(s), {counts.get('HIGH', 0)} high, "
-            f"{counts.get('MEDIUM', 0)} medium · prepared by ScriptRisk (scriptrisk.com)",
+            f"{tiers} · prepared by ScriptRisk (scriptrisk.com)",
             sub_style,
         )
     )
+    d = data.get("draft") or {}
+    if d.get("sha256"):
+        prov = (
+            "script's own scene numbers"
+            if d.get("scene_numbers") == "script"
+            else "generated scene coordinates"
+        )
+        story.append(Spacer(1, 4))
+        story.append(
+            Paragraph(
+                f"This report is valid only for this draft: {d.get('pages', '?')} pp · "
+                f"{prov} · SHA-256 {d['sha256'][:12]}…",
+                sub_style,
+            )
+        )
     story.append(Spacer(1, 10))
 
+    # Columns arrive pre-filtered (empty ones dropped server-side); widths are
+    # keyed by identity so a dropped column redistributes to the remedy.
     cols = data["columns"]
-    widths = [0.75, 0.35, 1.35, 1.05, 0.95, 0.55, 1.15, 2.6, 0.7, 0.95, 0.45]
-    total = sum(widths)
+    col_w = {
+        "Scene": 0.8,
+        "Page": 0.35,
+        "Scene heading": 1.2,
+        "Item": 1.0,
+        "Category": 0.9,
+        "Severity": 0.6,
+        "Clearance status": 1.0,
+        "Remedy / licensing note": 3.4,
+        "Est. cost (USD)": 0.7,
+        "Sources": 1.0,
+        "Finding": 0.5,
+    }
+    fracs = [col_w.get(c, 1.0) for c in cols]
     page_w = landscape(letter)[0] - 0.9 * inch
-    widths = [w / total * page_w for w in widths]
+    widths = [f / sum(fracs) * page_w for f in fracs]
+    sev_col = cols.index("Severity") if "Severity" in cols else -1
 
-    rows: list[list[Any]] = [[Paragraph(c.upper(), _HEAD) for c in cols]]
+    def _cell(text: str, style: ParagraphStyle) -> Paragraph:
+        # reportlab Paragraph parses mini-XML — unescaped '&' corrupts cells
+        import html as _html
+
+        safe = _html.escape(str(text)).replace("\n", "<br/>")
+        return Paragraph(safe, style)
+
+    rows: list[list[Any]] = [[_cell(c.upper(), _HEAD) for c in cols]]
     styles_extra = []
     for i, r in enumerate(data["rows"], start=1):
         style = _CELL_DIM if r.get("Clearance status") == "No known issue" else _CELL
-        rows.append([Paragraph(str(r.get(c, "")), style) for c in cols])
+        rows.append([_cell(r.get(c, ""), style) for c in cols])
         sev = r.get("Severity")
-        if sev in SEV_COLORS:
-            styles_extra.append(("TEXTCOLOR", (5, i), (5, i), SEV_COLORS[sev]))
+        if sev in SEV_COLORS and sev_col >= 0:
+            styles_extra.append(("TEXTCOLOR", (sev_col, i), (sev_col, i), SEV_COLORS[sev]))
     table = Table(rows, colWidths=widths, repeatRows=1)
     table.setStyle(
         TableStyle(
@@ -89,6 +130,45 @@ def binder_pdf(data: dict[str, Any]) -> bytes:
         )
     )
     story.append(table)
+
+    import html as _html
+
+    sec_style = ParagraphStyle(
+        "sec", fontName="Helvetica-Bold", fontSize=8.5, leading=11, textColor=INK, spaceBefore=14
+    )
+    item_style = ParagraphStyle("item", parent=_CELL, fontSize=8, leading=10.5)
+
+    def _sec(title: str, items: list[str]) -> None:
+        if not items:
+            return
+        story.append(Paragraph(_html.escape(title).upper(), sec_style))
+        for it in items:
+            story.append(Paragraph(_html.escape(it), item_style))
+
+    bm = data.get("back_matter") or {}
+    rating = bm.get("rating") or {}
+    if rating.get("predicted"):
+        tgt = (
+            f" · production target {rating['target']}"
+            if rating.get("target") and rating["target"] != rating["predicted"]
+            else ""
+        )
+        _sec("Rating prediction", [f"Predicted {rating['predicted']}{tgt}"])
+    _sec(
+        f"Reviewed & cleared ({len(bm.get('cleared') or [])})",
+        [f"[{c['desk']}] {c['text']}" for c in bm.get("cleared") or []],
+    )
+    _sec(
+        "Open questions — honest unknowns",
+        [f"[{q['desk']}] {q['text']}" for q in bm.get("open_questions") or []],
+    )
+    _sec(
+        f"Rejected in verification ({len(bm.get('rejected') or [])})",
+        [f"{r['finding']} ({r['category']}): {r['reason']}" for r in bm.get("rejected") or []],
+    )
+    _sec("Adjudication", list(bm.get("adjudication") or []))
+    _sec("Sources cited", [" · ".join(bm.get("sources") or [])] if bm.get("sources") else [])
+
     story.append(Spacer(1, 12))
     story.append(Paragraph(data.get("disclaimer", ""), sub_style))
     doc.build(story)
@@ -248,7 +328,22 @@ def onesheet_pdf(record: dict[str, Any]) -> bytes:
         line = f"Predicted {pred['predicted']}"
         if pred.get("target") and pred["target"] != pred["predicted"]:
             line += f" · production target {pred['target']}"
-        line += f" — {same} of {len(comps)} nearest released comparables agree"
+        order = ["G", "PG", "PG-13", "R", "NC-17"]
+        predicted = pred["predicted"]
+        pred_i = order.index(predicted) if predicted in order else -1
+        at_or_above = (
+            sum(
+                1
+                for comp in comps
+                if comp.get("rating") in order and order.index(comp["rating"]) >= pred_i
+            )
+            if pred_i >= 0
+            else same
+        )
+        line += (
+            f" — {at_or_above} of {len(comps)} nearest released comparables "
+            f"rate {predicted} or stricter"
+        )
         c.drawString(margin + 62, y, line[:95])
         y -= 0.35 * inch
 

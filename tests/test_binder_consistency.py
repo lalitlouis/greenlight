@@ -50,14 +50,17 @@ def test_binder_matches_report(path: str) -> None:
                 "Est. cost (USD)"
             ].replace(",", ""), f"cost range missing for {r['Finding']}"
         # The finding text (where corrected titles live) is present in the note.
-        if f.get("finding"):
-            head = str(f["finding"])[:60]
-            assert head in r["Remedy / licensing note"], (
-                f"finding text absent from binder note for {r['Finding']}"
+        if f.get("finding") and len(r["Remedy / licensing note"]) < 2400:
+            assert str(f["finding"]) in r["Remedy / licensing note"], (
+                f"finding text elided in binder note for {r['Finding']}"
             )
         # No mid-word slice: a clipped cell ends with the ellipsis marker.
         note = r["Remedy / licensing note"]
-        assert len(note) <= 620 or note.endswith("…")
+        assert len(note) <= 2400 or note.endswith("…")
+        # the remedy is the actionable half — it must be present, uncut
+        detail = (f.get("remedy") or {}).get("detail") or ""
+        if detail and len(note) < 2400:
+            assert detail[:60] in note, f"remedy truncated for {r['Finding']}"
         # Item never silently duplicates Category.
         if r["Item"] != "—":
             assert r["Item"] != r["Category"]

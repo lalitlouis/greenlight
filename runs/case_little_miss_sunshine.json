@@ -2951,5 +2951,657 @@
     "year": 2006,
     "hook": "A family film with an R problem: Super Freak, a minor on stage, and the language math.",
     "note": "Independent analysis of a publicly circulating study draft, published for commentary and education. Not affiliated with the production. The screenplay text is not reproduced. Scores reflect the draft analyzed, not the released film."
+  },
+  "scene_meta": {
+    "S001": {
+      "heading": "INT. BASEMENT REC ROOM - DAY",
+      "page": 1,
+      "number": ""
+    },
+    "S002": {
+      "heading": "INT. CLASSROOM - DAY",
+      "page": 1,
+      "number": ""
+    },
+    "S003": {
+      "heading": "INT. CAR - DAY",
+      "page": 2,
+      "number": ""
+    },
+    "S004": {
+      "heading": "EXT. HOSPITAL CORRIDOR - DAY",
+      "page": 2,
+      "number": ""
+    },
+    "S005": {
+      "heading": "INT. HOSPITAL ROOM - DAY",
+      "page": 3,
+      "number": ""
+    },
+    "S006": {
+      "heading": "INT. HOSPITAL CORRIDOR - DAY",
+      "page": 3,
+      "number": ""
+    },
+    "S007": {
+      "heading": "INT. HOSPITAL ROOM - DAY",
+      "page": 3,
+      "number": ""
+    },
+    "S008": {
+      "heading": "INT. BATHROOM - DAY *",
+      "page": 3,
+      "number": ""
+    },
+    "S009": {
+      "heading": "INT. DWAYNE'S BEDROOM - DAY *",
+      "page": 3,
+      "number": ""
+    },
+    "S010": {
+      "heading": "INT. CAR - DAY *",
+      "page": 4,
+      "number": ""
+    },
+    "S011": {
+      "heading": "INT. KITCHEN - DAY",
+      "page": 4,
+      "number": ""
+    },
+    "S012": {
+      "heading": "INT. HALLWAY - DAY",
+      "page": 4,
+      "number": ""
+    },
+    "S013": {
+      "heading": "INT. DWAYNE'S BEDROOM - DAY",
+      "page": 5,
+      "number": ""
+    },
+    "S014": {
+      "heading": "INT. DINING ROOM - DAY",
+      "page": 5,
+      "number": ""
+    },
+    "S015": {
+      "heading": "INT. KITCHEN - DAY",
+      "page": 6,
+      "number": ""
+    },
+    "S016": {
+      "heading": "INT. DWAYNE'S BEDROOM- DAY",
+      "page": 8,
+      "number": ""
+    },
+    "S017": {
+      "heading": "INT. DINING ROOM - DAY",
+      "page": 8,
+      "number": ""
+    },
+    "S018": {
+      "heading": ".L.:L",
+      "page": 10,
+      "number": ""
+    },
+    "S019": {
+      "heading": "INT. KITCHEN - DAY",
+      "page": 16,
+      "number": ""
+    },
+    "S020": {
+      "heading": "INT. DINING ROOM - DAY",
+      "page": 17,
+      "number": ""
+    },
+    "S021": {
+      "heading": "INT. KITCHEN - DAY",
+      "page": 17,
+      "number": ""
+    },
+    "S022": {
+      "heading": "INT. DINING ROOM - DAY",
+      "page": 17,
+      "number": ""
+    },
+    "S023": {
+      "heading": "INT. REC ROOM - DAY",
+      "page": 18,
+      "number": ""
+    },
+    "S024": {
+      "heading": "INT. KITCHEN - MOMENTS LATER",
+      "page": 18,
+      "number": ""
+    },
+    "S025": {
+      "heading": "INT. DINING ROOM - CONTINUOUS",
+      "page": 20,
+      "number": ""
+    },
+    "S026": {
+      "heading": "INT. OLIVE'S BEDROOM - DAY",
+      "page": 20,
+      "number": ""
+    },
+    "S027": {
+      "heading": "INT. DINING ROOM - DAY",
+      "page": 20,
+      "number": ""
+    },
+    "S028": {
+      "heading": "INT. VW BUS - ON THE ROAD - DAY",
+      "page": 22,
+      "number": ""
+    },
+    "S029": {
+      "heading": "INT. DINER - DAY",
+      "page": 25,
+      "number": ""
+    },
+    "S030": {
+      "heading": ".JV\u2022",
+      "page": 25,
+      "number": ""
+    },
+    "S031": {
+      "heading": "EXT. PARKING LOT - DAY",
+      "page": 28,
+      "number": ""
+    },
+    "S032": {
+      "heading": "INT. VW BUS - PARKED - DAY",
+      "page": 29,
+      "number": ""
+    },
+    "S033": {
+      "heading": "INT. SERVICE STATION GARAGE - DAY",
+      "page": 29,
+      "number": ""
+    },
+    "S034": {
+      "heading": "EXT. SERVICE STATION - DAY",
+      "page": 30,
+      "number": ""
+    },
+    "S035": {
+      "heading": "INT. SERVICE STATION GARAGE - DAY",
+      "page": 30,
+      "number": ""
+    },
+    "S036": {
+      "heading": "EXT. PARKING LOT - DAY",
+      "page": 31,
+      "number": ""
+    },
+    "S037": {
+      "heading": "INT. VW BUS - ON THE ROAD - DAY",
+      "page": 32,
+      "number": ""
+    },
+    "S038": {
+      "heading": "INT./EXT. VW BUS, ON THE ROAD - DAY ~ DRIVING MONTAGE",
+      "page": 32,
+      "number": ""
+    },
+    "S039": {
+      "heading": "INT. VW BUS - ON THE ROAD - DAY",
+      "page": 32,
+      "number": ""
+    },
+    "S040": {
+      "heading": "EXT. CONVENIENCE STORE I PHONE BOOTH - DAY",
+      "page": 34,
+      "number": ""
+    },
+    "S041": {
+      "heading": "INT. PHONE BOOTH - DAY",
+      "page": 34,
+      "number": ""
+    },
+    "S042": {
+      "heading": "INT. CONVENIENCE STORE - DAY",
+      "page": 35,
+      "number": ""
+    },
+    "S043": {
+      "heading": "EXT. PHONE BOOTH - DAY",
+      "page": 37,
+      "number": ""
+    },
+    "S044": {
+      "heading": "EXT. VW BUS - PARKED - DAY",
+      "page": 37,
+      "number": ""
+    },
+    "S045": {
+      "heading": "INT. VW BUS - ON THE ROAD - DAY",
+      "page": 38,
+      "number": ""
+    },
+    "S046": {
+      "heading": "EXT. PHONE BOOTH - DAY",
+      "page": 38,
+      "number": ""
+    },
+    "S047": {
+      "heading": "INT. VW BUS - ON THE ROAD - DAY",
+      "page": 39,
+      "number": ""
+    },
+    "S048": {
+      "heading": "INT. MCDONALDS - NIGHT",
+      "page": 39,
+      "number": ""
+    },
+    "S049": {
+      "heading": "EXT. MOTEL - NIGHT",
+      "page": 39,
+      "number": ""
+    },
+    "S050": {
+      "heading": "INT. MOTEL ROOM ELEVEN - NIGHT",
+      "page": 40,
+      "number": ""
+    },
+    "S051": {
+      "heading": "INT. MOTEL ROOM TWELVE - NIGHT",
+      "page": 40,
+      "number": ""
+    },
+    "S052": {
+      "heading": "INT. MOTEL BATHROOM - NIGHT",
+      "page": 41,
+      "number": ""
+    },
+    "S053": {
+      "heading": "INT. MOTEL ROOM TWELVE - NIGHT",
+      "page": 41,
+      "number": ""
+    },
+    "S054": {
+      "heading": "INT. MOTEL ROOM THIRTEEN - NIGHT",
+      "page": 41,
+      "number": ""
+    },
+    "S055": {
+      "heading": "INT. MOTEL ROOM TWELVE - NIGHT",
+      "page": 42,
+      "number": ""
+    },
+    "S056": {
+      "heading": "INT. MOTEL BATHROOM - DAY",
+      "page": 43,
+      "number": ""
+    },
+    "S057": {
+      "heading": "INT. MOTEL ROOM ELEVEN - NIGHT",
+      "page": 43,
+      "number": ""
+    },
+    "S058": {
+      "heading": "EXT. MOTEL PARKING LOT - NIGHT",
+      "page": 43,
+      "number": ""
+    },
+    "S059": {
+      "heading": "EXT. HIGHWAY ENTRANCE - NIGHT - LONG SHOT",
+      "page": 44,
+      "number": ""
+    },
+    "S060": {
+      "heading": "EXT. MOTEL PLAYGROUND - NIGHT",
+      "page": 44,
+      "number": ""
+    },
+    "S061": {
+      "heading": "EXT. HOTEL PARKING LOT - NIGHT",
+      "page": 44,
+      "number": ""
+    },
+    "S062": {
+      "heading": "INT. HOTEL HALLWAY - NIGHT",
+      "page": 44,
+      "number": ""
+    },
+    "S063": {
+      "heading": "INT. HOTEL LOBBY - NIGHT",
+      "page": 44,
+      "number": ""
+    },
+    "S064": {
+      "heading": "EXT. HOTEL PARKING LOT - NIGHT",
+      "page": 45,
+      "number": ""
+    },
+    "S065": {
+      "heading": "EXT. HIGHWAY - NIGHT",
+      "page": 46,
+      "number": ""
+    },
+    "S066": {
+      "heading": "INT. MOTEL - NIGHT",
+      "page": 46,
+      "number": ""
+    },
+    "S067": {
+      "heading": "INT. MOTEL ROOM - DAWN",
+      "page": 47,
+      "number": ""
+    },
+    "S068": {
+      "heading": "EXT. AMBULANCE ROOF - DAY",
+      "page": 47,
+      "number": ""
+    },
+    "S069": {
+      "heading": "INT. HOSPITAL WAITING ROOM - DAY",
+      "page": 47,
+      "number": ""
+    },
+    "S070": {
+      "heading": "INT. HOSPITAL ROOM DAY",
+      "page": 48,
+      "number": ""
+    },
+    "S071": {
+      "heading": "INT. HOSPITAL CORRIDOR - DAY",
+      "page": 51,
+      "number": ""
+    },
+    "S072": {
+      "heading": "INT. INTENSIVE CARE ROOM - DAY",
+      "page": 51,
+      "number": ""
+    },
+    "S073": {
+      "heading": "EXT. HOSPITAL - DAY",
+      "page": 52,
+      "number": ""
+    },
+    "S074": {
+      "heading": "INT. INTENSIVE CARE ROOM - DAY",
+      "page": 52,
+      "number": ""
+    },
+    "S075": {
+      "heading": "EXT. HOSPITAL - DAY",
+      "page": 53,
+      "number": ""
+    },
+    "S076": {
+      "heading": "INT. VW BUS - DAY",
+      "page": 54,
+      "number": ""
+    },
+    "S077": {
+      "heading": "EXT. HIGHWAY - DAY - MONTAGE",
+      "page": 55,
+      "number": ""
+    },
+    "S078": {
+      "heading": "INT. VW BUS - ON THE ROAD - DAY - MONTAGE",
+      "page": 55,
+      "number": ""
+    },
+    "S079": {
+      "heading": "INT. VW BUS - ON THE ROAD - DAY",
+      "page": 56,
+      "number": ""
+    },
+    "S080": {
+      "heading": "EXT. HIGHWAY - DAY",
+      "page": 57,
+      "number": ""
+    },
+    "S081": {
+      "heading": "INT. VW BUS - ON THE ROAD - DAY",
+      "page": 57,
+      "number": ""
+    },
+    "S082": {
+      "heading": "EXT. HIGHWAY - DAY",
+      "page": 58,
+      "number": ""
+    },
+    "S083": {
+      "heading": "INT. VW BUS - DAY",
+      "page": 58,
+      "number": ""
+    },
+    "S084": {
+      "heading": "EXT. HIGHWAY - DAY",
+      "page": 59,
+      "number": ""
+    },
+    "S085": {
+      "heading": "INT. VW BUS - DAY",
+      "page": 59,
+      "number": ""
+    },
+    "S086": {
+      "heading": "EXT. HIGHWAY - DAY",
+      "page": 59,
+      "number": ""
+    },
+    "S087": {
+      "heading": "INT. VW BUS - DAY",
+      "page": 59,
+      "number": ""
+    },
+    "S088": {
+      "heading": "INT. VW BUS - ON THE ROAD - DAY",
+      "page": 59,
+      "number": ""
+    },
+    "S089": {
+      "heading": "EXT. SIDE OF THE INTERSTATE - DAY",
+      "page": 61,
+      "number": ""
+    },
+    "S090": {
+      "heading": "INT. VW BUS - ON THE ROAD - DAY",
+      "page": 63,
+      "number": ""
+    },
+    "S091": {
+      "heading": "INT. REGISTRATION HALL - DAY",
+      "page": 66,
+      "number": ""
+    },
+    "S092": {
+      "heading": "INT. HOLIDAY INN ROOM - DAY",
+      "page": 70,
+      "number": ""
+    },
+    "S093": {
+      "heading": "EXT. HOLIDAY INN BALCONY - DAY",
+      "page": 71,
+      "number": ""
+    },
+    "S094": {
+      "heading": "EXT. PARKING LOT - DAY",
+      "page": 71,
+      "number": ""
+    },
+    "S095": {
+      "heading": "INT. LOBBY - DAY",
+      "page": 71,
+      "number": ""
+    },
+    "S096": {
+      "heading": "EXT. PARKING LOT - DAY",
+      "page": 72,
+      "number": ""
+    },
+    "S097": {
+      "heading": "INT. HOLIDAY INN ROOM - DAY",
+      "page": 72,
+      "number": ""
+    },
+    "S098": {
+      "heading": "INT. HOLIDAY INN BATHROOM - DAY",
+      "page": 73,
+      "number": ""
+    },
+    "S099": {
+      "heading": "INT. HOLIDAY INN ROOM DAY",
+      "page": 73,
+      "number": ""
+    },
+    "S100": {
+      "heading": "INT. HOLIDAY INN BATHROOM - DAY",
+      "page": 74,
+      "number": ""
+    },
+    "S101": {
+      "heading": "INT. HOLIDAY INN ROOM - DAY",
+      "page": 74,
+      "number": ""
+    },
+    "S102": {
+      "heading": "INT. LOBBY - DAY",
+      "page": 74,
+      "number": ""
+    },
+    "S103": {
+      "heading": "INT. BACKSTAGE - DAY",
+      "page": 75,
+      "number": ""
+    },
+    "S104": {
+      "heading": "INT. DRESSING ROOM - DAY",
+      "page": 75,
+      "number": ""
+    },
+    "S105": {
+      "heading": "INT. AUDITORIUM - DAY",
+      "page": 76,
+      "number": ""
+    },
+    "S106": {
+      "heading": "EXT. BEACH - AFTERNOON",
+      "page": 77,
+      "number": ""
+    },
+    "S107": {
+      "heading": "INT. AUDITORIUM - DAY",
+      "page": 77,
+      "number": ""
+    },
+    "S108": {
+      "heading": "EXT. ON THE WATER - DAY",
+      "page": 77,
+      "number": ""
+    },
+    "S109": {
+      "heading": "EXT. UNDERWATER - DAY",
+      "page": 77,
+      "number": ""
+    },
+    "S110": {
+      "heading": "EXT. ON THE WATER - DAY",
+      "page": 77,
+      "number": ""
+    },
+    "S111": {
+      "heading": "EXT. UNDERWATER - DAY - MONTAGE",
+      "page": 78,
+      "number": ""
+    },
+    "S112": {
+      "heading": "INT. AUDITORIUM - DAY",
+      "page": 78,
+      "number": ""
+    },
+    "S113": {
+      "heading": "EXT. ON THE WATER - DAY",
+      "page": 78,
+      "number": ""
+    },
+    "S114": {
+      "heading": "INT. AUDITORIUM - DAY",
+      "page": 80,
+      "number": ""
+    },
+    "S115": {
+      "heading": "EXT. BOARDWALK - DAY",
+      "page": 80,
+      "number": ""
+    },
+    "S116": {
+      "heading": "INT. AUDITORIUM - DAY",
+      "page": 80,
+      "number": ""
+    },
+    "S117": {
+      "heading": "INT. LOBBY - DAY",
+      "page": 81,
+      "number": ""
+    },
+    "S118": {
+      "heading": "INT. BACKSTAGE - DAY",
+      "page": 81,
+      "number": ""
+    },
+    "S119": {
+      "heading": "INT. BACKSTAGE, DRESSING ROOMS - DAY",
+      "page": 82,
+      "number": ""
+    },
+    "S120": {
+      "heading": "INT. DRESSING ROOM - NIGHT",
+      "page": 84,
+      "number": ""
+    },
+    "S121": {
+      "heading": "INT. BACKSTAGE - NIGHT",
+      "page": 84,
+      "number": ""
+    },
+    "S122": {
+      "heading": "INT. DRESSING ROOM - NIGHT",
+      "page": 84,
+      "number": ""
+    },
+    "S123": {
+      "heading": "INT. BACKSTAGE - NIGHT",
+      "page": 84,
+      "number": ""
+    },
+    "S124": {
+      "heading": "INT. AUDITORIUM LOBBY - DAY",
+      "page": 85,
+      "number": ""
+    },
+    "S125": {
+      "heading": "INT. AUDITORIUM NIGHT",
+      "page": 85,
+      "number": ""
+    },
+    "S126": {
+      "heading": "INT. OFFICE - NIGHT",
+      "page": 90,
+      "number": ""
+    },
+    "S127": {
+      "heading": "INT. HOLIDAY INN LOBBY - NIGHT",
+      "page": 90,
+      "number": ""
+    },
+    "S128": {
+      "heading": "EXT. REST STOP - DAY",
+      "page": 91,
+      "number": ""
+    }
+  },
+  "draft": {
+    "title": "Little Miss Sunshine",
+    "draft_date": "",
+    "revision_label": "",
+    "sha256": "48e25d46cb73ee3a8408dddab1007eac0162ddd42c14406193e734a1ebad8422",
+    "bytes": 120446,
+    "pages": 91,
+    "scene_count": 128,
+    "scene_numbers": "generated"
   }
 }

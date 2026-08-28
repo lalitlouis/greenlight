@@ -2567,5 +2567,242 @@
     "year": 1992,
     "hook": "The $1.5M indie legend \u2014 priced at script stage, needle-drop and all.",
     "note": "Independent analysis of a publicly circulating study draft, published for commentary and education. Not affiliated with the production. The screenplay text is not reproduced. Scores reflect the draft analyzed, not the released film."
+  },
+  "scene_meta": {
+    "S001": {
+      "heading": "1 INT. UNCLE BOB'S PANCAKE HOUSE - MORNING 1",
+      "page": 1,
+      "number": ""
+    },
+    "S002": {
+      "heading": "2 EXT. UNCLE BOB'S PANCAKE HOUSE - DAY 2",
+      "page": 9,
+      "number": ""
+    },
+    "S003": {
+      "heading": "3 INT. GETAWAY GAR (MOVING) - DAY 3",
+      "page": 9,
+      "number": ""
+    },
+    "S004": {
+      "heading": "4 INT. WAREHOUSE - DAY 4",
+      "page": 10,
+      "number": ""
+    },
+    "S005": {
+      "heading": "5 INT. BATHROOM HALLWAY - DAY 5",
+      "page": 14,
+      "number": ""
+    },
+    "S006": {
+      "heading": "6 EXT. CROWDED CITY STREET - DAY 6",
+      "page": 15,
+      "number": ""
+    },
+    "S007": {
+      "heading": "7 INT. CAR (STOPPED) - DAY 7",
+      "page": 16,
+      "number": ""
+    },
+    "S008": {
+      "heading": "8 EXT. STREET - DAY 8",
+      "page": 16,
+      "number": ""
+    },
+    "S009": {
+      "heading": "9 INT. CAR (MOVING) - DAY 9",
+      "page": 16,
+      "number": ""
+    },
+    "S010": {
+      "heading": "10 INT. BATHROOM - DAY 10",
+      "page": 16,
+      "number": ""
+    },
+    "S011": {
+      "heading": "11 INT. WAREHOUSE - DAY 11",
+      "page": 20,
+      "number": ""
+    },
+    "S012": {
+      "heading": "12 INT. WAREHOUSE - DAY - MEDIUM C.U. ON MR. BLONDE 12",
+      "page": 24,
+      "number": ""
+    },
+    "S013": {
+      "heading": "13 EXT. WAREHOUSE - DAY 13",
+      "page": 28,
+      "number": ""
+    },
+    "S014": {
+      "heading": "14 INT. JOE CABOT'S OFFICE - DAY 14",
+      "page": 29,
+      "number": ""
+    },
+    "S015": {
+      "heading": "15 INT. NICE GUY EDDIE'S CAR (MOVING) - DAY 15",
+      "page": 36,
+      "number": ""
+    },
+    "S016": {
+      "heading": "16 INT. WAREHOUSE - DAY 16",
+      "page": 36,
+      "number": ""
+    },
+    "S017": {
+      "heading": "20 EXT. WAREHOUSE - DAY 20",
+      "page": 37,
+      "number": ""
+    },
+    "S018": {
+      "heading": "21 INT. WAREHOUSE - DAY 21",
+      "page": 37,
+      "number": ""
+    },
+    "S019": {
+      "heading": "22 INT. WAREHOUSE - DAY - MR. BLONDE AND COP 22",
+      "page": 40,
+      "number": ""
+    },
+    "S020": {
+      "heading": "23 INT./EXT. WAREHOUSE - DAY - HANDHELD SHOT 23",
+      "page": 42,
+      "number": ""
+    },
+    "S021": {
+      "heading": "24 INT. WAREHOUSE - DAY 24",
+      "page": 42,
+      "number": ""
+    },
+    "S022": {
+      "heading": "25 INT. DENNY'S - NIGHT 25",
+      "page": 44,
+      "number": ""
+    },
+    "S023": {
+      "heading": "26 EXT. DENNY'S - NIGHT 26",
+      "page": 44,
+      "number": ""
+    },
+    "S024": {
+      "heading": "27 INT. DENNY'S - NIGHT 27",
+      "page": 44,
+      "number": ""
+    },
+    "S025": {
+      "heading": "28 INT. MEN'S ROOM - L.A. TRAIN STATION - NIGHT 28",
+      "page": 46,
+      "number": ""
+    },
+    "S026": {
+      "heading": "29 INT. FREDDY'S APARTMENT - DAY 29",
+      "page": 48,
+      "number": ""
+    },
+    "S027": {
+      "heading": "30 EXT. PARKING LOT - DAY 30",
+      "page": 48,
+      "number": ""
+    },
+    "S028": {
+      "heading": "31 INT. BOOTS AND SOCKS BAR - NIGHT 31",
+      "page": 49,
+      "number": ""
+    },
+    "S029": {
+      "heading": "32 INT. MEN'S ROOM - TRAIN STATION - DAY 32",
+      "page": 50,
+      "number": ""
+    },
+    "S030": {
+      "heading": "35 INT. OFFICE - DAY 35",
+      "page": 53,
+      "number": ""
+    },
+    "S031": {
+      "heading": "36 INT. HOLDAWAY'S OFFICE - DAY 36",
+      "page": 53,
+      "number": ""
+    },
+    "S032": {
+      "heading": "35 INT. FREDDY'S APARTMENT - DAY 35",
+      "page": 56,
+      "number": ""
+    },
+    "S033": {
+      "heading": "36 INT. NICE GUY EDDIE'S CAR (PARKED) - DAY 36",
+      "page": 56,
+      "number": ""
+    },
+    "S034": {
+      "heading": "39 INT. FREDDY'S APARTMENT - DAY 39",
+      "page": 56,
+      "number": ""
+    },
+    "S035": {
+      "heading": "40 EXT. FREDDY'S APARTMENT - DAY 40",
+      "page": 57,
+      "number": ""
+    },
+    "S036": {
+      "heading": "41 INT. NICE GUY EDDIE'S CAR (MOVING) - DAY 41",
+      "page": 57,
+      "number": ""
+    },
+    "S037": {
+      "heading": "42 EXT. WAREHOUSE - DAY 42",
+      "page": 60,
+      "number": ""
+    },
+    "S038": {
+      "heading": "43 INT. WAREHOUSE - DAY 43",
+      "page": 60,
+      "number": ""
+    },
+    "S039": {
+      "heading": "44 EXT. BLEACHERS - DAY 44",
+      "page": 63,
+      "number": ""
+    },
+    "S040": {
+      "heading": "45 EXT. KARINA'S FINE JEWELRY - DAY 45",
+      "page": 65,
+      "number": ""
+    },
+    "S041": {
+      "heading": "46 INT. MR. WHITE'S CAR (PARKED) - DAY 46",
+      "page": 65,
+      "number": ""
+    },
+    "S042": {
+      "heading": "47 EXT. ALLEY - DAY 47",
+      "page": 66,
+      "number": ""
+    },
+    "S043": {
+      "heading": "48 INT. GETAWAY CAR (MOVING) - DAY 48",
+      "page": 68,
+      "number": ""
+    },
+    "S044": {
+      "heading": "49 INT. NICE GUY EDDIE'S CAR (MOVING) - DAY 49",
+      "page": 68,
+      "number": ""
+    },
+    "S045": {
+      "heading": "50 INT. WAREHOUSE - DAY 50",
+      "page": 70,
+      "number": ""
+    }
+  },
+  "draft": {
+    "title": "Reservoir Dogs",
+    "draft_date": "",
+    "revision_label": "",
+    "sha256": "882bcbe87c00e47bd741167ba4d81bff83576bacf85c307ba120f8795acf8cc3",
+    "bytes": 102541,
+    "pages": 70,
+    "scene_count": 45,
+    "scene_numbers": "generated"
   }
 }

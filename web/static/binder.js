@@ -16,7 +16,10 @@ function bdRender(data) {
   left.appendChild(
     el("p", "bd-sub",
       `Generated ${data.generated_at} · Greenlight Score ${data.score ?? "—"}/100 · ` +
-      `${counts.BLOCKER || 0} blocker(s), ${counts.HIGH || 0} high, ${counts.MEDIUM || 0} medium` +
+      ["BLOCKER", "HIGH", "MEDIUM", "LOW", "FYI"]
+        .filter((t) => counts[t])
+        .map((t) => `${counts[t]} ${t.toLowerCase()}`)
+        .join(", ") +
       (data.est_cost ? ` · est. exposure ${money(data.est_cost)}` : ""))
   );
   const d = data.draft || {};
@@ -86,6 +89,57 @@ function bdRender(data) {
   }
   table.appendChild(tbody);
   page.appendChild(table);
+
+  const bm = data.back_matter || {};
+  const section = (title, node) => {
+    page.appendChild(el("p", "bd-sec-title", title));
+    page.appendChild(node);
+  };
+  const plainList = (items, render) => {
+    const ul = el("ul", "bd-back-list");
+    for (const it of items) ul.appendChild(render(it));
+    return ul;
+  };
+  if (bm.rating && bm.rating.predicted) {
+    const tgt = bm.rating.target && bm.rating.target !== bm.rating.predicted
+      ? ` · production target ${bm.rating.target}` : "";
+    section("Rating prediction", el("p", "bd-back-line", `Predicted ${bm.rating.predicted}${tgt} — full comparables panel in the web report.`));
+  }
+  if ((bm.cleared || []).length) {
+    const det = document.createElement("details");
+    const summ = document.createElement("summary");
+    summ.textContent = `${bm.cleared.length} items examined and cleared — expand for the reasoning`;
+    det.appendChild(summ);
+    det.appendChild(plainList(bm.cleared, (it) => {
+      const li = el("li");
+      li.appendChild(el("span", "who", it.desk));
+      li.appendChild(document.createTextNode(it.text));
+      return li;
+    }));
+    section("Reviewed & cleared", det);
+  }
+  if ((bm.open_questions || []).length) {
+    section("Open questions — honest unknowns", plainList(bm.open_questions, (it) => {
+      const li = el("li");
+      li.appendChild(el("span", "who", it.desk));
+      li.appendChild(document.createTextNode(it.text));
+      return li;
+    }));
+  }
+  if ((bm.rejected || []).length) {
+    section(`Rejected in verification (${bm.rejected.length}) — the cross-examination working`, plainList(bm.rejected, (it) => {
+      const li = el("li");
+      li.appendChild(el("span", "who", `${it.finding} ${it.category}`));
+      li.appendChild(document.createTextNode(it.reason));
+      return li;
+    }));
+  }
+  if ((bm.adjudication || []).length) {
+    section("Adjudication — merges and conflict resolutions", plainList(bm.adjudication, (t) => el("li", null, t)));
+  }
+  if ((bm.sources || []).length) {
+    section("Sources cited", el("p", "bd-back-line", bm.sources.join(" · ")));
+  }
 
   page.appendChild(el("p", "bd-disclaimer", data.disclaimer));
   document.title = `${data.title} — Clearance Binder`;

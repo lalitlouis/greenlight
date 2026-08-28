@@ -3348,5 +3348,337 @@
     "year": 1994,
     "hook": "Rated NC-17 purely for language, overturned on appeal \u2014 called from the page.",
     "note": "Independent analysis of a publicly circulating study draft, published for commentary and education. Not affiliated with the production. The screenplay text is not reproduced. Scores reflect the draft analyzed, not the released film."
+  },
+  "scene_meta": {
+    "S001": {
+      "heading": "INT: BEDROOM. EARLY-MORNING HOURS",
+      "page": 1,
+      "number": ""
+    },
+    "S002": {
+      "heading": "INT: BATHROOM. MINUTES LATER",
+      "page": 2,
+      "number": ""
+    },
+    "S003": {
+      "heading": "INT: KITCHEN. MINUTES LATER",
+      "page": 2,
+      "number": ""
+    },
+    "S004": {
+      "heading": "INT: KITCHEN. SECONDS LATER",
+      "page": 2,
+      "number": ""
+    },
+    "S005": {
+      "heading": "INT: BEDROOM. A MINUTE LATER",
+      "page": 2,
+      "number": ""
+    },
+    "S006": {
+      "heading": "INT: HALLWAY. MINUTES LATER",
+      "page": 2,
+      "number": ""
+    },
+    "S007": {
+      "heading": "EXT: DRIVEWAY. MINUTES LATER",
+      "page": 2,
+      "number": ""
+    },
+    "S008": {
+      "heading": "EXT: CONVENIENCE STORE. MORNING",
+      "page": 2,
+      "number": ""
+    },
+    "S009": {
+      "heading": "INT: CONVENIENCE STORE. MORNING",
+      "page": 2,
+      "number": ""
+    },
+    "S010": {
+      "heading": "EXT: CONVENIENCE STORE. MORNING",
+      "page": 3,
+      "number": ""
+    },
+    "S011": {
+      "heading": "INT: CONVENIENCE STORE. MORNING",
+      "page": 3,
+      "number": ""
+    },
+    "S012": {
+      "heading": "EXT: CONVENIENCE STORE. MORNING",
+      "page": 3,
+      "number": ""
+    },
+    "S013": {
+      "heading": "INT: CONVENIENCE STORE. MORNING",
+      "page": 4,
+      "number": ""
+    },
+    "S014": {
+      "heading": "EXT: CONVENIENCE STORE. MORNING",
+      "page": 4,
+      "number": ""
+    },
+    "S015": {
+      "heading": "INT: CONVENIENCE STORE. MORNING",
+      "page": 4,
+      "number": ""
+    },
+    "S016": {
+      "heading": "EXT: CONVENIENCE STORE. DAY",
+      "page": 4,
+      "number": ""
+    },
+    "S017": {
+      "heading": "INT: CONVENIENCE STORE. DAY",
+      "page": 4,
+      "number": ""
+    },
+    "S018": {
+      "heading": "EXT: CONVENIENCE STORE. DAY",
+      "page": 7,
+      "number": ""
+    },
+    "S019": {
+      "heading": "INT: CONVENIENCE STORE. DAY",
+      "page": 8,
+      "number": ""
+    },
+    "S020": {
+      "heading": "INT: CONVENIENCE STORE. DAY",
+      "page": 15,
+      "number": ""
+    },
+    "S021": {
+      "heading": "INT: CONVENIENCE STORE. DAY",
+      "page": 24,
+      "number": ""
+    },
+    "S022": {
+      "heading": "EXT: CONVENIENCE STORE. DAY",
+      "page": 26,
+      "number": ""
+    },
+    "S023": {
+      "heading": "INT: CONVENIENCE STORE. DAY",
+      "page": 27,
+      "number": ""
+    },
+    "S024": {
+      "heading": "EXT: CONVENIENCE STORE. DAY",
+      "page": 28,
+      "number": ""
+    },
+    "S025": {
+      "heading": "INT: CONVENIENCE STORE. DAY",
+      "page": 28,
+      "number": ""
+    },
+    "S026": {
+      "heading": "INT: BACK ROOM. DAY",
+      "page": 29,
+      "number": ""
+    },
+    "S027": {
+      "heading": "INT: CONVENIENCE STORE. DAY",
+      "page": 29,
+      "number": ""
+    },
+    "S028": {
+      "heading": "INT: VIDEO STORE. DAY",
+      "page": 33,
+      "number": ""
+    },
+    "S029": {
+      "heading": "INT: CONVENIENCE STORE. DAY",
+      "page": 35,
+      "number": ""
+    },
+    "S030": {
+      "heading": "EXT: CONVENIENCE STORE. DAY",
+      "page": 36,
+      "number": ""
+    },
+    "S031": {
+      "heading": "INT: VIDEO STORE. DAY",
+      "page": 39,
+      "number": ""
+    },
+    "S032": {
+      "heading": "EXT: VIDEO STORE. DAY",
+      "page": 39,
+      "number": ""
+    },
+    "S033": {
+      "heading": "INT: CONVENIENCE STORE. DAY",
+      "page": 39,
+      "number": ""
+    },
+    "S034": {
+      "heading": "INT: VIDEO STORE. DAY",
+      "page": 45,
+      "number": ""
+    },
+    "S035": {
+      "heading": "INT: CONVENIENCE STORE. DAY",
+      "page": 48,
+      "number": ""
+    },
+    "S036": {
+      "heading": "INT: CONVENIENCE STORE. DAY",
+      "page": 51,
+      "number": ""
+    },
+    "S037": {
+      "heading": "INT: VIDEO STORE. DAY",
+      "page": 58,
+      "number": ""
+    },
+    "S038": {
+      "heading": "INT: CONVENIENCE STORE. DAY",
+      "page": 59,
+      "number": ""
+    },
+    "S039": {
+      "heading": "INT: CONVENIENCE STORE. DAY",
+      "page": 61,
+      "number": ""
+    },
+    "S040": {
+      "heading": "EXT: CONVENIENCE STORE. DAY",
+      "page": 63,
+      "number": ""
+    },
+    "S041": {
+      "heading": "INT: CONVENIENCE STORE. DAY",
+      "page": 67,
+      "number": ""
+    },
+    "S042": {
+      "heading": "INT CAR: DAY",
+      "page": 72,
+      "number": ""
+    },
+    "S043": {
+      "heading": "EXT: FUNERAL PARLOR. DAY",
+      "page": 74,
+      "number": ""
+    },
+    "S044": {
+      "heading": "EXT: CONVENIENCE STORE. DAY",
+      "page": 74,
+      "number": ""
+    },
+    "S045": {
+      "heading": "EXT: FUNERAL PARLOR. DAY",
+      "page": 74,
+      "number": ""
+    },
+    "S046": {
+      "heading": "EXT: CONVENIENCE STORE. NIGHT",
+      "page": 74,
+      "number": ""
+    },
+    "S047": {
+      "heading": "INT: CONVENIENCE STORE. NIGHT",
+      "page": 76,
+      "number": ""
+    },
+    "S048": {
+      "heading": "INT: CONVENIENCE STORE. DAY",
+      "page": 80,
+      "number": ""
+    },
+    "S049": {
+      "heading": "EXT: VIDEO STORE. NIGHT",
+      "page": 87,
+      "number": ""
+    },
+    "S050": {
+      "heading": "INT: CONVENIENCE STORE. NIGHT",
+      "page": 88,
+      "number": ""
+    },
+    "S051": {
+      "heading": "EXT: VIDEO STORE. NIGHT",
+      "page": 89,
+      "number": ""
+    },
+    "S052": {
+      "heading": "INT: VIDEO STORE. NIGHT",
+      "page": 90,
+      "number": ""
+    },
+    "S053": {
+      "heading": "INT: CONVENIENCE STORE. NIGHT",
+      "page": 97,
+      "number": ""
+    },
+    "S054": {
+      "heading": "EXT: CONVENIENCE STORE. NIGHT",
+      "page": 100,
+      "number": ""
+    },
+    "S055": {
+      "heading": "INT: CONVENIENCE STORE. NIGHT",
+      "page": 100,
+      "number": ""
+    },
+    "S056": {
+      "heading": "EXT: CONVENIENCE STORE. NIGHT",
+      "page": 102,
+      "number": ""
+    },
+    "S057": {
+      "heading": "INT: CONVENIENCE STORE. LATER",
+      "page": 105,
+      "number": ""
+    },
+    "S058": {
+      "heading": "EXT: VIDEO STORE. NIGHT",
+      "page": 108,
+      "number": ""
+    },
+    "S059": {
+      "heading": "INT: CONVENIENCE STORE. NIGHT",
+      "page": 108,
+      "number": ""
+    },
+    "S060": {
+      "heading": "INT: CONVENIENCE STORE. NIGHT",
+      "page": 113,
+      "number": ""
+    },
+    "S061": {
+      "heading": "INT: VIDEO STORE. NIGHT",
+      "page": 117,
+      "number": ""
+    },
+    "S062": {
+      "heading": "INT: CONVENIENCE STORE. NIGHT",
+      "page": 118,
+      "number": ""
+    },
+    "S063": {
+      "heading": "EXT: VIDEO STORE. NIGHT",
+      "page": 121,
+      "number": ""
+    },
+    "S064": {
+      "heading": "INT: CONVENIENCE STORE. NIGHT",
+      "page": 121,
+      "number": ""
+    }
+  },
+  "draft": {
+    "title": "Clerks",
+    "draft_date": "",
+    "revision_label": "",
+    "sha256": "345b09e00efae690aed359cc3fed4390e2999c02989dd729950ff79dd9ca0f1f",
+    "bytes": 129827,
+    "pages": 121,
+    "scene_count": 64,
+    "scene_numbers": "generated"
   }
 }

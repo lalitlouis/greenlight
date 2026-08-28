@@ -7,7 +7,7 @@ import pytest
 from greenlight.fdx import FdxError, fdx_to_fountain
 from greenlight.parser import parse_fountain
 from greenlight.pdf import screenplay_text
-from greenlight.pipeline import _draft_identity
+from greenlight.parser import draft_identity
 
 FDX = """<?xml version="1.0" encoding="UTF-8"?>
 <FinalDraft DocumentType="Script" Template="No" Version="5">
@@ -51,7 +51,7 @@ def test_fountain_hash_numbers_parse() -> None:
 def test_draft_identity_provenance() -> None:
     src = "INT. BAR - DAY #1#\n\nHello.\n"
     meta, scenes = parse_fountain(src)
-    d = _draft_identity(src, meta, scenes, "T")
+    d = draft_identity(src, meta, scenes, "T")
     assert d["scene_numbers"] == "script"
     assert len(d["sha256"]) == 64
     assert d["scene_count"] == 1

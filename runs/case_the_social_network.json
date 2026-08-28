@@ -3949,5 +3949,962 @@
     "year": 2010,
     "hook": "Every character is a real person \u2014 the biographical stress test: 47 cited findings and the record-vs-invention line drawn scene by scene.",
     "note": "Independent analysis of a publicly circulating study draft, published for commentary and education. Not affiliated with the production. The screenplay text is not reproduced. Scores reflect the draft analyzed, not the released film."
+  },
+  "scene_meta": {
+    "S001": {
+      "heading": "INT. CAMPUS BAR - NIGHT",
+      "page": 1,
+      "number": ""
+    },
+    "S002": {
+      "heading": "EXT. BAR - NIGHT",
+      "page": 9,
+      "number": ""
+    },
+    "S003": {
+      "heading": "EXT. HARVARD SQUARE - NIGHT",
+      "page": 9,
+      "number": ""
+    },
+    "S004": {
+      "heading": "INT. KIRKLAND HOUSE/LOBBY - NIGHT",
+      "page": 9,
+      "number": ""
+    },
+    "S005": {
+      "heading": "INT. MARK\u2019S DORM ROOM - NIGHT",
+      "page": 9,
+      "number": ""
+    },
+    "S006": {
+      "heading": "INT. MARK\u2019S DORM ROOM - NIGHT",
+      "page": 10,
+      "number": ""
+    },
+    "S007": {
+      "heading": "INT. A BUS - NIGHT",
+      "page": 11,
+      "number": ""
+    },
+    "S008": {
+      "heading": "INT. MARK\u2019S DORM ROOM - NIGHT",
+      "page": 11,
+      "number": ""
+    },
+    "S009": {
+      "heading": "EXT. FINAL CLUB - NIGHT",
+      "page": 11,
+      "number": ""
+    },
+    "S010": {
+      "heading": "INT. MARK\u2019S DORM ROOM - NIGHT",
+      "page": 12,
+      "number": ""
+    },
+    "S011": {
+      "heading": "EXT. FINAL CLUB - NIGHT",
+      "page": 12,
+      "number": ""
+    },
+    "S012": {
+      "heading": "INT. MARK\u2019S DORM ROOM - NIGHT",
+      "page": 12,
+      "number": ""
+    },
+    "S013": {
+      "heading": "INT. FINAL CLUB - NIGHT",
+      "page": 13,
+      "number": ""
+    },
+    "S014": {
+      "heading": "INT. MARK\u2019S DORM ROOM - NIGHT",
+      "page": 13,
+      "number": ""
+    },
+    "S015": {
+      "heading": "11B INT. FINAL CLUB - NIGHT 11B",
+      "page": 13,
+      "number": ""
+    },
+    "S016": {
+      "heading": "INT. KIRKLAND HOUSE/STAIRWAY - NIGHT",
+      "page": 14,
+      "number": ""
+    },
+    "S017": {
+      "heading": "INT. MARK\u2019S DORM ROOM - CONTINUOUS",
+      "page": 14,
+      "number": ""
+    },
+    "S018": {
+      "heading": "INT. MARK\u2019S DORM ROOM - NIGHT",
+      "page": 15,
+      "number": ""
+    },
+    "S019": {
+      "heading": "INT. FINAL CLUB - NIGHT",
+      "page": 16,
+      "number": ""
+    },
+    "S020": {
+      "heading": "INT. MARK\u2019S ROOM - NIGHT",
+      "page": 16,
+      "number": ""
+    },
+    "S021": {
+      "heading": "INT. FINAL CLUB - NIGHT",
+      "page": 16,
+      "number": ""
+    },
+    "S022": {
+      "heading": "INT. ANOTHER DORM ROOM - NIGHT",
+      "page": 17,
+      "number": ""
+    },
+    "S023": {
+      "heading": "INT. ANOTHER DORM ROOM - NIGHT",
+      "page": 17,
+      "number": ""
+    },
+    "S024": {
+      "heading": "INT. ALL NIGHT DINER - NIGHT",
+      "page": 17,
+      "number": ""
+    },
+    "S025": {
+      "heading": "INT. FINAL CLUB - NIGHT",
+      "page": 17,
+      "number": ""
+    },
+    "S026": {
+      "heading": "INT. CYBER CAFE - NIGHT",
+      "page": 17,
+      "number": ""
+    },
+    "S027": {
+      "heading": "INT. ANOTHER DORM ROOM - NIGHT",
+      "page": 17,
+      "number": ""
+    },
+    "S028": {
+      "heading": "INT. ANOTHER DORM ROOM - NIGHT",
+      "page": 17,
+      "number": ""
+    },
+    "S029": {
+      "heading": "INT. ANOTHER DORM ROOM - NIGHT",
+      "page": 18,
+      "number": ""
+    },
+    "S030": {
+      "heading": "INT. ANOTHER DORM ROOM - NIGHT",
+      "page": 18,
+      "number": ""
+    },
+    "S031": {
+      "heading": "INT. DORM ROOM - NIGHT",
+      "page": 18,
+      "number": ""
+    },
+    "S032": {
+      "heading": "INT. HARVARD DORM ROOM - NIGHT",
+      "page": 18,
+      "number": ""
+    },
+    "S033": {
+      "heading": "INT. COFFEE HOUSE - NIGHT",
+      "page": 19,
+      "number": ""
+    },
+    "S034": {
+      "heading": "INT. DINING HALL - NIGHT",
+      "page": 19,
+      "number": ""
+    },
+    "S035": {
+      "heading": "INT. GIRLS\u2019 DORM ROOM - NIGHT",
+      "page": 19,
+      "number": ""
+    },
+    "S036": {
+      "heading": "INT. MARK\u2019S DORM ROOM - NIGHT",
+      "page": 19,
+      "number": ""
+    },
+    "S037": {
+      "heading": "INT. BEDROOM - NIGHT",
+      "page": 19,
+      "number": ""
+    },
+    "S038": {
+      "heading": "INT. HARVARD COMMUNICATIONS OFFICE - SAME TIME",
+      "page": 19,
+      "number": ""
+    },
+    "S039": {
+      "heading": "INT. MARK\u2019S DORM ROOM - NIGHT",
+      "page": 20,
+      "number": ""
+    },
+    "S040": {
+      "heading": "INT. DEPOSITION ROOM - DAY",
+      "page": 20,
+      "number": ""
+    },
+    "S041": {
+      "heading": "EXT. CHARLES RIVER - DAWN",
+      "page": 22,
+      "number": ""
+    },
+    "S042": {
+      "heading": "INT. PFORZHEIMER DINING HALL - MORNING",
+      "page": 23,
+      "number": ""
+    },
+    "S043": {
+      "heading": "INT. SECOND DEPOSITION ROOM - DAY",
+      "page": 25,
+      "number": ""
+    },
+    "S044": {
+      "heading": "INT. ADMINISTRATIVE HEARING ROOM - DAY",
+      "page": 25,
+      "number": ""
+    },
+    "S045": {
+      "heading": "INT. CORRIDOR - DAY",
+      "page": 26,
+      "number": ""
+    },
+    "S046": {
+      "heading": "EXT. QUAD - CONTINUOUS",
+      "page": 27,
+      "number": ""
+    },
+    "S047": {
+      "heading": "INT. LECTURE HALL - DAY",
+      "page": 27,
+      "number": ""
+    },
+    "S048": {
+      "heading": "EXT. ACADEMIC BUILDING - DAY",
+      "page": 28,
+      "number": ""
+    },
+    "S049": {
+      "heading": "EXT. PORCELLIAN CLUB - DAY",
+      "page": 30,
+      "number": ""
+    },
+    "S050": {
+      "heading": "INT. PORCELLIAN CLUB - DAY",
+      "page": 30,
+      "number": ""
+    },
+    "S051": {
+      "heading": "INT. SECOND DEPOSITION ROOM - DAY",
+      "page": 33,
+      "number": ""
+    },
+    "S052": {
+      "heading": "INT. FIRST DEPOSITION ROOM - DAY",
+      "page": 33,
+      "number": ""
+    },
+    "S053": {
+      "heading": "INT. SECOND DEPOSITION ROOM - DAY",
+      "page": 33,
+      "number": ""
+    },
+    "S054": {
+      "heading": "INT. FIRST DEPOSITION ROOM - DAY",
+      "page": 34,
+      "number": ""
+    },
+    "S055": {
+      "heading": "INT. SECOND DEPOSITION ROOM - DAY",
+      "page": 34,
+      "number": ""
+    },
+    "S056": {
+      "heading": "INT. FIRST DEPOSITION ROOM - DAY",
+      "page": 34,
+      "number": ""
+    },
+    "S057": {
+      "heading": "INT. LARGE MULTI-PURPOSE ROOM - NIGHT",
+      "page": 34,
+      "number": ""
+    },
+    "S058": {
+      "heading": "EXT. QUAD - NIGHT",
+      "page": 37,
+      "number": ""
+    },
+    "S059": {
+      "heading": "INT. FIRST DEPOSITION ROOM - DAY",
+      "page": 37,
+      "number": ""
+    },
+    "S060": {
+      "heading": "EXT. QUAD - NIGHT",
+      "page": 38,
+      "number": ""
+    },
+    "S061": {
+      "heading": "INT. FIRST DEPOSITION ROOM - DAY",
+      "page": 38,
+      "number": ""
+    },
+    "S062": {
+      "heading": "EXT. QUAD - NIGHT",
+      "page": 38,
+      "number": ""
+    },
+    "S063": {
+      "heading": "INT. FIRST DEPOSITION ROOM - NIGHT",
+      "page": 39,
+      "number": ""
+    },
+    "S064": {
+      "heading": "EXT. QUAD - NIGHT",
+      "page": 39,
+      "number": ""
+    },
+    "S065": {
+      "heading": "INT. FIRST DEPOSITION ROOM - DAY",
+      "page": 39,
+      "number": ""
+    },
+    "S066": {
+      "heading": "EXT. QUAD - NIGHT",
+      "page": 39,
+      "number": ""
+    },
+    "S067": {
+      "heading": "INT. FIRST DEPOSITION ROOM - DAY",
+      "page": 39,
+      "number": ""
+    },
+    "S068": {
+      "heading": "EXT. QUAD - NIGHT",
+      "page": 40,
+      "number": ""
+    },
+    "S069": {
+      "heading": "INT. SECOND DEPOSITION ROOM - DAY",
+      "page": 40,
+      "number": ""
+    },
+    "S070": {
+      "heading": "INT. MARK\u2019S DORM ROOM - NIGHT",
+      "page": 42,
+      "number": ""
+    },
+    "S071": {
+      "heading": "INT. SECOND DEPOSITION ROOM - DAY",
+      "page": 42,
+      "number": ""
+    },
+    "S072": {
+      "heading": "INT. MARK\u2019S DORM ROOM - NIGHT",
+      "page": 42,
+      "number": ""
+    },
+    "S073": {
+      "heading": "INT. SECOND DEPOSITION ROOM - DAY",
+      "page": 42,
+      "number": ""
+    },
+    "S074": {
+      "heading": "INT. PHOENIX HOUSE - NIGHT",
+      "page": 43,
+      "number": ""
+    },
+    "S075": {
+      "heading": "INT. CLASSROOM - DAY",
+      "page": 43,
+      "number": ""
+    },
+    "S076": {
+      "heading": "INT. SECOND DEPOSITION ROOM - DAY",
+      "page": 43,
+      "number": ""
+    },
+    "S077": {
+      "heading": "INT. CAMERON AND TYLER\u2019S DORM ROOM - NIGHT",
+      "page": 43,
+      "number": ""
+    },
+    "S078": {
+      "heading": "INT. EDUARDO\u2019S DORM ROOM - NIGHT",
+      "page": 44,
+      "number": ""
+    },
+    "S079": {
+      "heading": "INT. MARK\u2019S DORM ROOM - NIGHT",
+      "page": 44,
+      "number": ""
+    },
+    "S080": {
+      "heading": "INT. SECOND DEPOSITION ROOM - DAY",
+      "page": 45,
+      "number": ""
+    },
+    "S081": {
+      "heading": "INT. PFORZHEIMER DINING HALL - NIGHT",
+      "page": 45,
+      "number": ""
+    },
+    "S082": {
+      "heading": "INT. SECOND DEPOSITION ROOM - DAY",
+      "page": 45,
+      "number": ""
+    },
+    "S083": {
+      "heading": "INT. HAMBURGER JOINT - NIGHT",
+      "page": 45,
+      "number": ""
+    },
+    "S084": {
+      "heading": "EXT. HARVARD YARD - NIGHT",
+      "page": 45,
+      "number": ""
+    },
+    "S085": {
+      "heading": "INT. SECOND DEPOSITION ROOM - DAY",
+      "page": 46,
+      "number": ""
+    },
+    "S086": {
+      "heading": "INT. MARK\u2019S DORM ROOM - DAY",
+      "page": 47,
+      "number": ""
+    },
+    "S087": {
+      "heading": "INT. SECOND DEPOSITION ROOM - DAY",
+      "page": 47,
+      "number": ""
+    },
+    "S088": {
+      "heading": "INT. PORCELLIAN - NIGHT",
+      "page": 47,
+      "number": ""
+    },
+    "S089": {
+      "heading": "INT. SECOND DEPOSITION ROOM - DAY",
+      "page": 47,
+      "number": ""
+    },
+    "S090": {
+      "heading": "INT. COMPUTER SCIENCE LAB - DAY",
+      "page": 48,
+      "number": ""
+    },
+    "S091": {
+      "heading": "EXT. COMPUTER SCIENCE BUILDING - DAY",
+      "page": 49,
+      "number": ""
+    },
+    "S092": {
+      "heading": "INT. KIRKLAND HOUSE/LOBBY - MORNING",
+      "page": 49,
+      "number": ""
+    },
+    "S093": {
+      "heading": "INT. DINING HALL - NIGHT",
+      "page": 53,
+      "number": ""
+    },
+    "S094": {
+      "heading": "EXT. BRIDGE - NIGHT",
+      "page": 54,
+      "number": ""
+    },
+    "S095": {
+      "heading": "INT. BOATHOUSE - NIGHT",
+      "page": 55,
+      "number": ""
+    },
+    "S096": {
+      "heading": "INT. CAMERON AND TYLER\u2019S DORM ROOM - NIGHT",
+      "page": 55,
+      "number": ""
+    },
+    "S097": {
+      "heading": "INT. SECOND DEPOSITION ROOM - DAY",
+      "page": 60,
+      "number": ""
+    },
+    "S098": {
+      "heading": "INT. FIRST DEPOSITION ROOM - DAY",
+      "page": 62,
+      "number": ""
+    },
+    "S099": {
+      "heading": "INT. SECOND DEPOSITION ROOM - DAY",
+      "page": 62,
+      "number": ""
+    },
+    "S100": {
+      "heading": "EXT./EST. AUDITORIUM - NIGHT",
+      "page": 63,
+      "number": ""
+    },
+    "S101": {
+      "heading": "INT. AUDITORIUM - SAME TIME",
+      "page": 63,
+      "number": ""
+    },
+    "S102": {
+      "heading": "EXT. AUDITORIUM - NIGHT",
+      "page": 65,
+      "number": ""
+    },
+    "S103": {
+      "heading": "INT. MARK\u2019S DORM ROOM - NIGHT",
+      "page": 67,
+      "number": ""
+    },
+    "S104": {
+      "heading": "INT. SECOND DEPOSITION ROOM - DAY",
+      "page": 70,
+      "number": ""
+    },
+    "S105": {
+      "heading": "INT. MARK\u2019S DORM ROOM - NIGHT",
+      "page": 70,
+      "number": ""
+    },
+    "S106": {
+      "heading": "INT. SECOND DEPOSITION ROOM - DAY",
+      "page": 71,
+      "number": ""
+    },
+    "S107": {
+      "heading": "INT. MARK\u2019S DORM ROOM - NIGHT",
+      "page": 73,
+      "number": ""
+    },
+    "S108": {
+      "heading": "INT. MEN\u2019S ROOM - NIGHT",
+      "page": 73,
+      "number": ""
+    },
+    "S109": {
+      "heading": "INT. CLUB/MEN\u2019S ROOM - NIGHT",
+      "page": 73,
+      "number": ""
+    },
+    "S110": {
+      "heading": "INT. MARK\u2019S DORM ROOM - NIGHT",
+      "page": 76,
+      "number": ""
+    },
+    "S111": {
+      "heading": "INT. FIRST DEPOSITION ROOM - DAY",
+      "page": 78,
+      "number": ""
+    },
+    "S112": {
+      "heading": "INT. TYLER AND CAMERON\u2019S DORM ROOM - NIGHT",
+      "page": 79,
+      "number": ""
+    },
+    "S113": {
+      "heading": "INT. A GIRL\u2019S COLLEGE APARTMENT (PALO ALTO) - MORNING",
+      "page": 81,
+      "number": ""
+    },
+    "S114": {
+      "heading": "INT. LARRY SUMMERS\u2019 OUTER OFFICE - DAY",
+      "page": 86,
+      "number": ""
+    },
+    "S115": {
+      "heading": "INT. SUMMERS\u2019 OFFICE - CONTINUOUS",
+      "page": 86,
+      "number": ""
+    },
+    "S116": {
+      "heading": "INT. SUMMERS OUTER OFFICE - DAY",
+      "page": 92,
+      "number": ""
+    },
+    "S117": {
+      "heading": "INT. FIRST DEPOSITION ROOM - DAY",
+      "page": 92,
+      "number": ""
+    },
+    "S118": {
+      "heading": "INT. AD EXECUTIVE\u2019S OFFICE - DAY",
+      "page": 93,
+      "number": ""
+    },
+    "S119": {
+      "heading": "INT. FIRST DEPOSITION ROOM - DAY",
+      "page": 94,
+      "number": ""
+    },
+    "S120": {
+      "heading": "INT. 66 - NIGHT",
+      "page": 94,
+      "number": ""
+    },
+    "S121": {
+      "heading": "INT. FIRST DEPOSITION ROOM - DAY",
+      "page": 95,
+      "number": ""
+    },
+    "S122": {
+      "heading": "INT. 66 - NIGHT",
+      "page": 95,
+      "number": ""
+    },
+    "S123": {
+      "heading": "INT. FIRST DEPOSITION ROOM - DAY",
+      "page": 97,
+      "number": ""
+    },
+    "S124": {
+      "heading": "INT. 66 - NIGHT",
+      "page": 97,
+      "number": ""
+    },
+    "S125": {
+      "heading": "INT. FIRST DEPOSITION ROOM - DAY",
+      "page": 97,
+      "number": ""
+    },
+    "S126": {
+      "heading": "INT. 66 - NIGHT",
+      "page": 98,
+      "number": ""
+    },
+    "S127": {
+      "heading": "INT. FIRST DEPOSITION ROOM - DAY",
+      "page": 98,
+      "number": ""
+    },
+    "S128": {
+      "heading": "INT. 66 - NIGHT",
+      "page": 98,
+      "number": ""
+    },
+    "S129": {
+      "heading": "INT. FIRST DEPOSITION ROOM - DAY",
+      "page": 99,
+      "number": ""
+    },
+    "S130": {
+      "heading": "INT. 66 - NIGHT",
+      "page": 99,
+      "number": ""
+    },
+    "S131": {
+      "heading": "INT. FIRST DEPOSITION ROOM - DAY",
+      "page": 99,
+      "number": ""
+    },
+    "S132": {
+      "heading": "INT. 66 - NIGHT",
+      "page": 99,
+      "number": ""
+    },
+    "S133": {
+      "heading": "INT. FIRST DEPOSITION ROOM - DAY",
+      "page": 101,
+      "number": ""
+    },
+    "S134": {
+      "heading": "INT. 66 - NIGHT",
+      "page": 101,
+      "number": ""
+    },
+    "S135": {
+      "heading": "INT. FIRST DEPOSITION ROOM - DAY",
+      "page": 102,
+      "number": ""
+    },
+    "S136": {
+      "heading": "INT. 66 - NIGHT",
+      "page": 102,
+      "number": ""
+    },
+    "S137": {
+      "heading": "INT. NY TAXICAB - NIGHT",
+      "page": 102,
+      "number": ""
+    },
+    "S138": {
+      "heading": "INT. FIRST DEPOSITION ROOM - DAY",
+      "page": 103,
+      "number": ""
+    },
+    "S139": {
+      "heading": "INT. MARK\u2019S DORM ROOM - DAY",
+      "page": 104,
+      "number": ""
+    },
+    "S140": {
+      "heading": "INT. FIRST DEPOSITION ROOM - DAY",
+      "page": 105,
+      "number": ""
+    },
+    "S141": {
+      "heading": "INT. MARK\u2019S DORM ROOM - DAY",
+      "page": 105,
+      "number": ""
+    },
+    "S142": {
+      "heading": "INT. FIRST DEPOSITION ROOM - DAY",
+      "page": 105,
+      "number": ""
+    },
+    "S143": {
+      "heading": "INT. MARK\u2019S DORM ROOM - DAY",
+      "page": 105,
+      "number": ""
+    },
+    "S144": {
+      "heading": "INT. FIRST DEPOSITION ROOM - DAY",
+      "page": 105,
+      "number": ""
+    },
+    "S145": {
+      "heading": "INT. MARK\u2019S DORM ROOM - DAY",
+      "page": 106,
+      "number": ""
+    },
+    "S146": {
+      "heading": "INT. FIRST DEPOSITION ROOM - DAY",
+      "page": 106,
+      "number": ""
+    },
+    "S147": {
+      "heading": "INT. MARK\u2019S DORM ROOM - DAY",
+      "page": 106,
+      "number": ""
+    },
+    "S148": {
+      "heading": "INT. FIRST DEPOSITION ROOM - DAY",
+      "page": 107,
+      "number": ""
+    },
+    "S149": {
+      "heading": "INT. MARK\u2019S DORM ROOM - DAY",
+      "page": 108,
+      "number": ""
+    },
+    "S150": {
+      "heading": "INT. COMPUTER SCIENCE BUILDING/BASEMENT CORRIDOR - NIGHT",
+      "page": 110,
+      "number": ""
+    },
+    "S151": {
+      "heading": "INT. CLASSROOM - NIGHT",
+      "page": 110,
+      "number": ""
+    },
+    "S152": {
+      "heading": "INT. FIRST DEPOSITION ROOM - DAY",
+      "page": 113,
+      "number": ""
+    },
+    "S153": {
+      "heading": "EXT. PALO ALTO HOUSE - DAY",
+      "page": 114,
+      "number": ""
+    },
+    "S154": {
+      "heading": "INT. PALO ALTO HOUSE - CONTINUOUS",
+      "page": 115,
+      "number": ""
+    },
+    "S155": {
+      "heading": "INT. PALO ALTO HOUSE - LATER",
+      "page": 116,
+      "number": ""
+    },
+    "S156": {
+      "heading": "INT. RUBY SKYE - CONTINUOUS",
+      "page": 117,
+      "number": ""
+    },
+    "S157": {
+      "heading": "EXT. THE THAMES - DAY",
+      "page": 121,
+      "number": ""
+    },
+    "S158": {
+      "heading": "INT. AWARD CEREMONY - DAY",
+      "page": 123,
+      "number": ""
+    },
+    "S159": {
+      "heading": "INT. RECEPTION ROOM - CONTINUOUS",
+      "page": 123,
+      "number": ""
+    },
+    "S160": {
+      "heading": "INT. PALO ALTO HOUSE - NIGHT",
+      "page": 127,
+      "number": ""
+    },
+    "S161": {
+      "heading": "EXT. PALO ALTO HOUSE - NIGHT",
+      "page": 128,
+      "number": ""
+    },
+    "S162": {
+      "heading": "INT. PALO ALTO HOUSE - NIGHT",
+      "page": 128,
+      "number": ""
+    },
+    "S163": {
+      "heading": "INT. KITCHEN - CONTINUOUS",
+      "page": 131,
+      "number": ""
+    },
+    "S164": {
+      "heading": "INT. BANK OF AMERICA BRANCH- DAY",
+      "page": 133,
+      "number": ""
+    },
+    "S165": {
+      "heading": "EXT./EST. SAN FRANCISCO SKYSCRAPER - DAY",
+      "page": 134,
+      "number": ""
+    },
+    "S166": {
+      "heading": "INT. THIEL\u2019S OUTER OFFICE - DAY",
+      "page": 134,
+      "number": ""
+    },
+    "S167": {
+      "heading": "INT. THIEL\u2019S OFFICE - CONTINUOUS",
+      "page": 134,
+      "number": ""
+    },
+    "S168": {
+      "heading": "INT. EDUARDO\u2019S APARTMENT - NIGHT",
+      "page": 135,
+      "number": ""
+    },
+    "S169": {
+      "heading": "INT. PALO ALTO HOUSE - SAME TIME",
+      "page": 137,
+      "number": ""
+    },
+    "S170": {
+      "heading": "INT. FACEBOOK OFFICE - DAY",
+      "page": 140,
+      "number": ""
+    },
+    "S171": {
+      "heading": "INT. FIRST DEPOSITION ROOM - EVENING",
+      "page": 142,
+      "number": ""
+    },
+    "S172": {
+      "heading": "INT. FACEBOOK OFFICE - DAY",
+      "page": 143,
+      "number": ""
+    },
+    "S173": {
+      "heading": "EXT. SAN FRANCISCO STREET - DAY",
+      "page": 143,
+      "number": ""
+    },
+    "S174": {
+      "heading": "INT. FIRST DEPOSITION ROOM - EVENING",
+      "page": 144,
+      "number": ""
+    },
+    "S175": {
+      "heading": "INT. NEW FACEBOOK OFFICES - NIGHT",
+      "page": 145,
+      "number": ""
+    },
+    "S176": {
+      "heading": "INT. FIRST DEPOSITION ROOM - EVENING",
+      "page": 145,
+      "number": ""
+    },
+    "S177": {
+      "heading": "INT. NEW FACEBOOK OFFICES - NIGHT",
+      "page": 145,
+      "number": ""
+    },
+    "S178": {
+      "heading": "INT. CONFERENCE ROOM - CONTINUOUS",
+      "page": 146,
+      "number": ""
+    },
+    "S179": {
+      "heading": "INT. BULLPEN - CONTINUOUS",
+      "page": 146,
+      "number": ""
+    },
+    "S180": {
+      "heading": "INT. FIRST DEPOSITION ROOM - EVENING",
+      "page": 147,
+      "number": ""
+    },
+    "S181": {
+      "heading": "INT. NEW FACEBOOK OFFICES - NIGHT",
+      "page": 147,
+      "number": ""
+    },
+    "S182": {
+      "heading": "EXT. SORORITY HOUSE - NIGHT",
+      "page": 151,
+      "number": ""
+    },
+    "S183": {
+      "heading": "INT. SORORITY HOUSE - NIGHT",
+      "page": 151,
+      "number": ""
+    },
+    "S184": {
+      "heading": "INT. BEDROOM - NIGHT",
+      "page": 152,
+      "number": ""
+    },
+    "S185": {
+      "heading": "INT. STAIRCASE LANDING - CONTINUOUS",
+      "page": 153,
+      "number": ""
+    },
+    "S186": {
+      "heading": "INT. BEDROOM - CONTINUOUS",
+      "page": 153,
+      "number": ""
+    },
+    "S187": {
+      "heading": "INT. NEW FACEBOOK OFFICES - NIGHT",
+      "page": 155,
+      "number": ""
+    },
+    "S188": {
+      "heading": "EXT. POLICE STATION - NIGHT",
+      "page": 155,
+      "number": ""
+    },
+    "S189": {
+      "heading": "INT. FIRST DEPOSITION ROOM - NIGHT",
+      "page": 157,
+      "number": ""
+    }
+  },
+  "draft": {
+    "title": "The Social Network",
+    "draft_date": "",
+    "revision_label": "",
+    "sha256": "d5e2c7455575b083d30c78c368919aabc9679dcc368d6071bbb455f3b6a99464",
+    "bytes": 165438,
+    "pages": 157,
+    "scene_count": 189,
+    "scene_numbers": "generated"
   }
 }

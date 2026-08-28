@@ -160,6 +160,7 @@ let CURRENT_RECORD = null; // the rendered record — reference updates recomput
 // outside this set is reasoning over a finding that no longer ships — mark
 // it rather than render a dead link. (Referential integrity, review item #4.)
 let KNOWN_FLAG_IDS = null;
+let ENTITY_SURFACE = {};
 
 function linkifyRefs(text) {
   const frag = document.createDocumentFragment();
@@ -500,10 +501,19 @@ function renderPrediction(root, pred) {
   const comps = pred.comparables || [];
   const tallies = {};
   for (const c of comps) tallies[c.rating] = (tallies[c.rating] || 0) + 1;
-  const majority = Object.entries(tallies).sort((a, b) => b[1] - a[1])[0];
+  const ORDER = ["G", "PG", "PG-13", "R", "NC-17"];
+  const predIdx = ORDER.indexOf(pred.predicted);
   const same = tallies[pred.predicted] || 0;
-  let line = `${same} of your ${comps.length} nearest released comparables are rated ${pred.predicted}.`;
-  if (majority && majority[0] !== pred.predicted && majority[1] > same) {
+  const stricter = comps.filter((c) => ORDER.indexOf(c.rating) > predIdx).length;
+  let line;
+  if (stricter > 0 && predIdx >= 0) {
+    const parts = ORDER.slice(predIdx).filter((r) => tallies[r]).map((r) => `${tallies[r]} ${r}`);
+    line = `${same + stricter} of your ${comps.length} nearest released comparables are rated ${pred.predicted} or stricter (${parts.join(", ")}) — the neighbourhood runs harder than the prediction, not softer.`;
+  } else {
+    line = `${same} of your ${comps.length} nearest released comparables are rated ${pred.predicted}.`;
+  }
+  const majority = Object.entries(tallies).sort((a, b) => b[1] - a[1])[0];
+  if (majority && majority[0] !== pred.predicted && majority[1] > same + stricter) {
     line += ` The plurality — ${majority[1]} of ${comps.length} — are rated ${majority[0]}; treat the prediction with caution.`;
   }
   meta.appendChild(el("p", "pred-evidence", line));
@@ -832,6 +842,8 @@ function revealInDetails(node) {
 }
 
 function renderReport(record) {
+  ENTITY_SURFACE = {};
+  for (const e of record.entities || []) ENTITY_SURFACE[e.entity_id] = e.surface;
   KNOWN_FLAG_IDS = new Set(
     [...(record.flags || []), ...(record.rejected_flags || [])].map((f) => f.flag_id).filter(Boolean)
   );
@@ -1023,9 +1035,13 @@ function renderReport(record) {
   if (informational.length) {
     const wrap = el("details", "flags-informational");
     wrap.id = "sec-informational";
+    const names = informational
+      .map((f) => ENTITY_SURFACE[f.entity_id] || prettyCat(f.category))
+      .filter(Boolean);
+    const shown = names.slice(0, 5).join(", ") + (names.length > 5 ? ` +${names.length - 5} more` : "");
     const sum = el("summary", null,
-      `${informational.length} informational item${informational.length === 1 ? "" : "s"} (LOW / FYI) — ` +
-      "background mentions and protected expressive use; nothing here blocks production");
+      `${informational.length} informational item${informational.length === 1 ? "" : "s"} (LOW / FYI): ` +
+      `${shown} — expand for the full findings; nothing here blocks production`);
     wrap.appendChild(sum);
     const list = el("div", "flags");
     informational.forEach((f) => list.appendChild(flagRow(f, {})));
