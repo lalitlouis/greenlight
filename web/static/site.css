@@ -890,23 +890,10 @@ mark.d-add { background: rgba(10, 143, 82, 0.16); color: var(--green-deep); bord
 /* ---------- The Read-Through: the scene strip is the run page's centerpiece.
    Desk dots walk down the script, findings pin to their scenes, verdicts
    confirm or strike the pins. The old four-column feed becomes "Detail view". ---------- */
-.now-bar { display: flex; flex-direction: column; gap: 12px; padding: 18px 22px; margin-bottom: 16px; }
-.now-line { display: flex; align-items: center; gap: 10px; font-size: 17.5px; line-height: 1.45; min-height: 26px; }
-.now-line b { font-weight: 700; flex: none; }
 .now-text { color: var(--ink-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
 .now-dot { width: 11px; height: 11px; border-radius: 50%; flex: none; }
 .dot-system { background: var(--green); }
 
-.now-desks { display: flex; gap: 8px 10px; flex-wrap: wrap; }
-.chip-desk { display: inline-flex; align-items: center; gap: 7px; font-size: 14.5px; border: 1px solid var(--line); border-radius: 980px; padding: 4px 13px; background: var(--surface); transition: border-color 0.3s ease, background 0.3s ease; }
-.chip-desk b { font-weight: 600; }
-.chip-desk .rail-status { font-size: 13.5px; color: var(--fyi); font-variant-numeric: tabular-nums; }
-.chip-desk.rail-working { background: var(--band); }
-.chip-desk.rail-working.rail-clearance_counsel { border-color: var(--desk-clearance); }
-.chip-desk.rail-working.rail-ratings_board { border-color: var(--desk-ratings); }
-.chip-desk.rail-working.rail-safety_underwriter { border-color: var(--desk-safety); }
-.chip-desk.rail-working.rail-territory_censor { border-color: var(--desk-territory); }
-.chip-desk.rail-done .rail-status { color: var(--green-deep); font-weight: 650; }
 
 .scene-strip-wrap { padding: 0; overflow: hidden; }
 .strip-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 20px; border-bottom: 1px solid var(--line); }
@@ -950,18 +937,9 @@ mark.d-add { background: rgba(10, 143, 82, 0.16); color: var(--green-deep); bord
 .rt-pin.pin-rejected { opacity: 0.45; border-style: dashed; }
 .rt-pin.pin-rejected span { text-decoration: line-through; }
 
-.rail-dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
-.rail-clearance_counsel .rail-dot { background: var(--desk-clearance); }
-.rail-ratings_board .rail-dot { background: var(--desk-ratings); }
-.rail-safety_underwriter .rail-dot { background: var(--desk-safety); }
-.rail-territory_censor .rail-dot { background: var(--desk-territory); }
-
-.detail-disclosure { width: 100%; display: flex; align-items: center; gap: 10px; margin-top: 16px; padding: 14px 20px; border: 1px solid var(--line); background: var(--surface); font: inherit; font-size: 15.5px; color: var(--ink-2); text-align: left; cursor: pointer; }
-.detail-disclosure:hover { border-color: var(--green); color: var(--green-deep); }
-.detail-disclosure b { font-weight: 650; color: inherit; }
-.dd-arrow { font-size: 13.5px; flex: none; transition: transform 0.2s ease; }
-.detail-only { display: none; }
-body.show-detail .detail-only { display: grid; margin-top: 12px; }
+.rail-clearance_counsel .rail-ratings_board .rail-safety_underwriter .rail-territory_censor 
+.feeds-strip .studio-head { cursor: pointer; user-select: none; }
+#feeds-body .panel { margin-top: 12px; }
 
 @media (prefers-reduced-motion: reduce) {
   .rt-dot, .rt-ripple { animation: none !important; }

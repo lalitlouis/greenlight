@@ -310,7 +310,7 @@ function gPulse(a, b, tone) {
    plus a tab-title flash when the report lands. */
 function showLanguageCaveat() {
   if ($("lang-caveat")) return;
-  const bar = document.querySelector(".now-bar");
+  const bar = $("run-status")?.closest(".card");
   if (!bar) return;
   const note = el("div", "lang-caveat");
   note.id = "lang-caveat";
@@ -328,7 +328,7 @@ function showLanguageCaveat() {
 function offerNotify() {
   if (!("Notification" in window) || Notification.permission === "granted") return;
   if (Notification.permission === "denied") return;
-  const bar = document.querySelector(".now-bar");
+  const bar = $("run-status")?.closest(".card");
   if (!bar || $("notify-chip")) return;
   const chip = el("button", "notify-chip", "🔔 Notify me when the report is ready");
   chip.id = "notify-chip";
@@ -380,14 +380,11 @@ function startBeatPlayer() {
 }
 
 function renderBeat(b) {
-  const line = $("now-line");
+  const line = $("run-status");
   if (!line) return;
-  line.textContent = "";
-  line.appendChild(el("span", "now-dot dot-" + (DESK_IDS.includes(b.agent) ? b.agent : "system")));
   const who = whoIs(b.agent);
-  if (who) line.appendChild(el("b", null, who));
-  line.appendChild(el("span", "now-text", b.text));
-  if (window.FX?.on) gsap.fromTo(line, { opacity: 0.25, y: 5 }, { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" });
+  line.textContent = (who ? who + " · " : "") + b.text;
+  if (window.FX?.on) gsap.fromTo(line, { opacity: 0.25 }, { opacity: 1, duration: 0.3, ease: "power2.out" });
 }
 
 function rtOp(fn) {
@@ -590,23 +587,8 @@ function bumpProgress() {
 
 /* ---------- desk panel ---------- */
 
-function buildDeskRail() {
-  gBuild();
-  const rail = $("desk-rail");
-  if (!rail) return;
-  rail.textContent = "";
-  for (const [id, name] of DESKS) {
-    const row = el("span", "chip-desk rail-" + id);
-    row.id = "rail-" + id;
-    row.appendChild(el("span", "rail-dot"));
-    row.appendChild(el("b", null, name));
-    row.appendChild(el("span", "rail-status", "waiting"));
-    rail.appendChild(row);
-  }
-}
-
 function buildPanel() {
-  buildDeskRail();
+  gBuild();
   const panel = $("panel");
   panel.textContent = "";
   $("pipe-log").textContent = "";
@@ -642,17 +624,6 @@ function setDeskStatus(id) {
       st.className = "st running";
       txt.textContent = `Working · ${d.calls} calls · ${d.flags} flags`;
     }
-  }
-  const rail = document.querySelector(`#rail-${id} .rail-status`);
-  const row = $("rail-" + id);
-  if (rail) {
-    rail.textContent = d.done
-      ? `✓ ${d.flags} ${d.flags === 1 ? "flag" : "flags"}`
-      : d.started
-        ? `${d.flags} ${d.flags === 1 ? "flag" : "flags"} so far`
-        : "waiting";
-    row?.classList.toggle("rail-working", d.started && !d.done);
-    row?.classList.toggle("rail-done", d.done);
   }
 }
 
@@ -1098,10 +1069,15 @@ function wireFirstLookCollapse() {
 
 document.addEventListener("DOMContentLoaded", () => {
   wireFirstLookCollapse();
-  $("detail-toggle")?.addEventListener("click", () => {
-    const on = document.body.classList.toggle("show-detail");
-    const arrow = document.querySelector("#detail-toggle .dd-arrow");
-    if (arrow) arrow.textContent = on ? "▾" : "▸";
+  const toggleFeeds = () => {
+    const body = $("feeds-body");
+    if (!body) return;
+    const hidden = body.classList.toggle("hidden");
+    $("feeds-toggle").textContent = hidden ? "Show" : "Hide";
+  };
+  $("feeds-head")?.addEventListener("click", toggleFeeds);
+  $("feeds-head")?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleFeeds(); }
   });
   $("studio-toggle")?.addEventListener("click", () => {
     const body = $("studio-body");
