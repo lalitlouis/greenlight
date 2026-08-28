@@ -1581,7 +1581,7 @@ def note_open_question(question: str, tool_context: ToolContext) -> str:
 # --- done -------------------------------------------------------------------
 
 
-_DONE_MAX_REFUSALS = 2
+_DONE_MAX_REFUSALS = 4  # raised from 2: worklist-floored lists are longer and clearing is cheap
 _DONE_MIN_BUDGET = 3
 _DONE_COVERAGE = 0.5
 

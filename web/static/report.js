@@ -1049,6 +1049,29 @@ function renderReport(record) {
   root.appendChild(head);
   root.appendChild(buildReportNav(record, rep));
 
+  const unex = record.unexamined || [];
+  if (unex.length) {
+    const warn = el("div", "card run-error-banner desk-incomplete-banner");
+    warn.appendChild(el("b", null, `⚠ ${unex.length} extracted item${unex.length === 1 ? " was" : "s were"} not examined by any desk.`));
+    const p = el("p", null,
+      "These items were found in the script but never flagged, cleared, or questioned — their scenes are NOT cleared. Rerun the analysis before relying on this report.");
+    warn.appendChild(p);
+    const det = document.createElement("details");
+    const summ = document.createElement("summary");
+    summ.textContent = `Show the ${unex.length} unexamined item${unex.length === 1 ? "" : "s"}`;
+    det.appendChild(summ);
+    const ul = el("ul", "plain-list");
+    for (const u of unex) {
+      const li = el("li");
+      li.appendChild(el("strong", null, u.surface || u.entity_id || "?"));
+      li.appendChild(document.createTextNode(` — ${(u.scene_ids || []).join(", ")}`));
+      ul.appendChild(li);
+    }
+    det.appendChild(ul);
+    warn.appendChild(det);
+    root.appendChild(warn);
+  }
+
   for (const desk of record.desks_incomplete || []) {
     const warn = el("div", "card run-error-banner desk-incomplete-banner");
     warn.textContent =

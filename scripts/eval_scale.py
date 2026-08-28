@@ -69,6 +69,11 @@ def main() -> int:
         not r.get("desks_incomplete"),
         f"desks_incomplete={r.get('desks_incomplete')}",
     )
+    check(
+        "invariant: no unexamined entities (every extracted item dispositioned)",
+        not r.get("unexamined"),
+        f"{len(r.get('unexamined') or [])} unexamined",
+    )
 
     # --- seeded traps --------------------------------------------------------
     check(

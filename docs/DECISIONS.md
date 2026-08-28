@@ -854,3 +854,23 @@ Open (owner decisions): k=3 union as a paid-tier recall feature (reviewer recomm
 ~3x cost, best available recall gain today); artwork rights-holder verification tool
 (Nighthawks passes disagreed: ARS/2037 vs AIC-Bridgeman/2038 — 2037 is correct);
 score shown as range/suppressed until coverage stabilizes.
+
+## 2026-08-28 — OWNER: single-run completeness IS the product; k=3 union optional at most
+
+"i want it to reflect everything in 1 itself, 3 should be optional." The recall fix is
+single-pass, not ensembling. Shipped accordingly (one gated batch with the worklist floor):
+
+- **Per-entity accounting end to end**: record["unexamined"] = extracted entities with no
+  disposition anywhere (flag kept OR rejected, clearance, or surface-matched open
+  question). Rendered loudly: report banner with the named items, binder NOT-EXAMINED
+  rows replacing false "No known issue" on affected scenes, PDF section, disclaimer
+  updated. Absence can no longer render as cleanliness — a thin report is now visibly
+  thin.
+- **Eval check #23**: unexamined must be empty (both fixture evals). The gate is now 23
+  checks.
+- **done() refusal cap 2 → 4**: worklist-floored lists are longer and clearing is cheap;
+  the LoopAgent iteration cap remains the hard stop.
+
+Chain of defense now: deterministic extraction floor (pre-pass) → deterministic
+assignment floor (every entity on a worklist) → done() refusals by name → under-coverage
+= INCOMPLETE desk → anything still missed renders as NOT EXAMINED, never as clean.

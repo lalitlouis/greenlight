@@ -198,6 +198,12 @@ def main() -> int:
         all(f["citations"] and all(c["excerpt"].strip() for c in f["citations"]) for f in flags),
     )
     check(
+        "invariant: no unexamined entities (every extracted item dispositioned)",
+        not r.get("unexamined"),
+        f"unexamined={[u.get('surface') for u in r.get('unexamined') or []][:8]} — absence "
+        "must never render as cleanliness",
+    )
+    check(
         "invariant: no desk collapsed (worklist with zero dispositions)",
         not r.get("desks_incomplete"),
         f"desks_incomplete={r.get('desks_incomplete')} — the territory 5->0 failure class; "

@@ -146,6 +146,16 @@ def binder_pdf(data: dict[str, Any]) -> bytes:
             story.append(Paragraph(_html.escape(it), item_style))
 
     bm = data.get("back_matter") or {}
+    if bm.get("unexamined"):
+        _sec(
+            f"NOT EXAMINED — {len(bm['unexamined'])} extracted item(s) with no disposition",
+            [
+                "These items were found in the script but no desk flagged, cleared, or "
+                "questioned them. Their scenes are NOT cleared. Rerun before relying on "
+                "this binder.",
+                *bm["unexamined"],
+            ],
+        )
     if bm.get("desks_incomplete"):
         _sec(
             "INCOMPLETE — desks with zero dispositions",

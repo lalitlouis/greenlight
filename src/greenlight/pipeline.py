@@ -306,6 +306,44 @@ def _incomplete_desks(state: dict[str, Any], verbose: bool) -> list[str]:
     return incomplete
 
 
+def _unexamined_entities(state: dict[str, Any]) -> list[dict[str, Any]]:
+    """Extracted entities that NO desk dispositioned — not flagged (kept or
+    rejected), not cleared, not named in an open question. These render
+    loudly: a report page whose promise is "every scene accounted for" must
+    never let absence read as cleanliness (the k=3 pass-1 failure: Nighthawks
+    and Baba O'Riley neither flagged nor cleared, scenes shown clean)."""
+    tri = state.get("triage") or {}
+    if hasattr(tri, "model_dump"):
+        tri = tri.model_dump()
+    covered: set[str] = set()
+    oq_texts: list[str] = []
+    for d in DESKS:
+        for f in toolbelt.desk_flags(state, d):
+            if f.get("entity_id"):
+                covered.add(f["entity_id"])
+        for c in toolbelt.desk_cleared(state, d):
+            if c.get("entity_id"):
+                covered.add(c["entity_id"])
+        oq_texts.extend(str(q).lower() for q in toolbelt.desk_open_questions(state, d))
+    out: list[dict[str, Any]] = []
+    for e in tri.get("entities") or []:
+        if not isinstance(e, dict):
+            continue
+        if e.get("entity_id") in covered:
+            continue
+        surf = (e.get("surface") or "").lower()
+        if surf and any(surf in q for q in oq_texts):
+            continue
+        out.append(
+            {
+                "entity_id": e.get("entity_id"),
+                "surface": e.get("surface", ""),
+                "scene_ids": e.get("scene_ids") or [],
+            }
+        )
+    return out
+
+
 def _desk_coverage(state: dict[str, Any]) -> dict[str, dict[str, int]]:
     """Per-desk instrumentation: what triage assigned vs what got dispositioned.
     On the record so worklist variance is measurable across runs."""
@@ -441,6 +479,7 @@ async def run(
         },
         "entities": state.get("triage", {}).get("entities", []),
         "desk_coverage": _desk_coverage(state),
+        "unexamined": _unexamined_entities(state),
         "flags": kept,
         "rejected_flags": rejected,
         "verdicts": verdicts,

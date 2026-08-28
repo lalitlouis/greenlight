@@ -272,6 +272,10 @@ def _back_matter(record: dict[str, Any]) -> dict[str, Any]:
     ] + script_level
     return {
         "desks_incomplete": [_pretty(d) for d in record.get("desks_incomplete") or []],
+        "unexamined": [
+            f"{u.get('surface', '')} ({', '.join(u.get('scene_ids') or [])})"
+            for u in record.get("unexamined") or []
+        ],
         "cleared": recorded
         + [{"desk": _pretty(d), "text": q} for d, q in oq_all if _is_determination(q)],
         "open_questions": [
@@ -295,7 +299,28 @@ def _back_matter(record: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def build(
+_UNEX_SHOWN = 4
+
+
+def _not_examined_row(base: dict[str, str], names: list[str]) -> dict[str, str]:
+    shown = ", ".join(names[:_UNEX_SHOWN]) + (
+        f" (+{len(names) - _UNEX_SHOWN} more)" if len(names) > _UNEX_SHOWN else ""
+    )
+    return {
+        **base,
+        "Item": shown,
+        "Category": "—",
+        "Severity": "",
+        "Clearance status": f"NOT EXAMINED — {len(names)} item(s)",
+        "Remedy / licensing note": "No desk dispositioned these items; "
+        "do not treat this scene as cleared. Rerun the analysis.",
+        "Est. cost (USD)": "",
+        "Sources": "",
+        "Finding": "",
+    }
+
+
+def build(  # noqa: PLR0912 - a deliberate sequence of row-emission cases
     record: dict[str, Any], scene_meta: dict[str, dict[str, Any]] | None = None
 ) -> dict[str, Any]:
     """The binder as data: header block + one row per finding per scene, with
@@ -315,6 +340,14 @@ def build(
         touched.update(sids)
         by_scene[sids[0]].append({**f, "_all_scenes": sids})
 
+    # Per-scene unexamined accounting: an entity no desk dispositioned must
+    # never let its scene read "No known issue" — absence is not cleanliness.
+    unexamined_by_scene: dict[str, list[str]] = defaultdict(list)
+    for u in record.get("unexamined") or []:
+        for usid in u.get("scene_ids") or []:
+            if u.get("surface"):
+                unexamined_by_scene[usid].append(u["surface"])
+
     all_sids = sorted(set(scene_meta) | touched, key=_scene_sort_key)
     rows: list[dict[str, str]] = []
     for sid in all_sids:
@@ -328,9 +361,14 @@ def build(
             by_scene.get(sid, []),
             key=lambda f: list(STATUS_BY_SEVERITY).index(f.get("severity", "FYI")),
         )
+        unex_here = unexamined_by_scene.get(sid) or []
+        if unex_here:
+            rows.append(_not_examined_row(base, unex_here))
         if not flags and sid in touched:
             continue  # covered by a finding anchored at an earlier scene
         if not flags:
+            if unex_here:
+                continue  # the NOT EXAMINED row already speaks for this scene
             rows.append(
                 {
                     **base,
@@ -380,7 +418,9 @@ def build(
         "disclaimer": (
             "Prepared by ScriptRisk (scriptrisk.com). Research tool output, not legal advice; "
             "'No known issue' means no finding survived independent verification, not a legal "
-            "clearance. Every flagged row cites public sources available in the full report."
+            "clearance. 'NOT EXAMINED' rows mark items no desk dispositioned — those scenes "
+            "are not cleared; rerun before relying on this log. Every flagged row cites "
+            "public sources available in the full report."
         ),
     }
 
