@@ -93,10 +93,18 @@ def build_root_agent() -> SequentialAgent:
             territory_censor.agent,
         ],
     )
+    from greenlight import prepass
+
     return SequentialAgent(
         name="greenlight_pipeline",
-        description="Screenplay clearance: triage -> gatekeeper panel -> verification.",
-        sub_agents=[triage.agent, panel, verification.agent, adjudicator.agent],
+        description="Screenplay clearance: triage -> pre-pass -> gatekeeper panel -> verification.",
+        sub_agents=[
+            triage.agent,
+            prepass.build_agent(),
+            panel,
+            verification.agent,
+            adjudicator.agent,
+        ],
     )
 
 
