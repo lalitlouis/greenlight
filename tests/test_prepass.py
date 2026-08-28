@@ -11,10 +11,16 @@ def _scene(sid, action="", lines=()):
 
 def test_sweep_finds_privacy_vectors_and_names():
     scenes = [
-        _scene("S001", "MARA answers the PAY PHONE. The number 212-664-7665 is scrawled on it.",
-               ["Call me at bubba@harborbar.com, or check www.harborbar.com"]),
-        _scene("S002", "A poster for Blue Harbor Session hangs by the door.",
-               ['She hums "Gypsies, Tramps and Thieves" under her breath.']),
+        _scene(
+            "S001",
+            "MARA answers the PAY PHONE. The number 212-664-7665 is scrawled on it.",
+            ["Call me at bubba@harborbar.com, or check www.harborbar.com"],
+        ),
+        _scene(
+            "S002",
+            "A poster for Blue Harbor Session hangs by the door.",
+            ['She hums "Gypsies, Tramps and Thieves" under her breath.'],
+        ),
     ]
     got = {(c["surface"], c["kind"]) for c in sweep(scenes)}
     assert ("212-664-7665", "PHONE_NUMBER") in got

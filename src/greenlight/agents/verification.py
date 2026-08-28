@@ -49,6 +49,9 @@ SEVERITY_ORDER = ["BLOCKER", "HIGH", "MEDIUM", "LOW", "FYI"]
 class Verdict(BaseModel):
     verdict: Literal["SUPPORTED", "PARTIAL", "UNSUPPORTED"]
     reason: str
+    failure_mode: Literal[
+        "none", "script_misstatement", "premise_unsupported", "citation_offtopic"
+    ] = "none"
 
 
 VERIFIER_PROMPT = """\
@@ -85,6 +88,13 @@ REJECT MULTI-STEP INFERENCE: a claim that depends on an assumed fact the script 
 not state — a character's age inferred from "college student", commercial injury
 inferred from casual dialogue, casting or staging choices the text leaves open — fails
 its premise even if the assumption is plausible. The desk asserts; the text decides.
+
+When you answer UNSUPPORTED, also classify WHY in failure_mode:
+- script_misstatement — the claim misstates the screenplay (fatal: the finding is wrong);
+- premise_unsupported — the script facts hold but the excerpts do not establish the premise
+  (a sourcing failure: the claim may be true with better citations);
+- citation_offtopic — the excerpts are about something else entirely (also a sourcing failure).
+For SUPPORTED and PARTIAL verdicts, failure_mode is "none".
 
 The premise must come from the excerpts, not from your own knowledge. If the premise is true
 but these excerpts do not show it, that is not SUPPORTED.
@@ -174,7 +184,15 @@ def apply_verdicts(
             capped["finding"] = "[partially supported] " + capped["finding"]
             kept.append(capped)
         else:
-            rejected.append({**flag, "rejection_reason": v["reason"]})
+            recoverable = v.get("failure_mode") in ("premise_unsupported", "citation_offtopic")
+            rejected.append(
+                {
+                    **flag,
+                    "rejection_reason": v["reason"],
+                    "failure_mode": v.get("failure_mode", "none"),
+                    "recoverable": recoverable and not flag.get("resourced"),
+                }
+            )
     return kept, rejected
 
 
@@ -232,6 +250,43 @@ async def verify_standalone(
     return dict(results)
 
 
+_RESOURCE_CAP = 6  # re-source the worst-hit few, not the world
+_RESOURCE_CITES = 3  # replacement citations per re-sourced flag
+
+
+def _fresh_citations(flag: dict[str, Any]) -> list[dict[str, Any]]:
+    """One live search aimed at the claim's premise; top verbatim excerpts
+    become replacement citations. Module-level so tests can monkeypatch."""
+    from greenlight.tools import toolbelt
+
+    query_seed = (
+        f"{flag.get('category', '').replace('_', ' ')} {str(flag.get('finding', ''))[:140]}"
+    )
+    try:
+        res = toolbelt._live_search(
+            objective=f"Authoritative support for: {str(flag.get('finding', ''))[:200]}",
+            queries=[query_seed],
+        )
+    except Exception:
+        return []
+    cits: list[dict[str, Any]] = []
+    for r in res.get("results", []) or []:
+        for ex in (r.get("excerpts") or [])[:1]:
+            cits.append(
+                {
+                    "source_type": "web",
+                    "title": r.get("title", ""),
+                    "url": r.get("url"),
+                    "excerpt": ex,
+                    "retrieved_at": None,
+                    "via": "parallel_search_resource",
+                }
+            )
+        if len(cits) >= _RESOURCE_CITES:
+            break
+    return cits
+
+
 class VerificationPanel(BaseAgent):
     """Runtime fan-out: one Gemini verifier per flag, concurrently, blinded."""
 
@@ -252,7 +307,11 @@ class VerificationPanel(BaseAgent):
                         ),
                     )
                     v = Verdict.model_validate_json(res.text)
-                    return {"verdict": v.verdict, "reason": v.reason}
+                    return {
+                        "verdict": v.verdict,
+                        "reason": v.reason,
+                        "failure_mode": v.failure_mode,
+                    }
                 except Exception:
                     if attempt == _MAX_ATTEMPTS - 1:
                         # Fail open with a marker: never silently drop a flag
@@ -312,7 +371,56 @@ class VerificationPanel(BaseAgent):
             )
         kept, dropped = apply_verdicts(flags, verdicts)
 
-        rejected = [fid for fid, v in verdicts.items() if v["verdict"] == "UNSUPPORTED"]
+        # A5: a true finding killed by a bad citation goes around ONCE with
+        # fresh sourcing — recall must not be capped by citation retrieval.
+        recoverable = [r for r in dropped if r.get("recoverable")][:_RESOURCE_CAP]
+        resourced_stats = {"attempted": len(recoverable), "recovered": 0}
+        if recoverable:
+            yield Event(
+                invocation_id=ctx.invocation_id,
+                author=self.name,
+                content=types.Content(
+                    role="model",
+                    parts=[
+                        types.Part(
+                            text=f"↻ re-sourcing {len(recoverable)} rejection(s) whose failure "
+                            "was the citations, not the claim: "
+                            + ", ".join(r["flag_id"] for r in recoverable)
+                        )
+                    ],
+                ),
+            )
+        for r in recoverable:
+            new_cits = await asyncio.to_thread(_fresh_citations, r)
+            if not new_cits:
+                continue
+            retry_flag = {**r, "citations": new_cits, "resourced": True}
+            retry_flag.pop("rejection_reason", None)
+            retry_flag.pop("recoverable", None)
+            v2 = await self._verify_one(client, retry_flag, _scene_context(retry_flag, state), sem)
+            verdicts[r["flag_id"] + ":resourced"] = v2
+            yield Event(
+                invocation_id=ctx.invocation_id,
+                author=self.name,
+                content=types.Content(
+                    role="model",
+                    parts=[
+                        types.Part(
+                            text=f"↻ {r['flag_id']} re-sourced → "
+                            f"{v2['verdict']}|{v2['reason'][:120]}"
+                        )
+                    ],
+                ),
+            )
+            k2, _d2 = apply_verdicts([retry_flag], {r["flag_id"]: v2})
+            if k2:
+                kept.extend(k2)
+                dropped = [d for d in dropped if d["flag_id"] != r["flag_id"]]
+                resourced_stats["recovered"] += 1
+
+        rejected = [
+            fid for fid, v in verdicts.items() if ":" not in fid and v["verdict"] == "UNSUPPORTED"
+        ]
         summary = (
             f"Verified {len(flags)} flags: "
             f"{sum(v['verdict'] == 'SUPPORTED' for v in verdicts.values())} supported, "
@@ -327,6 +435,7 @@ class VerificationPanel(BaseAgent):
                     **{f"verdicts:{fid}": v for fid, v in verdicts.items()},
                     "verified_flags": kept,
                     "rejected_flags": dropped,
+                    "resource_stats": resourced_stats,
                 }
             ),
             content=types.Content(role="model", parts=[types.Part(text=summary)]),
