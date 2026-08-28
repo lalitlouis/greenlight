@@ -37,44 +37,14 @@ COLUMNS = [
 ]
 
 
-def _fold_territory_rows(flags: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    """One binder row per territory ISSUE: territory_cn_drug_use and
-    territory_uae_drug_use on the same scenes fold into a single row whose
-    category reads "Territory (CN, UAE): Drug Use" — the per-desk flags stay
-    separate in the full report; the log is a scannable summary."""
+def _territory_label(category: str) -> str:
+    """territory_cn_drug_use -> "Territory (CN): Drug Use"."""
     import re as _re
 
-    grouped: dict[tuple, dict[str, Any]] = {}
-    out: list[dict[str, Any]] = []
-    for f in flags:
-        m = _re.match(r"territory_([a-z]{2,3})_(.+)", f.get("category", ""))
-        if not m:
-            out.append(f)
-            continue
-        cc, issue = m.group(1).upper(), m.group(2)
-        if issue in grouped:
-            g = grouped[issue]
-            if cc not in g["_territories"]:
-                g["_territories"].append(cc)
-            g["_all_scenes"] = sorted(
-                set(g.get("_all_scenes") or []) | set(f.get("_all_scenes") or []),
-                key=_scene_sort_key,
-            )
-            sev_order = list(STATUS_BY_SEVERITY)
-            if sev_order.index(f.get("severity", "FYI")) < sev_order.index(
-                g.get("severity", "FYI")
-            ):
-                g["severity"] = f.get("severity")
-        else:
-            g = {**f, "_territories": [cc], "_issue": issue}
-            grouped[issue] = g
-            out.append(g)
-    for g in out:
-        if "_territories" in g:
-            tcs = ", ".join(g["_territories"])
-            issue_label = g["_issue"].replace("_", " ").title()
-            g["category"] = f"Territory ({tcs}): {issue_label}"
-    return out
+    m = _re.match(r"territory_([a-z]{2,3})_(.+)", category or "")
+    if not m:
+        return ""
+    return f"Territory ({m.group(1).upper()}): {m.group(2).replace('_', ' ').title()}"
 
 
 def _clip(text: str, limit: int = 480) -> str:
@@ -86,7 +56,15 @@ def _clip(text: str, limit: int = 480) -> str:
 
 def _label(f: dict[str, Any]) -> str:
     cat = f.get("category", "")
-    return cat if cat.startswith("Territory (") else _pretty(cat)
+    if cat.startswith("Territory ("):
+        return cat
+    return _territory_label(cat) or _pretty(cat)
+
+
+def _unescape(text: str) -> str:
+    import html
+
+    return html.unescape(text or "")
 
 
 def _pretty(slug: str) -> str:
@@ -181,31 +159,37 @@ def build(record: dict[str, Any], scene_meta: dict[str, dict[str, Any]]) -> dict
                 }
             )
             continue
-        flags = _fold_territory_rows(flags)
         for f in flags:
             all_sids_f = f.get("_all_scenes") or [sid]
             scene_ref = _compact_scene_ref(all_sids_f)
             r = f.get("remedy") or {}
             note_parts = []
+            if f.get("finding"):
+                note_parts.append(_clip(str(f["finding"]), 240))
+            remedy_bits = []
             if r.get("action"):
-                note_parts.append(r["action"].replace("_", " ").title())
+                remedy_bits.append(r["action"].replace("_", " ").title())
             if r.get("detail"):
-                note_parts.append(r["detail"])
+                remedy_bits.append(r["detail"])
+            if remedy_bits:
+                note_parts.append("Remedy: " + " — ".join(remedy_bits))
             cost_s = _cost_label(r.get("est_cost_usd") or [])
             hosts = []
             for c in f.get("citations", []):
-                host = (c.get("url") or "").split("/")[2:3]
-                if host and host[0] not in hosts:
-                    hosts.append(host[0])
+                seg = (c.get("url") or "").split("/")[2:3]
+                host = seg[0].removeprefix("www.") if seg else ""
+                if host and host not in hosts:
+                    hosts.append(host)
+            item = _unescape(entities.get(f.get("entity_id")) or "")
             rows.append(
                 {
                     **base,
                     "Scene": scene_ref,
-                    "Item": entities.get(f.get("entity_id")) or _label(f),
+                    "Item": item or "\u2014",
                     "Category": _label(f),
                     "Severity": f.get("severity", ""),
                     "Clearance status": STATUS_BY_SEVERITY.get(f.get("severity", ""), "Review"),
-                    "Remedy / licensing note": _clip(" — ".join(note_parts)),
+                    "Remedy / licensing note": _clip("  \u2027  ".join(note_parts), 620),
                     "Est. cost (USD)": cost_s,
                     "Sources": "; ".join(hosts[:4]),
                     "Finding": f.get("flag_id", ""),
@@ -213,11 +197,16 @@ def build(record: dict[str, Any], scene_meta: dict[str, dict[str, Any]]) -> dict
             )
 
     rep = record.get("report") or {}
+    counts: dict[str, int] = {}
+    for row in rows:
+        sev = row.get("Severity")
+        if sev:
+            counts[sev] = counts.get(sev, 0) + 1
     return {
         "title": record.get("script_title") or "Untitled",
         "generated_at": (record.get("generated_at") or "")[:10],
         "score": rep.get("greenlight_score"),
-        "counts": rep.get("counts") or {},
+        "counts": counts,
         "est_cost": rep.get("est_clearance_cost_usd"),
         "columns": COLUMNS,
         "rows": rows,

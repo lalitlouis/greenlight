@@ -155,12 +155,22 @@ let CURRENT_RECORD = null; // the rendered record — reference updates recomput
 /* Every mention of a flag id anywhere in the report is a live reference:
    click scrolls to the finding; state changes (fix accepted) repaint every
    reference at once, so later sections never go stale. */
+// Set of finding ids that actually render (kept + rejected), populated by
+// renderReport before adjudication notes are drawn. A reference to an id
+// outside this set is reasoning over a finding that no longer ships — mark
+// it rather than render a dead link. (Referential integrity, review item #4.)
+let KNOWN_FLAG_IDS = null;
+
 function linkifyRefs(text) {
   const frag = document.createDocumentFragment();
   const parts = String(text).split(/\b(F\d{3})\b/);
   parts.forEach((part, i) => {
     if (i % 2 === 0) {
       if (part) frag.appendChild(document.createTextNode(part));
+      return;
+    }
+    if (KNOWN_FLAG_IDS && !KNOWN_FLAG_IDS.has(part)) {
+      frag.appendChild(el("span", "flag-ref-gone", part + " (superseded in verification)"));
       return;
     }
     const chip = el("button", "flag-ref", part);
@@ -822,6 +832,9 @@ function revealInDetails(node) {
 }
 
 function renderReport(record) {
+  KNOWN_FLAG_IDS = new Set(
+    [...(record.flags || []), ...(record.rejected_flags || [])].map((f) => f.flag_id).filter(Boolean)
+  );
   CURRENT_RECORD = record;
   const root = $("report");
   root.textContent = "";

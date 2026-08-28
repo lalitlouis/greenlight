@@ -1155,6 +1155,7 @@ td.bd-col-finding { overflow-wrap: normal; }
 .bd-sevcell.sev-MEDIUM { color: var(--medium); }
 .bd-sevcell.sev-LOW, .bd-sevcell.sev-FYI { color: var(--low); }
 tr.bd-sev-BLOCKER { background: rgba(224, 52, 42, 0.045); }
+.flag-ref-gone { color: var(--ink-dim, #8a8271); font-style: italic; }
 .bd-disclaimer { margin: 22px 0 0; padding-top: 14px; border-top: 1px solid #e5e0d2; font-size: 11px; line-height: 1.55; color: #8a8271; }
 @media print {
   .bd-body { background: #fff; padding: 0; }
