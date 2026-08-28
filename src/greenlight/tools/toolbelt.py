@@ -1547,7 +1547,19 @@ def verify_trademark(number: str, tool_context: ToolContext) -> dict[str, Any]:
     if not digits:
         return {"error": "no digits in the number given"}
     state = tool_context.state
-    result = _tsdr_lookup(digits)
+    # Durable cache: trademark status moves on a months scale, popular marks
+    # recur across scripts, and TSDR occasionally 503s — one register read
+    # serves everyone for ~90 days.
+    cache_key = f"tsdr-{digits}"
+    cached = _durable_cache_load(cache_key)
+    if cached and not cached.get("error") and _tsdr_cache_fresh(cached):
+        result = dict(cached)
+        result["cached"] = True
+    else:
+        result = _tsdr_lookup(digits)
+        if not result.get("error"):
+            result["fetched_at"] = time.strftime("%Y-%m-%d")
+            _durable_cache_store(cache_key, result)
     if not result.get("error"):
         seen = list(state.get(f"verified_marks:{_agent_key(tool_context)}", []) or [])
         if digits not in seen:
@@ -1555,6 +1567,19 @@ def verify_trademark(number: str, tool_context: ToolContext) -> dict[str, Any]:
         state[f"verified_marks:{_agent_key(tool_context)}"] = seen
         _register_provenance(tool_context, [str(v) for v in result.values() if v])
     return result
+
+
+_TSDR_CACHE_DAYS = 90
+
+
+def _tsdr_cache_fresh(record: dict[str, Any]) -> bool:
+    import datetime as _dt
+
+    try:
+        fetched = _dt.date.fromisoformat(record.get("fetched_at", ""))
+    except ValueError:
+        return False
+    return (_dt.date.today() - fetched).days <= _TSDR_CACHE_DAYS
 
 
 _SERIAL_LEN = 8  # USPTO serial numbers; registration numbers are shorter
