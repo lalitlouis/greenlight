@@ -798,3 +798,30 @@ Owner reconfirmed feature-scale k=3 stays parked; the rest of Wave 2's open item
   model ≠ accurate reports until extraction is validated against hand-labeled scripts (A3).
 - A3 validation and a one-off feature-scale k=3 measurement remain owner decisions
   (parked); the reviewer recommends A3 as the cheapest close.
+
+## 2026-08-28 — Feature-scale k=3 + A3: measured, and the results reorder the roadmap
+
+Owner un-parked both. Three full passes on scale_gate.fountain (18.5 / ~11 / 8.1 min;
+records runs/k3_pass{1,2,3}_20260828_*.json, binders rendered beside them).
+
+**Judgment: consistent.** Flag-vs-cleared on co-examined items: 42/46 unanimous across
+three passes; 36/37 across the two complete passes. Alpha is prevalence-limited at this
+uniformity (0.525 / 0.0) — raw agreement is the publishable statistic, stated as such.
+
+**Coverage: NOT consistent — this is the finding.** Union 19 findings (after adding a
+containment rule to the matcher: "Nighthawks" ⊆ "Edward Hopper's Nighthawks" — two false
+singletons removed, near-miss log now empty). Only 1/19 found by all three passes; between
+the two complete passes, 5/16 overlap. Chapman N-hat ≈ 20-28 → per-pass recall bound
+≈ 0.4-0.69. Seed-key grades: 13/21, 17/21, 19/21 — pass 1 missed the entire music complex
+plus Nighthawks, the tattoo, and Coors; pass 3 missed only the controlled-venue remedy.
+
+**The collapse class recurred:** pass 2 ran with safety_underwriter AND territory_censor
+producing zero dispositions — at feature scale, 1 pass in 3. Check #22 (shipped hours
+earlier) makes this a failed gate/visible INCOMPLETE rather than silence; eval_scale.py
+now carries the same check. The "clearance produced 4 batches" scale check was found to
+actually grade a >=25 kept-flags floor (passes kept 8-13); relabeled honestly, left red
+pending the coverage work.
+
+**Consequence:** the roadmap's next engineering target is coverage convergence (why a
+pass skips seeded entities; why desks still collapse), not further decision-layer work.
+Methodology page updated to say all of this plainly — "measured, and the news is mixed."

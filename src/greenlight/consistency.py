@@ -24,10 +24,15 @@ _MIN_RATERS = 2  # a row needs two observations to say anything about agreement
 
 
 def _fuzzy_same(a: str, b: str) -> bool:
-    """Punctuation/spelling drift merges; a distinct token does not."""
+    """Punctuation/spelling drift merges; a distinct token does not.
+    Containment also merges: "nighthawks" and "edward hopper s nighthawks"
+    are one finding whose surface one desk elaborated — requiring ratio
+    alone left both as singletons in the first feature-scale k=3."""
+    ta, tb = set(a.split()), set(b.split())
+    if ta and tb and (ta <= tb or tb <= ta):
+        return True
     if difflib.SequenceMatcher(None, a, b).ratio() < _FUZZY_THRESHOLD:
         return False
-    ta, tb = set(a.split()), set(b.split())
     union = ta | tb
     return bool(union) and len(ta & tb) / len(union) >= _TOKEN_JACCARD
 

@@ -87,14 +87,18 @@ prediction sets: mostly single ratings; boundary scripts get honest pairs like {
     </div>
 
     <div class="card legal-card">
-      <h2>Run-to-run consistency — <span class="sec-hl">preliminary</span></h2>
+      <h2>Run-to-run consistency — <span class="sec-hl">measured, and the news is mixed</span></h2>
       <p>Same script, same answer? We measure it by running the entire pipeline multiple times
-      and matching findings across passes. On our test screenplay:
-      <b>judgment agreement α&nbsp;=&nbsp;0.93</b> — when two passes examine the same entity, they
-      agree on flag-vs-clear 11 times in 12. What varies between passes is <i>coverage</i> (which
-      entities get examined), which is why a deterministic pre-pass now feeds every desk the same
-      candidate floor. <b>Preliminary</b> because the sample is small; the feature-length
-      measurement is built and scheduled, and this label changes only when it runs.</p>
+      and matching findings across passes — and we publish what came out, not what we hoped.
+      <b>Judgment is consistent:</b> when two passes examine the same item they agree
+      flag-vs-clear <b>36 times in 37</b> on the feature-length measurement (α&nbsp;=&nbsp;0.93 on
+      the short fixture; at feature scale the raw agreement is the honest statistic, because
+      near-uniform data makes alpha uninformative). <b>Coverage is not yet consistent:</b> across
+      two complete feature-length passes, only 5 of the 16 distinct findings were surfaced by
+      both — different passes chase different threads. And one pass in three had two desks
+      return no dispositions at all, a failure the pipeline now refuses to grade or ship
+      (it renders as an INCOMPLETE banner instead of silence). Coverage convergence is the
+      current engineering target; this section will carry the numbers as they move.</p>
     </div>
 
     <div class="card legal-card">

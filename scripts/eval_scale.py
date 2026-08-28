@@ -59,9 +59,15 @@ def main() -> int:
         bool(pred.get("predicted")) and len(pred.get("comparables") or []) >= 5,
     )
     check(
-        "clearance produced 4 batches of work",
+        "kept-findings floor (>=25 on this fixture)",
         sum(1 for k in (r.get("research_budget_left") or {}) if True) >= 1 and len(flags) >= 25,
-        f"{len(flags)} kept",
+        f"{len(flags)} kept — was labeled '4 batches' but always graded total kept flags; "
+        "k=3 passes kept 8-13, far under the floor this fixture set when the check was written",
+    )
+    check(
+        "invariant: no desk collapsed (worklist with zero dispositions)",
+        not r.get("desks_incomplete"),
+        f"desks_incomplete={r.get('desks_incomplete')}",
     )
 
     # --- seeded traps --------------------------------------------------------
