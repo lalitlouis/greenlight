@@ -178,3 +178,48 @@ def recall_bound(match: dict[str, Any]) -> dict[str, Any]:
         "recall_upper_bound": round(min(1.0, union / n_hat) if n_hat > 0 else 1.0, 3),
         "pairwise_estimates": [round(e, 1) for e in estimates],
     }
+
+
+def surfaces_by_disposition(rec: dict[str, Any]) -> tuple[set[str], set[str]]:
+    """(flagged surfaces, cleared surfaces), normalized — one record."""
+    ents = {e.get("entity_id"): e.get("surface", "") for e in rec.get("entities", [])}
+    flagged = {
+        normalize_surface(ents.get(f.get("entity_id") or "", ""))
+        for f in rec.get("flags", [])
+        if ents.get(f.get("entity_id") or "")
+    }
+    cleared = set()
+    for items in (rec.get("cleared") or {}).values():
+        for c in items:
+            surf = ents.get(c.get("entity_id") or "", "")
+            if surf:
+                cleared.add(normalize_surface(surf))
+    return flagged, cleared - flagged
+
+
+def alpha_with_clearances(records: list[dict[str, Any]]) -> dict[str, Any]:
+    """Krippendorff over flag-vs-cleared decisions, entity level.
+
+    The union-of-findings matrix has no agreed negatives, so chance agreement
+    ~= observed and alpha collapses toward zero by construction. Explicit
+    clearances are the negatives: rows = entities dispositioned anywhere,
+    cell = flagged (True) / cleared (False) / not dispositioned (None).
+    """
+    dispositions = [surfaces_by_disposition(r) for r in records]
+    universe = set()
+    for flagged, cleared in dispositions:
+        universe |= flagged | cleared
+    matrix: list[list[bool | None]] = []
+    for surf in sorted(universe):
+        row: list[bool | None] = []
+        for flagged, cleared in dispositions:
+            row.append(True if surf in flagged else False if surf in cleared else None)
+        matrix.append(row)
+    rated_rows = [r for r in matrix if sum(v is not None for v in r) >= _MIN_RATERS]
+    unanimous = sum(1 for r in rated_rows if len({v for v in r if v is not None}) == 1)
+    return {
+        "alpha": krippendorff_alpha_binary(matrix),
+        "universe": len(universe),
+        "rows_with_2plus_observations": len(rated_rows),
+        "unanimous_rows": unanimous,
+    }

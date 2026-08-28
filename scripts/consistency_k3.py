@@ -28,7 +28,12 @@ from dotenv import load_dotenv  # noqa: E402
 load_dotenv(ROOT / ".env")
 
 from greenlight import pipeline  # noqa: E402
-from greenlight.consistency import krippendorff_alpha_binary, match_runs, recall_bound  # noqa: E402
+from greenlight.consistency import (  # noqa: E402
+    alpha_with_clearances,
+    krippendorff_alpha_binary,
+    match_runs,
+    recall_bound,
+)
 
 DESKS = ["clearance_counsel", "ratings_board", "safety_underwriter", "territory_censor"]
 
@@ -50,6 +55,10 @@ def main() -> int:
             print("pass errored — aborting the measurement (a dead run is not a sample)")
             return 1
         records.append(rec)
+        # cli.py owns normal record-saving; the driver bypasses it, so persist
+        # each pass here — offline reanalysis must never depend on memory
+        ppath = ROOT / "runs" / f"k3_pass{i + 1}_{time.strftime('%Y%m%d_%H%M%S')}.json"
+        ppath.write_text(json.dumps(rec, indent=2))
 
     match = match_runs(records)
     groups = match["groups"]
@@ -67,6 +76,7 @@ def main() -> int:
         ]
         per_desk_alpha[desk] = krippendorff_alpha_binary(rows) if rows else None
     rb = recall_bound(match)
+    awc = alpha_with_clearances(records)
 
     out = {
         "script": script,
@@ -75,6 +85,8 @@ def main() -> int:
         "fuzzy_merges": match["fuzzy_merges"],
         "agreement_histogram": dict(hist),
         "alpha_overall": alpha,
+        "alpha_flag_vs_cleared": awc,
+        "near_misses": match.get("near_misses", []),
         "alpha_per_desk": per_desk_alpha,
         "recall": rb,
         "groups": groups,
@@ -83,7 +95,17 @@ def main() -> int:
     path = ROOT / "runs" / f"consistency_{stamp}.json"
     path.write_text(json.dumps(out, indent=2))
     print(f"\nunion {match['union_size']} findings | agreement {dict(hist)}")
-    print(f"alpha overall: {alpha:.3f}" if alpha is not None else "alpha: n/a")
+    print(
+        f"alpha (union-presence, floor-biased): {alpha:.3f}" if alpha is not None else "alpha: n/a"
+    )
+    a2 = awc["alpha"]
+    print(
+        f"alpha (flag-vs-cleared, {awc['rows_with_2plus_observations']} rated rows, "
+        f"{awc['unanimous_rows']} unanimous): {a2:.3f}"
+        if a2 is not None
+        else "flag-vs-cleared alpha: n/a"
+    )
+    print(f"near misses to review: {len(match.get('near_misses', []))}")
     for d, a in per_desk_alpha.items():
         print(f"  {d}: {a:.3f}" if a is not None else f"  {d}: n/a")
     print(f"recall upper bound: {rb.get('recall_upper_bound')} (N-hat {rb.get('n_hat')})")
