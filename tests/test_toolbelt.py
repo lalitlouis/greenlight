@@ -1057,3 +1057,29 @@ def test_rating_prediction_must_follow_or_rebut_comps():
     assert toolbelt.file_rating_prediction("PG-13", "for thematic elements", [], ctx2).startswith(
         "Prediction filed"
     )
+
+
+def test_unverified_registration_number_rejected(monkeypatch):
+    """Review item #8: a cited registration number must resolve on the register."""
+    ctx = make_ctx()
+    msg = file_good_flag(
+        ctx, finding="Bubble-Yum is a registered trademark (Reg. #1001109) owned by Hershey."
+    )
+    assert "REJECTED" in msg and "verify_trademark" in msg
+    # after a successful verification this run, the same filing goes through
+    monkeypatch.setattr(
+        toolbelt, "_tsdr_lookup", lambda d: {"number": d, "mark": "BUBBLE YUM", "status": "LIVE"}
+    )
+    assert toolbelt.verify_trademark("1001109", ctx)["mark"] == "BUBBLE YUM"
+    msg = file_good_flag(
+        ctx, finding="Bubble-Yum is a registered trademark (Reg. #1001109) owned by Hershey."
+    )
+    assert msg.startswith("Filed"), msg
+
+
+def test_csatf_bulletin_lookup_and_no_guessing():
+    ctx = make_ctx(agent_name="safety_underwriter")
+    hits = toolbelt.csatf_bulletin("open flame", ctx)["matches"]
+    assert "19" in hits
+    res = toolbelt.csatf_bulletin("zzz nonexistent topic", ctx)
+    assert res["matches"] == {} and "guessing" in res["guidance"]

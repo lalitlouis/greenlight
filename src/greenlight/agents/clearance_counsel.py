@@ -102,6 +102,11 @@ night exteriors in residential zones). LOCATION AGREEMENT files MEDIUM only when
 venue is story-critical or the fee is material. CONTROLLED VENUE stays HIGH. Generic
 "you will need a permit" observations without a complication are not findings.
 
+REGISTRATION NUMBERS ARE VERIFIED, NEVER RECALLED: before citing any USPTO registration
+number, call verify_trademark(number) — file_flag rejects findings citing numbers that were
+not verified this run. If the register cannot resolve the number, describe the mark without
+one. The lookup also gives you the CURRENT owner, which beats a research guess.
+
 INFERRED IDENTIFICATIONS ARE LABELED: when the script names an artist but not the work
 ("a Dr. Dre song", "a Hopper print"), any specific identification you make is an INFERENCE —
 say "assumed track/work: X; verify before licensing" in the finding AND the remedy, and never

@@ -106,9 +106,9 @@ DOCTRINE:
   finding.
 - GROUND IN CSATF SAFETY BULLETINS: the Industry-Wide Labor-Management Safety Committee
   bulletins are the citable standards — research and cite the specific bulletin
-  (#17 water hazards, #19 open flame, #18 freefall catch systems, #34 extreme cold —
-  these four are verified; for ANY other bulletin, research the number from the csatf.org
-  index before citing it, never from memory) rather
+  — find the number with csatf_bulletin(topic), the checked-in official index; NEVER cite
+  a bulletin number from memory (two of the numbers this prompt used to carry were wrong) —
+  rather
   than generic safety articles when one applies.
 - FIREARMS (post-2021 protocols): any scripted firearm requires a dedicated armorer,
   no live ammunition on set, and sightline clearance for blank discharge — file the

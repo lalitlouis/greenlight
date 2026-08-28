@@ -996,6 +996,14 @@ BACKGROUND_HOSTS = {
 _SCENE_ANCHOR_CAP = 8  # a finding spanning more scenes than this says "the script"
 
 
+def state_get_list(tool_context: ToolContext, prefix: str) -> list[str]:
+    out: list[str] = []
+    desk = _desk(tool_context)
+    for name in batch_agent_names(desk):
+        out.extend(tool_context.state.get(f"{prefix}:{name}") or [])
+    return out
+
+
 def _is_background_host(url: str) -> bool:
     seg = (url or "").split("/")[2:3]
     if not seg:
@@ -1005,7 +1013,58 @@ def _is_background_host(url: str) -> bool:
     return host in BACKGROUND_HOSTS or root in BACKGROUND_HOSTS
 
 
-def file_flag(
+def _background_only_problem(severity: str, cits: list[dict[str, Any]]) -> str | None:
+    """A legal conclusion needs at least one non-background source. Fan wikis
+    and forums may inform, but they cannot carry a MEDIUM+ finding alone."""
+    if severity not in ("BLOCKER", "HIGH", "MEDIUM"):
+        return None
+    if not all(_is_background_host(c.get("url") or "") for c in cits):
+        return None
+    return (
+        "REJECTED, not filed: every citation is a background-tier source (fan "
+        "wiki, forum, general-interest site). A finding at this severity needs "
+        "at least one authoritative source — regulator or government site, "
+        "USPTO/Copyright Office, CSATF, CARA/filmratings.com, BBFC, primary "
+        "statutes, or law-firm analysis. Re-run research() with "
+        "restrict_to_domains targeting those, or lower the severity to LOW/FYI "
+        "if the claim only merits background support."
+    )
+
+
+def _umbrella_problem(category: str, scene_ids: list[str]) -> str | None:
+    """One finding per entity, anchored where the issue occurs. Ratings and
+    territory findings legitimately aggregate cumulative content; everything
+    else spanning the whole script is an umbrella flag that swallows real
+    entities (the F101 failure: 137 scenes, twelve people, one finding)."""
+    if category.startswith(("rating_", "territory_")) or len(scene_ids) <= _SCENE_ANCHOR_CAP:
+        return None
+    return (
+        f"REJECTED, not filed: this finding anchors to {len(scene_ids)} scenes. "
+        f"Anchor to the {_SCENE_ANCHOR_CAP} scenes where the issue is strongest. "
+        "If several distinct entities share this issue, file ONE FINDING PER "
+        "ENTITY — each named person, brand, or work gets its own finding with "
+        "its own citations and remedy."
+    )
+
+
+def _unverified_regs(tool_context: ToolContext, finding: str) -> str | None:
+    """A cited registration number must resolve on the register — an invented
+    one would look identically authoritative (review item #8)."""
+    cited = re.findall(r"[Rr]eg(?:istration)?\.?\s*#?\s*([0-9]{6,8})", finding)
+    if not cited:
+        return None
+    verified = set(state_get_list(tool_context, "verified_marks"))
+    unverified = [n for n in cited if n not in verified]
+    if not unverified:
+        return None
+    return (
+        f"REJECTED, not filed: registration number(s) {unverified} are cited but were "
+        "not verified this run. Call verify_trademark() first; if it cannot resolve "
+        "the number, describe the mark WITHOUT a number."
+    )
+
+
+def file_flag(  # noqa: PLR0912 - a deliberate sequence of filing gates
     scene_ids: list[str],
     severity: str,
     category: str,
@@ -1096,40 +1155,14 @@ def file_flag(
             "REJECTED, not filed: every citation needs a non-empty verbatim excerpt.",
         )
 
-    # One finding per entity, anchored where the issue occurs. Ratings and
-    # territory findings legitimately aggregate cumulative content; everything
-    # else spanning the whole script is an umbrella flag that swallows real
-    # entities (the F101 failure: 137 scenes, twelve people, one finding).
-    aggregate_ok = category.startswith(("rating_", "territory_"))
-    if len(scene_ids) > _SCENE_ANCHOR_CAP and not aggregate_ok:
-        return _reject_or_stop(
-            tool_context,
-            entity_id,
-            category,
-            f"REJECTED, not filed: this finding anchors to {len(scene_ids)} scenes. "
-            f"Anchor to the {_SCENE_ANCHOR_CAP} scenes where the issue is strongest. "
-            "If several distinct entities share this issue, file ONE FINDING PER "
-            "ENTITY — each named person, brand, or work gets its own finding with "
-            "its own citations and remedy.",
-        )
+    if cap_problem := _umbrella_problem(category, scene_ids):
+        return _reject_or_stop(tool_context, entity_id, category, cap_problem)
 
-    # A legal conclusion needs at least one non-background source. Fan wikis and
-    # forums may inform, but they cannot carry a MEDIUM+ finding alone.
-    if severity in ("BLOCKER", "HIGH", "MEDIUM") and all(
-        _is_background_host(c.get("url") or "") for c in cits
-    ):
-        return _reject_or_stop(
-            tool_context,
-            entity_id,
-            category,
-            "REJECTED, not filed: every citation is a background-tier source (fan "
-            "wiki, forum, general-interest site). A finding at this severity needs "
-            "at least one authoritative source — regulator or government site, "
-            "USPTO/Copyright Office, CSATF, CARA/filmratings.com, BBFC, primary "
-            "statutes, or law-firm analysis. Re-run research() with "
-            "restrict_to_domains targeting those, or lower the severity to LOW/FYI "
-            "if the claim only merits background support.",
-        )
+    if reg_problem := _unverified_regs(tool_context, finding):
+        return _reject_or_stop(tool_context, entity_id, category, reg_problem)
+
+    if src_problem := _background_only_problem(severity, cits):
+        return _reject_or_stop(tool_context, entity_id, category, src_problem)
 
     # Excerpt provenance: a citation's excerpt must exist VERBATIM in material this
     # run actually retrieved (research results, precedent rationales, or the script
@@ -1461,6 +1494,116 @@ _DONE_MIN_BUDGET = 3
 _DONE_COVERAGE = 0.5
 
 
+_MIN_KEYWORD = 2  # 'of', 'in' would match everything
+_CSATF_CACHE: dict[str, dict[str, str]] = {}
+
+
+def _csatf_index() -> dict[str, str]:
+    if "b" not in _CSATF_CACHE:
+        import json as _json
+        from pathlib import Path as _Path
+
+        data = _json.loads(
+            (_Path(__file__).resolve().parents[1] / "data" / "csatf_bulletins.json").read_text()
+        )
+        _CSATF_CACHE["b"] = data["bulletins"]
+    return _CSATF_CACHE["b"]
+
+
+def csatf_bulletin(topic: str, tool_context: ToolContext) -> dict[str, Any]:
+    """Look up CSATF safety bulletin numbers by topic — the official index,
+    checked in from csatf.org. ALWAYS use this before citing a bulletin number;
+    numbers from memory have been wrong. Free (no research budget).
+
+    topic: keywords, e.g. "water", "open flame", "minors", "firearms".
+    Returns matching bulletins as {number: title}. Cite as
+    "CSATF Safety Bulletin #<number>: <title>".
+    """
+    words = [w for w in re.sub(r"[^a-z0-9 ]", " ", topic.lower()).split() if len(w) > _MIN_KEYWORD]
+    idx = _csatf_index()
+    hits = {num: title for num, title in idx.items() if any(w in title.lower() for w in words)}
+    if not hits:
+        return {
+            "matches": {},
+            "guidance": "No bulletin title matches. Broaden the keywords, or cite the "
+            "hazard without a bulletin number rather than guessing one.",
+        }
+    return {"matches": hits}
+
+
+def verify_trademark(number: str, tool_context: ToolContext) -> dict[str, Any]:
+    """Verify a US trademark registration or serial number against the USPTO
+    register (TSDR). REQUIRED before citing any registration number in a
+    finding — file_flag rejects findings citing unverified numbers. Free.
+
+    number: digits only — a registration number (e.g. "1001109") or an
+    8-digit serial number.
+    Returns status (LIVE/DEAD), the mark text, and the current owner when the
+    register resolves; an error field when it does not (do not cite a number
+    that fails to resolve).
+    """
+    digits = re.sub(r"[^0-9]", "", str(number))
+    if not digits:
+        return {"error": "no digits in the number given"}
+    state = tool_context.state
+    result = _tsdr_lookup(digits)
+    if not result.get("error"):
+        seen = list(state.get(f"verified_marks:{_agent_key(tool_context)}", []) or [])
+        if digits not in seen:
+            seen.append(digits)
+        state[f"verified_marks:{_agent_key(tool_context)}"] = seen
+        _register_provenance(tool_context, [str(v) for v in result.values() if v])
+    return result
+
+
+_SERIAL_LEN = 8  # USPTO serial numbers; registration numbers are shorter
+
+
+def _tsdr_lookup(digits: str) -> dict[str, Any]:
+    """USPTO TSDR status lookup. Module-level so tests can monkeypatch."""
+    import json as _json
+    import urllib.error
+    import urllib.request
+    from http import HTTPStatus
+
+    kind = "sn" if len(digits) == _SERIAL_LEN else "rn"
+    url = f"https://tsdrapi.uspto.gov/ts/cd/casestatus/{kind}{digits}/info.json"
+    headers = {"User-Agent": "ScriptRisk-clearance/1.0"}
+    if os.getenv("USPTO_API_KEY"):
+        headers["USPTO-API-KEY"] = os.environ["USPTO_API_KEY"]
+    try:
+        req = urllib.request.Request(url, headers=headers)
+        with urllib.request.urlopen(req, timeout=20) as resp:
+            data = _json.loads(resp.read())
+    except urllib.error.HTTPError as e:
+        if e.code == HTTPStatus.NOT_FOUND:
+            return {"error": f"number {digits} not found on the USPTO register"}
+        if e.code in (HTTPStatus.UNAUTHORIZED, HTTPStatus.FORBIDDEN):
+            return {
+                "error": "USPTO API key required (set USPTO_API_KEY; free at "
+                "developer.uspto.gov) — until then, cite the mark WITHOUT a "
+                "registration number rather than an unverified one"
+            }
+        return {"error": f"USPTO lookup failed: HTTP {e.code}"}
+    except Exception as exc:
+        return {"error": f"USPTO lookup failed: {type(exc).__name__}"}
+    try:
+        tm = data["trademarks"][0]
+        status = tm.get("status", {})
+        parties = tm.get("parties", {})
+        owners = parties.get("owners") or [{}]
+        return {
+            "number": digits,
+            "mark": status.get("markElement", ""),
+            "status": status.get("status", ""),
+            "live_dead": status.get("markCurrentStatusExternalDescriptionText", ""),
+            "owner": owners[0].get("name", ""),
+            "status_date": status.get("statusDate", ""),
+        }
+    except (KeyError, IndexError, TypeError):
+        return {"error": "unexpected TSDR response shape"}
+
+
 def record_clearance(entity_id: str, reasoning: str, tool_context: ToolContext) -> str:
     """Record that a worklist item was examined and CLEARED — no finding needed.
 
@@ -1566,6 +1709,8 @@ DESK_TOOLS = [
     find_in_script,
     research,
     record_clearance,
+    csatf_bulletin,
+    verify_trademark,
     fetch_page,
     deep_research,
     query_precedent,

@@ -568,3 +568,35 @@ Pro is ~2-3x model cost per run. The reviewer's narrower idea — routing only
 non-neutral-portrayal entities to a Pro sub-pass — stays on the backlog as
 the middle path if Flash's judgment on defamation calibration proves weak
 with the new guards in place.
+
+## 2026-08-28 — Data-assets roadmap: convert assertions into lookups
+
+The founding doctrine ("never let the model assert what you could retrieve")
+extended to reference data. Each asset converts a class of LLM assertion into
+a deterministic lookup, on the pattern proven by the CARA rationale harvest
+(official source, one-time polite crawl or bulk download, provenance per row,
+then a tool the desks call).
+
+**Building now (pre-deadline):**
+- **USPTO trademark verification** — official APIs/bulk data. file_flag
+  requires a verify_trademark() lookup on record before any registration
+  number is cited; live/dead status, owner, and class come from the register,
+  not the model. Closes review item #8 (validate identifiers) mechanically.
+- **CSATF bulletin index** — one-time harvest of the official safety-bulletin
+  list into a checked-in data file + csatf_bulletin() tool. Bulletin numbers
+  become un-fumble-able; the never-from-memory rule gets a mechanism.
+
+**Staged (post-deadline, in leverage order):**
+- CourtListener/RECAP API — primary-source case law for defamation/ROP
+  citations (source-authority floor met at the root).
+- Copyright renewal records (Stanford DB +) — actual renewal verification for
+  the 1923-1963 PD window.
+- MusicBrainz dumps — labels/works/soundtrack graph; unlocks the clearability
+  index (severity = cost x P(refusal), both measured) that the roadmap parks
+  as Bradley-Terry "if obtainable" — it is obtainable.
+- BBFC + Australian classification DBs — official territory ratings text,
+  CARA-harvest treatment per territory.
+- SEC EDGAR + Wikidata owned-by graph — corporate rights-holder chains.
+
+**Not doing:** IMDb (scraping prohibited, paid data omits what we need);
+ASCAP/BMI/Songview stay runtime-query-only per their terms.
