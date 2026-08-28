@@ -723,15 +723,30 @@ function renderWhatIf(out, d, pred, baseTarget, total, nCuts) {
 
 /* Sticky "on this page" navigator: the whole report visible from the top.
    Built from what this record actually contains — no dead links. */
+// A desk sometimes logs a closed determination ("Cleared.", "no license
+// required") through note_open_question. Those are findings of safety, not
+// unknowns — render them in their own section so "Open questions" means
+// exactly what it says.
+function isDetermination(q) {
+  const t = String(q);
+  if (/\?\s*$/.test(t)) return false;
+  if (/\b(unclear|unresolved|unknown|unable|could(?:n't| not)|pending|unverified|needs? (?:further|manual)|open question)\b/i.test(t)) return false;
+  return /\bcleared\b/i.test(t) ||
+    /\bno (?:synchronization|sync|master(?:[- ]use)?|licen[cs]e|clearance|release|permit|action)\b[^.?]*\b(?:required|needed|necessary)\b/i.test(t);
+}
+
 function buildReportNav(record, rep) {
   const cited = (record.flags || []).filter((f) => (f.citations || []).length > 0);
-  const oqCount = Object.values(record.open_questions || {}).flat().length;
+  const oqRaw = Object.values(record.open_questions || {}).flat();
+  const oqCount = oqRaw.filter((q) => !isDetermination(q)).length;
+  const clearedCount = oqRaw.length - oqCount;
   const entries = [
     rep.est_clearance_cost_usd ? ["sec-cost", "Cost exposure", null] : null,
     rep.rating_prediction?.predicted ? ["sec-rating", "Rating + simulator", null] : null,
     ["sec-findings", "Findings", cited.length],
     (record.rejected_flags || []).length ? ["sec-rejected", "Rejected", record.rejected_flags.length] : null,
     oqCount ? ["sec-questions", "Open questions", oqCount] : null,
+    clearedCount ? ["sec-cleared", "Reviewed & cleared", clearedCount] : null,
     (record.adjudication_notes || []).length ? ["sec-adjudication", "Adjudication", null] : null,
   ].filter(Boolean);
 
@@ -1035,8 +1050,12 @@ function renderReport(record) {
     root.appendChild(wrap);
   }
 
+
+
   const oq = record.open_questions || {};
-  const oqItems = Object.entries(oq).flatMap(([desk, qs]) => qs.map((q) => [desk, q]));
+  const oqAll = Object.entries(oq).flatMap(([desk, qs]) => qs.map((q) => [desk, q]));
+  const oqItems = oqAll.filter(([, q]) => !isDetermination(q));
+  const clearedItems = oqAll.filter(([, q]) => isDetermination(q));
   if (oqItems.length) {
     const sec = el("div", "section-head");
     sec.id = "sec-questions";
@@ -1050,6 +1069,27 @@ function renderReport(record) {
       ul.appendChild(li);
     }
     root.appendChild(ul);
+  }
+
+  if (clearedItems.length) {
+    const sec = el("div", "section-head");
+    sec.id = "sec-cleared";
+    sec.appendChild(el("h2", null, `Reviewed & cleared — ${clearedItems.length} items examined, no action needed`));
+    root.appendChild(sec);
+    const det = document.createElement("details");
+    det.className = "flags-informational";
+    const summ = document.createElement("summary");
+    summ.textContent = `Show the ${clearedItems.length} cleared determinations`;
+    det.appendChild(summ);
+    const ul = el("ul", "plain-list");
+    for (const [desk, q] of clearedItems) {
+      const li = el("li");
+      li.appendChild(el("span", "who", prettyCat(desk)));
+      li.appendChild(document.createTextNode(q));
+      ul.appendChild(li);
+    }
+    det.appendChild(ul);
+    root.appendChild(det);
   }
 
   const notes = record.adjudication_notes || [];
