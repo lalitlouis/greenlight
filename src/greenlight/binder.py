@@ -77,6 +77,13 @@ def _fold_territory_rows(flags: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return out
 
 
+def _clip(text: str, limit: int = 480) -> str:
+    """Cap a note at a word boundary — a mid-word slice reads as a data bug."""
+    if len(text) <= limit:
+        return text
+    return text[:limit].rsplit(" ", 1)[0].rstrip(" ,;:—-") + " …"
+
+
 def _label(f: dict[str, Any]) -> str:
     cat = f.get("category", "")
     return cat if cat.startswith("Territory (") else _pretty(cat)
@@ -198,7 +205,7 @@ def build(record: dict[str, Any], scene_meta: dict[str, dict[str, Any]]) -> dict
                     "Category": _label(f),
                     "Severity": f.get("severity", ""),
                     "Clearance status": STATUS_BY_SEVERITY.get(f.get("severity", ""), "Review"),
-                    "Remedy / licensing note": " — ".join(note_parts)[:400],
+                    "Remedy / licensing note": _clip(" — ".join(note_parts)),
                     "Est. cost (USD)": cost_s,
                     "Sources": "; ".join(hosts[:4]),
                     "Finding": f.get("flag_id", ""),

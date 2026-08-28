@@ -26,10 +26,14 @@ function bdRender(data) {
   head.appendChild(brand);
   page.appendChild(head);
 
+  // Columns with no data in any row (e.g. Page on records without pagination)
+  // are dropped rather than rendered as dead width.
+  const cols = data.columns.filter((c) => data.rows.some((r) => String(r[c] ?? "").trim() !== ""));
+  const colClass = (c) => "bd-col-" + c.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").split("-").slice(0, 2).join("-");
   const table = el("table", "bd-table");
   const thead = el("thead");
   const hr = el("tr");
-  for (const c of data.columns) hr.appendChild(el("th", null, c));
+  for (const c of cols) hr.appendChild(el("th", colClass(c), c));
   thead.appendChild(hr);
   table.appendChild(thead);
   const tbody = el("tbody");
@@ -39,9 +43,17 @@ function bdRender(data) {
     const newScene = row.Scene !== lastScene;
     if (newScene && lastScene !== null) tr.classList.add("bd-scene-start");
     lastScene = row.Scene;
-    data.columns.forEach((c, i) => {
-      const td = el("td", i <= 2 && !newScene ? "bd-dup" : null, newScene || i > 2 ? row[c] : "");
-      if (c === "Severity" && row[c]) td.className = "bd-sevcell sev-" + row[c];
+    const sceneCols = ["Scene", "Page", "Scene heading"];
+    cols.forEach((c) => {
+      const dup = sceneCols.includes(c) && !newScene;
+      let val = dup ? "" : row[c];
+      if (/^sources/i.test(c) && val) {
+        // one source per line, wrap points after dots instead of mid-word
+        val = String(val).replace(/;\s*/g, "\n").replace(/^www\./gm, "").replace(/\./g, ".\u200b");
+      }
+      const td = el("td", colClass(c), val);
+      if (dup) td.classList.add("bd-dup");
+      if (c === "Severity" && row[c]) { td.className = ""; td.classList.add(colClass(c), "bd-sevcell", "sev-" + row[c]); }
       tr.appendChild(td);
     });
     tbody.appendChild(tr);

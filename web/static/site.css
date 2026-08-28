@@ -1130,19 +1130,23 @@ body.show-detail .detail-only { display: grid; margin-top: 12px; }
 .bd-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--green); }
 .bd-table { width: 100%; border-collapse: collapse; font-size: 12.5px; line-height: 1.45; table-layout: fixed; }
 .bd-table th, .bd-table td { overflow-wrap: break-word; }
-.bd-table th:nth-child(1) { width: 4.5%; }
-.bd-table th:nth-child(2) { width: 3.5%; }
-.bd-table th:nth-child(3) { width: 11%; }
-.bd-table th:nth-child(4) { width: 10%; }
-.bd-table th:nth-child(5) { width: 8.5%; }
-.bd-table th:nth-child(6) { width: 6%; }
-.bd-table th:nth-child(7) { width: 10%; }
-.bd-table th:nth-child(8) { width: 26%; }
-.bd-table th:nth-child(9) { width: 7%; }
-.bd-table th:nth-child(10) { width: 9%; }
-.bd-table th:nth-child(11) { width: 4.5%; }
-.bd-table th { text-align: left; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #6d6653; border-bottom: 1.5px solid #1a1712; padding: 6px 8px; }
-.bd-table td { border-bottom: 1px solid #e5e0d2; padding: 7px 8px; vertical-align: top; }
+/* Widths keyed by column identity, not position — empty columns are dropped
+   at render time, so nth-child would drift. The remedy column takes the rest. */
+th.bd-col-scene { width: 8%; }
+th.bd-col-page { width: 4%; }
+th.bd-col-scene-heading { width: 10%; }
+th.bd-col-item { width: 11%; }
+th.bd-col-category { width: 9.5%; }
+th.bd-col-severity { width: 7%; }
+th.bd-col-clearance-status { width: 9%; }
+th.bd-col-est-cost { width: 7.5%; }
+th.bd-col-sources { width: 11.5%; }
+th.bd-col-finding { width: 5.5%; }
+td.bd-col-scene { overflow-wrap: normal; }  /* wrap between ranges, never inside S001-S005 */
+td.bd-col-sources { white-space: pre-line; font-size: 11px; }  /* one source per line */
+td.bd-col-finding { overflow-wrap: normal; }
+.bd-table th { text-align: left; font-size: 10.5px; letter-spacing: 0.05em; text-transform: uppercase; color: #6d6653; border-bottom: 1.5px solid #1a1712; padding: 6px 8px; overflow-wrap: normal; word-break: normal; hyphens: none; }
+.bd-table td { border-bottom: 1px solid #e5e0d2; padding: 7px 8px; vertical-align: top; hyphens: auto; }
 .bd-scene-start td { border-top: 1.5px solid #c9c2ac; }
 .bd-clear td { color: #8a8271; }
 .bd-sevcell { font-weight: 800; font-size: 10.5px; letter-spacing: 0.04em; white-space: nowrap; }
