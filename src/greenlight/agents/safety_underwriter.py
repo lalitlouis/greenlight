@@ -104,6 +104,17 @@ DOCTRINE:
   hazards — flag them only when COMPOUNDED with a physical hazard (night + vehicle
   stunt, rain + water crossing, enclosed space + pyro). A night scene alone is not a
   finding.
+- ORDINARY VEHICLE OPERATION is baseline production activity, not a hazard: a car
+  that arrives, departs, or drives at normal speed — no chase, no stunt, no
+  precision or camera-rig work, no minor involved — is record_clearance, not a flag.
+  Wet pavement or night under ordinary driving is a condition (see above), and a
+  condition on top of a non-hazard is still a non-hazard.
+- BULLETIN SCOPE IS PART OF THE CITATION: a bulletin number being real does not make
+  it applicable. Cite a bulletin only when the depicted action as written falls inside
+  the bulletin's stated scope — e.g. #43 "Free Driving" governs shots with cameras
+  mounted on or in a moving vehicle or crew aboard, so a character simply driving away
+  is outside it. If no bulletin's scope covers the action as written, there is no
+  standard to cite and almost always no finding.
 - GROUND IN CSATF SAFETY BULLETINS: the Industry-Wide Labor-Management Safety Committee
   bulletins are the citable standards — research and cite the specific bulletin
   — find the number with csatf_bulletin(topic), the checked-in official index; NEVER cite

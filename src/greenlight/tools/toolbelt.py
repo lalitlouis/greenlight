@@ -992,6 +992,7 @@ BACKGROUND_HOSTS = {
     "writingforums.com",
     "genius.com",
     "looper.com",
+    "bhroberts.org",
 }
 
 _SCENE_ANCHOR_CAP = 8  # a finding spanning more scenes than this says "the script"
@@ -1065,6 +1066,13 @@ def _unverified_regs(tool_context: ToolContext, finding: str) -> str | None:
     )
 
 
+def _strip_json_escapes(text: str) -> str:
+    """Model output occasionally leaks JSON-style escapes into free text
+    (He\\'ll, \\"quote\\"); rendered verbatim the backslash shows. Strip only
+    backslash-before-quote — never touch legitimate backslashes."""
+    return re.sub(r"\\+([\"'])", r"\1", text or "")
+
+
 def file_flag(  # noqa: PLR0912 - a deliberate sequence of filing gates
     scene_ids: list[str],
     severity: str,
@@ -1108,9 +1116,9 @@ def file_flag(  # noqa: PLR0912 - a deliberate sequence of filing gates
     for c in citations:
         cit = {
             "source_type": c.get("source_type", "web"),
-            "title": c.get("title", ""),
+            "title": _strip_json_escapes(c.get("title", "")),
             "url": c.get("url"),
-            "excerpt": c.get("excerpt", ""),
+            "excerpt": _strip_json_escapes(c.get("excerpt", "")),
             "retrieved_at": None,
             "via": c.get("via", "parallel_search"),
         }
@@ -1123,11 +1131,11 @@ def file_flag(  # noqa: PLR0912 - a deliberate sequence of filing gates
         "entity_id": entity_id or None,
         "severity": severity,
         "category": category,
-        "finding": finding,
+        "finding": _strip_json_escapes(finding),
         "citations": cits,
         "remedy": {
             "action": remedy_action,
-            "detail": remedy_detail,
+            "detail": _strip_json_escapes(remedy_detail),
             "est_cost_usd": (
                 [est_cost_usd_low, est_cost_usd_high]
                 if est_cost_usd_low >= 0 and est_cost_usd_high >= 0
@@ -1489,10 +1497,56 @@ def file_rating_prediction(
 # --- note_open_question -----------------------------------------------------
 
 
+_OQ_NEG = (
+    "unclear",
+    "unknown",
+    "unable",
+    "cannot",
+    "can't",
+    "couldn't",
+    "could not",
+    "pending",
+    "unverified",
+    "needs further",
+    "needs manual",
+    "open question",
+)
+
+
+def _reads_as_determination(q: str) -> bool:
+    """A note that states a closed conclusion ("Cleared.", "no license required")
+    rather than an unresolved item. Mirrors binder._is_determination / report.js."""
+    t = (q or "").strip()
+    if t.endswith("?"):
+        return False
+    low = t.lower()
+    if any(neg in low for neg in _OQ_NEG):
+        return False
+    if re.search(r"\bcleared\b", low):
+        return True
+    return bool(
+        re.search(
+            r"\bno (?:synchronization|sync|master(?:[- ]use)?|licen[cs]e|clearance"
+            r"|release|permit|action)\b[^.?]*\b(?:required|needed|necessary)\b",
+            low,
+        )
+    )
+
+
 def note_open_question(question: str, tool_context: ToolContext) -> str:
-    """Record something you could not resolve. Surfaced in the report as an honest
+    """Record something you could NOT resolve. Surfaced in the report as an honest
     unknown — an honest unknown beats a confident guess. Use when research was
-    inconclusive or the answer needs a human (e.g. ownership deeper than 3 hops)."""
+    inconclusive or the answer needs a human (e.g. ownership deeper than 3 hops).
+    NOT for conclusions: "cleared" or "no license required" is a determination and
+    belongs in record_clearance, never here — file each conclusion exactly once."""
+    question = _strip_json_escapes(question)
+    if _reads_as_determination(question):
+        return (
+            "NOT NOTED: that reads as a closed determination, not an open question. "
+            "If the item is resolved, record it once with record_clearance and do not "
+            "also note it here. If it is genuinely unresolved, restate it as what "
+            "remains unknown."
+        )
     _state_append(tool_context, f"open_questions:{_agent_key(tool_context)}", question)
     return "Noted."
 
@@ -1658,9 +1712,10 @@ def verify_trademark(number: str, tool_context: ToolContext) -> dict[str, Any]:
 
     number: digits only — a registration number (e.g. "1001109") or an
     8-digit serial number.
-    Returns the mark text, LIVE/DEAD status, current owner, both numbers, and
-    — when the register lists one — the owner's licensing contact email
-    (include it in the remedy: it is who the production actually writes to).
+    Returns the mark text, LIVE/DEAD status, current owner, and both numbers.
+    An attorney_of_record_email, when present, is the USPTO prosecution
+    correspondent — NEVER present it as a licensing contact; remedies should
+    direct the production to the owner's licensing department, unnamed.
     An error field means the number did not resolve: do not cite it.
     """
     digits = re.sub(r"[^0-9]", "", str(number))
@@ -1707,9 +1762,8 @@ _SERIAL_LEN = 8  # USPTO serial numbers; registration numbers are shorter
 
 def _tsdr_lookup(digits: str) -> dict[str, Any]:
     """USPTO TSDR status lookup via the server-rendered statusview page —
-    the JSON API paths 404 as of 2026-08; the HTML is stable and richer
-    (it includes the owner's licensing contact). Module-level so tests can
-    monkeypatch."""
+    the JSON API paths 404 as of 2026-08; the HTML is stable and richer.
+    Module-level so tests can monkeypatch."""
     import urllib.error
     import urllib.request
     from http import HTTPStatus
@@ -1754,7 +1808,16 @@ def _tsdr_lookup(digits: str) -> dict[str, Any]:
         "serial_number": serial,
     }
     if contact:
-        out["licensing_contact"] = contact
+        # TSDR's mailto is the prosecution correspondent of record — typically an
+        # outside-counsel docketing inbox, NOT the brand's licensing office. A wrong
+        # contact is worse than none, so it is labeled for what it is.
+        out["attorney_of_record_email"] = contact
+        out["contact_note"] = (
+            "attorney_of_record_email is the USPTO correspondence address for this "
+            "registration (often outside counsel's docketing inbox). Never present it "
+            "as a licensing contact; remedies should direct the production to the "
+            "owner's licensing or brand-partnership department, unnamed."
+        )
     return out
 
 
@@ -1775,7 +1838,10 @@ def record_clearance(entity_id: str, reasoning: str, tool_context: ToolContext) 
     desk = _desk(tool_context)
     name = _agent_key(tool_context)
     state = tool_context.state
-    entry = {"entity_id": entity_id or None, "reasoning": (reasoning or "").strip()[:600]}
+    entry = {
+        "entity_id": entity_id or None,
+        "reasoning": _strip_json_escapes((reasoning or "").strip())[:600],
+    }
     if not entry["reasoning"]:
         return "REJECTED: reasoning is required — a bare 'cleared' is not auditable."
     cleared = list(state.get(f"cleared:{name}", []) or [])

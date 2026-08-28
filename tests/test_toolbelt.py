@@ -1109,3 +1109,26 @@ def test_rating_boundary_returns_marginals_and_set():
     assert r["marginals"]["pervasive language"]["distribution"].popitem()[0] in ("R", "PG-13")
     assert r["conformal_prediction_set"] == ["R"]
     assert ctx.state["boundary_set:ratings_board"] == ["R"]
+
+
+# --- Night Counter review fixes -------------------------------------------
+
+
+def test_strip_json_escapes():
+    from greenlight.tools.toolbelt import _strip_json_escapes
+
+    assert _strip_json_escapes("He\\'ll be back") == "He'll be back"
+    assert _strip_json_escapes('a \\"quoted\\" word') == 'a "quoted" word'
+    assert _strip_json_escapes("C:\\network\\path") == "C:\\network\\path"
+    assert _strip_json_escapes("") == ""
+
+
+def test_open_question_rejects_determinations():
+    from greenlight.tools.toolbelt import _reads_as_determination
+
+    assert _reads_as_determination(
+        "Name sweep complete: all fictional names cleared, no distinctive collisions."
+    )
+    assert _reads_as_determination("No sync license required; composition is public domain.")
+    assert not _reads_as_determination("Chain of title unclear beyond the second assignee.")
+    assert not _reads_as_determination("Who controls the 1988 remaster?")

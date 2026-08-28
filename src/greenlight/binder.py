@@ -247,18 +247,29 @@ def _back_matter(record: dict[str, Any]) -> dict[str, Any]:
             if h not in hosts:
                 hosts.append(h)
     ents = {e.get("entity_id"): e.get("surface") for e in record.get("entities", [])}
+    # Group by entity: four desks each clearing the same prop is one row with
+    # four determinations, not four rows (mirrors report.js clearedRows).
+    by_entity: dict[str, list[tuple[str, str]]] = {}
+    script_level: list[dict[str, Any]] = []
+    for d, items in (record.get("cleared") or {}).items():
+        for c in items:
+            who = _unescape(ents.get(c.get("entity_id")) or "")
+            reasoning = c.get("reasoning", "")
+            if who:
+                by_entity.setdefault(who, []).append((_pretty(d), reasoning))
+            else:
+                script_level.append({"desk": _pretty(d), "text": reasoning})
     recorded = [
-        {
-            "desk": _pretty(d),
-            "text": (
-                f"{_unescape(ents.get(c.get('entity_id')) or '')}: {c.get('reasoning', '')}"
-                if ents.get(c.get("entity_id"))
-                else c.get("reasoning", "")
-            ),
-        }
-        for d, items in (record.get("cleared") or {}).items()
-        for c in items
-    ]
+        (
+            {"desk": ds[0][0], "text": f"{who}: {ds[0][1]}"}
+            if len(ds) == 1
+            else {
+                "desk": ", ".join(dict.fromkeys(d for d, _ in ds)),
+                "text": f"{who} — " + " · ".join(f"[{d}] {r}" for d, r in ds),
+            }
+        )
+        for who, ds in by_entity.items()
+    ] + script_level
     return {
         "cleared": recorded
         + [{"desk": _pretty(d), "text": q} for d, q in oq_all if _is_determination(q)],

@@ -89,6 +89,14 @@ not state — a character's age inferred from "college student", commercial inju
 inferred from casual dialogue, casting or staging choices the text leaves open — fails
 its premise even if the assumption is plausible. The desk asserts; the text decides.
 
+REJECT SCOPE-MISMATCHED STANDARDS: when the claim rests on a named standard (a safety
+bulletin, statute, or guideline), the excerpts must show that standard governing the
+activity AS DEPICTED. A real bulletin about a different activity — a vehicle
+camera-rig bulletin cited against a character simply driving off — is UNSUPPORTED
+with citation_offtopic, not PARTIAL. PARTIAL is for a supported core with an
+overstated edge; it is never a home for a claim whose cited authority does not cover
+the depicted action.
+
 When you answer UNSUPPORTED, also classify WHY in failure_mode:
 - script_misstatement — the claim misstates the screenplay (fatal: the finding is wrong);
 - premise_unsupported — the script facts hold but the excerpts do not establish the premise

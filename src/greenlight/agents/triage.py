@@ -122,6 +122,14 @@ hazard or censorship exposure missing from a worklist is invisible to every desk
   drug use, alcohol prominence, sexuality, religious content, and depictions of state
   authority condoning illegal acts — these are the categories censors act on.
 
+Coverage is per-desk, not all-desks: an item goes on a desk's list only when it
+implicates that desk's remit. A branded drink on a table is clearance work, not a
+safety hazard or a rating driver; a fistfight is ratings and safety work, not a
+clearance item. Never put an entity on all four lists by default — each desk must
+disposition every item you hand it, so an irrelevant item costs real investigation
+and buries real findings. (The territory desk's twelve mandatory axis sweeps are
+scene-level and unaffected by this rule.)
+
 Worklist items reference an entity_id where
 one applies; for scene-level work (a stunt, a rating beat) use entity_id "" and name the scenes
 in the note. Be specific about what the desk must establish; do not pre-judge the answer.

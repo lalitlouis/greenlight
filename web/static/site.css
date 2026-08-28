@@ -1447,3 +1447,7 @@ tr.bd-sev-BLOCKER { background: rgba(224, 52, 42, 0.045); }
 .rev-item-resolved b { color: var(--green-deep, var(--green)); }
 .rev-cta { display: flex; align-items: center; gap: 16px; padding: 14px 20px; margin: 8px 0 18px; flex-wrap: wrap; }
 .rev-cta-note { font-size: 14px; color: var(--ink-2); }
+
+/* Cleared list grouped by entity: desk determinations nest flat under the name */
+.plain-list > li > .cleared-desks { display: flex; flex-direction: column; gap: 4px; margin: 8px 0 2px 4px; padding: 0; list-style: none; }
+.cleared-desks > li { background: none; border: none; border-radius: 0; padding: 0 0 0 12px; border-left: 2px solid var(--line); font-size: 15px; }

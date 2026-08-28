@@ -68,9 +68,34 @@ def _clean(surface: str) -> str:
     return " ".join(surface.replace(".", "").split()).strip("'&- ")
 
 
+def _corroborations(scenes: list[dict[str, Any]]) -> tuple[set[str], set[str]]:
+    """(speaker cues, mid-sentence titlecase words) — the two signals that
+    rescue a single-word ALL-CAPS token from screenplay-convention noise.
+    'ROSA' speaks; 'Biscuit' recurs in prose; 'ROARS' does neither."""
+    speakers: set[str] = set()
+    titlecase: set[str] = set()
+    for sc in scenes:
+        for ch in sc.get("characters") or []:
+            speakers.add(ch.strip().upper())
+        text = (
+            (sc.get("action") or "")
+            + " "
+            + " ".join(d.get("line", "") for d in sc.get("dialogue", []))
+        )
+        for m in re.finditer(r"(?<![.!?\n])\s([A-Z][a-z]{2,})\b", text):
+            titlecase.add(m.group(1).upper())
+    return speakers, titlecase
+
+
 def sweep(scenes: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """Candidate entities with scene ids: proper-noun runs, quoted titles,
-    phones/URLs/emails (privacy vectors). Deterministic by construction."""
+    phones/URLs/emails (privacy vectors). Deterministic by construction.
+
+    Screenplay caps convention (sounds, props, emphasis: 'Grease ROARS',
+    'a whoosh of FLAME') is filtered: a single-word ALL-CAPS token is only a
+    candidate when it is also a dialogue speaker, carries an age
+    parenthetical, or recurs as a mid-sentence titlecase proper noun."""
+    speakers, titlecase = _corroborations(scenes)
     hits: dict[tuple[str, str], set[str]] = defaultdict(set)
     for sc in scenes:
         sid = sc["scene_id"]
@@ -79,10 +104,17 @@ def sweep(scenes: list[dict[str, Any]]) -> list[dict[str, Any]]:
             + "\n"
             + "\n".join(d.get("line", "") for d in sc.get("dialogue", []))
         )
-        for m in _ALLCAPS.finditer(sc.get("action") or ""):
+        action = sc.get("action") or ""
+        for m in _ALLCAPS.finditer(action):
             surface = _clean(m.group(1))
-            if surface and surface not in _STOP and len(surface) > _MIN_SURFACE:
-                hits[(surface.title(), "PROPER_NOUN")].add(sid)
+            if not surface or surface in _STOP or len(surface) <= _MIN_SURFACE:
+                continue
+            if " " not in surface:
+                follows_age = bool(re.search(re.escape(m.group(1)) + r"\s*\(\d", action))
+                corroborated = surface in speakers or surface in titlecase or follows_age
+                if not corroborated:
+                    continue  # ROARS / FLAME / OPEN / JUKEBOX class: convention, not entity
+            hits[(surface.title(), "PROPER_NOUN")].add(sid)
         for m in _TITLECASE_RUN.finditer(text):
             surface = _clean(m.group(1))
             if surface.upper() not in _STOP:

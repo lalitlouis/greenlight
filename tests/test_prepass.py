@@ -54,3 +54,49 @@ def test_worklist_items_are_low_priority_and_labeled():
     assert item["type"] == "PRIVACY"
     assert item["prominence"] == "BACKGROUND"
     assert "PRE-PASS" in item["context"]
+
+
+# --- screenplay caps convention -------------------------------------------
+
+
+def test_sweep_drops_uncorroborated_single_caps():
+    """Sound/prop emphasis caps (Grease ROARS, a whoosh of FLAME) are convention,
+    not entities — the Night Counter run filed ROARS/FLAME/OPEN/JUKEBOX."""
+    scenes = [
+        _scene(
+            "S001",
+            "The fryer ROARS to life. A whoosh of FLAME. The OPEN sign hums. "
+            "The JUKEBOX sits silent in the corner.",
+        )
+    ]
+    got = {s for s, k in ((c["surface"], c["kind"]) for c in sweep(scenes))}
+    assert not {"Roars", "Flame", "Open", "Jukebox"} & got
+
+
+def test_sweep_keeps_single_caps_with_speaker_cue():
+    scenes = [
+        {
+            "scene_id": "S001",
+            "action": "ROSA wipes the counter.",
+            "characters": ["ROSA"],
+            "dialogue": [{"line": "We close at two."}],
+        }
+    ]
+    assert any(c["surface"] == "Rosa" for c in sweep(scenes))
+
+
+def test_sweep_keeps_single_caps_with_titlecase_recurrence():
+    scenes = [
+        _scene("S001", "BISCUIT lifts his head. The old dog Biscuit pads to the door.")
+    ]
+    assert any(c["surface"] == "Biscuit" for c in sweep(scenes))
+
+
+def test_sweep_keeps_single_caps_with_age_parenthetical():
+    scenes = [_scene("S001", "MARISOL (34) counts the till without looking down.")]
+    assert any(c["surface"] == "Marisol" for c in sweep(scenes))
+
+
+def test_sweep_keeps_multiword_caps_runs():
+    scenes = [_scene("S001", "A neon RED BULL sign flickers over the cooler.")]
+    assert any(c["surface"] == "Red Bull" for c in sweep(scenes))

@@ -782,11 +782,32 @@ function isDetermination(q) {
     /\bno (?:synchronization|sync|master(?:[- ]use)?|licen[cs]e|clearance|release|permit|action)\b[^.?]*\b(?:required|needed|necessary)\b/i.test(t);
 }
 
+// The cleared list groups by entity: four desks each clearing Red Bull is one
+// row with four determinations, not four rows. Script-level determinations
+// (no entity) stay as their own rows.
+function clearedRows(record) {
+  const entries = Object.entries(record.cleared || {}).flatMap(([desk, items]) =>
+    (items || []).map((c) => ({ desk, who: ENTITY_SURFACE[c.entity_id] || null, text: c.reasoning }))
+  );
+  for (const [desk, qs] of Object.entries(record.open_questions || {})) {
+    for (const q of qs) if (isDetermination(q)) entries.push({ desk, who: null, text: q });
+  }
+  const byEntity = new Map();
+  const scriptLevel = [];
+  for (const e of entries) {
+    if (e.who) {
+      if (!byEntity.has(e.who)) byEntity.set(e.who, []);
+      byEntity.get(e.who).push(e);
+    } else scriptLevel.push(e);
+  }
+  return { byEntity, scriptLevel, rowCount: byEntity.size + scriptLevel.length, total: entries.length };
+}
+
 function buildReportNav(record, rep) {
   const cited = (record.flags || []).filter((f) => (f.citations || []).length > 0);
   const oqRaw = Object.values(record.open_questions || {}).flat();
   const oqCount = oqRaw.filter((q) => !isDetermination(q)).length;
-  const clearedCount = oqRaw.length - oqCount;
+  const clearedCount = clearedRows(record).rowCount;
   const entries = [
     rep.est_clearance_cost_usd ? ["sec-cost", "Cost exposure", null] : null,
     rep.rating_prediction?.predicted ? ["sec-rating", "Rating + simulator", null] : null,
@@ -1168,13 +1189,7 @@ function renderReport(record) {
   const oq = record.open_questions || {};
   const oqAll = Object.entries(oq).flatMap(([desk, qs]) => qs.map((q) => [desk, q]));
   const oqItems = oqAll.filter(([, q]) => !isDetermination(q));
-  const recordedCleared = Object.entries(record.cleared || {}).flatMap(([desk, items]) =>
-    items.map((c) => {
-      const who = ENTITY_SURFACE[c.entity_id];
-      return [desk, who ? `${who}: ${c.reasoning}` : c.reasoning];
-    })
-  );
-  const clearedItems = recordedCleared.concat(oqAll.filter(([, q]) => isDetermination(q)));
+  const cleared = clearedRows(record);
   if (oqItems.length) {
     const sec = el("div", "section-head");
     sec.id = "sec-questions";
@@ -1190,21 +1205,34 @@ function renderReport(record) {
     root.appendChild(ul);
   }
 
-  if (clearedItems.length) {
+  if (cleared.rowCount) {
     const sec = el("div", "section-head");
     sec.id = "sec-cleared";
-    sec.appendChild(el("h2", null, `Reviewed & cleared — ${clearedItems.length} items examined, no action needed`));
+    sec.appendChild(el("h2", null, `Reviewed & cleared — ${cleared.rowCount} items examined, no action needed`));
     root.appendChild(sec);
     const det = document.createElement("details");
     det.className = "flags-informational";
     const summ = document.createElement("summary");
-    summ.textContent = `Show the ${clearedItems.length} cleared determinations`;
+    summ.textContent = `Show ${cleared.total} determinations across ${cleared.rowCount} items`;
     det.appendChild(summ);
     const ul = el("ul", "plain-list");
-    for (const [desk, q] of clearedItems) {
+    for (const [who, ds] of cleared.byEntity) {
       const li = el("li");
-      li.appendChild(el("span", "who", prettyCat(desk)));
-      li.appendChild(document.createTextNode(q));
+      li.appendChild(el("strong", null, who));
+      const sub = el("ul", "plain-list cleared-desks");
+      for (const d of ds) {
+        const sli = el("li");
+        sli.appendChild(el("span", "who", prettyCat(d.desk)));
+        sli.appendChild(document.createTextNode(d.text));
+        sub.appendChild(sli);
+      }
+      li.appendChild(sub);
+      ul.appendChild(li);
+    }
+    for (const d of cleared.scriptLevel) {
+      const li = el("li");
+      li.appendChild(el("span", "who", prettyCat(d.desk)));
+      li.appendChild(document.createTextNode(d.text));
       ul.appendChild(li);
     }
     det.appendChild(ul);
