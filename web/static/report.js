@@ -436,6 +436,9 @@ function flagRow(f, opts) {
   const main = el("div", "flag-main");
   const top = el("div", "flag-top");
   top.appendChild(glossTip(el("span", `sev-chip sev-${f.severity}`, f.severity), f.severity));
+  if (f.verification_unavailable) {
+    top.appendChild(el("span", "sev-chip chip-partial", "unverified — verifier unavailable"));
+  }
   top.appendChild(el("span", "cat", prettyCat(f.category)));
   top.appendChild(el("span", "by by-" + f.agent, prettyCat(f.agent)));
   main.appendChild(top);

@@ -124,6 +124,40 @@ def _map_responses_to_entities(contents) -> dict[tuple[int, int], Any]:
     return out
 
 
+def _nudge_tool_use(llm_request) -> None:
+    """The territory failure mode: the model muses in prose, calls no tools,
+    and the LoopAgent silently exhausts its iterations with zero dispositions.
+    If the last model turn produced no function call, append a hard reminder —
+    prose turns are invisible; only tool calls exist."""
+    _nudge_tool_use(llm_request)
+    contents = llm_request.contents or []
+    last_model = next((c for c in reversed(contents) if c.role == "model"), None)
+    if last_model is None:
+        return
+    has_call = any(getattr(part, "function_call", None) for part in last_model.parts or [])
+    if has_call:
+        return
+    from google.genai import types as _t
+
+    llm_request.contents = [
+        *contents,
+        _t.Content(
+            role="user",
+            parts=[
+                _t.Part(
+                    text=(
+                        "SYSTEM REMINDER: your previous turn contained no tool call, so it "
+                        "accomplished nothing — plans and analysis in prose are discarded. "
+                        "Act NOW with a tool: read_scene/find_in_script/research to "
+                        "investigate, file_flag/record_clearance/note_open_question to "
+                        "disposition, or done() if every worklist item is dispositioned."
+                    )
+                )
+            ],
+        ),
+    ]
+
+
 def prune_stale_tool_results(callback_context, llm_request):
     """before_model_callback: bound per-turn input on long desk loops.
 
@@ -201,6 +235,10 @@ three dispositions, each recorded through its tool:
 Immediately before calling done(), write the roll-call: every worklist item, one line each,
 with its disposition. An item with no disposition is unfinished work. If the budget is spent,
 its disposition is an open question, never silence.
+
+Then, before done(), one more line: name the single worklist item you are LEAST confident
+about and what evidence would settle it — file that as note_open_question unless you already
+hold that evidence. An honest report has at least one genuine unknown.
 
 ONE FINDING PER ENTITY — each named person, brand, work, or location with an issue gets its
 OWN finding with its own citations and remedy. Never fold multiple entities into one umbrella

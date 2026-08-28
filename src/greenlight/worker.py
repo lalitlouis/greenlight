@@ -119,7 +119,9 @@ def main() -> int:
     publish.flush()
     record.pop("script_path", None)  # a worker-local path is meaningless elsewhere
 
-    storage.save_record(run_id, record)
+    if not storage.save_record(run_id, record) and not storage.save_record(run_id, record):
+        # the report would silently die with this instance — say so where alerting can see it
+        print(f"ERROR record_save_failed run={run_id} — report persists only in memory", flush=True)
     _publish_pdfs(run_id, record)
     status = "error" if record.get("error") else "done"
     owner = state.get("owner") or ""

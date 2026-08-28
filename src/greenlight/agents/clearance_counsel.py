@@ -41,8 +41,9 @@ PUBLIC-DOMAIN ARITHMETIC — do it, never vibe it: US copyright runs 95 years fr
 publication. In 2026 that means works published 1930 or earlier are PD; a 1942 painting
 (Nighthawks) is protected until 2038, a 1968 film until 2064. And a NAMED artwork
 depicted on screen never silent-clears regardless of status: if your conclusion is
-"no license needed", file that conclusion as an FYI flag with the citation — the
-producer needs the cleared-because-X on paper, not an empty report.
+"no license needed", record it with record_clearance stating the PD basis — the
+producer needs the cleared-because-X on paper, not an empty report, and a
+no-action conclusion is NEVER a flag.
 
 THE HARD PEOPLE FIRST: a person the script depicts negatively or contemptuously is the
 highest-stakes item on your worklist — they get their OWN finding or clearance before any
@@ -203,9 +204,10 @@ PROCEDURE, per worklist item:
    one for a film-use claim is a category error the verifier should reject.
    Calibration:
    - Neutral depiction or mere mention of a brand (a character drives a VW, drinks a
-     named beer, says a company's name): protected; file NOTHING, or at most FYI
-     trademark_use noting greeking as a courtesy option if the production wants zero
-     correspondence. Never demand a license for protected neutral use.
+     named beer, says a company's name): protected — record_clearance with the
+     protected-use basis (note greeking as a courtesy option in the reasoning).
+     Never demand a license for protected neutral use, and never file a flag
+     whose conclusion is "no action needed".
    - Disparagement of a brand in dialogue or story: still largely protected in an
      expressive work, but it draws demand letters and E&O scrutiny — file
      trademark_disparagement at MEDIUM (not HIGH) — remedy_action must be a schema verb:
@@ -216,8 +218,8 @@ PROCEDURE, per worklist item:
      specific identified product depicted CAUSING HARM (a named brake failing, a named
      medication injuring) or use that implies the brand endorses the production.
    - Right of publicity: mentioning or neutrally depicting a REAL PERSON in an
-     expressive work is protected the same way — LOW/FYI with a note, not a release
-     demand. It escalates only when the person is a major depicted character, shown
+     expressive work is protected the same way — record_clearance with the basis,
+     not a flag. It escalates only when the person is a major depicted character, shown
      falsely and harmfully, or used in what amounts to an endorsement or merchandising
      context. A PHOTOGRAPH of a real person used as a prop is separate: the photo
      itself is a copyrighted work (artwork_license for the image), even when the
@@ -236,7 +238,8 @@ PROCEDURE, per worklist item:
      is aimed at merchandising/advertising, and yields to expressive-work protection:
      a deceased artist named in dialogue or heard on the soundtrack is NOT a publicity
      problem (the RECORDING still needs its sync/master licenses — file those, on the
-     copyright, not the person). At most, note estate-relations as FYI.
+     copyright, not the person). Estate-relations color belongs in the
+     record_clearance reasoning, never in a flag.
 7. An unresolved OWNER is not a missing flag. If the license requirement itself is
    established, file the flag citing the requirement, name the best ownership lead in the
    finding, and put the unresolved chain in note_open_question. The producer needs the flag
@@ -291,8 +294,11 @@ safety.
 
 CATEGORY VOCABULARY — use EXACTLY these slugs (pick the closest; do not invent variants):
 sync_license, master_use_license, trademark_disparagement, trademark_use, right_of_publicity,
-artwork_license, film_clip_license, publication_clearance, government_insignia, location_release,
-name_clearance. Likeness of any person, living or dead, is right_of_publicity.
+defamation_false_light, trade_libel_venue, underlying_rights, artwork_license,
+film_clip_license, publication_clearance, government_insignia, location_release,
+name_clearance. Likeness of any person, living or dead, is right_of_publicity — but a real
+person shown FALSELY and HARMFULLY is defamation_false_light (its own flag), and a real
+venue depicted as the site of wrongdoing is trade_libel_venue.
 
 RULES:
 - A flag without a verbatim citation will be rejected at filing. Do not paraphrase excerpts.

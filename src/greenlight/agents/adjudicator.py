@@ -27,7 +27,11 @@ class MergeAction(BaseModel):
     merged_flag_ids: list[str] = Field(
         description="Flags folded into the survivor (duplicates or same finding split up)."
     )
-    category: str = Field(description="Normalized category slug for the survivor.")
+    category: str = Field(
+        description="Normalized category slug for the survivor. NEVER normalize "
+        "defamation_false_light, trade_libel_venue, or underlying_rights into a broader "
+        "category — they are distinct legal theories and must survive as filed."
+    )
     severity: Literal["BLOCKER", "HIGH", "MEDIUM", "LOW", "FYI"] = Field(
         description="Final severity — the highest severity among the merged flags unless "
         "a stated conflict resolution justifies otherwise."
@@ -87,6 +91,31 @@ agent = LlmAgent(
 )
 
 
+_SCENE_CAP = 8  # mirrors file_flag's anchor cap — merges must not resurrect umbrellas
+
+
+def _cap_scenes(flag: dict[str, Any], prior: list[str]) -> None:
+    """Union results keep the survivor's original anchors first, then fill from
+    the merged flag, capped — except cumulative categories (ratings/territory),
+    whose script-wide scene lists are the finding."""
+    if flag["category"].startswith(("rating_", "territory_")):
+        return
+    if len(flag["scene_ids"]) > _SCENE_CAP:
+        ordered = [s for s in prior if s in flag["scene_ids"]]
+        ordered += [s for s in flag["scene_ids"] if s not in ordered]
+        flag["scene_ids"] = ordered[:_SCENE_CAP]
+
+
+def _respect_partial_cap(flag: dict[str, Any]) -> None:
+    """A [partially supported] finding was capped at MEDIUM by the verifier;
+    no merge may quietly restore a higher severity to caveated evidence."""
+    if str(flag.get("finding", "")).startswith("[partially supported]") and flag["severity"] in (
+        "BLOCKER",
+        "HIGH",
+    ):
+        flag["severity"] = "MEDIUM"
+
+
 def merge_exact_duplicates(flags: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """Code-level dedupe BEFORE the model sees anything: same desk + same
     category + overlapping scenes is one finding, full stop. Keeps the higher
@@ -106,11 +135,14 @@ def merge_exact_duplicates(flags: list[dict[str, Any]]) -> list[dict[str, Any]]:
             # rating_language flags, one per instance; the count is one finding)
             script_wide = flag["category"].startswith(("rating_", "territory_"))
             if same_cat and (script_wide or set(existing["scene_ids"]) & set(flag["scene_ids"])):
+                prior = list(existing["scene_ids"])
                 existing["scene_ids"] = sorted(set(existing["scene_ids"]) | set(flag["scene_ids"]))
+                _cap_scenes(existing, prior)
                 seen = {c["excerpt"] for c in existing["citations"]}
                 existing["citations"] += [c for c in flag["citations"] if c["excerpt"] not in seen]
                 if sev_rank[flag["severity"]] < sev_rank[existing["severity"]]:
                     existing["severity"] = flag["severity"]
+                _respect_partial_cap(existing)
                 merged = True
                 break
         if not merged:
@@ -137,7 +169,9 @@ def apply_plan(
         ]
         for fid in merged_real:
             other = by_id[fid]
+            prior = list(survivor["scene_ids"])
             survivor["scene_ids"] = sorted(set(survivor["scene_ids"]) | set(other["scene_ids"]))
+            _cap_scenes(survivor, prior)
             seen_excerpts = {c["excerpt"] for c in survivor["citations"]}
             survivor["citations"] += [
                 c for c in other["citations"] if c["excerpt"] not in seen_excerpts
@@ -151,7 +185,10 @@ def apply_plan(
         max_rank = min(sev_rank[p["severity"]] for p in participants)
         plan_rank = sev_rank.get(action.get("severity", ""), max_rank)
         final_rank = plan_rank if plan_rank in (max_rank, max_rank + 1) else max_rank
+        if max_rank == 0:  # a BLOCKER is never softened by a merge plan
+            final_rank = 0
         survivor["severity"] = ranks[min(final_rank, len(ranks) - 1)]
+        _respect_partial_cap(survivor)
         if action.get("category"):
             survivor["category"] = action["category"]
         if merged_real or action.get("category"):

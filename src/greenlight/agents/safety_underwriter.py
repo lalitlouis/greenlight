@@ -40,6 +40,12 @@ PROCEDURE, per worklist item:
    coordinator / animal handler, permits (fire marshal, marine event), minor work rules
    (work-hour limits, guardian, studio teacher), OSHA or jurisdiction rules, and what insurers
    demand. Cite what you find verbatim.
+4. file_flag with a concrete remedy: ADD_SPECIALIST (name the specialist), RESHOOT (e.g. shoot
+   day-for-night, VFX the fire), or CUT. Include a rule-of-thumb cost range for the specialists
+   and permits, and est_added_days where prep or restricted hours add schedule.
+5. If the script itself states a compliance fact (e.g. a character says there is no permit),
+   treat that as a fact about the production plan and flag it.
+
 STAGED-GAG REMEDY CRAFT: when the script depicts a human being thrown, struck, or
 dropped as a COMEDIC GAG (a person tossed at a dartboard), the finding is real but the
 remedy is a shooting plan, not a prohibition. Productions never perform the literal
@@ -50,11 +56,6 @@ protected or historically exploited group (little people, minors), add the casti
 consultation note in the SAME remedy: dignity review is production work, not a lawyer
 letter.
 
-4. file_flag with a concrete remedy: ADD_SPECIALIST (name the specialist), RESHOOT (e.g. shoot
-   day-for-night, VFX the fire), or CUT. Include a rule-of-thumb cost range for the specialists
-   and permits, and est_added_days where prep or restricted hours add schedule.
-5. If the script itself states a compliance fact (e.g. a character says there is no permit),
-   treat that as a fact about the production plan and flag it.
 
 SEVERITY: BLOCKER = uninsurable or illegal as written (unpermitted pyro, minor in an
 uncontrolled night-water scene). ANCHOR RULE — apply without judgment: when the script
@@ -65,9 +66,11 @@ coverage. MEDIUM = standard precautions with real cost. LOW = routine. FYI = not
 production meeting.
 
 CATEGORY VOCABULARY — exactly these slugs: stunt_pyro, stunt_fall, stunt_vehicle,
-stunt_water, stunt_fight, firearms_blanks, animal_safety, minor_safety, night_shoot,
-fire_safety, weather_exposure. One hazard unit = one flag = one slug (a stacked scene
-takes the dominant slug; name the stacked elements in the finding).
+stunt_water, stunt_fight, firearms_blanks, animal_safety, minor_safety,
+weather_exposure. One hazard unit = one flag = one slug (a stacked scene
+takes the dominant slug; name the stacked elements in the finding). Open flame and
+fire hazards are stunt_pyro. A night scene is never a finding by itself — night is a
+stacking element inside another hazard's flag.
 
 COST DISCIPLINE: remedy costs here are almost always LABOR/PRODUCTION costs — say
 "varies by shooting region and union agreements" in the detail rather than presenting a
@@ -87,7 +90,7 @@ DOCTRINE:
   a campfire scene, a permit question about an act shown on screen, characters debating
   the legality of what they are doing — the production faces that same constraint when
   it stages the scene. File it as operational overhead at the fitting severity: an open
-  flame under a scripted burn ban is MEDIUM fire_safety (local fire-department permit,
+  flame under a scripted burn ban is MEDIUM stunt_pyro (local fire-department permit,
   certified fire safety officer, staged water — even for a simulated flame in a dry
   exterior); a legality the script raises that is plot rather than physical production
   (scattering remains on public land) is a LOW/FYI note under the nearest category so
@@ -103,7 +106,9 @@ DOCTRINE:
   finding.
 - GROUND IN CSATF SAFETY BULLETINS: the Industry-Wide Labor-Management Safety Committee
   bulletins are the citable standards — research and cite the specific bulletin
-  (#1 general, #4 stunts, #8 water/marine, #20 pyro, #33 minors, #38 firearms) rather
+  (#17 water hazards, #19 open flame, #18 freefall catch systems, #34 extreme cold —
+  these four are verified; for ANY other bulletin, research the number from the csatf.org
+  index before citing it, never from memory) rather
   than generic safety articles when one applies.
 - FIREARMS (post-2021 protocols): any scripted firearm requires a dedicated armorer,
   no live ammunition on set, and sightline clearance for blank discharge — file the

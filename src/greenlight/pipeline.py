@@ -261,6 +261,28 @@ async def _salvage_verify(filed, verdicts, state, on_event):
     return verdicts
 
 
+def _incomplete_desks(state: dict[str, Any], verbose: bool) -> list[str]:
+    """An empty desk is an error surface, never a clean bill: a desk with a
+    worklist and zero dispositions (the territory failure) is disclosed
+    loudly on the record — silence must be distinguishable from "examined"."""
+    incomplete: list[str] = []
+    tri = state.get("triage") or {}
+    if hasattr(tri, "model_dump"):
+        tri = tri.model_dump()
+    for d in DESKS:
+        worklist = tri.get(d) or []
+        did_anything = (
+            bool(toolbelt.desk_flags(state, d))
+            or bool(toolbelt.desk_open_questions(state, d))
+            or bool(toolbelt.desk_cleared(state, d))
+        )
+        if worklist and not did_anything:
+            incomplete.append(d)
+            if verbose:
+                print(f"DESK INCOMPLETE — {d} produced no dispositions for {len(worklist)} items")
+    return incomplete
+
+
 async def run(
     script_path: str | Path,
     budgets: dict[str, int] | None = None,
@@ -354,8 +376,11 @@ async def run(
             app_name=APP_NAME, user_id=USER_ID, session_id=session.id
         )
 
+    incomplete = _incomplete_desks(state, verbose)
+
     record = {
         "script_title": title,
+        "desks_incomplete": incomplete,
         "script_path": str(script_path),
         "draft": draft,
         "generated_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),

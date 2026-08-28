@@ -9,6 +9,7 @@ function rowFor(r) {
   const started = Date.parse((r.generated_at || "").replace(/([+-]\d{2})(\d{2})$/, "$1:$2"));
   const stalled = r.status === "running" && !r.live && started && Date.now() - started > STALL_MS;
   const running = r.status === "running" && !stalled;
+  if (!r.id || r.id === "undefined") return null;  // a ledger stub without an id can neither open nor delete
   const liveHref = r.kind === "writer" ? `/writer?run=${encodeURIComponent(r.id)}` : `/run?id=${encodeURIComponent(r.id)}`;
   const doneHref = r.kind === "writer" ? `/writer?run=${encodeURIComponent(r.id)}` : `/report?run=${encodeURIComponent(r.id)}`;
   const main = el("div", "my-main");
@@ -82,7 +83,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       );
       return;
     }
-    for (const r of runs) list.appendChild(rowFor(r));
+    for (const r of runs) { const node = rowFor(r); if (node) list.appendChild(node); }
   } catch (e) {
     list.textContent = "";
     list.appendChild(el("div", "card runs-empty", "Could not load your reports."));

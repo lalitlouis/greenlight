@@ -4,21 +4,69 @@
   "title": "Entity",
   "description": "A clearance-relevant thing named in the script. One Parallel research task per entity.",
   "type": "object",
-  "required": ["entity_id", "type", "surface", "scene_ids", "context"],
+  "required": [
+    "entity_id",
+    "type",
+    "surface",
+    "scene_ids",
+    "context"
+  ],
   "additionalProperties": false,
   "properties": {
-    "entity_id": {"type": "string", "pattern": "^E[0-9]{3,4}$"},
+    "entity_id": {
+      "type": "string",
+      "pattern": "^E[0-9]{3,4}$"
+    },
     "type": {
       "type": "string",
-      "enum": ["BRAND", "TRADEMARK", "MUSIC", "PERSON", "LOCATION", "ARTWORK", "VEHICLE", "FILM_CLIP", "PUBLICATION", "ORGANIZATION"]
+      "enum": [
+        "BRAND",
+        "TRADEMARK",
+        "MUSIC",
+        "PERSON",
+        "LOCATION",
+        "ARTWORK",
+        "VEHICLE",
+        "FILM_CLIP",
+        "PUBLICATION",
+        "ORGANIZATION"
+      ]
     },
-    "surface":    {"type": "string", "description": "Exact text as written in the script."},
-    "scene_ids":  {"type": "array", "minItems": 1, "items": {"type": "string"}},
-    "context":    {"type": "string", "description": "The sentence(s) around it. What the researcher actually needs."},
+    "surface": {
+      "type": "string",
+      "description": "Exact text as written in the script."
+    },
+    "scene_ids": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "context": {
+      "type": "string",
+      "description": "The sentence(s) around it. What the researcher actually needs."
+    },
     "depicted_negatively": {
       "type": "boolean",
       "description": "Load-bearing. Flips a brand from 'send a courtesy letter' to 'will never clear'."
     },
-    "prominence": {"type": "string", "enum": ["BACKGROUND", "FEATURED", "PLOT_CRITICAL"]}
+    "prominence": {
+      "type": "string",
+      "enum": [
+        "BACKGROUND",
+        "FEATURED",
+        "PLOT_CRITICAL"
+      ]
+    },
+    "portrayal": {
+      "type": "string",
+      "enum": [
+        "neutral",
+        "unflattering",
+        "criminal_or_fraudulent"
+      ],
+      "description": "PERSON entities only: how the script's own scenes portray this real person. Invented dialogue or scenes making a real person look foolish, cruel, dishonest, or contemptible is 'unflattering' even when brief; depiction as committing crimes or fraud is 'criminal_or_fraudulent'."
+    }
   }
 }

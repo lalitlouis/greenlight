@@ -46,6 +46,16 @@ class Entity(BaseModel):
         description="True if shown in a negative light. Load-bearing: flips a brand from "
         "'courtesy letter' to 'will never clear'."
     )
+    portrayal: Literal["neutral", "unflattering", "criminal_or_fraudulent"] = Field(
+        default="neutral",
+        description="PERSON entities only; everything else stays 'neutral'. Judge from the "
+        "script's own scenes, not reputation: INVENTED dialogue or scenes that make a real "
+        "person look foolish, cruel, dishonest, brusque, or contemptible are 'unflattering' "
+        "even when brief or played for comedy (a real official dismissing students with "
+        "contempt is unflattering, however famous the scene). Depicted committing crimes, "
+        "fraud, or serious misconduct is 'criminal_or_fraudulent'. This field decides which "
+        "people the clearance desk MUST individually analyze — when in doubt, not neutral.",
+    )
     prominence: Literal["BACKGROUND", "FEATURED", "PLOT_CRITICAL"]
 
 

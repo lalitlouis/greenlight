@@ -118,7 +118,10 @@ def _scene_context(flag: dict[str, Any], state: Any) -> str:
     scenes = [by_id[sid] for sid in flag["scene_ids"] if sid in by_id]
     if not scenes:
         return "(scene text unavailable)"
-    per_scene = _MAX_CONTEXT_CHARS // len(scenes)
+    # Floor: a wide flag must still give the verifier enough of each scene to
+    # judge — 480-char slivers made it (correctly) refuse to rule, which turned
+    # the widest flags into the least-verified ones.
+    per_scene = max(1200, _MAX_CONTEXT_CHARS // len(scenes))
     chunks: list[str] = []
     for scene in scenes:
         start, end = scene["raw_span"]
@@ -157,7 +160,12 @@ def apply_verdicts(
     for flag in flags:
         v = verdicts.get(flag["flag_id"])
         if v is None or v["verdict"] == "SUPPORTED":
-            kept.append(flag)
+            if v is not None and v.get("fail_open"):
+                # the verifier never ran — the flag survives, but it must not
+                # impersonate a verified finding on any surface
+                kept.append({**flag, "verification_unavailable": True})
+            else:
+                kept.append(flag)
             continue
         if v["verdict"] == "PARTIAL":
             capped = dict(flag)
@@ -192,7 +200,11 @@ async def _verify_flag(
                 if attempt == _MAX_ATTEMPTS - 1:
                     # Fail open with a marker: never silently drop a flag
                     # because the VERIFIER errored.
-                    return {"verdict": "SUPPORTED", "reason": "verifier unavailable"}
+                    return {
+                        "verdict": "SUPPORTED",
+                        "reason": "verifier unavailable",
+                        "fail_open": True,
+                    }
                 await asyncio.sleep(delay)
                 delay = min(delay * 2, 60)
 
@@ -245,7 +257,11 @@ class VerificationPanel(BaseAgent):
                     if attempt == _MAX_ATTEMPTS - 1:
                         # Fail open with a marker: never silently drop a flag
                         # because the VERIFIER errored.
-                        return {"verdict": "SUPPORTED", "reason": "verifier unavailable"}
+                        return {
+                            "verdict": "SUPPORTED",
+                            "reason": "verifier unavailable",
+                            "fail_open": True,
+                        }
                     await asyncio.sleep(delay)
                     delay = min(delay * 2, 60)
 

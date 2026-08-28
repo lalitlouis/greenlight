@@ -1532,9 +1532,15 @@ def done(reason: str, tool_context: ToolContext) -> str:
     # The Summers failure: desks clear the easy people and swallow the hard
     # ones. Refusals name names, negatively-depicted persons first.
     name_cap = 10
+
+    def _hard_person(w: dict[str, Any]) -> bool:
+        return w.get("portrayal") in ("unflattering", "criminal_or_fraudulent") or bool(
+            w.get("depicted_negatively")
+        )
+
     missing.sort(
         key=lambda w: (
-            not w.get("depicted_negatively"),
+            not _hard_person(w),
             w.get("prominence") != "PLOT_CRITICAL",
         )
     )
@@ -1542,11 +1548,7 @@ def done(reason: str, tool_context: ToolContext) -> str:
         state[f"done_refusals:{name}"] = refusals + 1
         named = "; ".join(
             f"{w.get('entity_id')} '{w.get('surface')}'"
-            + (
-                " — DEPICTED NEGATIVELY, this one cannot be skipped"
-                if w.get("depicted_negatively")
-                else ""
-            )
+            + (" — NEGATIVELY PORTRAYED, this one cannot be skipped" if _hard_person(w) else "")
             for w in missing[:name_cap]
         )
         more = f" (+{len(missing) - name_cap} more)" if len(missing) > name_cap else ""
