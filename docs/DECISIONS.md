@@ -648,3 +648,53 @@ contest rules; now the most interesting available architecture change.
 Business path (from the reviews): Wave 2's three published numbers, then the
 revision-aware rescan as the subscription product, then TPN Blue. The
 'cannot honestly charge before this point' line is the roadmap's spine.
+
+## 2026-08-28 — Pivot SUSPENDED: contest rules back in force pending next week's decision
+
+Hours after THE PIVOT entry above, the decision was walked back to "keep the
+rules for now; final hackathon call next week." CLAUDE.md's contest
+constitution is restored (with a status note). The repo REMAINS PRIVATE as
+the one standing deviation — the public-repo rule bites only at Stage One
+screening, visibility is instantly reversible, and commit history (what
+"new projects only" verification reads) is unaffected by visibility windows.
+ACTION IF PROCEEDING WITH HACKATHON: flip the repo public before submission.
+All rules-contingent work (cross-model verification etc.) is parked in the
+contingent roadmap below; nothing rule-breaking lands before the decision.
+
+## 2026-08-28 — Contingent tech roadmap (activates ONLY if contest rules drop)
+
+Ranked by leverage against MEASURED problems, not novelty:
+
+**Tier 1 — attacks measured weaknesses (days of work):**
+1. Heterogeneous model families: a verifier from a different family than the
+   desks (an auditor from a different school); k=3 passes across three
+   families so capture-recapture's independence assumption becomes ~true and
+   the recall bound becomes publishable; the adversarial pass on a family
+   that does not share the defenders' priors. One root cause — correlated
+   blindness — three fixes, mostly routing code on the existing harness.
+2. Real zero-shot NER (GLiNER-class, local) as the A4 pre-pass engine —
+   deterministic across passes, better proper-noun recall than regex.
+3. Classical ML openly at runtime: sklearn/GBM for rating stage-2, the
+   clearability index, Monte-Carlo cost distributions (P50/P90/P(hard fail)).
+
+**Tier 2 — cost/speed structure (weeks):**
+4. NLI entailment pre-filter before the LLM verifier (cheap mechanical
+   rejection of the worst citations).
+5. Distillation from our own exhaust: LoRA-tuned small models as first-pass
+   verifier/triage from accumulated verdicts; big models only on
+   disagreement. COGS falls as volume grows.
+6. Batch inference APIs (~50% token cost) for regen, k-runs, nightly evals.
+
+**Tier 3 — product moats (months):**
+7. Enterprise privacy tier: open-weight models in the customer's VPC ("your
+   script never leaves your tenancy") — converts COGS into deployment fees;
+   pairs with TPN.
+8. Purpose-trained comparables embedding (contrastive, form features baked in).
+9. Debate-style verification (proposer/refuter from different families) for
+   BLOCKER/HIGH only.
+10. Draft-vs-release delta mining for ground truth + marketing.
+
+**Deliberately unchanged in every scenario:** Gemini desks (measured, gated,
+working), Parallel (earning its keep), the gate/deploy discipline. The
+freedom's value is diversity where correlation is the enemy and
+specialization where one size fits badly — not vendor churn.

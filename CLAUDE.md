@@ -1,55 +1,63 @@
-# GREENLIGHT / ScriptRisk
+# GREENLIGHT
 
 Multi-agent screenplay clearance and production-risk analysis. Four gatekeeper agents read a
 screenplay and emit a marked-up script plus a Production Risk Report where every flag carries a
-citation, a remedy, and a cost/schedule estimate. Live at scriptrisk.com.
+citation, a remedy, and a cost/schedule estimate.
 
-**This is a business, not a hackathon entry** (pivot 2026-08-28 — the Devpost submission was
-abandoned; repo is PRIVATE). The former contest rules are dissolved; what follows replaces them.
+Built for the Agentic Cinema hackathon (Devpost / Google Cloud), **Parallel partner track**.
 
 ---
 
-## OPERATING PRINCIPLES
+> **Status note (2026-08-28):** a pivot to business-only (abandoning the hackathon) was
+> executed and then SUSPENDED the same day — final hackathon decision is due next week.
+> Until that decision, every rule below is BACK IN FORCE. One deviation stands: the repo is
+> temporarily PRIVATE (owner's privacy preference); it must flip public before submission
+> if the hackathon proceeds. See docs/DECISIONS.md for the full sequence.
 
-### 1. Stack is a choice, reviewed on evidence — currently Gemini + Parallel + GCP
+## NON-NEGOTIABLE CONSTRAINTS
 
-Runtime AI is Vertex Gemini (3.7-flash desks/verifiers, 2.5-pro adjudicator) because it is
-measured and gated, not because a rule requires it. `scripts/check_forbidden_deps.sh` is kept
-as deliberate stack discipline — adding an AI dependency is an architecture decision made in
-docs/DECISIONS.md, never a casual import. The Gemini-only constraint's death unlocks one
-specific priority: CROSS-MODEL verification and k-pass diversity to attack correlated
-blindness (the measured recall ceiling). That change goes through the same gates as any other.
+These are contest rules. Violating any one is pass/fail disqualification, not a style problem.
 
-### 2. Nothing ships ungated
+### 1. Runtime AI is Gemini and only Gemini
 
-Behavior changes (prompts, tool contracts, models) pass the 21-check fixture eval before
-deploy. `scripts/safe_deploy.sh` is the only sanctioned deploy path (tests + lint + compliance
-+ refuses while a customer analysis runs). Never gate a shell chain on `check | tail` — the
-pipe's exit code lies (this has shipped red three times).
+The rules permit *only* Google Cloud AI tooling at runtime. Non-Google AI SDKs are banned
+**by name**, including Anthropic, OpenAI, AWS, and Microsoft.
 
-### 3. Paid-product error doctrine
+Never add, import, or call any of:
+`anthropic`, `openai`, `langchain*`, `llama-index`, `crewai`, `autogen`, `litellm`,
+`cohere`, `mistralai`, `ollama`, `replicate`, `boto3` Bedrock, `azure-ai-*`.
 
-Model mistakes are conversation, transient faults are patience (retries + timeouts on EVERY
-external client), dependency outages are loud aborts, silence is never success. A desk with a
-worklist and no dispositions is an error surface, not a clean bill. Run failures page the
-operator by email within minutes.
+There is no exception. Not for a fallback, not for an eval harness, not "just for a test", not
+commented out. `scripts/check_forbidden_deps.sh` enforces this on every file write.
 
-### 4. The three business numbers
+Allowed AI/agent packages: `google-adk`, `google-genai`, `google-cloud-aiplatform`.
 
-Everything serves: (1) consistency, measured (k=3 agreement); (2) recall, honestly bounded;
-(3) calibration, guaranteed (conformal). Plus repeat value — the revision-aware rescan is the
-subscription product. The methodology page publishing these numbers IS the product's proof.
+Claude Code is used as a *development* tool. That is fine and out of scope for the rule, which
+governs the Project. But Stage One screening may be automated, so never write anything into the
+shipped repo that reads as a non-Google model being called at runtime.
 
-### 5. Customer trust is structural
+### 2. Parallel must be genuinely called at runtime
 
-Fernet-before-GCS encryption, per-user storage prefixes, script-free logs, real deletion,
-/security page that shows evidence and claims no unearned badges. TPN Blue is the next
-certification; SOC 2 at enterprise stage.
+The Parallel track requires the **Search API** to be invoked in code, via the official
+`parallel-web` SDK. Naming it in the README does not satisfy the requirement. If a refactor ever
+makes the Parallel call optional, mocked-by-default, or dead, the submission fails Stage One.
+`fixtures/` may contain cached Parallel responses for offline dev, but the live path is the
+default path.
 
-### 6. Cadence
+### 3. Google Cloud must be genuinely called at runtime
 
-The contest deadline is replaced by weekly measured milestones with the same gate discipline.
-Commit and push continuously; the decision log (docs/DECISIONS.md) is the memory of why.
+`google-adk` imported and executing. Same reasoning as above.
+
+### 4. Repo hygiene
+
+- Public GitHub repo with `LICENSE` (MIT) at root so GitHub's About section detects it.
+- All source, assets, and run instructions present.
+- Commit continuously. "New projects only" is verified; a repo with one commit on the deadline
+  looks fabricated.
+
+### 5. Deadline
+
+**2026-09-09, 2:00 PM PT.** Treat Sept 8 as the real deadline.
 
 ---
 
@@ -114,10 +122,9 @@ an agent cannot cite it, it is not a finding.
 
 ## Cost discipline
 
-Cost is COGS now, not a credit ceiling: track per-run model+search cost (scripts/costs.py)
-against the pricing ladder (free 1-pass / paid k=3 / enterprise). Cache aggressively — brand,
-music, and trademark lookups repeat across scripts. Keep a cached end-to-end run in `runs/`
-so demos work with no network.
+$100 of GCP credit covers the entire project. Agent Engine bills for idle replicas — develop
+locally against `adk web` and deploy late (day 12+). Always keep a cached end-to-end run in
+`runs/` so the demo works with no network.
 
 ## Commands
 
@@ -128,7 +135,8 @@ make test
 make check      # ruff + forbidden-dependency scan
 ```
 
-## Demo material
+## Demo and submission constraints
 
-- The demo screenplay in `fixtures/` is **original work we wrote**. Never use a real screenplay
-  in fixtures or marketing. Case studies use scripts of released films for analysis only.
+- The demo screenplay in `fixtures/` is **original work we wrote**. Never use a real screenplay.
+- The 3-minute video must not display third-party logos or trademarks. Lead with music/likeness
+  clearance rather than brand flags — same point, nothing branded on screen.
