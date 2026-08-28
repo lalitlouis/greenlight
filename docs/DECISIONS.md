@@ -524,3 +524,47 @@ the economic core of the recurring tier; Stage 2 is the software moat no
 manual researcher can follow. Not started yet — first in line after the
 format work above; privacy-vector detection (phones, addresses, plates) rides
 the next gated calibration batch alongside it.
+
+## 2026-08-28 — Cloud execution: GitHub as front door, Google Cloud as engine
+
+Decision on where automation eventually lives. Split by job, not by loyalty:
+
+- **GitHub Actions — triggers and free checks.** The deterministic layer stays
+  on every push (lint, contest-compliance scan, the offline unit suite incl.
+  the binder-consistency gate). Deploys move behind a workflow that
+  authenticates via Workload Identity Federation (no service-account keys
+  stored in GitHub) and invokes the same guarded deploy path safe_deploy uses.
+- **Google Cloud — everything paid, credentialed, or long-running.** A
+  `greenlight-eval` Cloud Run Job runs the fixture pipeline + the 21-check
+  grader inside the SAME image that serves production (environment fidelity is
+  the point), writes the scorecard to GCS/Firestore, and trips the existing
+  run-failure email alert on red. Cloud Scheduler runs it nightly — a standing
+  run-to-run variance series, the consistency number the reviews keep asking
+  for, accumulated automatically. Case regeneration and the comparables
+  benchmark become jobs with args on the same pattern.
+- **Why not all-GitHub:** the evals need PARALLEL_API_KEY, CLICKHOUSE_PASSWORD,
+  ENCRYPTION_KEY, and Vertex auth — a second credential store to rotate, and a
+  runner env that drifts from prod. Also contest optics: evals on Cloud Run is
+  a sentence that helps this entry; evals on GitHub runners is not.
+- **Why not all-GCP:** Cloud Build's PR feedback is slower and weaker than
+  Actions annotations; the public repo's checks/badges belong on GitHub.
+
+Sequencing: post-deadline infrastructure EXCEPT the eval job (~1 hour: the
+image and scripts exist; needs an entrypoint + Scheduler cron), which also
+demos well. WIF + the deploy workflow wait until after Devpost submission.
+
+## 2026-08-28 — Desks stay on Flash; no Pro migration
+
+Considered moving desk inference to gemini-2.5-pro for reliability (the
+instruction-dropping failures: closed-vocabulary override, territory prose
+loop, roll-call skipping). Decided against, per the user: Flash is good.
+The remedy for instruction-dropping is MECHANICAL enforcement in the tools,
+not a bigger model reading longer prose — the Wave-1 batch binds Flash with
+code (vocabulary in the tool contract, twelve-disposition territory
+checklist, entity-named done() refusals, merge-path caps). Also noted:
+2.5-pro is a generation older than 3.7-flash, so "Pro is smarter" is not a
+given, 3.x Pro is preview-only (ruled out for a paid product), and wholesale
+Pro is ~2-3x model cost per run. The reviewer's narrower idea — routing only
+non-neutral-portrayal entities to a Pro sub-pass — stays on the backlog as
+the middle path if Flash's judgment on defamation calibration proves weak
+with the new guards in place.
