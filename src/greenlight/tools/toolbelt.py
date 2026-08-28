@@ -1538,9 +1538,10 @@ def verify_trademark(number: str, tool_context: ToolContext) -> dict[str, Any]:
 
     number: digits only — a registration number (e.g. "1001109") or an
     8-digit serial number.
-    Returns status (LIVE/DEAD), the mark text, and the current owner when the
-    register resolves; an error field when it does not (do not cite a number
-    that fails to resolve).
+    Returns the mark text, LIVE/DEAD status, current owner, both numbers, and
+    — when the register lists one — the owner's licensing contact email
+    (include it in the remedy: it is who the production actually writes to).
+    An error field means the number did not resolve: do not cite it.
     """
     digits = re.sub(r"[^0-9]", "", str(number))
     if not digits:
@@ -1560,48 +1561,56 @@ _SERIAL_LEN = 8  # USPTO serial numbers; registration numbers are shorter
 
 
 def _tsdr_lookup(digits: str) -> dict[str, Any]:
-    """USPTO TSDR status lookup. Module-level so tests can monkeypatch."""
-    import json as _json
+    """USPTO TSDR status lookup via the server-rendered statusview page —
+    the JSON API paths 404 as of 2026-08; the HTML is stable and richer
+    (it includes the owner's licensing contact). Module-level so tests can
+    monkeypatch."""
     import urllib.error
     import urllib.request
     from http import HTTPStatus
 
     kind = "sn" if len(digits) == _SERIAL_LEN else "rn"
-    url = f"https://tsdrapi.uspto.gov/ts/cd/casestatus/{kind}{digits}/info.json"
-    headers = {"User-Agent": "ScriptRisk-clearance/1.0"}
-    if os.getenv("USPTO_API_KEY"):
-        headers["USPTO-API-KEY"] = os.environ["USPTO_API_KEY"]
+    url = f"https://tsdr.uspto.gov/statusview/{kind}{digits}"
     try:
-        req = urllib.request.Request(url, headers=headers)
+        req = urllib.request.Request(
+            url, headers={"User-Agent": "Mozilla/5.0 (ScriptRisk clearance research)"}
+        )
         with urllib.request.urlopen(req, timeout=20) as resp:
-            data = _json.loads(resp.read())
+            html = resp.read().decode("utf-8", errors="replace")
     except urllib.error.HTTPError as e:
         if e.code == HTTPStatus.NOT_FOUND:
             return {"error": f"number {digits} not found on the USPTO register"}
-        if e.code in (HTTPStatus.UNAUTHORIZED, HTTPStatus.FORBIDDEN):
-            return {
-                "error": "USPTO API key required (set USPTO_API_KEY; free at "
-                "developer.uspto.gov) — until then, cite the mark WITHOUT a "
-                "registration number rather than an unverified one"
-            }
         return {"error": f"USPTO lookup failed: HTTP {e.code}"}
     except Exception as exc:
         return {"error": f"USPTO lookup failed: {type(exc).__name__}"}
-    try:
-        tm = data["trademarks"][0]
-        status = tm.get("status", {})
-        parties = tm.get("parties", {})
-        owners = parties.get("owners") or [{}]
-        return {
-            "number": digits,
-            "mark": status.get("markElement", ""),
-            "status": status.get("status", ""),
-            "live_dead": status.get("markCurrentStatusExternalDescriptionText", ""),
-            "owner": owners[0].get("name", ""),
-            "status_date": status.get("statusDate", ""),
-        }
-    except (KeyError, IndexError, TypeError):
-        return {"error": "unexpected TSDR response shape"}
+
+    def grab(pattern: str) -> str:
+        m2 = re.search(pattern, html, re.S)
+        return re.sub(r"\s+", " ", m2.group(1)).strip() if m2 else ""
+
+    mark = grab(r'Mark:</div>\s*<div class="value markText">\s*(.*?)\s*</div>')
+    live_dead = grab(r"((?:LIVE|DEAD)/[A-Za-z/ ]+)")
+    status = grab(r'Status:</div>\s*<div class="value single">\s*(.*?)\s*</div>')
+    owner = grab(r"Owner Name:</div>\s*<div class=\"value\">\s*(.*?)\s*</div>") or grab(
+        r"\b([A-Z][A-Z&,.' ]{4,60}(?:LLC|INC|CORP|COMPANY|CO\.|LTD))\b"
+    )
+    contact = grab(r"mailto:([^\"']+)")
+    reg_no = grab(r"US Registration Number:</div>\s*<div class=\"value\">\s*([0-9]+)")
+    serial = grab(r"US Serial Number:</div>\s*<div class=\"value\">\s*([0-9]+)")
+    if not mark:
+        return {"error": f"number {digits} did not resolve to a mark on TSDR"}
+    out = {
+        "number": digits,
+        "mark": mark,
+        "live_dead": live_dead,
+        "status": status,
+        "owner": owner,
+        "registration_number": reg_no,
+        "serial_number": serial,
+    }
+    if contact:
+        out["licensing_contact"] = contact
+    return out
 
 
 def record_clearance(entity_id: str, reasoning: str, tool_context: ToolContext) -> str:
