@@ -138,6 +138,7 @@ def _initial_state(
     budgets: dict[str, int],
     target_rating: str,
     adaptation: str = "",
+    title: str = "",
 ) -> dict[str, Any]:
     scene_index = "\n".join(f"{s['scene_id']}  p{s['page']:>2}  {s['heading']}" for s in scenes)
     state: dict[str, Any] = {
@@ -148,6 +149,7 @@ def _initial_state(
         "target_rating": target_rating,
         "adaptation_context": adaptation,
         "form_facts": _form_facts(scenes),
+        "script_title": title,
     }
     for desk, budget in budgets.items():
         state[f"research_budget:{desk}"] = budget
@@ -289,6 +291,8 @@ async def run(
             scenes,
             budgets or scaled_budgets(scenes[-1]["page"] if scenes else 1),
             target_rating,
+            adaptation=adaptation_context(meta, source_context),
+            title=title,
         ),
     )
 

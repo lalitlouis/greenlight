@@ -873,24 +873,33 @@ def test_batch_flags_isolated_and_aggregated():
 def test_done_judges_batch_against_its_slice():
     from types import SimpleNamespace
 
+    wl = _worklist(50)
+    slice1_ids = [w["entity_id"] for w in wl[:25]]
     state = FakeState(
         {
-            "triage": {"entities": [], "clearance_counsel": _worklist(50)},
+            "triage": {"entities": [], "clearance_counsel": wl},
             "research_budget:clearance_counsel": 40,
-            "flags:clearance_counsel__b1": [{"flag_id": f"F{i}"} for i in range(101, 121)],
+            # every slice-1 entity carries a disposition (flags + clearances)
+            "flags:clearance_counsel__b1": [
+                {"flag_id": f"F{i}", "entity_id": eid} for i, eid in enumerate(slice1_ids[:20], 101)
+            ],
+            "cleared:clearance_counsel__b1": [
+                {"entity_id": eid, "reasoning": "no issue"} for eid in slice1_ids[20:]
+            ],
         }
     )
     b1 = SimpleNamespace(
         agent_name="clearance_counsel__b1", state=state, actions=SimpleNamespace(escalate=False)
     )
-    # 20 dispositions of a 25-item slice = 80% coverage -> closes
     assert toolbelt.done("batch finished", b1).startswith("Desk closed")
     assert b1.actions.escalate is True
-    # a fresh batch with nothing done and budget in hand is refused
+    # a fresh batch with nothing done and budget in hand is refused BY NAME —
+    # the Summers rule: unaddressed entities are enumerated, never averaged away
     b2 = SimpleNamespace(
         agent_name="clearance_counsel__b2", state=state, actions=SimpleNamespace(escalate=False)
     )
-    assert toolbelt.done("lazy", b2).startswith("NOT CLOSED")
+    msg = toolbelt.done("lazy", b2)
+    assert msg.startswith("NOT CLOSED") and "E026" in msg
 
 
 def test_flag_ids_stable_across_fresh_state_wrappers():

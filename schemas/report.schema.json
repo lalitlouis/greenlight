@@ -179,6 +179,27 @@
         "divergence_reason": {
           "type": "string",
           "description": "Why the desk's prediction differs from comps_majority; empty when it follows the evidence."
+        },
+        "nearest_conflict": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Set when the closest comparable sits at near-identity distance with a different rating \u2014 the desk was required to address it.",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "rating": {
+              "type": "string"
+            },
+            "distance": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
         }
       }
     },

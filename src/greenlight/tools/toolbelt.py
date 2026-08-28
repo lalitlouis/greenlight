@@ -293,7 +293,7 @@ def _live_search(
     """
     import parallel
 
-    client = parallel.Parallel(api_key=os.environ["PARALLEL_API_KEY"])
+    client = parallel.Parallel(api_key=os.environ["PARALLEL_API_KEY"], timeout=120.0, max_retries=3)
     advanced: dict[str, Any] = {"max_results": 10}
     if country:
         advanced["location"] = country
@@ -498,7 +498,7 @@ def _live_extract(urls: list[str], objective: str, session_id: str | None = None
     """The live Parallel Extract call — full-page retrieval. Module-level for tests."""
     import parallel
 
-    client = parallel.Parallel(api_key=os.environ["PARALLEL_API_KEY"])
+    client = parallel.Parallel(api_key=os.environ["PARALLEL_API_KEY"], timeout=120.0, max_retries=3)
     res = client.extract(
         urls=urls, objective=objective, max_chars_total=12000, session_id=session_id
     )
@@ -600,7 +600,7 @@ def _live_task(question: str, processor: str) -> dict[str, Any]:
     """The live Parallel Task API call — deep multi-source research. Module-level for tests."""
     import parallel
 
-    client = parallel.Parallel(api_key=os.environ["PARALLEL_API_KEY"])
+    client = parallel.Parallel(api_key=os.environ["PARALLEL_API_KEY"], timeout=120.0, max_retries=3)
     res = client.task_run.execute(
         input=question,
         processor=processor,
@@ -1202,6 +1202,8 @@ def _clickhouse_client():
         username=os.getenv("CLICKHOUSE_USER", "default"),
         password=os.environ["CLICKHOUSE_PASSWORD"],
         secure=os.getenv("CLICKHOUSE_SECURE", "true").lower() == "true",
+        connect_timeout=15,
+        send_receive_timeout=60,
     )
 
 
@@ -1210,11 +1212,16 @@ def _embed(text: str) -> list[float]:
     Pinned to its own region: text-embedding-005 is not served from the global
     endpoint that the Gemini calls use for DSQ headroom."""
     from google import genai
+    from google.genai import types as genai_types
 
     client = genai.Client(
         vertexai=True,
         project=os.environ["GOOGLE_CLOUD_PROJECT"],
         location=os.getenv("EMBED_LOCATION", "us-central1"),
+        http_options=genai_types.HttpOptions(
+            timeout=60_000,
+            retry_options=genai_types.HttpRetryOptions(attempts=4, initial_delay=2),
+        ),
     )
     res = client.models.embed_content(model="text-embedding-005", contents=text)
     return list(res.embeddings[0].values)
@@ -1278,10 +1285,15 @@ async def query_precedent(text: str, k: int, tool_context: ToolContext) -> dict[
             SELECT title, year, rating, rationale, source_url,
                    cosineDistance(embedding, %(vec)s) AS distance
             FROM rating_rationales
+            WHERE lower(title) != lower(%(skip_title)s)
             ORDER BY distance ASC
             LIMIT %(k)s
             """,
-                    parameters={"vec": vec, "k": max(1, min(int(k), 20))},
+                    parameters={
+                        "vec": vec,
+                        "k": max(1, min(int(k), 20)),
+                        "skip_title": str(tool_context.state.get("script_title") or ""),
+                    },
                 )
                 .result_rows
             )
@@ -1323,6 +1335,9 @@ async def query_precedent(text: str, k: int, tool_context: ToolContext) -> dict[
 
 
 # --- file_rating_prediction -------------------------------------------------
+
+
+_NEAR_IDENTITY_DISTANCE = 0.30  # below this, the neighbour may be the same story
 
 
 def _comps_weighted_majority(comparables: list[dict[str, Any]]) -> str:
@@ -1374,16 +1389,31 @@ def file_rating_prediction(
     if predicted not in {"G", "PG", "PG-13", "R", "NC-17"}:
         return "REJECTED: predicted must be one of G, PG, PG-13, R, NC-17."
     majority = _comps_weighted_majority(comparables)
-    if majority and predicted != majority and not divergence_reason.strip():
+    nearest = comparables[0] if comparables else None
+    near_conflict = bool(
+        nearest
+        and float(nearest.get("distance") or 1.0) < _NEAR_IDENTITY_DISTANCE
+        and nearest.get("rating")
+        and nearest["rating"] != predicted
+    )
+    if ((majority and predicted != majority) or near_conflict) and not divergence_reason.strip():
         tally: dict[str, int] = {}
         for c in comparables:
             tally[c["rating"]] = tally.get(c["rating"], 0) + 1
+        near_note = (
+            f" Your NEAREST comparable, '{nearest['title']}' at distance "
+            f"{nearest['distance']}, is rated {nearest['rating']} — close enough that "
+            "it may be this very story's released form; a rating that contradicts it "
+            "must say why (a draft often overshoots its released cut — if that is the "
+            "case, say so and point at the cut list)."
+            if near_conflict
+            else ""
+        )
         return (
-            f"REJECTED: your prediction {predicted} contradicts the comparables' "
-            f"distance-weighted majority {majority} (tally: {tally}). Either follow "
+            f"REJECTED: your prediction {predicted} contradicts the evidence "
+            f"(weighted majority {majority}, tally: {tally}).{near_note} Either follow "
             "the evidence, or refile with divergence_reason stating specifically why "
-            "these neighbours don't govern (wrong register? content the corpus "
-            "under-weights? a documented CARA standard that controls?)."
+            "it doesn't govern."
         )
     meta = tool_context.state.get(f"last_precedent_meta:{desk}") or {}
     tool_context.state["rating_prediction"] = {
@@ -1396,6 +1426,15 @@ def file_rating_prediction(
         "distance_spread": meta.get("spread"),
         "comps_majority": majority,
         "divergence_reason": divergence_reason.strip(),
+        "nearest_conflict": (
+            {
+                "title": nearest.get("title", ""),
+                "rating": nearest.get("rating", ""),
+                "distance": nearest.get("distance"),
+            }
+            if near_conflict
+            else None
+        ),
     }
     dist: dict[str, int] = {}
     for c in comparables:
@@ -1472,18 +1511,49 @@ def done(reason: str, tool_context: ToolContext) -> str:
     else:
         worklist = _triage_dict(state).get(desk) or []
     budget_left = int(state.get(_budget_key(tool_context), 0))
-    dispositions = (
-        len(state.get(f"flags:{name}", []) or [])
-        + len(state.get(f"open_questions:{name}", []) or [])
-        + len(state.get(f"cleared:{name}", []) or [])
+    covered: set[str] = set()
+    for f in state.get(f"flags:{name}", []) or []:
+        if f.get("entity_id"):
+            covered.add(f["entity_id"])
+    for c in state.get(f"cleared:{name}", []) or []:
+        if c.get("entity_id"):
+            covered.add(c["entity_id"])
+    oq_texts = [str(q).lower() for q in state.get(f"open_questions:{name}", []) or []]
+
+    def _addressed(item: Any) -> bool:
+        if not isinstance(item, dict):
+            return True
+        if item.get("entity_id") in covered:
+            return True
+        surface = (item.get("surface") or "").lower()
+        return bool(surface) and any(surface in q for q in oq_texts)
+
+    missing = [w for w in worklist if not _addressed(w)]
+    # The Summers failure: desks clear the easy people and swallow the hard
+    # ones. Refusals name names, negatively-depicted persons first.
+    name_cap = 10
+    missing.sort(
+        key=lambda w: (
+            not w.get("depicted_negatively"),
+            w.get("prominence") != "PLOT_CRITICAL",
+        )
     )
-    underworked = worklist and dispositions < _DONE_COVERAGE * len(worklist)
-    if underworked and budget_left >= _DONE_MIN_BUDGET and refusals < _DONE_MAX_REFUSALS:
+    if missing and budget_left >= _DONE_MIN_BUDGET and refusals < _DONE_MAX_REFUSALS:
         state[f"done_refusals:{name}"] = refusals + 1
+        named = "; ".join(
+            f"{w.get('entity_id')} '{w.get('surface')}'"
+            + (
+                " — DEPICTED NEGATIVELY, this one cannot be skipped"
+                if w.get("depicted_negatively")
+                else ""
+            )
+            for w in missing[:name_cap]
+        )
+        more = f" (+{len(missing) - name_cap} more)" if len(missing) > name_cap else ""
         return (
-            f"NOT CLOSED: you have addressed {dispositions} of {len(worklist)} worklist "
-            f"items and {budget_left} research budget remains. Work the remaining items — "
-            "file, or note_open_question each one — then call done() again."
+            f"NOT CLOSED: {len(missing)} worklist entities have NO disposition — every one "
+            f"needs file_flag, record_clearance, or note_open_question. Unaddressed: "
+            f"{named}{more}. {budget_left} research budget remains."
         )
     tool_context.actions.escalate = True
     return f"Desk closed: {reason}"

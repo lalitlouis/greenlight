@@ -534,6 +534,13 @@ function renderPrediction(root, pred) {
     meta.appendChild(el("p", "pred-evidence pred-diverge",
       `The comparables' weighted majority is ${pred.comps_majority}; the desk diverges: ${pred.divergence_reason}`));
   }
+  const nc = pred.nearest_conflict;
+  if (nc && nc.title) {
+    meta.appendChild(el("p", "pred-evidence pred-diverge",
+      `Note: your closest comparable — ${nc.title} (${nc.rating}, distance ${nc.distance}) — is near enough that it may be this story's released form. ` +
+      `A ${pred.predicted} read on the draft as written is not a contradiction: shooting drafts routinely overshoot the released cut` +
+      (pred.divergence_reason ? ` — the desk's reasoning: ${pred.divergence_reason}` : `; the cut list below is the path back to ${nc.rating}.`)));
+  }
   head.appendChild(meta);
   card.appendChild(head);
 
