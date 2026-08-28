@@ -372,6 +372,7 @@ PAGES = {
     "/terms": "terms.html",
     "/privacy": "privacy.html",
     "/security": "security.html",
+    "/methodology": "methodology.html",
 }
 
 

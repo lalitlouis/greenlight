@@ -39,7 +39,18 @@ INTENSITIES = [
 ]
 CATEGORIES = {
     "language": ["language", "profanity", "cursing"],
-    "violence": ["violence", "combat", "gunplay", "shootings"],
+    "violence": [
+        "violence",
+        "violent content",
+        "violent images",
+        "violent material",
+        "combat",
+        "gunplay",
+        "shootings",
+        "torture",
+        "destruction",
+        "violent",
+    ],
     "sexual_content": [
         "sexual content",
         "sexuality",
@@ -54,17 +65,58 @@ CATEGORIES = {
         "sex",
     ],
     "nudity": ["nudity"],
-    "drugs": ["drug use", "drug content", "drug material", "drug references", "drugs"],
+    "drugs": [
+        "drug use",
+        "drug content",
+        "drug material",
+        "drug references",
+        "drug reference",
+        "drugs",
+        "drug",
+        "substance abuse",
+        "substance use",
+    ],
     "alcohol": ["alcohol use", "alcohol abuse", "drinking", "alcohol", "teen partying"],
     "smoking": ["smoking", "tobacco"],
-    "thematic": ["thematic material", "thematic elements", "mature themes", "themes"],
+    "thematic": [
+        "thematic material",
+        "thematic elements",
+        "thematic content",
+        "mature thematic content",
+        "mature themes",
+        "themes",
+    ],
     "gore": ["gore", "grisly images", "bloody images"],
-    "disturbing": ["disturbing images", "disturbing content", "disturbing violent"],
-    "peril": ["peril", "menace", "terror", "frightening"],
+    "disturbing": [
+        "disturbing images",
+        "disturbing content",
+        "disturbing violent",
+        "disturbing material",
+        "disturbing behavior",
+        "disturbing",
+        "injury images",
+    ],
+    "peril": ["peril", "menace", "terror", "frightening", "scary images", "scary"],
     "action": ["action"],
-    "crude_humor": ["crude humor", "rude humor", "crude and sexual humor", "crude content"],
+    "crude_humor": [
+        "crude humor",
+        "rude humor",
+        "crude and sexual humor",
+        "crude content",
+        "crude material",
+        "rude material",
+        "crude",
+    ],
     "horror": ["horror"],
-    "suggestive": ["suggestive material", "suggestive content", "innuendo"],
+    "suggestive": [
+        "suggestive material",
+        "suggestive content",
+        "innuendo",
+        "suggestive references",
+        "suggestive humor",
+        "suggestive",
+    ],
+    "suicide": ["suicide", "self-harm", "self harm"],
 }
 _PREFIX = re.compile(r"^Rated\s+(G|PG-13|PG|R|NC-17)\s+for\s+", re.I)
 _SPLIT = re.compile(r",\s*(?:and\s+)?|\s+and\s+")
@@ -77,8 +129,16 @@ def parse_rationale(text: str) -> tuple[list[tuple[str, str]], list[str]]:
     body = body.rstrip(".").strip('"“” ')
     pairs: list[tuple[str, str]] = []
     fails: list[str] = []
-    for raw_seg in _SPLIT.split(body):
-        seg = raw_seg.strip().lower()
+    segments = [x.strip().lower() for x in _SPLIT.split(body) if x.strip()]
+    merged: list[str] = []
+    for seg in segments:
+        # "strong, bloody violence" splits as "strong" + "bloody violence" —
+        # a bare-intensity fragment re-binds to what follows it
+        if merged and merged[-1] in INTENSITIES:
+            merged[-1] = f"{merged[-1]} {seg}"
+        else:
+            merged.append(seg)
+    for seg in merged:
         if not seg:
             continue
         intensity = ""

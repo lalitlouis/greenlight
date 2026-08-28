@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="ScriptRisk's measured numbers: rating-prediction calibration with a coverage guarantee, run-to-run consistency, and what we do not claim yet — with the methodology behind each.">
+<link rel="canonical" href="https://scriptrisk.com/methodology">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ScriptRisk">
+<meta property="og:title" content="Methodology — ScriptRisk">
+<meta property="og:description" content="The numbers behind the reports, and the honest status of each: measured, preliminary, or pending.">
+<meta property="og:url" content="https://scriptrisk.com/methodology">
+<meta property="og:image" content="https://scriptrisk.com/static/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://scriptrisk.com/static/og.png">
+<link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<title>Methodology — ScriptRisk</title>
+<link rel="stylesheet" href="/static/vendor/fonts/fonts.css">
+<link rel="stylesheet" href="/static/site.css">
+<script defer src="/static/common.js"></script>
+</head>
+<body>
+<main>
+  <div class="container legal">
+    <div class="page-head">
+      <span class="kicker">Methodology</span>
+      <h1>Numbers, not adjectives</h1>
+      <p class="lede">Every claim on this page is labeled <b>measured</b>, <b>preliminary</b>, or
+      <b>pending</b> — and the pending ones stay pending until the measurement exists. Updated
+      August 28, 2026.</p>
+    </div>
+
+    <div class="card legal-card">
+      <h2>Rating prediction — <span class="sec-hl">measured</span></h2>
+      <p>We harvested the official CARA rating rationale for <b>4,755 films</b> from the MPA's own
+      register (88% of our post-1990 corpus; the practice barely existed before 1990, so our scope
+      is post-1990 wide releases, stated plainly). Parsed into intensity-category descriptors,
+      they train a transparent model whose predictions carry a
+      <span class="sec-hl">distribution-free coverage guarantee</span> (Mondrian split conformal):</p>
+      <pre class="sec-evidence">held-out films: 927 (deterministic split, never trained on)
+conformal coverage: <span class="sec-ev-ok">92.0%</span> against a 90% target — the guarantee holds
+top-1 accuracy: 84.4% · multiclass Brier: 0.245
+prediction sets: mostly single ratings; boundary scripts get honest pairs like {PG-13, R}</pre>
+      <p>Two findings from the same data: the R-line for language is the <i>modifier</i>, not the
+      category — <b>"pervasive language" lands R 99%</b> of the time (n=187) while
+      <b>"strong language" lands PG-13 89%</b> (n=383) — and the descriptor→rating mapping is
+      <b>stable across decades</b>: a model trained only on pre-2010 films loses just 1.1 points
+      of accuracy on post-2015 films. The vocabulary drifted; the line didn't.</p>
+      <p>The guarantee is conditional on descriptor extraction from your script, which is model
+      judgment. We say that plainly rather than hiding it in a footnote.</p>
+    </div>
+
+    <div class="card legal-card">
+      <h2>Cut guidance — <span class="sec-hl">grounded, validation growing</span></h2>
+      <p>The cut list ("these changes buy the lower rating") is checked against a second
+      regulator's paper trail: the BBFC publishes, per film, <i>which cuts were made and what
+      category they achieved</i>. Our harvest holds <b>436 such records</b> — including 57 that
+      state the full trade ("uncut 15 was available; cuts achieved 12A") — the exact transaction
+      our cut simulator predicts, documented by the regulator that watched it happen.</p>
+    </div>
+
+    <div class="card legal-card">
+      <h2>Run-to-run consistency — <span class="sec-hl">preliminary</span></h2>
+      <p>Same script, same answer? We measure it by running the entire pipeline multiple times
+      and matching findings across passes. On our test screenplay:
+      <b>judgment agreement α&nbsp;=&nbsp;0.93</b> — when two passes examine the same entity, they
+      agree on flag-vs-clear 11 times in 12. What varies between passes is <i>coverage</i> (which
+      entities get examined), which is why a deterministic pre-pass now feeds every desk the same
+      candidate floor. <b>Preliminary</b> because the sample is small; the feature-length
+      measurement is built and scheduled, and this label changes only when it runs.</p>
+    </div>
+
+    <div class="card legal-card">
+      <h2>Recall — <span class="sec-hl">pending, and we will not fake it</span></h2>
+      <p>What fraction of findable issues do we find? Honest answer today: <b>we do not publish a
+      recall number yet.</b> The estimator (capture–recapture across independent passes) is built,
+      but it is only honest after validation against independently hand-labeled scripts — and its
+      known biases point optimistic, so when it ships it ships as an upper bound
+      ("no better than X%"), never a point estimate.</p>
+    </div>
+
+    <div class="card legal-card">
+      <h2>Verification — <span class="sec-hl">measured per run</span></h2>
+      <p>Every finding faces a blinded verifier — claim and citations only, never the desk's
+      reasoning — and rejections are shown on every report with the verifier's reason. Across
+      recent runs the verifier rejects roughly 10–30% of draft findings. A finding rejected for
+      <i>citation quality</i> (rather than substance) now gets exactly one re-sourcing round with
+      fresh evidence and a second blinded verdict; each report carries its attempted/recovered
+      counts.</p>
+    </div>
+
+    <div class="card legal-card">
+      <h2>What we do not claim</h2>
+      <ul class="plain-list">
+        <li>This is a research pre-screen, not a legal opinion, and it does not satisfy E&amp;O
+        requirements — production counsel reviews before production relies.</li>
+        <li>No accuracy number appears here before its measurement exists. When a label above
+        says pending, that is the whole claim.</li>
+      </ul>
+    </div>
+  </div>
+</main>
+</body>
+</html>

@@ -496,6 +496,7 @@ function injectChrome() {
       ["/terms", "Terms of service"],
       ["/privacy", "Privacy policy"],
       ["/security", "Security"],
+      ["/methodology", "Methodology"],
     ])
   );
   footer.appendChild(finner);
