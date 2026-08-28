@@ -739,3 +739,19 @@ unbounded pending A3's validation. The k=3 harness, the matcher, and the
 hand-label sources are ready; resuming is one command
 (scripts/consistency_k3.py <script> 3). The methodology page will state
 these two numbers as pending rather than claiming them.
+
+## 2026-08-28 — POLICY: quality is never scaled down. Every customer, full treatment.
+
+Owner decision, stated as principle: we never compromise on quality, whatever
+it takes. Consequences, binding:
+- The proposed "scale contract floors with script size" optimization is DEAD.
+  A one-page script gets the same twelve territory dispositions, the same
+  per-entity roll-call, the same pre-pass, the same blinded verification and
+  re-sourcing as a feature. The rigor floor is the product.
+- Latency is accepted as the cost: ~10-15 min for short scripts (the fixed
+  floor dominating), ~20-35 min projected for features (floor amortizes;
+  iteration ceilings unchanged, so no path to 'hours'). We set expectations
+  honestly in the UI rather than trimming the work.
+- Performance work is welcome ONLY where it removes waste, never rigor:
+  stall-kills, prose-loop nudges, caching, concurrency — yes. Fewer
+  dispositions — no.

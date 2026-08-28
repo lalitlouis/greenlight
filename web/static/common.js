@@ -367,7 +367,7 @@ function promptUpload() {
   if (!requireSignIn()) return;
   openUploadModal({
     title: "Analyze a screenplay",
-    note: "Fountain, plain text, or PDF · up to 5 MB · about five minutes",
+    note: "Fountain, PDF, or Final Draft (.fdx) · up to 5 MB · 10–35 min of real investigation",
     action: "Start the analysis",
     onFile: uploadScreenplay,
   });
