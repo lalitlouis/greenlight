@@ -371,6 +371,7 @@ PAGES = {
     "/binder": "binder.html",
     "/terms": "terms.html",
     "/privacy": "privacy.html",
+    "/security": "security.html",
 }
 
 

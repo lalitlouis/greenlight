@@ -495,6 +495,7 @@ function injectChrome() {
       ["/contact", "Contact the team"],
       ["/terms", "Terms of service"],
       ["/privacy", "Privacy policy"],
+      ["/security", "Security"],
     ])
   );
   footer.appendChild(finner);

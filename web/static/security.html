@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="How ScriptRisk secures unreleased screenplays: application-layer encryption before storage, Google sign-in, delete-anytime, no training on your work — and an honest roadmap for TPN and SOC 2.">
+<link rel="canonical" href="https://scriptrisk.com/security">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ScriptRisk">
+<meta property="og:title" content="Security — ScriptRisk">
+<meta property="og:description" content="How ScriptRisk secures unreleased screenplays, control by control — and what we have not certified yet.">
+<meta property="og:url" content="https://scriptrisk.com/security">
+<meta property="og:image" content="https://scriptrisk.com/static/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://scriptrisk.com/static/og.png">
+<link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<title>Security — ScriptRisk</title>
+<link rel="stylesheet" href="/static/vendor/fonts/fonts.css">
+<link rel="stylesheet" href="/static/site.css">
+<script defer src="/static/common.js"></script>
+</head>
+<body>
+<main>
+  <div class="container legal">
+    <div class="page-head">
+      <span class="kicker">Security</span>
+      <h1>How your screenplay is protected</h1>
+      <p class="lede">An unreleased script is the most sensitive document in this industry.
+      Here is what protects yours, control by control — and, just as plainly, what we have
+      not certified yet. Last updated August 28, 2026 · ScriptRisk is in beta.</p>
+    </div>
+
+    <div class="card legal-card">
+      <h2>Encryption</h2>
+      <ul class="plain-list">
+        <li><b>In transit:</b> TLS everywhere — browser to us, and between every internal service and provider.</li>
+        <li><b>At rest, twice:</b> your script and its analysis are encrypted at the application layer
+        (AES-128-CBC with HMAC authentication, via Fernet) <i>before</i> they reach storage, on top of
+        Google Cloud Storage's own at-rest encryption. Access to the storage bucket alone yields ciphertext.</li>
+        <li><b>Key handling:</b> the encryption key lives in Google Secret Manager, never in code or
+        configuration files, and is rotated on credential-exposure events and major releases
+        (last rotation: August 2026).</li>
+      </ul>
+    </div>
+
+    <div class="card legal-card">
+      <h2>Access</h2>
+      <ul class="plain-list">
+        <li><b>Sign-in:</b> Google OAuth only — we never see or store a password. Sessions expire.</li>
+        <li><b>Ownership is structural:</b> a signed-in analysis can only be read or deleted through the
+        owner's session; the storage layout makes reaching another user's run impossible by construction,
+        not by policy.</li>
+        <li><b>Anonymous runs</b> are protected by unguessable identifiers — the link is the capability,
+        and it is yours to share or not.</li>
+        <li><b>Operations:</b> production access is limited to a single administrator; hardening of
+        every underlying provider account (hardware-backed two-factor, access reviews) is part of
+        our TPN preparation below.</li>
+      </ul>
+    </div>
+
+    <div class="card legal-card">
+      <h2>Your work is never training data</h2>
+      <ul class="plain-list">
+        <li>We do not train models on your screenplay, and our AI processing runs under enterprise terms
+        (Google Cloud Vertex AI) that do not permit training on your content.</li>
+        <li>Production logs are engineered to carry <b>no screenplay text</b> — titles, findings, and
+        excerpts are kept out of operational logging by design, and this promise is enforced in code.</li>
+      </ul>
+    </div>
+
+    <div class="card legal-card">
+      <h2>Deletion that actually deletes</h2>
+      <ul class="plain-list">
+        <li>Delete any analysis at any time — from <a href="/my">My reports</a> signed in, or via the
+        report page for anonymous runs.</li>
+        <li>Deletion removes the script, the analysis record, generated PDFs, and ownership markers together —
+        not just the listing.</li>
+      </ul>
+    </div>
+
+    <div class="card legal-card">
+      <h2>Monitoring and response</h2>
+      <ul class="plain-list">
+        <li>Failed analyses page the operator by email within minutes — a paid run failing silently is
+        treated as an incident, not a statistic.</li>
+        <li>Every deploy is gated: the full test suite, lint, and a compliance scan must pass, and deploys
+        are refused while any customer analysis is running.</li>
+        <li>Infrastructure runs on Google Cloud, inheriting Google's own SOC 2, ISO 27001, and related
+        attestations for the physical and platform layers.</li>
+      </ul>
+    </div>
+
+    <div class="card legal-card">
+      <h2>What we have not certified — yet</h2>
+      <p>Badges only mean something if you know what they prove, so here is our honest status:</p>
+      <ul class="plain-list">
+        <li><b>TPN (Trusted Partner Network)</b> — the MPA's content-security program, built for vendors
+        who handle unreleased material. Membership and the Blue Shield self-assessment are next on our
+        roadmap after our current release cycle.</li>
+        <li><b>SOC 2</b> — an independent audit of security controls over time. We operate the underlying
+        practices described on this page; the formal audit is planned as we grow into studio and
+        enterprise work.</li>
+      </ul>
+      <p>We will not display a badge we have not earned. When these change, this page changes.</p>
+    </div>
+
+    <div class="card legal-card">
+      <h2>Questions or reports</h2>
+      <p>Security questions, or something you believe we should fix:
+      <a href="/contact">contact us</a>. We read every report and respond to security issues first.</p>
+    </div>
+  </div>
+</main>
+</body>
+</html>
