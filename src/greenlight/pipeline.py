@@ -357,6 +357,7 @@ async def run(
         "report": the_report,
         "adjudication_notes": adjudication_notes,
         "open_questions": {d: toolbelt.desk_open_questions(state, d) for d in DESKS},
+        "cleared": {d: toolbelt.desk_cleared(state, d) for d in DESKS},
         "research_budget_left": {d: toolbelt.desk_budget_left(state, d) for d in DESKS},
         "research": {
             k: v for k, v in state.items() if isinstance(k, str) and k.startswith("research:")

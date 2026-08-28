@@ -551,7 +551,7 @@ def test_tool_error_shield_corrects_hallucinated_tools_but_lets_runabort_kill():
 
 def test_prune_disposition_aware():
     """Archive closed case files; never touch open ones; ceiling bounds monsters."""
-    from types import SimpleNamespace as NS
+    from types import SimpleNamespace
 
     from google.genai import types as gt
 
@@ -584,10 +584,10 @@ def test_prune_disposition_aware():
     contents = []
     for i in range(18):
         contents.extend(pair("E1" if i % 2 == 0 else "E2", i))
-    ctx = NS(
+    ctx = SimpleNamespace(
         agent_name="clearance_counsel", state={"flags:clearance_counsel": [{"entity_id": "E1"}]}
     )
-    req = NS(contents=list(contents))
+    req = SimpleNamespace(contents=list(contents))
     assert common.prune_stale_tool_results(ctx, req) is None
 
     def payload(c):
@@ -607,7 +607,7 @@ def test_prune_disposition_aware():
 
 
 def test_prune_hard_ceiling_bounds_open_items():
-    from types import SimpleNamespace as NS
+    from types import SimpleNamespace
 
     from google.genai import types as gt
 
@@ -637,8 +637,8 @@ def test_prune_hard_ceiling_bounds_open_items():
                 ],
             )
         )
-    ctx = NS(agent_name="clearance_counsel", state={})
-    req = NS(contents=list(contents))
+    ctx = SimpleNamespace(agent_name="clearance_counsel", state={})
+    req = SimpleNamespace(contents=list(contents))
     common.prune_stale_tool_results(ctx, req)
 
     def payload(c):
@@ -651,7 +651,7 @@ def test_prune_hard_ceiling_bounds_open_items():
 
 
 def test_prune_absolute_bound_and_entityless_ceiling():
-    from types import SimpleNamespace as NS
+    from types import SimpleNamespace
 
     from google.genai import types as gt
 
@@ -679,8 +679,8 @@ def test_prune_absolute_bound_and_entityless_ceiling():
     contents = []
     for i in range(130):
         contents.extend(resp_pair("research", {"entity_id": f"E{i}"}, "y" * 4000))
-    ctx = NS(agent_name="clearance_counsel", state={})
-    req = NS(contents=list(contents))
+    ctx = SimpleNamespace(agent_name="clearance_counsel", state={})
+    req = SimpleNamespace(contents=list(contents))
     common.prune_stale_tool_results(ctx, req)
     resps = [c for c in req.contents if c.parts[0].function_response is not None]
 
@@ -692,7 +692,7 @@ def test_prune_absolute_bound_and_entityless_ceiling():
     contents = []
     for i in range(50):
         contents.extend(resp_pair("read_scene", {"scene_id": f"S{i:03d}"}, "z" * 4000))
-    req = NS(contents=list(contents))
+    req = SimpleNamespace(contents=list(contents))
     common.prune_stale_tool_results(ctx, req)
     resps = [c for c in req.contents if c.parts[0].function_response is not None]
     assert sum("trimmed" in payload(c) for c in resps) == 10  # 50 - 40
@@ -773,7 +773,7 @@ def test_file_flag_retry_limit_breaks_rejection_loops():
                 {
                     "source_type": "web",
                     "url": "https://x.example",
-                    "excerpt": "words that resemble nothing retrieved at all in this run whatsoever",
+                    "excerpt": "words resembling nothing retrieved in this run at all",
                 }
             ],
             remedy_action="NO_ACTION",
@@ -949,3 +949,72 @@ def test_contract_rejections_hit_the_retry_cap_too():
     assert all(m.startswith("REJECTED") for m in msgs)
     assert "DO NOT retry" in msgs[toolbelt._PROV_RETRY_LIMIT - 1]
     assert "DO NOT retry" in msgs[-1]
+
+
+# ---- calibration-batch guards (2026-08-27 review: A1, A2, A3) ----
+
+
+def test_umbrella_flag_rejected_beyond_scene_cap():
+    """A1: a clearance finding spanning the whole script swallows real entities
+    (the F101 failure: 137 scenes, twelve people, one finding)."""
+    ctx = make_ctx()
+    msg = file_good_flag(ctx, scene_ids=[f"S{i:03d}" for i in range(1, 11)])
+    assert "REJECTED" in msg and "PER" in msg.upper()
+    assert not ctx.state.get("flags:clearance_counsel")
+
+
+def test_ratings_findings_may_aggregate_scenes():
+    """Cumulative-content categories legitimately anchor to many scenes."""
+    ctx = make_ctx(
+        agent_name="ratings_board",
+        **{
+            "research_budget:ratings_board": 3,
+            "research_keys:ratings_board": ["research:E001:seeded"],
+        },
+    )
+    msg = file_good_flag(
+        ctx,
+        category="rating_language",
+        scene_ids=[f"S{i:03d}" for i in range(1, 10)],
+    )
+    assert msg.startswith("Filed"), msg
+
+
+def test_background_only_sources_rejected_at_medium_plus():
+    """A3: fan wikis and forums cannot carry a legal conclusion alone."""
+    ctx = make_ctx(
+        **{
+            "research:E001:seeded": {
+                "objective": "seeded",
+                "search_id": "s0",
+                "results": [
+                    {
+                        "url": "https://rating-system.fandom.com/wiki/R",
+                        "title": "Fan wiki",
+                        "excerpts": [RESEARCH_EXCERPT],
+                    }
+                ],
+            },
+        }
+    )
+    bg_cite = {
+        "title": "Fan wiki",
+        "url": "https://rating-system.fandom.com/wiki/R",
+        "excerpt": RESEARCH_EXCERPT,
+    }
+    msg = file_good_flag(ctx, citations=[bg_cite])
+    assert "REJECTED" in msg and "authoritative" in msg
+    # the same evidence is acceptable at background severity
+    msg2 = file_good_flag(ctx, citations=[bg_cite], severity="FYI")
+    assert msg2.startswith("Filed"), msg2
+
+
+def test_record_clearance_counts_and_requires_reasoning():
+    """A2: examined-and-fine work becomes visible, and bare 'cleared' is refused."""
+    ctx = make_ctx()
+    assert "REJECTED" in toolbelt.record_clearance("E001", "  ", ctx)
+    msg = toolbelt.record_clearance("E001", "Public domain since 1922; no recording used.", ctx)
+    assert msg.startswith("Recorded")
+    (entry,) = ctx.state["cleared:clearance_counsel"]
+    assert entry["entity_id"] == "E001"
+    assert toolbelt.desk_cleared(ctx.state, "clearance_counsel")

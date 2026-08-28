@@ -330,6 +330,14 @@ main:has(> .hero-band:first-child) { padding-top: 0; }
 
 .counter-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 72px; padding: 0; background: none; border: 0; box-shadow: none; }
 @media (max-width: 860px) { .counter-strip { grid-template-columns: repeat(2, 1fr); } }
+/* On wide monitors the hero pooled in a laptop-sized column — let it breathe. */
+@media (min-width: 1500px) {
+  .hero h1 { font-size: clamp(42px, 4.4vw, 86px); max-width: 22ch; }
+  .hero .sub { font-size: 25px; max-width: 64ch; }
+  .hero-note { font-size: 17px; }
+  .hero-visual { max-width: 900px; }
+  .pipeline-svg { max-width: 800px; }
+}
 .counter-strip div { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px; }
 .counter-strip b { font-family: var(--display); font-size: clamp(36px, 4vw, 54px); font-weight: 640; color: var(--green-deep); font-variant-numeric: tabular-nums; }
 .counter-strip div:nth-child(2) b { color: var(--gold); }
@@ -1160,6 +1168,7 @@ td.bd-col-finding { overflow-wrap: normal; }
 .bd-sevcell.sev-MEDIUM { color: var(--medium); }
 .bd-sevcell.sev-LOW, .bd-sevcell.sev-FYI { color: var(--low); }
 tr.bd-sev-BLOCKER { background: rgba(224, 52, 42, 0.045); }
+.chip-partial { background: transparent; border: 1px solid var(--line-2, #c9c2ac); color: var(--ink-2); font-weight: 600; }
 .flag-ref-gone { color: var(--ink-dim, #8a8271); font-style: italic; }
 .bd-sec-title { margin: 26px 0 6px; font-size: 12px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: #6d6653; border-top: 1.5px solid #1a1712; padding-top: 12px; }
 .bd-back-list { margin: 0; padding-left: 0; list-style: none; font-size: 12.5px; line-height: 1.65; }

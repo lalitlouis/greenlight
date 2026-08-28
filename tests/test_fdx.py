@@ -5,9 +5,8 @@ from __future__ import annotations
 import pytest
 
 from greenlight.fdx import FdxError, fdx_to_fountain
-from greenlight.parser import parse_fountain
+from greenlight.parser import draft_identity, parse_fountain
 from greenlight.pdf import screenplay_text
-from greenlight.parser import draft_identity
 
 FDX = """<?xml version="1.0" encoding="UTF-8"?>
 <FinalDraft DocumentType="Script" Template="No" Version="5">
@@ -35,7 +34,10 @@ def test_invalid_fdx_is_rejected_with_guidance() -> None:
 
 
 def test_fdx_without_scenes_is_rejected() -> None:
-    empty = b'<?xml version="1.0"?><FinalDraft><Content><Paragraph Type="Action"><Text>hi</Text></Paragraph></Content></FinalDraft>'
+    empty = (
+        b'<?xml version="1.0"?><FinalDraft><Content>'
+        b'<Paragraph Type="Action"><Text>hi</Text></Paragraph></Content></FinalDraft>'
+    )
     with pytest.raises(FdxError, match="scene headings"):
         fdx_to_fountain(empty)
 

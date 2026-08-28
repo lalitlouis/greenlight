@@ -17,6 +17,7 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from greenlight import parser  # noqa: E402
 
+
 def main() -> int:
     for rec_path in sorted((ROOT / "runs").glob("case_*.json")):
         slug = rec_path.stem.removeprefix("case_")
@@ -40,8 +41,11 @@ def main() -> int:
             parser.draft_identity(source, meta, scenes, record.get("script_title") or slug),
         )
         rec_path.write_text(json.dumps(record, indent=2))
-        print(f"{slug}: scene_meta for {len(scenes)} scenes, draft {record['draft']['sha256'][:12]}")
+        print(
+            f"{slug}: scene_meta for {len(scenes)} scenes, draft {record['draft']['sha256'][:12]}"
+        )
     return 0
+
 
 if __name__ == "__main__":
     raise SystemExit(main())

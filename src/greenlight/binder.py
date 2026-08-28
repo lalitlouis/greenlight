@@ -246,8 +246,22 @@ def _back_matter(record: dict[str, Any]) -> dict[str, Any]:
         for h in _hosts(f):
             if h not in hosts:
                 hosts.append(h)
+    ents = {e.get("entity_id"): e.get("surface") for e in record.get("entities", [])}
+    recorded = [
+        {
+            "desk": _pretty(d),
+            "text": (
+                f"{_unescape(ents.get(c.get('entity_id')) or '')}: {c.get('reasoning', '')}"
+                if ents.get(c.get("entity_id"))
+                else c.get("reasoning", "")
+            ),
+        }
+        for d, items in (record.get("cleared") or {}).items()
+        for c in items
+    ]
     return {
-        "cleared": [{"desk": _pretty(d), "text": q} for d, q in oq_all if _is_determination(q)],
+        "cleared": recorded
+        + [{"desk": _pretty(d), "text": q} for d, q in oq_all if _is_determination(q)],
         "open_questions": [
             {"desk": _pretty(d), "text": q} for d, q in oq_all if not _is_determination(q)
         ],

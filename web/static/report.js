@@ -439,7 +439,12 @@ function flagRow(f, opts) {
   top.appendChild(el("span", "cat", prettyCat(f.category)));
   top.appendChild(el("span", "by by-" + f.agent, prettyCat(f.agent)));
   main.appendChild(top);
-  main.appendChild(el("p", "finding", f.finding || ""));
+  let findingText = f.finding || "";
+  if (findingText.startsWith("[partially supported] ")) {
+    findingText = findingText.slice("[partially supported] ".length);
+    top.appendChild(glossTip(el("span", "sev-chip chip-partial", "PARTIAL — verified with caveats"), "PARTIAL"));
+  }
+  main.appendChild(el("p", "finding", findingText));
 
   const cites = f.citations || [];
   const hosts = [...new Set(cites.map((c) => (c.url || "").split("/")[2]).filter(Boolean))];
@@ -517,6 +522,14 @@ function renderPrediction(root, pred) {
     line += ` The plurality — ${majority[1]} of ${comps.length} — are rated ${majority[0]}; treat the prediction with caution.`;
   }
   meta.appendChild(el("p", "pred-evidence", line));
+  const base = pred.corpus_base_rates || {};
+  if (base[pred.predicted]) {
+    let baseLine = `Base rate: ${base[pred.predicted]}% of all 6,302 corpus films are rated ${pred.predicted} — the neighbours ${same + (typeof stricter === "number" ? stricter : 0) > Math.round((base[pred.predicted] / 100) * comps.length) ? "add lift over" : "match"} that baseline.`;
+    if (pred.distance_spread && pred.distance_spread < 0.05) {
+      baseLine += ` Distances span only ${pred.distance_spread}, so weigh the base rate as much as the neighbour set.`;
+    }
+    meta.appendChild(el("p", "pred-evidence pred-base", baseLine));
+  }
   head.appendChild(meta);
   card.appendChild(head);
 
@@ -807,6 +820,7 @@ function buildReportNav(record, rep) {
 }
 
 const GLOSSARY = {
+  PARTIAL: "The blinded verifier confirmed the script facts, but the cited excerpts support a weaker or narrower claim than the desk filed. The rule: severity is capped at MEDIUM and the finding carries this marker. It tracks what the evidence proves, not how many citations there are.",
   // remedy verbs
   REPLACE: "Swap the element for a cleared or fictional alternative (a prop, a name, a track).",
   OBTAIN_LICENSE: "Negotiate permission from the rights holder — the estimate is the going rate, not a quote.",
@@ -1084,7 +1098,13 @@ function renderReport(record) {
   const oq = record.open_questions || {};
   const oqAll = Object.entries(oq).flatMap(([desk, qs]) => qs.map((q) => [desk, q]));
   const oqItems = oqAll.filter(([, q]) => !isDetermination(q));
-  const clearedItems = oqAll.filter(([, q]) => isDetermination(q));
+  const recordedCleared = Object.entries(record.cleared || {}).flatMap(([desk, items]) =>
+    items.map((c) => {
+      const who = ENTITY_SURFACE[c.entity_id];
+      return [desk, who ? `${who}: ${c.reasoning}` : c.reasoning];
+    })
+  );
+  const clearedItems = recordedCleared.concat(oqAll.filter(([, q]) => isDetermination(q)));
   if (oqItems.length) {
     const sec = el("div", "section-head");
     sec.id = "sec-questions";

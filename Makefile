@@ -32,7 +32,7 @@ eval:           ## score the latest run against fixtures/SEEDS.md
 	.venv/bin/python scripts/eval_run.py
 
 lint:
-	.venv/bin/ruff check src && .venv/bin/ruff format --check src
+	.venv/bin/ruff check src tests scripts && .venv/bin/ruff format --check src tests
 
 audit:          ## dependency CVE scan (network)
 	.venv/bin/pip-audit --skip-editable

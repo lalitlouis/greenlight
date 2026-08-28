@@ -180,11 +180,29 @@ def prune_stale_tool_results(callback_context, llm_request):
 
 COVERAGE_RULE = """
 
-COVERAGE ROLL-CALL — the contract for finishing. Immediately before calling done(), write out
-every item on your worklist with its disposition, one line each:
-  <worklist item> -> FLAGGED <flag_id> | CLEARED (one-line reason) | OPEN QUESTION (noted)
-An item with no disposition is unfinished work: deal with it before you close. If the budget
-is spent, its disposition is an open question, never silence.
+COVERAGE ROLL-CALL — the contract for finishing. Every worklist item ends in exactly one of
+three dispositions, each recorded through its tool:
+  - a real issue      -> file_flag
+  - examined, fine    -> record_clearance(entity_id, reasoning) — REQUIRED, not optional.
+                         Silence is indistinguishable from "never looked"; the cleared list
+                         renders on the report, so this is how your work becomes visible.
+  - genuinely unknown -> note_open_question (unresolved items ONLY — never conclusions;
+                         a determination like "cleared, no license needed" belongs in
+                         record_clearance)
+Immediately before calling done(), write the roll-call: every worklist item, one line each,
+with its disposition. An item with no disposition is unfinished work. If the budget is spent,
+its disposition is an open question, never silence.
+
+ONE FINDING PER ENTITY — each named person, brand, work, or location with an issue gets its
+OWN finding with its own citations and remedy. Never fold multiple entities into one umbrella
+finding, and anchor each finding to the specific scenes where its issue occurs (max 8 — cite
+the strongest occurrences, not every mention).
+
+SOURCE AUTHORITY — a MEDIUM+ finding needs at least one authoritative citation: regulator or
+government site (uspto.gov, copyright.gov, csatf.org, filmratings.com, bbfc.co.uk, nma.gov.ae),
+primary statute, or law-firm analysis. Fan wikis, forums, and general-interest sites are
+background: they may add color, never carry the conclusion. Steer research() there with
+restrict_to_domains when chasing a legal question.
 """
 
 

@@ -74,6 +74,13 @@ def desk_open_questions(state: Any, desk: str) -> list[Any]:
     return out
 
 
+def desk_cleared(state: Any, desk: str) -> list[Any]:
+    out: list[Any] = []
+    for name in batch_agent_names(desk):
+        out.extend(state.get(f"cleared:{name}") or [])
+    return out
+
+
 def desk_budget_left(state: Any, desk: str) -> int:
     batch_keys = [f"research_budget:{n}" for n in batch_agent_names(desk)[1:]]
     batch_vals = [state.get(k) for k in batch_keys]
@@ -383,6 +390,18 @@ async def research(
     Every citation you file must copy an excerpt from these results VERBATIM. Never
     paraphrase an excerpt.
     """
+    if isinstance(restrict_to_domains, str):
+        cleaned = restrict_to_domains.strip()
+        restrict_to_domains = (
+            [cleaned] if cleaned and cleaned.lower() not in ("none", "null", "[]") else None
+        )
+    elif restrict_to_domains:
+        restrict_to_domains = [
+            str(d).strip()
+            for d in restrict_to_domains
+            if str(d).strip() and str(d).strip().lower() not in ("none", "null")
+        ] or None
+
     # Key on entity AND question: an ownership chase asks several different
     # questions about one entity, and each deserves its own search. Identical
     # questions still share across desks. Geo/domain modifiers change the answer
@@ -958,6 +977,34 @@ def _precedent_has(needle: str, state: Any) -> bool:
     return False
 
 
+BACKGROUND_HOSTS = {
+    "wikipedia.org",
+    "fandom.com",
+    "reddit.com",
+    "quora.com",
+    "discogs.com",
+    "songfacts.com",
+    "secondhandsongs.com",
+    "imdb.com",
+    "tvtropes.org",
+    "writing.stackexchange.com",
+    "writingforums.com",
+    "genius.com",
+    "looper.com",
+}
+
+_SCENE_ANCHOR_CAP = 8  # a finding spanning more scenes than this says "the script"
+
+
+def _is_background_host(url: str) -> bool:
+    seg = (url or "").split("/")[2:3]
+    if not seg:
+        return True
+    host = seg[0].removeprefix("www.")
+    root = ".".join(host.split(".")[-2:])
+    return host in BACKGROUND_HOSTS or root in BACKGROUND_HOSTS
+
+
 def file_flag(
     scene_ids: list[str],
     severity: str,
@@ -1049,6 +1096,41 @@ def file_flag(
             "REJECTED, not filed: every citation needs a non-empty verbatim excerpt.",
         )
 
+    # One finding per entity, anchored where the issue occurs. Ratings and
+    # territory findings legitimately aggregate cumulative content; everything
+    # else spanning the whole script is an umbrella flag that swallows real
+    # entities (the F101 failure: 137 scenes, twelve people, one finding).
+    aggregate_ok = category.startswith(("rating_", "territory_"))
+    if len(scene_ids) > _SCENE_ANCHOR_CAP and not aggregate_ok:
+        return _reject_or_stop(
+            tool_context,
+            entity_id,
+            category,
+            f"REJECTED, not filed: this finding anchors to {len(scene_ids)} scenes. "
+            f"Anchor to the {_SCENE_ANCHOR_CAP} scenes where the issue is strongest. "
+            "If several distinct entities share this issue, file ONE FINDING PER "
+            "ENTITY — each named person, brand, or work gets its own finding with "
+            "its own citations and remedy.",
+        )
+
+    # A legal conclusion needs at least one non-background source. Fan wikis and
+    # forums may inform, but they cannot carry a MEDIUM+ finding alone.
+    if severity in ("BLOCKER", "HIGH", "MEDIUM") and all(
+        _is_background_host(c.get("url") or "") for c in cits
+    ):
+        return _reject_or_stop(
+            tool_context,
+            entity_id,
+            category,
+            "REJECTED, not filed: every citation is a background-tier source (fan "
+            "wiki, forum, general-interest site). A finding at this severity needs "
+            "at least one authoritative source — regulator or government site, "
+            "USPTO/Copyright Office, CSATF, CARA/filmratings.com, BBFC, primary "
+            "statutes, or law-firm analysis. Re-run research() with "
+            "restrict_to_domains targeting those, or lower the severity to LOW/FYI "
+            "if the claim only merits background support.",
+        )
+
     # Excerpt provenance: a citation's excerpt must exist VERBATIM in material this
     # run actually retrieved (research results, precedent rationales, or the script
     # itself). A model deep in a long run can confabulate a plausible "quote"; this
@@ -1138,12 +1220,41 @@ def _embed(text: str) -> list[float]:
     return list(res.embeddings[0].values)
 
 
-async def query_precedent(text: str, k: int, tool_context: ToolContext) -> dict[str, Any]:
-    """Find the k nearest released films by MPA/CARA rating rationale.
+_BASE_RATES_CACHE: dict[str, dict[str, float]] = {}
 
-    text: a capsule content profile of THIS script — the rating-relevant facts in the
-    style of a rating rationale, e.g. "strong language throughout, brief violence,
-    drug use, thematic elements involving grief". 1-3 sentences.
+
+def _corpus_base_rates() -> dict[str, float]:
+    """Rating distribution across the whole corpus — the denominator that tells
+    the reader whether the neighbours add lift over the base rate."""
+    if "rates" not in _BASE_RATES_CACHE:
+        try:
+            rows = (
+                _clickhouse_client()
+                .query("SELECT rating, count() FROM rating_rationales GROUP BY rating")
+                .result_rows
+            )
+            total = sum(int(c) for _, c in rows) or 1
+            _BASE_RATES_CACHE["rates"] = {r: round(100 * int(c) / total, 1) for r, c in rows}
+        except Exception:
+            _BASE_RATES_CACHE["rates"] = {}
+    return _BASE_RATES_CACHE["rates"]
+
+
+async def query_precedent(text: str, k: int, tool_context: ToolContext) -> dict[str, Any]:
+    """Find the k nearest released films in a corpus of 6,302 rated releases.
+
+    text: a capsule profile of THIS script, 2-3 sentences, in this order:
+      1. GENRE, REGISTER, AND SETTING FIRST — "a dialogue-driven biographical
+         drama about a corporate founding, told through legal depositions",
+         "a slow-burn rural ghost story", "an ensemble heist comedy". The
+         corpus is embedded from film descriptions, so genre and tone are what
+         place you in the right neighbourhood.
+      2. THEN the rating-relevant content elements with their framing —
+         "pervasive strong language; brief cocaine use at a party, not
+         endorsed; no violence; no nudity". Framing matters: depicted-vs-
+         endorsed and on-screen-vs-recounted change ratings.
+    A bare content list ("sex, drugs, language") lands you among shock
+    comedies regardless of genre — always lead with what kind of film this is.
     k: how many comparables, typically 8.
 
     Returns released films with their actual rating, official rationale, and distance
@@ -1180,6 +1291,9 @@ async def query_precedent(text: str, k: int, tool_context: ToolContext) -> dict[
             "error": f"precedent corpus unavailable: {type(e).__name__}: {str(e)[:120]}",
             "guidance": "Fall back to research() on documented CARA standards.",
         }
+    base_rates = _corpus_base_rates()
+    dists = [float(r[5]) for r in rows]
+    spread = round(max(dists) - min(dists), 4) if dists else 0.0
     comparables = [
         {
             "title": r[0],
@@ -1194,8 +1308,18 @@ async def query_precedent(text: str, k: int, tool_context: ToolContext) -> dict[
     # The prediction tool assembles the report's rating_prediction from the most
     # recent comparables — stored here so the desk never re-types them.
     tool_context.state[f"last_precedent:{_agent_key(tool_context)}"] = comparables
+    tool_context.state[f"last_precedent_meta:{_agent_key(tool_context)}"] = {
+        "base_rates": base_rates,
+        "spread": spread,
+    }
     _register_provenance(tool_context, [c.get("rationale", "") for c in comparables])
-    return {"comparables": comparables}
+    out: dict[str, Any] = {"comparables": comparables, "corpus_base_rates": base_rates}
+    if spread and spread < 0.05:  # noqa: PLR2004 - tight-cluster caution threshold
+        out["caution"] = (
+            f"distances span only {spread} — the neighbourhood is not discriminating "
+            "strongly; weigh the corpus base rate as much as the neighbours"
+        )
+    return out
 
 
 # --- file_rating_prediction -------------------------------------------------
@@ -1229,12 +1353,15 @@ def file_rating_prediction(
         )
     if predicted not in {"G", "PG", "PG-13", "R", "NC-17"}:
         return "REJECTED: predicted must be one of G, PG, PG-13, R, NC-17."
+    meta = tool_context.state.get(f"last_precedent_meta:{desk}") or {}
     tool_context.state["rating_prediction"] = {
         "predicted": predicted,
         "target": tool_context.state.get("target_rating"),
         "rationale": rationale,
         "comparables": comparables,
         "beats_to_cut": list(beats_to_cut),
+        "corpus_base_rates": meta.get("base_rates") or {},
+        "distance_spread": meta.get("spread"),
     }
     dist: dict[str, int] = {}
     for c in comparables:
@@ -1261,6 +1388,32 @@ _DONE_MIN_BUDGET = 3
 _DONE_COVERAGE = 0.5
 
 
+def record_clearance(entity_id: str, reasoning: str, tool_context: ToolContext) -> str:
+    """Record that a worklist item was examined and CLEARED — no finding needed.
+
+    This is how examined-and-fine work becomes visible: silence looks identical to
+    "never looked". Use it for every worklist item you investigated and concluded
+    carries no issue (public domain, generic term, protected expressive use, no
+    real-world match). NOT for unresolved items — those are note_open_question.
+
+    entity_id: the worklist entity this clears (e.g. "E014"), or "" for a
+      script-level determination.
+    reasoning: one or two sentences stating WHY it is clear, specific enough for
+      production counsel to audit ("'Amazing Grace' composition published 1779,
+      public domain worldwide; no specific recording is used").
+    """
+    desk = _desk(tool_context)
+    name = _agent_key(tool_context)
+    state = tool_context.state
+    entry = {"entity_id": entity_id or None, "reasoning": (reasoning or "").strip()[:600]}
+    if not entry["reasoning"]:
+        return "REJECTED: reasoning is required — a bare 'cleared' is not auditable."
+    cleared = list(state.get(f"cleared:{name}", []) or [])
+    cleared.append(entry)
+    state[f"cleared:{name}"] = cleared
+    return f"Recorded: {desk} cleared {entity_id or 'script-level item'}."
+
+
 def done(reason: str, tool_context: ToolContext) -> str:
     """Close your desk. Call when every worklist item is either flagged, cleared, or
     noted as an open question — or when told your research budget is spent. reason is
@@ -1285,8 +1438,10 @@ def done(reason: str, tool_context: ToolContext) -> str:
     else:
         worklist = _triage_dict(state).get(desk) or []
     budget_left = int(state.get(_budget_key(tool_context), 0))
-    dispositions = len(state.get(f"flags:{name}", []) or []) + len(
-        state.get(f"open_questions:{name}", []) or []
+    dispositions = (
+        len(state.get(f"flags:{name}", []) or [])
+        + len(state.get(f"open_questions:{name}", []) or [])
+        + len(state.get(f"cleared:{name}", []) or [])
     )
     underworked = worklist and dispositions < _DONE_COVERAGE * len(worklist)
     if underworked and budget_left >= _DONE_MIN_BUDGET and refusals < _DONE_MAX_REFUSALS:
@@ -1304,6 +1459,7 @@ DESK_TOOLS = [
     read_scene,
     find_in_script,
     research,
+    record_clearance,
     fetch_page,
     deep_research,
     query_precedent,
