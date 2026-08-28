@@ -1404,3 +1404,28 @@ tr.bd-sev-BLOCKER { background: rgba(224, 52, 42, 0.045); }
 .rc-stats { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; row-gap: 3px; font-size: 13.5px; color: var(--ink-2); margin: 10px 0 4px; }
 .rc-stats > span { white-space: nowrap; }
 .rc-stats > span + span::before { content: "\00b7\00a0"; color: var(--ink-3); margin-right: 2px; }
+
+/* ---------- security page graphics ---------- */
+.sec-diagram { padding: 26px 22px 16px; margin-bottom: 22px; overflow-x: auto; }
+.sec-diagram svg { width: 100%; max-width: 860px; height: auto; display: block; margin: 0 auto; font-family: inherit; }
+.sd-title { font-size: 13px; font-weight: 700; letter-spacing: 0.09em; fill: var(--ink-3, #8a8271); }
+.sd-label { font-size: 13.5px; fill: var(--ink-2); }
+.sd-hint { font-size: 12px; fill: var(--ink-3, #8a8271); }
+.sd-doc rect { fill: var(--gold-tint, #2b281a); stroke: var(--gold); stroke-width: 1.6; }
+.sd-doc line { stroke: var(--gold); stroke-width: 1.4; opacity: 0.75; }
+.sd-server rect { fill: var(--surface); stroke: var(--line-2); stroke-width: 1.6; }
+.sd-server circle { fill: var(--green); }
+.sd-server line { stroke: var(--line-2); stroke-width: 1.6; }
+.sd-pipe-top { stroke: var(--line-2); stroke-width: 1.4; fill: none; }
+.sd-flow { stroke: var(--green); stroke-width: 2.4; fill: none; stroke-dasharray: 7 9; animation: sd-flow 1.6s linear infinite; }
+@keyframes sd-flow { to { stroke-dashoffset: -16; } }
+@media (prefers-reduced-motion: reduce) { .sd-flow { animation: none; } }
+.sd-divider { stroke: var(--line); stroke-width: 1; }
+.sd-ring { fill: none; stroke-width: 1.8; }
+.sd-ring-gcs { stroke: var(--desk-territory, #38bdf8); stroke-dasharray: 5 6; opacity: 0.8; }
+.sd-ring-fernet { stroke: var(--green); }
+.sd-ring-label { font-size: 12px; fill: var(--ink-3, #8a8271); }
+.sd-fernet-label { fill: var(--green-deep, var(--ink-2)); }
+.sd-key circle, .sd-key path { fill: none; stroke: var(--gold); stroke-width: 1.8; stroke-linecap: round; }
+.sd-caption { margin: 14px auto 4px; max-width: 70ch; text-align: center; font-size: 14px; color: var(--ink-2); }
+.sec-ico { width: 21px; height: 21px; margin-right: 10px; vertical-align: -3px; fill: none; stroke: var(--green); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }

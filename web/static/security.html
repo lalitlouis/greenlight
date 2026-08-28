@@ -32,8 +32,56 @@
       not certified yet. Last updated August 28, 2026 · ScriptRisk is in beta.</p>
     </div>
 
+    <div class="card sec-diagram" aria-label="How a screenplay is protected in transit and at rest">
+      <svg viewBox="0 0 880 300" role="img" xmlns="http://www.w3.org/2000/svg">
+        <!-- IN TRANSIT -->
+        <text x="20" y="34" class="sd-title">IN TRANSIT</text>
+        <g class="sd-doc">
+          <rect x="24" y="120" width="76" height="96" rx="8"/>
+          <line x1="40" y1="146" x2="84" y2="146"/><line x1="40" y1="162" x2="84" y2="162"/>
+          <line x1="40" y1="178" x2="72" y2="178"/>
+          <text x="62" y="238" class="sd-label" text-anchor="middle">your script</text>
+        </g>
+        <g class="sd-pipe">
+          <path d="M112 152 h210" class="sd-pipe-top"/>
+          <path d="M112 184 h210" class="sd-pipe-top"/>
+          <path d="M126 168 h182" class="sd-flow"/>
+          <text x="217" y="140" class="sd-label" text-anchor="middle">TLS — encrypted tunnel</text>
+          <text x="217" y="210" class="sd-hint" text-anchor="middle">browser → us, and to every provider</text>
+        </g>
+        <g class="sd-server">
+          <rect x="334" y="118" width="88" height="100" rx="10"/>
+          <circle cx="378" cy="146" r="5"/>
+          <line x1="352" y1="170" x2="404" y2="170"/><line x1="352" y1="188" x2="404" y2="188"/>
+          <text x="378" y="240" class="sd-label" text-anchor="middle">ScriptRisk</text>
+        </g>
+        <!-- divider -->
+        <line x1="470" y1="24" x2="470" y2="276" class="sd-divider"/>
+        <!-- AT REST -->
+        <text x="500" y="34" class="sd-title">AT REST — TWO LAYERS</text>
+        <g class="sd-vault">
+          <rect x="500" y="60" width="336" height="196" rx="14" class="sd-ring sd-ring-gcs"/>
+          <text x="516" y="86" class="sd-ring-label">Google Cloud Storage encryption</text>
+          <rect x="532" y="102" width="272" height="132" rx="12" class="sd-ring sd-ring-fernet"/>
+          <text x="548" y="126" class="sd-ring-label sd-fernet-label">application-layer seal — Fernet (AES + HMAC)</text>
+          <g class="sd-doc">
+            <rect x="630" y="142" width="62" height="74" rx="7"/>
+            <line x1="644" y1="164" x2="678" y2="164"/><line x1="644" y1="178" x2="678" y2="178"/>
+            <line x1="644" y1="192" x2="668" y2="192"/>
+          </g>
+          <g class="sd-key">
+            <circle cx="790" cy="186" r="9"/>
+            <path d="M796 192 l16 16 M804 200 l6 -6 M810 206 l5 -5"/>
+            <text x="800" y="252" class="sd-hint" text-anchor="middle">key in Secret Manager</text>
+          </g>
+        </g>
+      </svg>
+      <p class="sd-caption">Bucket access alone yields ciphertext: the seal is applied <i>before</i>
+      your script reaches storage, and the key never lives beside the data.</p>
+    </div>
+
     <div class="card legal-card">
-      <h2>Encryption</h2>
+      <h2><svg class="sec-ico" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10 V7a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15" r="1.6"/></svg>Encryption</h2>
       <ul class="plain-list">
         <li><b>In transit:</b> TLS everywhere — browser to us, and between every internal service and provider.</li>
         <li><b>At rest, twice:</b> your script and its analysis are encrypted at the application layer
@@ -46,7 +94,7 @@
     </div>
 
     <div class="card legal-card">
-      <h2>Access</h2>
+      <h2><svg class="sec-ico" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21 c0-4 4-6 8-6 s8 2 8 6"/></svg>Access</h2>
       <ul class="plain-list">
         <li><b>Sign-in:</b> Google OAuth only — we never see or store a password. Sessions expire.</li>
         <li><b>Ownership is structural:</b> a signed-in analysis can only be read or deleted through the
@@ -61,7 +109,7 @@
     </div>
 
     <div class="card legal-card">
-      <h2>Your work is never training data</h2>
+      <h2><svg class="sec-ico" viewBox="0 0 24 24"><path d="M12 3 l8 4 v5 c0 5-3.5 8-8 9 c-4.5-1-8-4-8-9 V7 z"/><path d="M8.5 12.5 l2.5 2.5 l4.5-5"/></svg>Your work is never training data</h2>
       <ul class="plain-list">
         <li>We do not train models on your screenplay, and our AI processing runs under enterprise terms
         (Google Cloud Vertex AI) that do not permit training on your content.</li>
@@ -71,7 +119,7 @@
     </div>
 
     <div class="card legal-card">
-      <h2>Deletion that actually deletes</h2>
+      <h2><svg class="sec-ico" viewBox="0 0 24 24"><path d="M5 7 h14 M10 7 V5 h4 v2 M7 7 l1 13 h8 l1-13"/><path d="M10 11 v6 M14 11 v6"/></svg>Deletion that actually deletes</h2>
       <ul class="plain-list">
         <li>Delete any analysis at any time — from <a href="/my">My reports</a> signed in, or via the
         report page for anonymous runs.</li>
@@ -81,7 +129,7 @@
     </div>
 
     <div class="card legal-card">
-      <h2>Monitoring and response</h2>
+      <h2><svg class="sec-ico" viewBox="0 0 24 24"><path d="M12 4 a6 6 0 0 1 6 6 c0 5 2 6 2 6 H4 c0 0 2-1 2-6 a6 6 0 0 1 6-6 z"/><path d="M10 19 a2 2 0 0 0 4 0"/></svg>Monitoring and response</h2>
       <ul class="plain-list">
         <li>Failed analyses page the operator by email within minutes — a paid run failing silently is
         treated as an incident, not a statistic.</li>
@@ -93,7 +141,7 @@
     </div>
 
     <div class="card legal-card">
-      <h2>What we have not certified — yet</h2>
+      <h2><svg class="sec-ico" viewBox="0 0 24 24"><circle cx="12" cy="9" r="5"/><path d="M9 13 l-1.5 7 L12 17.5 L16.5 20 L15 13"/></svg>What we have not certified — yet</h2>
       <p>Badges only mean something if you know what they prove, so here is our honest status:</p>
       <ul class="plain-list">
         <li><b>TPN (Trusted Partner Network)</b> — the MPA's content-security program, built for vendors
@@ -107,7 +155,7 @@
     </div>
 
     <div class="card legal-card">
-      <h2>Questions or reports</h2>
+      <h2><svg class="sec-ico" viewBox="0 0 24 24"><path d="M4 6 h16 v12 H4 z"/><path d="M4 7 l8 6 l8-6"/></svg>Questions or reports</h2>
       <p>Security questions, or something you believe we should fix:
       <a href="/contact">contact us</a>. We read every report and respond to security issues first.</p>
     </div>
