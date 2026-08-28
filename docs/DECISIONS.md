@@ -479,3 +479,48 @@ previews don't ship in a paid product. All model names now live in
 pricing $0.75/$3.75 per MTok roughly doubles per-run model spend (~$2 → ~$4–5);
 accepted deliberately — the case library and demo should showcase the best
 engine available. Pricing doubles again 2027-01-01; revisit then.
+
+## 2026-08-27 — Industry-format research adopted as the format roadmap
+
+External research on clearance-industry conventions (input formats, report
+conventions, the E&O workflow, WGA revision machinery) accepted as the basis
+for ingest/emit priorities. The load-bearing findings:
+
+- **PDF and FDX are both non-negotiable.** Writers send PDF deliberately (to
+  prevent alteration); production sends FDX, the delivery standard whose XML
+  carries scene boundaries, element types, locked scene numbers, and revision
+  marks for free. We ingest PDF and Fountain today; FDX ingest is being added
+  now. Third-party FDX is validated, not trusted (Final Draft's own KB warns
+  it may not be well-formed).
+- **Scene and page numbers are a shared coordinate system, not internal ids.**
+  Once a script is locked, scene numbers never change — every department
+  references them. Rule adopted: use the script's own numbers whenever they
+  exist (FDX Number attributes, Fountain #42# syntax); generate and clearly
+  label our own only for unnumbered spec drafts. Internally scene_id stays
+  S### (stable machine id); the script's number is carried alongside and is
+  what renders. scene.schema.json gains an optional `number` — additive.
+- **Draft identity is chain of custody.** A clearance report is only valid for
+  the exact draft it ran against. Every new record now carries a draft block:
+  title, format, byte size, SHA-256, page count, scene-number provenance
+  (script vs generated), and receipt date. Rendered on the report and binder.
+- **Binder layout follows the industry**: severity-ranked exposure summary up
+  front, body in script order (producers read alongside the script).
+- Deferred deliberately: annotated-script PDF, Movie Magic .sex breakdown
+  export, rights-holder contact blocks, title-report add-on, DOCX degraded
+  path — post-deadline, none demo.
+
+## 2026-08-27 — Revision-aware rescan is the subscription product
+
+The WGA revision system (White -> Blue -> Pink ... colored pages, margin
+asterisks at paragraph granularity, locked scene and page numbers, A-pages,
+OMITTED pages) is a formal, machine-readable change-tracking protocol — and
+incumbents bill against it by hand: $100 per revision pass "if asterisks are
+attached." Decision: build revision-aware rescanning natively, in two stages.
+Stage 1 (findings diff): ingest a revised draft, run it, and diff finding sets
+against the prior run (match on entity + category + scene) -> "N new, M
+resolved, K unchanged." Stage 2 (true incremental): read FDX revision
+asterisks and re-analyze only changed pages. Stage 1 is the demo-able MVP and
+the economic core of the recurring tier; Stage 2 is the software moat no
+manual researcher can follow. Not started yet — first in line after the
+format work above; privacy-vector detection (phones, addresses, plates) rides
+the next gated calibration batch alongside it.
