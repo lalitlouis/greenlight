@@ -204,7 +204,41 @@ def build_agent():
             entities = list(tri.get("entities") or [])
             delta = delta_against_triage(sweep(scenes), entities)
             items = as_worklist_items(delta, 1)
-            if not items:
+
+            # Worklist floor: an extracted entity on NO desk worklist is
+            # invisible downstream no matter how diligent the desks are —
+            # the k=3 feature measurement caught triage assigning 39/110
+            # extracted entities in one pass and 110/110 in another. Assign
+            # every stray to clearance deterministically; record_clearance
+            # is the cheap honest out for the harmless ones.
+            assigned: set[str] = set()
+            for d in (
+                "clearance_counsel",
+                "ratings_board",
+                "safety_underwriter",
+                "territory_censor",
+            ):
+                for it in tri.get(d) or []:
+                    if isinstance(it, dict) and it.get("entity_id"):
+                        assigned.add(it["entity_id"])
+            strays = [
+                e
+                for e in entities
+                if isinstance(e, dict) and e.get("entity_id") and e["entity_id"] not in assigned
+            ]
+            stray_items = [
+                {
+                    "entity_id": e["entity_id"],
+                    "note": (
+                        f"WORKLIST FLOOR: '{e.get('surface', '')}' was extracted by triage "
+                        "but assigned to no desk. Disposition it: file_flag if it carries "
+                        "exposure, record_clearance with the reason if not."
+                    ),
+                }
+                for e in strays
+            ]
+
+            if not items and not stray_items:
                 yield Event(
                     invocation_id=ctx.invocation_id,
                     author=self.name,
@@ -216,15 +250,25 @@ def build_agent():
                 return
             new_tri = dict(tri)
             new_tri["entities"] = entities + items
-            new_tri["clearance_counsel"] = list(tri.get("clearance_counsel") or []) + items
-            summary = (
-                f"Pre-pass: {len(items)} deterministic candidates triage missed, appended "
-                f"to the clearance worklist as low priority: "
-                + ", ".join(
-                    f"{i['entity_id']} '{i['surface'][:28]}'" for i in items[:_SUMMARY_NAMES]
-                )
-                + (" …" if len(items) > _SUMMARY_NAMES else "")
+            new_tri["clearance_counsel"] = (
+                list(tri.get("clearance_counsel") or []) + items + stray_items
             )
+            parts_txt = []
+            if items:
+                parts_txt.append(
+                    f"{len(items)} deterministic candidates triage missed ("
+                    + ", ".join(
+                        f"{i['entity_id']} '{i['surface'][:28]}'" for i in items[:_SUMMARY_NAMES]
+                    )
+                    + (" …" if len(items) > _SUMMARY_NAMES else "")
+                    + ")"
+                )
+            if stray_items:
+                parts_txt.append(
+                    f"{len(stray_items)} extracted entities were on no desk worklist — "
+                    "floored to clearance"
+                )
+            summary = "Pre-pass: " + "; ".join(parts_txt)
             yield Event(
                 invocation_id=ctx.invocation_id,
                 author=self.name,

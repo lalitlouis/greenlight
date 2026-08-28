@@ -825,3 +825,32 @@ pending the coverage work.
 **Consequence:** the roadmap's next engineering target is coverage convergence (why a
 pass skips seeded entities; why desks still collapse), not further decision-layer work.
 Methodology page updated to say all of this plainly — "measured, and the news is mixed."
+
+## 2026-08-28 — k=3 forensics: triage exonerated, the loss is worklist assignment
+
+Reviewer challenged pass 3's ~60-brand cleared list as possible hallucination. Verified
+against the fixture: every brand is ON THE PAGE (scale_gate is a deliberate brand-density
+stress test — templated grange-hall scenes each swapping two brands). Pass 3 was the
+faithful observer; passes 1-2 under-covered.
+
+Forensics: all three passes extracted ~110 entities INCLUDING all sampled brands — triage
+extraction is consistent. The variance is in the WORKLISTS triage writes: dispositioned
+entities were 39/110, 48/110, 113/111. Fixes shipped (gated):
+- **Worklist floor** (pre-pass): any extracted entity on no desk worklist is
+  deterministically appended to clearance. Coverage no longer depends on model diligence.
+- **Under-coverage joins desks_incomplete**: a desk dispositioning <50% of its assigned
+  items (worklist >=8) is INCOMPLETE — the quieter second collapse class from pass 1.
+  Same eval check #22 enforces it. Per-desk assigned/dispositioned instrumented on record.
+- **Gwet's AC1** (reviewer suggestion): judgment agreement AC1 = 0.93 (k=3) / 0.97
+  (complete passes) where alpha degenerated (0.525 / 0.0, cleared-prevalence ~95%).
+  Published as raw + AC1 + prevalence.
+- **Cost-span guard**: file_flag rejects ranges spanning >50x (pass 2's F103
+  "$500-100,000" merged a license fee with its indie alternative).
+- **Background hosts** += grokipedia, whoppah, go-legal.ai, cinemacafe, uscspotlight,
+  jakedavidowitz (pass 3 source regression).
+- **file_rating_prediction rejection now names the failing leg** (was: always "contradicts
+  weighted majority", even when the trigger was near-conflict or the conformal set).
+Open (owner decisions): k=3 union as a paid-tier recall feature (reviewer recommends;
+~3x cost, best available recall gain today); artwork rights-holder verification tool
+(Nighthawks passes disagreed: ARS/2037 vs AIC-Bridgeman/2038 — 2037 is correct);
+score shown as range/suppressed until coverage stabilizes.

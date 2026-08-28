@@ -104,3 +104,17 @@ def test_chapman_and_recall_bound():
 
 def test_normalize_surface():
     assert normalize_surface("The 'Margaret Rose'!") == "margaret rose"
+
+
+def test_gwet_ac1_stable_under_prevalence():
+    from greenlight.consistency import gwet_ac1_binary, krippendorff_alpha_binary
+
+    # 36/37 unanimous all-True rows: alpha degenerates, AC1 must not
+    rows = [[True, True]] * 36 + [[True, False]]
+    ac1 = gwet_ac1_binary(rows)
+    alpha = krippendorff_alpha_binary([[True, True]] * 36 + [[True, False]])
+    assert ac1 is not None and ac1 > 0.9
+    assert alpha is None or alpha < 0.2
+
+    assert gwet_ac1_binary([[True, True], [False, False]]) == 1.0
+    assert gwet_ac1_binary([[True]]) is None

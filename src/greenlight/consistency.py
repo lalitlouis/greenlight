@@ -127,6 +127,34 @@ def match_runs(records: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
+def gwet_ac1_binary(rows: list[list[bool]]) -> float | None:
+    """Gwet's AC1 for binary ratings with missing data. Chance-corrected like
+    Krippendorff's alpha but stable under high prevalence — alpha degenerates
+    toward 0 when nearly all judgments share one value (the feature-scale k=3:
+    36/37 unanimous rows, alpha 0.0), which is exactly the regime AC1 was
+    designed for. Rows are per-item observation lists; only rows with 2+
+    observations contribute.
+
+    AC1 = (Pa - Pe) / (1 - Pe), Pe = 2*pi*(1-pi) with pi the overall
+    proportion of positive ratings."""
+    rated = [r for r in rows if len(r) >= _MIN_RATERS]
+    if not rated:
+        return None
+    total = sum(len(r) for r in rated)
+    pi = sum(sum(r) for r in rated) / total if total else 0.0
+    pe = 2.0 * pi * (1.0 - pi)
+    pa_num = pa_den = 0.0
+    for r in rated:
+        n = len(r)
+        k = sum(r)
+        pa_num += (k * (k - 1) + (n - k) * (n - k - 1)) / (n - 1)
+        pa_den += n
+    pa = pa_num / pa_den if pa_den else 0.0
+    if pe >= 1.0:
+        return None
+    return (pa - pe) / (1.0 - pe)
+
+
 def krippendorff_alpha_binary(matrix: list[list[bool | None]]) -> float | None:
     """Krippendorff's alpha for binary nominal data with missing values.
     Rows = items (union of finding groups), columns = runs; None = run missing."""
@@ -222,8 +250,13 @@ def alpha_with_clearances(records: list[dict[str, Any]]) -> dict[str, Any]:
         matrix.append(row)
     rated_rows = [r for r in matrix if sum(v is not None for v in r) >= _MIN_RATERS]
     unanimous = sum(1 for r in rated_rows if len({v for v in r if v is not None}) == 1)
+    total = sum(sum(v is not None for v in r) for r in rated_rows)
+    pos = sum(sum(bool(v) for v in r if v is not None) for r in rated_rows)
     return {
         "alpha": krippendorff_alpha_binary(matrix),
+        "ac1": gwet_ac1_binary([[bool(v) for v in r if v is not None] for r in rated_rows]),
+        "raw_agreement": (unanimous / len(rated_rows)) if rated_rows else None,
+        "prevalence_flag": (pos / total) if total else None,
         "universe": len(universe),
         "rows_with_2plus_observations": len(rated_rows),
         "unanimous_rows": unanimous,

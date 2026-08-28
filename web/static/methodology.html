@@ -91,9 +91,12 @@ prediction sets: mostly single ratings; boundary scripts get honest pairs like {
       <p>Same script, same answer? We measure it by running the entire pipeline multiple times
       and matching findings across passes — and we publish what came out, not what we hoped.
       <b>Judgment is consistent:</b> when two passes examine the same item they agree
-      flag-vs-clear <b>36 times in 37</b> on the feature-length measurement (α&nbsp;=&nbsp;0.93 on
-      the short fixture; at feature scale the raw agreement is the honest statistic, because
-      near-uniform data makes alpha uninformative). <b>Coverage is not yet consistent:</b> across
+      flag-vs-clear <b>36 times in 37</b> on the feature-length measurement — raw agreement
+      97%, Gwet's AC1&nbsp;=&nbsp;0.97 (α&nbsp;=&nbsp;0.93 on the short fixture; at feature
+      scale Krippendorff's alpha degenerates because ~95% of co-examined items are cleared,
+      leaving no variance for the chance correction — AC1 is the chance-corrected statistic
+      built for exactly that regime, and we report all three numbers plus the prevalence so
+      you can see why). <b>Coverage is not yet consistent:</b> across
       two complete feature-length passes, only 5 of the 16 distinct findings were surfaced by
       both — different passes chase different threads. And one pass in three had two desks
       return no dispositions at all, a failure the pipeline now refuses to grade or ship

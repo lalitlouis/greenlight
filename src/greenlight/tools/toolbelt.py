@@ -993,6 +993,12 @@ BACKGROUND_HOSTS = {
     "genius.com",
     "looper.com",
     "bhroberts.org",
+    "grokipedia.com",
+    "whoppah.com",
+    "go-legal.ai",
+    "cinemacafe.com",
+    "uscspotlight.com",
+    "jakedavidowitz.com",
 }
 
 _SCENE_ANCHOR_CAP = 8  # a finding spanning more scenes than this says "the script"
@@ -1211,6 +1217,18 @@ def file_flag(  # noqa: PLR0912 - a deliberate sequence of filing gates
                 "contiguous part):\n" + "\n".join(f"<<{q}>>" for q in quotable)
             )
         return _reject_or_stop(tool_context, entity_id, category, msg)
+
+    cost_span_max = 50
+    if est_cost_usd_low > 0 and est_cost_usd_high > cost_span_max * est_cost_usd_low:
+        return _reject_or_stop(
+            tool_context,
+            entity_id,
+            category,
+            f"REJECTED, not filed: cost range {est_cost_usd_low}-{est_cost_usd_high} spans "
+            f">{cost_span_max}x — that is two different remedies' costs merged into one range "
+            "(e.g. a license fee and its indie alternative). Give the range for the "
+            "RECOMMENDED remedy only; name the alternative and its figure in remedy_detail.",
+        )
 
     known = {s["scene_id"] for s in tool_context.state.get("scenes", [])}
     if bad := [s for s in scene_ids if s not in known]:
@@ -1461,11 +1479,19 @@ def file_rating_prediction(
             if outside_boundary
             else ""
         )
+        legs = []
+        if majority and predicted != majority:
+            legs.append(f"the comparables' weighted majority is {majority} (tally: {tally})")
+        if near_conflict:
+            legs.append("your nearest comparable conflicts (see below)")
+        if outside_boundary:
+            legs.append("your prediction sits outside the conformal set (see below)")
         return (
-            f"REJECTED: your prediction {predicted} contradicts the evidence "
-            f"(weighted majority {majority}, tally: {tally}).{near_note}{boundary_note} "
+            f"REJECTED: your prediction {predicted} fails the evidence contract on: "
+            + "; ".join(legs)
+            + f".{near_note}{boundary_note} "
             "Either follow the evidence, or refile with divergence_reason stating "
-            "specifically why it doesn't govern."
+            "specifically why the failing leg doesn't govern."
         )
     meta = tool_context.state.get(f"last_precedent_meta:{desk}") or {}
     tool_context.state["rating_prediction"] = {

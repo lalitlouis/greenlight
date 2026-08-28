@@ -269,26 +269,60 @@ async def _salvage_verify(filed, verdicts, state, on_event):
     return verdicts
 
 
+_UNDERCOVERAGE_FLOOR = 0.5  # mirrors done()'s coverage refusal
+_UNDERCOVERAGE_MIN_WORKLIST = 8  # tiny worklists are noise at this ratio
+
+
 def _incomplete_desks(state: dict[str, Any], verbose: bool) -> list[str]:
-    """An empty desk is an error surface, never a clean bill: a desk with a
-    worklist and zero dispositions (the territory failure) is disclosed
-    loudly on the record — silence must be distinguishable from "examined"."""
+    """An empty desk is an error surface, never a clean bill. Two collapse
+    classes, both disclosed loudly: a desk with a worklist and ZERO
+    dispositions (the territory failure), and a desk that dispositioned
+    fewer than half its assigned items (the quieter class the feature-scale
+    k=3 caught: dispositions on a truncated slice look like diligence)."""
     incomplete: list[str] = []
     tri = state.get("triage") or {}
     if hasattr(tri, "model_dump"):
         tri = tri.model_dump()
     for d in DESKS:
         worklist = tri.get(d) or []
-        did_anything = (
-            bool(toolbelt.desk_flags(state, d))
-            or bool(toolbelt.desk_open_questions(state, d))
-            or bool(toolbelt.desk_cleared(state, d))
+        n_disp = (
+            len(toolbelt.desk_flags(state, d))
+            + len(toolbelt.desk_open_questions(state, d))
+            + len(toolbelt.desk_cleared(state, d))
         )
-        if worklist and not did_anything:
+        if worklist and n_disp == 0:
             incomplete.append(d)
             if verbose:
                 print(f"DESK INCOMPLETE — {d} produced no dispositions for {len(worklist)} items")
+        elif len(worklist) >= _UNDERCOVERAGE_MIN_WORKLIST and n_disp < _UNDERCOVERAGE_FLOOR * len(
+            worklist
+        ):
+            incomplete.append(d)
+            if verbose:
+                print(
+                    f"DESK INCOMPLETE — {d} dispositioned {n_disp} of {len(worklist)} "
+                    "assigned items (under-coverage)"
+                )
     return incomplete
+
+
+def _desk_coverage(state: dict[str, Any]) -> dict[str, dict[str, int]]:
+    """Per-desk instrumentation: what triage assigned vs what got dispositioned.
+    On the record so worklist variance is measurable across runs."""
+    tri = state.get("triage") or {}
+    if hasattr(tri, "model_dump"):
+        tri = tri.model_dump()
+    return {
+        d: {
+            "assigned": len(tri.get(d) or []),
+            "dispositioned": (
+                len(toolbelt.desk_flags(state, d))
+                + len(toolbelt.desk_open_questions(state, d))
+                + len(toolbelt.desk_cleared(state, d))
+            ),
+        }
+        for d in DESKS
+    }
 
 
 async def run(
@@ -406,6 +440,7 @@ async def run(
             for sc in scenes
         },
         "entities": state.get("triage", {}).get("entities", []),
+        "desk_coverage": _desk_coverage(state),
         "flags": kept,
         "rejected_flags": rejected,
         "verdicts": verdicts,
