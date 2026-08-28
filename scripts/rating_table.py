@@ -112,6 +112,7 @@ def main() -> int:
     table: dict[str, Counter] = defaultdict(Counter)  # descriptor -> rating counts
     combo: dict[str, Counter] = defaultdict(Counter)  # frozenset-of-cats key -> ratings
     all_fails: list[dict] = []
+    films: list[dict] = []
     parsed_films = 0
     for r in scoped:
         pairs, fails = parse_rationale(r["rationale"])
@@ -119,6 +120,15 @@ def main() -> int:
             all_fails.append({"title": r["title"], "segments": fails, "raw": r["rationale"]})
         if not pairs:
             continue
+        films.append(
+            {
+                "title": r["title"],
+                "year": r["year"],
+                "year_rated": r.get("year_rated", ""),
+                "rating": r["rating"],
+                "pairs": pairs,
+            }
+        )
         parsed_films += 1
         rating = r["rating"]
         for intensity, cat in pairs:
@@ -155,6 +165,7 @@ def main() -> int:
                 "films_parsed": parsed_films,
                 "descriptors": {k: dict(v) for k, v in table.items()},
                 "combos": {k: dict(v) for k, v in combo.items()},
+                "films": films,
                 "parse_failures": all_fails,
             },
             indent=1,
