@@ -38,7 +38,7 @@ INTENSITIES = [
     "explicit",
 ]
 CATEGORIES = {
-    "language": ["language", "profanity", "cursing"],
+    "language": ["language", "profanity", "cursing", "racial slurs", "slurs"],
     "violence": [
         "violence",
         "violent content",
@@ -50,6 +50,11 @@ CATEGORIES = {
         "torture",
         "destruction",
         "violent",
+        "mayhem",
+        "battle sequences",
+        "warfare",
+        "war images",
+        "fight",
     ],
     "sexual_content": [
         "sexual content",
@@ -63,8 +68,9 @@ CATEGORIES = {
         "sexual dialogue",
         "erotic sexuality",
         "sex",
+        "dialogue",
     ],
-    "nudity": ["nudity"],
+    "nudity": ["nudity", "nude images", "nude image"],
     "drugs": [
         "drug use",
         "drug content",
@@ -75,8 +81,11 @@ CATEGORIES = {
         "drug",
         "substance abuse",
         "substance use",
+        "substance",
+        "marijuana",
+        "cannabis",
     ],
-    "alcohol": ["alcohol use", "alcohol abuse", "drinking", "alcohol", "teen partying"],
+    "alcohol": ["alcohol use", "alcohol abuse", "drinking", "alcohol", "partying"],
     "smoking": ["smoking", "tobacco"],
     "thematic": [
         "thematic material",
@@ -85,8 +94,15 @@ CATEGORIES = {
         "mature thematic content",
         "mature themes",
         "themes",
+        "bullying",
+        "situations",
+        "emotional intensity",
+        "ridicule",
+        "meanness",
+        "subject matter",
+        "thematic",
     ],
-    "gore": ["gore", "grisly images", "bloody images"],
+    "gore": ["gore", "grisly images", "bloody images", "bloody image", "gruesome images"],
     "disturbing": [
         "disturbing images",
         "disturbing content",
@@ -95,9 +111,13 @@ CATEGORIES = {
         "disturbing behavior",
         "disturbing",
         "injury images",
+        "injury image",
+        "unsettling images",
+        "macabre",
+        "images",
     ],
-    "peril": ["peril", "menace", "terror", "frightening", "scary images", "scary"],
-    "action": ["action"],
+    "peril": ["peril", "menace", "terror", "frightening", "scary images", "scary", "disaster"],
+    "action": ["action", "stunts"],
     "crude_humor": [
         "crude humor",
         "rude humor",
@@ -106,6 +126,14 @@ CATEGORIES = {
         "crude material",
         "rude material",
         "crude",
+        "off-color humor",
+        "impolite humor",
+        "bizarre humor",
+        "rude gesture",
+        "rude behavior",
+        "rude",
+        "humor",
+        "gestures",
     ],
     "horror": ["horror"],
     "suggestive": [
@@ -115,8 +143,10 @@ CATEGORIES = {
         "suggestive references",
         "suggestive humor",
         "suggestive",
+        "exotic dancing",
     ],
     "suicide": ["suicide", "self-harm", "self harm"],
+    "sexual_violence": ["rape", "sexual assault", "sexual violence"],
 }
 _PREFIX = re.compile(r"^Rated\s+(G|PG-13|PG|R|NC-17)\s+for\s+", re.I)
 _SPLIT = re.compile(r",\s*(?:and\s+)?|\s+and\s+")

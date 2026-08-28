@@ -755,3 +755,27 @@ it takes. Consequences, binding:
 - Performance work is welcome ONLY where it removes waste, never rigor:
   stall-kills, prose-loop nudges, caching, concurrency — yes. Fewer
   dispositions — no.
+
+## 2026-08-28 — Wave 2 close-out (k=3 stays parked)
+
+Owner reconfirmed feature-scale k=3 stays parked; the rest of Wave 2's open items closed:
+
+- **Reliability diagram published** on the methodology page — the unflattering version on
+  purpose: mid-confidence bins run overconfident (a 0.74 answer is right ~54% of the time),
+  which is the argument for shipping conformal sets instead of raw probabilities. Bins are
+  persisted in `rating_model.json` (`test_metrics.reliability`) so the chart regenerates from
+  the artifact.
+- **CARA parse failures 242 → 75** via two descriptor-vocabulary passes (new categories:
+  sexual_violence; new variants: mayhem, battle sequences, racial slurs, bare "images"/
+  "dialogue"/"humor" conventions, marijuana/cannabis, etc.). films_parsed 4,535 → 4,544.
+  Residual 75 are genuine one-offs ("intense depiction of very bad weather").
+- **Model refit on the richer table**: top-1 84.4% → 83.9%, Brier 0.245 → 0.239, conformal
+  coverage 92.0% holds, holdout n=937. Comps benchmark 9/9. Runtime asset now built by
+  `scripts/build_boundary_asset.py` (previously assembled ad hoc) — 69 marginals at n>=20.
+- **Drift claim corrected**: the old "+1.1pt, stable across decades" was measured on the
+  narrow vocabulary AND the baseline sampler was biased (truncated a non-random film list;
+  fixed to hash-ordered sampling). Honest current number: pre-2010-trained loses **5.0pt**
+  on post-2015 — standards/vocabulary moved. Methodology page updated; recency weighting
+  noted as the follow-up this number argues for.
+- **Re-source recovery rate** stays per-report until production volume makes an aggregate a
+  statistic; the page now says exactly that.

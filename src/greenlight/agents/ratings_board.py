@@ -29,7 +29,7 @@ PROCEDURE:
    driver note intensity and context (comic, realistic, brief, pervasive) — CARA weighs
    context, and so do you.
 2a. rating_boundary(descriptors) with the CARA-style descriptors you counted — it returns
-   the MEASURED decision boundary (per-descriptor rating distributions from 4,535 official
+   the MEASURED decision boundary (per-descriptor rating distributions from 4,544 official
    rationales) and a conformal prediction set with a 90% coverage guarantee. This is your
    strongest citable evidence: quote the marginals ("'pervasive language' lands R in 99% of
    187 official rationales — source: CARA via filmratings.com"). A prediction outside the

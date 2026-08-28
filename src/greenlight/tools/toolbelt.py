@@ -1591,7 +1591,7 @@ def _boundary_data() -> dict[str, Any]:
 
 def rating_boundary(descriptors: list[str], tool_context: ToolContext) -> dict[str, Any]:
     """Measured CARA decision boundary: per-descriptor rating distributions
-    across 4,535 official post-1990 rationales, plus the fitted model's
+    across 4,544 official post-1990 rationales, plus the fitted model's
     conformal prediction set for the combination. This is EVIDENCE — cite the
     marginals verbatim (source: official CARA rationales, filmratings.com).
     Free (no research budget). Call BEFORE file_rating_prediction; a
@@ -1642,7 +1642,7 @@ def rating_boundary(descriptors: list[str], tool_context: ToolContext) -> dict[s
         "conformal_prediction_set": pred_set,
         "coverage_note": (
             "the true rating falls inside the prediction set 90% of the time by "
-            "construction (Mondrian split conformal, 927 held-out films)"
+            "construction (Mondrian split conformal, 937 held-out films)"
         ),
         "source": d["source"],
     }

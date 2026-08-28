@@ -111,6 +111,7 @@ def main() -> int:
     set_sizes = Counter()
     brier = 0.0
     bins: dict[int, list[int]] = defaultdict(list)
+    conf: dict[int, list[float]] = defaultdict(list)
     correct_top = 0
     for i in te:
         p = predict(w, xs[i])
@@ -121,6 +122,7 @@ def main() -> int:
         top = max(range(len(CLASSES)), key=lambda c: p[c])
         correct_top += top == ys[i]
         bins[int(p[top] * 10)].append(1 if top == ys[i] else 0)
+        conf[int(p[top] * 10)].append(p[top])
 
     n = len(te)
     print(f"\ntop-1 accuracy: {correct_top / n:.3f}")
@@ -145,6 +147,16 @@ def main() -> int:
                     "top1": correct_top / n,
                     "coverage": covered / n,
                     "brier": brier / n,
+                    "reliability": [
+                        {
+                            "bin_low": b / 10,
+                            "bin_high": (b + 1) / 10,
+                            "mean_confidence": sum(conf[b]) / len(conf[b]),
+                            "observed_accuracy": sum(bins[b]) / len(bins[b]),
+                            "n": len(bins[b]),
+                        }
+                        for b in sorted(bins)
+                    ],
                 },
             }
         )

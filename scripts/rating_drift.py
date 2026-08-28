@@ -48,7 +48,10 @@ def main() -> int:
 
     # baseline: random split of the SAME training size, tested in-era
     keys = [split_key(f["title"]) for f in films]
-    tr = [i for i, k in enumerate(keys) if k < 0.8][: len(old_i)]
+    # order by the deterministic hash, not list order — the films list is not
+    # randomly ordered, and a truncated head is a biased training sample
+    pool = sorted((i for i, k in enumerate(keys) if k < 0.8), key=lambda i: keys[i])
+    tr = pool[: len(old_i)]
     te = [i for i, k in enumerate(keys) if k >= 0.8]
     w_rand = fit([xs[i] for i in tr], [ys[i] for i in tr], len(CLASSES))
     acc_base = evaluate(w_rand, xs, ys, te)

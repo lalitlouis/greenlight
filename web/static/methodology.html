@@ -39,15 +39,26 @@
       is post-1990 wide releases, stated plainly). Parsed into intensity-category descriptors,
       they train a transparent model whose predictions carry a
       <span class="sec-hl">distribution-free coverage guarantee</span> (Mondrian split conformal):</p>
-      <pre class="sec-evidence">held-out films: 927 (deterministic split, never trained on)
+      <pre class="sec-evidence">held-out films: 937 (deterministic split, never trained on)
 conformal coverage: <span class="sec-ev-ok">92.0%</span> against a 90% target — the guarantee holds
-top-1 accuracy: 84.4% · multiclass Brier: 0.245
+top-1 accuracy: 83.9% · multiclass Brier: 0.239
 prediction sets: mostly single ratings; boundary scripts get honest pairs like {PG-13, R}</pre>
+      <figure class="sec-chart" style="margin:14px 0 6px"><svg viewBox="0 0 540 306" role="img" aria-label="Reliability diagram: model confidence versus observed accuracy on the 937-film holdout" style="width:100%;max-width:560px;height:auto;display:block"><line x1="46.0" y1="252.0" x2="516.0" y2="12.0" stroke="var(--line)" stroke-dasharray="5 4" stroke-width="1.5"/><text x="113" y="272" text-anchor="middle" font-size="11" fill="var(--ink-2)">0.4</text><text x="38" y="222" text-anchor="end" font-size="11" fill="var(--ink-2)">0.4</text><line x1="46" y1="218" x2="516" y2="218" stroke="var(--line)" stroke-width="0.5" opacity="0.5"/><text x="247" y="272" text-anchor="middle" font-size="11" fill="var(--ink-2)">0.6</text><text x="38" y="153" text-anchor="end" font-size="11" fill="var(--ink-2)">0.6</text><line x1="46" y1="149" x2="516" y2="149" stroke="var(--line)" stroke-width="0.5" opacity="0.5"/><text x="382" y="272" text-anchor="middle" font-size="11" fill="var(--ink-2)">0.8</text><text x="38" y="85" text-anchor="end" font-size="11" fill="var(--ink-2)">0.8</text><line x1="46" y1="81" x2="516" y2="81" stroke="var(--line)" stroke-width="0.5" opacity="0.5"/><text x="516" y="272" text-anchor="middle" font-size="11" fill="var(--ink-2)">1.0</text><text x="38" y="16" text-anchor="end" font-size="11" fill="var(--ink-2)">1.0</text><line x1="46" y1="12" x2="516" y2="12" stroke="var(--line)" stroke-width="0.5" opacity="0.5"/><polyline points="149.4,252.0 214.3,193.5 292.3,148.1 340.6,170.6 419.2,104.6 498.2,34.3" fill="none" stroke="var(--green-deep, var(--green))" stroke-width="1.5" opacity="0.65"/><circle cx="149.4" cy="252.0" r="3.5" fill="var(--green-deep, var(--green))" fill-opacity="0.75"/><circle cx="214.3" cy="193.5" r="3.5" fill="var(--green-deep, var(--green))" fill-opacity="0.75"/><text x="214.3" y="213.0" text-anchor="middle" font-size="10.5" fill="var(--ink-2)">n=34</text><circle cx="292.3" cy="148.1" r="4.0" fill="var(--green-deep, var(--green))" fill-opacity="0.75"/><text x="292.3" y="168.0" text-anchor="middle" font-size="10.5" fill="var(--ink-2)">n=63</text><circle cx="340.6" cy="170.6" r="4.1" fill="var(--green-deep, var(--green))" fill-opacity="0.75"/><text x="340.6" y="190.7" text-anchor="middle" font-size="10.5" fill="var(--ink-2)">n=67</text><circle cx="419.2" cy="104.6" r="5.0" fill="var(--green-deep, var(--green))" fill-opacity="0.75"/><text x="419.2" y="125.6" text-anchor="middle" font-size="10.5" fill="var(--ink-2)">n=100</text><circle cx="498.2" cy="34.3" r="12.9" fill="var(--green-deep, var(--green))" fill-opacity="0.75"/><text x="498.2" y="63.1" text-anchor="middle" font-size="10.5" fill="var(--ink-2)">n=662</text><text x="281" y="298" text-anchor="middle" font-size="11.5" fill="var(--ink-2)">model confidence in its top rating</text><text x="13" y="132" text-anchor="middle" font-size="11.5" fill="var(--ink-2)" transform="rotate(-90 13 132)">observed accuracy</text></svg></figure>
+      <p>The reliability diagram above is the unflattering version of that table, published on
+      purpose. Dot size is bin population (71% of holdout films land in the 0.9–1.0 bin, where
+      confidence and accuracy agree at 93%). In the thin middle bins the raw probability runs
+      <b>overconfident</b> — a 0.74 answer is right about 54% of the time — which is exactly why a
+      report never ships the raw probability as the claim: the <b>conformal set</b> is the
+      guarantee, and it widens to an honest pair precisely where these dots sag below the
+      diagonal.</p>
       <p>Two findings from the same data: the R-line for language is the <i>modifier</i>, not the
       category — <b>"pervasive language" lands R 99%</b> of the time (n=187) while
-      <b>"strong language" lands PG-13 89%</b> (n=383) — and the descriptor→rating mapping is
-      <b>stable across decades</b>: a model trained only on pre-2010 films loses just 1.1 points
-      of accuracy on post-2015 films. The vocabulary drifted; the line didn't.</p>
+      <b>"strong language" lands PG-13 89%</b> (n=384) — and the descriptor→rating mapping
+      <b>drifts measurably across decades</b>: a model trained only on pre-2010 films loses
+      5.0 points of accuracy on post-2015 films (an earlier, narrower descriptor vocabulary
+      measured 1.1 — the richer vocabulary sees drift the narrow one was blind to). The model
+      you get is trained on the full corpus; recency weighting is a candidate improvement, and
+      if we ship it, this number is the reason.</p>
       <p>The guarantee is conditional on descriptor extraction from your script, which is model
       judgment. We say that plainly rather than hiding it in a footnote.</p>
     </div>
@@ -88,7 +99,8 @@ prediction sets: mostly single ratings; boundary scripts get honest pairs like {
       recent runs the verifier rejects roughly 10–30% of draft findings. A finding rejected for
       <i>citation quality</i> (rather than substance) now gets exactly one re-sourcing round with
       fresh evidence and a second blinded verdict; each report carries its attempted/recovered
-      counts.</p>
+      counts. The aggregate recovery rate will be published here once enough production runs
+      exist for it to be a statistic rather than an anecdote — until then it stays per-report.</p>
     </div>
 
     <div class="card legal-card">
