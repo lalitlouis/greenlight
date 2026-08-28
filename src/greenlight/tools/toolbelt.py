@@ -57,8 +57,45 @@ def _desk_name_of(agent_name: str) -> str:
 
 
 def batch_agent_names(desk: str) -> list[str]:
-    """The base desk name plus its possible batch-agent names."""
-    return [desk] + [f"{desk}__b{i}" for i in range(1, CLEARANCE_MAX_BATCHES + 1)]
+    """The base desk name, its batch-agent names, and the completeness sweeper."""
+    return (
+        [desk] + [f"{desk}__b{i}" for i in range(1, CLEARANCE_MAX_BATCHES + 1)] + [f"{desk}__sweep"]
+    )
+
+
+def unexamined_entities(state: Any) -> list[dict[str, Any]]:
+    """Extracted entities NO desk dispositioned — not flagged (kept or later
+    rejected), not cleared, not named in an open question. The completeness
+    gate loops on this before verification; anything that still survives
+    renders as NOT EXAMINED, never as clean."""
+    tri = _triage_dict(state)
+    covered: set[str] = set()
+    oq_texts: list[str] = []
+    for d in DESKS:
+        for f in desk_flags(state, d):
+            if f.get("entity_id"):
+                covered.add(f["entity_id"])
+        for c in desk_cleared(state, d):
+            if c.get("entity_id"):
+                covered.add(c["entity_id"])
+        oq_texts.extend(str(q).lower() for q in desk_open_questions(state, d))
+    out: list[dict[str, Any]] = []
+    for e in tri.get("entities") or []:
+        if not isinstance(e, dict):
+            continue
+        if e.get("entity_id") in covered:
+            continue
+        surf = (e.get("surface") or "").lower()
+        if surf and any(surf in q for q in oq_texts):
+            continue
+        out.append(
+            {
+                "entity_id": e.get("entity_id"),
+                "surface": e.get("surface", ""),
+                "scene_ids": e.get("scene_ids") or [],
+            }
+        )
+    return out
 
 
 def desk_flags(state: Any, desk: str) -> list[dict[str, Any]]:
@@ -210,6 +247,10 @@ def _budget_key(tool_context: ToolContext) -> str:
         return f"research_budget:{desk}"
     key = f"research_budget:{name}"
     state = tool_context.state
+    if name.endswith("__sweep"):
+        if state.get(key) is None:
+            state[key] = 12  # the sweep is mostly record_clearance; research is the exception
+        return key
     if state.get(key) is None:
         import math
 
@@ -1581,7 +1622,6 @@ def note_open_question(question: str, tool_context: ToolContext) -> str:
 # --- done -------------------------------------------------------------------
 
 
-_DONE_MAX_REFUSALS = 4  # raised from 2: worklist-floored lists are longer and clearing is cheap
 _DONE_MIN_BUDGET = 3
 _DONE_COVERAGE = 0.5
 
@@ -1895,7 +1935,9 @@ def done(reason: str, tool_context: ToolContext) -> str:
     # A clearance batch is judged against ITS slice, with its own keys.
     refusals = int(state.get(f"done_refusals:{name}", 0))
     idx = batch_index(name)
-    if idx is not None:
+    if name.endswith("__sweep"):
+        worklist = list(state.get("sweep_worklist") or [])
+    elif idx is not None:
         slices = clearance_batch_slices(state)
         worklist = slices[idx] if idx < len(slices) else []
     else:
@@ -1934,7 +1976,9 @@ def done(reason: str, tool_context: ToolContext) -> str:
             w.get("prominence") != "PLOT_CRITICAL",
         )
     )
-    if missing and budget_left >= _DONE_MIN_BUDGET and refusals < _DONE_MAX_REFUSALS:
+    # No refusal cap: closing with undispositioned items is not a thing a desk
+    # can talk its way into — the LoopAgent iteration ceiling is the hard stop.
+    if missing and budget_left >= _DONE_MIN_BUDGET:
         state[f"done_refusals:{name}"] = refusals + 1
         named = "; ".join(
             f"{w.get('entity_id')} '{w.get('surface')}'"
@@ -1947,7 +1991,10 @@ def done(reason: str, tool_context: ToolContext) -> str:
             f"needs file_flag, record_clearance, or note_open_question. Unaddressed: "
             f"{named}{more}. {budget_left} research budget remains."
         )
-    tool_context.actions.escalate = True
+    if not name.endswith("__sweep"):
+        # The sweeper must NOT escalate: escalation bubbles past its own agent
+        # and would end the completeness gate's loop after one round.
+        tool_context.actions.escalate = True
     return f"Desk closed: {reason}"
 
 

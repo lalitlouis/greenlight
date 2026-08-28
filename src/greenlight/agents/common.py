@@ -259,6 +259,7 @@ def make_desk(
     instruction: str,
     max_iterations: int,
     batch: int | None = None,
+    worklist_state_key: str | None = None,
 ) -> LoopAgent:
     """One gatekeeper desk: a LoopAgent over an LlmAgent with the shared toolbelt.
 
@@ -295,6 +296,10 @@ def make_desk(
                 "rest; never work an item that is not on your slice. Research results "
                 "are shared across batches (identical questions are free cache hits)."
             )
+        elif worklist_state_key:
+            items = ctx.state.get(worklist_state_key) or []
+            sliced = {"entities": tri.get("entities", []), desk: items}
+            batch_note = ""
         else:
             sliced = {"entities": tri.get("entities", []), desk: tri.get(desk, [])}
             batch_note = ""

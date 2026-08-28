@@ -35,6 +35,9 @@ GreenlightPipeline                  SequentialAgent
 │   ├── RatingsBoard                LoopAgent(max_iterations=4)
 │   ├── SafetyUnderwriter           LoopAgent(max_iterations=6)
 │   └── TerritoryCensor             LoopAgent(max_iterations=8)
+├── CompletenessGate                LoopAgent(≤3): deterministic unexamined-set check +
+│                                   a scoped sweep desk; verification is not reached while
+│                                   any extracted entity lacks a disposition
 ├── VerificationPanel               ParallelAgent — one verifier per filed flag
 ├── Adjudicator                     LoopAgent(max_iterations=3)
 └── ReportWriter                    deterministic -> Report + marked-up script

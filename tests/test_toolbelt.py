@@ -1132,3 +1132,23 @@ def test_open_question_rejects_determinations():
     assert _reads_as_determination("No sync license required; composition is public domain.")
     assert not _reads_as_determination("Chain of title unclear beyond the second assignee.")
     assert not _reads_as_determination("Who controls the 1988 remaster?")
+
+
+def test_unexamined_entities_accounting():
+    from greenlight.tools.toolbelt import unexamined_entities
+
+    state = {
+        "triage": {
+            "entities": [
+                {"entity_id": "E001", "surface": "Red Bull", "scene_ids": ["S001"]},
+                {"entity_id": "E002", "surface": "Nighthawks", "scene_ids": ["S002"]},
+                {"entity_id": "E003", "surface": "Baba O'Riley", "scene_ids": ["S003"]},
+                {"entity_id": "E004", "surface": "Coors", "scene_ids": ["S004"]},
+            ]
+        },
+        "flags:clearance_counsel": [{"entity_id": "E001"}],
+        "cleared:clearance_counsel__sweep": [{"entity_id": "E002"}],
+        "open_questions:territory_censor": ["Who controls Baba O'Riley sync in CN?"],
+    }
+    out = unexamined_entities(state)
+    assert [u["entity_id"] for u in out] == ["E004"]  # sweeper + OQ-by-surface count

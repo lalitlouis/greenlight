@@ -874,3 +874,17 @@ single-pass, not ensembling. Shipped accordingly (one gated batch with the workl
 Chain of defense now: deterministic extraction floor (pre-pass) → deterministic
 assignment floor (every entity on a worklist) → done() refusals by name → under-coverage
 = INCOMPLETE desk → anything still missed renders as NOT EXAMINED, never as clean.
+
+## 2026-08-28 — OWNER: completeness is enforced by a loop, not disclosed after the fact
+
+"there should be a loop in the agent that makes sure everyone is accounted and only then
+moves to verify stage." Shipped as the **CompletenessGate**, a new pipeline stage between
+the desk panel and verification: LoopAgent(≤3 rounds) of [deterministic check, sweep desk].
+The check recomputes the unexamined set (toolbelt.unexamined_entities, single source of
+truth) and only escalates when it is EMPTY; otherwise it hands exactly those items to a
+clearance-family sweep agent (clearance_counsel__sweep, shared toolbelt, small dedicated
+budget) and loops. done() changes: refusal cap REMOVED (a desk can no longer outlast the
+refusals — the iteration ceiling is the only stop), and the sweeper's done() does not
+escalate (ADK escalation would end the gate's loop after one round — the check alone
+controls the loop). NOT-EXAMINED rendering and eval #23 remain as defense in depth for
+whatever survives all rounds; they are the backstop now, not the mechanism.

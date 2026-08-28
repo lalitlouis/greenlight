@@ -80,6 +80,9 @@ GreenlightPipeline                  SequentialAgent
 │   ├── RatingsBoard                LoopAgent(max_iterations=4)
 │   ├── SafetyUnderwriter           LoopAgent(max_iterations=6)
 │   └── TerritoryCensor             LoopAgent(max_iterations=8)
+├── CompletenessGate                LoopAgent(≤3) — deterministic check + sweep desk;
+│                                   refuses to advance while any extracted entity lacks
+│                                   a disposition (absence must never render as clean)
 ├── VerificationPanel               fan-out — one blinded verifier per filed flag; can REJECT
 ├── Adjudicator                     LoopAgent(max_iterations=3) — merge, resolve conflicts,
 │                                   re-enter a desk via AgentTool when remedies interact
