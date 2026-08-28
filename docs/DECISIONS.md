@@ -716,3 +716,13 @@ title-hash splits, post-1990 scope): top-1 82.1%, multiclass Brier 0.280,
 real numbers behind it. Wobbly middle-confidence bins (0.7-0.9, small n) are
 the stated caveat; next accuracy lever is stage-1 descriptor extraction
 quality, per the standing 'none of this fixes extraction' caution.
+
+## 2026-08-28 — BBFC harvest complete: 436 regulator-documented band moves
+
+5,275/6,302 matched (84%), 436 cuts records (64 company-elected; 57 state
+the uncut-category delta). Dominant move: 15 -> 12A (n=14) — the UK's
+commercial sweet spot and the exact Social Network pattern. Combined with
+CARA's 4,755 rationales, the corpus now carries two regulators' official
+decisions per film. Overnight harvest total: 12,604 films, 5 errors. The
+cut simulator's validation set and the cross-jurisdiction feature space
+both exist as of tonight.
