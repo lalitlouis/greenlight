@@ -25,14 +25,19 @@ CORPUS = ROOT / ".cache" / "ratings_ingest" / "corpus.jsonl"
 OUT = ROOT / ".cache" / "ratings_ingest" / "rationales.jsonl"
 
 TITLE = re.compile(r'<div class="item-title">([^<]+)</div>')
-REASON = re.compile(r'Reason: </span>\s*<span class="text">([^<]+)</span>')
+FIELD = re.compile(
+    r'<span class="label">([^<:]+):\s*</span>\s*<span class="text">\s*([^<]*?)\s*</span>', re.S
+)
+STUDIO = re.compile(r'<div class="studio">\s*([^<]*?)\s*</div>', re.S)
 RATED = re.compile(r"Rated\s+(G|PG-13|PG|R|NC-17)\b")
 HDRS = {"User-Agent": "ScriptRisk-research/1.0 (one-time corpus enrichment)"}
 _FUZZY = 0.92
 
 
 def norm_title(t: str) -> str:
-    t = t.strip().lower()
+    import html as _html
+
+    t = _html.unescape(t).strip().lower()
     # CARA inverts articles: "Social Network, The" -> "the social network"
     m = re.match(r"^(.*),\s*(the|a|an)$", t)
     if m:
@@ -63,27 +68,58 @@ def search(title: str, year: int | None) -> list[tuple[str, str]]:
         url += f"&my={year}"
     html = fetch(url)
     out = []
-    # segment per entry: title -> everything until the next title holds its reason
+    # segment per entry: title -> everything until the next title holds its fields
     parts = TITLE.split(html)
     for i in range(1, len(parts), 2):
         fr_title, body = parts[i].strip(), parts[i + 1]
-        m = REASON.search(body)
-        if m:
-            out.append((fr_title, m.group(1).strip()))
+        fields = {k.strip().lower(): v.strip() for k, v in FIELD.findall(body)}
+        if not fields.get("reason"):
+            continue
+        sm = STUDIO.search(body)
+        out.append(
+            {
+                "fr_title": fr_title,
+                "reason": fields["reason"],
+                "year_rated": fields.get("year rated", ""),
+                "certificate": fields.get("certificate #", ""),
+                "alternate_titles": fields.get("alternate titles", ""),
+                "studio": sm.group(1).strip() if sm else "",
+            }
+        )
     return out
 
 
-def best_match(title: str, entries: list[tuple[str, str]]) -> tuple[str, str] | None:
+def best_match(
+    title: str, entries: list[dict], year: int | None = None, rating: str | None = None
+) -> dict | None:
     want = norm_title(title)
-    for fr_title, reason in entries:
-        if norm_title(fr_title) == want:
-            return (fr_title, reason)
-    scored = [
-        (difflib.SequenceMatcher(None, want, norm_title(ft)).ratio(), ft, r) for ft, r in entries
-    ]
-    scored.sort(reverse=True)
+    if rating and len(entries) > 1:
+        # two same-title films (Titanic 1997 x2): the corpus rating letter votes
+        lettered = [e for e in entries if (m := RATED.search(e["reason"])) and m.group(1) == rating]
+        if lettered:
+            entries = lettered
+    if year and len(entries) > 1:
+
+        def _dist(e: dict) -> int:
+            try:
+                return abs(int(e.get("year_rated") or 0) - year)
+            except ValueError:
+                return 99
+
+        entries = sorted(entries, key=_dist)
+    for e in entries:
+        names = [e["fr_title"], *e.get("alternate_titles", "").split(",")]
+        if any(norm_title(n) == want for n in names if n.strip()):
+            return e
+    scored = sorted(
+        (
+            (difflib.SequenceMatcher(None, want, norm_title(e["fr_title"])).ratio(), i)
+            for i, e in enumerate(entries)
+        ),
+        reverse=True,
+    )
     if scored and scored[0][0] >= _FUZZY:
-        return (scored[0][1], scored[0][2])
+        return entries[scored[0][1]]
     return None
 
 
@@ -114,12 +150,27 @@ def main() -> int:
                     or search(r["title"], r["year"] - 1)
                     or search(r["title"], None)
                 )
-                match = best_match(r["title"], hits)
+                match = best_match(r["title"], hits, r["year"], r["rating"])
                 if match:
-                    fr_title, reason = match
-                    entry["fr_title"] = fr_title
-                    entry["rationale"] = reason
-                    m = RATED.search(reason)
+                    twins = [
+                        e
+                        for e in hits
+                        if e is not match
+                        and norm_title(e["fr_title"]) == norm_title(match["fr_title"])
+                        and e.get("year_rated") == match.get("year_rated")
+                    ]
+                    if twins:
+                        entry["ambiguous_certs"] = [
+                            match["certificate"],
+                            *(t["certificate"] for t in twins),
+                        ]
+                if match:
+                    entry["fr_title"] = match["fr_title"]
+                    entry["rationale"] = match["reason"]  # verbatim, unparsed
+                    entry["year_rated"] = match["year_rated"]
+                    entry["certificate"] = match["certificate"]
+                    entry["studio"] = match["studio"]
+                    m = RATED.search(match["reason"])
                     if m and m.group(1) != r["rating"]:
                         entry["rating_in_text"] = m.group(1)
             except Exception as exc:
