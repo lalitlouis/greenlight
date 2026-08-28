@@ -698,3 +698,21 @@ Ranked by leverage against MEASURED problems, not novelty:
 working), Parallel (earning its keep), the gate/deploy discipline. The
 freedom's value is diversity where correlation is the enemy and
 specialization where one size fits badly — not vendor churn.
+
+## 2026-08-28 — Track B delivers: the CARA boundary measured, the guarantee holds
+
+Full harvest: 4,755 official rationales (75% of the corpus), 74
+multi-certificate titles (re-rating cohort), 860 parse-failure films queued
+for vocabulary review, 1 fetch error. The decision boundary in plain sight —
+and it MEASURES the folklore: 'pervasive language' -> R 99% (n=187) while
+'strong language' -> PG-13 89% (n=383): the modifier, not the category, is
+the R-line. strong bloody violence -> R 100% (n=122); graphic nudity -> R
+99% (n=225); mild anything -> PG 100%; 'intense' is PG-13's signature word.
+
+Model (pure-Python multinomial logistic, coefficients-as-data, deterministic
+title-hash splits, post-1990 scope): top-1 82.1%, multiclass Brier 0.280,
+**Mondrian conformal coverage 90.1% vs 90% target** on 927 held-out films,
+75% singleton prediction sets. The methodology-page sentence now exists with
+real numbers behind it. Wobbly middle-confidence bins (0.7-0.9, small n) are
+the stated caveat; next accuracy lever is stage-1 descriptor extraction
+quality, per the standing 'none of this fixes extraction' caution.
