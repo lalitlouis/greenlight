@@ -1477,6 +1477,7 @@ def file_rating_prediction(
         "corpus_base_rates": meta.get("base_rates") or {},
         "distance_spread": meta.get("spread"),
         "comps_majority": majority,
+        "conformal_set": list(boundary_set),
         "divergence_reason": divergence_reason.strip(),
         "nearest_conflict": (
             {

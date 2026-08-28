@@ -146,6 +146,15 @@ def binder_pdf(data: dict[str, Any]) -> bytes:
             story.append(Paragraph(_html.escape(it), item_style))
 
     bm = data.get("back_matter") or {}
+    if bm.get("desks_incomplete"):
+        _sec(
+            "INCOMPLETE — desks with zero dispositions",
+            [
+                f"The {d} desk returned no dispositions for its worklist; its portion of this "
+                "analysis is unexamined, not clear. Rerun before relying on this binder."
+                for d in bm["desks_incomplete"]
+            ],
+        )
     rating = bm.get("rating") or {}
     if rating.get("predicted"):
         tgt = (

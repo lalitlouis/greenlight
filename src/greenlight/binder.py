@@ -271,6 +271,7 @@ def _back_matter(record: dict[str, Any]) -> dict[str, Any]:
         for who, ds in by_entity.items()
     ] + script_level
     return {
+        "desks_incomplete": [_pretty(d) for d in record.get("desks_incomplete") or []],
         "cleared": recorded
         + [{"desk": _pretty(d), "text": q} for d, q in oq_all if _is_determination(q)],
         "open_questions": [

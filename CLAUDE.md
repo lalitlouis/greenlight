@@ -116,7 +116,7 @@ an agent cannot cite it, it is not a finding.
 - Tools are plain typed Python functions with docstrings. ADK reads the signature — the docstring
   is the tool spec, so write it for a model, not a human.
 - Model tiers: `gemini-3.7-flash` for extraction and per-entity work (global endpoint only;
-  overridable via `GREENLIGHT_FLASH_MODEL`, every change gated on the 21-check eval), `gemini-2.5-pro` for the
+  overridable via `GREENLIGHT_FLASH_MODEL`, every change gated on the 22-check eval), `gemini-2.5-pro` for the
   Adjudicator only. Budget is $100 total; Flash is the default and Pro is a deliberate choice.
 - Never call a live API in a unit test. Cache fixtures under `fixtures/cassettes/`.
 

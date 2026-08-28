@@ -491,8 +491,23 @@ function renderPrediction(root, pred) {
   const card = el("div", "card pred-card");
   const head = el("div", "pred-head");
   const ratings = el("div", "pred-ratings");
+  const cset = pred.conformal_set || [];
+  if (cset.length) {
+    const setBox = el("div", "pred-box pred-set");
+    setBox.appendChild(el("span", "pred-label", "The guarantee (90% coverage)"));
+    const badges = el("div", "pred-set-badges");
+    for (const r of cset) {
+      badges.appendChild(el("b", "rating-badge r-" + r + (r === pred.predicted ? "" : " set-alt"), r));
+    }
+    setBox.appendChild(badges);
+    setBox.appendChild(el("span", "pred-set-note",
+      cset.length === 1
+        ? "The measured CARA boundary commits to a single rating for this descriptor profile."
+        : "The measured CARA boundary spans these ratings for this profile — a boundary script, honestly labeled."));
+    ratings.appendChild(setBox);
+  }
   const predBox = el("div", "pred-box");
-  predBox.appendChild(el("span", "pred-label", "Predicted, as written"));
+  predBox.appendChild(el("span", "pred-label", cset.length ? "The desk's call, as written" : "Predicted, as written"));
   predBox.appendChild(el("b", "rating-badge r-" + pred.predicted, pred.predicted));
   ratings.appendChild(predBox);
   if (pred.target && pred.target !== pred.predicted) {
@@ -1033,6 +1048,14 @@ function renderReport(record) {
   head.appendChild(tally);
   root.appendChild(head);
   root.appendChild(buildReportNav(record, rep));
+
+  for (const desk of record.desks_incomplete || []) {
+    const warn = el("div", "card run-error-banner desk-incomplete-banner");
+    warn.textContent =
+      `⚠ The ${prettyCat(desk)} desk returned no dispositions for its worklist — its portion ` +
+      `of this analysis is incomplete. Treat its silence as unexamined, not clear, and rerun.`;
+    root.appendChild(warn);
+  }
 
   const drivers = (record.flags || [])
     .filter((f) => f.remedy?.est_cost_usd)

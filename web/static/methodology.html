@@ -59,8 +59,10 @@ prediction sets: mostly single ratings; boundary scripts get honest pairs like {
       measured 1.1 — the richer vocabulary sees drift the narrow one was blind to). The model
       you get is trained on the full corpus; recency weighting is a candidate improvement, and
       if we ship it, this number is the reason.</p>
-      <p>The guarantee is conditional on descriptor extraction from your script, which is model
-      judgment. We say that plainly rather than hiding it in a footnote.</p>
+      <p><b>The population boundary:</b> the guarantee is calibrated on post-1990 US
+      wide-release features with published CARA rationales, and it is a guarantee about that
+      population. A documentary short, an unrated festival cut, or a pre-1990 sensibility sits
+      outside it — the prediction still renders, but the 90% number does not travel with it.</p>
     </div>
 
     <div class="card legal-card">
@@ -70,6 +72,18 @@ prediction sets: mostly single ratings; boundary scripts get honest pairs like {
       category they achieved</i>. Our harvest holds <b>436 such records</b> — including 57 that
       state the full trade ("uncut 15 was available; cuts achieved 12A") — the exact transaction
       our cut simulator predicts, documented by the regulator that watched it happen.</p>
+    </div>
+
+    <div class="card legal-card">
+      <h2>Descriptor extraction — <span class="sec-hl">pending, and it is the load-bearing wall</span></h2>
+      <p>Everything above measures the <i>decision layer</i>: given descriptors, the boundary is
+      measured and the coverage guarantee holds. But the descriptors come from a model reading
+      your script, and that extraction step is <b>not yet measured</b>. If the desk reads your
+      drug content as "some" where CARA would say "pervasive", the 92% coverage does not save
+      the prediction — the guarantee is conditional on correct extraction, and we say that here
+      in plain words rather than in a footnote. The planned measurement is validation against
+      hand-labeled scripts; until it runs, "our model is calibrated" is the claim we make, and
+      "our reports are accurate" is the claim we do not.</p>
     </div>
 
     <div class="card legal-card">

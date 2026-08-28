@@ -779,3 +779,22 @@ Owner reconfirmed feature-scale k=3 stays parked; the rest of Wave 2's open item
   noted as the follow-up this number argues for.
 - **Re-source recovery rate** stays per-report until production volume makes an aggregate a
   statistic; the page now says exactly that.
+
+## 2026-08-28 — Reviewer round 2: collapse enforcement, set-primary display, honest boundaries
+
+- **Desk-collapse signature enforced end to end.** `_incomplete_desks` existed since Wave 1
+  (built for the territory 5→0 failure) but was disclosure-only: nothing graded it and
+  nothing rendered it. Now: eval check #22 (a run with any collapsed desk cannot gate),
+  a report banner ("silence is unexamined, not clear"), and a binder/PDF INCOMPLETE
+  section. The 21-check eval is now the 22-check eval.
+- **Conformal set is the primary rating display.** The set was already the filing gate but
+  was never persisted; `rating_prediction.conformal_set` added to the report schema
+  (additive) and the report card now leads with the set ("The guarantee, 90% coverage"),
+  point prediction second ("The desk's call"). Reviewer's argument accepted: Brier 0.239
+  with overconfident mid-bins is exactly the profile where the set is the honest claim.
+- **Methodology page: population boundary stated** (post-1990 US wide-release features —
+  the guarantee does not travel to documentaries/shorts) and **descriptor extraction
+  promoted to its own labeled section**: pending, "the load-bearing wall" — calibrated
+  model ≠ accurate reports until extraction is validated against hand-labeled scripts (A3).
+- A3 validation and a one-off feature-scale k=3 measurement remain owner decisions
+  (parked); the reviewer recommends A3 as the cheapest close.

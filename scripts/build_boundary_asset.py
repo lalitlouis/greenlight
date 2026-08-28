@@ -25,8 +25,7 @@ def main() -> int:
     OUT.write_text(
         json.dumps(
             {
-                "source": "official CARA rating rationales, filmratings.com "
-                f"(harvested {today})",
+                "source": f"official CARA rating rationales, filmratings.com (harvested {today})",
                 "scope": f"post-{table['min_year']} wide releases, "
                 f"{table['films_parsed']} films parsed",
                 "marginals": marginals,

@@ -197,6 +197,12 @@ def main() -> int:
         "invariant: every kept flag has a citation with an excerpt",
         all(f["citations"] and all(c["excerpt"].strip() for c in f["citations"]) for f in flags),
     )
+    check(
+        "invariant: no desk collapsed (worklist with zero dispositions)",
+        not r.get("desks_incomplete"),
+        f"desks_incomplete={r.get('desks_incomplete')} — the territory 5->0 failure class; "
+        "silence must never grade as a clean bill",
+    )
 
     print(f"\nEval of {path} — {len(flags)} kept, {len(rejected)} rejected\n")
     passed = 0

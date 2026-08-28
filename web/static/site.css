@@ -1451,3 +1451,11 @@ tr.bd-sev-BLOCKER { background: rgba(224, 52, 42, 0.045); }
 /* Cleared list grouped by entity: desk determinations nest flat under the name */
 .plain-list > li > .cleared-desks { display: flex; flex-direction: column; gap: 4px; margin: 8px 0 2px 4px; padding: 0; list-style: none; }
 .cleared-desks > li { background: none; border: none; border-radius: 0; padding: 0 0 0 12px; border-left: 2px solid var(--line); font-size: 15px; }
+
+/* Desk-collapse disclosure: silence must read as failure, not clearance */
+.desk-incomplete-banner { margin-bottom: 14px; font-size: 15px; color: var(--ink); }
+
+/* Conformal set as the primary rating claim */
+.pred-set-badges { display: flex; gap: 6px; align-items: center; }
+.pred-set-badges .set-alt { opacity: 0.75; }
+.pred-set-note { display: block; margin-top: 6px; font-size: 13px; color: var(--ink-2); max-width: 340px; }
