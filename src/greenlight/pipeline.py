@@ -116,6 +116,22 @@ def adaptation_context(meta: dict[str, Any], provided: str | None) -> str:
     return "\n".join(dict.fromkeys(parts))  # dedupe, keep order
 
 
+def _form_facts(scenes: list[dict[str, Any]]) -> str:
+    """Measured form profile — the dimension content markers can't carry.
+    Deterministic, so the ratings capsule is grounded in fact, not vibes."""
+    dlg = sum(len(d.get("line", "")) for sc in scenes for d in sc.get("dialogue", []))
+    act = sum(len(sc.get("action", "")) for sc in scenes)
+    pct = round(100 * dlg / max(1, dlg + act))
+    hi, lo = 60, 35  # dialogue-share bands: talky pictures vs action-forward ones
+    register = "dialogue-driven" if pct >= hi else "action-forward" if pct <= lo else "balanced"
+    ints = sum(1 for sc in scenes if "INT" in (sc.get("int_ext") or "").upper())
+    nights = sum(1 for sc in scenes if "NIGHT" in (sc.get("time_of_day") or "").upper())
+    return (
+        f"{len(scenes)} scenes; {pct}% of the text is dialogue ({register}); "
+        f"{ints} INT / {len(scenes) - ints} EXT; {nights} night scenes"
+    )
+
+
 def _initial_state(
     text: str,
     scenes: list[dict[str, Any]],
@@ -131,6 +147,7 @@ def _initial_state(
         "scene_index": scene_index,
         "target_rating": target_rating,
         "adaptation_context": adaptation,
+        "form_facts": _form_facts(scenes),
     }
     for desk, budget in budgets.items():
         state[f"research_budget:{desk}"] = budget

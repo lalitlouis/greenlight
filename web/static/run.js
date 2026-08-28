@@ -1120,6 +1120,7 @@ document.addEventListener("DOMContentLoaded", () => {
   $("feeds-head")?.addEventListener("keydown", (e) => {
     if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleFeeds(); }
   });
+  if (new URLSearchParams(window.location.search).get("feeds") === "1") toggleFeeds();
   $("studio-toggle")?.addEventListener("click", () => {
     const body = $("studio-body");
     const hidden = body.classList.toggle("hidden");

@@ -268,6 +268,7 @@ def make_desk(
             "unverified against any source material."
         )
         text = text.replace("{adaptation}", adaptation)
+        text = text.replace("{form_facts}", str(ctx.state.get("form_facts", "")))
         return text
 
     worker = LlmAgent(

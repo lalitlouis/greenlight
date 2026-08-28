@@ -171,6 +171,14 @@
             "null"
           ],
           "description": "max-min cosine distance across the comparables; a tight spread means the neighbourhood is not discriminating."
+        },
+        "comps_majority": {
+          "type": "string",
+          "description": "Distance-weighted majority rating of the comparables \u2014 the evidence's own verdict."
+        },
+        "divergence_reason": {
+          "type": "string",
+          "description": "Why the desk's prediction differs from comps_majority; empty when it follows the evidence."
         }
       }
     },

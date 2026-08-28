@@ -1325,11 +1325,23 @@ async def query_precedent(text: str, k: int, tool_context: ToolContext) -> dict[
 # --- file_rating_prediction -------------------------------------------------
 
 
+def _comps_weighted_majority(comparables: list[dict[str, Any]]) -> str:
+    """Distance-weighted majority rating of the comparables — the evidence's
+    own verdict, which a prediction must either follow or explicitly rebut."""
+    weights: dict[str, float] = {}
+    for c in comparables:
+        r = c.get("rating") or ""
+        d = float(c.get("distance") or 1.0)
+        weights[r] = weights.get(r, 0.0) + 1.0 / (d + 0.05)
+    return max(weights, key=lambda k: weights[k]) if weights else ""
+
+
 def file_rating_prediction(
     predicted: str,
     rationale: str,
     beats_to_cut: list[str],
     tool_context: ToolContext,
+    divergence_reason: str = "",
 ) -> str:
     """File the MPA rating prediction for the report. Ratings Board only; call once,
     after query_precedent has returned comparables.
@@ -1341,8 +1353,16 @@ def file_rating_prediction(
       `predicted`, the exact changes that buy the target, most impactful first, e.g.
       "Cut 2 of the 3 F-bombs; keep Danny's in S011". Empty list if already at target.
 
+    divergence_reason: REQUIRED when your prediction differs from the
+      comparables' distance-weighted majority rating — state specifically why
+      the evidence doesn't govern (e.g. "comps match on setting but all are
+      comedies where drinking is the joke; CARA's documented drug-depiction
+      standard controls here"). Empty when you follow the evidence.
+
     The comparables from your most recent query_precedent call are attached
-    automatically as the evidence. Filing without comparables is rejected.
+    automatically as the evidence. Filing without comparables is rejected, and
+    a prediction that contradicts its own evidence without a stated reason is
+    rejected — the report's claim is "evidence, not opinion".
     """
     desk = _desk(tool_context)
     comparables = tool_context.state.get(f"last_precedent:{desk}")
@@ -1353,6 +1373,18 @@ def file_rating_prediction(
         )
     if predicted not in {"G", "PG", "PG-13", "R", "NC-17"}:
         return "REJECTED: predicted must be one of G, PG, PG-13, R, NC-17."
+    majority = _comps_weighted_majority(comparables)
+    if majority and predicted != majority and not divergence_reason.strip():
+        tally: dict[str, int] = {}
+        for c in comparables:
+            tally[c["rating"]] = tally.get(c["rating"], 0) + 1
+        return (
+            f"REJECTED: your prediction {predicted} contradicts the comparables' "
+            f"distance-weighted majority {majority} (tally: {tally}). Either follow "
+            "the evidence, or refile with divergence_reason stating specifically why "
+            "these neighbours don't govern (wrong register? content the corpus "
+            "under-weights? a documented CARA standard that controls?)."
+        )
     meta = tool_context.state.get(f"last_precedent_meta:{desk}") or {}
     tool_context.state["rating_prediction"] = {
         "predicted": predicted,
@@ -1362,6 +1394,8 @@ def file_rating_prediction(
         "beats_to_cut": list(beats_to_cut),
         "corpus_base_rates": meta.get("base_rates") or {},
         "distance_spread": meta.get("spread"),
+        "comps_majority": majority,
+        "divergence_reason": divergence_reason.strip(),
     }
     dist: dict[str, int] = {}
     for c in comparables:

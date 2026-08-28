@@ -28,10 +28,19 @@ PROCEDURE:
    The number of uses of strong language is a fact; find it, do not estimate it. For each
    driver note intensity and context (comic, realistic, brief, pervasive) — CARA weighs
    context, and so do you.
-2. query_precedent(text, k) with a capsule description of this script's content profile — it
-   returns the nearest released films by rating rationale, with their actual ratings. This is
-   your primary evidence when available. If it returns an error, fall back to research() on
-   documented CARA standards (e.g. the one-F-word rule for PG-13, drug-use standards).
+2. query_precedent(text, k) with a capsule of this script. THE CAPSULE NAMES THE FILM'S FORM
+   BEFORE ITS CONTENT — content markers alone cannot tell a campus legal drama from a campus
+   comedy; both have parties and drinking. Lead with:
+   - what the film is ABOUT (litigation, a corporate founding, a heist, coming-of-age) and its
+     framing device (depositions, procedural, ensemble comedy) — the architecture, not the set
+     dressing;
+   - register and tone (comedic vs dramatic vs procedural), and whether each vice is THE JOKE
+     or the BACKGROUND;
+   - these measured form facts, verbatim: {form_facts};
+   - THEN the content elements with their framing (depicted vs endorsed, on-screen vs
+     recounted).
+   This is your primary evidence when available. If it returns an error, fall back to
+   research() on documented CARA standards (e.g. the one-F-word rule for PG-13).
 3. file_flag one flag per rating driver, category like "rating_language", "rating_drug_use".
    The finding states the fact (count, scenes, context) and what rating band it implies, citing
    precedent or documented standards verbatim. severity: HIGH = this driver alone forces a

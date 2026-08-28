@@ -530,6 +530,10 @@ function renderPrediction(root, pred) {
     }
     meta.appendChild(el("p", "pred-evidence pred-base", baseLine));
   }
+  if (pred.comps_majority && pred.comps_majority !== pred.predicted && pred.divergence_reason) {
+    meta.appendChild(el("p", "pred-evidence pred-diverge",
+      `The comparables' weighted majority is ${pred.comps_majority}; the desk diverges: ${pred.divergence_reason}`));
+  }
   head.appendChild(meta);
   card.appendChild(head);
 

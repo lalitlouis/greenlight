@@ -1018,3 +1018,33 @@ def test_record_clearance_counts_and_requires_reasoning():
     (entry,) = ctx.state["cleared:clearance_counsel"]
     assert entry["entity_id"] == "E001"
     assert toolbelt.desk_cleared(ctx.state, "clearance_counsel")
+
+
+def test_rating_prediction_must_follow_or_rebut_comps():
+    """'Evidence, not opinion' is a contract: contradicting the comparables'
+    weighted majority without a stated reason is rejected."""
+    ctx = make_ctx(agent_name="ratings_board")
+    comps = [
+        {"rating": "PG-13", "distance": 0.30},
+        {"rating": "PG-13", "distance": 0.32},
+        {"rating": "R", "distance": 0.45},
+    ]
+    ctx.state["last_precedent:ratings_board"] = comps
+    msg = toolbelt.file_rating_prediction("R", "for pervasive language", [], ctx)
+    assert "REJECTED" in msg and "majority" in msg
+    msg = toolbelt.file_rating_prediction(
+        "R",
+        "for pervasive language",
+        [],
+        ctx,
+        divergence_reason="comps match setting but the F-word count alone forces R per CARA",
+    )
+    assert msg.startswith("Prediction filed")
+    pred = ctx.state["rating_prediction"]
+    assert pred["comps_majority"] == "PG-13" and pred["divergence_reason"]
+    # following the evidence needs no reason
+    ctx2 = make_ctx(agent_name="ratings_board")
+    ctx2.state["last_precedent:ratings_board"] = comps
+    assert toolbelt.file_rating_prediction("PG-13", "for thematic elements", [], ctx2).startswith(
+        "Prediction filed"
+    )

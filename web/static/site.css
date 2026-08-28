@@ -953,7 +953,9 @@ mark.d-add { background: rgba(10, 143, 82, 0.16); color: var(--green-deep); bord
 .fc-working { border-color: var(--line-2); }
 .fc-done { opacity: 0.85; }
 .feeds-head .studio-toggle { margin-left: 6px; flex: none; }
-#feeds-body .panel { margin-top: 12px; }
+#feeds-body { padding: 0 16px 16px; }
+#feeds-body .panel { margin-top: 14px; }
+.feeds-strip { margin-bottom: 16px; }
 
 @media (prefers-reduced-motion: reduce) {
   .rt-dot, .rt-ripple { animation: none !important; }
