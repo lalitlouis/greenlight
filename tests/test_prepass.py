@@ -86,9 +86,7 @@ def test_sweep_keeps_single_caps_with_speaker_cue():
 
 
 def test_sweep_keeps_single_caps_with_titlecase_recurrence():
-    scenes = [
-        _scene("S001", "BISCUIT lifts his head. The old dog Biscuit pads to the door.")
-    ]
+    scenes = [_scene("S001", "BISCUIT lifts his head. The old dog Biscuit pads to the door.")]
     assert any(c["surface"] == "Biscuit" for c in sweep(scenes))
 
 
