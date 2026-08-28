@@ -119,6 +119,21 @@ def main() -> int:
     publish.flush()
     record.pop("script_path", None)  # a worker-local path is meaningless elsewhere
 
+    prev_id = state.get("previous_run_id") or ""
+    if prev_id and not record.get("error"):
+        prev = storage.load_record(prev_id)
+        if prev:
+            from greenlight.revision import diff_records
+
+            try:
+                record["revision"] = {
+                    "of": prev_id,
+                    "of_title": prev.get("script_title", ""),
+                    "diff": diff_records(prev, record),
+                }
+            except Exception as e:  # a broken diff must never kill a paid run
+                print(f"WARNING revision_diff_failed run={run_id}: {type(e).__name__}", flush=True)
+
     if not storage.save_record(run_id, record) and not storage.save_record(run_id, record):
         # the report would silently die with this instance — say so where alerting can see it
         print(f"ERROR record_save_failed run={run_id} — report persists only in memory", flush=True)

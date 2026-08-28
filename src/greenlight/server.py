@@ -627,11 +627,21 @@ def _require_signin(request: Request) -> dict[str, Any]:
 
 @app.post("/api/runs")
 async def create_run(
-    screenplay: UploadFile, request: Request, source_context: str = Form("")
+    screenplay: UploadFile,
+    request: Request,
+    source_context: str = Form(""),
+    previous_run_id: str = Form(""),
 ) -> dict[str, str]:
     _check_rate(request)
     source_context = (source_context or "").strip()[:2000]
     owner = _require_signin(request)
+    previous_run_id = _safe_id(previous_run_id) if previous_run_id else ""
+    if previous_run_id:
+        prev_owner = await asyncio.to_thread(storage.load_owner, previous_run_id)
+        # owned prior runs may only be revised by their owner; anonymous prior
+        # runs use the capability model (knowing the id IS the authorization)
+        if prev_owner and (not owner or owner["sub"] != prev_owner):
+            raise HTTPException(403, "The previous analysis belongs to a different account.")
     try:
         source = screenplay_text(screenplay.filename or "", await _read_upload(screenplay))
     except FdxError as exc:
@@ -671,6 +681,7 @@ async def create_run(
             "started_at": _time_module.time(),
             "english_ok": english_ok,
             "source_context": source_context,
+            "previous_run_id": previous_run_id,
         },
     )
     if RUN_MODE == "worker":

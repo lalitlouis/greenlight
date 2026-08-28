@@ -190,8 +190,10 @@ function toSignIn() {
 async function uploadScreenplay(file, sourceContext) {
   showUploadOverlay(file);
   try {
+    const reviseOf = new URLSearchParams(window.location.search).get("revise") || "";
     const { run_id } = await uploadWithProgress("/api/runs", file, {
       source_context: sourceContext || "",
+      previous_run_id: reviseOf,
     });
     setUploadProgress(100, "Desks are opening the script — taking you to the live run…");
     window.location.href = `/run?id=${run_id}`;

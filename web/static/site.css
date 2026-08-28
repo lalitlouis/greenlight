@@ -1437,3 +1437,13 @@ tr.bd-sev-BLOCKER { background: rgba(224, 52, 42, 0.045); }
 .sec-ev-del { color: var(--high, #e97c00); }
 .sec-ev-ok { color: var(--green-deep, var(--green)); }
 .legal-card p { line-height: 1.65; }
+.rev-card { padding: 18px 22px; margin-bottom: 18px; border-left: 3px solid var(--green); }
+.rev-summary { margin: 0 0 8px; font-size: 16.5px; }
+.rev-new { color: var(--high, #e97c00); }
+.rev-resolved { color: var(--green-deep, var(--green)); }
+.rev-note { margin: 0 0 8px; font-size: 13.5px; color: var(--ink-3, #8a8271); font-style: italic; }
+.rev-list { margin: 6px 0 0; padding-left: 0; list-style: none; font-size: 14px; line-height: 1.75; }
+.rev-item-new b { color: var(--high, #e97c00); }
+.rev-item-resolved b { color: var(--green-deep, var(--green)); }
+.rev-cta { display: flex; align-items: center; gap: 16px; padding: 14px 20px; margin: 8px 0 18px; flex-wrap: wrap; }
+.rev-cta-note { font-size: 14px; color: var(--ink-2); }

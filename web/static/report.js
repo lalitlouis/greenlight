@@ -875,6 +875,7 @@ function renderReport(record) {
   KNOWN_FLAG_IDS = new Set(
     [...(record.flags || []), ...(record.rejected_flags || [])].map((f) => f.flag_id).filter(Boolean)
   );
+  window.__REVISION__ = record.revision || null;
   CURRENT_RECORD = record;
   const root = $("report");
   root.textContent = "";
@@ -1108,6 +1109,61 @@ function renderReport(record) {
   }
 
 
+
+  if (!IS_CASE) {
+    const cta = el("div", "card rev-cta");
+    const b = el("a", "btn btn-secondary", "⟳ Analyze a revised draft");
+    b.href = "/?revise=" + encodeURIComponent(new URLSearchParams(window.location.search).get("run") || "");
+    b.title = "Upload the next draft — the new report opens with what changed since this one";
+    cta.appendChild(b);
+    cta.appendChild(el("span", "rev-cta-note",
+      "Upload your next draft and the new report leads with what changed — new, resolved, unchanged."));
+    root.appendChild(cta);
+  }
+
+  const rev = window.__REVISION__;
+  if (rev && rev.diff) {
+    const d = rev.diff;
+    const sec = el("div", "section-head");
+    sec.id = "sec-revision";
+    sec.appendChild(el("h2", null, "What changed since your last draft"));
+    root.insertBefore(sec, root.firstChild ? root.firstChild.nextSibling : null);
+    const card = el("div", "card rev-card");
+    const line = el("p", "rev-summary",
+      `Compared with ${rev.of_title || "your previous analysis"}: `);
+    line.appendChild(el("b", "rev-new", `${d.new.length} new`));
+    line.appendChild(document.createTextNode(" · "));
+    line.appendChild(el("b", "rev-resolved", `${d.resolved.length} resolved`));
+    line.appendChild(document.createTextNode(` · ${d.unchanged.length} unchanged`));
+    if (d.severity_changed.length) {
+      line.appendChild(document.createTextNode(` · ${d.severity_changed.length} severity change${d.severity_changed.length === 1 ? "" : "s"}`));
+    }
+    card.appendChild(line);
+    if (d.drafts && d.drafts.same_text) {
+      card.appendChild(el("p", "rev-note",
+        "Note: this draft's text is identical to the previous one — differences below reflect run-to-run variance, not script changes."));
+    }
+    const list = el("ul", "rev-list");
+    for (const f of d.new) {
+      const li = el("li", "rev-item-new");
+      li.appendChild(el("b", null, "NEW "));
+      li.appendChild(document.createTextNode(`${f.flag_id} · ${prettyCat(f.category)} (${f.severity}) — ${f.finding.slice(0, 120)}`));
+      list.appendChild(li);
+    }
+    for (const f of d.resolved) {
+      const li = el("li", "rev-item-resolved");
+      li.appendChild(el("b", null, "RESOLVED "));
+      li.appendChild(document.createTextNode(`${f.category ? prettyCat(f.category) : ""} — ${f.finding.slice(0, 120)}`));
+      list.appendChild(li);
+    }
+    for (const f of d.severity_changed) {
+      const li = el("li");
+      li.appendChild(document.createTextNode(`${f.flag_id} · ${prettyCat(f.category)}: ${f.was_severity} → ${f.severity}`));
+      list.appendChild(li);
+    }
+    if (list.childElementCount) card.appendChild(list);
+    root.insertBefore(card, sec.nextSibling);
+  }
 
   const oq = record.open_questions || {};
   const oqAll = Object.entries(oq).flatMap(([desk, qs]) => qs.map((q) => [desk, q]));
