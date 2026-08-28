@@ -139,12 +139,15 @@ function renderProfile(p) {
     c.appendChild(txt);
     stats.appendChild(c);
   }
-  if (state.mode !== "replay" && $("fl-impressions").hidden) $("fl-pending").hidden = false;
-  clearTimeout(rt.flPendingTimer);
-  rt.flPendingTimer = setTimeout(() => {
-    const pend = $("fl-pending");
-    if (pend && $("fl-impressions").hidden) pend.hidden = true; // gave up quietly
-  }, 180000);
+  if (state.mode !== "replay" && $("fl-impressions").hidden) {
+    $("fl-pending").hidden = false;
+    // Absolute deadline from FIRST show — profile re-renders (reconnects,
+    // refreshes) used to reset the timer, so the spinner never gave up.
+    if (!rt.flPendingSince) rt.flPendingSince = Date.now();
+    clearTimeout(rt.flPendingTimer);
+    const left = Math.max(0, 90000 - (Date.now() - rt.flPendingSince));
+    rt.flPendingTimer = setTimeout(hideFlPending, left);
+  }
   const lists = $("fl-lists");
   lists.textContent = "";
   const addRow = (label, items, cls) => {
@@ -159,6 +162,11 @@ function renderProfile(p) {
   addRow("Locations", (p.top_locations || []).map((l) => [`${l.name} ×${l.scenes}`]));
   addRow("Dialogue", (p.top_cast || []).map((c) => [`${c.name} · ${c.lines} lines`]));
   addRow("Elements", Object.entries(p.elements || {}).map(([name, n]) => [`${name} ×${n}`, "fl-elem"]));
+}
+
+function hideFlPending() {
+  const pend = $("fl-pending");
+  if (pend && $("fl-impressions").hidden) pend.hidden = true; // gave up quietly
 }
 
 function renderImpressions(d) {
@@ -555,6 +563,7 @@ function setPhase(name) {
   const idx = PHASE_ORDER.indexOf(name);
   if (idx < 0 || idx < PHASE_ORDER.indexOf(state.phase)) return;
   if (name !== state.phase && PHASE_BEATS[name]) enqueueBeat("system", PHASE_BEATS[name]);
+  if (idx >= PHASE_ORDER.indexOf("verify")) hideFlPending();
   state.phase = name;
   PHASE_ORDER.forEach((p, i) => {
     const node = $("phase-" + p);
@@ -587,8 +596,30 @@ function bumpProgress() {
 
 /* ---------- desk panel ---------- */
 
+const DESK_SHORT = {
+  clearance_counsel: "Clearance",
+  ratings_board: "Ratings",
+  safety_underwriter: "Safety",
+  territory_censor: "Territory",
+};
+
+function buildFeedChips() {
+  const wrap = $("feeds-chips");
+  if (!wrap) return;
+  wrap.textContent = "";
+  for (const [id] of DESKS) {
+    const chip = el("span", "fc fc-" + id);
+    chip.id = "fc-" + id;
+    chip.appendChild(el("span", "fc-dot"));
+    chip.appendChild(el("b", null, DESK_SHORT[id] || id));
+    chip.appendChild(el("span", "fc-count", "waiting"));
+    wrap.appendChild(chip);
+  }
+}
+
 function buildPanel() {
   gBuild();
+  buildFeedChips();
   const panel = $("panel");
   panel.textContent = "";
   $("pipe-log").textContent = "";
@@ -624,6 +655,16 @@ function setDeskStatus(id) {
       st.className = "st running";
       txt.textContent = `Working · ${d.calls} calls · ${d.flags} flags`;
     }
+  }
+  const fc = document.querySelector(`#fc-${id} .fc-count`);
+  if (fc) {
+    fc.textContent = d.done
+      ? `✓ ${d.flags} ${d.flags === 1 ? "flag" : "flags"}`
+      : d.started
+        ? `${d.flags} ${d.flags === 1 ? "flag" : "flags"} so far`
+        : "waiting";
+    $("fc-" + id)?.classList.toggle("fc-working", d.started && !d.done);
+    $("fc-" + id)?.classList.toggle("fc-done", d.done);
   }
 }
 
