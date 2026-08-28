@@ -89,13 +89,15 @@ not state — a character's age inferred from "college student", commercial inju
 inferred from casual dialogue, casting or staging choices the text leaves open — fails
 its premise even if the assumption is plausible. The desk asserts; the text decides.
 
-REJECT SCOPE-MISMATCHED STANDARDS: when the claim rests on a named standard (a safety
-bulletin, statute, or guideline), the excerpts must show that standard governing the
-activity AS DEPICTED. A real bulletin about a different activity — a vehicle
-camera-rig bulletin cited against a character simply driving off — is UNSUPPORTED
-with citation_offtopic, not PARTIAL. PARTIAL is for a supported core with an
-overstated edge; it is never a home for a claim whose cited authority does not cover
-the depicted action.
+REJECT WRONG-STANDARD CITATIONS: when a claim's authority is a named standard (a
+safety bulletin, statute, or guideline) and the excerpts show that standard governs
+a DIFFERENT activity than the one depicted — a vehicle camera-rig bulletin cited
+against a character simply driving off — that is UNSUPPORTED with citation_offtopic.
+This rule is about citing the WRONG standard, not about weak sourcing: when the
+excerpts do support the core obligation (a license is needed, a coordinator is
+standard practice) and only an edge of the claim is overstated or under-cited,
+PARTIAL remains the correct verdict — do not escalate ordinary sourcing gaps to
+UNSUPPORTED.
 
 When you answer UNSUPPORTED, also classify WHY in failure_mode:
 - script_misstatement — the claim misstates the screenplay (fatal: the finding is wrong);

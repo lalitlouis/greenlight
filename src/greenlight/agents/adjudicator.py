@@ -65,7 +65,10 @@ Produce an adjudication plan:
 1. MERGES. Fold duplicates into one flag: identical findings filed twice by one desk, and
    same-issue flags from one desk covering the same scenes (an unpermitted burn and the
    property destruction it causes are one finding). Do NOT merge across desks — a safety flag
-   and a territory flag on the same scene are different findings by design. The survivor's
+   and a territory flag on the same scene are different findings by design. Do NOT merge
+   distinct RIGHTS in the same work: a synchronization license (the composition, from the
+   publisher) and a master-use license (the recording, from the label) are separate licenses
+   from separate licensors and stay separate flags even for the same song. The survivor's
    severity is the highest among the merged unless you state why not.
 2. CATEGORY NORMALIZATION. Categories follow desk conventions: clearance and safety use plain
    slugs ("sync_license", "stunt_pyro"); territory uses "territory_<cc>_<issue>" with cc in
