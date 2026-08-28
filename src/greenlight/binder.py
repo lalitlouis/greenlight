@@ -138,13 +138,29 @@ def _hosts(f: dict[str, Any]) -> list[str]:
     return hosts
 
 
+def _scene_ref(sids: list[str], numbers: dict[str, str]) -> str:
+    """Prefer the script's own locked numbers — the coordinate system every
+    production department shares. Generated S### ids compact into ranges."""
+    if sids and all(numbers.get(sid) for sid in sids):
+        labels = list(dict.fromkeys(numbers[sid] for sid in sids))
+        cap = 6
+        shown = ", ".join(labels[:cap])
+        more = f" +{len(labels) - cap} more" if len(labels) > cap else ""
+        return f"Sc. {shown}{more}"
+    return _compact_scene_ref(sids)
+
+
 def _flag_row(
-    f: dict[str, Any], base: dict[str, str], entities: dict[str, Any], sid: str
+    f: dict[str, Any],
+    base: dict[str, str],
+    entities: dict[str, Any],
+    sid: str,
+    numbers: dict[str, str],
 ) -> dict[str, str]:
     item = _unescape(entities.get(f.get("entity_id")) or "")
     return {
         **base,
-        "Scene": _compact_scene_ref(f.get("_all_scenes") or [sid]),
+        "Scene": _scene_ref(f.get("_all_scenes") or [sid], numbers),
         "Item": item or "\u2014",
         "Category": _label(f),
         "Severity": f.get("severity", ""),
@@ -160,6 +176,7 @@ def build(record: dict[str, Any], scene_meta: dict[str, dict[str, Any]]) -> dict
     """The binder as data: header block + one row per finding per scene, with
     explicit no-known-issue rows so the log covers the whole script."""
     entities = {e.get("entity_id"): e.get("surface") for e in record.get("entities", [])}
+    numbers = {sid: str(m.get("number") or "") for sid, m in scene_meta.items()}
     # One line item per finding, anchored at its first scene with a multi-scene
     # reference — repeating a finding per scene reads as duplicate exposure and
     # artificially inflates the log.
@@ -177,7 +194,7 @@ def build(record: dict[str, Any], scene_meta: dict[str, dict[str, Any]]) -> dict
     for sid in all_sids:
         meta = scene_meta.get(sid, {})
         base = {
-            "Scene": sid,
+            "Scene": f"Sc. {numbers[sid]}" if numbers.get(sid) else sid,
             "Page": str(meta.get("page", "")),
             "Scene heading": meta.get("heading", ""),
         }
@@ -203,7 +220,7 @@ def build(record: dict[str, Any], scene_meta: dict[str, dict[str, Any]]) -> dict
             )
             continue
         for f in flags:
-            rows.append(_flag_row(f, base, entities, sid))
+            rows.append(_flag_row(f, base, entities, sid, numbers))
 
     rep = record.get("report") or {}
     counts: dict[str, int] = {}
@@ -211,11 +228,24 @@ def build(record: dict[str, Any], scene_meta: dict[str, dict[str, Any]]) -> dict
         sev = row.get("Severity")
         if sev:
             counts[sev] = counts.get(sev, 0) + 1
+    top = [
+        {
+            "finding": r["Finding"],
+            "label": (r["Item"] if r["Item"] != "\u2014" else r["Category"]),
+            "severity": r["Severity"],
+            "cost": r["Est. cost (USD)"],
+            "scene": r["Scene"],
+        }
+        for r in rows
+        if r["Severity"] in ("BLOCKER", "HIGH")
+    ]
     return {
         "title": record.get("script_title") or "Untitled",
         "generated_at": (record.get("generated_at") or "")[:10],
         "score": rep.get("greenlight_score"),
         "counts": counts,
+        "draft": record.get("draft") or {},
+        "top_exposures": top,
         "est_cost": rep.get("est_clearance_cost_usd"),
         "columns": COLUMNS,
         "rows": rows,

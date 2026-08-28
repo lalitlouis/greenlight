@@ -242,6 +242,27 @@ async def _salvage_verify(filed, verdicts, state, on_event):
     return verdicts
 
 
+def _draft_identity(
+    source: str, meta: dict[str, Any], scenes: list[dict[str, Any]], title: str
+) -> dict[str, Any]:
+    """Chain of custody: a clearance report is only valid for the exact draft it
+    ran against. Hash, size, page count, and whether the scene numbers are the
+    script's own locked numbers or our generated coordinates."""
+    import hashlib
+
+    numbered = sum(1 for sc in scenes if sc.get("number"))
+    return {
+        "title": title,
+        "draft_date": meta.get("draft date") or meta.get("draft_date") or "",
+        "revision_label": meta.get("revision") or "",
+        "sha256": hashlib.sha256(source.encode()).hexdigest(),
+        "bytes": len(source.encode()),
+        "pages": max((sc.get("page", 1) for sc in scenes), default=1),
+        "scene_count": len(scenes),
+        "scene_numbers": "script" if numbered >= max(1, len(scenes) // 2) else "generated",
+    }
+
+
 async def run(
     script_path: str | Path,
     budgets: dict[str, int] | None = None,
@@ -256,6 +277,7 @@ async def run(
     meta, scenes = parser.parse_fountain(source)
     # a worker's script file is named by run id — never let that become the title
     title = meta.get("title") or title_hint or Path(script_path).stem
+    draft = _draft_identity(source, meta, scenes, title)
     verbose = on_event is None  # CLI runs narrate to the console; server runs must
     # keep script-derived text (titles, findings, excerpts) OUT of stdout — stdout
     # is Cloud Logging in production, and the privacy page promises logs are clean.
@@ -335,6 +357,7 @@ async def run(
     record = {
         "script_title": title,
         "script_path": str(script_path),
+        "draft": draft,
         "generated_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
         "elapsed_s": round(time.time() - t0, 1),
         "error": error,

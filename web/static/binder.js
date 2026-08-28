@@ -19,6 +19,17 @@ function bdRender(data) {
       `${counts.BLOCKER || 0} blocker(s), ${counts.HIGH || 0} high, ${counts.MEDIUM || 0} medium` +
       (data.est_cost ? ` · est. exposure ${money(data.est_cost)}` : ""))
   );
+  const d = data.draft || {};
+  if (d.sha256) {
+    const bits = [
+      d.draft_date ? `draft ${d.draft_date}` : null,
+      d.revision_label || null,
+      d.pages ? `${d.pages} pp` : null,
+      d.scene_numbers === "script" ? "script's own scene numbers" : "generated scene coordinates",
+      `SHA-256 ${d.sha256.slice(0, 12)}…`,
+    ].filter(Boolean);
+    left.appendChild(el("p", "bd-draft", "This report is valid only for this draft: " + bits.join(" · ")));
+  }
   head.appendChild(left);
   const brand = el("div", "bd-brand");
   brand.appendChild(el("span", "bd-dot"));
@@ -30,6 +41,21 @@ function bdRender(data) {
   // are dropped rather than rendered as dead width.
   const cols = data.columns.filter((c) => data.rows.some((r) => String(r[c] ?? "").trim() !== ""));
   const colClass = (c) => "bd-col-" + c.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").split("-").slice(0, 2).join("-");
+  const top = data.top_exposures || [];
+  if (top.length) {
+    const box = el("div", "bd-top");
+    box.appendChild(el("p", "bd-top-title", "Top exposures — highest severity first"));
+    const ul = el("ul", "bd-top-list");
+    for (const t of top) {
+      const li = el("li");
+      li.appendChild(el("span", "bd-sevcell sev-" + t.severity, t.severity));
+      li.appendChild(document.createTextNode(` ${t.finding} — ${t.label} (${t.scene})` + (t.cost ? ` · $${t.cost}` : "")));
+      ul.appendChild(li);
+    }
+    box.appendChild(ul);
+    page.appendChild(box);
+  }
+
   const table = el("table", "bd-table");
   const thead = el("thead");
   const hr = el("tr");

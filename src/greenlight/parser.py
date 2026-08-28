@@ -161,6 +161,18 @@ def strip_title_page(text: str) -> tuple[dict[str, str], int]:
     return (meta, offset) if meta else ({}, 0)
 
 
+_SCENE_NUMBER_RE = __import__("re").compile(r"\s*#([A-Za-z0-9.\-]+)#\s*$")
+
+
+def _extract_scene_number(heading: str) -> tuple[str, str]:
+    """Fountain scene-number syntax: "INT. HOUSE - DAY #42A#" -> ("INT. HOUSE - DAY", "42A").
+    Locked production numbers are a shared coordinate system — carry them, never invent."""
+    m = _SCENE_NUMBER_RE.search(heading)
+    if not m:
+        return heading, ""
+    return heading[: m.start()].rstrip(), m.group(1)
+
+
 def parse_fountain(  # noqa: PLR0915 - one continuous scan loop
     text: str,
 ) -> tuple[dict[str, str], list[dict[str, Any]]]:
@@ -228,11 +240,12 @@ def parse_fountain(  # noqa: PLR0915 - one continuous scan loop
         page = 1 + int(cumulative_lines // _LINES_PER_PAGE)
         cumulative_lines += acc.line_count + 1  # + blank line before next heading
 
-        int_ext, location, time_of_day = _split_heading(heading)
+        clean_heading, scene_number = _extract_scene_number(heading)
+        int_ext, location, time_of_day = _split_heading(clean_heading)
         scene = {
             "scene_id": f"S{i + 1:03d}",
             "page": page,
-            "heading": heading,
+            "heading": clean_heading,
             "int_ext": int_ext,
             "location": location,
             "time_of_day": time_of_day,
@@ -241,6 +254,7 @@ def parse_fountain(  # noqa: PLR0915 - one continuous scan loop
             "characters": acc.characters,
             "raw_span": [start, end],
         }
+        scene |= {"number": scene_number} if scene_number else {}
         scenes.append(validate("scene", scene))
 
     return meta, scenes

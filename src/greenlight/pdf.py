@@ -31,8 +31,13 @@ def looks_like_pdf(data: bytes) -> bool:
 
 
 def screenplay_text(filename: str, data: bytes) -> str:
-    """Uploaded file -> parseable text. PDFs are extracted; everything else is
-    treated as Fountain/plain text."""
+    """Uploaded file -> parseable text. PDFs are extracted, FDX is converted
+    with its native structure (locked scene numbers preserved); everything
+    else is treated as Fountain/plain text."""
     if filename.lower().endswith(".pdf") or looks_like_pdf(data):
         return pdf_to_text(data)
+    from greenlight.fdx import fdx_to_fountain, looks_like_fdx
+
+    if looks_like_fdx(filename, data):
+        return fdx_to_fountain(data)
     return data.decode("utf-8", errors="replace")

@@ -43,6 +43,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from greenlight import auth, firstlook, fixer, langguard, parser, runstate, storage
+from greenlight.fdx import FdxError
 from greenlight.pdf import screenplay_text
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -629,7 +630,10 @@ async def create_run(
     _check_rate(request)
     source_context = (source_context or "").strip()[:2000]
     owner = _require_signin(request)
-    source = screenplay_text(screenplay.filename or "", await _read_upload(screenplay))
+    try:
+        source = screenplay_text(screenplay.filename or "", await _read_upload(screenplay))
+    except FdxError as exc:
+        raise HTTPException(400, str(exc)) from exc
     english_ok = langguard.probably_english(source)
     if not english_ok:
         _log("non_english_upload", pages=len(source) // 3200)
@@ -986,7 +990,10 @@ async def _run_writer(run_id: str, path: Path, owner: dict[str, Any] | None = No
 async def create_writer_run(screenplay: UploadFile, request: Request) -> dict[str, str]:
     _check_rate(request)
     owner = _require_signin(request)
-    source = screenplay_text(screenplay.filename or "", await _read_upload(screenplay))
+    try:
+        source = screenplay_text(screenplay.filename or "", await _read_upload(screenplay))
+    except FdxError as exc:
+        raise HTTPException(400, str(exc)) from exc
     _trim_tracked()
     run_id = "w" + uuid.uuid4().hex[:11]
     upload_dir = RUNS_DIR / "uploads"
@@ -1240,7 +1247,14 @@ async def _binder_data(run_id: str) -> dict[str, Any]:
     source = await _load_source_any(run_id, record)
     if source:
         _, scenes = parser.parse_fountain(source)
-        scene_meta = {s["scene_id"]: {"heading": s["heading"], "page": s["page"]} for s in scenes}
+        scene_meta = {
+            s["scene_id"]: {
+                "heading": s["heading"],
+                "page": s["page"],
+                "number": s.get("number", ""),
+            }
+            for s in scenes
+        }
     from greenlight import binder as binder_mod
 
     return binder_mod.build(record, scene_meta)
