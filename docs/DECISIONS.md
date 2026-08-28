@@ -600,3 +600,26 @@ then a tool the desks call).
 
 **Not doing:** IMDb (scraping prohibited, paid data omits what we need);
 ASCAP/BMI/Songview stay runtime-query-only per their terms.
+
+## 2026-08-28 — Competitive position (Filmustage) and certification roadmap
+
+**Position:** Filmustage is a pre-production OPERATIONS platform (breakdown ->
+schedule -> budget -> call sheets; customer = 1st AD / line producer). Their
+page never mentions clearance, E&O, defamation, licensing, rating prediction,
+or territory — the desk we serve (production counsel, E&O broker) is absent
+from their product. We do not compete on their field; we prove ourselves on
+ours: (1) verification as the product (blinded verifier, citation invariant,
+rejections shown), (2) published accuracy numbers (Wave 2's alpha / recall /
+conformal coverage — nobody in either category publishes any), (3) regulator
+data assets (CARA rationales, BBFC cuts records, USPTO live verification,
+CSATF index), (4) the forwardable binder as the artifact that reaches counsel.
+Long-term they are a natural channel partner: their breakdown identifies the
+props/brands/locations; we clear them.
+
+**Certifications:** no audits during deadline week. Sequence: /security page
+now (shipped — controls documented control-by-control, badges honestly
+absent: "we will not display a badge we have not earned"); TPN Blue Shield
+membership + self-assessment after Devpost (MPA-native trust, weeks not
+months); SOC 2 Type 1 via a compliance platform when the first enterprise
+conversation gets serious, Type 2 following. Operator action items: 2FA on
+all provider accounts; one-page incident-response note.
