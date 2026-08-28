@@ -9,6 +9,9 @@ dev:            ## local ADK dev UI
 run:            ## end-to-end on the fixture screenplay
 	.venv/bin/python -m greenlight.cli run fixtures/slack_tide.fountain
 
+comps-gate:
+	.venv/bin/python scripts/eval_comps.py
+
 scale-gate:     ## end-to-end on the LARGE fixture + graded scale checks
 	.venv/bin/python -m greenlight.cli run fixtures/scale_gate.fountain
 	.venv/bin/python scripts/eval_scale.py
