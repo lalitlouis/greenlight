@@ -108,6 +108,7 @@
             "type": "string",
             "enum": [
               "parallel_search",
+              "parallel_search_resource",
               "clickhouse",
               "local"
             ]
@@ -168,6 +169,24 @@
     "verification_unavailable": {
       "type": "boolean",
       "description": "True when the verifier could not run and the flag survives fail-open \u2014 rendered as unverified, never as verified."
+    },
+    "failure_mode": {
+      "type": "string",
+      "enum": [
+        "none",
+        "script_misstatement",
+        "premise_unsupported",
+        "citation_offtopic"
+      ],
+      "description": "Verifier's classification when a flag was rejected \u2014 sourcing failures are recoverable once."
+    },
+    "resourced": {
+      "type": "boolean",
+      "description": "True when this flag went through the one-time re-sourcing round."
+    },
+    "recoverable": {
+      "type": "boolean",
+      "description": "On rejected flags: whether the rejection was a sourcing failure eligible for re-sourcing."
     }
   }
 }
