@@ -157,6 +157,20 @@
             "type": "string"
           },
           "description": "What to change to hit the target rating."
+        },
+        "corpus_base_rates": {
+          "type": "object",
+          "description": "Rating -> percent of the whole corpus, the base-rate denominator for the comparables panel.",
+          "additionalProperties": {
+            "type": "number"
+          }
+        },
+        "distance_spread": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "max-min cosine distance across the comparables; a tight spread means the neighbourhood is not discriminating."
         }
       }
     },

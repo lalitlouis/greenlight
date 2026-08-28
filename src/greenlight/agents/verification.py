@@ -32,9 +32,10 @@ from greenlight.tools.toolbelt import DESKS
 # Same HTTP-layer 429 ladder as the agents (see agents/common.py): the genai
 # client defaults to NO retries, and a verifier 429 must not sink a run.
 _RETRY_HTTP = types.HttpOptions(
+    timeout=480_000,  # per-request wall — a stalled stream retries instead of hanging
     retry_options=types.HttpRetryOptions(
         attempts=8, initial_delay=10, max_delay=120, exp_base=2, jitter=0.5
-    )
+    ),
 )
 
 

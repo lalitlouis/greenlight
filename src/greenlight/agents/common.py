@@ -30,12 +30,21 @@ _RETRY_HTTP = types.HttpRetryOptions(
 # default is gated on the 21-check fixture eval before any change lands.
 
 
+# A per-request wall: a stalled global-endpoint stream (seen twice: the Clerks
+# case hang, the calibration gate hang) becomes a retryable timeout instead of
+# an infinite silent wait. CRITICAL: ADK's client_kwargs REPLACES the
+# http_options it builds from retry_options (google_llm.py: kwargs.update),
+# so timeout and retry_options must travel in the SAME HttpOptions — passing
+# them separately silently disables retries (it cost us a gate run to a 429).
+_HTTP_OPTIONS = types.HttpOptions(timeout=480_000, retry_options=_RETRY_HTTP)
+
+
 def _flash() -> Gemini:
-    return Gemini(model=FLASH_MODEL, retry_options=_RETRY_HTTP)
+    return Gemini(model=FLASH_MODEL, client_kwargs={"http_options": _HTTP_OPTIONS})
 
 
 def _pro() -> Gemini:
-    return Gemini(model=PRO_MODEL, retry_options=_RETRY_HTTP)
+    return Gemini(model=PRO_MODEL, client_kwargs={"http_options": _HTTP_OPTIONS})
 
 
 FLASH = _flash()
