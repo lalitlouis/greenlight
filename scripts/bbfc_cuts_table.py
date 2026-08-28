@@ -24,7 +24,8 @@ _CATEGORY_FOR = re.compile(
     r"(?:achie?ve|obtain|secure|receive)[^.]{0,30}'?\"?(U|PG|12A|12|15|18)\b", re.I
 )
 _WHAT = re.compile(
-    r"remove[sd]?\s+(?:a number of\s+)?(?:uses of\s+)?([^.;]{4,80})|reduc(?:e|tion)[s]?\s+(?:of|to|in)\s+([^.;]{4,80})",
+    r"remove[sd]?\s+(?:a number of\s+)?(?:uses of\s+)?([^.;]{4,80})"
+    r"|reduc(?:e|tion)[s]?\s+(?:of|to|in)\s+([^.;]{4,80})",
     re.I,
 )
 

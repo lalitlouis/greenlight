@@ -77,8 +77,8 @@ def parse_rationale(text: str) -> tuple[list[tuple[str, str]], list[str]]:
     body = body.rstrip(".").strip('"“” ')
     pairs: list[tuple[str, str]] = []
     fails: list[str] = []
-    for seg in _SPLIT.split(body):
-        seg = seg.strip().lower()
+    for raw_seg in _SPLIT.split(body):
+        seg = raw_seg.strip().lower()
         if not seg:
             continue
         intensity = ""

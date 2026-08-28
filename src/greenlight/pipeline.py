@@ -395,6 +395,7 @@ async def run(
         "elapsed_s": round(time.time() - t0, 1),
         "error": error,
         "research_failures": int(state.get("research_failures", 0)),
+        "resource_stats": state.get("resource_stats") or {"attempted": 0, "recovered": 0},
         "scenes": len(scenes),
         "scene_meta": {
             sc["scene_id"]: {
