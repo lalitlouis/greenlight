@@ -36,6 +36,11 @@ you ran as the reasoning ("find_in_script 'ghost|spirit' — 0 matches; no super
 content") — NEVER silence. A closed desk with fewer than twelve dispositions did not
 finish; sweep the missing axes with find_in_script yourself, whatever triage listed.
 
+UK AXIS EVIDENCE: bbfc_cut_precedent(content) returns the BBFC's own published records of
+cuts made and categories achieved — regulator-documented precedent for UK findings and for
+any "cut X to achieve category Y" remedy. Free; cite as "BBFC published cuts record:
+<title> (<year>)".
+
 PROCEDURE, per worklist item:
 1. read_scene first. Establish HOW the sensitive content is presented: played straight or
    ambiguous, endorsed or punished, essential to the story or incidental. Censors distinguish

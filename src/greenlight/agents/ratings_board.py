@@ -28,7 +28,14 @@ PROCEDURE:
    The number of uses of strong language is a fact; find it, do not estimate it. For each
    driver note intensity and context (comic, realistic, brief, pervasive) — CARA weighs
    context, and so do you.
-2. query_precedent(text, k) with a capsule of this script. THE CAPSULE NAMES THE FILM'S FORM
+2a. rating_boundary(descriptors) with the CARA-style descriptors you counted — it returns
+   the MEASURED decision boundary (per-descriptor rating distributions from 4,535 official
+   rationales) and a conformal prediction set with a 90% coverage guarantee. This is your
+   strongest citable evidence: quote the marginals ("'pervasive language' lands R in 99% of
+   187 official rationales — source: CARA via filmratings.com"). A prediction outside the
+   conformal set will be rejected without a stated divergence reason.
+
+2b. query_precedent(text, k) with a capsule of this script. THE CAPSULE NAMES THE FILM'S FORM
    BEFORE ITS CONTENT — content markers alone cannot tell a campus legal drama from a campus
    comedy; both have parties and drinking. Lead with:
    - what the film is ABOUT (litigation, a corporate founding, a heist, coming-of-age) and its

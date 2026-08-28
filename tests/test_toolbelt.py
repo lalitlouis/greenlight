@@ -1083,3 +1083,29 @@ def test_csatf_bulletin_lookup_and_no_guessing():
     assert "19" in hits
     res = toolbelt.csatf_bulletin("zzz nonexistent topic", ctx)
     assert res["matches"] == {} and "guessing" in res["guidance"]
+
+
+def test_prediction_outside_conformal_set_needs_reason():
+    """The measured boundary is part of the evidence contract."""
+    ctx = make_ctx(agent_name="ratings_board")
+    comps = [{"rating": "R", "distance": 0.30}, {"rating": "R", "distance": 0.35}]
+    ctx.state["last_precedent:ratings_board"] = comps
+    ctx.state["boundary_set:ratings_board"] = ["R"]
+    msg = toolbelt.file_rating_prediction("PG-13", "for language", [], ctx)
+    assert "REJECTED" in msg and "conformal" in msg
+    msg = toolbelt.file_rating_prediction(
+        "PG-13",
+        "for language",
+        [],
+        ctx,
+        divergence_reason="every counted instance is recounted dialogue, not depiction",
+    )
+    assert msg.startswith("Prediction filed")
+
+
+def test_rating_boundary_returns_marginals_and_set():
+    ctx = make_ctx(agent_name="ratings_board")
+    r = toolbelt.rating_boundary(["pervasive language"], ctx)
+    assert r["marginals"]["pervasive language"]["distribution"].popitem()[0] in ("R", "PG-13")
+    assert r["conformal_prediction_set"] == ["R"]
+    assert ctx.state["boundary_set:ratings_board"] == ["R"]

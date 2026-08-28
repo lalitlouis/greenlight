@@ -1423,6 +1423,7 @@ def file_rating_prediction(
     if predicted not in {"G", "PG", "PG-13", "R", "NC-17"}:
         return "REJECTED: predicted must be one of G, PG, PG-13, R, NC-17."
     majority = _comps_weighted_majority(comparables)
+    boundary_set = tool_context.state.get(f"boundary_set:{desk}") or []
     nearest = comparables[0] if comparables else None
     near_conflict = bool(
         nearest
@@ -1430,7 +1431,10 @@ def file_rating_prediction(
         and nearest.get("rating")
         and nearest["rating"] != predicted
     )
-    if ((majority and predicted != majority) or near_conflict) and not divergence_reason.strip():
+    outside_boundary = bool(boundary_set) and predicted not in boundary_set
+    if (
+        (majority and predicted != majority) or near_conflict or outside_boundary
+    ) and not divergence_reason.strip():
         tally: dict[str, int] = {}
         for c in comparables:
             tally[c["rating"]] = tally.get(c["rating"], 0) + 1
@@ -1443,11 +1447,17 @@ def file_rating_prediction(
             if near_conflict
             else ""
         )
+        boundary_note = (
+            f" The measured CARA boundary's conformal prediction set is {boundary_set} "
+            "(90% coverage guarantee) and your prediction sits outside it."
+            if outside_boundary
+            else ""
+        )
         return (
             f"REJECTED: your prediction {predicted} contradicts the evidence "
-            f"(weighted majority {majority}, tally: {tally}).{near_note} Either follow "
-            "the evidence, or refile with divergence_reason stating specifically why "
-            "it doesn't govern."
+            f"(weighted majority {majority}, tally: {tally}).{near_note}{boundary_note} "
+            "Either follow the evidence, or refile with divergence_reason stating "
+            "specifically why it doesn't govern."
         )
     meta = tool_context.state.get(f"last_precedent_meta:{desk}") or {}
     tool_context.state["rating_prediction"] = {
@@ -1509,6 +1519,115 @@ def _csatf_index() -> dict[str, str]:
         )
         _CSATF_CACHE["b"] = data["bulletins"]
     return _CSATF_CACHE["b"]
+
+
+_BOUNDARY_CACHE: dict[str, Any] = {}
+
+
+def _boundary_data() -> dict[str, Any]:
+    if "d" not in _BOUNDARY_CACHE:
+        import json as _json
+        from pathlib import Path as _Path
+
+        _BOUNDARY_CACHE["d"] = _json.loads(
+            (_Path(__file__).resolve().parents[1] / "data" / "rating_boundary.json").read_text()
+        )
+    return _BOUNDARY_CACHE["d"]
+
+
+def rating_boundary(descriptors: list[str], tool_context: ToolContext) -> dict[str, Any]:
+    """Measured CARA decision boundary: per-descriptor rating distributions
+    across 4,535 official post-1990 rationales, plus the fitted model's
+    conformal prediction set for the combination. This is EVIDENCE — cite the
+    marginals verbatim (source: official CARA rationales, filmratings.com).
+    Free (no research budget). Call BEFORE file_rating_prediction; a
+    prediction outside the conformal set needs a stated divergence reason.
+
+    descriptors: CARA-style intensity+category phrases matching what you
+    counted, e.g. ["pervasive language", "some violence", "brief nudity"].
+    """
+    import math as _math
+
+    d = _boundary_data()
+    marginals = {}
+    feats = d["model"]["features"]
+    idx = {k: i for i, k in enumerate(feats)}
+    x = [0.0] * (len(feats) + 1)
+    x[-1] = 1.0
+    for desc in descriptors:
+        key = desc.strip().lower()
+        m = d["marginals"].get(key)
+        if m:
+            n = sum(m.values())
+            marginals[key] = {
+                "n": n,
+                "distribution": {
+                    r: f"{100 * c // n}%" for r, c in sorted(m.items(), key=lambda kv: -kv[1])
+                },
+            }
+        tail = key.split(" ", 1)[-1] if " " in key else key
+        for cand in (key, tail):
+            if cand in idx:
+                x[idx[cand]] = 1.0
+    z = [sum(wc[j] * x[j] for j in range(len(x)) if x[j]) for wc in d["model"]["weights"]]
+    mx = max(z)
+    e = [_math.exp(v - mx) for v in z]
+    ssum = sum(e)
+    probs = {c: e[i] / ssum for i, c in enumerate(d["model"]["classes"])}
+    pred_set = [
+        c
+        for i, c in enumerate(d["model"]["classes"])
+        if 1.0 - probs[c] <= d["model"]["conformal_q"][str(i)]
+    ]
+    tool_context.state[f"boundary_set:{_agent_key(tool_context)}"] = pred_set
+    return {
+        "marginals": marginals,
+        "model_probabilities": {
+            c: round(pv, 3) for c, pv in sorted(probs.items(), key=lambda kv: -kv[1])
+        },
+        "conformal_prediction_set": pred_set,
+        "coverage_note": (
+            "the true rating falls inside the prediction set 90% of the time by "
+            "construction (Mondrian split conformal, 927 held-out films)"
+        ),
+        "source": d["source"],
+    }
+
+
+_BBFC_CACHE: dict[str, Any] = {}
+_BBFC_HITS = 8
+
+
+def bbfc_cut_precedent(content: str, tool_context: ToolContext) -> dict[str, Any]:
+    """Regulator-documented cut precedents: BBFC's published records of which
+    cuts were made and what category they achieved. Use to ground a cut-list
+    item ("films that made this exact cut moved 15 -> 12A") or a territory
+    UK finding. Free (no research budget). Cite as
+    "BBFC published cuts record: <title> (<year>)".
+
+    content: what the cut concerns — e.g. "strong language", "violence".
+    """
+    if "r" not in _BBFC_CACHE:
+        import json as _json
+        from pathlib import Path as _Path
+
+        _BBFC_CACHE["r"] = _json.loads(
+            (_Path(__file__).resolve().parents[1] / "data" / "bbfc_cuts.json").read_text()
+        )["records"]
+    words = [
+        w for w in re.sub(r"[^a-z0-9 ]", " ", content.lower()).split() if len(w) > _MIN_KEYWORD
+    ]
+    hits = [
+        r
+        for r in _BBFC_CACHE["r"]
+        if r.get("what_was_cut") and any(w in r["what_was_cut"].lower() for w in words)
+    ]
+    hits.sort(key=lambda r: (r.get("uncut_available") is None, -(r.get("year") or 0)))
+    return {
+        "matches": hits[:_BBFC_HITS],
+        "total_records": len(_BBFC_CACHE["r"]),
+        "source": "BBFC published cuts records, bbfc.co.uk",
+    }
 
 
 def csatf_bulletin(topic: str, tool_context: ToolContext) -> dict[str, Any]:
@@ -1746,6 +1865,8 @@ DESK_TOOLS = [
     record_clearance,
     csatf_bulletin,
     verify_trademark,
+    rating_boundary,
+    bbfc_cut_precedent,
     fetch_page,
     deep_research,
     query_precedent,
