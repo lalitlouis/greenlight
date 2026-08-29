@@ -999,3 +999,16 @@ threading additions) silenced via logger level; zero functional effect either wa
 - Dead `_DONE_COVERAGE` constant removed (unused since the refusal-cap removal).
 - Validation record re-grades 22/23 under recalibrated checks; the location seed is the
   one remaining red and requires a fresh run to test the doctrine.
+
+## 2026-08-29 — Post-registration citation laziness: local-tool strings need substantive pairing
+
+Gate roll 2 (21/24) exposed a regression the provenance registration unlocked: local-tool
+strings became citable, so desks leaned on them as easy excerpts — bulletin TITLE lines as
+sole safety support (3 rejections in one run), a filmratings glossary line that softened
+the desk's own R-line premise (rating_language rejected as self-contradicting), doctrine-
+adjacent excerpts under master-use flags. The verifier was RIGHT each time. Fixes (prompt/
+tool-text): ratings frames the multi-F-word line as measured boundary risk (marginals +
+comps + set, never a bright-line the glossary contradicts); safety pairs the bulletin
+index (number verification) with researched substantive text; csatf_bulletin says so at
+the point of use; master-use flags cite licensing practice. Roll 1's fix (disparagement
+cites trade-libel authority, never Rogers) PASSED its seed on roll 2.

@@ -155,6 +155,10 @@ PROCEDURE, per worklist item:
    THIS use. Not everything that looks like a rights problem is one.
 3. For music: composition and master recording are separately owned. If the script requires a
    specific recording, chase both chains: identify the composition's owner, then the master's,
+   and CITE LICENSING PRACTICE for each flag (label/publisher licensing pages, law-firm
+   sync/master licensing analyses, documented quotes) — an excerpt that merely describes
+   copyright doctrine without establishing that THIS use needs THIS license gets the
+   master flag rejected in verification (it has, repeatedly),
    then the administrator if ownership has moved. Each hop is a new research() call. Stop at
    three hops — deeper is a human's job; note_open_question it. File the composition (sync)
    and the master recording as SEPARATE flags — separate owners, separate negotiations,

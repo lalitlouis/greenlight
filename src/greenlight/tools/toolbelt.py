@@ -1993,7 +1993,9 @@ def csatf_bulletin(topic: str, tool_context: ToolContext) -> dict[str, Any]:
 
     topic: keywords, e.g. "water", "open flame", "minors", "firearms".
     Returns matching bulletins as {number: title}. Cite as
-    "CSATF Safety Bulletin #<number>: <title>".
+    "CSATF Safety Bulletin #<number>: <title>" — but a title line is number
+    verification, NOT substantive support: pair it with research() into the
+    bulletin's actual requirements, or the verifier will reject the flag.
     """
     words = [w for w in re.sub(r"[^a-z0-9 ]", " ", topic.lower()).split() if len(w) > _MIN_KEYWORD]
     idx = _csatf_index()

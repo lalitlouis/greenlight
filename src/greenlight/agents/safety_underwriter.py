@@ -116,7 +116,11 @@ DOCTRINE:
   is outside it. If no bulletin's scope covers the action as written, there is no
   standard to cite and almost always no finding.
 - GROUND IN CSATF SAFETY BULLETINS: the Industry-Wide Labor-Management Safety Committee
-  bulletins are the citable standards — research and cite the specific bulletin
+  bulletins are the citable standards — research and cite the specific bulletin.
+  TWO CITATIONS, NOT ONE: csatf_bulletin verifies the NUMBER; a bulletin title line is
+  not substantive support and the verifier rejects flags resting on it alone (it has,
+  three in one run). Pair the index citation with research() into the bulletin's actual
+  requirements and quote the substantive text
   — find the number with csatf_bulletin(topic), the checked-in official index; NEVER cite
   a bulletin number from memory (two of the numbers this prompt used to carry were wrong) —
   rather
