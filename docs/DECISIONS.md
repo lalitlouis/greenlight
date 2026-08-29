@@ -919,3 +919,49 @@ reads the 480s HttpOptions never fire on). Two mechanical fixes:
   lied to the gate; the "grade without a green exit" law now holds inside the run).
 The 18/23 salvage grade is struck as evidence: aborted run, not a measurement. The
 desk-scoped batch still awaits its first clean gate.
+
+## 2026-08-29 — External review (28 Aug) implemented in full: evidence plumbing + comparison math
+
+Three verification agents confirmed every review finding (several worse than claimed);
+all three phases implemented overnight, code-only per owner ("fix everything, don't run
+anything"). Commits 8b79ae1, d98ab36, bc98a76.
+
+**Phase A (P0):** local tools (rating_boundary/csatf_bulletin/bbfc_cut_precedent) register
+their output as citable provenance — their instructed citations no longer reject or get
+silently substituted. Work-item identity end to end: deterministic CC/RB/SU/TC-Wnnn ids in
+prepass, 12 synthetic TC-AX-* territory axis items (the "MECHANICAL" checklist is now
+mechanical), wi_done side channel on all three disposition tools, done()/unexamined/
+completeness-sweep consume ids, desk_coverage instrumented, eval check #24 (territory
+work_items_done >= 12). Scene-level work was previously PERMANENTLY unsatisfiable in
+done() — with the uncapped refusals this burned whole desks' iterations. Ratings lineage:
+Wikipedia content profiles are no longer called "official CARA rationales" anywhere
+agent-facing (query_precedent docstring, ratings prompt, report schema description —
+announced); marketing copy split. Conformal: pooled Mondrian groups {G,PG}/{PG-13}/
+{R,NC-17} with a hybrid per-class floor (naive pooling degenerated: the group hit 90% by
+letting G fail always) — groups all >=91.4% held-out, per-class table + calibration counts
+published on methodology; every "90% guarantee" claim restated per pooled group.
+Descriptors: parsed with the embedded harvest vocabulary, matched/unmatched returned, and
+a set built from partial input is ADVISORY — it no longer hard-rejects a desk's correct
+prediction (the review's sharpest find: the evidence contract inverting).
+
+**Phase B (P1):** ONE voting rule — What-If now uses the shared inverse-distance weighted
+majority and excludes the film's own title (it could previously vote in its own What-If);
+report.js's third client-side tally removed. Score labeled an ordinal risk index (the old
+caveat claimed few-point re-run stability that k=3 disproved); confidence labeled "desk
+self-assessment (uncalibrated)"; cost totals labeled independent-remedy sums; methodology
+gains a "labeled for what they are" card. Adjudicator docs now match runtime everywhere
+(single Pro pass; AgentTool re-entry explicitly deferred roadmap); RatingsBoard cap 4->6
+doc drift fixed.
+
+**Phase C (P2):** re-sourced citations pass the same background-host tier gate a filed
+flag faces, join the run's Parallel session, and are counted (resource_searches);
+fail-open (verifier-unavailable) flags are EXCLUDED from score/cost/schedule aggregation
+(rendered with their chip, no longer scored as verified); salvage-path verdicts carry
+failure_mode (were permanently mislabeled "none"); research cache key now includes the
+queries; budget decrement is atomic (the race UNDERCOUNTED spend); concurrent identical
+cache misses dedupe in flight.
+
+**MORNING QUEUE (nothing run tonight, per owner):** 1) make comps-gate (ClickHouse) —
+9/9 required after the asset rebuild; 2) the caffeinated 24-check fixture gate -> deploy
+on pass; 3) one feature-length validation on scale_gate graded by eval_scale (expect: no
+refusal-burn, territory work_items_done >= 12, grade >= 19/21, zero unexamined).
