@@ -16,6 +16,16 @@ from greenlight.server import DESKS, app
 client = TestClient(app)
 
 
+@pytest.fixture(autouse=True)
+def _hermetic_pause(monkeypatch):
+    """Unit tests must never read the PRODUCTION pause flag: the owner flipping
+    the live kill switch once turned two upload tests red (503) and blocked a
+    deploy. Tests that exercise the pause monkeypatch it explicitly."""
+    from greenlight import server
+
+    monkeypatch.setattr(server, "_runs_paused", lambda: None)
+
+
 def sse_events(response) -> list[dict]:
     """Decode a text/event-stream body into its JSON data payloads."""
     events = []
@@ -252,10 +262,7 @@ def test_admin_surface_hidden_from_anonymous():
 def test_kill_switch_blocks_new_runs(monkeypatch):
     from greenlight import server
 
-    def fake_load(k):
-        return {"paused": True} if k == server._PAUSE_KEY else None
-
-    monkeypatch.setattr(server.storage, "load_research", fake_load)
+    monkeypatch.setattr(server, "_runs_paused", lambda: {"paused": True})
     r = client.post("/api/runs", files={"screenplay": ("t.fountain", b"INT. ROOM - DAY\n")})
     assert r.status_code == 503
     assert "paused" in r.json()["detail"].lower()
