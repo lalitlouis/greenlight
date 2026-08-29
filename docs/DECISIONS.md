@@ -1012,3 +1012,16 @@ comps + set, never a bright-line the glossary contradicts); safety pairs the bul
 index (number verification) with researched substantive text; csatf_bulletin says so at
 the point of use; master-use flags cite licensing practice. Roll 1's fix (disparagement
 cites trade-libel authority, never Rogers) PASSED its seed on roll 2.
+
+## 2026-08-29 — Fix cycle closed: 24/24 on roll 4, all four doctrine fixes deployed
+
+Rolls: 23/24 (Coors: wrong doctrine cited) → 21/24 (title-line citations, the
+registration side effect) → 23/24 (drug-use: generic-threshold citation) → **24/24**
+(deployed, revision 00166). Every roll's fix held on subsequent rolls; roll 4's verdicts
+show all three ratings flags surviving verification under quote-the-marginal. The cycle's
+lesson, now doctrine in four places: local-tool output VERIFIES (numbers, marginals,
+records) — substantive support comes from researched authority matched to the claim class
+(trade-libel for disparagement, licensing practice for master-use, bulletin text for
+safety, measured marginals for rating drivers). Owner directive standing: no new
+features (taxonomy sweeps, registry tools, cost priors, real-script A3 all logged as the
+E&O-accuracy roadmap, not started).
