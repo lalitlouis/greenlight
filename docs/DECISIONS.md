@@ -888,3 +888,20 @@ refusals — the iteration ceiling is the only stop), and the sweeper's done() d
 escalate (ADK escalation would end the gate's loop after one round — the check alone
 controls the loop). NOT-EXAMINED rendering and eval #23 remain as defense in depth for
 whatever survives all rounds; they are the backstop now, not the mechanism.
+
+## 2026-08-28 — Validation exposed wrong-desk coverage; accounting is now desk-scoped
+
+First single-pass validation on the new architecture (run_20260828_173655): completeness
+invariants HELD (0 unexamined, no collapse, 17 min) but the seed grade was 14/23 — the
+music complex, Nighthawks, tattoo, and Coors were wrongly "covered". Forensics via the new
+desk_coverage instrumentation: safety (assigned 4) blanket-cleared 123 entities as "no
+physical hazard", and entity-level accounting accepted ANY desk's disposition — so
+clearance's copyright questions were never asked (clearance stopped at 89/115 with 43
+research budget UNUSED: its batch iteration ceiling bound, not budget). Fixes (gated):
+- unexamined_entities is now DESK-SCOPED: each desk's worklist items must be dispositioned
+  by that desk; the completeness gate loops until the right desk answers its own question.
+- COVERAGE_RULE: your worklist is the assignment; the entity table is context — clearing
+  another desk's items covers nothing.
+- Sweep items carry which desk left them + rights-item treatment ("never clear a FEATURED
+  item on vibes").
+- Clearance batch max_iterations 10 → 14 (the binding constraint at 29-item slices).

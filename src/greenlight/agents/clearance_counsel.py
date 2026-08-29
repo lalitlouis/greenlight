@@ -331,7 +331,7 @@ agent = ParallelAgent(
             name=f"clearance_counsel__b{i + 1}",
             description=f"Clearance batch {i + 1}: a bounded slice of the rights worklist.",
             instruction=INSTRUCTION,
-            max_iterations=10,
+            max_iterations=14,
             batch=i,
         )
         for i in range(CLEARANCE_MAX_BATCHES)

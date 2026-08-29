@@ -64,38 +64,74 @@ def batch_agent_names(desk: str) -> list[str]:
 
 
 def unexamined_entities(state: Any) -> list[dict[str, Any]]:
-    """Extracted entities NO desk dispositioned — not flagged (kept or later
-    rejected), not cleared, not named in an open question. The completeness
-    gate loops on this before verification; anything that still survives
-    renders as NOT EXAMINED, never as clean."""
+    """Worklist items their OWN desk never dispositioned, plus extracted
+    entities on no worklist at all. Coverage is desk-scoped: safety clearing
+    the Nighthawks print as "no physical hazard" is true, irrelevant, and
+    does NOT answer clearance's copyright question — the first live
+    validation showed a blanket-sweeping desk satisfying the completeness
+    gate on items whose real question was never asked. The gate loops on
+    this before verification; survivors render NOT EXAMINED, never clean."""
     tri = _triage_dict(state)
-    covered: set[str] = set()
-    oq_texts: list[str] = []
+    per_desk: dict[str, tuple[set[str], list[str]]] = {}
     for d in DESKS:
+        covered: set[str] = set()
         for f in desk_flags(state, d):
             if f.get("entity_id"):
                 covered.add(f["entity_id"])
         for c in desk_cleared(state, d):
             if c.get("entity_id"):
                 covered.add(c["entity_id"])
-        oq_texts.extend(str(q).lower() for q in desk_open_questions(state, d))
-    out: list[dict[str, Any]] = []
-    for e in tri.get("entities") or []:
-        if not isinstance(e, dict):
+        oqs = [str(q).lower() for q in desk_open_questions(state, d)]
+        per_desk[d] = (covered, oqs)
+    surfaces = {
+        e.get("entity_id"): e.get("surface", "")
+        for e in tri.get("entities") or []
+        if isinstance(e, dict)
+    }
+    scenes_of = {
+        e.get("entity_id"): e.get("scene_ids") or []
+        for e in tri.get("entities") or []
+        if isinstance(e, dict)
+    }
+
+    def _desk_covered(desk: str, eid: str) -> bool:
+        covered, oqs = per_desk[desk]
+        if eid in covered:
+            return True
+        surf = (surfaces.get(eid) or "").lower()
+        return bool(surf) and any(surf in q for q in oqs)
+
+    missing: dict[str, dict[str, Any]] = {}
+    assigned: set[str] = set()
+    for d in DESKS:
+        for it in tri.get(d) or []:
+            if not isinstance(it, dict) or not it.get("entity_id"):
+                continue
+            eid = it["entity_id"]
+            assigned.add(eid)
+            if not _desk_covered(d, eid):
+                entry = missing.setdefault(
+                    eid,
+                    {
+                        "entity_id": eid,
+                        "surface": surfaces.get(eid, it.get("surface", "")),
+                        "scene_ids": scenes_of.get(eid, []),
+                        "desks": [],
+                    },
+                )
+                entry["desks"].append(d)
+    # entities on NO worklist (pre-floor legacy records): any desk's answer counts
+    for eid, surf in surfaces.items():
+        if not eid or eid in assigned or eid in missing:
             continue
-        if e.get("entity_id") in covered:
-            continue
-        surf = (e.get("surface") or "").lower()
-        if surf and any(surf in q for q in oq_texts):
-            continue
-        out.append(
-            {
-                "entity_id": e.get("entity_id"),
-                "surface": e.get("surface", ""),
-                "scene_ids": e.get("scene_ids") or [],
+        if not any(_desk_covered(d, eid) for d in DESKS):
+            missing[eid] = {
+                "entity_id": eid,
+                "surface": surf,
+                "scene_ids": scenes_of.get(eid, []),
+                "desks": ["clearance_counsel"],
             }
-        )
-    return out
+    return list(missing.values())
 
 
 def desk_flags(state: Any, desk: str) -> list[dict[str, Any]]:

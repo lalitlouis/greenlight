@@ -1152,3 +1152,22 @@ def test_unexamined_entities_accounting():
     }
     out = unexamined_entities(state)
     assert [u["entity_id"] for u in out] == ["E004"]  # sweeper + OQ-by-surface count
+
+
+def test_unexamined_is_desk_scoped():
+    """Safety clearing a clearance-worklist item does NOT cover it — the
+    wrong desk answering the wrong question was the first live validation's
+    failure (Nighthawks 'no physical hazard')."""
+    from greenlight.tools.toolbelt import unexamined_entities
+
+    state = {
+        "triage": {
+            "entities": [{"entity_id": "E001", "surface": "Nighthawks", "scene_ids": ["S001"]}],
+            "clearance_counsel": [{"entity_id": "E001", "note": "artwork rights"}],
+        },
+        "cleared:safety_underwriter": [{"entity_id": "E001"}],
+    }
+    out = unexamined_entities(state)
+    assert len(out) == 1 and out[0]["desks"] == ["clearance_counsel"]
+    state["cleared:clearance_counsel__b2"] = [{"entity_id": "E001"}]
+    assert unexamined_entities(state) == []

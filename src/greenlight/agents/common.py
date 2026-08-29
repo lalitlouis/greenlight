@@ -223,7 +223,11 @@ def prune_stale_tool_results(callback_context, llm_request):
 
 COVERAGE_RULE = """
 
-COVERAGE ROLL-CALL — the contract for finishing. Every worklist item ends in exactly one of
+COVERAGE ROLL-CALL — the contract for finishing. Your assignment is YOUR WORKLIST and
+nothing else: the entity table is shared context for disambiguation, not your list.
+Dispositioning another desk's items ("no safety hazard" on a framed painting) burns your
+budget, answers a question nobody asked you, and covers nothing — the first validation run
+lost real findings this way. Every item ON YOUR WORKLIST ends in exactly one of
 three dispositions, each recorded through its tool:
   - a real issue      -> file_flag
   - examined, fine    -> record_clearance(entity_id, reasoning) — REQUIRED, not optional.

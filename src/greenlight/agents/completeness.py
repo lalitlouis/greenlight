@@ -72,8 +72,14 @@ class _CompletenessCheck(BaseAgent):
                 "entity_id": m["entity_id"],
                 "surface": m["surface"],
                 "scene_ids": m["scene_ids"],
-                "note": "No desk dispositioned this extracted entity. Flag it, clear it "
-                "with a reason, or note the open question — silence is not an option.",
+                "note": (
+                    f"Left undispositioned by: {', '.join(m.get('desks') or ['(unassigned)'])}. "
+                    "Answer THAT desk's question — a rights item (artwork, music, brand, "
+                    "person, clip) gets the clearance treatment with research and citations "
+                    "if exposure exists; never clear a FEATURED or PLOT_CRITICAL item on "
+                    "vibes. Flag it, clear it with a reason, or note the open question — "
+                    "silence is not an option."
+                ),
             }
             for m in missing
         ]
