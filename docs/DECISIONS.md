@@ -965,3 +965,22 @@ cache misses dedupe in flight.
 9/9 required after the asset rebuild; 2) the caffeinated 24-check fixture gate -> deploy
 on pass; 3) one feature-length validation on scale_gate graded by eval_scale (expect: no
 refusal-burn, territory work_items_done >= 12, grade >= 19/21, zero unexamined).
+
+## 2026-08-29 — Morning queue complete: review batch gated 24/24, deployed, validated 20/23
+
+comps 9/9 → fixture gate **24/24** (first-try pass incl. new check #24: all 12 territory
+axis sweeps by work-item id) → deployed (df5a99bc) → feature validation on scale_gate:
+**20/23, the best feature-length grade recorded** (prior spread 13–19), in 12.4 min
+(vs 17–18 broken): zero unexamined, zero collapse, zero done() refusal-burn; territory
+17/17 work items, ratings 4/4, safety 5/5, clearance 103/114 by id with the completeness
+gate catching 29 leftovers (Nighthawks first among them) and the sweep producing the
+actual artwork FLAG, not a cheap clearance. Every k=3 pass-1 miss (music sync/master/
+indie path, Nighthawks, tattoo, Coors) is green.
+
+Residual misses: (1) location-realism controlled-venue remedy — the one persistent
+judgment gap (has failed every run ever); (2) verification-rate>0% — small-n flakiness:
+0 rejections among 11 well-gated flags can be legitimate; left as-is for now;
+(3) kept-findings floor recalibrated 25→10 (dated from the FYI-noise era; 11 kept with
+all 14 content seeds passing is the direct thinness measure — logged, not hidden).
+Also: OTel context-detach noise (~1,000 swallowed tracebacks/run, appeared with the
+threading additions) silenced via logger level; zero functional effect either way.

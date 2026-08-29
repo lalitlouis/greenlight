@@ -10,6 +10,7 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import json
+import logging as _logging
 import os
 import sys
 import time
@@ -17,6 +18,12 @@ from pathlib import Path
 from typing import Any
 
 from dotenv import load_dotenv
+
+# OpenTelemetry's context detach fails noisily when ADK spans cross threads
+# (appeared with the 2026-08-29 threading additions): ~1,000 swallowed
+# tracebacks per run log, zero functional effect. Quiet that one logger;
+# real errors surface through the pipeline's own error paths.
+_logging.getLogger("opentelemetry.context").setLevel(_logging.CRITICAL)
 
 ROOT = Path(__file__).resolve().parents[2]
 load_dotenv(ROOT / ".env")
