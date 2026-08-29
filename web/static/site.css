@@ -1459,3 +1459,8 @@ tr.bd-sev-BLOCKER { background: rgba(224, 52, 42, 0.045); }
 .pred-set-badges { display: flex; gap: 6px; align-items: center; }
 .pred-set-badges .set-alt { opacity: 0.75; }
 .pred-set-note { display: block; margin-top: 6px; font-size: 13px; color: var(--ink-2); max-width: 340px; }
+
+/* Methodology data tables */
+.sec-table { border-collapse: collapse; font-size: 14px; margin: 10px 0 14px; min-width: 420px; }
+.sec-table th, .sec-table td { border: 1px solid var(--line); padding: 7px 12px; text-align: left; color: var(--ink-2); }
+.sec-table th { font-weight: 650; color: var(--ink); background: var(--surface-2, rgba(0,0,0,0.06)); }

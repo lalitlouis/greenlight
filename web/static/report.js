@@ -494,7 +494,7 @@ function renderPrediction(root, pred) {
   const cset = pred.conformal_set || [];
   if (cset.length) {
     const setBox = el("div", "pred-box pred-set");
-    setBox.appendChild(el("span", "pred-label", "The guarantee (90% coverage)"));
+    setBox.appendChild(el("span", "pred-label", "The guarantee (90% per rating group)"));
     const badges = el("div", "pred-set-badges");
     for (const r of cset) {
       badges.appendChild(el("b", "rating-badge r-" + r + (r === pred.predicted ? "" : " set-alt"), r));

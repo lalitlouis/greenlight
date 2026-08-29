@@ -213,7 +213,7 @@
               "NC-17"
             ]
           },
-          "description": "Mondrian conformal prediction set at 90% coverage, from the measured CARA boundary. The guarantee the report leads with; the point prediction is the desk's call within (or explicitly diverging from) it."
+          "description": "Pooled Mondrian conformal prediction set: 90% coverage per pooled rating group ({G,PG},{PG-13},{R,NC-17}), 92% aggregate, from the measured CARA boundary. The guarantee the report leads with; the point prediction is the desk's call within (or explicitly diverging from) it."
         }
       }
     },
