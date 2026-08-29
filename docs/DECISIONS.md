@@ -905,3 +905,17 @@ research budget UNUSED: its batch iteration ceiling bound, not budget). Fixes (g
 - Sweep items carry which desk left them + rights-item treatment ("never clear a FEATURED
   item on vibes").
 - Clearance batch max_iterations 10 → 14 (the binding constraint at 29-item slices).
+
+## 2026-08-28 — Third stall in one day: run-level inactivity watchdog; aborted runs exit red
+
+The desk-scoped gate run hung for 2h20m mid-panel and aborted with a bare TimeoutError —
+third multi-hour stall today, all below the per-client timeout bounds (parked streaming
+reads the 480s HttpOptions never fire on). Two mechanical fixes:
+- **pipeline.run inactivity watchdog**: if no agent event arrives for 900s (beyond every
+  client's worst retry envelope), the run aborts deliberately with a StallTimeout error
+  and salvages. Bounded, disclosed failure instead of a silent multi-hour hang — applies
+  to prod worker runs too.
+- **cli exits 2 on any aborted/salvaged run** (was: 0 whenever flags existed — RUN_EXIT
+  lied to the gate; the "grade without a green exit" law now holds inside the run).
+The 18/23 salvage grade is struck as evidence: aborted run, not a measurement. The
+desk-scoped batch still awaits its first clean gate.

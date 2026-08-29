@@ -46,6 +46,8 @@ def main(argv: list[str] | None = None) -> int:
     if not args.no_save:
         path = pipeline.save_run(record)
         print(f"\nrun saved: {path}")
+    if record.get("error"):
+        return 2  # aborted/salvaged run: never exit green (the gate reads this)
     return 0 if record["flags"] else 1
 
 

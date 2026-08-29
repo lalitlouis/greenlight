@@ -7,6 +7,7 @@ the graph here must not silently become the final architecture.
 
 from __future__ import annotations
 
+import asyncio
 import contextlib
 import json
 import os
@@ -61,6 +62,8 @@ DEFAULT_BUDGETS = {
 # grows (the 109-scene scale test starved territory_censor to zero and the
 # name-commonality sweep never ran). Budgets scale with length, capped at 2.5x
 # so a feature costs at most ~$4-5 of research, still bounded and predictable.
+_EVENT_STALL_S = 900  # 15 min: beyond every bounded client's worst retry envelope
+
 _BUDGET_BASELINE_PAGES = 12
 _BUDGET_SCALE_CAP = 2.5
 
@@ -330,7 +333,7 @@ def _desk_coverage(state: dict[str, Any]) -> dict[str, dict[str, int]]:
     }
 
 
-async def run(
+async def run(  # noqa: PLR0912, PLR0915 - one linear run sequence, deliberately explicit
     script_path: str | Path,
     budgets: dict[str, int] | None = None,
     title_hint: str | None = None,
@@ -371,9 +374,24 @@ async def run(
     t0 = time.time()
     error: str | None = None
     try:
-        async for event in runner.run_async(
-            user_id=USER_ID, session_id=session.id, new_message=message
-        ):
+        # Inactivity watchdog: every client is timeout-bounded (Gemini 480s,
+        # Parallel 120s, ClickHouse 60s), yet three multi-hour stalls in one
+        # day hung BELOW those bounds (parked streaming reads). If no agent
+        # event arrives for _EVENT_STALL_S, the run aborts deliberately and
+        # salvages — a bounded, disclosed failure instead of a silent hang.
+        agen = runner.run_async(user_id=USER_ID, session_id=session.id, new_message=message)
+        it = agen.__aiter__()
+        while True:
+            try:
+                event = await asyncio.wait_for(it.__anext__(), timeout=_EVENT_STALL_S)
+            except StopAsyncIteration:
+                break
+            except TimeoutError:
+                with contextlib.suppress(Exception):
+                    await agen.aclose()
+                raise RuntimeError(
+                    f"StallTimeout: no agent event for {_EVENT_STALL_S}s — aborting and salvaging"
+                ) from None
             if on_event is not None:
                 for ev in structured_events(event):
                     on_event(ev)
