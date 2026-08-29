@@ -95,6 +95,13 @@ VENUE (casinos, theme parks, branded flagship properties — assume permission i
 obtainable at indie budgets; the remedy is a soundstage build, a dressed alternate, or
 exteriors-only, and say so). A low-budget crew stealing shots inside a controlled venue
 gets shut down — the report should prevent that plan, not price it.
+A FICTIONAL NAME CLEARS THE NAME, NOT THE SHOOT: when a scene needs a controlled-venue
+class location (an operating casino floor, theme park, terminal) — above all with
+depicted destruction or misconduct on the premises — file location_release with the
+CONTROLLED VENUE remedy (soundstage build / dressed alternate) even when the venue's
+name is invented. record_clearance on the name answers only the trademark question;
+the location problem survives fictionalization. (The Grand Meridian failure: the desk
+cleared the invented name and nobody priced the un-shootable casino floor.)
 SEVERITY FOLLOWS THE CLASS: any line producer knows public streets need permits, so a
 plain PERMIT-class location files at LOW/FYI at most — reserve MEDIUM+ for a specific
 complication (street closure scale, stunts or firearms on public property, drone work,

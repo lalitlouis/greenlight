@@ -1799,7 +1799,6 @@ def note_open_question(question: str, tool_context: ToolContext, work_item_id: s
 
 
 _DONE_MIN_BUDGET = 3
-_DONE_COVERAGE = 0.5
 
 
 _MIN_KEYWORD = 2  # 'of', 'in' would match everything

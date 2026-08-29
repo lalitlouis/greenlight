@@ -984,3 +984,18 @@ judgment gap (has failed every run ever); (2) verification-rate>0% — small-n f
 all 14 content seeds passing is the direct thinness measure — logged, not hidden).
 Also: OTel context-detach noise (~1,000 swallowed tracebacks/run, appeared with the
 threading additions) silenced via logger level; zero functional effect either way.
+
+## 2026-08-29 — Minor residuals fixed
+
+- **Location realism**: forensics showed the doctrine existed but the desk cleared the
+  fictional venue NAME and never filed the location flag — "A FICTIONAL NAME CLEARS THE
+  NAME, NOT THE SHOOT" added to clearance doctrine (controlled-venue remedy required even
+  for invented venues when the scene needs the venue class; the Grand Meridian failure
+  named in the prompt).
+- **Verification-rate checks** (both evals): "rejections > 0" replaced with "verdicts
+  recorded for every kept flag AND no fail-open markers AND rate <= cap" — zero rejections
+  is legitimate now that filing gates block weak flags at the desk; a sleeping verifier
+  still fails via missing verdicts/fail-open.
+- Dead `_DONE_COVERAGE` constant removed (unused since the refusal-cap removal).
+- Validation record re-grades 22/23 under recalibrated checks; the location seed is the
+  one remaining red and requires a fresh run to test the doctrine.

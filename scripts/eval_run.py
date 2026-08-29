@@ -48,7 +48,7 @@ def flags_about(flags, *, category_any=(), text_any=(), desk=None):
     return out
 
 
-def main() -> int:
+def main() -> int:  # noqa: PLR0915 - a linear checklist, deliberately flat
     path = (
         sys.argv[1]
         if len(sys.argv) > 1
@@ -187,11 +187,19 @@ def main() -> int:
     )
 
     # --- Verification health
+    verdicts = r.get("verdicts") or {}
+    verdict_ids = {str(k).split(":")[0] for k in verdicts}
+    kept_ids = {f.get("flag_id") for f in flags}
     check(
-        "verification: rejection rate in (0%, 40%]",
-        0 < len(rejected) <= 0.4 * max(1, len(rejected) + len(flags)),
-        f"{len(rejected)} rejected / {len(rejected) + len(flags)} filed — 0 means the verifier "
-        "is asleep; >40% means desks or verifier are miscalibrated",
+        "verification: ran on every kept flag, rejection rate <= 40%",
+        bool(verdicts)
+        and kept_ids <= verdict_ids
+        and not any(f.get("verification_unavailable") for f in flags)
+        and len(rejected) <= 0.4 * max(1, len(rejected) + len(flags)),
+        f"{len(rejected)} rejected / {len(rejected) + len(flags)} filed; verdicts for "
+        f"{len(verdict_ids)} flags — zero rejections is legitimate when the desks' filing "
+        "gates already blocked the weak flags; a sleeping verifier shows as missing "
+        "verdicts or fail-open markers, and those fail this check",
     )
     check(
         "invariant: every kept flag has a citation with an excerpt",

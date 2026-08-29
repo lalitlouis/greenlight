@@ -52,7 +52,19 @@ def main() -> int:
     check("no research failures", not r.get("research_failures"))
     check("flag ids unique", len(ids) == len(set(ids)), f"{len(ids)} ids")
     rate = len(rejected) / max(1, all_filed)
-    check("verification rate in (0%, 45%]", 0 < rate <= 0.45, f"{rate:.0%}")
+    verdicts = r.get("verdicts") or {}
+    verdict_ids = {str(k).split(":")[0] for k in verdicts}
+    kept_ids = {f.get("flag_id") for f in flags}
+    check(
+        "verification: ran on every kept flag, rejection rate <= 45%",
+        bool(verdicts)
+        and kept_ids <= verdict_ids
+        and not any(f.get("verification_unavailable") for f in flags)
+        and rate <= 0.45,
+        f"{rate:.0%} rejected; verdicts for {len(verdict_ids)} flags — zero rejections is "
+        "legitimate when filing gates block weak flags; a sleeping verifier shows as "
+        "missing verdicts or fail-open markers",
+    )
     pred = rep.get("rating_prediction") or {}
     check(
         "rating prediction filed with comparables",
