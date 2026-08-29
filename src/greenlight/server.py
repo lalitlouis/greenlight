@@ -663,9 +663,7 @@ async def _run_live(handle: RunHandle, script_path: Path) -> None:
 
 REQUIRE_INVITE = os.getenv("REQUIRE_INVITE", "0") == "1"
 _PAUSE_KEY = "admin:runs_paused"
-_INVITE_CODES = {
-    c.strip() for c in os.getenv("INVITE_CODES", "").split(",") if c.strip()
-}
+_INVITE_CODES = {c.strip() for c in os.getenv("INVITE_CODES", "").split(",") if c.strip()}
 
 
 def _runs_paused() -> dict[str, Any] | None:
@@ -682,8 +680,7 @@ def _require_not_paused() -> None:
     if _runs_paused():
         raise HTTPException(
             503,
-            "New analyses are paused by the operator — existing runs continue. "
-            "Try again later.",
+            "New analyses are paused by the operator — existing runs continue. Try again later.",
         )
 
 
