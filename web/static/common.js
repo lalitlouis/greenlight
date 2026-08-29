@@ -203,6 +203,26 @@ async function uploadScreenplay(file, sourceContext) {
       toSignIn();
       return;
     }
+    if (e.status === 403 && /invite/i.test(e.message || "")) {
+      const code = window.prompt("This beta is invite-only. Enter your invite code:");
+      if (code && code.trim()) {
+        try {
+          const r = await fetch("/api/invite", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ code: code.trim() }),
+          });
+          if (r.ok) {
+            toast("Invite accepted — uploading again…");
+            return uploadScreenplay(file, sourceContext);
+          }
+          toast("That invite code was not accepted.", true);
+        } catch {
+          toast("Could not redeem the code — try again.", true);
+        }
+      }
+      return;
+    }
     toast("upload failed: " + e.message, true);
   }
 }

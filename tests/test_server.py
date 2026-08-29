@@ -244,3 +244,53 @@ def test_admin_surface_hidden_from_anonymous():
     # /admin redirects to sign-in when auth is configured, 404s when not
     res = client.get("/admin", follow_redirects=False)
     assert res.status_code in (404, 307)
+
+
+# --- access control: kill switch + invite codes ------------------------------
+
+
+def test_kill_switch_blocks_new_runs(monkeypatch):
+    from greenlight import server
+
+    monkeypatch.setattr(
+        server.storage, "load_research", lambda k: {"paused": True} if k == server._PAUSE_KEY else None
+    )
+    r = client.post("/api/runs", files={"screenplay": ("t.fountain", b"INT. ROOM - DAY\n")})
+    assert r.status_code == 503
+    assert "paused" in r.json()["detail"].lower()
+
+
+def test_pause_endpoints_are_admin_only():
+    assert client.get("/api/admin/pause").status_code == 403
+    assert client.post("/api/admin/pause", json={"paused": True}).status_code == 403
+
+
+def test_invite_gate_blocks_unredeemed(monkeypatch):
+    from greenlight import server
+
+    monkeypatch.setattr(server, "REQUIRE_INVITE", True)
+    monkeypatch.setattr(server.storage, "load_research", lambda k: None)
+    r = client.post("/api/runs", files={"screenplay": ("t.fountain", b"INT. ROOM - DAY\n")})
+    assert r.status_code == 403
+    assert "invite" in r.json()["detail"].lower()
+
+
+def test_invite_redeem_requires_signin():
+    assert client.post("/api/invite", json={"code": "x"}).status_code == 401
+
+
+def test_invite_redeemed_user_passes_gate(monkeypatch):
+    from greenlight import auth as auth_mod
+    from greenlight import server
+
+    monkeypatch.setattr(server, "REQUIRE_INVITE", True)
+    stored = {}
+    monkeypatch.setattr(server.storage, "load_research", lambda k: stored.get(k))
+    monkeypatch.setattr(server.storage, "save_research", lambda k, v: stored.update({k: v}) or True)
+    monkeypatch.setattr(server, "_INVITE_CODES", {"PILOT1"})
+    user = {"sub": "u1", "email": "pilot@example.com"}
+    monkeypatch.setattr(server, "_current_user", lambda req: user)
+    r = client.post("/api/invite", json={"code": "PILOT1"})
+    assert r.status_code == 200
+    # gate now passes for this user (invite:u1 stored)
+    server._require_invite(user)  # must not raise

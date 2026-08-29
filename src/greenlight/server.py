@@ -441,6 +441,52 @@ async def auth_status(request: Request) -> dict[str, Any]:
     }
 
 
+@app.get("/api/admin/pause")
+async def pause_status(request: Request) -> dict[str, Any]:
+    user = _current_user(request)
+    if not auth.is_admin(user):
+        raise HTTPException(403, "Admin only.")
+    flag = _runs_paused()
+    return {"paused": bool(flag), "detail": flag or {}}
+
+
+@app.post("/api/admin/pause")
+async def set_pause(request: Request, body: dict[str, Any]) -> dict[str, Any]:
+    """The kill switch: pause/resume NEW analysis starts instantly, fleet-wide.
+    Existing runs always finish — this never cancels in-flight work."""
+    user = _current_user(request)
+    if not auth.is_admin(user):
+        raise HTTPException(403, "Admin only.")
+    import time as _time
+
+    paused = bool(body.get("paused"))
+    await asyncio.to_thread(
+        storage.save_research,
+        _PAUSE_KEY,
+        {"paused": paused, "by": user.get("email", ""), "at": _time.time()},
+    )
+    return {"paused": paused}
+
+
+@app.post("/api/invite")
+async def redeem_invite(request: Request, body: dict[str, Any]) -> dict[str, Any]:
+    """Redeem an invite code once; the redemption sticks to the account."""
+    owner = _current_user(request)
+    if not owner:
+        raise HTTPException(401, "Sign in first, then redeem your invite code.")
+    code = str(body.get("code") or "").strip()
+    if not code or code not in _INVITE_CODES:
+        raise HTTPException(403, "That invite code is not valid.")
+    import time as _time
+
+    await asyncio.to_thread(
+        storage.save_research,
+        f"invite:{owner.get('sub', '')}",
+        {"code": code, "email": owner.get("email", ""), "at": _time.time()},
+    )
+    return {"ok": True}
+
+
 @app.get("/auth/login")
 async def auth_login(request: Request, next: str = "") -> RedirectResponse:
     if not auth.configured():
@@ -615,6 +661,50 @@ async def _run_live(handle: RunHandle, script_path: Path) -> None:
             q.put_nowait(None)  # sentinel: stream over
 
 
+REQUIRE_INVITE = os.getenv("REQUIRE_INVITE", "0") == "1"
+_PAUSE_KEY = "admin:runs_paused"
+_INVITE_CODES = {
+    c.strip() for c in os.getenv("INVITE_CODES", "").split(",") if c.strip()
+}
+
+
+def _runs_paused() -> dict[str, Any] | None:
+    """Operator kill switch, stored durably so every instance sees it and it
+    survives restarts. Read only at run start — starts are rare."""
+    try:
+        flag = storage.load_research(_PAUSE_KEY)
+    except Exception:
+        return None
+    return flag if flag and flag.get("paused") else None
+
+
+def _require_not_paused() -> None:
+    if _runs_paused():
+        raise HTTPException(
+            503,
+            "New analyses are paused by the operator — existing runs continue. "
+            "Try again later.",
+        )
+
+
+def _require_invite(owner: dict[str, Any] | None) -> None:
+    """Invite gate for the pilot phase. Off unless REQUIRE_INVITE=1. Admins are
+    exempt; a signed-in user redeems a code once (stored) and never again."""
+    if not REQUIRE_INVITE or auth.is_admin(owner):
+        return
+    if owner:
+        try:
+            if storage.load_research(f"invite:{owner.get('sub', '')}"):
+                return
+        except Exception:
+            pass
+    raise HTTPException(
+        403,
+        "This beta is invite-only. Enter your invite code on the home page "
+        "(or request one) and try again.",
+    )
+
+
 def _require_signin(request: Request) -> dict[str, Any]:
     """Uploads require a signed-in user. Demo replays, case studies, and report
     views stay public — only running an analysis is gated. When OAuth is not
@@ -626,15 +716,17 @@ def _require_signin(request: Request) -> dict[str, Any]:
 
 
 @app.post("/api/runs")
-async def create_run(
+async def create_run(  # noqa: PLR0915 - the run-start gauntlet, deliberately linear
     screenplay: UploadFile,
     request: Request,
     source_context: str = Form(""),
     previous_run_id: str = Form(""),
 ) -> dict[str, str]:
     _check_rate(request)
+    _require_not_paused()
     source_context = (source_context or "").strip()[:2000]
     owner = _require_signin(request)
+    _require_invite(owner)
     previous_run_id = _safe_id(previous_run_id) if previous_run_id else ""
     if previous_run_id:
         prev_owner = await asyncio.to_thread(storage.load_owner, previous_run_id)
@@ -1002,7 +1094,9 @@ async def _run_writer(run_id: str, path: Path, owner: dict[str, Any] | None = No
 @app.post("/api/writer")
 async def create_writer_run(screenplay: UploadFile, request: Request) -> dict[str, str]:
     _check_rate(request)
+    _require_not_paused()
     owner = _require_signin(request)
+    _require_invite(owner)
     try:
         source = screenplay_text(screenplay.filename or "", await _read_upload(screenplay))
     except FdxError as exc:
