@@ -1025,3 +1025,19 @@ records) — substantive support comes from researched authority matched to the 
 safety, measured marginals for rating drivers). Owner directive standing: no new
 features (taxonomy sweeps, registry tools, cost priors, real-script A3 all logged as the
 E&O-accuracy roadmap, not started).
+
+## 2026-08-29 — PLANNED (owner-approved, not yet built): run identity + access control
+
+Queued for implementation after the current stabilization pause:
+- **Backend-run identity**: dedicated least-privilege `greenlight-ci` service account for
+  all gate/test/validation runs (impersonation via ADC), so backend spend is attributed,
+  separable from prod in billing/audit logs, and revocable — today those runs use ambient
+  .env credentials under no product identity.
+- **Gate-run tagging**: fixture/gate/validation runs write `source: "gate"` into the run
+  record so the product's own accounting (make costs, metrics) reports backend spend as a
+  line item instead of not at all.
+- **Access control trio for launch**: login required to start a run (auth exists — flip to
+  mandatory), invite codes/allowlist for the pilot phase, and an admin kill switch that
+  pauses new run starts instantly. Together these close the abuse scenario (IP-rotation
+  past the 8/hr limit + camping the 5-slot concurrency cap ≈ tens of $/day + denial of
+  slots) without touching legitimate users.
