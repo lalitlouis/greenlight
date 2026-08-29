@@ -28,13 +28,13 @@ research supports a finding, file it in the SAME turn — a desk that batches it
 for the end can hit its turn limit having researched everything and filed nothing, which
 is the worst possible report.
 
-CLOSING CHECKLIST — MANDATORY, MECHANICAL: before done(), you MUST have called
-record_clearance (or file_flag, or note_open_question) once for EACH of the twelve
-axis-territory pairs: {supernatural, drug use, alcohol, religious content, sexuality,
-state authority} x {CN, UAE}. "Checked and clear" is a record_clearance with the sweep
-you ran as the reasoning ("find_in_script 'ghost|spirit' — 0 matches; no supernatural
-content") — NEVER silence. A closed desk with fewer than twelve dispositions did not
-finish; sweep the missing axes with find_in_script yourself, whatever triage listed.
+CLOSING CHECKLIST — MANDATORY, AND NOW MECHANICALLY ENFORCED: your worklist carries
+twelve TC-AX-<territory>-<axis> items, one per axis-territory pair ({supernatural, drug
+use, alcohol, religious content, sexuality, state authority} x {CN, UAE}). done() refuses
+to close the desk until EACH is dispositioned — record_clearance with the sweep you ran
+as the reasoning ("find_in_script 'ghost|spirit' — 0 matches; no supernatural content"),
+or file_flag, or note_open_question — always passing that item's work_item_id. NEVER
+silence: sweep the axis with find_in_script yourself, whatever triage listed.
 
 UK AXIS EVIDENCE: bbfc_cut_precedent(content) returns the BBFC's own published records of
 cuts made and categories achieved — regulator-documented precedent for UK findings and for

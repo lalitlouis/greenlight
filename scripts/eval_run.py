@@ -203,6 +203,14 @@ def main() -> int:
         f"unexamined={[u.get('surface') for u in r.get('unexamined') or []][:8]} — absence "
         "must never render as cleanliness",
     )
+    tc_cov = (r.get("desk_coverage") or {}).get("territory_censor") or {}
+    check(
+        "territory: all 12 axis sweeps dispositioned by work-item id",
+        tc_cov.get("work_items_done", 0) >= 12,
+        f"territory work_items_done={tc_cov.get('work_items_done')} "
+        f"of {tc_cov.get('work_items_assigned')} assigned — the 12 axis sweeps "
+        "are now mechanical, not prompt folklore",
+    )
     check(
         "invariant: no desk collapsed (worklist with zero dispositions)",
         not r.get("desks_incomplete"),

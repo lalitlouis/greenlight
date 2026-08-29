@@ -68,6 +68,63 @@ def _clean(surface: str) -> str:
     return " ".join(surface.replace(".", "").split()).strip("'&- ")
 
 
+_WI_PREFIX = {
+    "clearance_counsel": "CC",
+    "ratings_board": "RB",
+    "safety_underwriter": "SU",
+    "territory_censor": "TC",
+}
+
+_AXES = [
+    "SUPERNATURAL",
+    "DRUG_USE",
+    "ALCOHOL",
+    "RELIGIOUS_CONTENT",
+    "SEXUALITY",
+    "STATE_AUTHORITY",
+]
+_TERRITORIES = ["CN", "UAE"]
+
+
+def assign_work_item_ids(tri: dict[str, Any]) -> dict[str, Any]:
+    """Stamp a deterministic work_item_id on every desk worklist item lacking
+    one (CC-W001, RB-W001, ...). Scene-level items (entity_id "") were
+    previously invisible to done() and the completeness gate; the id is the
+    identity every disposition tool records against. Idempotent."""
+    out = dict(tri)
+    for desk, prefix in _WI_PREFIX.items():
+        items = list(out.get(desk) or [])
+        n = 0
+        for it in items:
+            if not isinstance(it, dict):
+                continue
+            n += 1
+            if not it.get("work_item_id"):
+                it["work_item_id"] = f"{prefix}-W{n:03d}"
+        out[desk] = items
+    return out
+
+
+def territory_axis_items() -> list[dict[str, Any]]:
+    """The 12 mandatory territory axis sweeps as real worklist items — the
+    desk prompt called them MANDATORY, MECHANICAL, but nothing enforced them.
+    Now done() refuses a territory close until each is dispositioned by id."""
+    return [
+        {
+            "entity_id": "",
+            "work_item_id": f"TC-AX-{cc}-{axis}",
+            "note": (
+                f"MANDATORY AXIS SWEEP: {axis.replace('_', ' ').lower()} x {cc}. "
+                "Run find_in_script yourself; disposition with record_clearance "
+                "(cite the sweep you ran), file_flag, or note_open_question — "
+                "pass this work_item_id."
+            ),
+        }
+        for cc in _TERRITORIES
+        for axis in _AXES
+    ]
+
+
 def _corroborations(scenes: list[dict[str, Any]]) -> tuple[set[str], set[str]]:
     """(speaker cues, mid-sentence titlecase words) — the two signals that
     rescue a single-word ALL-CAPS token from screenplay-convention noise.
@@ -238,21 +295,21 @@ def build_agent():
                 for e in strays
             ]
 
-            if not items and not stray_items:
-                yield Event(
-                    invocation_id=ctx.invocation_id,
-                    author=self.name,
-                    content=types.Content(
-                        role="model",
-                        parts=[types.Part(text="Pre-pass: triage covered every candidate.")],
-                    ),
-                )
-                return
             new_tri = dict(tri)
             new_tri["entities"] = entities + items
             new_tri["clearance_counsel"] = (
                 list(tri.get("clearance_counsel") or []) + items + stray_items
             )
+            existing_tc = {
+                (it or {}).get("work_item_id")
+                for it in tri.get("territory_censor") or []
+                if isinstance(it, dict)
+            }
+            new_axis = [
+                ax for ax in territory_axis_items() if ax["work_item_id"] not in existing_tc
+            ]
+            new_tri["territory_censor"] = list(tri.get("territory_censor") or []) + new_axis
+            new_tri = assign_work_item_ids(new_tri)
             parts_txt = []
             if items:
                 parts_txt.append(
@@ -268,6 +325,11 @@ def build_agent():
                     f"{len(stray_items)} extracted entities were on no desk worklist — "
                     "floored to clearance"
                 )
+            parts_txt.append(
+                f"work-item ids stamped; {len(new_axis)} territory axis sweeps synthesized"
+                if new_axis
+                else "work-item ids stamped"
+            )
             summary = "Pre-pass: " + "; ".join(parts_txt)
             yield Event(
                 invocation_id=ctx.invocation_id,

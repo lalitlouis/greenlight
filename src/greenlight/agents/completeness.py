@@ -35,7 +35,9 @@ give every item exactly one disposition —
   set-dressing lands here — one honest sentence each);
 - note_open_question only for genuine unknowns.
 
-Work every item on the list; call done() when none remain. Do not research
+Work every item on the list; call done() when none remain. When an item
+shows a work_item_id, pass it to your disposition tool — that is the only
+way scene-level items count. Do not research
 what a competent reader can clear from the script context alone — your
 budget is small by design.
 
@@ -70,6 +72,7 @@ class _CompletenessCheck(BaseAgent):
         state["sweep_worklist"] = [
             {
                 "entity_id": m["entity_id"],
+                "work_item_id": m.get("work_item_id"),
                 "surface": m["surface"],
                 "scene_ids": m["scene_ids"],
                 "note": (

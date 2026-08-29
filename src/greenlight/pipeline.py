@@ -320,17 +320,21 @@ def _desk_coverage(state: dict[str, Any]) -> dict[str, dict[str, int]]:
     tri = state.get("triage") or {}
     if hasattr(tri, "model_dump"):
         tri = tri.model_dump()
-    return {
-        d: {
-            "assigned": len(tri.get(d) or []),
+    out: dict[str, dict[str, int]] = {}
+    for d in DESKS:
+        items = [it for it in (tri.get(d) or []) if isinstance(it, dict)]
+        assigned_ids = {it.get("work_item_id") for it in items if it.get("work_item_id")}
+        out[d] = {
+            "assigned": len(items),
             "dispositioned": (
                 len(toolbelt.desk_flags(state, d))
                 + len(toolbelt.desk_open_questions(state, d))
                 + len(toolbelt.desk_cleared(state, d))
             ),
+            "work_items_assigned": len(assigned_ids),
+            "work_items_done": len(assigned_ids & toolbelt.desk_work_items_done(state, d)),
         }
-        for d in DESKS
-    }
+    return out
 
 
 async def run(  # noqa: PLR0912, PLR0915 - one linear run sequence, deliberately explicit

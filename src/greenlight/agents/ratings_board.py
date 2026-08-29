@@ -1,8 +1,10 @@
 """Ratings Board: an evidence-based MPA rating read, not a vibe.
 
 The strongest version of this desk leans on query_precedent — kNN over released
-films' CARA rating rationales — so the prediction is "your nearest comparables are
-these released films" rather than an LLM's opinion. Until the corpus lands, the
+films' content profiles (Wikipedia-derived, with the film's real rating attached)
+— so the prediction is "your nearest comparables are these released films" rather
+than an LLM's opinion. The OFFICIAL CARA wording lives in rating_boundary's
+marginals; never attribute a comparable's profile line to CARA. Until the corpus lands, the
 desk grounds every beat in documented CARA standards via research().
 """
 

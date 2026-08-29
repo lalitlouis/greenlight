@@ -18,6 +18,11 @@ MIN_N = 20  # a marginal below this is an anecdote, not a base rate
 
 
 def main() -> int:
+    import sys
+
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from rating_table import CATEGORIES, INTENSITIES
+
     table = json.loads((CACHE / "descriptor_table.json").read_text())
     model = json.loads((CACHE / "rating_model.json").read_text())
     marginals = {k: v for k, v in table["descriptors"].items() if sum(v.values()) >= MIN_N}
@@ -29,6 +34,10 @@ def main() -> int:
                 "scope": f"post-{table['min_year']} wide releases, "
                 f"{table['films_parsed']} films parsed",
                 "marginals": marginals,
+                # The harvest parser's vocabulary, embedded so the runtime
+                # rating_boundary tool parses desk descriptors with EXACTLY the
+                # rules the corpus was parsed with — no silent mismatches.
+                "vocabulary": {"intensities": INTENSITIES, "categories": CATEGORIES},
                 "model": model,
             }
         )

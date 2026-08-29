@@ -227,7 +227,10 @@ COVERAGE ROLL-CALL — the contract for finishing. Your assignment is YOUR WORKL
 nothing else: the entity table is shared context for disambiguation, not your list.
 Dispositioning another desk's items ("no safety hazard" on a framed painting) burns your
 budget, answers a question nobody asked you, and covers nothing — the first validation run
-lost real findings this way. Every item ON YOUR WORKLIST ends in exactly one of
+lost real findings this way. Every worklist item shows a work_item_id; pass it to
+file_flag / record_clearance / note_open_question — that id is how the closing gate sees
+your work, especially for scene-level items with no entity_id.
+Every item ON YOUR WORKLIST ends in exactly one of
 three dispositions, each recorded through its tool:
   - a real issue      -> file_flag
   - examined, fine    -> record_clearance(entity_id, reasoning) — REQUIRED, not optional.

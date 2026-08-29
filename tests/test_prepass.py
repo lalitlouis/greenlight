@@ -98,3 +98,33 @@ def test_sweep_keeps_single_caps_with_age_parenthetical():
 def test_sweep_keeps_multiword_caps_runs():
     scenes = [_scene("S001", "A neon RED BULL sign flickers over the cooler.")]
     assert any(c["surface"] == "Red Bull" for c in sweep(scenes))
+
+
+# --- work-item identity -----------------------------------------------------
+
+
+def test_assign_work_item_ids_stamps_and_is_idempotent():
+    from greenlight.prepass import assign_work_item_ids
+
+    tri = {
+        "clearance_counsel": [{"entity_id": "E001", "note": "n"}],
+        "ratings_board": [{"entity_id": "", "note": "beat"}],
+        "safety_underwriter": [],
+        "territory_censor": [{"entity_id": "", "note": "axis"}],
+    }
+    out = assign_work_item_ids(tri)
+    assert out["clearance_counsel"][0]["work_item_id"] == "CC-W001"
+    assert out["ratings_board"][0]["work_item_id"] == "RB-W001"
+    assert out["territory_censor"][0]["work_item_id"] == "TC-W001"
+    again = assign_work_item_ids(out)
+    assert again["ratings_board"][0]["work_item_id"] == "RB-W001"
+
+
+def test_territory_axis_items_twelve_and_stable():
+    from greenlight.prepass import territory_axis_items
+
+    items = territory_axis_items()
+    ids = [i["work_item_id"] for i in items]
+    assert len(ids) == 12 and len(set(ids)) == 12
+    assert "TC-AX-CN-SUPERNATURAL" in ids and "TC-AX-UAE-DRUG_USE" in ids
+    assert all(i["entity_id"] == "" for i in items)

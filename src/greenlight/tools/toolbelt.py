@@ -12,6 +12,7 @@ Design rules (see docs/TECH_SPEC.md):
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import hashlib
 import logging
 import os
@@ -63,7 +64,27 @@ def batch_agent_names(desk: str) -> list[str]:
     )
 
 
-def unexamined_entities(state: Any) -> list[dict[str, Any]]:
+def _mark_work_item(tool_context: ToolContext, work_item_id: str) -> None:
+    """Record a work-item disposition in the per-agent side channel. Flags
+    cannot carry the id (frozen schema, additionalProperties:false), so this
+    is the single accounting mechanism done() and the completeness gate read."""
+    if work_item_id:
+        _state_append(tool_context, f"wi_done:{_agent_key(tool_context)}", work_item_id)
+
+
+def desk_work_items_done(state: Any, desk: str) -> set[str]:
+    """Work-item ids dispositioned by this desk (own name, batches, sweeper) —
+    plus the clearance sweeper's, which the completeness gate credits to any
+    desk: an id names one specific desk question, so exact-id credit cannot
+    reproduce the blanket-sweep failure."""
+    out: set[str] = set()
+    for name in batch_agent_names(desk):
+        out.update(state.get(f"wi_done:{name}") or [])
+    out.update(state.get("wi_done:clearance_counsel__sweep") or [])
+    return out
+
+
+def unexamined_entities(state: Any) -> list[dict[str, Any]]:  # noqa: PLR0912 - three deliberate accounting sweeps
     """Worklist items their OWN desk never dispositioned, plus extracted
     entities on no worklist at all. Coverage is desk-scoped: safety clearing
     the Nighthawks print as "no physical hazard" is true, irrelevant, and
@@ -120,6 +141,26 @@ def unexamined_entities(state: Any) -> list[dict[str, Any]]:
                     },
                 )
                 entry["desks"].append(d)
+    # scene-level work items (entity_id ""): tracked by work_item_id — the
+    # only identity they have. Undispositioned ones surface to the gate with
+    # scene ids harvested from the note.
+    for d in DESKS:
+        wi_done = desk_work_items_done(state, d)
+        for it in tri.get(d) or []:
+            if not isinstance(it, dict) or it.get("entity_id"):
+                continue
+            wid = it.get("work_item_id")
+            if not wid or wid in wi_done:
+                continue
+            note = str(it.get("note") or "")
+            missing[wid] = {
+                "entity_id": None,
+                "work_item_id": wid,
+                "surface": note[:80],
+                "scene_ids": re.findall(r"S\d{3}", note),
+                "desks": [d],
+            }
+
     # entities on NO worklist (pre-floor legacy records): any desk's answer counts
     for eid, surf in surfaces.items():
         if not eid or eid in assigned or eid in missing:
@@ -823,6 +864,35 @@ def _register_provenance(tool_context: ToolContext, texts: list[str]) -> None:
         bucket.append(_norm_for_match(joined))
 
 
+def _register_tool_output(tool_context: ToolContext, obj: Any) -> None:
+    """Register a local tool's returned content as citable provenance. The
+    desks are instructed to cite these tools verbatim, but until this existed
+    their output was absent from the registry — file_flag rejected the very
+    citations the tools demand, or worse, the >=60%-overlap repair silently
+    substituted some OTHER registered text. With the true text registered,
+    exact quotes pass and near-miss repair resolves to the consulted source."""
+    import json as _json
+
+    texts: list[str] = []
+
+    def _walk(v: Any) -> None:
+        if isinstance(v, str):
+            if v.strip():
+                texts.append(v)
+        elif isinstance(v, dict):
+            for k, vv in v.items():
+                texts.append(str(k))
+                _walk(vv)
+        elif isinstance(v, (list, tuple)):
+            for vv in v:
+                _walk(vv)
+
+    _walk(obj)
+    with contextlib.suppress(Exception):
+        texts.append(_json.dumps(obj, ensure_ascii=False))
+    _register_provenance(tool_context, texts)
+
+
 def _index_research_key(tool_context: ToolContext, key: str) -> None:
     """Explicit index of research state keys, ONE PER AGENT. ADK State cannot be
     enumerated (.keys() crashed in production), and a single shared list gets
@@ -1170,6 +1240,7 @@ def file_flag(  # noqa: PLR0912 - a deliberate sequence of filing gates
     est_cost_usd_low: float = -1,
     est_cost_usd_high: float = -1,
     est_added_days: float = -1,
+    work_item_id: str = "",
 ) -> str:
     """File one finding. A flag without a citation is REJECTED — this is enforced.
 
@@ -1189,6 +1260,9 @@ def file_flag(  # noqa: PLR0912 - a deliberate sequence of filing gates
     entity_id: the entity this concerns, or "" for findings not tied to one.
     est_cost_usd_low/high: rule-of-thumb remedy cost range in USD; pass -1 if unknown.
     est_added_days: schedule impact in days; pass -1 if unknown.
+    work_item_id: the worklist item this dispositions (e.g. "TC-W003") — pass it
+      whenever your worklist item shows one; it is how the closing gate sees
+      scene-level work that has no entity_id.
 
     On rejection you get every validation error at once — fix them all and refile once.
     """
@@ -1317,6 +1391,7 @@ def file_flag(  # noqa: PLR0912 - a deliberate sequence of filing gates
         )
 
     _state_append(tool_context, f"flags:{_agent_key(tool_context)}", flag)
+    _mark_work_item(tool_context, work_item_id)
     note = (
         f" ({repaired} citation excerpt{'s' if repaired != 1 else ''} auto-corrected "
         "to the verbatim source text)"
@@ -1401,11 +1476,14 @@ async def query_precedent(text: str, k: int, tool_context: ToolContext) -> dict[
     comedies regardless of genre — always lead with what kind of film this is.
     k: how many comparables, typically 8.
 
-    Returns released films with their actual rating, official rationale, and distance
-    (smaller = more similar). This is evidence — cite it with source_type "precedent"
-    and via "clickhouse", quoting the rationale verbatim as the excerpt. If you get an
-    error field back, the corpus is unavailable: fall back to research() on documented
-    CARA standards instead.
+    Returns released films with their actual rating, a content-profile line
+    (drawn from the film's Wikipedia article lead — NOT the CARA rationale;
+    source_url attached), and distance (smaller = more similar). Cite it with
+    source_type "precedent" and via "clickhouse", quoting the profile line
+    verbatim as the excerpt and never presenting it as CARA's own wording —
+    the official rationales live in rating_boundary's marginals. If you get an
+    error field back, the corpus is unavailable: fall back to research() on
+    documented CARA standards instead.
     """
     if _missing_env := [v for v in ("CLICKHOUSE_HOST", "CLICKHOUSE_PASSWORD") if not os.getenv(v)]:
         return {
@@ -1637,7 +1715,7 @@ def _reads_as_determination(q: str) -> bool:
     )
 
 
-def note_open_question(question: str, tool_context: ToolContext) -> str:
+def note_open_question(question: str, tool_context: ToolContext, work_item_id: str = "") -> str:
     """Record something you could NOT resolve. Surfaced in the report as an honest
     unknown — an honest unknown beats a confident guess. Use when research was
     inconclusive or the answer needs a human (e.g. ownership deeper than 3 hops).
@@ -1652,6 +1730,7 @@ def note_open_question(question: str, tool_context: ToolContext) -> str:
             "remains unknown."
         )
     _state_append(tool_context, f"open_questions:{_agent_key(tool_context)}", question)
+    _mark_work_item(tool_context, work_item_id)
     return "Noted."
 
 
@@ -1692,6 +1771,29 @@ def _boundary_data() -> dict[str, Any]:
     return _BOUNDARY_CACHE["d"]
 
 
+def _parse_descriptor(desc: str, vocab: dict[str, Any]) -> tuple[str, str] | None:
+    """(intensity, category) via the SAME vocabulary the corpus was parsed
+    with (embedded in the asset), so runtime phrasing and harvest phrasing
+    cannot silently diverge. Returns None when no category variant matches."""
+    seg = re.sub(r"[^a-z0-9 ]", " ", (desc or "").lower())
+    seg = " ".join(seg.split())
+    if not seg:
+        return None
+    intensity = ""
+    for i in vocab.get("intensities") or []:
+        if re.search(rf"\b{re.escape(i)}\b", seg):
+            intensity = i
+            break
+    cat, best = "", 0
+    for c, variants in (vocab.get("categories") or {}).items():
+        for v in variants:
+            if v in seg and len(v) > best:
+                cat, best = c, len(v)
+    if not cat:
+        return None
+    return (intensity or "unmodified", cat)
+
+
 def rating_boundary(descriptors: list[str], tool_context: ToolContext) -> dict[str, Any]:
     """Measured CARA decision boundary: per-descriptor rating distributions
     across 4,544 official post-1990 rationales, plus the fitted model's
@@ -1702,28 +1804,39 @@ def rating_boundary(descriptors: list[str], tool_context: ToolContext) -> dict[s
 
     descriptors: CARA-style intensity+category phrases matching what you
     counted, e.g. ["pervasive language", "some violence", "brief nudity"].
+    The return names matched_descriptors and unmatched_descriptors — if any
+    came back unmatched, rephrase them and call again; the prediction set is
+    only a filing gate when EVERY descriptor matched.
     """
     import math as _math
 
     d = _boundary_data()
+    vocab = d.get("vocabulary") or {}
     marginals = {}
     feats = d["model"]["features"]
     idx = {k: i for i, k in enumerate(feats)}
     x = [0.0] * (len(feats) + 1)
     x[-1] = 1.0
+    matched: list[str] = []
+    unmatched: list[str] = []
     for desc in descriptors:
-        key = desc.strip().lower()
-        m = d["marginals"].get(key)
-        if m:
-            n = sum(m.values())
-            marginals[key] = {
-                "n": n,
-                "distribution": {
-                    r: f"{100 * c // n}%" for r, c in sorted(m.items(), key=lambda kv: -kv[1])
-                },
-            }
-        tail = key.split(" ", 1)[-1] if " " in key else key
-        for cand in (key, tail):
+        parsed = _parse_descriptor(desc, vocab)
+        if parsed is None:
+            unmatched.append(desc)
+            continue
+        intensity, cat = parsed
+        matched.append(desc)
+        for key in (f"{intensity} {cat}", cat):
+            m = d["marginals"].get(key)
+            if m:
+                n = sum(m.values())
+                marginals[key] = {
+                    "n": n,
+                    "distribution": {
+                        r: f"{100 * c // n}%" for r, c in sorted(m.items(), key=lambda kv: -kv[1])
+                    },
+                }
+        for cand in (f"{intensity} {cat}", cat):
             if cand in idx:
                 x[idx[cand]] = 1.0
     z = [sum(wc[j] * x[j] for j in range(len(x)) if x[j]) for wc in d["model"]["weights"]]
@@ -1736,19 +1849,43 @@ def rating_boundary(descriptors: list[str], tool_context: ToolContext) -> dict[s
         for i, c in enumerate(d["model"]["classes"])
         if 1.0 - probs[c] <= d["model"]["conformal_q"][str(i)]
     ]
-    tool_context.state[f"boundary_set:{_agent_key(tool_context)}"] = pred_set
-    return {
+    # The set hard-gates file_rating_prediction ONLY when every descriptor
+    # matched: a set built from silently-dropped inputs once rejected a desk's
+    # correct R prediction as "outside the evidence". Partial input = advisory.
+    complete = bool(matched) and not unmatched
+    tool_context.state[f"boundary_set:{_agent_key(tool_context)}"] = pred_set if complete else []
+    out: dict[str, Any] = {
+        "matched_descriptors": matched,
+        "unmatched_descriptors": unmatched,
         "marginals": marginals,
         "model_probabilities": {
             c: round(pv, 3) for c, pv in sorted(probs.items(), key=lambda kv: -kv[1])
         },
         "conformal_prediction_set": pred_set,
-        "coverage_note": (
-            "the true rating falls inside the prediction set 90% of the time by "
-            "construction (Mondrian split conformal, 937 held-out films)"
-        ),
         "source": d["source"],
     }
+    if unmatched:
+        out["warning"] = (
+            f"{len(unmatched)} descriptor(s) did not match the measured vocabulary "
+            f"({unmatched}); the prediction set EXCLUDES them and is advisory only, "
+            "not a guarantee. Rephrase (e.g. 'drug content' -> 'drug use', "
+            "'thematic elements' -> 'thematic material') and call again."
+        )
+    elif not matched:
+        out["warning"] = (
+            "no descriptors given or matched — this is the base-rate prior only, "
+            "not a guarantee. Provide CARA-style descriptors."
+        )
+    else:
+        out["coverage_note"] = (
+            "the true rating falls inside the prediction set at least 90% of the "
+            "time per pooled rating group ({G,PG}, {PG-13}, {R,NC-17}) by "
+            "construction (pooled Mondrian split conformal, 937 held-out films; "
+            "aggregate coverage 92%). G and NC-17 are too rare post-1990 for "
+            "single-class guarantees — see the methodology page's per-class table."
+        )
+    _register_tool_output(tool_context, out)
+    return out
 
 
 _BBFC_CACHE: dict[str, Any] = {}
@@ -1780,11 +1917,13 @@ def bbfc_cut_precedent(content: str, tool_context: ToolContext) -> dict[str, Any
         if r.get("what_was_cut") and any(w in r["what_was_cut"].lower() for w in words)
     ]
     hits.sort(key=lambda r: (r.get("uncut_available") is None, -(r.get("year") or 0)))
-    return {
+    out = {
         "matches": hits[:_BBFC_HITS],
         "total_records": len(_BBFC_CACHE["r"]),
         "source": "BBFC published cuts records, bbfc.co.uk",
     }
+    _register_tool_output(tool_context, out)
+    return out
 
 
 def csatf_bulletin(topic: str, tool_context: ToolContext) -> dict[str, Any]:
@@ -1805,7 +1944,9 @@ def csatf_bulletin(topic: str, tool_context: ToolContext) -> dict[str, Any]:
             "guidance": "No bulletin title matches. Broaden the keywords, or cite the "
             "hazard without a bulletin number rather than guessing one.",
         }
-    return {"matches": hits}
+    out = {"matches": hits}
+    _register_tool_output(tool_context, out)
+    return out
 
 
 def verify_trademark(number: str, tool_context: ToolContext) -> dict[str, Any]:
@@ -1924,7 +2065,9 @@ def _tsdr_lookup(digits: str) -> dict[str, Any]:
     return out
 
 
-def record_clearance(entity_id: str, reasoning: str, tool_context: ToolContext) -> str:
+def record_clearance(
+    entity_id: str, reasoning: str, tool_context: ToolContext, work_item_id: str = ""
+) -> str:
     """Record that a worklist item was examined and CLEARED — no finding needed.
 
     This is how examined-and-fine work becomes visible: silence looks identical to
@@ -1934,6 +2077,8 @@ def record_clearance(entity_id: str, reasoning: str, tool_context: ToolContext) 
 
     entity_id: the worklist entity this clears (e.g. "E014"), or "" for a
       script-level determination.
+    work_item_id: the worklist item this dispositions (e.g. "TC-AX-CN-SUPERNATURAL")
+      — pass it whenever your worklist item shows one.
     reasoning: one or two sentences stating WHY it is clear, specific enough for
       production counsel to audit ("'Amazing Grace' composition published 1779,
       public domain worldwide; no specific recording is used").
@@ -1943,6 +2088,7 @@ def record_clearance(entity_id: str, reasoning: str, tool_context: ToolContext) 
     state = tool_context.state
     entry = {
         "entity_id": entity_id or None,
+        "work_item_id": work_item_id or None,
         "reasoning": _strip_json_escapes((reasoning or "").strip())[:600],
     }
     if not entry["reasoning"]:
@@ -1950,6 +2096,7 @@ def record_clearance(entity_id: str, reasoning: str, tool_context: ToolContext) 
     cleared = list(state.get(f"cleared:{name}", []) or [])
     cleared.append(entry)
     state[f"cleared:{name}"] = cleared
+    _mark_work_item(tool_context, work_item_id)
     return f"Recorded: {desk} cleared {entity_id or 'script-level item'}."
 
 
@@ -1987,9 +2134,13 @@ def done(reason: str, tool_context: ToolContext) -> str:
         if c.get("entity_id"):
             covered.add(c["entity_id"])
     oq_texts = [str(q).lower() for q in state.get(f"open_questions:{name}", []) or []]
+    wi_covered = set(state.get(f"wi_done:{name}") or [])
 
     def _addressed(item: Any) -> bool:
         if not isinstance(item, dict):
+            return True
+        wid = item.get("work_item_id")
+        if wid and wid in wi_covered:
             return True
         if item.get("entity_id") in covered:
             return True
@@ -2017,15 +2168,19 @@ def done(reason: str, tool_context: ToolContext) -> str:
     if missing and budget_left >= _DONE_MIN_BUDGET:
         state[f"done_refusals:{name}"] = refusals + 1
         named = "; ".join(
-            f"{w.get('entity_id')} '{w.get('surface')}'"
+            (
+                f"{w.get('work_item_id') or w.get('entity_id')} "
+                f"'{w.get('surface') or str(w.get('note') or '')[:60]}'"
+            )
             + (" — NEGATIVELY PORTRAYED, this one cannot be skipped" if _hard_person(w) else "")
             for w in missing[:name_cap]
         )
         more = f" (+{len(missing) - name_cap} more)" if len(missing) > name_cap else ""
         return (
-            f"NOT CLOSED: {len(missing)} worklist entities have NO disposition — every one "
-            f"needs file_flag, record_clearance, or note_open_question. Unaddressed: "
-            f"{named}{more}. {budget_left} research budget remains."
+            f"NOT CLOSED: {len(missing)} worklist items have NO disposition — every one "
+            f"needs file_flag, record_clearance, or note_open_question (pass the item's "
+            f"work_item_id). Unaddressed: {named}{more}. "
+            f"{budget_left} research budget remains."
         )
     if not name.endswith("__sweep"):
         # The sweeper must NOT escalate: escalation bubbles past its own agent

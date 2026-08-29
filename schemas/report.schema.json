@@ -85,7 +85,7 @@
         "object",
         "null"
       ],
-      "description": "Ratings Board output. Evidence-based: nearest CARA rationales from ClickHouse, not an LLM guess.",
+      "description": "Ratings Board output. Evidence-based: nearest released-film content profiles from ClickHouse (Wikipedia-derived, real ratings attached) plus the measured CARA boundary \u2014 not an LLM guess.",
       "required": [
         "predicted",
         "comparables"

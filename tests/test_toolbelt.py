@@ -1171,3 +1171,156 @@ def test_unexamined_is_desk_scoped():
     assert len(out) == 1 and out[0]["desks"] == ["clearance_counsel"]
     state["cleared:clearance_counsel__b2"] = [{"entity_id": "E001"}]
     assert unexamined_entities(state) == []
+
+
+# --- work-item identity -----------------------------------------------------
+
+
+def _wi_state():
+    return {
+        "triage": {
+            "entities": [],
+            "territory_censor": [
+                {"entity_id": "", "work_item_id": "TC-AX-CN-SUPERNATURAL", "note": "sweep S003"}
+            ],
+        }
+    }
+
+
+def test_done_refuses_scene_item_then_closes_on_work_item_id():
+    """The original bug: entity_id='' items were permanently unsatisfiable."""
+    from unittest.mock import MagicMock
+
+    from greenlight.tools.toolbelt import done, record_clearance
+
+    state = _wi_state()
+    state["research_budget:territory_censor"] = 10
+    ctx = MagicMock()
+    ctx.state = state
+    ctx.agent_name = "territory_censor"
+    out = done("finished", ctx)
+    assert "NOT CLOSED" in out and "TC-AX-CN-SUPERNATURAL" in out
+    record_clearance(
+        "", "find_in_script ghost — 0 matches", ctx, work_item_id="TC-AX-CN-SUPERNATURAL"
+    )
+    assert done("finished", ctx).startswith("Desk closed")
+
+
+def test_unexamined_tracks_scene_level_items_and_sweeper_credit():
+    from greenlight.tools.toolbelt import unexamined_entities
+
+    state = _wi_state()
+    out = unexamined_entities(state)
+    assert [u["work_item_id"] for u in out] == ["TC-AX-CN-SUPERNATURAL"]
+    assert out[0]["scene_ids"] == ["S003"]
+    state["wi_done:clearance_counsel__sweep"] = ["TC-AX-CN-SUPERNATURAL"]
+    assert unexamined_entities(state) == []
+
+
+def test_file_flag_rejection_marks_nothing():
+    from unittest.mock import MagicMock
+
+    from greenlight.tools.toolbelt import file_flag
+
+    ctx = MagicMock()
+    ctx.state = {"scenes": []}
+    ctx.agent_name = "territory_censor"
+    ctx.invocation_id = "t"
+    out = file_flag(
+        scene_ids=["S001"],
+        severity="HIGH",
+        category="territory_cn_supernatural",
+        finding="x",
+        citations=[],
+        remedy_action="CUT",
+        remedy_detail="y",
+        confidence=0.9,
+        tool_context=ctx,
+        work_item_id="TC-W001",
+    )
+    assert "REJECTED" in out
+    assert not ctx.state.get("wi_done:territory_censor")
+
+
+def test_old_style_worklists_unchanged():
+    from unittest.mock import MagicMock
+
+    from greenlight.tools.toolbelt import done
+
+    state = {
+        "triage": {"territory_censor": [{"entity_id": "E001", "note": "n"}]},
+        "cleared:territory_censor": [{"entity_id": "E001"}],
+        "research_budget:territory_censor": 10,
+    }
+    ctx = MagicMock()
+    ctx.state = state
+    ctx.agent_name = "territory_censor"
+    assert done("finished", ctx).startswith("Desk closed")
+
+
+def test_batch_slices_preserve_work_item_ids():
+    from greenlight.tools.toolbelt import clearance_batch_slices
+
+    state = {
+        "triage": {
+            "entities": [],
+            "clearance_counsel": [
+                {"entity_id": f"E{i:03d}", "work_item_id": f"CC-W{i:03d}", "note": "n"}
+                for i in range(1, 31)
+            ],
+        }
+    }
+    slices = clearance_batch_slices(state)
+    ids = [it["work_item_id"] for sl in slices for it in sl]
+    assert sorted(ids) == [f"CC-W{i:03d}" for i in range(1, 31)]
+
+
+# --- descriptor honesty ------------------------------------------------------
+
+
+def _boundary_ctx():
+    from unittest.mock import MagicMock
+
+    ctx = MagicMock()
+    ctx.state = {}
+    ctx.agent_name = "ratings_board"
+    ctx.invocation_id = "t"
+    return ctx
+
+
+def test_rating_boundary_reports_unmatched_and_clears_gate():
+    from greenlight.tools.toolbelt import rating_boundary
+
+    ctx = _boundary_ctx()
+    out = rating_boundary(["strong language", "intense depiction of very bad weather"], ctx)
+    assert out["matched_descriptors"] == ["strong language"]
+    assert out["unmatched_descriptors"] == ["intense depiction of very bad weather"]
+    assert "warning" in out and "coverage_note" not in out
+    assert ctx.state["boundary_set:ratings_board"] == []  # advisory, not a gate
+
+
+def test_rating_boundary_empty_input_no_guarantee():
+    from greenlight.tools.toolbelt import rating_boundary
+
+    ctx = _boundary_ctx()
+    out = rating_boundary([], ctx)
+    assert "warning" in out and "coverage_note" not in out
+    assert ctx.state["boundary_set:ratings_board"] == []
+
+
+def test_rating_boundary_full_match_keeps_gate_and_group_note():
+    from greenlight.tools.toolbelt import rating_boundary
+
+    ctx = _boundary_ctx()
+    out = rating_boundary(["pervasive language"], ctx)
+    assert out["unmatched_descriptors"] == []
+    assert "pooled" in out["coverage_note"]
+    assert ctx.state["boundary_set:ratings_board"] == out["conformal_prediction_set"]
+
+
+def test_rating_boundary_vocabulary_normalizes_common_phrasings():
+    from greenlight.tools.toolbelt import rating_boundary
+
+    ctx = _boundary_ctx()
+    out = rating_boundary(["drug content", "sexual content", "thematic elements"], ctx)
+    assert out["unmatched_descriptors"] == []

@@ -96,18 +96,39 @@ def main() -> int:
 
     w = fit([xs[i] for i in tr], [ys[i] for i in tr], len(CLASSES))
 
-    # Mondrian (class-conditional) split conformal
-    q: dict[int, float] = {}
-    for c in range(len(CLASSES)):
-        scores = sorted(1.0 - predict(w, xs[i])[c] for i in ca if ys[i] == c)
-        if not scores:
-            q[c] = 1.0
-            continue
+    # Mondrian split conformal over POOLED groups: {G,PG}, {PG-13}, {R,NC-17}.
+    # A valid 90% quantile needs >= ceil(1/alpha)-1 = 9 calibration points;
+    # G has 1 and NC-17 has 6 — their per-class "quantiles" were silently the
+    # max of 1 and 6 scores (measured coverage 66.7% / 62.5% vs the promised
+    # 90%). The guarantee is now per pooled group, and stated as such.
+    groups = [["G", "PG"], ["PG-13"], ["R", "NC-17"]]
+    group_of = {c: g for g in groups for c in g}
+    cal_counts: dict[str, int] = {
+        c: sum(1 for i in ca if ys[i] == ci) for ci, c in enumerate(CLASSES)
+    }
+
+    def _quantile(scores: list[float]) -> float:
         m = len(scores)
         rank = min(m - 1, math.ceil((m + 1) * (1 - ALPHA)) - 1)
-        q[c] = scores[rank]
+        return scores[rank]
+
+    # Hybrid: the pooled-group quantile carries the valid 90% guarantee (the
+    # thin classes alone cannot — G has 1 calibration film, NC-17 has 6); but
+    # naive pooling degenerates (the group hits 90% by letting the rare class
+    # fail almost always). Each class therefore takes the LOOSER of the pooled
+    # and own-class thresholds: the group guarantee still holds (thresholds
+    # only widen sets) and thin-class behavior can only improve on per-class.
+    q: dict[int, float] = {}
+    for ci, c in enumerate(CLASSES):
+        members = {CLASSES.index(m) for m in group_of[c]}
+        pooled = sorted(1.0 - predict(w, xs[i])[ys[i]] for i in ca if ys[i] in members)
+        own = sorted(1.0 - predict(w, xs[i])[ci] for i in ca if ys[i] == ci)
+        pooled_q = _quantile(pooled) if pooled else 1.0
+        own_q = _quantile(own) if own else 1.0
+        q[ci] = max(pooled_q, own_q)
 
     covered = 0
+    per_class_cov: dict[str, list[int]] = {c: [] for c in CLASSES}
     set_sizes = Counter()
     brier = 0.0
     bins: dict[int, list[int]] = defaultdict(list)
@@ -117,6 +138,7 @@ def main() -> int:
         p = predict(w, xs[i])
         pred_set = [c for c in range(len(CLASSES)) if 1.0 - p[c] <= q[c]]
         covered += ys[i] in pred_set
+        per_class_cov[CLASSES[ys[i]]].append(1 if ys[i] in pred_set else 0)
         set_sizes[len(pred_set)] += 1
         brier += sum((p[c] - (1.0 if c == ys[i] else 0.0)) ** 2 for c in range(len(CLASSES)))
         top = max(range(len(CLASSES)), key=lambda c: p[c])
@@ -143,6 +165,15 @@ def main() -> int:
                 "conformal_q": q,
                 "alpha": ALPHA,
                 "test_metrics": {
+                    "groups": groups,
+                    "calibration_counts": cal_counts,
+                    "per_class_coverage": {
+                        c: {
+                            "n": len(v),
+                            "coverage": round(sum(v) / len(v), 4) if v else None,
+                        }
+                        for c, v in per_class_cov.items()
+                    },
                     "n": n,
                     "top1": correct_top / n,
                     "coverage": covered / n,
