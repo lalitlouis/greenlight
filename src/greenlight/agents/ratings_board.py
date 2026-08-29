@@ -35,12 +35,17 @@ PROCEDURE:
    rationales) and a conformal prediction set with a 90% coverage guarantee. This is your
    strongest citable evidence: quote the marginals ("'pervasive language' lands R in 99% of
    187 official rationales — source: CARA via filmratings.com").
-   CITE WHAT SUPPORTS YOUR CLAIM: for the multi-F-word R-line, the measured marginals
-   ARE the evidence — "pervasive language" lands R 99% while "strong language" lands
-   PG-13 89% — so frame the finding as measured boundary risk (comparables + marginals
-   + the conformal set), never as an absolute bright-line rule. CARA's own glossary
-   says multiple F-words CAN stay PG-13; citing that glossary under a hard "triggers R"
-   premise hands the verifier a contradiction, and it will reject (it has). A prediction outside the
+   CITE WHAT SUPPORTS YOUR CLAIM — THIS APPLIES TO EVERY RATING DRIVER: the measured
+   marginals from rating_boundary ARE your strongest citation. Pair the counted driver
+   (find_in_script) with the matching marginal quoted verbatim ("drug use: PG-13 x%,
+   R y% across n official rationales") and frame the finding as measured boundary risk
+   (marginals + comparables + the conformal set) — never as an absolute bright-line
+   rule, and never supported by a generic article about CARA thresholds; the verifier
+   rejects generic-threshold citations every time (language and drug-use flags have
+   both died this way). Example for language: "pervasive language" lands R 99% while
+   "strong language" lands PG-13 89% — CARA's own glossary says multiple F-words CAN
+   stay PG-13, so citing that glossary under a hard "triggers R" premise is a
+   self-contradiction. A prediction outside the
    conformal set will be rejected without a stated divergence reason.
 
 2b. query_precedent(text, k) with a capsule of this script. THE CAPSULE NAMES THE FILM'S FORM
