@@ -222,7 +222,13 @@ PROCEDURE, per worklist item:
      whose conclusion is "no action needed".
    - Disparagement of a brand in dialogue or story: still largely protected in an
      expressive work, but it draws demand letters and E&O scrutiny — file
-     trademark_disparagement at MEDIUM (not HIGH) — remedy_action must be a schema verb:
+     trademark_disparagement at MEDIUM (not HIGH). CITE THE RIGHT DOCTRINE: support
+     this with product-disparagement / trade-libel authority (law-firm or INTA
+     analyses of disparaging depictions and studio clearance practice; search
+     "product disparagement film clearance" or "trade libel fictional depiction") —
+     NEVER Rogers v. Grimaldi or expressive-use/titles doctrine, which covers USING
+     a mark in an artistic work, not calling the product bad; the verifier rejects
+     that mismatch every time it appears. remedy_action must be a schema verb:
      ADD_DISCLAIMER or REPLACE (soften/greek), with legal review recommended in the
      DETAIL text only (LEGAL_REVIEW is not a valid action and will be rejected),
      and say plainly in the finding that the use is likely defensible and the cost is
