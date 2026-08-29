@@ -173,7 +173,7 @@ def _extract_scene_number(heading: str) -> tuple[str, str]:
     return heading[: m.start()].rstrip(), m.group(1)
 
 
-def parse_fountain(  # noqa: PLR0915 - one continuous scan loop
+def parse_fountain(  # noqa: PLR0912, PLR0915 - one continuous scan loop
     text: str,
 ) -> tuple[dict[str, str], list[dict[str, Any]]]:
     """Parse Fountain source into (title_metadata, Scene[]).
@@ -193,6 +193,10 @@ def parse_fountain(  # noqa: PLR0915 - one continuous scan loop
 
     scenes: list[dict[str, Any]] = []
     cumulative_lines = 0.0
+    # Real pagination when the source preserves page breaks (PDF form feeds):
+    # a scene's page is 1 + feeds before its heading. Fountain text without
+    # feeds falls back to the deterministic ~55-line model.
+    has_feeds = "\f" in text
 
     for i, (start, heading) in enumerate(heading_positions):
         end = heading_positions[i + 1][0] if i + 1 < len(heading_positions) else len(text)
@@ -237,7 +241,10 @@ def parse_fountain(  # noqa: PLR0915 - one continuous scan loop
             acc.line_count += _formatted_lines(stripped, "action")
             j += 1
 
-        page = 1 + int(cumulative_lines // _LINES_PER_PAGE)
+        if has_feeds:
+            page = 1 + text.count("\f", 0, start)
+        else:
+            page = 1 + int(cumulative_lines // _LINES_PER_PAGE)
         cumulative_lines += acc.line_count + 1  # + blank line before next heading
 
         clean_heading, scene_number = _extract_scene_number(heading)

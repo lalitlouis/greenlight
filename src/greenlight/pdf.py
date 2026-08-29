@@ -23,7 +23,10 @@ def pdf_to_text(data: bytes) -> str:
         for page in pdf.pages[:MAX_PDF_PAGES]:
             text = page.extract_text() or ""
             lines.append(text)
-    return "\n\n".join(lines)
+    # Form feed between pages: the parser anchors scenes to the PDF's REAL
+    # pages instead of the ~55-line estimate (which drifted 17 pages by act
+    # three on a 111-page script — a line producer flips to the wrong page).
+    return "\n\f\n".join(lines)
 
 
 def looks_like_pdf(data: bytes) -> bool:

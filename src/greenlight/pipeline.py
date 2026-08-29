@@ -12,6 +12,7 @@ import contextlib
 import json
 import logging as _logging
 import os
+import re
 import sys
 import time
 from pathlib import Path
@@ -453,6 +454,21 @@ async def run(  # noqa: PLR0912, PLR0915 - one linear run sequence, deliberately
         )
 
     incomplete = _incomplete_desks(state, verbose)
+
+    # Referential integrity for the cleared section: a desk's clearance note
+    # written mid-run may cite a flag id the verifier later rejected ("flagged
+    # as BLOCKER under F401") — without this, the report points at findings
+    # that no longer exist.
+    rejected_ids = {f.get("flag_id") for f in rejected if f.get("flag_id")}
+    if rejected_ids:
+        pat = re.compile(r"\b(" + "|".join(sorted(rejected_ids)) + r")\b")
+        for d in DESKS:
+            for entry in toolbelt.desk_cleared(state, d):
+                reasoning = entry.get("reasoning") or ""
+                if pat.search(reasoning):
+                    entry["reasoning"] = pat.sub(
+                        r"\1 (later rejected in verification — see Rejected)", reasoning
+                    )
 
     record = {
         "script_title": title,

@@ -144,6 +144,36 @@ def _corroborations(scenes: list[dict[str, Any]]) -> tuple[set[str], set[str]]:
     return speakers, titlecase
 
 
+_LEADING_STOP = {"then", "but", "and", "hey", "so", "now", "the", "a", "an"}
+_JUNK_SURFACES = {
+    "sunday",
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
+    "title card",
+    "bouncer",
+    "later",
+    "continuous",
+    "morning",
+    "night",
+    "day",
+}
+
+
+def _tidy_candidate(surface: str) -> str:
+    """'Then Vick' / 'But Alan' are sentence fragments, not entities — strip
+    leading discourse words; drop weekday/marker junk entirely (the Hangover
+    run's cleared list carried eighteen of these)."""
+    words = surface.split()
+    while words and words[0].lower() in _LEADING_STOP:
+        words = words[1:]
+    out = " ".join(words)
+    return "" if out.lower() in _JUNK_SURFACES else out
+
+
 def sweep(scenes: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """Candidate entities with scene ids: proper-noun runs, quoted titles,
     phones/URLs/emails (privacy vectors). Deterministic by construction.
@@ -168,12 +198,19 @@ def sweep(scenes: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 continue
             if " " not in surface:
                 follows_age = bool(re.search(re.escape(m.group(1)) + r"\s*\(\d", action))
-                corroborated = surface in speakers or surface in titlecase or follows_age
+                # signage: "CHAPS: HOME OF THE..." — caps before a colon is a
+                # named sign/marquee, a real clearance item (the caps filter
+                # once ate the Chaps venue entirely)
+                signage = bool(re.search(re.escape(m.group(1)) + r"\s*:", action))
+                corroborated = surface in speakers or surface in titlecase or follows_age or signage
                 if not corroborated:
                     continue  # ROARS / FLAME / OPEN / JUKEBOX class: convention, not entity
-            hits[(surface.title(), "PROPER_NOUN")].add(sid)
+            tidy = _tidy_candidate(surface.title())
+            if not tidy or len(tidy) <= _MIN_SURFACE:
+                continue
+            hits[(tidy, "PROPER_NOUN")].add(sid)
         for m in _TITLECASE_RUN.finditer(text):
-            surface = _clean(m.group(1))
+            surface = _tidy_candidate(_clean(m.group(1)))
             if surface.upper() not in _STOP:
                 hits[(surface, "PROPER_NOUN")].add(sid)
         for m in _QUOTED.finditer(text):

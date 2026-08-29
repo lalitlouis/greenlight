@@ -128,3 +128,16 @@ def test_territory_axis_items_twelve_and_stable():
     assert len(ids) == 12 and len(set(ids)) == 12
     assert "TC-AX-CN-SUPERNATURAL" in ids and "TC-AX-UAE-DRUG_USE" in ids
     assert all(i["entity_id"] == "" for i in items)
+
+
+def test_sweep_tidies_fragments_and_junk():
+    scenes = [
+        _scene(
+            "S001",
+            "Then VICK stumbles in. But ALAN waves. The TITLE CARD reads Sunday. "
+            "A marquee: CHAPS: HOME OF THE GOLDEN PONY ALL MALE REVUE.",
+        )
+    ]
+    got = {c["surface"] for c in sweep(scenes)}
+    assert "Chaps" in got  # signage-colon rescue
+    assert not {"Then Vick", "But Alan", "Title Card", "Sunday"} & got

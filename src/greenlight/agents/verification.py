@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import asyncio
 import os
+import re as _re
 from collections.abc import AsyncGenerator
 from typing import Any, Literal
 
@@ -109,10 +110,14 @@ For SUPPORTED and PARTIAL verdicts, failure_mode is "none".
 The premise must come from the excerpts, not from your own knowledge. If the premise is true
 but these excerpts do not show it, that is not SUPPORTED.
 
-Two cautions on script facts. The scene text shows only the scenes this claim anchors to,
-never the whole screenplay, and a scene marked TRUNCATED continues beyond what you see —
-absence from shown text is only a misstatement if the shown text positively contradicts the
-claim. Never rule "not in the script" against a truncated scene.
+Two cautions on script facts. The scene text shows ONLY the scenes labeled above (===
+S### ===), never the whole screenplay, and a scene marked TRUNCATED continues beyond what
+you see — absence from shown text is only a misstatement if the shown text positively
+contradicts the claim. Never rule "not in the script" against a truncated scene, and NEVER
+assert what is or is not in a scene whose labeled text you were not given — a claim
+resting on unshown scenes is at most premise_unsupported, never script_misstatement.
+Fabricating a specific absence ("X is not mentioned in S023") about unshown text once
+killed a true finding.
 
 CLAIM (severity {severity}, category {category}):
 {finding}
@@ -135,7 +140,13 @@ def _scene_context(flag: dict[str, Any], state: Any) -> str:
     true findings (it happened; see the F204/F301 postmortem in the git history)."""
     text = state.get("script_text", "")
     by_id = {s["scene_id"]: s for s in state.get("scenes", [])}
-    scenes = [by_id[sid] for sid in flag["scene_ids"] if sid in by_id]
+    # The claim's evidence sometimes lives outside its anchor scenes (a desk
+    # anchored a Sbarro finding at S019 while quoting S023; the verifier,
+    # shown only S019, fabricated "Sbarro is not mentioned in S023" and killed
+    # a true finding). Include every scene the FINDING ITSELF references.
+    referenced = _re.findall(r"\bS\d{3}\b", str(flag.get("finding") or ""))
+    sids = list(dict.fromkeys([*flag["scene_ids"], *referenced]))
+    scenes = [by_id[sid] for sid in sids if sid in by_id]
     if not scenes:
         return "(scene text unavailable)"
     # Floor: a wide flag must still give the verifier enough of each scene to
@@ -148,7 +159,7 @@ def _scene_context(flag: dict[str, Any], state: Any) -> str:
         chunk = text[start:end].strip()
         if len(chunk) > per_scene:
             chunk = chunk[:per_scene] + "\n[... SCENE TRUNCATED — text continues ...]"
-        chunks.append(chunk)
+        chunks.append(f"=== {scene['scene_id']} ===\n{chunk}")
     return "\n\n".join(chunks)
 
 
@@ -316,6 +327,36 @@ def _fresh_citations(
 class VerificationPanel(BaseAgent):
     """Runtime fan-out: one Gemini verifier per flag, concurrently, blinded."""
 
+    async def _correct_finding(
+        self, client: Any, flag: dict[str, Any], script_context: str, sem: asyncio.Semaphore
+    ) -> str | None:
+        """Rewrite a misstated finding to state only what the scene text
+        supports, preserving the exposure claim. Returns None when the core
+        claim does not survive the correction (then the rejection stands)."""
+        prompt = (
+            "A clearance finding was rejected because it misstates the screenplay. "
+            "Rewrite it to state ONLY what the scene text below supports, preserving "
+            "the underlying exposure claim if it survives the correction. If the core "
+            "claim does not survive, reply with exactly: UNSALVAGEABLE.\n\n"
+            f"REJECTED FINDING:\n{flag.get('finding', '')}\n\n"
+            f"REJECTION REASON:\n{flag.get('rejection_reason', '')}\n\n"
+            f"SCENE TEXT:\n{script_context}\n\n"
+            "Reply with the corrected finding text alone (or UNSALVAGEABLE)."
+        )
+        async with sem:
+            try:
+                res = await client.aio.models.generate_content(
+                    model=MODEL,
+                    contents=prompt,
+                    config=types.GenerateContentConfig(temperature=0.0),
+                )
+            except Exception:
+                return None
+        fixed = (res.text or "").strip()
+        if not fixed or "UNSALVAGEABLE" in fixed[:40].upper():
+            return None
+        return fixed[:1500]
+
     async def _verify_one(
         self, client: Any, flag: dict[str, Any], script_context: str, sem: asyncio.Semaphore
     ) -> dict:
@@ -417,10 +458,19 @@ class VerificationPanel(BaseAgent):
                 ),
             )
         for r in recoverable:
-            new_cits = await asyncio.to_thread(_fresh_citations, r, state)
-            if not new_cits:
-                continue
-            retry_flag = {**r, "citations": new_cits, "resourced": True}
+            if r.get("failure_mode") == "script_misstatement":
+                # A factual slip (wrong character name) once deleted a whole
+                # territory analysis. One correction round: restate the finding
+                # to ONLY what the script supports, keep citations, re-verify.
+                fixed = await self._correct_finding(client, r, _scene_context(r, state), sem)
+                if not fixed:
+                    continue
+                retry_flag = {**r, "finding": fixed, "resourced": True}
+            else:
+                new_cits = await asyncio.to_thread(_fresh_citations, r, state)
+                if not new_cits:
+                    continue
+                retry_flag = {**r, "citations": new_cits, "resourced": True}
             retry_flag.pop("rejection_reason", None)
             retry_flag.pop("recoverable", None)
             v2 = await self._verify_one(client, retry_flag, _scene_context(retry_flag, state), sem)

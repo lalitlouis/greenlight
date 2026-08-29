@@ -417,6 +417,8 @@ def build(  # noqa: PLR0912 - a deliberate sequence of row-emission cases
         "rows": rows,
         "disclaimer": (
             "Prepared by ScriptRisk (scriptrisk.com). Research tool output, not legal advice; "
+            "'[partially supported]' marks a finding that survived blinded verification with "
+            "caveats (severity capped at MEDIUM). "
             "'No known issue' means no finding survived independent verification, not a legal "
             "clearance. 'NOT EXAMINED' rows mark items no desk dispositioned — those scenes "
             "are not cleared; rerun before relying on this log. Every flagged row cites "

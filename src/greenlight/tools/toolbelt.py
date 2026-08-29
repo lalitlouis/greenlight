@@ -1272,6 +1272,13 @@ def _unverified_regs(tool_context: ToolContext, finding: str) -> str | None:
     )
 
 
+def _clip_words(text: str, limit: int) -> str:
+    """Cap at a word boundary — a mid-word slice reads as a data bug."""
+    if len(text) <= limit:
+        return text
+    return text[:limit].rsplit(" ", 1)[0].rstrip(" ,;:—-") + " …"
+
+
 def _strip_json_escapes(text: str) -> str:
     """Model output occasionally leaks JSON-style escapes into free text
     (He\\'ll, \\"quote\\"); rendered verbatim the backslash shows. Strip only
@@ -1297,7 +1304,9 @@ def file_flag(  # noqa: PLR0912 - a deliberate sequence of filing gates
 ) -> str:
     """File one finding. A flag without a citation is REJECTED — this is enforced.
 
-    scene_ids: the scenes the finding anchors to, e.g. ["S004"].
+    scene_ids: ONLY the scenes where the element itself appears on the page,
+      e.g. ["S004"] — never "the sequence around it"; a scene chip pointing at
+      text that lacks the element reads as fabrication to the reader.
     severity: BLOCKER | HIGH | MEDIUM | LOW | FYI. BLOCKER means cannot shoot or
       cannot release as written.
     category: short slug, e.g. "sync_license", "trademark_disparagement", "stunt_pyro".
@@ -2151,7 +2160,7 @@ def record_clearance(
     entry = {
         "entity_id": entity_id or None,
         "work_item_id": work_item_id or None,
-        "reasoning": _strip_json_escapes((reasoning or "").strip())[:600],
+        "reasoning": _clip_words(_strip_json_escapes((reasoning or "").strip()), 600),
     }
     if not entry["reasoning"]:
         return "REJECTED: reasoning is required — a bare 'cleared' is not auditable."

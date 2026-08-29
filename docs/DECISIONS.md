@@ -1041,3 +1041,29 @@ Queued for implementation after the current stabilization pause:
   pauses new run starts instantly. Together these close the abuse scenario (IP-rotation
   past the 8/hr limit + camping the 5-slot concurrency cap ≈ tens of $/day + denial of
   slots) without touching legitimate users.
+
+## 2026-08-29 — Hangover review (real-script QA) fixes
+
+Reviewer verified the run line-by-line against the script; big prior fixes held
+(per-location findings, count reconciliation, cleared/OQ split, scene caps, 15/15 claim
+spot-checks accurate; rating ground-truth R). Fixed this batch:
+- **Pages were fabricated** (~0.81 scale, 17pp drift by act three): pdf_to_text now
+  preserves page breaks as form feeds and the parser anchors scenes to REAL pages
+  (55-line model only for feed-less Fountain).
+- **Verifier false denial** (F116 Sbarro: asserted absence about an unshown scene,
+  killed a true finding): context now includes every scene the FINDING references,
+  chunks are labeled === S### ===, and asserting absence about unshown scenes is
+  forbidden (at most premise_unsupported).
+- **script_misstatement is recoverable**: one correct-and-refile round rewrites the
+  finding to what the script supports (UNSALVAGEABLE stands as rejected) — a wrong
+  character name no longer deletes a whole territory analysis.
+- **Cleared referential integrity**: reasonings citing later-rejected flag ids are
+  annotated "(later rejected in verification — see Rejected)".
+- **Mid-word truncation at source**: record_clearance clips at word boundaries.
+- **[partially supported] defined** in the binder disclaimer.
+- **Pre-pass junk**: leading discourse words stripped (Then Vick→Vick), weekday/marker
+  junk dropped, and signage-colon rescue (the caps filter had eaten CHAPS entirely).
+- **file_flag doctrine**: scene_ids = only scenes where the element appears.
+DEFERRED (logged): mini-slug sub-anchoring (S012 mis-head — parser-stability risk,
+scene ids would shift under revision diffing); deeper merge-range membership pruning;
+re-source citation-recovery rework (1/13 lifetime).

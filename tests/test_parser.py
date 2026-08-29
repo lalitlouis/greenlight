@@ -116,3 +116,17 @@ def test_adaptation_context_detection():
     assert adaptation_context({"title": "X"}, None) == ""
     # a 'based on' line under any key is caught
     assert "novel" in adaptation_context({"notes": "based on the novel"}, None)
+
+
+def test_form_feeds_anchor_real_pages():
+    """PDF sources carry \f page breaks; scenes must use the REAL page, not
+    the 55-line estimate (which drifted 17 pages by act three on a feature)."""
+    from greenlight.parser import parse_fountain
+
+    text = (
+        "INT. ROOM A - DAY\n\nShort scene.\n\n\f\n"
+        "INT. ROOM B - NIGHT\n\nAnother.\n\n\f\n\f\n"
+        "INT. ROOM C - DAY\n\nDeep in the script.\n"
+    )
+    _, scenes = parse_fountain(text)
+    assert [s["page"] for s in scenes] == [1, 2, 4]
