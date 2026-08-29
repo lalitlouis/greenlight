@@ -130,3 +130,17 @@ def test_form_feeds_anchor_real_pages():
     )
     _, scenes = parse_fountain(text)
     assert [s["page"] for s in scenes] == [1, 2, 4]
+
+
+def test_title_page_feeds_do_not_shift_printed_pages():
+    """A PDF title page occupies page 1 of the FILE but page 0 of the printed
+    script — scene pages must match the printed numbering (+1 bug, run 3)."""
+    from greenlight.parser import parse_fountain
+
+    text = (
+        "Title: THE HANGOVER\nAuthor: L\n\n\f\n"
+        "INT. ROOM A - DAY\n\nAction.\n\n\f\n"
+        "INT. ROOM B - NIGHT\n\nMore.\n"
+    )
+    _, scenes = parse_fountain(text)
+    assert [s["page"] for s in scenes] == [1, 2]

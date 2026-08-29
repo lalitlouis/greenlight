@@ -444,16 +444,19 @@ async def run(  # noqa: PLR0912, PLR0915 - one linear run sequence, deliberately
     kept.sort(key=lambda f: SEV_ORDER.get(f["severity"], 9))
 
     page_count = scenes[-1]["page"] if scenes else None
+    incomplete = _incomplete_desks(state, verbose)
     the_report = report_mod.build_report(
-        title, kept, page_count=page_count, rating_prediction=state.get("rating_prediction")
+        title,
+        kept,
+        page_count=page_count,
+        rating_prediction=state.get("rating_prediction"),
+        incomplete_desks=incomplete,
     )
 
     with contextlib.suppress(Exception):
         await runner.session_service.delete_session(
             app_name=APP_NAME, user_id=USER_ID, session_id=session.id
         )
-
-    incomplete = _incomplete_desks(state, verbose)
 
     # Referential integrity for the cleared section: a desk's clearance note
     # written mid-run may cite a flag id the verifier later rejected ("flagged
@@ -498,7 +501,14 @@ async def run(  # noqa: PLR0912, PLR0915 - one linear run sequence, deliberately
         "report": the_report,
         "adjudication_notes": adjudication_notes,
         "open_questions": {d: toolbelt.desk_open_questions(state, d) for d in DESKS},
-        "cleared": {d: toolbelt.desk_cleared(state, d) for d in DESKS},
+        "cleared": {
+            **{d: toolbelt.desk_cleared_own(state, d) for d in DESKS},
+            **(
+                {"completeness_sweep": sweep_cleared}
+                if (sweep_cleared := list(state.get("cleared:clearance_counsel__sweep") or []))
+                else {}
+            ),
+        },
         "research_budget_left": {d: toolbelt.desk_budget_left(state, d) for d in DESKS},
         "research": {
             k: v for k, v in state.items() if isinstance(k, str) and k.startswith("research:")

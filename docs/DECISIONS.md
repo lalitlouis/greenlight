@@ -1067,3 +1067,33 @@ spot-checks accurate; rating ground-truth R). Fixed this batch:
 DEFERRED (logged): mini-slug sub-anchoring (S012 mis-head — parser-stability risk,
 scene ids would shift under revision diffing); deeper merge-range membership pruning;
 re-source citation-recovery rework (1/13 lifetime).
+
+## 2026-08-29 — Hangover run-3 review: the score must never reward desk failure
+
+Reviewer compared run 3 vs run 2 vs the script. Root finding: score rose 33→45 BECAUSE
+coverage fell (territory desk produced zero own dispositions; its 18 items were absorbed
+by the clearance-family completeness sweeper, whose shallow generalist conclusions
+rendered as "[Clearance counsel]" and reversed the real desk's run-2 analysis). Fixes
+(gated):
+- **Score withheld** (null, schema announced) whenever any desk has zero own
+  dispositions — rendered "Score withheld — analysis incomplete" in report + PDF.
+- **Sweep attribution**: sweeper clearances get their own "completeness_sweep" bucket
+  (never blended into clearance counsel); the incomplete-desk banner says swept items are
+  provisional/reduced-depth.
+- **Pages exact**: front-matter form feeds subtracted — scene pages now match the
+  script's PRINTED numbers (the +1 fencepost).
+- **PARTIAL no longer caps severity** (blank-fire stunt had sorted below a location fee);
+  it is a citation-confidence marker only; test updated to the new contract.
+- **Deterministic language census** (prepass regex; profanity+slur inventory with scene
+  ids) injected as enforceable RB-CENSUS-LANGUAGE / TC-CENSUS-SLURS work items — the
+  dropped-F-words/slur class can no longer vary by model attention.
+- **Scene refs never silently truncate** ("+2 more" had hidden S037 entirely).
+- **Re-source queries are category-matched** to the authority class the claim needs
+  (six of seven rejections shared right-claim-wrong-authority; the generic query re-found
+  the wrong class).
+- paramount internal hostname → background tier.
+Honest answer to "are we not running comprehensive checks?": coverage is enforced at the
+work-item level, but which FACTS a desk surfaces still varies with model attention; the
+fix direction is exactly the census pattern — deterministic inventories for everything
+countable. DEFERRED still: desk-retry for a collapsed desk (vs sweep), location
+availability/currency caveats (Bel Air Bay Club post-fire), mini-slug sub-anchoring.

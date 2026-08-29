@@ -197,6 +197,10 @@ def parse_fountain(  # noqa: PLR0912, PLR0915 - one continuous scan loop
     # a scene's page is 1 + feeds before its heading. Fountain text without
     # feeds falls back to the deterministic ~55-line model.
     has_feeds = "\f" in text
+    # Printed screenplay pages start AFTER front matter: subtract the feeds
+    # consumed by the title page so scene pages match the script's own printed
+    # numbers (the raw index ran uniformly +1 on a real 111-page script).
+    front_feeds = text.count("\f", 0, body_start) if has_feeds else 0
 
     for i, (start, heading) in enumerate(heading_positions):
         end = heading_positions[i + 1][0] if i + 1 < len(heading_positions) else len(text)
@@ -242,7 +246,7 @@ def parse_fountain(  # noqa: PLR0912, PLR0915 - one continuous scan loop
             j += 1
 
         if has_feeds:
-            page = 1 + text.count("\f", 0, start)
+            page = max(1, 1 + text.count("\f", 0, start) - front_feeds)
         else:
             page = 1 + int(cumulative_lines // _LINES_PER_PAGE)
         cumulative_lines += acc.line_count + 1  # + blank line before next heading

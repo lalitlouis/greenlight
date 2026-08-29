@@ -141,3 +141,22 @@ def test_sweep_tidies_fragments_and_junk():
     got = {c["surface"] for c in sweep(scenes)}
     assert "Chaps" in got  # signage-colon rescue
     assert not {"Then Vick", "But Alan", "Title Card", "Sunday"} & got
+
+
+def test_language_census_counts_exactly():
+    from greenlight.prepass import census_work_items, language_census
+
+    scenes = [
+        _scene("S023", "", ["I fucking hate you."]),
+        _scene("S031", "The song blares.", ["I want to fuck you like an animal"]),
+        _scene("S004", "", ["You closet fag."]),
+        _scene("S082", "", ["Are you fucking kidding me?"]),
+    ]
+    c = language_census(scenes)
+    assert len([1 for t, _ in c["profanity"] if t.startswith("fuck")]) == 3
+    assert c["slurs"] == [("fag", "S004")]
+    items = census_work_items(c)
+    rb = items["ratings_board"][0]
+    assert rb["work_item_id"] == "RB-CENSUS-LANGUAGE"
+    assert "S023" in rb["note"] and "S082" in rb["note"] and "fag" in rb["note"]
+    assert items["territory_censor"][0]["work_item_id"] == "TC-CENSUS-SLURS"

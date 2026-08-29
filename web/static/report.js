@@ -941,9 +941,10 @@ function renderReport(record) {
   }
   const rep = record.report || {};
   const counts = rep.counts || {};
-  const score = rep.greenlight_score ?? "—";
+  const withheld = rep.greenlight_score == null && (record.desks_incomplete || []).length > 0;
+  const score = withheld ? "—" : (rep.greenlight_score ?? "—");
   const blockers = counts.BLOCKER || 0;
-  const tone = blockers > 0 || score < 40 ? "bad" : score < 75 ? "mid" : "good";
+  const tone = withheld || blockers > 0 || score < 40 ? "bad" : score < 75 ? "mid" : "good";
 
   $("rpt-title").textContent = record.script_title || "Report";
 
@@ -969,8 +970,9 @@ function renderReport(record) {
   head.appendChild(scoreBox);
 
   const meta = el("div", "score-meta");
-  const verdict =
-    blockers > 0
+  const verdict = withheld
+    ? "Score withheld — analysis incomplete"
+    : blockers > 0
       ? `Not cleared — ${blockers} blocker${blockers === 1 ? "" : "s"}`
       : tone === "good"
         ? "Cleared, with conditions"
@@ -980,9 +982,12 @@ function renderReport(record) {
     el(
       "p",
       "score-caveat",
-      "The score is an ordinal risk index — a deterministic summary of finding severities, " +
-        "not a probability, and not calibrated. The cited findings below are the product; " +
-        "compare drafts by findings, not by small score moves."
+      withheld
+        ? "A desk returned no dispositions of its own, so the number is withheld: fewer " +
+          "findings from a failed desk must never read as lower risk. Rerun the analysis."
+        : "The score is an ordinal risk index — a deterministic summary of finding severities, " +
+          "not a probability, and not calibrated. The cited findings below are the product; " +
+          "compare drafts by findings, not by small score moves."
     )
   );
   const proj = el("span", "proj");
@@ -1078,8 +1083,10 @@ function renderReport(record) {
   for (const desk of record.desks_incomplete || []) {
     const warn = el("div", "card run-error-banner desk-incomplete-banner");
     warn.textContent =
-      `⚠ The ${prettyCat(desk)} desk returned no dispositions for its worklist — its portion ` +
-      `of this analysis is incomplete. Treat its silence as unexamined, not clear, and rerun.`;
+      `⚠ The ${prettyCat(desk)} desk returned no dispositions of its own — its portion of ` +
+      `this analysis is incomplete, and the score is withheld. Items it left were dispositioned ` +
+      `by the completeness sweep at REDUCED DEPTH (labeled "completeness sweep" below): treat ` +
+      `those conclusions as provisional, and rerun the analysis.`;
     root.appendChild(warn);
   }
 

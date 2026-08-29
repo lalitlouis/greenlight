@@ -86,6 +86,90 @@ _AXES = [
 _TERRITORIES = ["CN", "UAE"]
 
 
+# High-precision lexicon for the deterministic language census. This is a
+# clearance product: exact profanity/slur inventory is a rating and territory
+# fact, and a regex never forgets an occurrence the way a model can (run 3
+# dropped two of three F-words and the slur entirely).
+_PROFANITY = [
+    r"fuck\w*",
+    r"shit\w*",
+    r"cunt",
+    r"cocksucker\w*",
+    r"goddamn\w*",
+    r"asshole\w*",
+    r"bitch\w*",
+]
+_SLURS = [
+    r"fag(?:got)?s?",
+    r"retard(?:ed|s)?",
+    r"nigger\w*",
+    r"chink s?",
+    r"kike s?",
+    r"tranny",
+]
+
+
+def language_census(scenes: list[dict[str, Any]]) -> dict[str, list[tuple[str, str]]]:
+    """(term, scene_id) occurrences for profanity and slurs, deterministically.
+    The desks JUDGE these; they must never be the ones counting them."""
+    out: dict[str, list[tuple[str, str]]] = {"profanity": [], "slurs": []}
+    for sc in scenes:
+        sid = sc.get("scene_id", "")
+        text = (
+            (sc.get("action") or "")
+            + " "
+            + " ".join(d.get("line", "") for d in sc.get("dialogue") or [])
+        )
+        low = text.lower()
+        for kind, pats in (("profanity", _PROFANITY), ("slurs", _SLURS)):
+            for pat in pats:
+                for m in re.finditer(rf"\b{pat}\b", low):
+                    out[kind].append((m.group(0), sid))
+    return out
+
+
+def census_work_items(census: dict[str, list[tuple[str, str]]]) -> dict[str, list[dict[str, Any]]]:
+    """Worklist items carrying the census: ratings always gets the language
+    inventory; territory additionally gets slurs (UAE/CN exposure)."""
+
+    def _fmt(rows: list[tuple[str, str]]) -> str:
+        by_term: dict[str, list[str]] = {}
+        for term, sid in rows:
+            by_term.setdefault(term, []).append(sid)
+        return "; ".join(f"'{t}' x{len(sids)} at {', '.join(sids)}" for t, sids in by_term.items())
+
+    items: dict[str, list[dict[str, Any]]] = {"ratings_board": [], "territory_censor": []}
+    prof, slurs = census.get("profanity") or [], census.get("slurs") or []
+    if prof or slurs:
+        items["ratings_board"].append(
+            {
+                "entity_id": "",
+                "work_item_id": "RB-CENSUS-LANGUAGE",
+                "note": (
+                    "DETERMINISTIC LANGUAGE CENSUS (regex, exact — do not recount): "
+                    + "; ".join(x for x in (_fmt(prof), _fmt(slurs)) if x)
+                    + ". Your language finding must account for EVERY occurrence listed "
+                    "(spoken vs lyric noted per scene); a remedy that leaves listed "
+                    "occurrences unaddressed does not reach the target rating."
+                ),
+            }
+        )
+    if slurs:
+        items["territory_censor"].append(
+            {
+                "entity_id": "",
+                "work_item_id": "TC-CENSUS-SLURS",
+                "note": (
+                    "DETERMINISTIC SLUR CENSUS (regex, exact): "
+                    + _fmt(slurs)
+                    + ". Disposition territory exposure (UAE/CN broadcast and cut "
+                    "standards) for each listed occurrence."
+                ),
+            }
+        )
+    return items
+
+
 def assign_work_item_ids(tri: dict[str, Any]) -> dict[str, Any]:
     """Stamp a deterministic work_item_id on every desk worklist item lacking
     one (CC-W001, RB-W001, ...). Scene-level items (entity_id "") were
@@ -346,6 +430,16 @@ def build_agent():
                 ax for ax in territory_axis_items() if ax["work_item_id"] not in existing_tc
             ]
             new_tri["territory_censor"] = list(tri.get("territory_censor") or []) + new_axis
+            census_items = census_work_items(language_census(scenes))
+            for desk_name, extra in census_items.items():
+                have = {
+                    (it or {}).get("work_item_id")
+                    for it in new_tri.get(desk_name) or []
+                    if isinstance(it, dict)
+                }
+                new_tri[desk_name] = list(new_tri.get(desk_name) or []) + [
+                    it for it in extra if it["work_item_id"] not in have
+                ]
             new_tri = assign_work_item_ids(new_tri)
             parts_txt = []
             if items:

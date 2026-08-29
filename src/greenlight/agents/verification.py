@@ -6,7 +6,7 @@ run (see docs/TECH_SPEC.md). Each verifier sees the claim and its citations — 
 the desk's reasoning — and answers one question: does this source support this claim?
 
 - SUPPORTED    flag stands
-- PARTIAL      flag stands, severity capped at MEDIUM, marked partially supported
+- PARTIAL      flag stands at its filed severity, marked partially supported
 - UNSUPPORTED  flag is dropped and logged; it never reaches the report
 
 Rejected-flag count is a metric we watch: if it is always zero, the verifier is
@@ -199,11 +199,13 @@ def apply_verdicts(
                 kept.append(flag)
             continue
         if v["verdict"] == "PARTIAL":
-            capped = dict(flag)
-            if SEVERITY_ORDER.index(capped["severity"]) < SEVERITY_ORDER.index("MEDIUM"):
-                capped["severity"] = "MEDIUM"
-            capped["finding"] = "[partially supported] " + capped["finding"]
-            kept.append(capped)
+            marked = dict(flag)
+            # Severity is a RISK judgment and stays untouched: the old MEDIUM
+            # cap parked close-proximity blank fire below a location fee in
+            # the sort order because its citation carried a caveat. PARTIAL is
+            # a visible verification marker, not a risk downgrade.
+            marked["finding"] = "[partially supported] " + marked["finding"]
+            kept.append(marked)
         else:
             recoverable = v.get("failure_mode") in ("premise_unsupported", "citation_offtopic")
             rejected.append(
@@ -291,9 +293,23 @@ def _fresh_citations(
     from greenlight.tools import toolbelt
 
     state = state or {}
-    query_seed = (
-        f"{flag.get('category', '').replace('_', ' ')} {str(flag.get('finding', ''))[:140]}"
-    )
+    cat = str(flag.get("category") or "")
+    lead = str(flag.get("finding", ""))[:120]
+    # Category-matched retrieval: six of seven rejections in one run shared
+    # "right claim, wrong authority class" — a generic query re-found the
+    # same wrong class. Aim the re-source at the authority the claim needs.
+    if cat.startswith(("location_release", "trade_libel_venue")):
+        query_seed = f"filming location agreement rates production {lead}"
+    elif cat.startswith("rating_"):
+        query_seed = f"CARA MPA rating rationale {cat.removeprefix('rating_')} filmratings {lead}"
+    elif cat.startswith(("stunt_", "firearms", "minor_safety", "animal_safety", "weather")):
+        query_seed = f"CSATF safety bulletin requirements {cat.replace('_', ' ')} {lead}"
+    elif cat.startswith("territory_"):
+        query_seed = f"{cat.replace('_', ' ')} media regulation film censorship {lead}"
+    elif cat.startswith(("sync_", "master_", "music")):
+        query_seed = f"sync master use license practice {lead}"
+    else:
+        query_seed = f"{cat.replace('_', ' ')} {lead}"
     try:
         res = toolbelt._live_search(
             objective=f"Authoritative support for: {str(flag.get('finding', ''))[:200]}",

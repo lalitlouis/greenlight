@@ -84,15 +84,17 @@ def _ranges(nums: list[int]) -> list[str]:
     return chunks
 
 
-def _compact_scene_ref(sids: list[str], cap: int = 6) -> str:
-    """S003, S004, S005 -> "S003-S005"; beyond `cap` chunks, "+N more".
-    A 20-scene list stacked vertically made the PDF unscannable."""
+def _compact_scene_ref(sids: list[str], cap: int = 12) -> str:
+    """S003, S004, S005 -> "S003-S005". Range-compressed and NEVER silently
+    truncated: "+2 more" once hid S037 entirely — a scene the log claims to
+    account for must be findable by searching its id. The range compression
+    is what keeps the PDF scannable; the cap is a generous fuse only."""
     nums = []
     for s in sids:
         try:
             nums.append(int(s.lstrip("S")))
         except ValueError:
-            return ", ".join(sids[:cap]) + (f" +{len(sids) - cap} more" if len(sids) > cap else "")
+            return ", ".join(sids)
     chunks = _ranges(sorted(nums))
     if len(chunks) > cap:
         return ", ".join(chunks[:cap]) + f" +{len(chunks) - cap} more"
@@ -418,7 +420,8 @@ def build(  # noqa: PLR0912 - a deliberate sequence of row-emission cases
         "disclaimer": (
             "Prepared by ScriptRisk (scriptrisk.com). Research tool output, not legal advice; "
             "'[partially supported]' marks a finding that survived blinded verification with "
-            "caveats (severity capped at MEDIUM). "
+            "caveats — a citation-confidence marker; severity remains the desk's risk "
+            "judgment. "
             "'No known issue' means no finding survived independent verification, not a legal "
             "clearance. 'NOT EXAMINED' rows mark items no desk dispositioned — those scenes "
             "are not cleared; rerun before relying on this log. Every flagged row cites "

@@ -65,13 +65,14 @@ def test_apply_verdicts_supported_and_missing_keep_flag():
     assert len(kept) == 2 and not rejected  # missing verdict fails open
 
 
-def test_apply_verdicts_partial_caps_severity():
+def test_apply_verdicts_partial_marks_without_capping():
+    """Severity is a risk judgment: the old MEDIUM cap parked blank-fire
+    stunts below location fees because a citation carried a caveat."""
     kept, _ = apply_verdicts(
         [make_flag("F101", "BLOCKER")], {"F101": {"verdict": "PARTIAL", "reason": "narrower"}}
     )
-    assert kept[0]["severity"] == "MEDIUM"
+    assert kept[0]["severity"] == "BLOCKER"
     assert kept[0]["finding"].startswith("[partially supported]")
-    # a LOW flag is not promoted upward by the cap
     kept2, _ = apply_verdicts(
         [make_flag("F102", "LOW")], {"F102": {"verdict": "PARTIAL", "reason": "n"}}
     )

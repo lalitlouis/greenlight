@@ -73,18 +73,24 @@ def build_report(
     flags: list[dict[str, Any]],
     page_count: float | None = None,
     rating_prediction: dict[str, Any] | None = None,
+    incomplete_desks: list[str] | None = None,
 ) -> dict[str, Any]:
-    """Assemble and validate the Report object. Flags must already be verified."""
+    """Assemble and validate the Report object. Flags must already be verified.
+
+    A run where any desk returned no own dispositions WITHHOLDS the score:
+    fewer findings from a dead desk once RAISED the number (33 -> 45 while the
+    territory desk was down) — the score must never reward desk failure."""
     counts = {sev: sum(f["severity"] == sev for f in flags) for sev in SEVERITIES}
     by_agent: dict[str, int] = {}
     for f in flags:
         by_agent[f["agent"]] = by_agent.get(f["agent"], 0) + 1
 
+    complete = not incomplete_desks
     report: dict[str, Any] = {
         "script_title": script_title,
         "generated_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
-        "greenlight_score": greenlight_score(flags),
-        "dimension_scores": dimension_scores(flags),
+        "greenlight_score": greenlight_score(flags) if complete else None,
+        "dimension_scores": dimension_scores(flags) if complete else {},
         "counts": counts,
         "by_agent": by_agent,
         "est_clearance_cost_usd": _cost_range(flags),

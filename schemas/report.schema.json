@@ -24,10 +24,13 @@
       "format": "date-time"
     },
     "greenlight_score": {
-      "type": "integer",
+      "type": [
+        "integer",
+        "null"
+      ],
       "minimum": 0,
       "maximum": 100,
-      "description": "0-100. Deterministic function of flag severities \u2014 never asked of an LLM."
+      "description": "0-100, deterministic function of flag severities \u2014 never asked of an LLM. NULL when the analysis is incomplete (a desk returned no own dispositions): a score must never reward desk failure by counting fewer findings."
     },
     "counts": {
       "type": "object",
@@ -228,7 +231,7 @@
         "object",
         "null"
       ],
-      "description": "Per-desk 0-100 scores, same deterministic function as greenlight_score restricted to that desk's flags. Defensible where one number is not.",
+      "description": "Per-desk 0-100 scores, same deterministic function as greenlight_score restricted to that desk's flags. Defensible where one number is not. Withheld (empty) when the analysis is incomplete.",
       "additionalProperties": {
         "type": "integer",
         "minimum": 0,

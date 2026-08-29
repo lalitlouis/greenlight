@@ -197,6 +197,18 @@ def desk_cleared(state: Any, desk: str) -> list[Any]:
     return out
 
 
+def desk_cleared_own(state: Any, desk: str) -> list[Any]:
+    """The desk's own clearances, EXCLUDING the completeness sweeper's — the
+    sweeper's shallow generalist conclusions once rendered as '[Clearance
+    counsel]' territory law and reversed the real desk's prior analysis."""
+    out: list[Any] = []
+    for name in batch_agent_names(desk):
+        if name.endswith("__sweep"):
+            continue
+        out.extend(state.get(f"cleared:{name}") or [])
+    return out
+
+
 def desk_budget_left(state: Any, desk: str) -> int:
     batch_keys = [f"research_budget:{n}" for n in batch_agent_names(desk)[1:]]
     batch_vals = [state.get(k) for k in batch_keys]
@@ -1199,6 +1211,7 @@ BACKGROUND_HOSTS = {
     "cinemacafe.com",
     "uscspotlight.com",
     "jakedavidowitz.com",
+    "enduser-medianetworksproductionsafety-prod.paramount.com",
 }
 
 _SCENE_ANCHOR_CAP = 8  # a finding spanning more scenes than this says "the script"

@@ -56,8 +56,13 @@ def binder_pdf(data: dict[str, Any]) -> bytes:
     )
     story.append(
         Paragraph(
-            f"Generated {data['generated_at']} · Greenlight Score {data.get('score', '—')}/100 "
-            "(ordinal risk index, not a probability) · "
+            f"Generated {data['generated_at']} · Greenlight Score "
+            + (
+                "WITHHELD (analysis incomplete)"
+                if data.get("score") is None
+                else f"{data.get('score')}/100"
+            )
+            + " (ordinal risk index, not a probability) · "
             f"{tiers} · prepared by ScriptRisk (scriptrisk.com)",
             sub_style,
         )
