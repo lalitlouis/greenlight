@@ -1339,3 +1339,50 @@ def test_whatif_and_live_share_one_voting_rule():
     # plurality would say PG-13; the weighted rule says R — and both paths use it
     assert comps_weighted_majority(comps) == "R"
     assert comps_weighted_majority(comps) == _comps_weighted_majority(comps)
+
+
+# --- collapse retry ---------------------------------------------------------
+
+
+def test_collapsed_desks_detects_zero_own_dispositions():
+    from greenlight.tools.toolbelt import collapsed_desks
+
+    state = {
+        "triage": {
+            "territory_censor": [
+                {"entity_id": "", "work_item_id": "TC-AX-CN-DRUG_USE", "note": "n"}
+            ],
+            "ratings_board": [{"entity_id": "", "work_item_id": "RB-W001", "note": "n"}],
+        },
+        "cleared:ratings_board": [{"entity_id": None, "work_item_id": "RB-W001"}],
+        # the SWEEPER covering territory's items must NOT count as the desk's own
+        "cleared:clearance_counsel__sweep": [
+            {"entity_id": None, "work_item_id": "TC-AX-CN-DRUG_USE"}
+        ],
+    }
+    assert collapsed_desks(state) == ["territory_censor"]
+    # a retry-instance disposition counts as the desk's own
+    state["cleared:territory_censor__retry"] = [
+        {"entity_id": None, "work_item_id": "TC-AX-CN-DRUG_USE"}
+    ]
+    assert collapsed_desks(state) == []
+
+
+def test_retry_done_uses_retry_worklist_and_does_not_escalate():
+    from unittest.mock import MagicMock
+
+    from greenlight.tools.toolbelt import done
+
+    state = {
+        "triage": {
+            "territory_censor": [{"entity_id": "E1", "work_item_id": "TC-W001", "note": "n"}]
+        },
+        "retry_worklist:territory_censor": [],
+        "research_budget:territory_censor__retry": 12,
+    }
+    ctx = MagicMock()
+    ctx.state = state
+    ctx.agent_name = "territory_censor__retry"
+    out = done("empty worklist", ctx)
+    assert out.startswith("Desk closed")
+    assert ctx.actions.escalate is not True or isinstance(ctx.actions.escalate, MagicMock)

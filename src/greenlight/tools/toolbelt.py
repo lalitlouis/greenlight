@@ -59,9 +59,12 @@ def _desk_name_of(agent_name: str) -> str:
 
 
 def batch_agent_names(desk: str) -> list[str]:
-    """The base desk name, its batch-agent names, and the completeness sweeper."""
+    """The base desk name, its batch names, the collapse-retry instance, and
+    the completeness sweeper."""
     return (
-        [desk] + [f"{desk}__b{i}" for i in range(1, CLEARANCE_MAX_BATCHES + 1)] + [f"{desk}__sweep"]
+        [desk]
+        + [f"{desk}__b{i}" for i in range(1, CLEARANCE_MAX_BATCHES + 1)]
+        + [f"{desk}__retry", f"{desk}__sweep"]
     )
 
 
@@ -194,6 +197,26 @@ def desk_cleared(state: Any, desk: str) -> list[Any]:
     out: list[Any] = []
     for name in batch_agent_names(desk):
         out.extend(state.get(f"cleared:{name}") or [])
+    return out
+
+
+def collapsed_desks(state: Any) -> list[str]:
+    """Desks with a worklist and ZERO dispositions of their own (batches and
+    retry count as own; the generalist sweeper does not). The territory desk
+    once spent all eight iterations on read_scene and filed nothing — this is
+    the signature the completeness gate retries the desk on."""
+    tri = _triage_dict(state)
+    out: list[str] = []
+    for d in DESKS:
+        if not (tri.get(d) or []):
+            continue
+        n = (
+            len(desk_flags(state, d))
+            + len(desk_open_questions(state, d))
+            + len(desk_cleared_own(state, d))
+        )
+        if n == 0:
+            out.append(d)
     return out
 
 
@@ -337,9 +360,10 @@ def _budget_key(tool_context: ToolContext) -> str:
         return f"research_budget:{desk}"
     key = f"research_budget:{name}"
     state = tool_context.state
-    if name.endswith("__sweep"):
+    if name.endswith(("__sweep", "__retry")):
         if state.get(key) is None:
-            state[key] = 12  # the sweep is mostly record_clearance; research is the exception
+            # sweep/retry work is mostly record_clearance; research is the exception
+            state[key] = 12
         return key
     if state.get(key) is None:
         import math
@@ -2204,6 +2228,8 @@ def done(reason: str, tool_context: ToolContext) -> str:
     idx = batch_index(name)
     if name.endswith("__sweep"):
         worklist = list(state.get("sweep_worklist") or [])
+    elif name.endswith("__retry"):
+        worklist = list(state.get(f"retry_worklist:{desk}") or [])
     elif idx is not None:
         slices = clearance_batch_slices(state)
         worklist = slices[idx] if idx < len(slices) else []
@@ -2266,9 +2292,9 @@ def done(reason: str, tool_context: ToolContext) -> str:
             f"work_item_id). Unaddressed: {named}{more}. "
             f"{budget_left} research budget remains."
         )
-    if not name.endswith("__sweep"):
-        # The sweeper must NOT escalate: escalation bubbles past its own agent
-        # and would end the completeness gate's loop after one round.
+    if not name.endswith(("__sweep", "__retry")):
+        # Sweeper and retry desks must NOT escalate: escalation bubbles past
+        # their own agent and would end the completeness gate's loop early.
         tool_context.actions.escalate = True
     return f"Desk closed: {reason}"
 

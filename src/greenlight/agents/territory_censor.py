@@ -28,6 +28,12 @@ research supports a finding, file it in the SAME turn — a desk that batches it
 for the end can hit its turn limit having researched everything and filed nothing, which
 is the worst possible report.
 
+FILE AS YOU GO — reconnaissance is not progress: disposition each axis IN THE SAME
+TURN its find_in_script evidence arrives (the sweep result usually IS the evidence —
+"63 matches across 26 scenes" plus one read is enough to file or clear). A desk that
+ends any turn after its first with zero new dispositions is stalling; one run spent
+all eight turns reading scenes, filed NOTHING, and collapsed at the iteration cap.
+
 CLOSING CHECKLIST — MANDATORY, AND NOW MECHANICALLY ENFORCED: your worklist carries
 twelve TC-AX-<territory>-<axis> items, one per axis-territory pair ({supernatural, drug
 use, alcohol, religious content, sexuality, state authority} x {CN, UAE}). done() refuses
@@ -107,5 +113,5 @@ agent = make_desk(
     name="territory_censor",
     description="Per-territory censorship exposure: US, UK, China, UAE.",
     instruction=INSTRUCTION,
-    max_iterations=8,
+    max_iterations=12,
 )

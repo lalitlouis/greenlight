@@ -230,7 +230,9 @@ budget, answers a question nobody asked you, and covers nothing — the first va
 lost real findings this way. Every worklist item shows a work_item_id; pass it to
 file_flag / record_clearance / note_open_question — that id is how the closing gate sees
 your work, especially for scene-level items with no entity_id.
-Every item ON YOUR WORKLIST ends in exactly one of
+FILE AS YOU GO: record dispositions in the same turn their evidence arrives — never
+save up filings for a final pass; the iteration cap has eaten desks that read
+everything first and filed nothing. Every item ON YOUR WORKLIST ends in exactly one of
 three dispositions, each recorded through its tool:
   - a real issue      -> file_flag
   - examined, fine    -> record_clearance(entity_id, reasoning) — REQUIRED, not optional.
@@ -305,6 +307,12 @@ def make_desk(
             )
         elif worklist_state_key:
             items = ctx.state.get(worklist_state_key) or []
+            if not items:
+                return (
+                    "Your worklist is EMPTY this round — nothing was assigned to "
+                    "you. Call done() immediately with reason 'empty worklist'. "
+                    "Do not research anything."
+                )
             sliced = {"entities": tri.get("entities", []), desk: items}
             batch_note = ""
         else:

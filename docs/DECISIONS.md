@@ -1097,3 +1097,21 @@ work-item level, but which FACTS a desk surfaces still varies with model attenti
 fix direction is exactly the census pattern — deterministic inventories for everything
 countable. DEFERRED still: desk-retry for a collapsed desk (vs sweep), location
 availability/currency caveats (Bel Air Bay Club post-fire), mini-slug sub-anchoring.
+
+## 2026-08-29 — Territory collapse root-caused and triple-fixed
+
+Journal forensics on run 3 (643965843e3a): territory ran its axis sweeps correctly
+(find_in_script, free — budget untouched at 20/20), then spent every remaining iteration
+on read_scene batches and hit the LoopAgent cap having filed NOTHING — no done(), no
+error, a silent cap exit. Root cause: read-forever-file-never work ordering under a hard
+8-turn cap; run-to-run variance is just whether the model happens to interleave filing.
+Three fixes (gated):
+1. **Filing pressure**: territory prompt + COVERAGE_RULE — disposition in the same turn
+   evidence arrives; a turn with zero new dispositions after the first is stalling.
+2. **Territory max_iterations 8 → 12** (feature scripts surface 20+ scenes per sweep).
+3. **Desk-retry in the completeness gate**: collapsed_desks() (worklist + zero OWN
+   dispositions; sweeper excluded, __retry counts) → the gate re-runs THAT desk on its
+   own worklist with a filing-first preamble (name {desk}__retry, budget 12, done()
+   reads retry_worklist, escalate suppressed inside the gate loop) BEFORE the generalist
+   sweep may touch its items; sweep only takes what retry leaves. Healthy runs cost
+   nothing (check escalates before the retry agents run).

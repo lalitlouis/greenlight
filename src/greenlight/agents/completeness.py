@@ -20,7 +20,7 @@ from google.adk.events import Event, EventActions
 from google.genai import types
 
 from greenlight.agents.common import make_desk
-from greenlight.tools.toolbelt import unexamined_entities
+from greenlight.tools.toolbelt import collapsed_desks, unexamined_entities
 
 _MAX_ROUNDS = 3
 _NAME_CAP = 8
@@ -53,7 +53,42 @@ class _CompletenessCheck(BaseAgent):
     async def _run_async_impl(self, ctx: InvocationContext) -> AsyncGenerator[Event, None]:
         state = ctx.session.state
         missing = unexamined_entities(state)
-        if not missing:
+
+        # Collapsed desks (worklist, zero own dispositions — the territory
+        # read-everything-file-nothing failure) get THEIR OWN retry before the
+        # generalist sweep touches their items: desk-quality analysis first,
+        # the sweep as last resort.
+        collapsed = collapsed_desks(state)
+        tri = state.get("triage") or {}
+        if hasattr(tri, "model_dump"):
+            tri = tri.model_dump()
+        from greenlight.tools.toolbelt import DESKS as _DESKS
+
+        for d in _DESKS:
+            if d in collapsed:
+                state[f"retry_worklist:{d}"] = list(tri.get(d) or [])
+            else:
+                state[f"retry_worklist:{d}"] = []
+        if collapsed:
+            missing = [m for m in missing if not set(m.get("desks") or []) <= set(collapsed)]
+            yield Event(
+                invocation_id=ctx.invocation_id,
+                author=self.name,
+                content=types.Content(
+                    role="model",
+                    parts=[
+                        types.Part(
+                            text=(
+                                "Completeness gate: desk(s) with ZERO own dispositions — "
+                                + ", ".join(collapsed)
+                                + " — re-running each desk on its own worklist before any sweep."
+                            )
+                        )
+                    ],
+                ),
+            )
+
+        if not missing and not collapsed:
             yield Event(
                 invocation_id=ctx.invocation_id,
                 author=self.name,
@@ -103,6 +138,29 @@ class _CompletenessCheck(BaseAgent):
         )
 
 
+def _retry_desk(desk_module_instruction: str, desk: str) -> object:
+    """A collapse-retry instance of a desk: same instruction as the real desk
+    plus a filing-first preamble; runs only when the check assigned it work."""
+    preamble = (
+        "RETRY — your desk's previous attempt read scenes but FILED NOTHING and "
+        "hit its iteration cap. File dispositions FIRST this time: record each "
+        "conclusion the moment its evidence arrives; do not re-survey the "
+        "script.\n\n"
+    )
+    return make_desk(
+        name=f"{desk}__retry",
+        description=f"Collapse retry for {desk}: files what the first attempt read.",
+        instruction=preamble + desk_module_instruction,
+        max_iterations=6,
+        worklist_state_key=f"retry_worklist:{desk}",
+    )
+
+
+from greenlight.agents.clearance_counsel import INSTRUCTION as _CC_INSTRUCTION  # noqa: E402
+from greenlight.agents.ratings_board import INSTRUCTION as _RB_INSTRUCTION  # noqa: E402
+from greenlight.agents.safety_underwriter import INSTRUCTION as _SU_INSTRUCTION  # noqa: E402
+from greenlight.agents.territory_censor import INSTRUCTION as _TC_INSTRUCTION  # noqa: E402
+
 agent = LoopAgent(
     name="completeness_gate",
     description="Refuses to advance to verification while extracted entities lack dispositions.",
@@ -112,6 +170,10 @@ agent = LoopAgent(
             name="completeness_check",
             description="Deterministic: recomputes the unexamined set each round.",
         ),
+        _retry_desk(_CC_INSTRUCTION, "clearance_counsel"),
+        _retry_desk(_RB_INSTRUCTION, "ratings_board"),
+        _retry_desk(_SU_INSTRUCTION, "safety_underwriter"),
+        _retry_desk(_TC_INSTRUCTION, "territory_censor"),
         make_desk(
             name="clearance_counsel__sweep",
             description="Dispositions the entities every desk left untouched.",
