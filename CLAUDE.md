@@ -77,15 +77,16 @@ GreenlightPipeline                  SequentialAgent
 │   │                               (clearance_counsel__bN, ~25-item slices,
 │   │                               fresh conversations; caches/provenance shared,
 │   │                               all mutable state keys per-agent)
-│   ├── RatingsBoard                LoopAgent(max_iterations=4)
+│   ├── RatingsBoard                LoopAgent(max_iterations=6)
 │   ├── SafetyUnderwriter           LoopAgent(max_iterations=6)
 │   └── TerritoryCensor             LoopAgent(max_iterations=8)
 ├── CompletenessGate                LoopAgent(≤3) — deterministic check + sweep desk;
 │                                   refuses to advance while any extracted entity lacks
 │                                   a disposition (absence must never render as clean)
 ├── VerificationPanel               fan-out — one blinded verifier per filed flag; can REJECT
-├── Adjudicator                     LoopAgent(max_iterations=3) — merge, resolve conflicts,
-│                                   re-enter a desk via AgentTool when remedies interact
+├── Adjudicator                     single LlmAgent (Pro) — merges duplicates, normalizes
+│                                   categories, states conflicts on the record (desk
+│                                   re-entry via AgentTool: deferred roadmap)
 └── ReportWriter                    deterministic Python -> Report + marked-up script
 ```
 

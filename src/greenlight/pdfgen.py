@@ -56,7 +56,8 @@ def binder_pdf(data: dict[str, Any]) -> bytes:
     )
     story.append(
         Paragraph(
-            f"Generated {data['generated_at']} · Greenlight Score {data.get('score', '—')}/100 · "
+            f"Generated {data['generated_at']} · Greenlight Score {data.get('score', '—')}/100 "
+            "(ordinal risk index, not a probability) · "
             f"{tiers} · prepared by ScriptRisk (scriptrisk.com)",
             sub_style,
         )

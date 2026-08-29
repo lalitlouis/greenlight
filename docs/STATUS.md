@@ -45,8 +45,9 @@ Parallel?"* — and he was right. It has been rewritten as a genuine agent syste
 to the pipeline.**
 
 Each desk is now a `LoopAgent` over an `LlmAgent` with seven tools, deciding what to investigate
-and when to stop. Plus a blinded verification fan-out that can reject flags, and an adjudicator
-loop that can re-enter a desk via `AgentTool` when remedies interact. Full reasoning in
+and when to stop. Plus a blinded verification fan-out that can reject flags, and a single-pass
+Pro adjudicator that merges, normalizes, and states remedy conflicts on the record
+(desk re-entry via `AgentTool` remains deliberately deferred — see below). Full reasoning in
 `docs/TECH_SPEC.md`.
 
 Governing principle, applied twice: **never let the model assert what you could retrieve.**

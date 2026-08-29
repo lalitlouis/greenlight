@@ -1324,3 +1324,18 @@ def test_rating_boundary_vocabulary_normalizes_common_phrasings():
     ctx = _boundary_ctx()
     out = rating_boundary(["drug content", "sexual content", "thematic elements"], ctx)
     assert out["unmatched_descriptors"] == []
+
+
+def test_whatif_and_live_share_one_voting_rule():
+    """Same neighbours, same answer — plain plurality vs weighted majority
+    once disagreed whenever a near neighbour opposed a far cluster."""
+    from greenlight.tools.toolbelt import _comps_weighted_majority, comps_weighted_majority
+
+    comps = [
+        {"rating": "R", "distance": 0.05},
+        {"rating": "PG-13", "distance": 0.40},
+        {"rating": "PG-13", "distance": 0.42},
+    ]
+    # plurality would say PG-13; the weighted rule says R — and both paths use it
+    assert comps_weighted_majority(comps) == "R"
+    assert comps_weighted_majority(comps) == _comps_weighted_majority(comps)

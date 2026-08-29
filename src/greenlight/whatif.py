@@ -109,10 +109,17 @@ def project(
         SELECT title, year, rating, source_url,
                cosineDistance(embedding, %(vec)s) AS distance
         FROM rating_rationales
+        WHERE lower(title) != lower(%(skip_title)s)
         ORDER BY distance ASC
         LIMIT 8
         """,
-            parameters={"vec": vec},
+            parameters={
+                "vec": vec,
+                # the film itself must not vote in its own What-If — the live
+                # prediction excludes self-matches (query_precedent); this
+                # query never inherited that until now
+                "skip_title": str(record.get("script_title") or ""),
+            },
         )
         .result_rows
     )
@@ -129,7 +136,9 @@ def project(
     tally: dict[str, int] = {}
     for c in comparables:
         tally[c["rating"]] = tally.get(c["rating"], 0) + 1
-    projected = max(tally.items(), key=lambda kv: kv[1])[0] if tally else "?"
+    # ONE voting rule, shared with the live prediction — plain plurality here
+    # once let the same neighbours answer differently in two report panels
+    projected = toolbelt.comps_weighted_majority(comparables) or "?"
     result = {
         "projected": projected,
         "tally": tally,

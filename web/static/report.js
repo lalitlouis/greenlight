@@ -397,7 +397,7 @@ function flagExpand(f) {
   ex.appendChild(rem);
 
   if (f.confidence != null) {
-    ex.appendChild(el("span", "conf", `desk confidence ${Math.round(f.confidence * 100)}%`));
+    ex.appendChild(el("span", "conf", `desk self-assessment ${Math.round(f.confidence * 100)}% (uncalibrated)`));
   }
   if (f.rejection_reason) {
     const rej = el("div", "rejection");
@@ -535,9 +535,11 @@ function renderPrediction(root, pred) {
   } else {
     line = `${same} of your ${comps.length} nearest released comparables are rated ${pred.predicted}.`;
   }
-  const majority = Object.entries(tallies).sort((a, b) => b[1] - a[1])[0];
-  if (majority && majority[0] !== pred.predicted && majority[1] > same + stricter) {
-    line += ` The plurality — ${majority[1]} of ${comps.length} — are rated ${majority[0]}; treat the prediction with caution.`;
+  // The neighbours' verdict is computed ONCE, server-side, by the shared
+  // weighted rule (pred.comps_majority) — a client-side plurality here once
+  // contradicted the weighted line rendered a few rows below.
+  if (pred.comps_majority && pred.comps_majority !== pred.predicted) {
+    line += ` The weighted neighbour majority is ${pred.comps_majority} — see the desk's stated reasoning below.`;
   }
   meta.appendChild(el("p", "pred-evidence", line));
   const base = pred.corpus_base_rates || {};
@@ -978,8 +980,9 @@ function renderReport(record) {
     el(
       "p",
       "score-caveat",
-      "Scores are directional — independent re-runs typically land within a few points. " +
-        "The cited findings below are the product; the number is a summary of them."
+      "The score is an ordinal risk index — a deterministic summary of finding severities, " +
+        "not a probability, and not calibrated. The cited findings below are the product; " +
+        "compare drafts by findings, not by small score moves."
     )
   );
   const proj = el("span", "proj");
@@ -1091,6 +1094,8 @@ function renderReport(record) {
     h.appendChild(el("h3", null, "Estimated clearance exposure"));
     h.appendChild(el("b", "drivers-total", money(rep.est_clearance_cost_usd)));
     card.appendChild(h);
+    card.appendChild(el("p", "score-caveat",
+      "Desk-estimated ranges summed as independent remedies — dependencies between remedies are not modeled; treat as order-of-magnitude."));
     const ul = el("div", "drivers");
     drivers.forEach((f, i) => {
       const row = el("button", "driver");

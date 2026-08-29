@@ -750,7 +750,7 @@ footer{padding:44px 0 60px; border-bottom:0}
 &boxv;  &boxvr; SafetyUnderwriter       LoopAgent(max_iterations=6)
 &boxv;  &boxur; TerritoryCensor         LoopAgent(max_iterations=6)
 &boxvr; <b>VerificationPanel</b>          ParallelAgent &mdash; one verifier per filed flag
-&boxvr; <b>Adjudicator</b>                LoopAgent &mdash; may re-enter a desk via AgentTool
+&boxvr; <b>Adjudicator</b>                single Pro pass &mdash; merges, states conflicts (re-entry: roadmap)
 &boxur; ReportWriter                deterministic &rarr; Report + marked-up script
 
 <b>tools</b>  read_scene &middot; find_in_script &middot; research &middot; query_precedent
@@ -766,10 +766,11 @@ footer{padding:44px 0 60px; border-bottom:0}
     <em>not</em> the desk's reasoning &mdash; a verifier shown the argument tends to ratify it. It
     can downgrade a flag to partially supported, or drop it entirely. That is what turns "every
     claim is sourced" from a prompt instruction into a guarantee.</p>
-    <p><strong>Remedies interact, so adjudication is a loop.</strong> Replacing a brand rewrites an
-    action beat, which may move a rating beat that Ratings Board already scored. When the
-    adjudicator spots that, it calls the affected desk again through <code>AgentTool</code> with the
-    proposed change and waits for a revised answer.</p>
+    <p><strong>Remedies interact, and the adjudicator says so on the record.</strong> Replacing a
+    brand rewrites an action beat, which may move a rating beat that Ratings Board already
+    scored. The shipped adjudicator detects and records those conflicts with a proposed
+    resolution; automatically re-running the affected desk (<code>AgentTool</code> re-entry)
+    is deliberately deferred roadmap, not shipped behavior.</p>
     <p><strong>Loops that cannot end are just bills.</strong> Three independent stops: the desk
     calls <code>done()</code> and escalates, a hard <code>max_iterations</code> per desk, and a
     per-run research budget enforced inside the tool &mdash; when it is spent the tool replies

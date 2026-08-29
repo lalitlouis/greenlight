@@ -32,14 +32,14 @@ GreenlightPipeline                  SequentialAgent
 │   │   └── clearance_counsel__bN   LoopAgent(max_iterations=10) each, over a
 │   │                               bounded ~25-item slice with a FRESH
 │   │                               conversation (context bounded by construction)
-│   ├── RatingsBoard                LoopAgent(max_iterations=4)
+│   ├── RatingsBoard                LoopAgent(max_iterations=6)
 │   ├── SafetyUnderwriter           LoopAgent(max_iterations=6)
 │   └── TerritoryCensor             LoopAgent(max_iterations=8)
 ├── CompletenessGate                LoopAgent(≤3): deterministic unexamined-set check +
 │                                   a scoped sweep desk; verification is not reached while
 │                                   any extracted entity lacks a disposition
 ├── VerificationPanel               ParallelAgent — one verifier per filed flag
-├── Adjudicator                     LoopAgent(max_iterations=3)
+├── Adjudicator                     single LlmAgent (gemini-2.5-pro, structured plan)
 └── ReportWriter                    deterministic -> Report + marked-up script
 ```
 
@@ -93,24 +93,30 @@ Withholding the desk's reasoning is deliberate: a verifier shown the argument te
 
 Implementation note: ADK's `ParallelAgent` takes a static sub-agent list, and flag count is not
 known until the desks finish — so the VerificationPanel is built at runtime (or run as a fan-out
-inside a custom agent), not declared as a fixed `ParallelAgent`. Same class of care applies to the
-Adjudicator's `AgentTool` re-entry: a re-entered desk appends to `flags:<desk>` and must not
-double-file findings it already made.
+inside a custom agent), not declared as a fixed `ParallelAgent`. The same class of care will apply to the
+Adjudicator's deferred `AgentTool` re-entry if it ships: a re-entered desk appends to
+`flags:<desk>` and must not double-file findings it already made.
 
 This pass is the product thesis made mechanical. Rejected-flag count is a metric we report to
 ourselves — if it is zero, the verifier is not doing its job.
 
 ## Adjudication
 
-A `LoopAgent` that reconciles surviving flags:
+A single `LlmAgent` on gemini-2.5-pro that emits a structured reconciliation plan, applied
+deterministically:
 
-- Merges duplicates found by different desks on the same scene.
-- Resolves conflicting remedies (Ratings Board wants a line cut; Clearance Counsel wants the same
-  line rewritten).
-- **Detects interaction.** When a remedy changes a scene another desk scored, it calls that desk
-  again through `AgentTool` with the proposed change. That re-entry is why this is a loop.
+- Merges duplicates found by one desk on the same scenes (never across desks — different
+  desks' findings on one scene are different findings by design).
+- Normalizes drifted categories.
+- **States conflicts on the record.** Where remedies interact (Ratings wants a line cut;
+  Clearance wants it rewritten), the conflict and its proposed resolution are recorded as
+  adjudication notes rendered on the report — they are prose for the producer, not
+  executable desk re-runs.
 
-Terminates when a pass produces no new merges, conflicts, or re-checks.
+**Deferred (roadmap, not shipped):** bounded desk re-entry via `AgentTool` — re-running the
+desk a conflicting remedy affects, with the proposed change, in a LoopAgent. STATUS.md has
+carried this as deliberately deferred; this section previously described it in the present
+tense, which was wrong.
 
 ## What deliberately does not use a model
 

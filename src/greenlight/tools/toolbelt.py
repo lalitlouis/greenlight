@@ -1555,6 +1555,14 @@ async def query_precedent(text: str, k: int, tool_context: ToolContext) -> dict[
 _NEAR_IDENTITY_DISTANCE = 0.30  # below this, the neighbour may be the same story
 
 
+def comps_weighted_majority(comparables: list[dict[str, Any]]) -> str:
+    """THE voting rule over comparables — inverse-distance weighted. Public
+    because it must be the only one: the live prediction, the What-If
+    simulator, and any render of "what do the neighbours say" share it, or
+    the same neighbours produce different answers (they did)."""
+    return _comps_weighted_majority(comparables)
+
+
 def _comps_weighted_majority(comparables: list[dict[str, Any]]) -> str:
     """Distance-weighted majority rating of the comparables — the evidence's
     own verdict, which a prediction must either follow or explicitly rebut."""
