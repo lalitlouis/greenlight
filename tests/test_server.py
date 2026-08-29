@@ -252,9 +252,10 @@ def test_admin_surface_hidden_from_anonymous():
 def test_kill_switch_blocks_new_runs(monkeypatch):
     from greenlight import server
 
-    monkeypatch.setattr(
-        server.storage, "load_research", lambda k: {"paused": True} if k == server._PAUSE_KEY else None
-    )
+    def fake_load(k):
+        return {"paused": True} if k == server._PAUSE_KEY else None
+
+    monkeypatch.setattr(server.storage, "load_research", fake_load)
     r = client.post("/api/runs", files={"screenplay": ("t.fountain", b"INT. ROOM - DAY\n")})
     assert r.status_code == 503
     assert "paused" in r.json()["detail"].lower()
@@ -280,13 +281,17 @@ def test_invite_redeem_requires_signin():
 
 
 def test_invite_redeemed_user_passes_gate(monkeypatch):
-    from greenlight import auth as auth_mod
     from greenlight import server
 
     monkeypatch.setattr(server, "REQUIRE_INVITE", True)
     stored = {}
-    monkeypatch.setattr(server.storage, "load_research", lambda k: stored.get(k))
-    monkeypatch.setattr(server.storage, "save_research", lambda k, v: stored.update({k: v}) or True)
+
+    def fake_save(k, v):
+        stored[k] = v
+        return True
+
+    monkeypatch.setattr(server.storage, "load_research", stored.get)
+    monkeypatch.setattr(server.storage, "save_research", fake_save)
     monkeypatch.setattr(server, "_INVITE_CODES", {"PILOT1"})
     user = {"sub": "u1", "email": "pilot@example.com"}
     monkeypatch.setattr(server, "_current_user", lambda req: user)
