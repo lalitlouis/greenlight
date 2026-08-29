@@ -21,17 +21,25 @@ SEVERITIES = ("BLOCKER", "HIGH", "MEDIUM", "LOW", "FYI")
 _FACTOR = {"BLOCKER": 0.70, "HIGH": 0.92, "MEDIUM": 0.97, "LOW": 0.995, "FYI": 1.0}
 
 
+def _scored(flags: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Flags that count toward scores and totals: verified ones. A flag kept
+    only because the VERIFIER was unavailable (fail-open marker) renders, but
+    a run with the verifier down must not score like a fully verified run."""
+    return [f for f in flags if not f.get("verification_unavailable")]
+
+
 def greenlight_score(flags: list[dict[str, Any]]) -> int:
-    """0-100. Deterministic product of per-severity factors. Never asked of an LLM."""
+    """0-100. Deterministic product of per-severity factors over VERIFIED
+    flags. Never asked of an LLM."""
     score = 100.0
-    for f in flags:
+    for f in _scored(flags):
         score *= _FACTOR[f["severity"]]
     return round(score)
 
 
 def _cost_range(flags: list[dict[str, Any]]) -> list[float] | None:
     lows, highs = [], []
-    for f in flags:
+    for f in _scored(flags):
         rng = f["remedy"].get("est_cost_usd")
         if rng:
             lows.append(rng[0])
@@ -42,7 +50,7 @@ def _cost_range(flags: list[dict[str, Any]]) -> list[float] | None:
 def _added_days(flags: list[dict[str, Any]]) -> float | None:
     days = [
         f["remedy"]["est_added_days"]
-        for f in flags
+        for f in _scored(flags)
         if f["remedy"].get("est_added_days") is not None
     ]
     # Remedies overlap in schedule; summing them would be dishonest. The critical

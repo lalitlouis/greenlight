@@ -17,6 +17,7 @@ import hashlib
 import logging
 import os
 import re
+import threading
 import time
 from typing import Any
 from urllib.parse import urlparse
@@ -481,7 +482,7 @@ def _compact(raw: dict[str, Any]) -> list[dict[str, Any]]:
     return out
 
 
-async def research(
+async def research(  # noqa: PLR0915 - one linear cache/dedupe/live sequence
     objective: str,
     queries: list[str],
     entity_id: str,
@@ -530,7 +531,11 @@ async def research(
         if (country or restrict_to_domains)
         else ""
     )
-    q_hash = hashlib.sha1((objective + modifiers).encode()).hexdigest()[:12]
+    # queries join the key: a desk retrying the same objective with sharper
+    # retrieval strings must get a fresh search, not the old results (the
+    # objective-only key was deliberate but hid every retry).
+    q_sig = "|".join(sorted(str(q) for q in (queries or [])))
+    q_hash = hashlib.sha1((objective + "|" + q_sig + modifiers).encode()).hexdigest()[:12]
     key = f"research:{entity_id}:{q_hash}" if entity_id else f"research:{q_hash}"
     cached = tool_context.state.get(key)
     if cached is not None:
@@ -556,7 +561,12 @@ async def research(
         return {"cached": True, "results": stored["results"], "search_id": stored["search_id"]}
 
     budget_key = _budget_key(tool_context)
-    budget = int(tool_context.state.get(budget_key, 0))
+    # Atomic read-modify-write: a desk's parallel research calls in one turn
+    # once BOTH read budget=N and BOTH wrote N-1 — two API calls, one counted.
+    with _BUDGET_LOCK:
+        budget = int(tool_context.state.get(budget_key, 0))
+        if budget > 0:
+            tool_context.state[budget_key] = budget - 1
     if budget <= 0:
         return {
             "error": "research budget spent",
@@ -567,9 +577,39 @@ async def research(
         }
 
     session_id = f"scriptrisk-{getattr(tool_context, 'invocation_id', '') or 'run'}"[:64]
-    # Decrement BEFORE the await: when a desk issues several research calls in
-    # one turn they run concurrently, and the budget must count each of them.
-    tool_context.state[budget_key] = budget - 1
+
+    # In-flight dedupe: two branches missing on the same key at the same
+    # moment once both paid for the identical live search. The second waits
+    # briefly for the first, then reads the durable cache.
+    with _INFLIGHT_LOCK:
+        pending = _INFLIGHT.get(key)
+        if pending is None:
+            _INFLIGHT[key] = threading.Event()
+    if pending is not None:
+        await asyncio.to_thread(pending.wait, 150)
+        stored2 = await asyncio.to_thread(
+            _durable_cache_load, q_hash if not entity_id else f"{entity_id}-{q_hash}"
+        )
+        if stored2 is not None:
+            with _BUDGET_LOCK:  # refund: this branch spent no API call
+                tool_context.state[budget_key] = int(tool_context.state.get(budget_key, 0)) + 1
+            tool_context.state[key] = {k: v for k, v in stored2.items() if not k.startswith("_")}
+            _index_research_key(tool_context, key)
+            _register_provenance(
+                tool_context,
+                [
+                    x
+                    for r in stored2["results"]
+                    for x in [r.get("title", ""), *r.get("excerpts", [])]
+                ],
+            )
+            return {
+                "cached": True,
+                "deduped_in_flight": True,
+                "results": stored2["results"],
+                "search_id": stored2["search_id"],
+            }
+        # first caller failed or never saved — fall through to our own call
     try:
         raw = await asyncio.to_thread(
             _live_search,
@@ -580,7 +620,12 @@ async def research(
             include_domains=restrict_to_domains,
         )
     except Exception as exc:  # a failed search costs nothing; the failure is accounted
-        tool_context.state[budget_key] = budget
+        with _BUDGET_LOCK:
+            tool_context.state[budget_key] = int(tool_context.state.get(budget_key, 0)) + 1
+        with _INFLIGHT_LOCK:
+            ev = _INFLIGHT.pop(key, None)
+        if ev:
+            ev.set()
         _live_call_failed(tool_context, "search", exc)
         return {
             "error": f"search failed: {type(exc).__name__}",
@@ -602,6 +647,10 @@ async def research(
     await asyncio.to_thread(
         _durable_cache_store, q_hash if not entity_id else f"{entity_id}-{q_hash}", record
     )
+    with _INFLIGHT_LOCK:
+        ev = _INFLIGHT.pop(key, None)
+    if ev:
+        ev.set()  # release any branch waiting on this exact search
     return {
         "cached": False,
         "budget_remaining": budget - 1,
@@ -843,6 +892,10 @@ async def deep_research(question: str, entity_id: str, tool_context: ToolContext
 # run executes in a single process (worker job or in-process task), so a plain
 # module dict keyed by invocation id is race-free on the event loop and shared
 # by every desk. State-based indices remain as a secondary source.
+_BUDGET_LOCK = threading.Lock()
+_INFLIGHT: dict[str, threading.Event] = {}
+_INFLIGHT_LOCK = threading.Lock()
+
 _PROV_TEXTS: dict[str, list[str]] = {}
 _PROV_MAX_RUNS = 8
 

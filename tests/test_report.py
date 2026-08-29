@@ -169,3 +169,12 @@ def test_exact_duplicates_merge_deterministically():
     assert len(merged) == 2
     keeper = next(f for f in merged if f["agent"] == "territory_censor")
     assert keeper["severity"] == "BLOCKER"  # higher severity wins the merge
+
+
+def test_fail_open_flags_excluded_from_score():
+    """A run with the verifier down must not score like a verified run."""
+    from greenlight.report import greenlight_score
+
+    verified = [{"severity": "HIGH", "remedy": {}}]
+    unverified = [{"severity": "BLOCKER", "remedy": {}, "verification_unavailable": True}]
+    assert greenlight_score(verified + unverified) == greenlight_score(verified)

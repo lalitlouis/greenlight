@@ -223,7 +223,9 @@ async def _verify_flag(
                     ),
                 )
                 v = Verdict.model_validate_json(res.text)
-                return {"verdict": v.verdict, "reason": v.reason}
+                # mirror _verify_one: without failure_mode a salvage-path
+                # rejection is permanently mislabeled "none" on the record
+                return {"verdict": v.verdict, "reason": v.reason, "failure_mode": v.failure_mode}
             except Exception:
                 if attempt == _MAX_ATTEMPTS - 1:
                     # Fail open with a marker: never silently drop a flag
@@ -264,11 +266,20 @@ _RESOURCE_CAP = 6  # re-source the worst-hit few, not the world
 _RESOURCE_CITES = 3  # replacement citations per re-sourced flag
 
 
-def _fresh_citations(flag: dict[str, Any]) -> list[dict[str, Any]]:
+def _fresh_citations(
+    flag: dict[str, Any], state: dict[str, Any] | None = None
+) -> list[dict[str, Any]]:
     """One live search aimed at the claim's premise; top verbatim excerpts
-    become replacement citations. Module-level so tests can monkeypatch."""
+    become replacement citations. Module-level so tests can monkeypatch.
+
+    The result passes the SAME tier gate a filed flag faces: a re-sourced
+    BLOCKER/HIGH/MEDIUM flag once shipped on background hosts because this
+    path bypassed file_flag entirely. Background-host excerpts are dropped
+    here for MEDIUM+ severities; the search is grouped under the run's
+    Parallel session and counted in run telemetry."""
     from greenlight.tools import toolbelt
 
+    state = state or {}
     query_seed = (
         f"{flag.get('category', '').replace('_', ' ')} {str(flag.get('finding', ''))[:140]}"
     )
@@ -276,11 +287,16 @@ def _fresh_citations(flag: dict[str, Any]) -> list[dict[str, Any]]:
         res = toolbelt._live_search(
             objective=f"Authoritative support for: {str(flag.get('finding', ''))[:200]}",
             queries=[query_seed],
+            session_id=str(state.get("parallel_session_id") or "") or None,
         )
+        state["resource_searches"] = int(state.get("resource_searches") or 0) + 1
     except Exception:
         return []
+    strict = flag.get("severity") in ("BLOCKER", "HIGH", "MEDIUM")
     cits: list[dict[str, Any]] = []
     for r in res.get("results", []) or []:
+        if strict and toolbelt._is_background_host(r.get("url") or ""):
+            continue  # the tier gate, applied where file_flag would have applied it
         for ex in (r.get("excerpts") or [])[:1]:
             cits.append(
                 {
@@ -401,7 +417,7 @@ class VerificationPanel(BaseAgent):
                 ),
             )
         for r in recoverable:
-            new_cits = await asyncio.to_thread(_fresh_citations, r)
+            new_cits = await asyncio.to_thread(_fresh_citations, r, state)
             if not new_cits:
                 continue
             retry_flag = {**r, "citations": new_cits, "resourced": True}
