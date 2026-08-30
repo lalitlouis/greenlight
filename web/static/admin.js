@@ -8,6 +8,11 @@ function cell(tr, text, mono) {
   return td;
 }
 
+function fmtElapsed(s) {
+  if (s == null) return "—";
+  return s >= 60 ? `${Math.floor(s / 60)}m ${Math.round(s % 60)}s` : `${Math.round(s)}s`;
+}
+
 function renderOverview(o) {
   const pulse = $("adm-pulse");
   pulse.textContent = "";
@@ -31,17 +36,44 @@ function renderOverview(o) {
 
   const live = $("adm-live");
   live.textContent = "";
+  // Fleet (Firestore) is the truth for clearance runs; writer runs still come
+  // from this instance's memory.
   const running = [
-    ...(o.live?.clearance || []).map((r) => `clearance ${r.id} — ${r.status}`),
+    ...(o.fleet || [])
+      .filter((r) => r.status === "running")
+      .map((r) => `clearance ${r.id} — ${r.owner || "anon"} · ${fmtElapsed(r.elapsed_s)}`),
     ...(o.live?.writer || []).map((r) => `writer ${r.id} — ${r.status} (${r.stage || ""})`),
   ];
   live.appendChild(
     el("p", null, running.length ? running.join(" · ") : "Nothing running right now.")
   );
 
+  const fleet = $("adm-fleet");
+  fleet.textContent = "";
+  let tr = el("tr");
+  for (const h of ["Run", "Title", "Owner", "Status", "Started", "Duration"])
+    tr.appendChild(el("th", null, h));
+  fleet.appendChild(tr);
+  for (const r of o.fleet || []) {
+    tr = el("tr");
+    if (r.status === "error") tr.className = "adm-err";
+    cell(tr, r.id, true);
+    cell(tr, r.title || "—");
+    cell(tr, r.owner || "—");
+    cell(tr, r.status);
+    cell(tr, r.started_at ? fmtDate(new Date(r.started_at * 1000).toISOString()) : "—");
+    cell(tr, fmtElapsed(r.elapsed_s), true);
+    fleet.appendChild(tr);
+  }
+  if ((o.fleet || []).length === 0) {
+    tr = el("tr");
+    cell(tr, "No runs recorded yet.");
+    fleet.appendChild(tr);
+  }
+
   const users = $("adm-users");
   users.textContent = "";
-  let tr = el("tr");
+  tr = el("tr");
   for (const h of ["User", "Email", "Runs", "Latest", "When"]) tr.appendChild(el("th", null, h));
   users.appendChild(tr);
   for (const u of o.users || []) {

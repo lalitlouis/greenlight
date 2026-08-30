@@ -141,3 +141,21 @@ def count_running() -> int:
         return sum(1 for _ in docs)
     except Exception:
         return 0
+
+
+def list_runs(limit: int = 20) -> list[dict[str, Any]]:
+    """Newest clearance runs fleet-wide, any status — the admin page must see
+    worker-owned runs too, which the web tier's memory deliberately drops."""
+    try:
+        from google.cloud import firestore
+
+        docs = (
+            _db()
+            .collection(RUNS_COLLECTION)
+            .order_by("started_at", direction=firestore.Query.DESCENDING)
+            .limit(limit)
+            .stream()
+        )
+        return [{"id": d.id, **(d.to_dict() or {})} for d in docs]
+    except Exception:
+        return []

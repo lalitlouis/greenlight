@@ -280,13 +280,21 @@ def _bump(counter: str) -> None:
         task.add_done_callback(_bump_tasks.discard)
 
 
-def _log(kind: str, **fields: Any) -> None:
+def _log(kind: str, severity: str = "INFO", **fields: Any) -> None:
     """One JSON line per event on stdout — Cloud Run ships stdout to Cloud
-    Logging automatically, so this IS the logging system, no agent needed."""
+    Logging automatically, so this IS the logging system, no agent needed.
+    `severity` and `time` are Cloud Logging's special JSON fields: they become
+    the LogEntry's real severity and timestamp, so severity>=ERROR filters and
+    the dashboard's error panel actually work."""
     with contextlib.suppress(Exception):
         entry = {"ts": _time_module.strftime("%H:%M:%S"), "kind": kind, **fields}
         RECENT_LOGS.append(entry)
-        logger.info(json.dumps(entry, default=str))
+        shipped = {
+            "severity": severity,
+            "time": _time_module.strftime("%Y-%m-%dT%H:%M:%SZ", _time_module.gmtime()),
+            **entry,
+        }
+        logger.info(json.dumps(shipped, default=str))
 
 
 @app.middleware("http")
@@ -298,6 +306,7 @@ async def request_logging(request: Request, call_next):
         _bump("errors")
         _log(
             "http_error",
+            severity="ERROR",
             path=request.url.path,
             method=request.method,
             error=f"{type(e).__name__}: {e}",
@@ -310,6 +319,7 @@ async def request_logging(request: Request, call_next):
             _bump("errors")
         _log(
             "http",
+            severity="ERROR" if response.status_code >= HTTP_ERROR_STATUS else "INFO",
             path=request.url.path,
             method=request.method,
             status=response.status_code,
@@ -633,7 +643,14 @@ async def _run_live(handle: RunHandle, script_path: Path) -> None:
         handle.status = "error" if record.get("error") else "done"
         handle.flush_events()
         await asyncio.to_thread(
-            runstate.run_set, handle.run_id, {"status": handle.status, "record_saved": True}
+            runstate.run_set,
+            handle.run_id,
+            {
+                "status": handle.status,
+                "record_saved": True,
+                "finished_at": _time_module.time(),
+                "elapsed_s": record.get("elapsed_s"),
+            },
         )
         await asyncio.to_thread(storage.save_record, handle.run_id, record)
         if handle.owner:
@@ -651,7 +668,11 @@ async def _run_live(handle: RunHandle, script_path: Path) -> None:
         handle.status = "error"
         handle.publish({"type": "error", "message": f"{type(e).__name__}: {e}", "partial": False})
         handle.flush_events()
-        await asyncio.to_thread(runstate.run_set, handle.run_id, {"status": "error"})
+        await asyncio.to_thread(
+            runstate.run_set,
+            handle.run_id,
+            {"status": "error", "finished_at": _time_module.time()},
+        )
         if handle.owner:
             stub = _running_stub(handle.run_id, "clearance", handle.run_id, handle.owner_info or {})
             stub["status"] = "error"
@@ -779,8 +800,12 @@ async def create_run(  # noqa: PLR0915 - the run-start gauntlet, deliberately li
         try:
             await asyncio.to_thread(_dispatch_worker, run_id)
         except Exception as e:
-            await asyncio.to_thread(runstate.run_set, run_id, {"status": "error"})
-            _log("worker_dispatch_failed", run_id=run_id, err=type(e).__name__)
+            await asyncio.to_thread(
+                runstate.run_set,
+                run_id,
+                {"status": "error", "finished_at": _time_module.time()},
+            )
+            _log("worker_dispatch_failed", severity="ERROR", run_id=run_id, err=type(e).__name__)
             raise HTTPException(503, "Could not start the analysis worker — try again.") from e
         _bump("runs")
         pages = len(source) // 3200
@@ -1233,6 +1258,35 @@ async def admin_overview(request: Request) -> dict[str, Any]:
         users.sort(key=lambda u: u.get("latest_at") or "", reverse=True)
         return users
 
+    users = await asyncio.to_thread(_roster)
+
+    # Fleet truth comes from Firestore, not this instance's memory: in worker
+    # mode the web tier deliberately drops its handle, so RUNS under-reports.
+    email_by_sub = {u["sub"]: u["email"] for u in users}
+    now = _time_module.time()
+    fleet = []
+    for r in await asyncio.to_thread(runstate.list_runs, 20):
+        started = r.get("started_at") or 0
+        owner_sub = (r.get("owner") or "")[:10] + "…" if r.get("owner") else ""
+        if r.get("elapsed_s"):
+            elapsed = round(r["elapsed_s"])
+        elif started and r.get("finished_at"):
+            elapsed = round(r["finished_at"] - started)
+        elif started and r.get("status") == "running":
+            elapsed = round(now - started)
+        else:
+            elapsed = None  # pre-finished_at docs: unknowable, not "still growing"
+        fleet.append(
+            {
+                "id": r.get("id"),
+                "status": r.get("status"),
+                "title": (r.get("title") or "")[:80],
+                "owner": email_by_sub.get(owner_sub) or owner_sub,
+                "started_at": started,
+                "elapsed_s": elapsed,
+            }
+        )
+
     return {
         "metrics": {
             **_metrics,
@@ -1241,8 +1295,9 @@ async def admin_overview(request: Request) -> dict[str, Any]:
         },
         "lifetime": await asyncio.to_thread(runstate.get_counters),
         "live": {"clearance": live_runs, "writer": writer_live},
+        "fleet": fleet,
         "logs": list(RECENT_LOGS)[-150:][::-1],
-        "users": await asyncio.to_thread(_roster),
+        "users": users,
     }
 
 
@@ -1274,6 +1329,7 @@ async def client_log(body: ClientLog, request: Request) -> dict[str, bool]:
         _bump("errors")
     _log(
         "client",
+        severity="ERROR" if body.level == "error" else "INFO",
         level=body.level[:10],
         event=body.event[:60],
         detail=body.detail[:300],

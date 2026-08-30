@@ -90,7 +90,14 @@ def main() -> int:
     state = runstate.run_get(run_id) or {}
     source = storage.load_script(run_id)
     if source is None:
-        runstate.run_set(run_id, {"status": "error", "message": "script not found in storage"})
+        runstate.run_set(
+            run_id,
+            {
+                "status": "error",
+                "message": "script not found in storage",
+                "finished_at": time.time(),
+            },
+        )
         print(f"worker: no script for {run_id}", file=sys.stderr)
         return 1
 
@@ -113,7 +120,10 @@ def main() -> int:
         )
     except Exception as e:  # pipeline.run salvages internally; this is belt+braces
         publish.flush()
-        runstate.run_set(run_id, {"status": "error", "message": f"{type(e).__name__}"})
+        runstate.run_set(
+            run_id,
+            {"status": "error", "message": f"{type(e).__name__}", "finished_at": time.time()},
+        )
         print(f"worker: run failed hard: {type(e).__name__}", file=sys.stderr)
         return 1
     publish.flush()
@@ -143,7 +153,15 @@ def main() -> int:
     if owner:
         storage.save_owner(run_id, owner)
         storage.save_user_run(owner, run_id, _stub(run_id, record, state))
-    runstate.run_set(run_id, {"status": status, "record_saved": True})
+    runstate.run_set(
+        run_id,
+        {
+            "status": status,
+            "record_saved": True,
+            "finished_at": time.time(),
+            "elapsed_s": record.get("elapsed_s"),
+        },
+    )
     runstate.increment("runs_completed")
     # Structured run summary — the one log line that powers duration/quality
     # monitoring. Deliberately carries NO title and no script-derived text.

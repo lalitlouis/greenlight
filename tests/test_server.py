@@ -306,3 +306,63 @@ def test_invite_redeemed_user_passes_gate(monkeypatch):
     assert r.status_code == 200
     # gate now passes for this user (invite:u1 stored)
     server._require_invite(user)  # must not raise
+
+
+# --- observability: severity-tagged logs + fleet-wide admin runs -------------
+
+
+def test_log_line_carries_severity_and_rfc3339_time(caplog):
+    import logging
+
+    from greenlight import server
+
+    with caplog.at_level(logging.INFO, logger="scriptrisk"):
+        server._log("unit_test_event", severity="ERROR", foo="bar")
+    line = json.loads(caplog.records[-1].getMessage())
+    assert line["severity"] == "ERROR"
+    assert line["kind"] == "unit_test_event"
+    assert line["foo"] == "bar"
+    assert "T" in line["time"] and line["time"].endswith("Z")
+    # the in-memory admin feed stays compact — no severity/time duplication
+    assert "severity" not in server.RECENT_LOGS[-1]
+
+
+def test_list_runs_degrades_without_firestore(monkeypatch):
+    from greenlight import runstate
+
+    monkeypatch.setitem(runstate._cache, "db", None)  # .collection raises -> []
+    assert runstate.list_runs() == []
+
+
+def test_admin_overview_fleet_reads_firestore_not_memory(monkeypatch):
+    """The 'who is running what' table must come from the fleet-wide Firestore
+    ledger — in worker mode the web tier drops its in-memory handle, so RUNS
+    alone under-reports."""
+    from greenlight import server
+
+    monkeypatch.setattr(server.auth, "is_admin", lambda user: True)
+    monkeypatch.setattr(server, "_current_user", lambda req: {"sub": "adm", "email": "a@b.c"})
+    monkeypatch.setattr(server.runstate, "get_counters", lambda: {})
+    monkeypatch.setattr(server.storage, "list_user_subs", lambda: [])
+    now = server._time_module.time()
+    monkeypatch.setattr(
+        server.runstate,
+        "list_runs",
+        lambda limit=20: [
+            {
+                "id": "run_a",
+                "status": "running",
+                "title": "Live One",
+                "owner": "subsubsubsub",
+                "started_at": now - 60,
+            },
+            {"id": "run_b", "status": "done", "started_at": now - 600, "finished_at": now - 300},
+            {"id": "run_c", "status": "error", "started_at": now - 9000},
+        ],
+    )
+    o = client.get("/api/admin/overview").json()
+    by_id = {r["id"]: r for r in o["fleet"]}
+    assert 55 <= by_id["run_a"]["elapsed_s"] <= 65  # running: now - started_at
+    assert by_id["run_b"]["elapsed_s"] == 300  # finished: finished_at - started_at
+    assert by_id["run_c"]["elapsed_s"] is None  # pre-finished_at doc: unknowable
+    assert by_id["run_a"]["owner"] == "subsubsubs…"  # sub truncated, no roster match

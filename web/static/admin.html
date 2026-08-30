@@ -32,9 +32,15 @@
     <div class="counter-strip" id="adm-pulse" style="margin-top: 0;"></div>
     <div class="section-head"><h2>Running now</h2></div>
     <div id="adm-live" class="card wr-card" style="padding: 20px 26px;"></div>
+    <div class="section-head"><h2>Recent runs</h2><p class="lede">Fleet-wide from Firestore — includes worker-job runs no web instance holds.</p></div>
+    <div class="compare-scroll"><table class="compare-table" id="adm-fleet"></table></div>
     <div class="section-head"><h2>Users</h2></div>
     <div class="compare-scroll"><table class="compare-table" id="adm-users"></table></div>
-    <div class="section-head"><h2>Activity log</h2><p class="lede">Server events and browser beacons, newest first.</p></div>
+    <div class="section-head"><h2>Activity log</h2><p class="lede">Server events and browser beacons from this instance, newest first.
+      Full history: <a href="https://console.cloud.google.com/monitoring/dashboards/builder/2b125f62-9528-412f-82c5-28f7142578ff?project=greenlight-clearance-2026" target="_blank" rel="noopener">Ops dashboard</a> ·
+      <a href="https://console.cloud.google.com/logs/query;query=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22greenlight%22%0AjsonPayload.kind!%3D%22%22?project=greenlight-clearance-2026" target="_blank" rel="noopener">app events</a> ·
+      <a href="https://console.cloud.google.com/logs/query;query=resource.type%3D%22cloud_run_job%22%0Aresource.labels.job_name%3D%22greenlight-worker%22?project=greenlight-clearance-2026" target="_blank" rel="noopener">worker logs</a> ·
+      <a href="https://console.cloud.google.com/logs/query;query=severity%3E%3DWARNING%20OR%20textPayload%3A%22RUN%20ABORTED%22?project=greenlight-clearance-2026" target="_blank" rel="noopener">errors</a>.</p></div>
     <div class="compare-scroll"><table class="compare-table" id="adm-logs"></table></div>
   </div>
 </main>
