@@ -109,9 +109,10 @@ real analysis.
 - **Parallel**: ~$0.009 per `advanced` search. A clearance run on the 12-scene fixture spends
   19–26 searches ≈ **$0.20/run**. `searches_spent` in the worker's `run_summary` log line is
   the measured count; each `search_id` in the record is one billed search.
-- **Gemini**: ~$2.20/run *estimated* (3.7-flash desks/verifiers + one 2.5-pro adjudication;
-  flash intro pricing $0.75/$3.75 per MTok through 2026-12-31, then doubles). Not yet measured —
-  per-run `usage_metadata` capture is the planned fix; until it lands, treat Gemini as the
-  dominant and least-certain share of ≈ **$2.40 total per clearance run**.
+- **Gemini**: ~$3.70/run — back-calculated from the Aug 2026 billing console ($170 of
+  post-discount Gemini/storage spend over 46 runs), not per-run measured. Flash intro pricing
+  $0.75/$3.75 per MTok runs through 2026-12-31, then doubles. Per-run `usage_metadata`
+  capture is the planned fix; until it lands, budget ≈ **$3.90 total per clearance run**
+  (all cash — the $100 GCP credit is exhausted as of 2026-08-29).
 - Never add a per-desk search: any change that multiplies searches multiplies the only
   metered per-run cost that scales with entity count.
