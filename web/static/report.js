@@ -569,29 +569,48 @@ function renderPrediction(root, pred) {
   card.appendChild(list);
 
   if ((pred.beats_to_cut || []).length) {
+    // Case studies show the cut list as ANALYSIS, never as a live control: each
+    // projection re-runs the evidence pipeline and spends budget, and these are
+    // public pages. The server refuses them too — this just keeps the UI honest.
+    const interactive = !IS_CASE;
     const cuts = el("div", "cuts");
-    cuts.appendChild(el("div", "blk-label", `The cut list toward ${pred.target || "your target"} — test each cut`));
     cuts.appendChild(
-      el("p", "cuts-hint", `Check cuts to re-run the comparables search on your revised content profile — live against all ${corpusN()} films. Cuts are levers, not guarantees: the simulator measures how far each one actually moves the rating.`)
+      el(
+        "div",
+        "blk-label",
+        `The cut list toward ${pred.target || (interactive ? "your target" : "the target")}` +
+          (interactive ? " — test each cut" : "")
+      )
     );
+    if (interactive) {
+      cuts.appendChild(
+        el("p", "cuts-hint", `Check cuts to re-run the comparables search on your revised content profile — live against all ${corpusN()} films. Cuts are levers, not guarantees: the simulator measures how far each one actually moves the rating.`)
+      );
+    }
     const ol = el("ol", "cuts-list");
     pred.beats_to_cut.forEach((b, i) => {
       const li = el("li");
-      const lab = el("label", "cut-item");
-      const cb = el("input");
-      cb.type = "checkbox";
-      cb.dataset.beat = String(i);
-      lab.appendChild(cb);
-      lab.appendChild(el("span", null, b));
-      li.appendChild(lab);
+      if (interactive) {
+        const lab = el("label", "cut-item");
+        const cb = el("input");
+        cb.type = "checkbox";
+        cb.dataset.beat = String(i);
+        lab.appendChild(cb);
+        lab.appendChild(el("span", null, b));
+        li.appendChild(lab);
+      } else {
+        li.appendChild(el("span", null, b));
+      }
       ol.appendChild(li);
     });
     cuts.appendChild(ol);
-    const out = el("div", "whatif-out hidden");
-    out.id = "whatif-out";
-    cuts.appendChild(out);
+    if (interactive) {
+      const out = el("div", "whatif-out hidden");
+      out.id = "whatif-out";
+      cuts.appendChild(out);
+    }
     card.appendChild(cuts);
-    initWhatIf(cuts, pred);
+    if (interactive) initWhatIf(cuts, pred);
   }
   root.appendChild(card);
 }
@@ -804,7 +823,7 @@ function clearedRows(record) {
       }
       const who = ENTITY_SURFACE[eid] || ENTITY_SURFACE[c.entity_id] || null;
       if (who) {
-        const key = who + " " + desk;
+        const key = who + "\u0000" + desk;
         const prev = bestByKey.get(key);
         if (!prev || (c.reasoning || "").length > prev.text.length) {
           bestByKey.set(key, { desk, who, text: c.reasoning });

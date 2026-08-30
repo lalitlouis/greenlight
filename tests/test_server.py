@@ -450,3 +450,32 @@ def test_pause_flag_and_invites_never_expire(monkeypatch):
     monkeypatch.setattr(server.storage, "load_research", fake_load)
     assert _REAL_RUNS_PAUSED(), "a month-old pause must still be in force"
     assert seen[server._PAUSE_KEY] is None
+
+
+def test_simulator_refused_on_case_studies(monkeypatch):
+    """Each projection re-runs the evidence pipeline (model + embedding spend).
+    Case studies are public marketing pages — their cut list is analysis, not a
+    live control anyone can drive."""
+    from greenlight import server
+
+    monkeypatch.setattr(server, "_current_user", lambda req: {"sub": "u1", "email": "a@b.c"})
+    body = {"run_id": "case_the_hangover", "cuts": [0], "extra": []}
+    for path in ("/api/whatif", "/api/whatif/suggest"):
+        res = client.post(path, json=body)
+        assert res.status_code == 403, path
+        assert "case studies" in res.json()["detail"].lower()
+
+
+def test_static_js_is_text_not_binary():
+    """A stray NUL byte in report.js made `file` and grep treat a shipped source
+    file as binary — every grep over it silently returned nothing, which is how
+    a code audit misses things. Keep the front end greppable."""
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1] / "web" / "static"
+    for js in sorted(root.glob("*.js")):
+        raw = js.read_bytes()
+        assert b"\x00" not in raw, f"{js.name} contains a NUL byte"
+        raw.decode("utf-8")  # must be valid UTF-8
+        control = {b for b in raw if b < 32 and b not in (9, 10, 13)}
+        assert not control, f"{js.name} has control bytes {control}"

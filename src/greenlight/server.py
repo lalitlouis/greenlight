@@ -1437,6 +1437,18 @@ class WhatIfBody(BaseModel):
     extra: list[str] = []
 
 
+def _refuse_case_study_simulation(record: dict[str, Any]) -> None:
+    """The rating simulator is not offered on case studies.
+
+    Every projection re-runs the evidence pipeline — a model rewrite, an
+    embedding, and a comparables query — so it spends budget per click. Case
+    studies are public marketing pages for famous films; their cut list renders
+    as analysis, never as a live control anyone can drive. Your own analyses
+    keep the simulator (signed in, rate-limited)."""
+    if record.get("kind") == "case_study":
+        raise HTTPException(403, "The rating simulator is not available on case studies.")
+
+
 async def _binder_data(run_id: str) -> dict[str, Any]:
     run_id = _safe_id(run_id)
     record = await _load_record_any(run_id)
@@ -1670,6 +1682,7 @@ async def whatif_rating(body: WhatIfBody, request: Request) -> dict[str, Any]:
     record = await _load_record_any(run_id)
     if record is None:
         raise HTTPException(404, "Unknown run.")
+    _refuse_case_study_simulation(record)
     from greenlight import whatif as whatif_mod
 
     result = await asyncio.to_thread(
@@ -1700,6 +1713,7 @@ async def whatif_suggest(body: WhatIfBody, request: Request) -> dict[str, Any]:
     record = await _load_record_any(run_id)
     if record is None:
         raise HTTPException(404, "Unknown run.")
+    _refuse_case_study_simulation(record)
     from greenlight import whatif as whatif_mod
 
     result = await asyncio.to_thread(
