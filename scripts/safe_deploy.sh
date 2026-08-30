@@ -32,5 +32,11 @@ gcloud run deploy "$SERVICE" --source . --region "$REGION" --quiet
 # keep the worker job on the same image as the service
 IMG=$(gcloud run services describe "$SERVICE" --region "$REGION" \
   --format='value(spec.template.spec.containers[0].image)')
-gcloud run jobs update greenlight-worker --image "$IMG" --region "$REGION" --quiet
+# --max-retries=0: a retried execution re-runs the whole pipeline from scratch —
+# it bills a second full analysis AND restarts the journal sequence at 0, so the
+# retry's event chunks interleave with the first attempt's and every viewer sees
+# a garbled stream. A clearance run that dies should surface as failed, not
+# silently re-run at double cost; pipeline.run already salvages internally.
+gcloud run jobs update greenlight-worker --image "$IMG" --region "$REGION" \
+  --max-retries=0 --quiet
 echo "safe_deploy: service + worker job on image ${IMG##*/}"

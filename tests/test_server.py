@@ -479,3 +479,33 @@ def test_static_js_is_text_not_binary():
         raw.decode("utf-8")  # must be valid UTF-8
         control = {b for b in raw if b < 32 and b not in (9, 10, 13)}
         assert not control, f"{js.name} has control bytes {control}"
+
+
+def test_abandoned_runs_do_not_latch_the_concurrency_cap(monkeypatch):
+    """A worker killed mid-run never writes a terminal status. Counting those
+    forever latched the cap closed: five zombies and every new run 429s until
+    someone hand-edits Firestore."""
+    import time as _t
+
+    from greenlight import runstate
+
+    fresh = {"status": "running", "started_at": _t.time() - 60}
+    zombie = {"status": "running", "started_at": _t.time() - 5 * 3600}
+    cutoff = _t.time() - runstate.RUN_MAX_AGE_S
+    assert runstate._is_stale(zombie, cutoff)
+    assert not runstate._is_stale(fresh, cutoff)
+    # a doc with no started_at at all is never reaped (unknown age, not stale)
+    assert not runstate._is_stale({"status": "running"}, cutoff)
+
+
+def test_in_process_run_saves_the_record_before_declaring_done():
+    """Reversed, a crash in the window left the ledger saying done/record_saved
+    with nothing in storage — a paid run lost under a positive status."""
+    import inspect
+
+    from greenlight import server
+
+    src = inspect.getsource(server._run_live)
+    save_at = src.index("storage.save_record")
+    status_at = src.index('"record_saved"')
+    assert save_at < status_at, "save_record must precede the terminal run_set"

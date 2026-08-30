@@ -285,3 +285,21 @@ def test_blocker_may_drop_exactly_one_step_with_rationale():
     plan["merges"][0]["rationale"] = ""
     out2, _ = apply_plan([make_flag("F101", "BLOCKER")], plan)
     assert out2[0]["severity"] == "BLOCKER"
+
+
+def test_failed_verifier_withholds_the_score_instead_of_inflating_it():
+    """A Vertex outage fails every verification OPEN. _scored() drops those
+    flags from the maths, so the score used to come out 100/100 while the
+    counts beside it still listed the blockers."""
+    flags = [
+        {**make_flag("F101", "BLOCKER"), "verification_unavailable": True},
+        {**make_flag("F102", "HIGH"), "verification_unavailable": True},
+    ]
+    rep = build_report("X", flags, page_count=10)
+    assert rep["greenlight_score"] is None, "unverified must never score like verified"
+    assert rep["dimension_scores"] == {}
+    assert rep["verification_degraded"] is True
+    assert rep["counts"]["BLOCKER"] == 1  # the findings still render
+    # a fully verified run is unaffected
+    clean = build_report("X", [make_flag("F101", "HIGH")], page_count=10)
+    assert clean["greenlight_score"] == 92 and clean["verification_degraded"] is False

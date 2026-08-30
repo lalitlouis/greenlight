@@ -83,6 +83,10 @@
         "null"
       ]
     },
+    "verification_degraded": {
+      "type": "boolean",
+      "description": "True when one or more flags survived only because the VERIFIER could not run (fail-open). The score is withheld in that case: an unverified run must never score like a verified one."
+    },
     "rating_prediction": {
       "type": [
         "object",

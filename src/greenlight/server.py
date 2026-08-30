@@ -222,17 +222,28 @@ def _check_rate(request: Request) -> None:
         ]:
             _rate.pop(stale, None)
 
-    running = sum(1 for h in RUNS.values() if h.mode == "live" and h.status == "running")
-    running += sum(1 for h in WRITER_RUNS.values() if h.get("status") == "running")
-    if RUN_MODE == "worker":
-        # the cap must see the whole fleet, not this instance's memory
-        running = max(running, _fleet_running())
+    running = _live_count()
+    # A worker that died never wrote a terminal status, so its doc reads
+    # "running" forever and would latch this cap closed for everyone. Reap the
+    # abandoned ones before refusing anybody, then recount.
+    if running >= MAX_CONCURRENT_LIVE and RUN_MODE == "worker" and runstate.reap_stale():
+        running = _live_count()
     if running >= MAX_CONCURRENT_LIVE:
         raise HTTPException(
             429,
             "All analysis desks are busy right now — try again in a few minutes, "
             "or watch a recorded analysis meanwhile.",
         )
+
+
+def _live_count() -> int:
+    """Runs in flight: this instance's memory, plus the fleet in worker mode."""
+    running = sum(1 for h in RUNS.values() if h.mode == "live" and h.status == "running")
+    running += sum(1 for h in WRITER_RUNS.values() if h.get("status") == "running")
+    if RUN_MODE == "worker":
+        # the cap must see the whole fleet, not this instance's memory
+        running = max(running, _fleet_running())
+    return running
 
 
 async def _read_upload(screenplay: UploadFile) -> bytes:
@@ -670,18 +681,22 @@ async def _run_live(handle: RunHandle, script_path: Path) -> None:
         handle.record = record
         handle.status = "error" if record.get("error") else "done"
         handle.flush_events()
+        # SAVE FIRST, then publish the terminal status. Reversed, a crash in the
+        # window left the ledger saying done/record_saved with nothing in
+        # storage — a paid run lost under a positive status. The worker has
+        # always ordered it this way; this path had not.
+        saved = await asyncio.to_thread(storage.save_record, handle.run_id, record)
         await asyncio.to_thread(
             runstate.run_set,
             handle.run_id,
             {
                 "status": handle.status,
-                "record_saved": True,
+                "record_saved": bool(saved),
                 "finished_at": _time_module.time(),
                 "elapsed_s": record.get("elapsed_s"),
                 "cost_usd": record.get("cost_usd"),
             },
         )
-        await asyncio.to_thread(storage.save_record, handle.run_id, record)
         if handle.owner:
             await asyncio.to_thread(storage.save_owner, handle.run_id, handle.owner)
             await asyncio.to_thread(
@@ -1954,8 +1969,28 @@ async def _journal_relay(run_id: str) -> AsyncIterator[str]:
             if record is not None:
                 yield _sse({"type": "result", "record": record})
             else:
-                msg = {"type": "error", "message": "run ended; record unavailable", "partial": True}
-                yield _sse(msg)
+                # partial:false — the client closes the stream on a terminal
+                # error. Marked partial, it reconnected, replayed the journal,
+                # hit this same branch, and looped forever on a dead run.
+                yield _sse(
+                    {
+                        "type": "error",
+                        "message": "run ended; record unavailable",
+                        "partial": False,
+                    }
+                )
+            return
+        if runstate._is_stale(state, _time_module.time() - runstate.RUN_MAX_AGE_S):
+            # the worker died without a terminal status: say so and hang up
+            # rather than polling Firestore for this run forever, per viewer
+            yield _sse(
+                {
+                    "type": "error",
+                    "message": "This analysis was abandoned — its worker stopped "
+                    "without finishing. Nothing was charged for the unfinished work.",
+                    "partial": False,
+                }
+            )
             return
         idle = min(idle + 0.25, 2.0) if not events else 0.5
         await asyncio.sleep(idle)

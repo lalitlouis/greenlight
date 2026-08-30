@@ -9,13 +9,41 @@ can never kill a run again — jobs run to completion on their own revision.
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import os
+import signal
 import sys
 import time
 from pathlib import Path
 from typing import Any
 
 from greenlight import runstate, storage
+
+
+def _install_sigterm_guard(run_id: str) -> None:
+    """Cloud Run sends SIGTERM before it kills a job (task timeout, drain).
+
+    Without this the run doc stays "running" forever: it counts against the
+    fleet concurrency cap, keeps every viewer's SSE relay polling, and renders
+    as live in /admin. Writing the terminal status on the way out is what turns
+    an infrastructure kill into an honest failed run.
+    """
+
+    def _bail(signum: int, _frame: Any) -> None:
+        with contextlib.suppress(Exception):
+            runstate.run_set(
+                run_id,
+                {
+                    "status": "error",
+                    "message": f"worker terminated by signal {signum}",
+                    "finished_at": time.time(),
+                },
+            )
+        print(f"ERROR worker_terminated run={run_id} signal={signum}", flush=True)
+        os._exit(1)
+
+    with contextlib.suppress(Exception):
+        signal.signal(signal.SIGTERM, _bail)
 
 
 class JournalPublisher:
@@ -87,6 +115,7 @@ def main() -> int:
     if not run_id:
         print("usage: python -m greenlight.worker <run_id>  (or RUN_ID env)", file=sys.stderr)
         return 2
+    _install_sigterm_guard(run_id)
     state = runstate.run_get(run_id) or {}
     source = storage.load_script(run_id)
     if source is None:

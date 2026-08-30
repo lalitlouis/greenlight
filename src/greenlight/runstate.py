@@ -7,6 +7,8 @@ crash, exactly like the storage layer.
 
 from __future__ import annotations
 
+import os
+import time
 from typing import Any
 
 _cache: dict = {}
@@ -133,14 +135,71 @@ def events_read(run_id: str, after_seq: int = -1) -> tuple[list[dict[str, Any]],
         return [], after_seq
 
 
-def count_running() -> int:
+# No legitimate run outlives this: a feature script finishes in ~12 minutes and
+# the pipeline aborts after 15 minutes of agent silence. Anything still marked
+# "running" past this window is abandoned, not slow.
+RUN_MAX_AGE_S = float(os.getenv("RUN_MAX_AGE_S", str(90 * 60)))
+_RUNNING_SCAN_LIMIT = 50
+
+
+def _is_stale(state: dict[str, Any], cutoff: float) -> bool:
+    started = float(state.get("started_at") or 0)
+    return started > 0 and started < cutoff
+
+
+def count_running(max_age_s: float = RUN_MAX_AGE_S) -> int:
     """Live clearance runs across ALL instances and workers — the concurrency
-    cap must see the whole fleet, not one process's memory."""
+    cap must see the whole fleet, not one process's memory.
+
+    ABANDONED runs are excluded. A worker killed by a task timeout, an OOM, or
+    an instance death never writes a terminal status, so its doc reads "running"
+    forever; counting those latched the cap closed permanently — five zombies
+    and every new run 429s until someone hand-edits Firestore. Undercounting is
+    the safe direction: it admits work, where overcounting refuses all of it.
+    """
     try:
-        docs = _db().collection(RUNS_COLLECTION).where("status", "==", "running").limit(25).stream()
-        return sum(1 for _ in docs)
+        cutoff = time.time() - max_age_s
+        docs = (
+            _db()
+            .collection(RUNS_COLLECTION)
+            .where("status", "==", "running")
+            .limit(_RUNNING_SCAN_LIMIT)
+            .stream()
+        )
+        return sum(1 for d in docs if not _is_stale(d.to_dict() or {}, cutoff))
     except Exception:
         return 0
+
+
+def reap_stale(max_age_s: float = RUN_MAX_AGE_S) -> int:
+    """Mark abandoned runs terminal so they stop counting, stop being polled by
+    every viewer's relay, and stop rendering as live. Called at admission — rare,
+    and exactly when a latched cap would otherwise refuse a paying user."""
+    try:
+        cutoff = time.time() - max_age_s
+        docs = list(
+            _db()
+            .collection(RUNS_COLLECTION)
+            .where("status", "==", "running")
+            .limit(_RUNNING_SCAN_LIMIT)
+            .stream()
+        )
+    except Exception:
+        return 0
+    reaped = 0
+    for doc in docs:
+        if not _is_stale(doc.to_dict() or {}, cutoff):
+            continue
+        if run_set(
+            doc.id,
+            {
+                "status": "error",
+                "message": "abandoned — worker exited without a terminal status",
+                "finished_at": time.time(),
+            },
+        ):
+            reaped += 1
+    return reaped
 
 
 def list_runs(limit: int = 20) -> list[dict[str, Any]]:

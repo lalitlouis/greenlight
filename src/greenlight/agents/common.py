@@ -327,6 +327,13 @@ def make_desk(
         )
         text = text.replace("{adaptation}", adaptation)
         text = text.replace("{form_facts}", str(ctx.state.get("form_facts", "")))
+        # ADK skips state injection for CALLABLE instruction providers, so every
+        # {placeholder} must be substituted here or it reaches the model as
+        # literal braces. The ratings desk read "The production targets
+        # {target_rating}." for its whole life and guessed a target, then built
+        # a cut list against the guess while the record stored the real one.
+        target = str(ctx.state.get("target_rating") or "no fixed target")
+        text = text.replace("{target_rating}", target)
         return text
 
     worker = LlmAgent(

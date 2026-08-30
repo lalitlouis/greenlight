@@ -496,7 +496,10 @@ async def run(  # noqa: PLR0912, PLR0915 - one linear run sequence, deliberately
             }
             for sc in scenes
         },
-        "entities": state.get("triage", {}).get("entities", []),
+        # same guard the four other triage readers use: ADK may hand back the
+        # pydantic form, and an AttributeError HERE would crash record assembly
+        # after the whole paid run had already finished
+        "entities": _triage_entities(state),
         "desk_coverage": _desk_coverage(state),
         "unexamined": toolbelt.unexamined_entities(state),
         "flags": kept,
@@ -529,6 +532,13 @@ async def run(  # noqa: PLR0912, PLR0915 - one linear run sequence, deliberately
 
     record["entity_accounting"] = entity_accounting.account(record["entities"])
     return record
+
+
+def _triage_entities(state: Any) -> list[dict[str, Any]]:
+    tri = state.get("triage") or {}
+    if hasattr(tri, "model_dump"):
+        tri = tri.model_dump()
+    return list(tri.get("entities", []) or []) if isinstance(tri, dict) else []
 
 
 def save_run(record: dict[str, Any], out_dir: Path | None = None) -> Path:

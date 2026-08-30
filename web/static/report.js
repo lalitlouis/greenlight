@@ -979,7 +979,10 @@ function renderReport(record) {
   }
   const rep = record.report || {};
   const counts = rep.counts || {};
-  const withheld = rep.greenlight_score == null && (record.desks_incomplete || []).length > 0;
+  // A null score IS withheld, whatever the cause — a collapsed desk OR a
+  // verifier that could not run. Requiring desks_incomplete here meant a
+  // verifier-degraded run fell through to the numeric branch.
+  const withheld = rep.greenlight_score == null;
   const score = withheld ? "—" : (rep.greenlight_score ?? "—");
   const blockers = counts.BLOCKER || 0;
   const tone = withheld || blockers > 0 || score < 40 ? "bad" : score < 75 ? "mid" : "good";
@@ -1009,7 +1012,9 @@ function renderReport(record) {
 
   const meta = el("div", "score-meta");
   const verdict = withheld
-    ? "Score withheld — analysis incomplete"
+    ? rep.verification_degraded
+      ? "Score withheld — verification unavailable"
+      : "Score withheld — analysis incomplete"
     : blockers > 0
       ? `Not cleared — ${blockers} blocker${blockers === 1 ? "" : "s"}`
       : tone === "good"
@@ -1021,8 +1026,12 @@ function renderReport(record) {
       "p",
       "score-caveat",
       withheld
-        ? "A desk returned no dispositions of its own, so the number is withheld: fewer " +
-          "findings from a failed desk must never read as lower risk. Rerun the analysis."
+        ? rep.verification_degraded
+          ? "The independent verifier could not run for at least one finding, so those " +
+            "findings are unverified and the number is withheld: an unverified analysis " +
+            "must never score like a verified one. Rerun the analysis."
+          : "A desk returned no dispositions of its own, so the number is withheld: fewer " +
+            "findings from a failed desk must never read as lower risk. Rerun the analysis."
         : "The score is an ordinal risk index — a deterministic summary of finding severities, " +
           "not a probability, and not calibrated. The cited findings below are the product; " +
           "compare drafts by findings, not by small score moves."

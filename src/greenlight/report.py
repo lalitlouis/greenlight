@@ -90,18 +90,23 @@ def build_report(
 
     A run where any desk returned no own dispositions WITHHOLDS the score:
     fewer findings from a dead desk once RAISED the number (33 -> 45 while the
-    territory desk was down) — the score must never reward desk failure."""
+    territory desk was down) — the score must never reward desk failure. The
+    same rule covers a dead VERIFIER: _scored() drops fail-open flags, so a
+    Vertex outage that fails every verification open scored 100/100 while the
+    counts below still listed the blockers."""
     counts = {sev: sum(f["severity"] == sev for f in flags) for sev in SEVERITIES}
+    verification_degraded = any(f.get("verification_unavailable") for f in flags)
     by_agent: dict[str, int] = {}
     for f in flags:
         by_agent[f["agent"]] = by_agent.get(f["agent"], 0) + 1
 
-    complete = not incomplete_desks
+    complete = not incomplete_desks and not verification_degraded
     report: dict[str, Any] = {
         "script_title": script_title,
         "generated_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
         "greenlight_score": greenlight_score(flags) if complete else None,
         "dimension_scores": dimension_scores(flags) if complete else {},
+        "verification_degraded": verification_degraded,
         "counts": counts,
         "by_agent": by_agent,
         "est_clearance_cost_usd": _cost_range(flags),

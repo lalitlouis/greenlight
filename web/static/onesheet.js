@@ -37,7 +37,9 @@ function osRender(record) {
   const left = el("div", "os-title-wrap");
   left.appendChild(el("h1", "os-title", record.script_title || "Untitled"));
   const verdict = withheld
-    ? "Score withheld — analysis incomplete"
+    ? rep.verification_degraded
+      ? "Score withheld — verification unavailable"
+      : "Score withheld — analysis incomplete"
     : blockers > 0
       ? `Not cleared — ${blockers} blocker${blockers === 1 ? "" : "s"}`
       : tone === "good"
