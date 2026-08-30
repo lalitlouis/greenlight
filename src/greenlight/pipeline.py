@@ -525,6 +525,9 @@ async def run(  # noqa: PLR0912, PLR0915 - one linear run sequence, deliberately
     }
     record["gemini_usage"] = usage
     record["cost_usd"] = _usage_cost_usd(usage, len(searches))
+    from greenlight import entity_accounting
+
+    record["entity_accounting"] = entity_accounting.account(record["entities"])
     return record
 
 

@@ -1,0 +1,47 @@
+"""Distinct-entity accounting for report headlines.
+
+Triage extracts surfaces as they appear on the page, so the raw list carries
+fragments and duplicates — "Vick" plus "Vick and Alan", "Doug" and "Doug
+Billings", a truncated "& Forever Wedding" next to "& Forever Wedding Chapel".
+Labeling them pre-pass candidates is honest, but they must not inflate the
+headline ("78 entities researched", run-4 review). Deterministic, display-only:
+worklists and desk accounting keep the raw list.
+"""
+
+from __future__ import annotations
+
+import re
+from typing import Any
+
+
+def account(entities: list[dict[str, Any]]) -> dict[str, int]:
+    """{"researched": raw count, "distinct": deduped count, "fragments": folded}."""
+    surfaces = [str(e.get("surface") or "").strip() for e in entities]
+    n = len(surfaces)
+    low = [s.lower() for s in surfaces]
+    frag = [not s or not s[0].isalpha() for s in surfaces]  # truncation artifacts ("& Forever…")
+
+    # Compounds ("Stu and Vick", "X & Y") whose component also stands alone are
+    # groupings of existing entities, not entities.
+    standalone = set(low)
+    for i, s in enumerate(low):
+        if frag[i]:
+            continue
+        parts = re.split(r"\s+(?:and|&)\s+", s)
+        if len(parts) > 1 and any(p in standalone for p in parts):
+            frag[i] = True
+
+    # A single-token surface contained on a word boundary in a longer,
+    # non-fragment surface is the same entity's short form ("Doug" ⊂ "Doug
+    # Billings") — count it once, under the longer form.
+    for i, s in enumerate(low):
+        if frag[i] or not s or " " in s:
+            continue
+        pat = re.compile(rf"\b{re.escape(s)}\b")
+        if any(
+            i != j and not frag[j] and len(t) > len(s) and pat.search(t) for j, t in enumerate(low)
+        ):
+            frag[i] = True
+
+    distinct = sum(1 for x in frag if not x)
+    return {"researched": n, "distinct": distinct, "fragments": n - distinct}

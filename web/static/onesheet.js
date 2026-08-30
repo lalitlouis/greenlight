@@ -42,7 +42,7 @@ function osRender(record) {
   facts.textContent =
     `${(record.flags || []).length} findings · ` +
     `${(record.rejected_flags || []).length} rejected in verification · ` +
-    `${(record.entities || []).length} entities researched · ${rep.page_count || "—"} pages`;
+    `${record.entity_accounting?.distinct ?? (record.entities || []).length} entities researched · ${rep.page_count || "—"} pages`;
   left.appendChild(facts);
   const cost = money(rep.est_clearance_cost_usd);
   if (cost) {

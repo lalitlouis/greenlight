@@ -251,16 +251,32 @@ def _back_matter(record: dict[str, Any]) -> dict[str, Any]:
     ents = {e.get("entity_id"): e.get("surface") for e in record.get("entities", [])}
     # Group by entity: four desks each clearing the same prop is one row with
     # four determinations, not four rows (mirrors report.js clearedRows).
+    # An entity carrying a surviving FINDING is not "no action needed" — its
+    # cleared determinations move to a note, or 78 researched == 78 cleared
+    # reads as an accounting impossibility next to 30 findings (run-4 review).
+    flagged_ids = {f.get("entity_id") for f in record.get("flags", []) if f.get("entity_id")}
     by_entity: dict[str, list[tuple[str, str]]] = {}
     script_level: list[dict[str, Any]] = []
+    flagged_elsewhere = 0
     for d, items in (record.get("cleared") or {}).items():
         for c in items:
+            if c.get("entity_id") in flagged_ids:
+                flagged_elsewhere += 1
+                continue
             who = _unescape(ents.get(c.get("entity_id")) or "")
             reasoning = c.get("reasoning", "")
             if who:
                 by_entity.setdefault(who, []).append((_pretty(d), reasoning))
             else:
                 script_level.append({"desk": _pretty(d), "text": reasoning})
+    if flagged_elsewhere:
+        script_level.append(
+            {
+                "desk": "note",
+                "text": f"{flagged_elsewhere} further determination(s) concern entities "
+                "that carry findings — see the findings table, not this list.",
+            }
+        )
     recorded = [
         (
             {"desk": ds[0][0], "text": f"{who}: {ds[0][1]}"}
@@ -322,6 +338,16 @@ def _not_examined_row(base: dict[str, str], names: list[str]) -> dict[str, str]:
     }
 
 
+def _argued_scene(f: dict[str, Any], sids: list[str]) -> str:
+    """The scene the finding's own text argues from, when it names one of its
+    anchors; the first anchor otherwise."""
+    import re as _re
+
+    body = f"{f.get('finding') or ''} {(f.get('remedy') or {}).get('detail') or ''}"
+    named = [s for s in _re.findall(r"\bS\d{3}\b", body) if s in sids]
+    return named[0] if named else sids[0]
+
+
 def build(  # noqa: PLR0912 - a deliberate sequence of row-emission cases
     record: dict[str, Any], scene_meta: dict[str, dict[str, Any]] | None = None
 ) -> dict[str, Any]:
@@ -330,8 +356,10 @@ def build(  # noqa: PLR0912 - a deliberate sequence of row-emission cases
     scene_meta = scene_meta or record.get("scene_meta") or {}
     entities = {e.get("entity_id"): e.get("surface") for e in record.get("entities", [])}
     numbers = {sid: str(m.get("number") or "") for sid, m in scene_meta.items()}
-    # One line item per finding, anchored at its first scene with a multi-scene
-    # reference — repeating a finding per scene reads as duplicate exposure and
+    # One line item per finding, anchored at the scene its body ARGUES from —
+    # not the lowest scene number (run-4: five findings displayed "EXT. THE 10
+    # FREEWAY" and the Crazy Horse item anchored to the Dean Martin suite).
+    # Repeating a finding per scene reads as duplicate exposure and
     # artificially inflates the log.
     by_scene: dict[str, list[dict[str, Any]]] = defaultdict(list)
     touched: set[str] = set()
@@ -340,7 +368,7 @@ def build(  # noqa: PLR0912 - a deliberate sequence of row-emission cases
             continue  # the invariant, applied here too: uncited findings do not exist
         sids = sorted(f.get("scene_ids") or ["(script-wide)"], key=_scene_sort_key)
         touched.update(sids)
-        by_scene[sids[0]].append({**f, "_all_scenes": sids})
+        by_scene[_argued_scene(f, sids)].append({**f, "_all_scenes": sids})
 
     # Per-scene unexamined accounting: an entity no desk dispositioned must
     # never let its scene read "No known issue" — absence is not cleanliness.

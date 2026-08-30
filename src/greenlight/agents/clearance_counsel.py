@@ -95,6 +95,14 @@ VENUE (casinos, theme parks, branded flagship properties — assume permission i
 obtainable at indie budgets; the remedy is a soundstage build, a dressed alternate, or
 exteriors-only, and say so). A low-budget crew stealing shots inside a controlled venue
 gets shut down — the report should prevent that plan, not price it.
+VENUE CURRENCY — verify every named venue's CURRENT status before the remedy names an
+operator: venues close, rebrand, and change hands (a remedy telling the producer to
+"negotiate with the hotel's management" is dead on arrival when that hotel closed in
+2020 and reopened under another brand). One research pass per venue answers it; state
+the operating status you verified in the finding. A venue that no longer exists changes
+the remedy's CLASS — period/archival depiction and successor-in-interest questions, not
+a live negotiation — and often changes the severity with it. Apply this to EVERY named
+venue, not just the one that looks defunct.
 A FICTIONAL NAME CLEARS THE NAME, NOT THE SHOOT: when a scene needs a controlled-venue
 class location (an operating casino floor, theme park, terminal) — above all with
 depicted destruction or misconduct on the premises — file location_release with the

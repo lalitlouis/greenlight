@@ -802,10 +802,32 @@ function isDetermination(q) {
 // The cleared list groups by entity: four desks each clearing Red Bull is one
 // row with four determinations, not four rows. Script-level determinations
 // (no entity) stay as their own rows.
+function entityHeadline(record) {
+  // Distinct count when the record carries the accounting; fragments must not
+  // inflate the headline (78 raw vs ~58 distinct on a real script).
+  const acct = record.entity_accounting;
+  if (acct && acct.distinct != null) {
+    const frag = acct.fragments ? ` (${acct.fragments} name fragments folded)` : "";
+    return `${acct.distinct} entities researched${frag}`;
+  }
+  return `${(record.entities || []).length} entities researched`;
+}
+
 function clearedRows(record) {
-  const entries = Object.entries(record.cleared || {}).flatMap(([desk, items]) =>
-    (items || []).map((c) => ({ desk, who: ENTITY_SURFACE[c.entity_id] || null, text: c.reasoning }))
-  );
+  // An entity carrying a surviving finding is not "no action needed" — its
+  // cleared determinations are counted separately, never under the header.
+  const flaggedIds = new Set((record.flags || []).map((f) => f.entity_id).filter(Boolean));
+  let flaggedElsewhere = 0;
+  const entries = [];
+  for (const [desk, items] of Object.entries(record.cleared || {})) {
+    for (const c of items || []) {
+      if (c.entity_id && flaggedIds.has(c.entity_id)) {
+        flaggedElsewhere += 1;
+        continue;
+      }
+      entries.push({ desk, who: ENTITY_SURFACE[c.entity_id] || null, text: c.reasoning });
+    }
+  }
   for (const [desk, qs] of Object.entries(record.open_questions || {})) {
     for (const q of qs) if (isDetermination(q)) entries.push({ desk, who: null, text: q });
   }
@@ -817,7 +839,13 @@ function clearedRows(record) {
       byEntity.get(e.who).push(e);
     } else scriptLevel.push(e);
   }
-  return { byEntity, scriptLevel, rowCount: byEntity.size + scriptLevel.length, total: entries.length };
+  return {
+    byEntity,
+    scriptLevel,
+    rowCount: byEntity.size + scriptLevel.length,
+    total: entries.length,
+    flaggedElsewhere,
+  };
 }
 
 function buildReportNav(record, rep) {
@@ -995,7 +1023,7 @@ function renderReport(record) {
     document.createTextNode(
       `${(record.flags || []).length} findings · ` +
         `${(record.rejected_flags || []).length} rejected in verification · ` +
-        `${(record.entities || []).length} entities researched`
+        entityHeadline(record)
     )
   );
   meta.appendChild(proj);
@@ -1295,6 +1323,16 @@ function renderReport(record) {
     }
     det.appendChild(ul);
     root.appendChild(det);
+    if (cleared.flaggedElsewhere) {
+      root.appendChild(
+        el(
+          "p",
+          "lede",
+          `${cleared.flaggedElsewhere} further determination${cleared.flaggedElsewhere === 1 ? "" : "s"} ` +
+            "concern entities that carry findings — they are counted there, not here."
+        )
+      );
+    }
   }
 
   const notes = record.adjudication_notes || [];
