@@ -161,15 +161,19 @@ def main(argv: list[str]) -> int:
         by_funding[FUNDING[svc]] = by_funding.get(FUNDING[svc], 0.0) + (
             act if act is not None else est
         )
+    # The promotional credit caps at $100 — anything past it is cash.
+    gcp_total = by_funding.pop("gcp credit", 0.0)
+    credit_used = min(gcp_total, 100.0)
+    by_funding["cash"] = by_funding.get("cash", 0.0) + (gcp_total - credit_used)
     print("\nfunded by:")
-    for src in ("gcp credit", "cash", "partner credit", "trial credit"):
-        amount = by_funding.get(src, 0.0)
-        note = ""
-        if src == "gcp credit":
-            note = f"  → of the $100 GCP credit ({min(999, round(amount))}% if estimates hold)"
-        if src == "cash":
-            note = "  → real money out of pocket"
-        print(f"  {src:<15} ${amount:>7.2f}{note}")
+    print(
+        f"  {'gcp credit':<15} ${credit_used:>7.2f}"
+        f"  → of $100 promotional credit"
+        + ("  (EXHAUSTED — overflow below is cash)" if gcp_total > 100 else "")
+    )
+    for src in ("cash", "partner credit", "trial credit"):
+        note = "  → real money out of pocket" if src == "cash" else ""
+        print(f"  {src:<15} ${by_funding.get(src, 0.0):>7.2f}{note}")
     print(
         "\nEstimates ≠ invoices. Pull the two real numbers and record them:\n"
         "  GCP:      console.cloud.google.com/billing/012600-29EBC8-C419FB/reports"
