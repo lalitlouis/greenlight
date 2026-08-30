@@ -1236,6 +1236,9 @@ BACKGROUND_HOSTS = {
     "uscspotlight.com",
     "jakedavidowitz.com",
     "enduser-medianetworksproductionsafety-prod.paramount.com",
+    "yelp.com",
+    "trademarkia.com",
+    "filmindependent.org",
 }
 
 _SCENE_ANCHOR_CAP = 8  # a finding spanning more scenes than this says "the script"
@@ -1292,6 +1295,15 @@ AUTHORITY_HOSTS = {
 }
 
 
+def _host_root(url: str) -> str:
+    seg = (url or "").split("/")[2:3]
+    if not seg:
+        return ""
+    host = seg[0].removeprefix("www.")
+    root = ".".join(host.split(".")[-2:])
+    return host if host in AUTHORITY_HOSTS | RATING_AUTHORITY_HOSTS else root
+
+
 def _is_authority_host(url: str) -> bool:
     seg = (url or "").split("/")[2:3]
     if not seg:
@@ -1305,13 +1317,39 @@ def _is_authority_host(url: str) -> bool:
     return "gov" in parts or host.endswith(".int")
 
 
-def _authority_problem(severity: str, cits: list[dict[str, Any]]) -> str | None:
+# A ratings claim needs a ratings authority — being government is not enough.
+# Run 6 cited committee.nottinghamcity.gov.uk (a city council) for BBFC
+# classification guidelines; run 5 cited Belfast council minutes. Same class.
+RATING_AUTHORITY_HOSTS = {
+    "filmratings.com",
+    "motionpictures.org",
+    "bbfc.co.uk",
+    "variety.com",
+    "hollywoodreporter.com",
+    "deadline.com",
+}
+
+
+def _authority_problem(severity: str, cits: list[dict[str, Any]], category: str = "") -> str | None:
     """Default-deny sourcing for the report's loudest claims. A BLOCKER needs
     at least one allowlisted authority; a HIGH needs an authority OR two
-    distinct non-background hosts corroborating each other."""
+    distinct non-background hosts corroborating each other. Rating categories
+    are stricter: only ratings bodies and major trades qualify — a random
+    .gov domain is not an authority on CARA or the BBFC."""
     if severity not in ("BLOCKER", "HIGH"):
         return None
     urls = [c.get("url") or "" for c in cits]
+    if category.startswith("rating_"):
+        if any(_host_root(u) in RATING_AUTHORITY_HOSTS for u in urls):
+            return None
+        hosts = ", ".join(sorted({(u.split("/")[2:3] or ["?"])[0] for u in urls})) or "none"
+        return (
+            f"REJECTED, not filed: a {severity} ratings finding must cite a ratings "
+            "authority (filmratings.com, motionpictures.org, BBFC) or a major trade "
+            f"(Variety, THR, Deadline). Current hosts: {hosts} — a government domain "
+            "that is not the classification body itself does not qualify. Re-run "
+            "research() with restrict_to_domains on those hosts, or file at MEDIUM."
+        )
     if any(_is_authority_host(u) for u in urls):
         return None
     _host_idx = 2  # scheme://host/...
@@ -1512,7 +1550,7 @@ def file_flag(  # noqa: PLR0912 - a deliberate sequence of filing gates
 
     if src_problem := _background_only_problem(severity, cits):
         return _reject_or_stop(tool_context, entity_id, category, src_problem)
-    if auth_problem := _authority_problem(severity, cits):
+    if auth_problem := _authority_problem(severity, cits, category):
         return _reject_or_stop(tool_context, entity_id, category, auth_problem)
 
     # Excerpt provenance: a citation's excerpt must exist VERBATIM in material this

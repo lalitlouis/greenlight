@@ -105,6 +105,10 @@ Produce an adjudication plan:
    killed in another), the surviving flag must not carry the refuted premise at full
    strength: downgrade it one step via a single-flag merge whose rationale states the
    corrected rule, so the report never asserts what its own verification disproved.
+   This applies to refuted RULES AND STANDARDS only — never downgrade a flag because a
+   rejection claimed something is absent from the script; absence claims in rejections
+   have been wrong before, and script-fact policing is the verifier's job, not yours.
+   A rejection marked OVERTURNED does not exist for your purposes.
 
 Be conservative: when unsure whether two flags are one finding, leave them separate.
 """

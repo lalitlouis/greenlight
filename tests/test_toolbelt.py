@@ -989,6 +989,8 @@ def test_ratings_findings_may_aggregate_scenes():
         ctx,
         category="rating_language",
         scene_ids=[f"S{i:03d}" for i in range(1, 10)],
+        # rating_ categories demand a ratings authority, not just any .gov
+        citations=[{**GOOD_CITATION, "url": "https://www.filmratings.com/rules"}],
     )
     assert msg.startswith("Filed"), msg
 
@@ -1429,3 +1431,16 @@ def test_kiwix_dump_counts_as_background():
     assert _is_background_host("https://a.osmarks.net/content/wikipedia_en_all_maxi_2020-08/A/x")
     assert _is_background_host("https://grokipedia.com/wiki/thing")
     assert not _is_background_host("https://www.filmratings.com/rules")
+
+
+def test_rating_findings_need_a_ratings_authority_not_any_gov():
+    """Run 6: committee.nottinghamcity.gov.uk cited for BBFC guidelines —
+    government, but not a classification authority."""
+    from greenlight.tools.toolbelt import _authority_problem
+
+    council = [_cit("https://committee.nottinghamcity.gov.uk/minutes")]
+    assert _authority_problem("HIGH", council, "rating_language") is not None
+    bbfc = [_cit("https://www.bbfc.co.uk/about-classification")]
+    assert _authority_problem("HIGH", bbfc, "rating_language") is None
+    # non-rating categories keep the general rule: gov qualifies
+    assert _authority_problem("HIGH", council, "territory_uk_violence") is None

@@ -80,3 +80,103 @@ def test_scene_context_includes_scenes_named_in_remedy():
     flag = _flag("A finding about the mall.", detail="Trim the S004 age line too.")
     out = _scene_context(flag, _state())
     assert "=== S004 ===" in out and "=== S023 ===" in out
+
+
+# --- run-6 harness: assertion 1, normalization, stems ------------------------
+
+
+def test_canon_matches_across_quote_and_dash_variants():
+    """The real script uses curly apostrophes and em-dashes; findings quote in
+    straight ASCII. Run 6's Sbarro rejection survived because the matcher
+    treated the curly and straight apostrophe forms as different strings."""
+    from greenlight.agents.verification import _find_in_script
+
+    script = "STU\nIt\u2019s cool \u2014 I paid 7 grand for Sbarro?!\n"
+    assert _find_in_script("It's cool - I paid 7 grand for Sbarro?!", script) >= 0
+    assert _find_in_script("paid 7\ngrand for Sbarro", script) >= 0  # line wrap
+    assert _find_in_script("PISTOL WHIPS", "He PISTOL-WHIPS Vick") >= 0  # hyphen joins
+
+
+def test_quoted_spans_extract_single_quotes_without_apostrophe_traps():
+    from greenlight.agents.verification import _quoted_spans
+
+    text = (
+        "The line 'I paid 7 grand for Sbarro?!' does not appear; "
+        "Vick's car and Stu's ring aren't quotes; \"put away your sack\" is."
+    )
+    spans = _quoted_spans(text)
+    assert "I paid 7 grand for Sbarro?!" in spans
+    assert "put away your sack" in spans
+    assert not any("Vick" in s and "Stu" in s for s in spans)  # apostrophes never pair
+
+
+def _overturn_state():
+    text = (
+        "INT. MALL - DAY\n\nSTEVE\nSbarro, over in the Fremont mall.\n\n"
+        "ALAN (V.O.)\nI paid 7 grand for Sbarro?!\n"
+    )
+    return {
+        "script_text": text,
+        "scenes": [{"scene_id": "S023", "raw_span": [0, len(text)], "heading": "INT. MALL"}],
+    }
+
+
+def test_assertion_overturns_false_absence_rejection():
+    from greenlight.agents.verification import _overturned_by_script
+
+    hit = _overturned_by_script(
+        "The line 'I paid 7 grand for Sbarro?!' does not appear in the screenplay.",
+        _overturn_state(),
+    )
+    assert hit == ("I paid 7 grand for Sbarro?!", "S023")
+
+
+def test_assertion_leaves_supporting_quotes_and_true_absences_alone():
+    from greenlight.agents.verification import _overturned_by_script
+
+    state = _overturn_state()
+    # quote used as supporting evidence for the rejection: stands
+    supporting = (
+        "The claim misstates the script: the page reads 'I paid 7 grand for Sbarro?!', "
+        "which is comedic exaggeration, so the asserted liability is wrong."
+    )
+    assert _overturned_by_script(supporting, state) is None
+    # quote genuinely absent: stands
+    absent = "The line 'a tiger prowls the suite' does not appear in the screenplay."
+    assert _overturned_by_script(absent, state) is None
+
+
+def test_apply_overturns_flips_only_the_contradicted_verdict():
+    from greenlight.agents.verification import _apply_overturns
+
+    flags = [
+        {"flag_id": "F112"},
+        {"flag_id": "F116"},
+    ]
+    verdicts = {
+        "F112": {
+            "verdict": "UNSUPPORTED",
+            "reason": "The line 'I paid 7 grand for Sbarro?!' does not appear in the screenplay.",
+            "failure_mode": "script_misstatement",
+        },
+        "F116": {
+            "verdict": "UNSUPPORTED",
+            "reason": "The line 'Ride of the Valkyries plays' does not appear in the screenplay.",
+            "failure_mode": "script_misstatement",
+        },
+    }
+    out = _apply_overturns(flags, verdicts, _overturn_state())
+    assert [(o[0], o[2]) for o in out] == [("F112", "S023")]
+    assert verdicts["F112"]["verdict"] == "SUPPORTED" and verdicts["F112"]["overridden"]
+    assert verdicts["F116"]["verdict"] == "UNSUPPORTED"  # genuinely absent: stands
+
+
+def test_absent_terms_stems_do_not_punish_paraphrase():
+    """Run 6: F205 died because 'bloody'/'gunfire' aren't literal — on a page
+    with 'his lip explodes with blood'. Stems keep morphology out."""
+    from greenlight.agents.verification import _absent_terms
+
+    script = "he pistol-whips vick -- his lip explodes with blood. the guamians open fire."
+    absent = _absent_terms("Bloody violence as automatic gunfire erupts near a tiger.", script)
+    assert "bloody" not in absent  # blood is on the page
+    assert "tiger" in absent  # contamination still caught

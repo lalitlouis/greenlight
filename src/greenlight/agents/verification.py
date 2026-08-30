@@ -125,11 +125,22 @@ Fabricating a specific absence ("X is not mentioned in S023") about unshown text
 killed a true finding.
 
 CONTAMINATION CHECK: this screenplay may be an early draft of a famous film, and details
-from the RELEASED film are not in this draft. Any concrete on-page element the claim
-asserts — an animal, object, person, substance, event — whose word appears in the
-"found nowhere" list below is NOT in this screenplay, no matter how confidently you
-remember it from the movie. That is script_misstatement. Legal and industry vocabulary
-in that list is normal and proves nothing.
+from the RELEASED film are not in this draft. The "found nowhere" list below applies to
+CONCRETE NOUNS ONLY — a named animal, object, person, place, or substance the claim puts
+on the page (a tiger, a baby). A concrete noun in that list is not in this screenplay,
+no matter how confidently you remember it from the movie: script_misstatement. The list
+proves NOTHING about anything else: adjectives, verbs, characterizations, legal and
+industry vocabulary land there constantly because PARAPHRASE IS LEGITIMATE — a desk
+describing "bloody gunfire" is verified by a page where a pistol-whip draws blood and
+Guamians open fire, whatever words the page uses. Never reject, and never classify
+script_misstatement, because the desk's WORDING is absent when the described EVENT is
+present in the scene text or search results.
+
+ABSENCE DISCIPLINE: before ruling that any line, object, or action is absent from a
+scene, you must be able to point at your evidence: either a NOT FOUND search result for
+its quoted text, or the FULL text of that scene shown above without a TRUNCATED marker.
+A truncated scene plus no search result means you cannot rule absence at all — say the
+evidence is insufficient instead of inventing an absence.
 
 The FULL-SCRIPT SEARCH below is authoritative the other way: each quoted string from the
 claim was mechanically searched across the ENTIRE screenplay. A hit proves that text IS on
@@ -162,7 +173,13 @@ CITED EXCERPTS:
 {citations}
 """
 
-_MAX_CONTEXT_CHARS = 12000
+# 28k chars ≈ a dozen full script pages. Run 6 proved the window problem
+# recurses at every aperture: run 4 was cross-scene (fixed), run 6 was WITHIN
+# long scenes — the verifier saw the rooftop toast at the top of S012 and
+# denied the nudity 100 lines down. Input is cheap (76% implicit cache hits);
+# false rejections are not.
+_MAX_CONTEXT_CHARS = 28000
+_PER_SCENE_FLOOR = 2400
 
 
 def _scene_context(flag: dict[str, Any], state: Any) -> str:
@@ -187,19 +204,147 @@ def _scene_context(flag: dict[str, Any], state: Any) -> str:
     # Floor: a wide flag must still give the verifier enough of each scene to
     # judge — 480-char slivers made it (correctly) refuse to rule, which turned
     # the widest flags into the least-verified ones.
-    per_scene = max(1200, _MAX_CONTEXT_CHARS // len(scenes))
+    per_scene = max(_PER_SCENE_FLOOR, _MAX_CONTEXT_CHARS // len(scenes))
     chunks: list[str] = []
     for scene in scenes:
         start, end = scene["raw_span"]
         chunk = text[start:end].strip()
         if len(chunk) > per_scene:
-            chunk = chunk[:per_scene] + "\n[... SCENE TRUNCATED — text continues ...]"
+            cut = len(chunk) - per_scene
+            chunk = chunk[:per_scene] + (
+                f"\n[... SCENE TRUNCATED — {cut} more characters follow that you were NOT "
+                "shown; you cannot rule anything absent from this scene ...]"
+            )
         chunks.append(f"=== {scene['scene_id']} ===\n{chunk}")
     return "\n\n".join(chunks)
 
 
 _MAX_SEARCH_TERMS = 8
 _QUOTED_RE = _re.compile(r'["“]([^"“”]{4,120})["”]')
+# single-quoted spans need an inner space and clean boundaries so apostrophes
+# ("Vick's") don't pair up — findings quote dialogue in single quotes too, and
+# run 6's Sbarro rejection sailed past a double-quote-only extractor (3rd time)
+_SINGLE_QUOTED_RE = _re.compile(
+    "(?:^|[\\s(\\[\u2014\u2013-])[\u2018']([^\u2018\u2019']{6,120})[\u2019'](?=$|[\\s).,;:!?\\]])"
+)
+
+
+def _quoted_spans(text: str) -> list[str]:
+    spans = list(_QUOTED_RE.findall(text))
+    spans += [m for m in _SINGLE_QUOTED_RE.findall(text) if " " in m]
+    return list(dict.fromkeys(s.strip() for s in spans if s.strip()))
+
+
+# 1:1 character translations ONLY — positions into the original text stay
+# valid. The real script uses curly apostrophes (It\u2019s), curly quotes, and
+# em-dashes; findings and rejections quote in straight ASCII. Without this,
+# any quoted line containing an apostrophe fails both the exact and the
+# whitespace-flexible match and the search reports a false absence.
+_CANON = str.maketrans(
+    {
+        "\u2019": "'",
+        "\u2018": "'",
+        "\u201c": '"',
+        "\u201d": '"',
+        "\u2014": "-",
+        "\u2013": "-",
+        "\u2026": ".",
+    }
+)
+
+
+def _canon(s: str) -> str:
+    return s.translate(_CANON).lower()
+
+
+def _find_in_script(span: str, text: str) -> int:
+    """Position of span in the script: exact, then whitespace-flexible, both on
+    canonicalized text (curly/straight quote and dash variants unified); -1 if
+    absent. Word-splitting also tolerates a hyphen/linebreak between words."""
+    cspan, ctext = _canon(span), _canon(text)
+    pos = ctext.find(cspan)
+    if pos >= 0:
+        return pos
+    words = [w for w in _re.split(r"[\s-]+", cspan) if w]
+    if not words:
+        return -1
+    m = _re.search(r"[\s-]+".join(_re.escape(w) for w in words), ctext)
+    return m.start() if m else -1
+
+
+# High-precision absence phrasing only: an overturn must be near-certain. A
+# bare "no "/"never"/"without" near a quote used as SUPPORTING evidence
+# ("script shows 'X' but no permit exists") must not trigger.
+_ABSENCE_RE = _re.compile(
+    r"(?:does not|do not|doesn't|don't|did not|didn't)"
+    r" (?:appear|occur|exist|contain|feature|show|include)"
+    r"|not (?:present|depicted|shown|mentioned|spoken|found|appear)"
+    r"|appears? nowhere|nowhere in|absent from|contains? no\b|no such"
+    r"|not in (?:the )?(?:script|screenplay|scene|dialogue|s\d{3})"
+    r"|no (?:depicted|on-screen|onscreen)"
+)
+
+
+def _apply_overturns(
+    flags: list[dict[str, Any]], verdicts: dict[str, dict[str, Any]], state: Any
+) -> list[tuple[str, str, str]]:
+    """Assertion 1 over a verdict set: overturn every UNSUPPORTED verdict whose
+    reason asserts an absence the script text disproves. Mutates `verdicts`;
+    returns [(flag_id, span, scene_id)] for reporting. Runs on the main pass,
+    the re-source pass, and the salvage path — a false rejection must not
+    survive ANY route to the record."""
+    overturned: list[tuple[str, str, str]] = []
+    for f in flags:
+        v = verdicts.get(f["flag_id"])
+        if not v or v.get("verdict") != "UNSUPPORTED":
+            continue
+        hit = _overturned_by_script(str(v.get("reason") or ""), state)
+        if hit is None:
+            continue
+        span, sid = hit
+        verdicts[f["flag_id"]] = {
+            "verdict": "SUPPORTED",
+            "reason": (
+                f'OVERTURNED by assertion: the rejection asserted "{span[:80]}" is absent, '
+                f"but the script contains it in {sid}. Original rejection: "
+                + str(v.get("reason") or "")[:200]
+            ),
+            "failure_mode": "none",
+            "overridden": True,
+        }
+        overturned.append((f["flag_id"], span, sid))
+    return overturned
+
+
+def _overturned_by_script(reason: str, state: Any) -> tuple[str, str] | None:
+    """ASSERTION 1 (run-6 harness): no rejection may assert that a string is
+    absent when a full-text search of the script finds it. Returns (span,
+    scene_id) when the rejection quotes text that EXISTS in the script and the
+    surrounding sentence asserts its absence — the deterministic catch for
+    'The line X does not appear in the screenplay' about a line that does."""
+    text = str(state.get("script_text") or "")
+    if not text or not reason:
+        return None
+    low_reason = reason.lower()
+    for span in _quoted_spans(reason):
+        pos = _find_in_script(span, text)
+        if pos < 0:
+            continue  # quote genuinely absent — the rejection may stand
+        qpos = low_reason.find(span.lower()[:40])
+        window = low_reason[max(0, qpos - 90) : qpos + len(span) + 90] if qpos >= 0 else low_reason
+        if _ABSENCE_RE.search(window):
+            sid = next(
+                (
+                    s["scene_id"]
+                    for s in state.get("scenes", [])
+                    if s["raw_span"][0] <= pos < s["raw_span"][1]
+                ),
+                "the script",
+            )
+            return span, sid
+    return None
+
+
 _STOPWORDS = frozenset(
     [
         "a",
@@ -287,10 +432,16 @@ def _absent_terms(claim_text: str, script_lower: str) -> str:
     asserted 'live animals (rooster and tiger)... a baby left unattended' — the
     tiger and the baby are from the released 2009 film, not this draft. The
     verifier reads the list; legal vocabulary in it is noise, an on-page noun
-    in it is a misstatement."""
+    in it is a misstatement. Stem matching (first {_MIN_TERM_LEN} chars) keeps
+    morphology out of it: run 6 rejected a real finding because 'bloody' isn't
+    on a page where 'blood' is \u2014 match the event, not the desk's adjectives.
+    High precision over recall: a word sharing a stem with ANY script text is
+    treated as present."""
     words = {w.strip(".,;:()[]'\"!?" + "\u2014\u2013-").lower() for w in claim_text.split()}
     words = {w for w in words if w.isalpha() and len(w) >= _MIN_TERM_LEN and w not in _STOPWORDS}
-    missing = sorted(w for w in words if w not in script_lower)
+    missing = sorted(
+        w for w in words if w not in script_lower and w[:_MIN_TERM_LEN] not in script_lower
+    )
     return ", ".join(missing[:40])
 
 
@@ -305,35 +456,25 @@ def _search_context(flag: dict[str, Any], state: Any) -> str:
         return "(script text unavailable — make no absence rulings)"
     remedy = flag.get("remedy") or {}
     source = " ".join([str(flag.get("finding") or ""), str(remedy.get("detail") or "")])
-    terms = list(dict.fromkeys(t.strip() for t in _QUOTED_RE.findall(source) if t.strip()))
-    if not terms:
-        absent = _absent_terms(source, text.lower())
-        return (
-            "CLAIM WORDS FOUND NOWHERE IN THE SCREENPLAY (legal/industry vocabulary "
-            f"landing here is normal; on-page content landing here is not): {absent}"
-            if absent
-            else "(no quoted strings in the claim to search for)"
-        )
+    terms = _quoted_spans(source)  # double AND single quotes, curly or straight
     by_span = [(s["raw_span"][0], s["raw_span"][1], s["scene_id"]) for s in state.get("scenes", [])]
-    low = text.lower()
     lines: list[str] = []
-    if absent := _absent_terms(source, low):
+    if absent := _absent_terms(source, _canon(text)):
         lines.append(
-            "CLAIM WORDS FOUND NOWHERE IN THE SCREENPLAY (legal/industry vocabulary "
-            f"landing here is normal; on-page content landing here is not): {absent}"
+            "CLAIM WORDS (word-stems) FOUND NOWHERE IN THE SCREENPLAY — advisory only; "
+            "legal/industry vocabulary, adjectives, and paraphrase land here and prove "
+            f"NOTHING: {absent}"
         )
     for term in terms[:_MAX_SEARCH_TERMS]:
-        pos = low.find(term.lower())
-        if pos < 0:
-            # scripts wrap lines mid-sentence; retry whitespace-insensitively
-            m = _re.search(r"\s+".join(_re.escape(w) for w in term.split()), text, _re.IGNORECASE)
-            pos = m.start() if m else -1
+        pos = _find_in_script(term, text)
         if pos < 0:
             lines.append(f'- "{term}" — NOT FOUND anywhere in the screenplay')
             continue
         sid = next((s for a, b, s in by_span if a <= pos < b), "outside any scene")
         snippet = " ".join(text[max(0, pos - 100) : pos + len(term) + 100].split())
         lines.append(f'- "{term}" — FOUND in {sid}: “…{snippet}…”')
+    if not lines:
+        return "(no quoted strings in the claim to search for)"
     return "\n".join(lines)
 
 
@@ -461,7 +602,9 @@ async def verify_standalone(
         )
 
     results = await asyncio.gather(*[_one(f) for f in flags])
-    return dict(results)
+    verdicts = dict(results)
+    _apply_overturns(flags, verdicts, state)  # assertion 1 holds on the salvage path too
+    return verdicts
 
 
 _RESOURCE_CAP = 6  # re-source the worst-hit few, not the world
@@ -722,6 +865,24 @@ class VerificationPanel(BaseAgent):
                     ],
                 ),
             )
+        # ASSERTION 1 (run-6 harness): no rejection may assert a string is
+        # absent when the full-text search finds it. Deterministic, and it runs
+        # BEFORE anything downstream (rejected_summary, demotions, reconcile)
+        # can act on a false rejection.
+        for fid, span, sid in _apply_overturns(flags, verdicts, state):
+            yield Event(
+                invocation_id=ctx.invocation_id,
+                author=self.name,
+                content=types.Content(
+                    role="model",
+                    parts=[
+                        types.Part(
+                            text=f"⚖ {fid} rejection OVERTURNED — it asserted "
+                            f'"{span[:60]}" is absent; the script contains it in {sid}'
+                        )
+                    ],
+                ),
+            )
         kept, dropped = apply_verdicts(flags, verdicts)
 
         # A5: a true finding killed by a bad citation goes around ONCE with
@@ -771,6 +932,10 @@ class VerificationPanel(BaseAgent):
                 _search_context(retry_flag, state),
                 sem,
             )
+            # assertion 1 screens the re-source verdict too
+            _tmp = {retry_flag["flag_id"]: v2}
+            _apply_overturns([retry_flag], _tmp, state)
+            v2 = _tmp[retry_flag["flag_id"]]
             verdicts[r["flag_id"] + ":resourced"] = v2
             yield Event(
                 invocation_id=ctx.invocation_id,

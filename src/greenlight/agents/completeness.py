@@ -41,6 +41,15 @@ way scene-level items count. Do not research
 what a competent reader can clear from the script context alone — your
 budget is small by design.
 
+EXCEPTION — NAMED COMMERCIAL VENUES AND BUSINESSES: these are never cleared
+from script context alone. A real venue's exposure turns on its CURRENT
+operating status (open, closed, rebranded, who holds the mark now), which is
+not on the page. If your budget does not stretch to that research, file
+note_open_question naming exactly what must be verified — a one-line
+clearance here erases the venue-currency analysis the report is sold on
+(run 6 swept four nightclubs clear in a line each and destroyed run 5's
+best research).
+
 ENTITY TABLE AND YOUR WORKLIST:
 {triage}
 
