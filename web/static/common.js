@@ -64,6 +64,48 @@ function prettyCat(cat) {
   return (cat || "").replace(/_/g, " ");
 }
 
+/* Scene popover chrome — shared by the report and run views, which previously
+   carried identical copies (top-level declarations that would collide if the
+   two files ever met on one page). Each page supplies its own showScenePop. */
+let popHideTimer = null;
+
+function scenePopover() {
+  let pop = document.getElementById("scene-pop");
+  if (pop) return pop;
+  pop = el("div", "scene-pop hidden");
+  pop.id = "scene-pop";
+  pop.addEventListener("mouseenter", () => clearTimeout(popHideTimer));
+  pop.addEventListener("mouseleave", hideScenePop);
+  document.body.appendChild(pop);
+  return pop;
+}
+
+function hideScenePop() {
+  clearTimeout(popHideTimer);
+  popHideTimer = setTimeout(() => {
+    document.getElementById("scene-pop")?.classList.add("hidden");
+  }, 180);
+}
+
+function placeScenePop(pop, anchor) {
+  pop.classList.remove("hidden");
+  const r = anchor.getBoundingClientRect();
+  const pw = Math.min(560, window.innerWidth - 32);
+  let left = r.left + window.scrollX;
+  if (left + pw > window.scrollX + window.innerWidth - 16) {
+    left = window.scrollX + window.innerWidth - pw - 16;
+  }
+  pop.style.left = left + "px";
+  pop.style.top = r.bottom + window.scrollY + 8 + "px";
+  // flip above the anchor if the popover would fall off the viewport bottom
+  requestAnimationFrame(() => {
+    const ph = pop.offsetHeight;
+    if (r.bottom + ph + 16 > window.innerHeight) {
+      pop.style.top = r.top + window.scrollY - ph - 8 + "px";
+    }
+  });
+}
+
 function fmtDate(iso) {
   if (!iso) return "";
   const d = new Date(iso.replace(/([+-]\d{2})(\d{2})$/, "$1:$2"));

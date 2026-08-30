@@ -10,7 +10,6 @@ let IS_CASE = false;
 /* ---------- scene hover preview: the script text, right on the finding ---------- */
 let SCRIPT_DATA = null; // { scenes: {sid: {heading, text}} } — fetched once, on first hover
 let scriptFetch = null;
-let popHideTimer = null;
 
 async function ensureScript() {
   if (SCRIPT_DATA) return SCRIPT_DATA;
@@ -32,22 +31,18 @@ async function ensureScript() {
   return scriptFetch;
 }
 
-function scenePopover() {
-  let pop = document.getElementById("scene-pop");
-  if (pop) return pop;
-  pop = el("div", "scene-pop hidden");
-  pop.id = "scene-pop";
-  pop.addEventListener("mouseenter", () => clearTimeout(popHideTimer));
-  pop.addEventListener("mouseleave", hideScenePop);
-  document.body.appendChild(pop);
-  return pop;
-}
+/* scenePopover/hideScenePop/placeScenePop live in common.js */
 
-function hideScenePop() {
-  clearTimeout(popHideTimer);
-  popHideTimer = setTimeout(() => {
-    document.getElementById("scene-pop")?.classList.add("hidden");
-  }, 180);
+function focusFlag(node) {
+  /* THE scroll-to-a-finding ritual — one copy, four callers (ref chips, the
+     severity tally, cost drivers, and deep links), so the reveal, scroll, and
+     highlight flash can't drift apart again. */
+  if (!node) return;
+  node.querySelector(".expand")?.classList.remove("hidden");
+  revealInDetails(node);
+  node.scrollIntoView({ behavior: "smooth", block: "center" });
+  node.classList.add("hilite");
+  setTimeout(() => node.classList.remove("hilite"), 2200);
 }
 
 async function showScenePop(anchor, sid) {
@@ -67,23 +62,7 @@ async function showScenePop(anchor, sid) {
     open.addEventListener("click", () => gotoScene(sid));
     pop.appendChild(open);
   }
-  pop.classList.remove("hidden");
-  const r = anchor.getBoundingClientRect();
-  const pw = Math.min(560, window.innerWidth - 32);
-  let left = r.left + window.scrollX;
-  if (left + pw > window.scrollX + window.innerWidth - 16) {
-    left = window.scrollX + window.innerWidth - pw - 16;
-  }
-  pop.style.left = left + "px";
-  const below = r.bottom + window.scrollY + 8;
-  pop.style.top = below + "px";
-  // flip above the anchor if the popover would fall off the viewport bottom
-  requestAnimationFrame(() => {
-    const ph = pop.offsetHeight;
-    if (r.bottom + ph + 16 > window.innerHeight) {
-      pop.style.top = r.top + window.scrollY - ph - 8 + "px";
-    }
-  });
+  placeScenePop(pop, anchor);
 }
 
 function gotoScene(sid) {
@@ -177,15 +156,7 @@ function linkifyRefs(text) {
     const chip = el("button", "flag-ref", part);
     chip.type = "button";
     chip.dataset.fid = part;
-    chip.addEventListener("click", () => {
-      const node = $("flag-" + part);
-      if (!node) return;
-      node.querySelector(".expand")?.classList.remove("hidden");
-      revealInDetails(node);
-      node.scrollIntoView({ behavior: "smooth", block: "center" });
-      node.classList.add("hilite");
-      setTimeout(() => node.classList.remove("hilite"), 2200);
-    });
+    chip.addEventListener("click", () => focusFlag($("flag-" + part)));
     frag.appendChild(chip);
   });
   return frag;
@@ -451,15 +422,18 @@ function flagRow(f, opts) {
 
   const cites = f.citations || [];
   const hosts = [...new Set(cites.map((c) => (c.url || "").split("/")[2]).filter(Boolean))];
-  const toggle = el(
-    "button",
-    "cite-toggle",
-    `${cites.length} citation${cites.length === 1 ? "" : "s"} · ${hosts.join(", ")} ▾`
-  );
+  const label = [`${cites.length} citation${cites.length === 1 ? "" : "s"}`, hosts.join(", ")]
+    .filter(Boolean)
+    .join(" · ");
+  const toggle = el("button", "cite-toggle", `${label} ▾`);
   toggle.type = "button";
   const ex = flagExpand(f);
   if (!expanded) ex.classList.add("hidden");
-  toggle.addEventListener("click", () => ex.classList.toggle("hidden"));
+  toggle.setAttribute("aria-expanded", String(!!expanded));
+  toggle.addEventListener("click", () => {
+    ex.classList.toggle("hidden");
+    toggle.setAttribute("aria-expanded", String(!ex.classList.contains("hidden")));
+  });
   main.appendChild(toggle);
   main.appendChild(ex);
   const action = f.remedy?.action;
@@ -474,7 +448,7 @@ function flagRow(f, opts) {
     costBox.appendChild(el("b", null, cost));
     costBox.appendChild(document.createTextNode("estimate"));
   } else {
-    costBox.appendChild(glossTip(el("b", null, prettyCatSafe(f.remedy?.action)), f.remedy?.action));
+    costBox.appendChild(glossTip(el("b", null, prettyCat(f.remedy?.action)), f.remedy?.action));
   }
   row.appendChild(costBox);
   return row;
@@ -861,6 +835,10 @@ function buildReportNav(record, rep) {
     hasCostCard ? ["sec-cost", "Cost exposure", null] : null,
     rep.rating_prediction?.predicted ? ["sec-rating", "Rating + simulator", null] : null,
     ["sec-findings", "Findings", cited.length],
+    (() => {
+      const n = cited.filter((f) => f.severity === "FYI" || f.severity === "LOW").length;
+      return n ? ["sec-informational", "Informational", n] : null;
+    })(),
     (record.rejected_flags || []).length ? ["sec-rejected", "Rejected", record.rejected_flags.length] : null,
     oqCount ? ["sec-questions", "Open questions", oqCount] : null,
     clearedCount ? ["sec-cleared", "Reviewed & cleared", clearedCount] : null,
@@ -921,10 +899,6 @@ const GLOSSARY = {
   LOW: "Minor; fix opportunistically.",
   FYI: "No action required — on the record so the log shows it was considered.",
 };
-
-function prettyCatSafe(v) {
-  return (v || "").replace(/_/g, " ");
-}
 
 function glossTip(node, term) {
   if (GLOSSARY[term]) node.title = GLOSSARY[term];
@@ -1066,18 +1040,23 @@ function renderReport(record) {
     const cell = el("div");
     cell.appendChild(el("b", "sev-" + sev, String(counts[sev] || 0)));
     cell.appendChild(el("span", null, sev));
-    if (counts[sev]) {
+    // only a cell whose target actually RENDERS becomes a jump control —
+    // counted-but-uncited flags don't render, so their cells stay inert
+    const target = (record.flags || []).find(
+      (f) => f.severity === sev && (f.citations || []).length > 0
+    );
+    if (counts[sev] && target) {
       cell.classList.add("tally-link");
       cell.title = "Jump to the first " + sev + " finding";
-      cell.addEventListener("click", () => {
-        const target = (record.flags || []).find((f) => f.severity === sev);
-        const node = target && $("flag-" + target.flag_id);
-        if (!node) return;
-        node.querySelector(".expand")?.classList.remove("hidden");
-        revealInDetails(node);
-      node.scrollIntoView({ behavior: "smooth", block: "center" });
-        node.classList.add("hilite");
-        setTimeout(() => node.classList.remove("hilite"), 2200);
+      cell.setAttribute("role", "button");
+      cell.tabIndex = 0;
+      const jump = () => focusFlag($("flag-" + target.flag_id));
+      cell.addEventListener("click", jump);
+      cell.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          jump();
+        }
       });
     }
     tally.appendChild(cell);
@@ -1136,12 +1115,7 @@ function renderReport(record) {
     drivers.forEach((f, i) => {
       const row = el("button", "driver");
       row.type = "button";
-      row.addEventListener("click", () => {
-        const node = $("flag-" + f.flag_id);
-        node?.querySelector(".expand")?.classList.remove("hidden");
-        revealInDetails(node);
-        node?.scrollIntoView({ behavior: "smooth", block: "center" });
-      });
+      row.addEventListener("click", () => focusFlag($("flag-" + f.flag_id)));
       row.appendChild(el("span", "driver-rank", String(i + 1)));
       row.appendChild(el("span", "driver-name", prettyCat(f.category)));
       row.appendChild(el("b", null, money(f.remedy.est_cost_usd)));
@@ -1159,7 +1133,15 @@ function renderReport(record) {
   const cited = (record.flags || []).filter((f) => (f.citations || []).length > 0);
   const secFlags = el("div", "section-head");
   secFlags.id = "sec-findings";
-  secFlags.appendChild(el("h2", null, `Findings — ${cited.length}, every one cited`));
+  secFlags.appendChild(
+    el("h2", null, cited.length ? `Findings — ${cited.length}, every one cited` : "Findings")
+  );
+  if (!cited.length) {
+    // the best possible outcome must not render as a failure state
+    secFlags.appendChild(
+      el("p", "lede", "No findings survived verification — nothing here blocks production.")
+    );
+  }
   root.appendChild(secFlags);
   // A producer's screen belongs to what can sue them or crash the budget:
   // actionable severities render up front; FYI/LOW informational rows (mostly
@@ -1392,14 +1374,7 @@ function renderReport(record) {
   }
 
   if (window.location.hash) {
-    const node = document.querySelector(window.location.hash);
-    if (node) {
-      node.querySelector(".expand")?.classList.remove("hidden");
-      revealInDetails(node);
-      node.scrollIntoView({ behavior: "smooth", block: "center" });
-      node.classList.add("hilite");
-      setTimeout(() => node.classList.remove("hilite"), 2200);
-    }
+    focusFlag(document.querySelector(window.location.hash));
   }
 }
 

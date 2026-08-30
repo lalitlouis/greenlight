@@ -34,25 +34,7 @@ async function loadSceneHeadings(id) {
   }
 }
 
-let popHideTimer = null;
-
-function scenePopover() {
-  let pop = document.getElementById("scene-pop");
-  if (pop) return pop;
-  pop = el("div", "scene-pop hidden");
-  pop.id = "scene-pop";
-  pop.addEventListener("mouseenter", () => clearTimeout(popHideTimer));
-  pop.addEventListener("mouseleave", hideScenePop);
-  document.body.appendChild(pop);
-  return pop;
-}
-
-function hideScenePop() {
-  clearTimeout(popHideTimer);
-  popHideTimer = setTimeout(() => {
-    document.getElementById("scene-pop")?.classList.add("hidden");
-  }, 180);
-}
+/* scenePopover/hideScenePop/placeScenePop live in common.js */
 
 function showScenePop(anchor, sid) {
   const text = SCENE_TEXT[sid];
@@ -65,21 +47,7 @@ function showScenePop(anchor, sid) {
   head.appendChild(el("span", null, SCENE_HEADINGS[sid] || ""));
   pop.appendChild(head);
   pop.appendChild(el("pre", "sp-text", text));
-  pop.classList.remove("hidden");
-  const r = anchor.getBoundingClientRect();
-  const pw = Math.min(560, window.innerWidth - 32);
-  let left = r.left + window.scrollX;
-  if (left + pw > window.scrollX + window.innerWidth - 16) {
-    left = window.scrollX + window.innerWidth - pw - 16;
-  }
-  pop.style.left = left + "px";
-  pop.style.top = r.bottom + window.scrollY + 8 + "px";
-  requestAnimationFrame(() => {
-    const ph = pop.offsetHeight;
-    if (r.bottom + ph + 16 > window.innerHeight) {
-      pop.style.top = r.top + window.scrollY - ph - 8 + "px";
-    }
-  });
+  placeScenePop(pop, anchor);
 }
 
 function buildSceneStrip(scenes) {
