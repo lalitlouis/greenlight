@@ -98,42 +98,38 @@ document.addEventListener("DOMContentLoaded", () => {
 
 /* Kill switch: pauses NEW analysis starts fleet-wide; in-flight runs finish. */
 async function hydratePause() {
-  const btn = document.getElementById("adm-pause-btn");
+  const input = document.getElementById("adm-pause-input");
   const note = document.getElementById("adm-pause-note");
-  if (!btn) return;
-  const paint = (paused, detail) => {
-    btn.textContent = paused ? "▶ Resume new runs" : "⏸ Pause new runs";
-    btn.classList.toggle("btn-danger", !paused);
-    note.textContent = paused
-      ? "PAUSED — new analyses are refused; existing runs finish." +
-        (detail && detail.by ? ` (by ${detail.by})` : "")
-      : "Running normally — new analyses accepted.";
+  if (!input) return;
+  const paint = (paused) => {
+    input.checked = paused;
+    note.textContent = paused ? "Paused" : "";
+    note.classList.toggle("adm-paused", paused);
   };
-  let paused = false;
   try {
     const r = await (await fetch("/api/admin/pause")).json();
-    paused = !!r.paused;
-    paint(paused, r.detail);
+    paint(!!r.paused);
   } catch {
-    note.textContent = "Could not read pause state.";
+    note.textContent = "unavailable";
+    input.disabled = true;
     return;
   }
-  btn.addEventListener("click", async () => {
-    btn.disabled = true;
+  input.addEventListener("change", async () => {
+    input.disabled = true;
     try {
       const r = await (
         await fetch("/api/admin/pause", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ paused: !paused }),
+          body: JSON.stringify({ paused: input.checked }),
         })
       ).json();
-      paused = !!r.paused;
-      paint(paused, {});
+      paint(!!r.paused);
     } catch {
-      note.textContent = "Toggle failed — are you signed in as admin?";
+      paint(!input.checked);
+      note.textContent = "failed";
     } finally {
-      btn.disabled = false;
+      input.disabled = false;
     }
   });
 }
