@@ -1250,12 +1250,88 @@ def state_get_list(tool_context: ToolContext, prefix: str) -> list[str]:
 
 
 def _is_background_host(url: str) -> bool:
+    if "wikipedia_en_all" in (url or "") or "/kiwix" in (url or ""):
+        return True  # offline Wikipedia dumps on personal domains ARE Wikipedia
     seg = (url or "").split("/")[2:3]
     if not seg:
         return True
     host = seg[0].removeprefix("www.")
     root = ".".join(host.split(".")[-2:])
     return host in BACKGROUND_HOSTS or root in BACKGROUND_HOSTS
+
+
+# The authority allowlist — the one structural item open since run 2. The
+# background list is default-ALLOW (an unknown personal domain counts as
+# non-background), which is how a BLOCKER shipped on a Kiwix Wikipedia dump at
+# a.osmarks.net. Top severities are default-DENY: they need a source from here.
+AUTHORITY_HOSTS = {
+    # ratings / classification bodies
+    "filmratings.com",
+    "motionpictures.org",
+    "bbfc.co.uk",
+    # safety
+    "csatf.org",
+    "contractservices.org",
+    # registries / law
+    "copyright.gov",
+    "uspto.gov",
+    "wipo.int",
+    "law.cornell.edu",
+    "courtlistener.com",
+    "justia.com",
+    # music rights
+    "ascap.com",
+    "bmi.com",
+    "sesac.com",
+    "harryfox.com",
+    # major trades (industry-practice claims)
+    "variety.com",
+    "hollywoodreporter.com",
+    "deadline.com",
+    "billboard.com",
+}
+
+
+def _is_authority_host(url: str) -> bool:
+    seg = (url or "").split("/")[2:3]
+    if not seg:
+        return False
+    host = seg[0].removeprefix("www.")
+    root = ".".join(host.split(".")[-2:])
+    if host in AUTHORITY_HOSTS or root in AUTHORITY_HOSTS:
+        return True
+    # any government domain, any TLD flavor: .gov, .gov.uk, gov.cn, .int
+    parts = host.split(".")
+    return "gov" in parts or host.endswith(".int")
+
+
+def _authority_problem(severity: str, cits: list[dict[str, Any]]) -> str | None:
+    """Default-deny sourcing for the report's loudest claims. A BLOCKER needs
+    at least one allowlisted authority; a HIGH needs an authority OR two
+    distinct non-background hosts corroborating each other."""
+    if severity not in ("BLOCKER", "HIGH"):
+        return None
+    urls = [c.get("url") or "" for c in cits]
+    if any(_is_authority_host(u) for u in urls):
+        return None
+    _host_idx = 2  # scheme://host/...
+    distinct = {
+        u.split("/")[_host_idx].removeprefix("www.")
+        for u in urls
+        if not _is_background_host(u) and len(u.split("/")) > _host_idx
+    }
+    corroborated = 2  # two independent non-background sources
+    if severity == "HIGH" and len(distinct) >= corroborated:
+        return None
+    hosts = ", ".join(sorted({(u.split("/")[2:3] or ["?"])[0] for u in urls})) or "none"
+    return (
+        f"REJECTED, not filed: a {severity} finding must rest on at least one "
+        "ALLOWLISTED authority (regulator, government/court, rights registry, "
+        "CSATF, CARA/filmratings.com, BBFC, or a major trade)"
+        + ("" if severity == "BLOCKER" else " — or two independent non-background sources")
+        + f". Current hosts: {hosts}. Re-run research() targeting an authority "
+        "for this claim's domain, or file at the severity your sourcing carries."
+    )
 
 
 def _background_only_problem(severity: str, cits: list[dict[str, Any]]) -> str | None:
@@ -1345,7 +1421,10 @@ def file_flag(  # noqa: PLR0912 - a deliberate sequence of filing gates
       e.g. ["S004"] — never "the sequence around it"; a scene chip pointing at
       text that lacks the element reads as fabrication to the reader.
     severity: BLOCKER | HIGH | MEDIUM | LOW | FYI — a RISK judgment; use the FULL scale.
-      BLOCKER: cannot shoot or cannot release as written. HIGH: large exposure or an
+      BLOCKER: stops photography or makes the film UNDELIVERABLE IN ITS PRIMARY
+      market. A market-specific alternate-cut requirement (a CN or UAE localized
+      delivery cut priced in four figures) is HIGH with a deliverables note, never
+      a BLOCKER — "do not shoot as written" must be literally true. HIGH: large exposure or an
       expensive remedy (five figures up, or real schedule impact). MEDIUM: real cost or
       negotiation, but bounded and routine. LOW: cheap, local fix — a dialogue swap, a
       prop rename, a set-dressing change. FYI: no action required; filed for awareness
@@ -1433,6 +1512,8 @@ def file_flag(  # noqa: PLR0912 - a deliberate sequence of filing gates
 
     if src_problem := _background_only_problem(severity, cits):
         return _reject_or_stop(tool_context, entity_id, category, src_problem)
+    if auth_problem := _authority_problem(severity, cits):
+        return _reject_or_stop(tool_context, entity_id, category, auth_problem)
 
     # Excerpt provenance: a citation's excerpt must exist VERBATIM in material this
     # run actually retrieved (research results, precedent rationales, or the script

@@ -24,7 +24,9 @@ def test_account_folds_reviewers_exact_examples():
         )
     )
     # distinct: Vick, Alan, Doug Billings, Mandalay Bay
-    assert out == {"researched": 9, "distinct": 4, "fragments": 5}
+    assert (out["researched"], out["distinct"], out["fragments"]) == (9, 4, 5)
+    # "Doug" (E4) folds under "Doug Billings" (E5) so cleared displays merge
+    assert out["fold"] == {"E4": "E5"}
 
 
 def test_account_keeps_unrelated_entities_apart():

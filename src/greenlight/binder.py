@@ -266,20 +266,31 @@ def _back_matter(record: dict[str, Any]) -> dict[str, Any]:
     # cleared determinations move to a note, or 78 researched == 78 cleared
     # reads as an accounting impossibility next to 30 findings (run-4 review).
     flagged_ids = {f.get("entity_id") for f in record.get("flags", []) if f.get("entity_id")}
+    fold = (record.get("entity_accounting") or {}).get("fold") or {}
     by_entity: dict[str, list[tuple[str, str]]] = {}
     script_level: list[dict[str, Any]] = []
     flagged_elsewhere = 0
     for d, items in (record.get("cleared") or {}).items():
         for c in items:
-            if c.get("entity_id") in flagged_ids:
+            # a short-form's clearance belongs to its canonical entity
+            eid = fold.get(c.get("entity_id"), c.get("entity_id"))
+            if eid in flagged_ids:
                 flagged_elsewhere += 1
                 continue
-            who = _unescape(ents.get(c.get("entity_id")) or "")
+            who = _unescape(ents.get(eid) or ents.get(c.get("entity_id")) or "")
             reasoning = c.get("reasoning", "")
             if who:
                 by_entity.setdefault(who, []).append((_pretty(d), reasoning))
             else:
                 script_level.append({"desk": _pretty(d), "text": reasoning})
+    # one determination per (entity, desk): folded fragments carried near-
+    # duplicate reasonings that rendered twice joined by "·" — keep the longest
+    for who, ds in by_entity.items():
+        best: dict[str, str] = {}
+        for desk, reasoning in ds:
+            if len(reasoning) > len(best.get(desk, "")):
+                best[desk] = reasoning
+        by_entity[who] = list(best.items())
     if flagged_elsewhere:
         script_level.append(
             {
@@ -389,6 +400,9 @@ def build(  # noqa: PLR0912 - a deliberate sequence of row-emission cases
             if u.get("surface"):
                 unexamined_by_scene[usid].append(u["surface"])
 
+    rejected_scenes = {
+        sid for f in record.get("rejected_flags") or [] for sid in f.get("scene_ids") or []
+    }
     all_sids = sorted(set(scene_meta) | touched, key=_scene_sort_key)
     rows: list[dict[str, str]] = []
     for sid in all_sids:
@@ -410,6 +424,25 @@ def build(  # noqa: PLR0912 - a deliberate sequence of row-emission cases
         if not flags:
             if unex_here:
                 continue  # the NOT EXAMINED row already speaks for this scene
+            if sid in rejected_scenes:
+                # a rejected finding covered this scene; rejection is not
+                # clearance — "No known issue" here retired a 110mph missing-
+                # door drive in run 5
+                rows.append(
+                    {
+                        **base,
+                        "Item": "—",
+                        "Category": "—",
+                        "Severity": "",
+                        "Clearance status": "Finding rejected in verification — "
+                        "not affirmatively cleared (see Rejected / Open questions)",
+                        "Remedy / licensing note": "",
+                        "Est. cost (USD)": "",
+                        "Sources": "",
+                        "Finding": "",
+                    }
+                )
+                continue
             rows.append(
                 {
                     **base,

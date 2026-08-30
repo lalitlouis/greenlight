@@ -67,6 +67,11 @@ VERIFIED FLAGS (already citation-checked; you cannot reject or invent flags):
 
 {verified_flags}
 
+REJECTED IN VERIFICATION (context only — you cannot revive these; the rejection
+reasons' factual statements are authoritative):
+
+{rejected_summary}
+
 Produce an adjudication plan:
 
 1. MERGES. Fold duplicates into one flag: identical findings filed twice by one desk, and
@@ -92,6 +97,14 @@ Produce an adjudication plan:
    items with NO_ACTION are FYI. A report where every finding sits at MEDIUM or above
    cannot be triaged. When a filed severity is plainly inflated relative to its remedy,
    downgrade it one step via a single-flag merge action with the rationale on record.
+   BLOCKER means production stops or the film is undeliverable in its PRIMARY market — a
+   secondary-market alt-cut deliverable labeled BLOCKER is mislabeled; downgrade it to
+   HIGH with the deliverables framing in your rationale.
+5. VERIFIER CONSISTENCY. When a rejection reason above factually refutes a rule or
+   standard that a SURVIVING flag also asserts (the same premise, kept in one flag and
+   killed in another), the surviving flag must not carry the refuted premise at full
+   strength: downgrade it one step via a single-flag merge whose rationale states the
+   corrected rule, so the report never asserts what its own verification disproved.
 
 Be conservative: when unsure whether two flags are one finding, leave them separate.
 """
@@ -193,8 +206,12 @@ def apply_plan(
         max_rank = min(sev_rank[p["severity"]] for p in participants)
         plan_rank = sev_rank.get(action.get("severity", ""), max_rank)
         final_rank = plan_rank if plan_rank in (max_rank, max_rank + 1) else max_rank
-        if max_rank == 0:  # a BLOCKER is never softened by a merge plan
-            final_rank = 0
+        if max_rank == 0:
+            # a BLOCKER may drop exactly ONE step, to HIGH, and only when the
+            # plan asks for exactly that with the rationale on record — the
+            # mislabeled secondary-market alt-cut correction (run 5). A wilder
+            # proposal (MEDIUM or below) is refused outright, not clamped.
+            final_rank = 1 if plan_rank == 1 and action.get("rationale") else 0
         survivor["severity"] = ranks[min(final_rank, len(ranks) - 1)]
         if action.get("category"):
             survivor["category"] = action["category"]

@@ -124,6 +124,13 @@ resting on unshown scenes is at most premise_unsupported, never script_misstatem
 Fabricating a specific absence ("X is not mentioned in S023") about unshown text once
 killed a true finding.
 
+CONTAMINATION CHECK: this screenplay may be an early draft of a famous film, and details
+from the RELEASED film are not in this draft. Any concrete on-page element the claim
+asserts — an animal, object, person, substance, event — whose word appears in the
+"found nowhere" list below is NOT in this screenplay, no matter how confidently you
+remember it from the movie. That is script_misstatement. Legal and industry vocabulary
+in that list is normal and proves nothing.
+
 The FULL-SCRIPT SEARCH below is authoritative the other way: each quoted string from the
 claim was mechanically searched across the ENTIRE screenplay. A hit proves that text IS on
 the page in the named scene, even when that scene is not shown above — never rule a quoted
@@ -193,6 +200,98 @@ def _scene_context(flag: dict[str, Any], state: Any) -> str:
 
 _MAX_SEARCH_TERMS = 8
 _QUOTED_RE = _re.compile(r'["“]([^"“”]{4,120})["”]')
+_STOPWORDS = frozenset(
+    [
+        "a",
+        "an",
+        "and",
+        "are",
+        "as",
+        "at",
+        "be",
+        "been",
+        "but",
+        "by",
+        "can",
+        "could",
+        "did",
+        "do",
+        "does",
+        "for",
+        "from",
+        "had",
+        "has",
+        "have",
+        "her",
+        "his",
+        "how",
+        "if",
+        "in",
+        "into",
+        "is",
+        "it",
+        "its",
+        "may",
+        "more",
+        "most",
+        "must",
+        "no",
+        "not",
+        "of",
+        "on",
+        "one",
+        "only",
+        "or",
+        "other",
+        "our",
+        "out",
+        "over",
+        "should",
+        "so",
+        "some",
+        "such",
+        "than",
+        "that",
+        "the",
+        "their",
+        "them",
+        "then",
+        "there",
+        "these",
+        "they",
+        "this",
+        "those",
+        "to",
+        "under",
+        "was",
+        "were",
+        "what",
+        "when",
+        "where",
+        "which",
+        "while",
+        "who",
+        "will",
+        "with",
+        "would",
+        "you",
+        "your",
+    ]
+)
+_MIN_TERM_LEN = 4
+
+
+def _absent_terms(claim_text: str, script_lower: str) -> str:
+    """Every substantive word of the claim that appears NOWHERE in the script,
+    comma-joined. The famous-film contamination probe: a Hangover draft finding
+    asserted 'live animals (rooster and tiger)... a baby left unattended' — the
+    tiger and the baby are from the released 2009 film, not this draft. The
+    verifier reads the list; legal vocabulary in it is noise, an on-page noun
+    in it is a misstatement."""
+    words = {w.strip(".,;:()[]'\"!?" + "\u2014\u2013-").lower() for w in claim_text.split()}
+    words = {w for w in words if w.isalpha() and len(w) >= _MIN_TERM_LEN and w not in _STOPWORDS}
+    missing = sorted(w for w in words if w not in script_lower)
+    return ", ".join(missing[:40])
 
 
 def _search_context(flag: dict[str, Any], state: Any) -> str:
@@ -208,10 +307,21 @@ def _search_context(flag: dict[str, Any], state: Any) -> str:
     source = " ".join([str(flag.get("finding") or ""), str(remedy.get("detail") or "")])
     terms = list(dict.fromkeys(t.strip() for t in _QUOTED_RE.findall(source) if t.strip()))
     if not terms:
-        return "(no quoted strings in the claim to search for)"
+        absent = _absent_terms(source, text.lower())
+        return (
+            "CLAIM WORDS FOUND NOWHERE IN THE SCREENPLAY (legal/industry vocabulary "
+            f"landing here is normal; on-page content landing here is not): {absent}"
+            if absent
+            else "(no quoted strings in the claim to search for)"
+        )
     by_span = [(s["raw_span"][0], s["raw_span"][1], s["scene_id"]) for s in state.get("scenes", [])]
     low = text.lower()
     lines: list[str] = []
+    if absent := _absent_terms(source, low):
+        lines.append(
+            "CLAIM WORDS FOUND NOWHERE IN THE SCREENPLAY (legal/industry vocabulary "
+            f"landing here is normal; on-page content landing here is not): {absent}"
+        )
     for term in terms[:_MAX_SEARCH_TERMS]:
         pos = low.find(term.lower())
         if pos < 0:
@@ -474,6 +584,11 @@ class VerificationPanel(BaseAgent):
         )
         surviving = "\n".join(
             f"- {f['flag_id']} ({f['severity']} {f['category']}): {str(f.get('finding', ''))[:160]}"
+            + (
+                f" | REMEDY: {str((f.get('remedy') or {}).get('detail') or '')[:160]}"
+                if str(f.get("category", "")).startswith("rating_")
+                else ""
+            )
             for f in kept
         )
         prompt = (
@@ -482,7 +597,10 @@ class VerificationPanel(BaseAgent):
             "rejection reasons are authoritative. Revise the rating rationale and the cut "
             "list so neither rests on rejected material: remove or amend ONLY clauses and "
             "cuts whose sole support was a rejected finding, keep everything else verbatim, "
-            "and never invent new content or new cuts.\n\n"
+            "and never invent new content. ONE exception permits adding: when a SURVIVING "
+            "finding's remedy names a specific rating-driving cut (e.g. 'eliminate 2 of the "
+            "3 F-words') that the cut list lacks, add that cut using the remedy's own words "
+            "— the strongest single rating driver must never be missing from the levers.\n\n"
             f"CURRENT RATIONALE:\n{pred.get('rationale', '')}\n\n"
             "CURRENT CUT LIST:\n"
             + "\n".join(f"- {b}" for b in pred.get("beats_to_cut") or [])
@@ -546,7 +664,9 @@ class VerificationPanel(BaseAgent):
                     await asyncio.sleep(delay)
                     delay = min(delay * 2, 60)
 
-    async def _run_async_impl(self, ctx: InvocationContext) -> AsyncGenerator[Event, None]:
+    async def _run_async_impl(  # noqa: PLR0912, PLR0915 - staged verify/re-source/reconcile sequence
+        self, ctx: InvocationContext
+    ) -> AsyncGenerator[Event, None]:
         from google import genai
 
         state = ctx.session.state
@@ -557,6 +677,15 @@ class VerificationPanel(BaseAgent):
             yield Event(
                 invocation_id=ctx.invocation_id,
                 author=self.name,
+                # downstream reads these keys (the Adjudicator templates
+                # {rejected_summary}); an early return must still write them
+                actions=EventActions(
+                    state_delta={
+                        "verified_flags": [],
+                        "rejected_flags": [],
+                        "rejected_summary": "(none)",
+                    }
+                ),
                 content=types.Content(role="model", parts=[types.Part(text="No flags to verify.")]),
             )
             return
@@ -662,6 +791,39 @@ class VerificationPanel(BaseAgent):
                 dropped = [d for d in dropped if d["flag_id"] != r["flag_id"]]
                 resourced_stats["recovered"] += 1
 
+        # A sourcing-failure rejection must not RETIRE a real hazard: the claim
+        # may be true with better citations, and its scenes must never flip to
+        # "No known issue" silently (run 5: a fair CSATF-titles rejection took
+        # a 110mph missing-door drive dark). Demote to the desk's open
+        # questions — an honest unknown, on the record.
+        oq_delta: dict[str, list[str]] = {}
+        demoted = 0
+        for r in dropped:
+            if r.get("failure_mode") in ("premise_unsupported", "citation_offtopic"):
+                key = f"open_questions:{r.get('agent', 'clearance_counsel')}"
+                oq = oq_delta.get(key) or list(state.get(key) or [])
+                oq.append(
+                    f"Unresolved ({r['flag_id']} rejected on citation support, claim not "
+                    f"disproven; scenes {', '.join(r.get('scene_ids') or [])}): "
+                    f"{str(r.get('finding', ''))[:280]}"
+                )
+                oq_delta[key] = oq
+                demoted += 1
+        if demoted:
+            yield Event(
+                invocation_id=ctx.invocation_id,
+                author=self.name,
+                content=types.Content(
+                    role="model",
+                    parts=[
+                        types.Part(
+                            text=f"⚖ {demoted} sourcing-failure rejection(s) demoted to open "
+                            "questions — claims not disproven stay on the record"
+                        )
+                    ],
+                ),
+            )
+
         # The rating panel's rationale and cut list must describe the POST-
         # verification finding set, not the desk's pre-verification one.
         rating_delta: dict[str, Any] = {}
@@ -713,6 +875,16 @@ class VerificationPanel(BaseAgent):
                     "verified_flags": kept,
                     "rejected_flags": dropped,
                     "resource_stats": resourced_stats,
+                    # compact context for the Adjudicator's consistency pass —
+                    # it must see WHY things were rejected, not the full flags
+                    "rejected_summary": "\n".join(
+                        f"- {r['flag_id']} ({r.get('category', '')}): "
+                        f"{str(r.get('finding', ''))[:160]} | REJECTED: "
+                        f"{str(r.get('rejection_reason', ''))[:200]}"
+                        for r in dropped
+                    )
+                    or "(none)",
+                    **oq_delta,
                     **rating_delta,
                 }
             ),

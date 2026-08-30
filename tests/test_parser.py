@@ -176,3 +176,22 @@ def test_printed_page_count_includes_pages_after_last_scene():
     )
     assert printed_page_count(text) == 3
     assert printed_page_count("no feeds here") is None
+
+
+def test_display_title_page_without_fountain_meta():
+    """The REAL failure shape, four runs running: a PDF title page is display
+    text ('THE HANGOVER / Written by / ...'), not Fountain Key: metadata — any
+    meta-gated front-matter logic silently never fires. Structural detection
+    must classify it, and an attached feed on the heading's own line still
+    counts as that page's leading feed."""
+    from greenlight.parser import parse_fountain, printed_page_count
+
+    text = (
+        "THE HANGOVER\nWritten by\nJon Lucas & Scott Moore\nSeptember 30, 2007\n"
+        "\f\nEXT. BEL AIR BAY CLUB -- MORNING\n\nWorkers bustle about the lawn.\n"
+        "\f\nINT. BRIDAL SUITE -- DAY\n\nDresses everywhere.\n"
+        "\f\nTHE END\n"
+    )
+    _, scenes = parse_fountain(text)
+    assert [s["page"] for s in scenes] == [1, 2]
+    assert printed_page_count(text) == 3

@@ -102,7 +102,11 @@ operator: venues close, rebrand, and change hands (a remedy telling the producer
 the operating status you verified in the finding. A venue that no longer exists changes
 the remedy's CLASS — period/archival depiction and successor-in-interest questions, not
 a live negotiation — and often changes the severity with it. Apply this to EVERY named
-venue, not just the one that looks defunct.
+venue, not just the one that looks defunct. BUT a defunct venue is NOT trademark-free:
+demolition ends the LOCATION question, never the DEPICTION question — the property has
+an owner and the mark has a holder (often a successor: a closed club's name may belong
+to the casino that housed it). Keep the trademark/trade-libel analysis alive and name
+who holds the rights NOW.
 A FICTIONAL NAME CLEARS THE NAME, NOT THE SHOOT: when a scene needs a controlled-venue
 class location (an operating casino floor, theme park, terminal) — above all with
 depicted destruction or misconduct on the premises — file location_release with the

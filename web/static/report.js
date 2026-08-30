@@ -791,17 +791,30 @@ function clearedRows(record) {
   // An entity carrying a surviving finding is not "no action needed" — its
   // cleared determinations are counted separately, never under the header.
   const flaggedIds = new Set((record.flags || []).map((f) => f.entity_id).filter(Boolean));
+  const fold = record.entity_accounting?.fold || {};
   let flaggedElsewhere = 0;
   const entries = [];
+  const bestByKey = new Map(); // one determination per (entity, desk) — folded
   for (const [desk, items] of Object.entries(record.cleared || {})) {
     for (const c of items || []) {
-      if (c.entity_id && flaggedIds.has(c.entity_id)) {
+      const eid = fold[c.entity_id] || c.entity_id; // short forms fold to canonical
+      if (eid && flaggedIds.has(eid)) {
         flaggedElsewhere += 1;
         continue;
       }
-      entries.push({ desk, who: ENTITY_SURFACE[c.entity_id] || null, text: c.reasoning });
+      const who = ENTITY_SURFACE[eid] || ENTITY_SURFACE[c.entity_id] || null;
+      if (who) {
+        const key = who + " " + desk;
+        const prev = bestByKey.get(key);
+        if (!prev || (c.reasoning || "").length > prev.text.length) {
+          bestByKey.set(key, { desk, who, text: c.reasoning });
+        }
+      } else {
+        entries.push({ desk, who: null, text: c.reasoning });
+      }
     }
   }
+  entries.push(...bestByKey.values());
   for (const [desk, qs] of Object.entries(record.open_questions || {})) {
     for (const q of qs) if (isDetermination(q)) entries.push({ desk, who: null, text: q });
   }
@@ -1007,6 +1020,19 @@ function renderReport(record) {
     )
   );
   meta.appendChild(proj);
+  // two-path totals when the adjudication ruled some remedy costs mutually
+  // exclusive with the target-rating path — the single sum double-counts
+  const paths = rep.est_cost_paths;
+  if (paths && paths.target_rating && paths.as_written) {
+    const p = el("span", "proj");
+    p.appendChild(
+      document.createTextNode(
+        `cost by path: target rating ${money(paths.target_rating) || "—"} · ` +
+          `as written ${money(paths.as_written) || "—"} (some remedies are mutually exclusive)`
+      )
+    );
+    meta.appendChild(p);
+  }
   const cost = money(rep.est_clearance_cost_usd);
   if (cost) {
     const c = el("span", "proj");

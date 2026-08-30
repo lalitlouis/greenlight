@@ -41,7 +41,7 @@ def make_ctx(agent_name="clearance_counsel", **state):
             "search_id": "s0",
             "results": [
                 {
-                    "url": "https://example.com/clearance",
+                    "url": "https://www.copyright.gov/clearance",
                     "title": "Clearance overview",
                     "excerpts": [RESEARCH_EXCERPT],
                 }
@@ -59,7 +59,7 @@ def make_ctx(agent_name="clearance_counsel", **state):
 
 GOOD_CITATION = {
     "title": "Clearance overview",
-    "url": "https://example.com/clearance",
+    "url": "https://www.copyright.gov/clearance",
     "excerpt": RESEARCH_EXCERPT,
 }
 
@@ -712,7 +712,7 @@ def test_provenance_rejection_hands_back_quotable_excerpts(monkeypatch):
         citations=[
             {
                 "source_type": "web",
-                "url": "https://example.com/clearance",
+                "url": "https://www.copyright.gov/clearance",
                 "excerpt": "a paraphrased memory of the rule that was never retrieved verbatim",
             }
         ],
@@ -745,7 +745,11 @@ def test_file_flag_auto_repairs_near_miss_citation():
         category="trademark_disparagement",
         finding="The product is disparaged on screen.",
         citations=[
-            {"source_type": "web", "url": "https://example.com/clearance", "excerpt": near_miss}
+            {
+                "source_type": "web",
+                "url": "https://www.copyright.gov/clearance",
+                "excerpt": near_miss,
+            }
         ],
         remedy_action="REPLACE",
         remedy_detail="Swap the prop.",
@@ -1386,3 +1390,42 @@ def test_retry_done_uses_retry_worklist_and_does_not_escalate():
     out = done("empty worklist", ctx)
     assert out.startswith("Desk closed")
     assert ctx.actions.escalate is not True or isinstance(ctx.actions.escalate, MagicMock)
+
+
+# --- source authority allowlist (run-5 review: blockers rested on Grokipedia
+# and a Kiwix Wikipedia dump on a personal domain) --------------------------
+
+
+def _cit(url):
+    return {"source_type": "web", "url": url, "excerpt": "x", "title": "t"}
+
+
+def test_blocker_requires_allowlisted_authority():
+    from greenlight.tools.toolbelt import _authority_problem
+
+    bad = [
+        _cit("https://grokipedia.com/x"),
+        _cit("https://a.osmarks.net/content/wikipedia_en_all_maxi_2020-08/A/x"),
+    ]
+    assert _authority_problem("BLOCKER", bad) is not None
+    good = [*bad, _cit("https://www.filmratings.com/rules")]
+    assert _authority_problem("BLOCKER", good) is None
+    assert _authority_problem("BLOCKER", [_cit("https://www.gov.cn/policy/x")]) is None
+
+
+def test_high_needs_authority_or_corroboration():
+    from greenlight.tools.toolbelt import _authority_problem
+
+    one_unknown = [_cit("https://someblog.example/post")]
+    assert _authority_problem("HIGH", one_unknown) is not None
+    two_independent = [*one_unknown, _cit("https://otherfirm.example/analysis")]
+    assert _authority_problem("HIGH", two_independent) is None
+    assert _authority_problem("MEDIUM", one_unknown) is None  # gate is BLOCKER/HIGH only
+
+
+def test_kiwix_dump_counts_as_background():
+    from greenlight.tools.toolbelt import _is_background_host
+
+    assert _is_background_host("https://a.osmarks.net/content/wikipedia_en_all_maxi_2020-08/A/x")
+    assert _is_background_host("https://grokipedia.com/wiki/thing")
+    assert not _is_background_host("https://www.filmratings.com/rules")

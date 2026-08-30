@@ -56,7 +56,24 @@ def test_search_covers_remedy_quotes_and_handles_no_quotes():
     flag = _flag("No quotes here.", detail='Cut "Haylee is two" entirely.')
     out = _search_context(flag, _state())
     assert "FOUND in S004" in out
-    assert "no quoted strings" in _search_context(_flag("Nothing quoted."), _state())
+    # no quoted strings -> the absent-terms probe still reports claim words
+    # found nowhere in the script (the contamination check's raw material)
+    out2 = _search_context(_flag("Nothing quoted."), _state())
+    assert "FOUND NOWHERE" in out2 and "nothing" in out2
+
+
+def test_absent_terms_catch_released_film_contamination():
+    """Run 5 (F107): 'live animals (rooster and tiger)... a baby left
+    unattended' — the tiger and the baby are in the 2009 FILM, not this draft.
+    The mechanical probe must surface them; words that ARE on the page must
+    not appear."""
+    from greenlight.agents.verification import _absent_terms
+
+    script = "int. courtyard - day\na chicken struts past the overturned chair.\n"
+    claim = "Live animals (rooster and tiger) roam; a baby left unattended near the chicken."
+    absent = _absent_terms(claim, script)
+    assert "tiger" in absent and "rooster" in absent and "baby" in absent
+    assert "chicken" not in absent
 
 
 def test_scene_context_includes_scenes_named_in_remedy():

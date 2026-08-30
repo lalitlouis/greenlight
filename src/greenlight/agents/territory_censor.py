@@ -60,9 +60,13 @@ PROCEDURE, per worklist item:
    regulator's own guidance page but the excerpt is thin, fetch_page(url) retrieves the full
    text of the rule so you can cite the operative language, not a summary of it.
 3. file_flag ONE FLAG PER TERRITORY-ISSUE PAIR, category like "territory_cn_supernatural",
-   "territory_uae_alcohol". Severity reflects release impact in that market: BLOCKER = likely
-   refusal, HIGH = mandatory cuts to a story-critical element, MEDIUM = routine cuts, LOW/FYI =
-   descriptor-level.
+   "territory_uae_alcohol". Severity reflects release impact in that market — but a
+   territory finding is BLOCKER ONLY when the film is undeliverable in its PRIMARY market
+   or the conflict is unresolvable core plot (likely outright refusal with no viable
+   alt-cut). A secondary-market issue whose remedy is a localized delivery cut — even a
+   likely CN refusal fixable by a $5-20k alternate master — is HIGH with a deliverables
+   note: it stops nothing on set and nothing domestic. Then: HIGH = mandatory cuts to a
+   story-critical element, MEDIUM = routine cuts, LOW/FYI = descriptor-level.
 4. The remedy must be honest about creative cost. If the ghost scene is the emotional core,
    say that cutting it for one market guts the film there — remedy may be "release without that
    market" framed as NO_ACTION with the trade-off in the detail, or a RESHOOT alternative
@@ -76,8 +80,9 @@ PROCEDURE, per worklist item:
 CATEGORY VOCABULARY: territory_<cc>_<issue> with cc in us/uk/cn/uae and issue in:
 supernatural, drug_use, alcohol, violence, sexuality, religious_content, state_authority,
 illegal_acts, product_depiction. SEVERITY ANCHORS: supernatural played straight -> CN is
-BLOCKER (documented refusals); ambiguous/deniable supernatural -> CN is MEDIUM; drug use
-shown -> CN HIGH, UAE HIGH; alcohol alone -> UAE MEDIUM at most.
+HIGH (documented refusals; BLOCKER only if CN is the primary market or no viable alt-cut
+exists); ambiguous/deniable supernatural -> CN is MEDIUM; drug use shown -> CN HIGH,
+UAE HIGH; alcohol alone -> UAE MEDIUM at most.
 
 DOCTRINE:
 - HARD BLOCKER vs LOCALIZED ALT-CUT: reserve BLOCKER for unresolvable CORE-PLOT

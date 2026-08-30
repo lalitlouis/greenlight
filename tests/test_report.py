@@ -259,3 +259,29 @@ def test_merge_does_not_recap_partial_severity():
     merged = merge_exact_duplicates([a, b])
     assert len(merged) == 1
     assert merged[0]["severity"] == "HIGH"
+
+
+def test_blocker_may_drop_exactly_one_step_with_rationale():
+    """Run 5: both blockers were secondary-market alt-cut items. The plan may
+    correct BLOCKER -> HIGH with a stated rationale; never further."""
+    from greenlight.agents.adjudicator import apply_plan
+
+    flags = [make_flag("F101", "BLOCKER")]
+    plan = {
+        "merges": [
+            {
+                "surviving_flag_id": "F101",
+                "merged_flag_ids": [],
+                "category": "territory_cn_supernatural",
+                "severity": "HIGH",
+                "rationale": "CN alt-cut deliverable; stops nothing domestic",
+            }
+        ],
+        "conflicts": [],
+    }
+    out, _ = apply_plan(flags, plan)
+    assert out[0]["severity"] == "HIGH"
+    # without a rationale the downgrade is refused
+    plan["merges"][0]["rationale"] = ""
+    out2, _ = apply_plan([make_flag("F101", "BLOCKER")], plan)
+    assert out2[0]["severity"] == "BLOCKER"

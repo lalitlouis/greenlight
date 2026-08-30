@@ -14,9 +14,14 @@ import re
 from typing import Any
 
 
-def account(entities: list[dict[str, Any]]) -> dict[str, int]:
-    """{"researched": raw count, "distinct": deduped count, "fragments": folded}."""
+def account(entities: list[dict[str, Any]]) -> dict[str, Any]:
+    """{"researched", "distinct", "fragments", "fold"}. `fold` maps a folded
+    short-form's entity_id to its canonical entity_id ("Doug" -> "Doug
+    Billings"), so display surfaces can merge their cleared determinations
+    instead of rendering the same entity twice (run 5: 97 determinations
+    across 72 items, folded fragments each rendering their reasoning twice)."""
     surfaces = [str(e.get("surface") or "").strip() for e in entities]
+    ids = [str(e.get("entity_id") or "") for e in entities]
     n = len(surfaces)
     low = [s.lower() for s in surfaces]
     frag = [not s or not s[0].isalpha() for s in surfaces]  # truncation artifacts ("& Forever…")
@@ -34,14 +39,23 @@ def account(entities: list[dict[str, Any]]) -> dict[str, int]:
     # A single-token surface contained on a word boundary in a longer,
     # non-fragment surface is the same entity's short form ("Doug" ⊂ "Doug
     # Billings") — count it once, under the longer form.
+    fold: dict[str, str] = {}
     for i, s in enumerate(low):
         if frag[i] or not s or " " in s:
             continue
         pat = re.compile(rf"\b{re.escape(s)}\b")
-        if any(
-            i != j and not frag[j] and len(t) > len(s) and pat.search(t) for j, t in enumerate(low)
-        ):
+        host = next(
+            (
+                j
+                for j, t in enumerate(low)
+                if i != j and not frag[j] and len(t) > len(s) and pat.search(t)
+            ),
+            None,
+        )
+        if host is not None:
             frag[i] = True
+            if ids[i] and ids[host]:
+                fold[ids[i]] = ids[host]
 
     distinct = sum(1 for x in frag if not x)
-    return {"researched": n, "distinct": distinct, "fragments": n - distinct}
+    return {"researched": n, "distinct": distinct, "fragments": n - distinct, "fold": fold}

@@ -161,19 +161,50 @@ def strip_title_page(text: str) -> tuple[dict[str, str], int]:
     return (meta, offset) if meta else ({}, 0)
 
 
-def _front_matter_feeds(text: str, meta: dict[str, str], body_start: int, bound: int) -> int:
-    """Form feeds that belong to the title page, i.e. precede printed page 1.
-    PDF extractors put the feed at the START of the next page's first line
-    ("\\fFADE IN:"), so the title->page-1 separator usually sits AT or AFTER
-    body_start — counting only feeds before body_start missed it and left every
-    scene page +1 (run-4 review, third time flagged). When a title page exists
-    and no feed was counted in front matter, the first feed before the first
-    scene heading is that separator."""
-    front = text.count("\f", 0, body_start)
-    if meta and front == 0:
-        sep = text.find("\f", body_start, bound)
-        if sep != -1:
-            front = 1
+_FRONT_MARKER_RE = re.compile(
+    r"(?im)\b(written by|screenplay by|story by|draft|revis\w*|copyright|all rights)\b"
+    r"|^[A-Za-z][A-Za-z ]{0,20}:"
+)
+_MAX_FRONT_SEGMENTS = 3  # title + at most a cast/notes page or two
+_FRONT_MAX_LINES = 12
+_FRONT_TITLE_MAX_CHARS = 40
+
+
+def _looks_like_front_matter(segment: str) -> bool:
+    lines = [ln.strip() for ln in segment.split("\n") if ln.strip()]
+    if not lines:
+        return True  # an empty leading page is padding, not page 1
+    for ln in lines:
+        if _is_heading(ln) and not _TRANSITION_RE.match(ln):
+            return False
+        if _TRANSITION_RE.match(ln) or ln.upper().startswith("FADE IN"):
+            return False  # transitions mean the movie has started
+    if _FRONT_MARKER_RE.search("\n".join(lines)):
+        return True
+    # a short all-caps opening line reads as a display title page
+    first = lines[0]
+    return (
+        len(lines) <= _FRONT_MAX_LINES
+        and first == first.upper()
+        and len(first) <= _FRONT_TITLE_MAX_CHARS
+    )
+
+
+def _front_matter_feeds(text: str) -> int:
+    """Form feeds that belong to front matter, i.e. precede printed page 1.
+    Detected STRUCTURALLY from the leading feed-delimited segments — a real PDF
+    title page ('THE HANGOVER / Written by / ...') carries no Fountain metadata
+    at all, so any meta-based guard silently never fires (run 5: the fourth
+    consecutive review to flag every scene page running exactly +1)."""
+    if "\f" not in text:
+        return 0
+    segments = text.split("\f")
+    front = 0
+    for seg in segments[: min(_MAX_FRONT_SEGMENTS, len(segments) - 1)]:
+        if _looks_like_front_matter(seg):
+            front += 1
+        else:
+            break
     return front
 
 
@@ -183,8 +214,7 @@ def printed_page_count(text: str) -> int | None:
     still pages (the header read 110 pp against a real 111)."""
     if "\f" not in text:
         return None
-    meta, body_start = strip_title_page(text)
-    return max(1, text.count("\f") - _front_matter_feeds(text, meta, body_start, len(text)) + 1)
+    return max(1, len(text.split("\f")) - _front_matter_feeds(text))
 
 
 _SCENE_NUMBER_RE = __import__("re").compile(r"\s*#([A-Za-z0-9.\-]+)#\s*$")
@@ -226,8 +256,7 @@ def parse_fountain(  # noqa: PLR0912, PLR0915 - one continuous scan loop
     # Printed screenplay pages start AFTER front matter: subtract the feeds
     # consumed by the title page so scene pages match the script's own printed
     # numbers (the raw index ran uniformly +1 on a real 111-page script).
-    first_heading = heading_positions[0][0] if heading_positions else len(text)
-    front_feeds = _front_matter_feeds(text, meta, body_start, first_heading) if has_feeds else 0
+    front_feeds = _front_matter_feeds(text) if has_feeds else 0
 
     for i, (start, heading) in enumerate(heading_positions):
         end = heading_positions[i + 1][0] if i + 1 < len(heading_positions) else len(text)
@@ -273,7 +302,10 @@ def parse_fountain(  # noqa: PLR0912, PLR0915 - one continuous scan loop
             j += 1
 
         if has_feeds:
-            page = max(1, 1 + text.count("\f", 0, start) - front_feeds)
+            # count through start+1: an extractor may attach the feed to the
+            # heading's own line ("\fINT. ..."), where the page's leading feed
+            # sits AT start rather than before it
+            page = max(1, 1 + text.count("\f", 0, start + 1) - front_feeds)
         else:
             page = 1 + int(cumulative_lines // _LINES_PER_PAGE)
         cumulative_lines += acc.line_count + 1  # + blank line before next heading
