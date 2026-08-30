@@ -4,6 +4,24 @@
 "use strict";
 
 const POLL_MS = 1500;
+// Transient blips (redeploy, cold start, network) get retries; only give up
+// after several. These three were REFERENCED by poll() but never declared —
+// under "use strict" the first successful poll threw ReferenceError, the catch
+// threw again, and the progress screen froze forever with no error shown. The
+// whole page was dead on every path.
+const POLL_MAX_MISSES = 5;
+let pollMisses = 0;
+
+function progressFailed(message) {
+  clearInterval(progressTimer);
+  const title = $("wr-progress-title");
+  if (title) title.textContent = "That run did not finish";
+  const bar = $("wr-bar-fill");
+  if (bar) bar.style.width = "0%";
+  const pct = $("wr-pct");
+  if (pct) pct.textContent = "—";
+  toast(message, true);
+}
 
 async function uploadForWriter(file) {
   showUploadOverlay(file);

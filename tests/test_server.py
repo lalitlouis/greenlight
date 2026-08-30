@@ -509,3 +509,41 @@ def test_in_process_run_saves_the_record_before_declaring_done():
     save_at = src.index("storage.save_record")
     status_at = src.index('"record_saved"')
     assert save_at < status_at, "save_record must precede the terminal run_set"
+
+
+def test_replay_filed_briefs_match_the_run_view_counter():
+    """run.js counts filings with /filed F\\d+/i. The live tool returns
+    'Filed F203 (HIGH …)' and the replay synthesizer 'filed F203 · 2
+    citation(s)' — a case-sensitive matcher counted 0 flags on every replay,
+    which is the surface the demo is recorded from."""
+    import re
+    from pathlib import Path
+
+    pattern = re.compile(r"filed F\d+", re.IGNORECASE)
+    with client.stream("GET", "/api/replay?pace=0") as response:
+        events = sse_events(response)
+    briefs = [
+        e.get("brief", "")
+        for e in events
+        if e.get("type") == "tool_result" and e.get("tool") == "file_flag"
+    ]
+    assert briefs, "replay emitted no file_flag results"
+    assert all(pattern.search(b) for b in briefs), f"counter would miss: {briefs[:3]}"
+    # and the front end must still be using the case-insensitive form
+    run_js = (Path(__file__).resolve().parents[1] / "web" / "static" / "run.js").read_text()
+    assert "/filed F\\d+/i" in run_js
+
+
+def test_writer_page_has_no_undefined_poll_identifiers():
+    """poll() referenced pollMisses / POLL_MAX_MISSES / progressFailed, none of
+    which existed: under strict mode the first successful poll threw and the
+    progress screen froze forever."""
+    from pathlib import Path
+
+    src = (Path(__file__).resolve().parents[1] / "web" / "static" / "writer.js").read_text()
+    for ident, decl in (
+        ("pollMisses", "let pollMisses"),
+        ("POLL_MAX_MISSES", "const POLL_MAX_MISSES"),
+        ("progressFailed", "function progressFailed"),
+    ):
+        assert ident in src and decl in src, f"{ident} is used but not declared"

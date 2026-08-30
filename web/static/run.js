@@ -727,7 +727,11 @@ function handleDeskEvent(ev) {
   if (ev.type === "tool_result" && ev.tool === "file_flag") {
     assignPinId(ev.agent, ev.brief);
     // count FILINGS, not attempts — a provenance-rejected try is not a flag
-    if (/Filed F\d+/.test(ev.brief || "")) {
+    // case-insensitive: the live tool returns "Filed F203 (HIGH …)" but the
+    // replay synthesizer emits "filed F203 · 2 citation(s)". Matching only the
+    // capitalized form meant every REPLAY — the demo surface — counted 0 flags
+    // while pins visibly dropped beside the counter.
+    if (/filed F\d+/i.test(ev.brief || "")) {
       d.flags += 1;
       gCount("verifier", "filed", "to verify");
       const gsub = document.getElementById("gs-" + ev.agent);
