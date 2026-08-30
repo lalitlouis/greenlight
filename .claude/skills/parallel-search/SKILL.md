@@ -109,10 +109,12 @@ real analysis.
 - **Parallel**: ~$0.009 per `advanced` search. A clearance run on the 12-scene fixture spends
   19–26 searches ≈ **$0.20/run**. `searches_spent` in the worker's `run_summary` log line is
   the measured count; each `search_id` in the record is one billed search.
-- **Gemini**: ~$3.70/run — back-calculated from the Aug 2026 billing console ($170 of
-  post-discount Gemini/storage spend over 46 runs), not per-run measured. Flash intro pricing
-  $0.75/$3.75 per MTok runs through 2026-12-31, then doubles. Per-run `usage_metadata`
-  capture is the planned fix; until it lands, budget ≈ **$3.90 total per clearance run**
-  (all cash — the $100 GCP credit is exhausted as of 2026-08-29).
+- **Gemini**: MEASURED (per-run `usage_metadata` capture, shipped 2026-08-29 — every record
+  now carries `cost_usd` + `gemini_usage`). The 12-scene fixture run: **$1.75 all-in**
+  ($1.45 flash, $0.08 pro adjudication, $0.21 searches). Vertex implicit caching already
+  serves ~76% of input tokens — do NOT build explicit context caching, the headroom is gone.
+  Bigger scripts cost more (billing history averaged ~$3.70/run across 100-page and pre-
+  cache-era runs). Flash intro pricing $0.75/$3.75 per MTok through 2026-12-31, then doubles.
+  All cash — the $100 GCP credit exhausted 2026-08-29.
 - Never add a per-desk search: any change that multiplies searches multiplies the only
   metered per-run cost that scales with entity count.
