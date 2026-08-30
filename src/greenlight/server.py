@@ -179,13 +179,27 @@ RATE_LIMIT_PER_HOUR = 8  # expensive-endpoint starts per client IP
 RATE_WINDOW_S = 3600
 MAX_TRACKED_IPS = 10000
 MAX_ID_LEN = 64
+# How many X-Forwarded-For entries the infrastructure appends. Cloud Run adds
+# exactly one (the real peer); a load balancer in front would add another.
+TRUSTED_PROXY_HOPS = int(os.getenv("TRUSTED_PROXY_HOPS", "1"))
 
 _rate: dict[str, list[float]] = {}
 
 
 def _client_ip(request: Request) -> str:
-    fwd = request.headers.get("x-forwarded-for", "")
-    return fwd.split(",")[0].strip() if fwd else (request.client.host if request.client else "?")
+    """The RIGHTMOST X-Forwarded-For hop, not the leftmost.
+
+    Cloud Run appends the real peer address to whatever the client sent, so the
+    left of that header is attacker-controlled: reading it let anyone mint a
+    fresh rate-limit bucket per request by rotating a header value, which is no
+    limit at all in front of endpoints that spend model budget. If a load
+    balancer is ever put in front of the service it adds a hop — raise
+    TRUSTED_PROXY_HOPS to match, and the key moves left by that many entries.
+    """
+    fwd = [p.strip() for p in request.headers.get("x-forwarded-for", "").split(",") if p.strip()]
+    if fwd:
+        return fwd[-min(TRUSTED_PROXY_HOPS, len(fwd))]
+    return request.client.host if request.client else "?"
 
 
 def _check_rate(request: Request) -> None:
@@ -501,7 +515,19 @@ async def redeem_invite(request: Request, body: dict[str, Any]) -> dict[str, Any
 async def auth_login(request: Request, next: str = "") -> RedirectResponse:
     if not auth.configured():
         raise HTTPException(503, "Sign-in is not configured yet.")
-    resp = RedirectResponse(auth.login_url(_redirect_uri(request)))
+    # The nonce goes into `state` AND into an httponly cookie; the callback
+    # requires both halves, so a state minted for another browser is useless.
+    nonce = auth.new_nonce()
+    resp = RedirectResponse(auth.login_url(_redirect_uri(request), nonce))
+    secure = request.headers.get("x-forwarded-proto") == "https"
+    resp.set_cookie(
+        auth.STATE_COOKIE,
+        nonce,
+        max_age=auth.STATE_TTL_S,
+        httponly=True,
+        secure=secure,
+        samesite="lax",  # must be Lax, not Strict: Google's callback is cross-site
+    )
     # same-site paths only — an absolute URL here would be an open redirect
     if next.startswith("/") and not next.startswith("//"):
         resp.set_cookie("gl_next", next, max_age=600, httponly=True, samesite="lax")
@@ -510,7 +536,8 @@ async def auth_login(request: Request, next: str = "") -> RedirectResponse:
 
 @app.get("/auth/callback")
 async def auth_callback(request: Request, code: str = "", state: str = "") -> RedirectResponse:
-    if not auth.configured() or not code or not auth.check_state(state):
+    nonce = request.cookies.get(auth.STATE_COOKIE, "")
+    if not auth.configured() or not code or not auth.check_state(state, nonce):
         raise HTTPException(400, "Sign-in failed — please try again.")
     try:
         user = await asyncio.to_thread(auth.exchange_code, code, _redirect_uri(request))
@@ -521,6 +548,7 @@ async def auth_callback(request: Request, code: str = "", state: str = "") -> Re
         dest = "/home"
     resp = RedirectResponse(dest)
     resp.delete_cookie("gl_next")
+    resp.delete_cookie(auth.STATE_COOKIE)  # single use: no replay of this login
     resp.set_cookie(
         auth.SESSION_COOKIE,
         auth.make_session(user),
@@ -692,7 +720,8 @@ def _runs_paused() -> dict[str, Any] | None:
     """Operator kill switch, stored durably so every instance sees it and it
     survives restarts. Read only at run start — starts are rare."""
     try:
-        flag = storage.load_research(_PAUSE_KEY)
+        # never expires: a kill switch that turns itself off is not a kill switch
+        flag = storage.load_research(_PAUSE_KEY, max_age_s=None)
     except Exception:
         return None
     return flag if flag and flag.get("paused") else None
@@ -713,7 +742,8 @@ def _require_invite(owner: dict[str, Any] | None) -> None:
         return
     if owner:
         try:
-            if storage.load_research(f"invite:{owner.get('sub', '')}"):
+            # a redemption sticks to the account — it must not lapse weekly
+            if storage.load_research(f"invite:{owner.get('sub', '')}", max_age_s=None):
                 return
         except Exception:
             pass
@@ -748,7 +778,14 @@ async def create_run(  # noqa: PLR0915 - the run-start gauntlet, deliberately li
     _require_invite(owner)
     previous_run_id = _safe_id(previous_run_id) if previous_run_id else ""
     if previous_run_id:
-        prev_owner = await asyncio.to_thread(storage.load_owner, previous_run_id)
+        try:
+            prev_owner = await asyncio.to_thread(storage.load_owner, previous_run_id)
+        except storage.OwnerLookupError as e:
+            # unknown ownership is not permission — deny rather than fall
+            # through to the anonymous branch
+            raise HTTPException(
+                503, "Could not verify who owns the previous analysis. Try again in a moment."
+            ) from e
         # owned prior runs may only be revised by their owner; anonymous prior
         # runs use the capability model (knowing the id IS the authorization)
         if prev_owner and (not owner or owner["sub"] != prev_owner):
@@ -1620,6 +1657,7 @@ async def whatif_rating(body: WhatIfBody, request: Request) -> dict[str, Any]:
     profile -> embed -> comparables pipeline re-run on the revised rationale."""
     import time as _time
 
+    _require_signin(request)  # this spends model budget: never anonymous
     ip = _client_ip(request)
     now = _time.time()
     window = [ts for ts in _whatif_rate.get(ip, []) if now - ts < RATE_WINDOW_S]
@@ -1649,6 +1687,7 @@ async def whatif_suggest(body: WhatIfBody, request: Request) -> dict[str, Any]:
     comes back as a testable cut candidate, not advice."""
     import time as _time
 
+    _require_signin(request)  # this spends model budget: never anonymous
     ip = _client_ip(request)
     now = _time.time()
     window = [ts for ts in _whatif_rate.get(ip, []) if now - ts < RATE_WINDOW_S]
@@ -1678,6 +1717,7 @@ async def propose_fix(body: FixRequest, request: Request) -> dict[str, Any]:
     during beta; this is the future paid surface, so it gets its own rate lane."""
     import time as _time
 
+    _require_signin(request)  # Pro-tier call: never anonymous
     ip = _client_ip(request)
     now = _time.time()
     window = [ts for ts in _fix_rate.get(ip, []) if now - ts < RATE_WINDOW_S]
@@ -1765,7 +1805,14 @@ async def delete_run(run_id: str, request: Request) -> dict[str, bool]:
     run_id = _safe_id(run_id)
     if _disk_record(run_id) is not None:
         raise HTTPException(403, "Curated demo records cannot be deleted")
-    owner = await asyncio.to_thread(storage.load_owner, run_id)
+    try:
+        owner = await asyncio.to_thread(storage.load_owner, run_id)
+    except storage.OwnerLookupError as e:
+        # never let a storage fault route an OWNED run into the anonymous
+        # capability delete
+        raise HTTPException(
+            503, "Could not verify who owns this run. Try again in a moment."
+        ) from e
     if owner:
         user = _current_user(request)
         if not user or user["sub"] != owner:

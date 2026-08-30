@@ -29,9 +29,30 @@ def test_tampered_session_rejected(monkeypatch):
 
 def test_state_roundtrip_and_garbage(monkeypatch):
     auth = _fresh(monkeypatch)
-    assert auth.check_state(auth.make_state())
-    assert not auth.check_state("garbage")
-    assert not auth.check_state(None)
+    nonce = auth.new_nonce()
+    assert auth.check_state(auth.make_state(nonce), nonce)
+    assert not auth.check_state("garbage", nonce)
+    assert not auth.check_state(None, nonce)
+
+
+def test_state_is_bound_to_one_browser(monkeypatch):
+    """Login CSRF: a validly-signed, unexpired state minted for the ATTACKER's
+    browser must not authorize a callback in the VICTIM's browser. Without the
+    nonce leg the victim gets silently signed into the attacker's account and
+    everything they upload lands under the attacker's sub."""
+    auth = _fresh(monkeypatch)
+    attacker_state = auth.make_state(auth.new_nonce())  # attacker's own login
+    victim_nonce = auth.new_nonce()  # victim's browser, different value
+    assert not auth.check_state(attacker_state, victim_nonce)
+    # a victim with no login in flight has no cookie at all
+    assert not auth.check_state(attacker_state, "")
+    assert not auth.check_state(attacker_state, None)
+    # and a state with no nonce in it (pre-fix shape) never validates
+    import base64
+    import json
+
+    legacy = base64.urlsafe_b64encode(json.dumps({"ts": 9999999999}).encode())
+    assert not auth.check_state(legacy.decode() + "." + auth._sign(legacy), "anything")
 
 
 def test_unconfigured_status(monkeypatch):

@@ -13,6 +13,7 @@ import hashlib
 import hmac
 import json
 import os
+import secrets
 import time
 import urllib.parse
 import urllib.request
@@ -22,6 +23,7 @@ CLIENT_ID = os.getenv("GOOGLE_OAUTH_CLIENT_ID", "")
 CLIENT_SECRET = os.getenv("GOOGLE_OAUTH_CLIENT_SECRET", "")
 SESSION_SECRET = os.getenv("SESSION_SECRET", "")
 SESSION_COOKIE = "sr_session"
+STATE_COOKIE = "gl_state"  # per-browser nonce that binds `state` to THIS browser
 SESSION_TTL_S = 30 * 24 * 3600
 STATE_TTL_S = 600
 
@@ -71,32 +73,51 @@ def read_session(cookie: str | None) -> dict[str, Any] | None:
     return user
 
 
-def make_state() -> str:
-    payload = base64.urlsafe_b64encode(json.dumps({"ts": int(time.time())}).encode())
+def new_nonce() -> str:
+    """One unguessable value per login attempt. Goes into BOTH the `state`
+    parameter and an httponly cookie; the callback requires them to match."""
+    return secrets.token_urlsafe(16)
+
+
+def make_state(nonce: str) -> str:
+    payload = base64.urlsafe_b64encode(json.dumps({"ts": int(time.time()), "n": nonce}).encode())
     return payload.decode() + "." + _sign(payload)
 
 
-def check_state(state: str | None) -> bool:
-    if not state or "." not in state:
+def check_state(state: str | None, nonce: str | None) -> bool:
+    """A signed, unexpired state whose nonce matches THIS browser's cookie.
+
+    The signature and TTL alone prove only that this server issued *some* state
+    recently — which any party gets by starting their own login. Without the
+    nonce leg, an attacker could relay their own OAuth code plus a valid state
+    to a victim and silently sign that victim into the ATTACKER's account, where
+    anything the victim then uploaded would be filed under the attacker's sub.
+    The cookie binding is what makes the state a per-browser CSRF token.
+    """
+    if not state or "." not in state or not nonce:
         return False
     payload_s, sig = state.rsplit(".", 1)
     payload = payload_s.encode()
     if not hmac.compare_digest(_sign(payload), sig):
         return False
     try:
-        ts = json.loads(base64.urlsafe_b64decode(payload))["ts"]
+        data = json.loads(base64.urlsafe_b64decode(payload))
+        ts = data["ts"]
+        state_nonce = str(data.get("n") or "")
     except Exception:
+        return False
+    if not state_nonce or not hmac.compare_digest(state_nonce, nonce):
         return False
     return time.time() - ts < STATE_TTL_S
 
 
-def login_url(redirect_uri: str) -> str:
+def login_url(redirect_uri: str, nonce: str) -> str:
     params = {
         "client_id": CLIENT_ID,
         "redirect_uri": redirect_uri,
         "response_type": "code",
         "scope": "openid email profile",
-        "state": make_state(),
+        "state": make_state(nonce),
         "prompt": "select_account",
     }
     return AUTH_URL + "?" + urllib.parse.urlencode(params)

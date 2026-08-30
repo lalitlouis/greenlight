@@ -11,9 +11,14 @@ import json
 import pytest
 from fastapi.testclient import TestClient
 
+from greenlight import server as _server_mod
 from greenlight.server import DESKS, app
 
 client = TestClient(app)
+
+# captured at import, before the autouse _hermetic_pause fixture stubs it out —
+# the kill-switch test needs the real implementation
+_REAL_RUNS_PAUSED = _server_mod._runs_paused
 
 
 @pytest.fixture(autouse=True)
@@ -277,7 +282,7 @@ def test_invite_gate_blocks_unredeemed(monkeypatch):
     from greenlight import server
 
     monkeypatch.setattr(server, "REQUIRE_INVITE", True)
-    monkeypatch.setattr(server.storage, "load_research", lambda k: None)
+    monkeypatch.setattr(server.storage, "load_research", lambda k, max_age_s=None: None)
     r = client.post("/api/runs", files={"screenplay": ("t.fountain", b"INT. ROOM - DAY\n")})
     assert r.status_code == 403
     assert "invite" in r.json()["detail"].lower()
@@ -297,7 +302,7 @@ def test_invite_redeemed_user_passes_gate(monkeypatch):
         stored[k] = v
         return True
 
-    monkeypatch.setattr(server.storage, "load_research", stored.get)
+    monkeypatch.setattr(server.storage, "load_research", lambda k, max_age_s=None: stored.get(k))
     monkeypatch.setattr(server.storage, "save_research", fake_save)
     monkeypatch.setattr(server, "_INVITE_CODES", {"PILOT1"})
     user = {"sub": "u1", "email": "pilot@example.com"}
@@ -366,3 +371,82 @@ def test_admin_overview_fleet_reads_firestore_not_memory(monkeypatch):
     assert by_id["run_b"]["elapsed_s"] == 300  # finished: finished_at - started_at
     assert by_id["run_c"]["elapsed_s"] is None  # pre-finished_at doc: unknowable
     assert by_id["run_a"]["owner"] == "subsubsubs…"  # sub truncated, no roster match
+
+
+# --- security fixes (2026-08-30 security review) -----------------------------
+
+
+def test_paid_endpoints_require_signin(monkeypatch):
+    """/api/fix and the what-if pair spend model budget (fix uses the Pro tier).
+    Anonymous callers could drive them against the PUBLIC demo run id, throttled
+    only by a spoofable per-IP lane."""
+    from greenlight import auth as auth_mod
+    from greenlight import server
+
+    monkeypatch.setattr(server, "_current_user", lambda req: None)
+    monkeypatch.setattr(auth_mod, "configured", lambda: True)
+    body = {"run_id": "run_20260826_demo", "cuts": [], "extra": []}
+    assert client.post("/api/whatif", json=body).status_code == 401
+    assert client.post("/api/whatif/suggest", json=body).status_code == 401
+    assert (
+        client.post("/api/fix", json={"run_id": "run_20260826_demo", "flag_id": "F101"}).status_code
+        == 401
+    )
+
+
+def test_client_ip_ignores_the_spoofable_left_hop():
+    """Cloud Run appends the real peer; the left of X-Forwarded-For is whatever
+    the caller typed. Keying limits off it let one client mint a fresh bucket
+    per request by rotating the header."""
+    from types import SimpleNamespace
+
+    from greenlight import server
+
+    def req(xff):
+        return SimpleNamespace(
+            headers={"x-forwarded-for": xff}, client=SimpleNamespace(host="10.0.0.1")
+        )
+
+    assert server._client_ip(req("1.2.3.4")) == "1.2.3.4"
+    # attacker prepends junk; the trusted appended hop still keys the limit
+    assert server._client_ip(req("evil-spoof, 1.2.3.4")) == "1.2.3.4"
+    assert server._client_ip(req("a, b, c, 1.2.3.4")) == "1.2.3.4"
+    # no header at all -> the socket peer
+    assert server._client_ip(SimpleNamespace(headers={}, client=SimpleNamespace(host="9.9.9.9")))
+
+
+def test_owner_lookup_failure_denies_instead_of_allowing(monkeypatch):
+    """A storage fault must never read as 'anonymous, anyone may act' on the
+    delete path — that would route an OWNED run into the capability delete."""
+    from greenlight import server, storage
+
+    def boom(_run_id):
+        raise storage.OwnerLookupError("gcs down")
+
+    monkeypatch.setattr(server.storage, "load_owner", boom)
+    monkeypatch.setattr(server, "_disk_record", lambda rid: None)
+    res = client.delete("/api/runs/abc123def456")
+    assert res.status_code == 503
+    assert "verify" in res.json()["detail"].lower()
+
+
+def test_pause_flag_and_invites_never_expire(monkeypatch):
+    """The kill switch and invite redemptions share the research blob layer,
+    which TTLs cached research at 7 days. A pause that lapses is not a switch."""
+    import time as _t
+
+    from greenlight import server, storage
+
+    stale = {"paused": True, "by": "boss@example.com", "_cached_at": _t.time() - 30 * 24 * 3600}
+    seen: dict = {}
+
+    def fake_load(key, max_age_s=storage.RESEARCH_TTL_S):
+        seen[key] = max_age_s
+        # emulate the real TTL rule the blob layer applies
+        if max_age_s is not None and _t.time() - stale["_cached_at"] > max_age_s:
+            return None
+        return stale
+
+    monkeypatch.setattr(server.storage, "load_research", fake_load)
+    assert _REAL_RUNS_PAUSED(), "a month-old pause must still be in force"
+    assert seen[server._PAUSE_KEY] is None

@@ -60,6 +60,26 @@ def _bucket():
     return _cache["client"].bucket(BUCKET)
 
 
+def available() -> bool:
+    """Whether durable storage is reachable at all.
+
+    When it is not (local dev, tests, no credentials) nothing was ever
+    persisted, so no run can carry an owner and the capability model is the
+    only model — returning "no owner" there is correct, not a failure. That is
+    a different fact from a configured bucket erroring on one read, which must
+    never be read as "anonymous". Only success is cached, so a bucket that is
+    briefly unreachable at boot does not disable ownership for the process.
+    """
+    if _cache.get("available"):
+        return True
+    try:
+        _bucket()
+    except Exception:
+        return False
+    _cache["available"] = True
+    return True
+
+
 def save_record(run_id: str, record: dict[str, Any]) -> bool:
     try:
         _bucket().blob(f"records/{run_id}.json").upload_from_string(
@@ -123,10 +143,17 @@ def load_script(run_id: str) -> str | None:
 RESEARCH_TTL_S = 7 * 24 * 3600  # a week: fresh enough for citations, stable for reruns
 
 
-def load_research(key: str) -> dict[str, Any] | None:
+def load_research(key: str, max_age_s: float | None = RESEARCH_TTL_S) -> dict[str, Any] | None:
     """Cross-run research cache: the same clearance question re-asks the web at
     most weekly. Stabilizes reruns (same sources -> same verifier outcomes) and
-    stops paying twice for the same question."""
+    stops paying twice for the same question.
+
+    max_age_s=None means "never expires" and is REQUIRED for the control-plane
+    values that share this blob layer — the operator kill switch and invite
+    redemptions are durable state, not cached research. Under the default TTL a
+    paused service silently resumed itself a week later, and redeemed invites
+    lapsed weekly; neither has anything to do with citation freshness.
+    """
     try:
         blob = _bucket().blob(f"research/{key}.json")
         if not blob.exists():
@@ -134,7 +161,7 @@ def load_research(key: str) -> dict[str, Any] | None:
         data = json.loads(blob.download_as_text())
         import time as _t
 
-        if _t.time() - data.get("_cached_at", 0) > RESEARCH_TTL_S:
+        if max_age_s is not None and _t.time() - data.get("_cached_at", 0) > max_age_s:
             return None
         return data
     except Exception:
@@ -230,14 +257,28 @@ def save_owner(run_id: str, sub: str) -> bool:
         return False
 
 
+class OwnerLookupError(RuntimeError):
+    """The owner blob could not be READ. Distinct from "there is no owner":
+    callers gate authorization on this answer, so a lookup failure must fail
+    CLOSED (deny) instead of degrading into "anonymous, allowed"."""
+
+
 def load_owner(run_id: str) -> str | None:
+    """The run's owner sub, or None when the run is genuinely anonymous.
+
+    Raises OwnerLookupError if the answer is unknown — never conflate a storage
+    fault with an absent owner, because both ownership gates read a falsy
+    result as "anonymous, anyone may act".
+    """
+    if not available():
+        return None
     try:
         blob = _bucket().blob(f"owners/{run_id}")
         if not blob.exists():
             return None
         return blob.download_as_bytes().decode().strip()
-    except Exception:
-        return None
+    except Exception as e:
+        raise OwnerLookupError(f"owner lookup failed for {run_id}: {type(e).__name__}") from e
 
 
 def delete_anon_run(run_id: str) -> bool:
