@@ -51,7 +51,7 @@ function renderOverview(o) {
   const fleet = $("adm-fleet");
   fleet.textContent = "";
   let tr = el("tr");
-  for (const h of ["Run", "Title", "Owner", "Status", "Started", "Duration"])
+  for (const h of ["Run", "Title", "Owner", "Status", "Started", "Duration", "Cost"])
     tr.appendChild(el("th", null, h));
   fleet.appendChild(tr);
   for (const r of o.fleet || []) {
@@ -63,6 +63,7 @@ function renderOverview(o) {
     cell(tr, r.status);
     cell(tr, r.started_at ? fmtDate(new Date(r.started_at * 1000).toISOString()) : "—");
     cell(tr, fmtElapsed(r.elapsed_s), true);
+    cell(tr, r.cost_usd != null ? "$" + r.cost_usd.toFixed(2) : "—", true);
     fleet.appendChild(tr);
   }
   if ((o.fleet || []).length === 0) {

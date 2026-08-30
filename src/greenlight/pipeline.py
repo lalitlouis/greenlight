@@ -47,6 +47,8 @@ from greenlight.agents import (  # noqa: E402
     verification,
 )
 from greenlight.agents.verification import apply_verdicts  # noqa: E402
+from greenlight.costing import accumulate_usage as _accumulate_usage  # noqa: E402
+from greenlight.costing import usage_cost_usd as _usage_cost_usd  # noqa: E402
 from greenlight.tools import toolbelt  # noqa: E402
 from greenlight.tools.toolbelt import DESKS, _desk_name_of  # noqa: E402
 
@@ -385,6 +387,7 @@ async def run(  # noqa: PLR0912, PLR0915 - one linear run sequence, deliberately
     )
     t0 = time.time()
     error: str | None = None
+    usage: dict[str, dict[str, int]] = {}
     try:
         # Inactivity watchdog: every client is timeout-bounded (Gemini 480s,
         # Parallel 120s, ClickHouse 60s), yet three multi-hour stalls in one
@@ -404,6 +407,7 @@ async def run(  # noqa: PLR0912, PLR0915 - one linear run sequence, deliberately
                 raise RuntimeError(
                     f"StallTimeout: no agent event for {_EVENT_STALL_S}s — aborting and salvaging"
                 ) from None
+            _accumulate_usage(usage, event)
             if on_event is not None:
                 for ev in structured_events(event):
                     on_event(ev)
@@ -514,6 +518,13 @@ async def run(  # noqa: PLR0912, PLR0915 - one linear run sequence, deliberately
             k: v for k, v in state.items() if isinstance(k, str) and k.startswith("research:")
         },
     }
+    searches = {
+        v.get("search_id")
+        for v in record["research"].values()
+        if isinstance(v, dict) and v.get("search_id")
+    }
+    record["gemini_usage"] = usage
+    record["cost_usd"] = _usage_cost_usd(usage, len(searches))
     return record
 
 

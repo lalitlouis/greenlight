@@ -160,6 +160,7 @@ def main() -> int:
             "record_saved": True,
             "finished_at": time.time(),
             "elapsed_s": record.get("elapsed_s"),
+            "cost_usd": record.get("cost_usd"),
         },
     )
     runstate.increment("runs_completed")
@@ -181,6 +182,8 @@ def main() -> int:
         "rejected": len(record.get("rejected_flags", [])),
         "score": record.get("report", {}).get("greenlight_score"),
         "searches_spent": sum(max(0, budgets.get(d, 0) - (left.get(d) or 0)) for d in budgets),
+        "cost_usd": record.get("cost_usd"),
+        "gemini_usage": record.get("gemini_usage"),
     }
     print(_json.dumps(summary))
     return 0

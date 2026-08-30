@@ -650,6 +650,7 @@ async def _run_live(handle: RunHandle, script_path: Path) -> None:
                 "record_saved": True,
                 "finished_at": _time_module.time(),
                 "elapsed_s": record.get("elapsed_s"),
+                "cost_usd": record.get("cost_usd"),
             },
         )
         await asyncio.to_thread(storage.save_record, handle.run_id, record)
@@ -1284,6 +1285,7 @@ async def admin_overview(request: Request) -> dict[str, Any]:
                 "owner": email_by_sub.get(owner_sub) or owner_sub,
                 "started_at": started,
                 "elapsed_s": elapsed,
+                "cost_usd": r.get("cost_usd"),
             }
         )
 
