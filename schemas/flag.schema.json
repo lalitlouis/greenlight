@@ -187,6 +187,10 @@
     "recoverable": {
       "type": "boolean",
       "description": "On rejected flags: whether the rejection was a sourcing failure eligible for re-sourcing."
+    },
+    "cost_excluded_on_target_path": {
+      "type": "boolean",
+      "description": "Set by the adjudication plan: this flag's remedy cost is moot when the production follows the target-rating path. The flag still renders; the report's target-path cost total excludes it."
     }
   }
 }

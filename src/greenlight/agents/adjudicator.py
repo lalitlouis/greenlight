@@ -42,6 +42,13 @@ class MergeAction(BaseModel):
 class Conflict(BaseModel):
     flag_ids: list[str]
     resolution: str = Field(description="How the remedies interact and which should proceed first.")
+    target_path_moot_flag_ids: list[str] = Field(
+        default_factory=list,
+        description="Flags whose remedy COST becomes moot when the production follows the "
+        "stated resolution toward its target rating (e.g. a music license only needed if the "
+        "scene survives in the R cut). The flags still render; their cost moves to the "
+        "as-written path. Empty when the remedies merely order.",
+    )
 
 
 class AdjudicationPlan(BaseModel):
@@ -76,7 +83,15 @@ Produce an adjudication plan:
    actions (a merge of one flag with an empty merged_flag_ids list is a rename).
 3. CONFLICTS. Where two remedies touch the same lines or scenes (ratings wants a line cut,
    clearance wants it rewritten; a territory cut would remove a scene other flags anchor to),
-   record the interaction and state which remedy should proceed and why.
+   record the interaction and state which remedy should proceed and why. When your resolution
+   makes another flag's remedy COST moot on the target-rating path (cutting a song for the
+   rating removes the need to license it), list those flag ids in target_path_moot_flag_ids —
+   the report shows a two-path cost total from exactly this field.
+4. SEVERITY DISCIPLINE. Severity is triage and must use the full scale: a remedy that is a
+   free, local fix (a dialogue swap, renaming a background prop) is LOW; awareness-only
+   items with NO_ACTION are FYI. A report where every finding sits at MEDIUM or above
+   cannot be triaged. When a filed severity is plainly inflated relative to its remedy,
+   downgrade it one step via a single-flag merge action with the rationale on record.
 
 Be conservative: when unsure whether two flags are one finding, leave them separate.
 """
@@ -109,16 +124,6 @@ def _cap_scenes(flag: dict[str, Any], prior: list[str]) -> None:
         flag["scene_ids"] = ordered[:_SCENE_CAP]
 
 
-def _respect_partial_cap(flag: dict[str, Any]) -> None:
-    """A [partially supported] finding was capped at MEDIUM by the verifier;
-    no merge may quietly restore a higher severity to caveated evidence."""
-    if str(flag.get("finding", "")).startswith("[partially supported]") and flag["severity"] in (
-        "BLOCKER",
-        "HIGH",
-    ):
-        flag["severity"] = "MEDIUM"
-
-
 def merge_exact_duplicates(flags: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """Code-level dedupe BEFORE the model sees anything: same desk + same
     category + overlapping scenes is one finding, full stop. Keeps the higher
@@ -145,7 +150,6 @@ def merge_exact_duplicates(flags: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 existing["citations"] += [c for c in flag["citations"] if c["excerpt"] not in seen]
                 if sev_rank[flag["severity"]] < sev_rank[existing["severity"]]:
                     existing["severity"] = flag["severity"]
-                _respect_partial_cap(existing)
                 merged = True
                 break
         if not merged:
@@ -159,6 +163,7 @@ def apply_plan(
     """Apply an adjudication plan deterministically. Unknown ids are ignored; a flag
     the plan does not touch survives unchanged. Returns (flags, applied_notes)."""
     by_id = {f["flag_id"]: f for f in flags}
+    flags_category_before = {f["flag_id"]: f["category"] for f in flags}
     absorbed: set[str] = set()
     notes: list[str] = []
     sev_rank = {"BLOCKER": 0, "HIGH": 1, "MEDIUM": 2, "LOW": 3, "FYI": 4}
@@ -191,15 +196,25 @@ def apply_plan(
         if max_rank == 0:  # a BLOCKER is never softened by a merge plan
             final_rank = 0
         survivor["severity"] = ranks[min(final_rank, len(ranks) - 1)]
-        _respect_partial_cap(survivor)
         if action.get("category"):
             survivor["category"] = action["category"]
-        if merged_real or action.get("category"):
-            notes.append(
-                f"{action['surviving_flag_id']}: absorbed {merged_real or 'none'} "
-                f"({action.get('rationale', '')})"
-            )
+        # PARTIAL is a confidence marker, not a severity cap (run-3 decision) —
+        # merges apply the highest-severity rule above and nothing else.
+        rationale = action.get("rationale", "")
+        sid = action["surviving_flag_id"]
+        if merged_real:
+            notes.append(f"{sid}: absorbed {', '.join(merged_real)} ({rationale})")
+        elif action.get("category") and action["category"] != flags_category_before.get(sid):
+            notes.append(f"{sid}: category normalized to {action['category']} ({rationale})")
+        elif rationale:
+            notes.append(f"{sid}: {rationale}")
 
     result = [f for f in flags if f["flag_id"] not in absorbed]
-    notes += [f"conflict: {c['resolution']}" for c in plan.get("conflicts", [])]
+    for c in plan.get("conflicts", []):
+        notes.append(f"conflict: {c['resolution']}")
+        # Two-path cost: the flags the resolution moots on the target path keep
+        # rendering, but the report's target-path total excludes their cost.
+        for fid in c.get("target_path_moot_flag_ids") or []:
+            if fid in by_id and fid not in absorbed:
+                by_id[fid]["cost_excluded_on_target_path"] = True
     return result, notes

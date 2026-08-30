@@ -55,6 +55,11 @@ class Verdict(BaseModel):
     ] = "none"
 
 
+class _RatingReconcile(BaseModel):
+    rationale: str
+    beats_to_cut: list[str]
+
+
 VERIFIER_PROMPT = """\
 You are an independent citation verifier for a screenplay clearance report. You are shown one
 claim, the screenplay scenes it anchors to, and the source excerpts cited for it — never the
@@ -110,7 +115,7 @@ For SUPPORTED and PARTIAL verdicts, failure_mode is "none".
 The premise must come from the excerpts, not from your own knowledge. If the premise is true
 but these excerpts do not show it, that is not SUPPORTED.
 
-Two cautions on script facts. The scene text shows ONLY the scenes labeled above (===
+Cautions on script facts. The scene text shows ONLY the scenes labeled below (===
 S### ===), never the whole screenplay, and a scene marked TRUNCATED continues beyond what
 you see — absence from shown text is only a misstatement if the shown text positively
 contradicts the claim. Never rule "not in the script" against a truncated scene, and NEVER
@@ -119,6 +124,22 @@ resting on unshown scenes is at most premise_unsupported, never script_misstatem
 Fabricating a specific absence ("X is not mentioned in S023") about unshown text once
 killed a true finding.
 
+The FULL-SCRIPT SEARCH below is authoritative the other way: each quoted string from the
+claim was mechanically searched across the ENTIRE screenplay. A hit proves that text IS on
+the page in the named scene, even when that scene is not shown above — never rule a quoted
+line absent when the search found it. "NOT FOUND anywhere" is the only license to say a
+quoted string is not in the script. Before rejecting a fact as an unstated assumption,
+check the search results AND the shown scenes: a fact stated anywhere the search surfaced
+is a stated fact. The inference rule cuts both ways: attributes the script assigns to one
+thing must not be silently transferred to another (a syndicate described as Asian does not
+make its individually-described boss Asian).
+
+SOURCE AUTHORITY: weigh whether each excerpt's SOURCE speaks with authority for the
+premise's domain — a claim about a national ratings body needs that body or reporting on
+it, not an unrelated council's meeting minutes; a legal doctrine needs more than a single
+obscure aggregator. Real support from a non-authoritative source is PARTIAL, not
+SUPPORTED.
+
 CLAIM (severity {severity}, category {category}):
 {finding}
 
@@ -126,6 +147,9 @@ REMEDY ASSERTED: {remedy}
 
 SCRIPT CONTEXT (authoritative, scenes {scene_ids}):
 {script_context}
+
+FULL-SCRIPT SEARCH (mechanical, whole screenplay):
+{search_results}
 
 CITED EXCERPTS:
 {citations}
@@ -144,7 +168,11 @@ def _scene_context(flag: dict[str, Any], state: Any) -> str:
     # anchored a Sbarro finding at S019 while quoting S023; the verifier,
     # shown only S019, fabricated "Sbarro is not mentioned in S023" and killed
     # a true finding). Include every scene the FINDING ITSELF references.
-    referenced = _re.findall(r"\bS\d{3}\b", str(flag.get("finding") or ""))
+    remedy = flag.get("remedy") or {}
+    referenced = _re.findall(
+        r"\bS\d{3}\b",
+        " ".join([str(flag.get("finding") or ""), str(remedy.get("detail") or "")]),
+    )
     sids = list(dict.fromkeys([*flag["scene_ids"], *referenced]))
     scenes = [by_id[sid] for sid in sids if sid in by_id]
     if not scenes:
@@ -163,7 +191,43 @@ def _scene_context(flag: dict[str, Any], state: Any) -> str:
     return "\n\n".join(chunks)
 
 
-def _blinded_prompt(flag: dict[str, Any], script_context: str) -> str:
+_MAX_SEARCH_TERMS = 8
+_QUOTED_RE = _re.compile(r'["“]([^"“”]{4,120})["”]')
+
+
+def _search_context(flag: dict[str, Any], state: Any) -> str:
+    """Mechanical whole-script search for every quoted string in the claim.
+    The verifier's window bug (run 4: four of five rejections false) was
+    absence rulings made from a partial window — 'Sbarro is not in dialogue'
+    while both lines sat in a scene the finding never named. The search is
+    deterministic; the verifier just has to read it."""
+    text = str(state.get("script_text") or "")
+    if not text:
+        return "(script text unavailable — make no absence rulings)"
+    remedy = flag.get("remedy") or {}
+    source = " ".join([str(flag.get("finding") or ""), str(remedy.get("detail") or "")])
+    terms = list(dict.fromkeys(t.strip() for t in _QUOTED_RE.findall(source) if t.strip()))
+    if not terms:
+        return "(no quoted strings in the claim to search for)"
+    by_span = [(s["raw_span"][0], s["raw_span"][1], s["scene_id"]) for s in state.get("scenes", [])]
+    low = text.lower()
+    lines: list[str] = []
+    for term in terms[:_MAX_SEARCH_TERMS]:
+        pos = low.find(term.lower())
+        if pos < 0:
+            # scripts wrap lines mid-sentence; retry whitespace-insensitively
+            m = _re.search(r"\s+".join(_re.escape(w) for w in term.split()), text, _re.IGNORECASE)
+            pos = m.start() if m else -1
+        if pos < 0:
+            lines.append(f'- "{term}" — NOT FOUND anywhere in the screenplay')
+            continue
+        sid = next((s for a, b, s in by_span if a <= pos < b), "outside any scene")
+        snippet = " ".join(text[max(0, pos - 100) : pos + len(term) + 100].split())
+        lines.append(f'- "{term}" — FOUND in {sid}: “…{snippet}…”')
+    return "\n".join(lines)
+
+
+def _blinded_prompt(flag: dict[str, Any], script_context: str, search_results: str) -> str:
     citations = "\n\n".join(
         f'[{i + 1}] {c.get("title") or c.get("url") or "untitled"}\n"{c["excerpt"]}"'
         for i, c in enumerate(flag["citations"])
@@ -176,6 +240,7 @@ def _blinded_prompt(flag: dict[str, Any], script_context: str) -> str:
         remedy=remedy,
         scene_ids=", ".join(flag["scene_ids"]),
         script_context=script_context,
+        search_results=search_results,
         citations=citations,
     )
 
@@ -207,7 +272,15 @@ def apply_verdicts(
             marked["finding"] = "[partially supported] " + marked["finding"]
             kept.append(marked)
         else:
-            recoverable = v.get("failure_mode") in ("premise_unsupported", "citation_offtopic")
+            # script_misstatement is recoverable too — via correct-and-refile,
+            # not re-sourcing. Excluding it here made the correction branch
+            # dead code, so every misstatement rejection (even one resting on
+            # a factual error in a single clause) deleted the whole finding.
+            recoverable = v.get("failure_mode") in (
+                "premise_unsupported",
+                "citation_offtopic",
+                "script_misstatement",
+            )
             rejected.append(
                 {
                     **flag,
@@ -220,7 +293,11 @@ def apply_verdicts(
 
 
 async def _verify_flag(
-    client: Any, flag: dict[str, Any], script_context: str, sem: asyncio.Semaphore
+    client: Any,
+    flag: dict[str, Any],
+    script_context: str,
+    search_results: str,
+    sem: asyncio.Semaphore,
 ) -> dict:
     async with sem:
         delay = 10.0
@@ -228,7 +305,7 @@ async def _verify_flag(
             try:
                 res = await client.aio.models.generate_content(
                     model=MODEL,
-                    contents=_blinded_prompt(flag, script_context),
+                    contents=_blinded_prompt(flag, script_context, search_results),
                     config=types.GenerateContentConfig(
                         response_mime_type="application/json",
                         response_schema=Verdict,
@@ -269,7 +346,9 @@ async def verify_standalone(
     sem = asyncio.Semaphore(_CONCURRENCY)
 
     async def _one(f: dict[str, Any]) -> tuple[str, dict[str, Any]]:
-        return f["flag_id"], await _verify_flag(client, f, _scene_context(f, state), sem)
+        return f["flag_id"], await _verify_flag(
+            client, f, _scene_context(f, state), _search_context(f, state), sem
+        )
 
     results = await asyncio.gather(*[_one(f) for f in flags])
     return dict(results)
@@ -373,8 +452,68 @@ class VerificationPanel(BaseAgent):
             return None
         return fixed[:1500]
 
+    async def _reconcile_rating(
+        self,
+        client: Any,
+        pred: dict[str, Any],
+        kept: list[dict[str, Any]],
+        dropped: list[dict[str, Any]],
+        sem: asyncio.Semaphore,
+    ) -> dict[str, Any] | None:
+        """The ratings desk files its rationale and cut list DURING its loop —
+        before verification exists. A rejected finding must take its clause of
+        the rationale and its cut with it, or the report contradicts itself
+        (run 4: a cut for open-bottle drinking-while-driving derived from a
+        finding the verifier rejected because the car is parked). Returns the
+        revised {rationale, beats_to_cut} or None to leave the prediction as
+        filed (fail-open: reconciliation must never delete the prediction)."""
+        rejected_lines = "\n".join(
+            f"- {r['flag_id']}: {str(r.get('finding', ''))[:300]}\n"
+            f"  REJECTED BECAUSE: {str(r.get('rejection_reason', ''))[:300]}"
+            for r in dropped
+        )
+        surviving = "\n".join(
+            f"- {f['flag_id']} ({f['severity']} {f['category']}): {str(f.get('finding', ''))[:160]}"
+            for f in kept
+        )
+        prompt = (
+            "A screenplay's MPA rating prediction was filed before citation verification. "
+            "Verification has now REJECTED some findings; the script facts stated in the "
+            "rejection reasons are authoritative. Revise the rating rationale and the cut "
+            "list so neither rests on rejected material: remove or amend ONLY clauses and "
+            "cuts whose sole support was a rejected finding, keep everything else verbatim, "
+            "and never invent new content or new cuts.\n\n"
+            f"CURRENT RATIONALE:\n{pred.get('rationale', '')}\n\n"
+            "CURRENT CUT LIST:\n"
+            + "\n".join(f"- {b}" for b in pred.get("beats_to_cut") or [])
+            + f"\n\nREJECTED FINDINGS:\n{rejected_lines}\n\n"
+            f"SURVIVING FINDINGS:\n{surviving}\n"
+        )
+        async with sem:
+            try:
+                res = await client.aio.models.generate_content(
+                    model=MODEL,
+                    contents=prompt,
+                    config=types.GenerateContentConfig(
+                        response_mime_type="application/json",
+                        response_schema=_RatingReconcile,
+                        temperature=0.0,
+                    ),
+                )
+                out = _RatingReconcile.model_validate_json(res.text)
+            except Exception:
+                return None
+        if not out.rationale.strip():
+            return None
+        return {"rationale": out.rationale.strip(), "beats_to_cut": out.beats_to_cut}
+
     async def _verify_one(
-        self, client: Any, flag: dict[str, Any], script_context: str, sem: asyncio.Semaphore
+        self,
+        client: Any,
+        flag: dict[str, Any],
+        script_context: str,
+        search_results: str,
+        sem: asyncio.Semaphore,
     ) -> dict:
         async with sem:
             delay = 10.0
@@ -382,7 +521,7 @@ class VerificationPanel(BaseAgent):
                 try:
                     res = await client.aio.models.generate_content(
                         model=MODEL,
-                        contents=_blinded_prompt(flag, script_context),
+                        contents=_blinded_prompt(flag, script_context, search_results),
                         config=types.GenerateContentConfig(
                             response_mime_type="application/json",
                             response_schema=Verdict,
@@ -431,7 +570,9 @@ class VerificationPanel(BaseAgent):
         sem = asyncio.Semaphore(_CONCURRENCY)
 
         async def _one(f: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any]]:
-            return f, await self._verify_one(client, f, _scene_context(f, state), sem)
+            return f, await self._verify_one(
+                client, f, _scene_context(f, state), _search_context(f, state), sem
+            )
 
         # Stream each verdict as it lands: the challenge-and-ruling is the part
         # of the run worth watching, so it must not arrive as one silent batch.
@@ -478,7 +619,12 @@ class VerificationPanel(BaseAgent):
                 # A factual slip (wrong character name) once deleted a whole
                 # territory analysis. One correction round: restate the finding
                 # to ONLY what the script supports, keep citations, re-verify.
-                fixed = await self._correct_finding(client, r, _scene_context(r, state), sem)
+                evidence = (
+                    _scene_context(r, state)
+                    + "\n\nFULL-SCRIPT SEARCH (authoritative):\n"
+                    + _search_context(r, state)
+                )
+                fixed = await self._correct_finding(client, r, evidence, sem)
                 if not fixed:
                     continue
                 retry_flag = {**r, "finding": fixed, "resourced": True}
@@ -489,7 +635,13 @@ class VerificationPanel(BaseAgent):
                 retry_flag = {**r, "citations": new_cits, "resourced": True}
             retry_flag.pop("rejection_reason", None)
             retry_flag.pop("recoverable", None)
-            v2 = await self._verify_one(client, retry_flag, _scene_context(retry_flag, state), sem)
+            v2 = await self._verify_one(
+                client,
+                retry_flag,
+                _scene_context(retry_flag, state),
+                _search_context(retry_flag, state),
+                sem,
+            )
             verdicts[r["flag_id"] + ":resourced"] = v2
             yield Event(
                 invocation_id=ctx.invocation_id,
@@ -510,6 +662,39 @@ class VerificationPanel(BaseAgent):
                 dropped = [d for d in dropped if d["flag_id"] != r["flag_id"]]
                 resourced_stats["recovered"] += 1
 
+        # The rating panel's rationale and cut list must describe the POST-
+        # verification finding set, not the desk's pre-verification one.
+        rating_delta: dict[str, Any] = {}
+        pred = state.get("rating_prediction")
+        if pred and dropped:
+            revised = await self._reconcile_rating(client, pred, kept, dropped, sem)
+            if revised is not None and (
+                revised["rationale"] != pred.get("rationale")
+                or revised["beats_to_cut"] != (pred.get("beats_to_cut") or [])
+            ):
+                rating_delta["rating_prediction"] = {
+                    **pred,
+                    **revised,
+                    "reconciled_after_verification": True,
+                    "pre_verification": {
+                        "rationale": pred.get("rationale"),
+                        "beats_to_cut": pred.get("beats_to_cut"),
+                    },
+                }
+                yield Event(
+                    invocation_id=ctx.invocation_id,
+                    author=self.name,
+                    content=types.Content(
+                        role="model",
+                        parts=[
+                            types.Part(
+                                text="⚖ rating rationale/cut list reconciled with "
+                                f"{len(dropped)} rejected finding(s)"
+                            )
+                        ],
+                    ),
+                )
+
         rejected = [
             fid for fid, v in verdicts.items() if ":" not in fid and v["verdict"] == "UNSUPPORTED"
         ]
@@ -528,6 +713,7 @@ class VerificationPanel(BaseAgent):
                     "verified_flags": kept,
                     "rejected_flags": dropped,
                     "resource_stats": resourced_stats,
+                    **rating_delta,
                 }
             ),
             content=types.Content(role="model", parts=[types.Part(text=summary)]),

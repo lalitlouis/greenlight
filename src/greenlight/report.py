@@ -47,6 +47,17 @@ def _cost_range(flags: list[dict[str, Any]]) -> list[float] | None:
     return [sum(lows), sum(highs)] if lows else None
 
 
+def _cost_paths(flags: list[dict[str, Any]]) -> dict[str, Any] | None:
+    """Two-path totals when the adjudicator ruled some remedy costs moot on the
+    target-rating path (run-4 review: the roll-up summed $70-160k of licensing
+    the adjudication itself said a PG-13 target invalidates). None when no flag
+    is marked — the single total stands alone."""
+    if not any(f.get("cost_excluded_on_target_path") for f in _scored(flags)):
+        return None
+    target = _cost_range([f for f in flags if not f.get("cost_excluded_on_target_path")])
+    return {"target_rating": target, "as_written": _cost_range(flags)}
+
+
 def _added_days(flags: list[dict[str, Any]]) -> float | None:
     days = [
         f["remedy"]["est_added_days"]
@@ -95,6 +106,7 @@ def build_report(
         "by_agent": by_agent,
         "est_clearance_cost_usd": _cost_range(flags),
         "est_added_days": _added_days(flags),
+        **({"est_cost_paths": paths} if (paths := _cost_paths(flags)) else {}),
         "rating_prediction": rating_prediction,
         "flags": flags,
     }

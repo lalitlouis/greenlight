@@ -1344,8 +1344,13 @@ def file_flag(  # noqa: PLR0912 - a deliberate sequence of filing gates
     scene_ids: ONLY the scenes where the element itself appears on the page,
       e.g. ["S004"] — never "the sequence around it"; a scene chip pointing at
       text that lacks the element reads as fabrication to the reader.
-    severity: BLOCKER | HIGH | MEDIUM | LOW | FYI. BLOCKER means cannot shoot or
-      cannot release as written.
+    severity: BLOCKER | HIGH | MEDIUM | LOW | FYI — a RISK judgment; use the FULL scale.
+      BLOCKER: cannot shoot or cannot release as written. HIGH: large exposure or an
+      expensive remedy (five figures up, or real schedule impact). MEDIUM: real cost or
+      negotiation, but bounded and routine. LOW: cheap, local fix — a dialogue swap, a
+      prop rename, a set-dressing change. FYI: no action required; filed for awareness
+      (usually NO_ACTION). A report where everything sits at MEDIUM+ cannot be triaged:
+      if the remedy is a free line change, the severity is LOW, not MEDIUM.
     category: short slug, e.g. "sync_license", "trademark_disparagement", "stunt_pyro".
     finding: one paragraph, plain English, addressed to a producer.
     citations: at least one. Each is an object with keys: source_type ("web"),

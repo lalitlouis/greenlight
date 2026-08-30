@@ -144,3 +144,35 @@ def test_title_page_feeds_do_not_shift_printed_pages():
     )
     _, scenes = parse_fountain(text)
     assert [s["page"] for s in scenes] == [1, 2]
+
+
+def test_attached_title_separator_feed_does_not_shift_pages():
+    """PDF extractors put the form feed at the START of the next page's first
+    line ("\\fINT. ..."), so the title->page-1 separator sits after body_start.
+    Run 4 (third flagging): every scene page ran exactly +1 because that feed
+    was counted as a body page break."""
+    from greenlight.parser import parse_fountain, printed_page_count
+
+    text = (
+        "Title: THE HANGOVER\nAuthor: L\n\n"
+        "\fINT. ROOM A - DAY\n\nAction.\n\n"
+        "\fINT. ROOM B - NIGHT\n\nMore.\n"
+    )
+    _, scenes = parse_fountain(text)
+    assert [s["page"] for s in scenes] == [1, 2]
+    assert printed_page_count(text) == 2
+
+
+def test_printed_page_count_includes_pages_after_last_scene():
+    """The header read 110 pp against a real 111: max(scene page) misses
+    printed pages after the final scene heading."""
+    from greenlight.parser import printed_page_count
+
+    text = (
+        "Title: X\nAuthor: L\n\n"
+        "\fINT. ROOM A - DAY\n\nAction.\n\n"
+        "\fMore action, no new scene.\n\n"
+        "\fTHE END\n"
+    )
+    assert printed_page_count(text) == 3
+    assert printed_page_count("no feeds here") is None

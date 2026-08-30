@@ -161,6 +161,32 @@ def strip_title_page(text: str) -> tuple[dict[str, str], int]:
     return (meta, offset) if meta else ({}, 0)
 
 
+def _front_matter_feeds(text: str, meta: dict[str, str], body_start: int, bound: int) -> int:
+    """Form feeds that belong to the title page, i.e. precede printed page 1.
+    PDF extractors put the feed at the START of the next page's first line
+    ("\\fFADE IN:"), so the title->page-1 separator usually sits AT or AFTER
+    body_start — counting only feeds before body_start missed it and left every
+    scene page +1 (run-4 review, third time flagged). When a title page exists
+    and no feed was counted in front matter, the first feed before the first
+    scene heading is that separator."""
+    front = text.count("\f", 0, body_start)
+    if meta and front == 0:
+        sep = text.find("\f", body_start, bound)
+        if sep != -1:
+            front = 1
+    return front
+
+
+def printed_page_count(text: str) -> int | None:
+    """Total printed pages when the source preserves form feeds; None otherwise.
+    max(scene page) undercounts — script pages after the last scene heading are
+    still pages (the header read 110 pp against a real 111)."""
+    if "\f" not in text:
+        return None
+    meta, body_start = strip_title_page(text)
+    return max(1, text.count("\f") - _front_matter_feeds(text, meta, body_start, len(text)) + 1)
+
+
 _SCENE_NUMBER_RE = __import__("re").compile(r"\s*#([A-Za-z0-9.\-]+)#\s*$")
 
 
@@ -200,7 +226,8 @@ def parse_fountain(  # noqa: PLR0912, PLR0915 - one continuous scan loop
     # Printed screenplay pages start AFTER front matter: subtract the feeds
     # consumed by the title page so scene pages match the script's own printed
     # numbers (the raw index ran uniformly +1 on a real 111-page script).
-    front_feeds = text.count("\f", 0, body_start) if has_feeds else 0
+    first_heading = heading_positions[0][0] if heading_positions else len(text)
+    front_feeds = _front_matter_feeds(text, meta, body_start, first_heading) if has_feeds else 0
 
     for i, (start, heading) in enumerate(heading_positions):
         end = heading_positions[i + 1][0] if i + 1 < len(heading_positions) else len(text)

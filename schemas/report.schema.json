@@ -217,6 +217,65 @@
             ]
           },
           "description": "Pooled Mondrian conformal prediction set: 90% coverage per pooled rating group ({G,PG},{PG-13},{R,NC-17}), 92% aggregate, from the measured CARA boundary. The guarantee the report leads with; the point prediction is the desk's call within (or explicitly diverging from) it."
+        },
+        "reconciled_after_verification": {
+          "type": "boolean",
+          "description": "True when the rationale and beats_to_cut were revised so they describe only the post-verification finding set."
+        },
+        "pre_verification": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The rationale and beats_to_cut exactly as the desk filed them, kept for the record when reconciliation changed them.",
+          "properties": {
+            "rationale": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "beats_to_cut": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "est_cost_paths": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Present only when the adjudication marked some remedy costs moot on the target-rating path: the same roll-up computed twice, so the two totals never silently double-count mutually exclusive remedies.",
+      "properties": {
+        "target_rating": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "type": "number"
+          }
+        },
+        "as_written": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "type": "number"
+          }
         }
       }
     },

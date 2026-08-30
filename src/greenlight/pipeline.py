@@ -447,7 +447,7 @@ async def run(  # noqa: PLR0912, PLR0915 - one linear run sequence, deliberately
         kept, adjudication_notes = adjudicator.apply_plan(kept, plan)
     kept.sort(key=lambda f: SEV_ORDER.get(f["severity"], 9))
 
-    page_count = scenes[-1]["page"] if scenes else None
+    page_count = parser.printed_page_count(source) or (scenes[-1]["page"] if scenes else None)
     incomplete = _incomplete_desks(state, verbose)
     the_report = report_mod.build_report(
         title,

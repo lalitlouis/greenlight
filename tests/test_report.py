@@ -179,3 +179,83 @@ def test_fail_open_flags_excluded_from_score():
     verified = [{"severity": "HIGH", "remedy": {}}]
     unverified = [{"severity": "BLOCKER", "remedy": {}, "verification_unavailable": True}]
     assert greenlight_score(verified + unverified) == greenlight_score(verified)
+
+
+# --- run-4 review batch: verifier window, two-path cost, plan hygiene --------
+
+
+def test_apply_verdicts_misstatement_is_recoverable():
+    """A rejection resting on a factual error must go around for correction,
+    not delete the finding (run 4: the correction branch was dead code and
+    every misstatement rejection was final)."""
+    flags = [make_flag("F101", "HIGH")]
+    _, rejected = apply_verdicts(
+        flags,
+        {
+            "F101": {
+                "verdict": "UNSUPPORTED",
+                "reason": "misstates",
+                "failure_mode": "script_misstatement",
+            }
+        },
+    )
+    assert rejected[0]["recoverable"] is True
+
+
+def test_cost_paths_split_when_adjudication_moots_a_remedy():
+    flags = [
+        make_flag("F101", "HIGH", cost=[70000, 160000]),
+        make_flag("F201", "MEDIUM", cost=[1000, 2000]),
+    ]
+    flags[0]["cost_excluded_on_target_path"] = True
+    rep = build_report("X", flags, page_count=10)
+    assert rep["est_clearance_cost_usd"] == [71000, 162000]
+    assert rep["est_cost_paths"]["as_written"] == [71000, 162000]
+    assert rep["est_cost_paths"]["target_rating"] == [1000, 2000]
+    # no marker, no split key
+    rep2 = build_report("X", [make_flag("F101", "HIGH", cost=[1, 2])], page_count=10)
+    assert "est_cost_paths" not in rep2
+
+
+def test_apply_plan_marks_target_path_moot_flags_and_formats_notes():
+    from greenlight.agents.adjudicator import apply_plan
+
+    flags = [make_flag("F101", "HIGH"), make_flag("F201", "MEDIUM")]
+    plan = {
+        "merges": [
+            {
+                "surviving_flag_id": "F101",
+                "merged_flag_ids": [],
+                "category": "sync_license",
+                "severity": "HIGH",
+                "rationale": "normalized slug",
+            }
+        ],
+        "conflicts": [
+            {
+                "flag_ids": ["F101", "F201"],
+                "resolution": "Cut the song for the rating; the license becomes moot.",
+                "target_path_moot_flag_ids": ["F101"],
+            }
+        ],
+    }
+    out, notes = apply_plan(flags, plan)
+    by_id = {f["flag_id"]: f for f in out}
+    assert by_id["F101"].get("cost_excluded_on_target_path") is True
+    assert "F201" not in {f["flag_id"] for f in out if f.get("cost_excluded_on_target_path")}
+    # a rename note names the category; no "absorbed none" ever renders
+    assert any("category normalized to sync_license" in n for n in notes)
+    assert not any("absorbed none" in n for n in notes)
+
+
+def test_merge_does_not_recap_partial_severity():
+    """PARTIAL is a confidence marker, not a severity cap (run-3 decision) —
+    a merge must not quietly restore the old MEDIUM cap."""
+    from greenlight.agents.adjudicator import merge_exact_duplicates
+
+    a = make_flag("F101", "HIGH")
+    a["finding"] = "[partially supported] A finding."
+    b = make_flag("F102", "HIGH")
+    merged = merge_exact_duplicates([a, b])
+    assert len(merged) == 1
+    assert merged[0]["severity"] == "HIGH"
