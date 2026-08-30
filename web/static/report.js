@@ -485,7 +485,7 @@ function renderPrediction(root, pred) {
   const sec = el("div", "section-head");
   sec.id = "sec-rating";
   sec.appendChild(el("h2", null, "Rating prediction"));
-  sec.appendChild(el("p", "lede", "Evidence, not opinion — your nearest comparables from 6,302 released films (corpus updated Aug 2026)."));
+  sec.appendChild(el("p", "lede", `Evidence, not opinion — your nearest comparables from ${corpusN()} released films (corpus updated Aug 2026).`));
   root.appendChild(sec);
 
   const card = el("div", "card pred-card");
@@ -544,7 +544,7 @@ function renderPrediction(root, pred) {
   meta.appendChild(el("p", "pred-evidence", line));
   const base = pred.corpus_base_rates || {};
   if (base[pred.predicted]) {
-    let baseLine = `Base rate: ${base[pred.predicted]}% of all 6,302 corpus films are rated ${pred.predicted} — the neighbours ${same + (typeof stricter === "number" ? stricter : 0) > Math.round((base[pred.predicted] / 100) * comps.length) ? "add lift over" : "match"} that baseline.`;
+    let baseLine = `Base rate: ${base[pred.predicted]}% of all ${corpusN()} corpus films are rated ${pred.predicted} — the neighbours ${same + (typeof stricter === "number" ? stricter : 0) > Math.round((base[pred.predicted] / 100) * comps.length) ? "add lift over" : "match"} that baseline.`;
     if (pred.distance_spread && pred.distance_spread < 0.05) {
       baseLine += ` Distances span only ${pred.distance_spread}, so weigh the base rate as much as the neighbour set.`;
     }
@@ -598,7 +598,7 @@ function renderPrediction(root, pred) {
     const cuts = el("div", "cuts");
     cuts.appendChild(el("div", "blk-label", `The cut list toward ${pred.target || "your target"} — test each cut`));
     cuts.appendChild(
-      el("p", "cuts-hint", "Check cuts to re-run the comparables search on your revised content profile — live against all 6,302 films. Cuts are levers, not guarantees: the simulator measures how far each one actually moves the rating.")
+      el("p", "cuts-hint", `Check cuts to re-run the comparables search on your revised content profile — live against all ${corpusN()} films. Cuts are levers, not guarantees: the simulator measures how far each one actually moves the rating.`)
     );
     const ol = el("ol", "cuts-list");
     pred.beats_to_cut.forEach((b, i) => {
@@ -656,7 +656,7 @@ function initWhatIf(cutsRoot, pred) {
       const s = (Date.now() - t0) / 1000;
       // paced against the typical ~8s round trip; holds at 92% until the result lands
       fill.style.width = Math.min(92, s * 12) + "%";
-      if (s > 3) stage.textContent = "Searching 6,302 released films for the new nearest comparables…";
+      if (s > 3) stage.textContent = `Searching ${corpusN()} released films for the new nearest comparables…`;
       if (s > 8) stage.textContent = "Almost there — ranking comparables…";
     }, 200);
     try {
@@ -853,8 +853,12 @@ function buildReportNav(record, rep) {
   const oqRaw = Object.values(record.open_questions || {}).flat();
   const oqCount = oqRaw.filter((q) => !isDetermination(q)).length;
   const clearedCount = clearedRows(record).rowCount;
+  // sec-cost only renders when at least one flag carries a cost — the chip
+  // must not link to a section that doesn't exist
+  const hasCostCard =
+    rep.est_clearance_cost_usd && (record.flags || []).some((f) => f.remedy?.est_cost_usd);
   const entries = [
-    rep.est_clearance_cost_usd ? ["sec-cost", "Cost exposure", null] : null,
+    hasCostCard ? ["sec-cost", "Cost exposure", null] : null,
     rep.rating_prediction?.predicted ? ["sec-rating", "Rating + simulator", null] : null,
     ["sec-findings", "Findings", cited.length],
     (record.rejected_flags || []).length ? ["sec-rejected", "Rejected", record.rejected_flags.length] : null,
@@ -1021,7 +1025,9 @@ function renderReport(record) {
   const proj = el("span", "proj");
   proj.appendChild(
     document.createTextNode(
-      `${(record.flags || []).length} findings · ` +
+      // the same cited-only count the Findings section shows — two different
+      // totals 600px apart is how a report loses a reader's trust
+      `${(record.flags || []).filter((f) => (f.citations || []).length > 0).length} findings · ` +
         `${(record.rejected_flags || []).length} rejected in verification · ` +
         entityHeadline(record)
     )
@@ -1040,13 +1046,8 @@ function renderReport(record) {
   const dims = rep.dimension_scores;
   if (dims) {
     const dimRow = el("div", "dims");
-    const names = {
-      clearance_counsel: "Rights",
-      ratings_board: "Ratings",
-      safety_underwriter: "Safety",
-      territory_censor: "Territory",
-    };
-    for (const [desk, label] of Object.entries(names)) {
+    for (const desk of DESK_IDS) {
+      const label = deskShort(desk);
       const v = dims[desk];
       if (v == null) continue;
       const cell = el("div", "dim by-" + desk);
@@ -1190,8 +1191,9 @@ function renderReport(record) {
     const sec = el("div", "section-head");
     sec.id = "sec-rejected";
     sec.appendChild(el("h2", null, `Rejected in verification — ${rejectedFlags.length}`));
+    const citedCount = (record.flags || []).filter((f) => (f.citations || []).length > 0).length;
     const rate = Math.round(
-      (100 * rejectedFlags.length) / Math.max(1, rejectedFlags.length + (record.flags || []).length)
+      (100 * rejectedFlags.length) / Math.max(1, rejectedFlags.length + citedCount)
     );
     sec.appendChild(
       el(
@@ -1308,7 +1310,7 @@ function renderReport(record) {
       const sub = el("ul", "plain-list cleared-desks");
       for (const d of ds) {
         const sli = el("li");
-        sli.appendChild(el("span", "who", prettyCat(d.desk)));
+        sli.appendChild(el("span", "who", deskName(d.desk)));
         sli.appendChild(document.createTextNode(d.text));
         sub.appendChild(sli);
       }
@@ -1317,7 +1319,7 @@ function renderReport(record) {
     }
     for (const d of cleared.scriptLevel) {
       const li = el("li");
-      li.appendChild(el("span", "who", prettyCat(d.desk)));
+      li.appendChild(el("span", "who", deskName(d.desk)));
       li.appendChild(document.createTextNode(d.text));
       ul.appendChild(li);
     }

@@ -67,8 +67,19 @@ def _unescape(text: str) -> str:
     return html.unescape(text or "")
 
 
+_DESK_NAMES = {
+    "clearance_counsel": "Clearance Counsel",
+    "ratings_board": "Ratings Board",
+    "safety_underwriter": "Safety Underwriter",
+    "territory_censor": "Territory Censor",
+}
+
+
 def _pretty(slug: str) -> str:
-    return (slug or "").replace("_", " ").strip().capitalize()
+    """Desk slugs get their proper names (mirrors common.js deskName) — the
+    binder must not call the same desk 'Clearance counsel' that the report
+    calls 'Clearance Counsel'."""
+    return _DESK_NAMES.get(slug, (slug or "").replace("_", " ").strip().capitalize())
 
 
 def _ranges(nums: list[int]) -> list[str]:

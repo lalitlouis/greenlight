@@ -200,6 +200,13 @@ def binder_pdf(data: dict[str, Any]) -> bytes:
     return buf.getvalue()
 
 
+def _distinct_entities(record: dict[str, Any]) -> int:
+    """Deduped headline count (mirrors report.js entityHeadline) — the paper
+    one-sheet must not claim 78 where the screen says 58."""
+    acct = record.get("entity_accounting") or {}
+    return acct.get("distinct", len(record.get("entities", [])))
+
+
 def onesheet_pdf(record: dict[str, Any]) -> bytes:
     from reportlab.pdfgen import canvas as pdfcanvas
 
@@ -212,6 +219,9 @@ def onesheet_pdf(record: dict[str, Any]) -> bytes:
 
     rep = record.get("report") or {}
     counts = rep.get("counts") or {}
+    # None is WITHHELD (a desk returned no dispositions) — `or 0` turned it
+    # into a confident red 0/100 on the printable one-sheet
+    withheld = rep.get("greenlight_score") is None
     score = rep.get("greenlight_score") or 0
     blockers = counts.get("BLOCKER", 0)
     margin = 0.75 * inch
@@ -238,31 +248,36 @@ def onesheet_pdf(record: dict[str, Any]) -> bytes:
     # score ring
     ring_x, ring_y, ring_r = w - margin - 55, y - 20, 44
     tone = (
-        SEV_COLORS["BLOCKER"]
+        SEV_COLORS["HIGH"]
+        if withheld
+        else SEV_COLORS["BLOCKER"]
         if blockers or score < 40
         else (SEV_COLORS["HIGH"] if score < 75 else colors.HexColor("#0e7c4a"))
     )
     c.setLineWidth(7)
     c.setStrokeColor(colors.HexColor("#22304a"))
     c.circle(ring_x, ring_y, ring_r, stroke=1, fill=0)
-    c.setStrokeColor(tone)
-    c.arc(
-        ring_x - ring_r,
-        ring_y - ring_r,
-        ring_x + ring_r,
-        ring_y + ring_r,
-        90,
-        -int(360 * min(100, score) / 100),
-    )
+    if not withheld:
+        c.setStrokeColor(tone)
+        c.arc(
+            ring_x - ring_r,
+            ring_y - ring_r,
+            ring_x + ring_r,
+            ring_y + ring_r,
+            90,
+            -int(360 * min(100, score) / 100),
+        )
     c.setFont("Times-Bold", 26)
     c.setFillColor(CREAM)
-    c.drawCentredString(ring_x, ring_y - 8, str(score))
+    c.drawCentredString(ring_x, ring_y - 8, "—" if withheld else str(score))
     c.setFont("Helvetica", 8)
     c.drawCentredString(ring_x, ring_y - 22, "/100")
 
     y -= 0.35 * inch
     verdict = (
-        f"Not cleared — {blockers} blocker(s)"
+        "Score withheld — analysis incomplete"
+        if withheld
+        else f"Not cleared — {blockers} blocker(s)"
         if blockers
         else ("Cleared, with conditions" if score >= 75 else "Conditional — remedies required")
     )
@@ -277,7 +292,7 @@ def onesheet_pdf(record: dict[str, Any]) -> bytes:
         y,
         f"{len(record.get('flags', []))} findings · "
         f"{len(record.get('rejected_flags', []))} rejected in verification · "
-        f"{len(record.get('entities', []))} entities researched",
+        f"{_distinct_entities(record)} entities researched",
     )
     cost = rep.get("est_clearance_cost_usd")
     if cost and len(cost) == 2:

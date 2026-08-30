@@ -52,7 +52,10 @@ function bdRender(data) {
     for (const t of top) {
       const li = el("li");
       li.appendChild(el("span", "bd-sevcell sev-" + t.severity, t.severity));
-      li.appendChild(document.createTextNode(` ${t.finding} — ${t.label} (${t.scene})` + (t.cost ? ` · $${t.cost}` : "")));
+      // t.cost is a preformatted label: "5,000-20,000" wants a $; "no fee
+      // expected" must not become "$no fee expected"
+      const costTxt = t.cost ? (/^\d/.test(t.cost) ? ` · $${t.cost}` : ` · ${t.cost}`) : "";
+      li.appendChild(document.createTextNode(` ${t.finding} — ${t.label} (${t.scene})` + costTxt));
       ul.appendChild(li);
     }
     box.appendChild(ul);
@@ -100,6 +103,28 @@ function bdRender(data) {
     for (const it of items) ul.appendChild(render(it));
     return ul;
   };
+  // The printed binder warns about incomplete desks and unexamined items
+  // (pdfgen renders both) — the web binder must never be the quieter surface.
+  for (const desk of bm.desks_incomplete || []) {
+    const warn = el("div", "card run-error-banner");
+    warn.appendChild(
+      el("p", null, `${desk} desk did not complete — its findings are missing; ` +
+        "do not treat its scenes as cleared. Rerun the analysis.")
+    );
+    page.appendChild(warn);
+  }
+  if ((bm.unexamined || []).length) {
+    const warn = el("div", "card run-error-banner");
+    warn.appendChild(
+      el("p", null, `${bm.unexamined.length} item${bm.unexamined.length === 1 ? "" : "s"} ` +
+        "extracted from the script were NOT examined by any desk — absence from " +
+        "this log is not cleanliness.")
+    );
+    const ul = el("ul", "plain-list");
+    for (const u of bm.unexamined) ul.appendChild(el("li", null, u));
+    warn.appendChild(ul);
+    page.appendChild(warn);
+  }
   if (bm.rating && bm.rating.predicted) {
     const tgt = bm.rating.target && bm.rating.target !== bm.rating.predicted
       ? ` · production target ${bm.rating.target}` : "";

@@ -5,13 +5,33 @@
 "use strict";
 
 const SEVS = ["BLOCKER", "HIGH", "MEDIUM", "LOW", "FYI"];
+// THE desk naming table: [id, formal name, subtitle, short label]. Every
+// surface reads from here — report, one-sheet, binder, run view — so the same
+// desk is never "Rights", "Rights & Clearances", and "Clearance counsel" on
+// three pages (run-4 UI survey).
 const DESKS = [
-  ["clearance_counsel", "Clearance Counsel", "Rights & clearances"],
-  ["ratings_board", "Ratings Board", "MPA rating drivers"],
-  ["safety_underwriter", "Safety Underwriter", "Physical production risk"],
-  ["territory_censor", "Territory Censor", "US · UK · CN · UAE"],
+  ["clearance_counsel", "Clearance Counsel", "Rights & clearances", "Rights"],
+  ["ratings_board", "Ratings Board", "MPA rating drivers", "Ratings"],
+  ["safety_underwriter", "Safety Underwriter", "Physical production risk", "Safety"],
+  ["territory_censor", "Territory Censor", "US · UK · CN · UAE", "Territory"],
 ];
 const DESK_IDS = DESKS.map((d) => d[0]);
+
+function deskName(id) {
+  const d = DESKS.find((x) => x[0] === id);
+  return d ? d[1] : prettyCat(id);
+}
+
+function deskShort(id) {
+  const d = DESKS.find((x) => x[0] === id);
+  return d ? d[3] : prettyCat(id);
+}
+
+const CORPUS_FILMS = 6302; // released-film comparables corpus — single source
+
+function corpusN() {
+  return CORPUS_FILMS.toLocaleString("en-US");
+}
 
 const $ = (id) => document.getElementById(id);
 

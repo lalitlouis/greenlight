@@ -4,19 +4,24 @@
 
 "use strict";
 
-const DESK_LABELS = {
-  clearance_counsel: ["Rights & Clearances", "clearance"],
-  ratings_board: ["Ratings", "ratings"],
-  safety_underwriter: ["Safety", "safety"],
-  territory_censor: ["Territories", "territory"],
+// labels come from the shared DESKS table (common.js); only the od- CSS
+// class suffix is local
+const DESK_CLASS = {
+  clearance_counsel: "clearance",
+  ratings_board: "ratings",
+  safety_underwriter: "safety",
+  territory_censor: "territory",
 };
 
 function osRender(record) {
   const rep = record.report || {};
   const counts = rep.counts || {};
+  // null score is WITHHELD (a desk returned no dispositions) — it must never
+  // render as a confident red 0/100 on the artifact meant for the E&O email.
+  const withheld = rep.greenlight_score == null;
   const score = rep.greenlight_score ?? 0;
   const blockers = counts.BLOCKER || 0;
-  const tone = blockers > 0 || score < 40 ? "bad" : score < 75 ? "mid" : "good";
+  const tone = withheld ? "mid" : blockers > 0 || score < 40 ? "bad" : score < 75 ? "mid" : "good";
   const page = $("os-page");
   page.textContent = "";
 
@@ -31,13 +36,19 @@ function osRender(record) {
   const hero = el("div", "os-hero");
   const left = el("div", "os-title-wrap");
   left.appendChild(el("h1", "os-title", record.script_title || "Untitled"));
-  const verdict =
-    blockers > 0
+  const verdict = withheld
+    ? "Score withheld — analysis incomplete"
+    : blockers > 0
       ? `Not cleared — ${blockers} blocker${blockers === 1 ? "" : "s"}`
       : tone === "good"
         ? "Cleared, with conditions"
         : "Conditional — remedies required";
   left.appendChild(el("p", "os-verdict v-" + tone, verdict));
+  if (record.error) {
+    left.appendChild(
+      el("p", "os-verdict v-bad", "Run ended early — partial results; rerun before relying on this sheet.")
+    );
+  }
   const facts = el("p", "os-facts");
   facts.textContent =
     `${(record.flags || []).length} findings · ` +
@@ -54,8 +65,8 @@ function osRender(record) {
   hero.appendChild(left);
 
   const ring = el("div", "score os-score " + tone);
-  ring.style.setProperty("--scorepct", String(score));
-  ring.appendChild(el("b", null, String(score)));
+  ring.style.setProperty("--scorepct", String(withheld ? 0 : score));
+  ring.appendChild(el("b", null, withheld ? "—" : String(score)));
   ring.appendChild(el("span", "of", "/100"));
   hero.appendChild(ring);
   page.appendChild(hero);
@@ -63,10 +74,10 @@ function osRender(record) {
   // four desks
   const dims = rep.dimension_scores || {};
   const deskRow = el("div", "os-desks");
-  for (const [id, [label, short]] of Object.entries(DESK_LABELS)) {
-    const d = el("div", "os-desk od-" + short);
+  for (const [id, cls] of Object.entries(DESK_CLASS)) {
+    const d = el("div", "os-desk od-" + cls);
     d.appendChild(el("b", null, dims[id] != null ? String(dims[id]) : "—"));
-    d.appendChild(el("span", null, label));
+    d.appendChild(el("span", null, deskShort(id)));
     deskRow.appendChild(d);
   }
   page.appendChild(deskRow);
@@ -87,10 +98,10 @@ function osRender(record) {
       main.appendChild(el("span", "os-flag-txt", (f.finding || "").slice(0, 170) + ((f.finding || "").length > 170 ? "…" : "")));
       row.appendChild(main);
       const right = el("div", "os-flag-right");
-      const fc =
-        f.est_cost_usd_low >= 0 && f.est_cost_usd_high >= 0
-          ? money([f.est_cost_usd_low, f.est_cost_usd_high])
-          : null;
+      // cost lives at remedy.est_cost_usd; the flat est_cost_usd_* names are
+      // tool-call arguments that never reach the record (every row read
+      // "cost TBD" under the page's own exposure total)
+      const fc = money((f.remedy || {}).est_cost_usd);
       right.appendChild(el("b", null, fc || "cost TBD"));
       right.appendChild(el("span", null, `${(f.citations || []).length} citations`));
       row.appendChild(right);
