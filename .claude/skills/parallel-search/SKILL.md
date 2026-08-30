@@ -103,3 +103,15 @@ path — the live call is what satisfies the track requirement.
 One search per entity, not per entity per agent. Multiple gatekeepers needing the same entity
 share one result set via session state. `mode="fast"` is fine for smoke tests; `advanced` for
 real analysis.
+
+### What a run costs (working rates, keep current with invoices — see scripts/costs.py)
+
+- **Parallel**: ~$0.009 per `advanced` search. A clearance run on the 12-scene fixture spends
+  19–26 searches ≈ **$0.20/run**. `searches_spent` in the worker's `run_summary` log line is
+  the measured count; each `search_id` in the record is one billed search.
+- **Gemini**: ~$2.20/run *estimated* (3.7-flash desks/verifiers + one 2.5-pro adjudication;
+  flash intro pricing $0.75/$3.75 per MTok through 2026-12-31, then doubles). Not yet measured —
+  per-run `usage_metadata` capture is the planned fix; until it lands, treat Gemini as the
+  dominant and least-certain share of ≈ **$2.40 total per clearance run**.
+- Never add a per-desk search: any change that multiplies searches multiplies the only
+  metered per-run cost that scales with entity count.

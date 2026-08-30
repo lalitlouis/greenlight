@@ -30,9 +30,21 @@ PRICE = {
     "corpus_embedding_once": 1.30,  # 6,302 profiles through text-embedding-005
     "dns_zone_month": 0.20,
     "artifact_registry_gb_month": 0.10,
+    "cloud_run_warm_day": 3.40,  # 2vCPU/2Gi min-instances=1, always warm
 }
 UNSAVED_CLEARANCE_RUNS = 4  # aborted/timeout runs that never wrote a record
 PREFLIGHT_SEARCHES = 4  # checks.py + cassette capture
+MIN_INSTANCES_SINCE = "2026-08-25"  # the day min-instances=1 went on
+
+# Who actually pays for each service. "credit" burns the GCP credit, "cash" is
+# real money out of pocket, partner/trial credits are someone else's tab.
+FUNDING = {
+    "gcp": "gcp credit",
+    "gcp-infra": "gcp credit",
+    "parallel": "partner credit",
+    "clickhouse": "trial credit",
+    "domain": "cash",
+}
 
 
 def measure() -> dict:
@@ -55,6 +67,13 @@ def measure() -> dict:
     }
 
 
+def _warm_days() -> int:
+    from datetime import date
+
+    y, mo, d = (int(x) for x in MIN_INSTANCES_SINCE.split("-"))
+    return max(1, (date.today() - date(y, mo, d)).days)
+
+
 def rows(m: dict, actuals: dict) -> list[tuple]:
     """(service, activity, estimate, actual, where-to-check)"""
     est_gemini = round(
@@ -74,11 +93,16 @@ def rows(m: dict, actuals: dict) -> list[tuple]:
         ),
         (
             "gcp-infra",
-            "Cloud Run 2vCPU/2Gi with min-instances=1 since Aug 25: always warm, "
-            "~$3.40/day flat; + registry + DNS",
-            round(PRICE["artifact_registry_gb_month"] * 0.7 + PRICE["dns_zone_month"], 2),
+            f"Cloud Run always-warm since {MIN_INSTANCES_SINCE} "
+            f"({_warm_days()}d x ${PRICE['cloud_run_warm_day']}/day) + registry + DNS",
+            round(
+                _warm_days() * PRICE["cloud_run_warm_day"]
+                + PRICE["artifact_registry_gb_month"] * 0.7
+                + PRICE["dns_zone_month"],
+                2,
+            ),
             actuals.get("gcp-infra"),
-            "same console; per month, absorbed by the $100 credit",
+            "same console; absorbed by the credit while it lasts",
         ),
         (
             "parallel",
@@ -131,11 +155,30 @@ def main(argv: list[str]) -> int:
         f"{'TOTAL':<11} {'$' + format(total_est, '.2f'):>9} "
         f"{'$' + format(total_act, '.2f'):>8}  (actuals fall back to estimates when unset)"
     )
+    # ---- who pays: the number that matters is cash + credit burn, separately
+    by_funding: dict[str, float] = {}
+    for svc, _act, est, act, _w in table:
+        by_funding[FUNDING[svc]] = by_funding.get(FUNDING[svc], 0.0) + (
+            act if act is not None else est
+        )
+    print("\nfunded by:")
+    for src in ("gcp credit", "cash", "partner credit", "trial credit"):
+        amount = by_funding.get(src, 0.0)
+        note = ""
+        if src == "gcp credit":
+            note = f"  → of the $100 GCP credit ({min(999, round(amount))}% if estimates hold)"
+        if src == "cash":
+            note = "  → real money out of pocket"
+        print(f"  {src:<15} ${amount:>7.2f}{note}")
     print(
-        "\nGCP credit: $100 — the estimate above suggests "
-        f"~{min(100, round(100 * (table[0][2] + table[1][2]) / 100))}% consumed; "
-        "budget alert emails fire at 40/75/90%.\n"
-        "Record console numbers with: python scripts/costs.py set <service> <amount>"
+        "\nEstimates ≠ invoices. Pull the two real numbers and record them:\n"
+        "  GCP:      console.cloud.google.com/billing/012600-29EBC8-C419FB/reports"
+        " (filter: greenlight-clearance-2026)\n"
+        "            → python scripts/costs.py set gcp <gemini+embed $>  and"
+        "  set gcp-infra <cloud run $>\n"
+        "  Parallel: platform.parallel.ai usage → python scripts/costs.py set parallel <$>\n"
+        "Budgets wired: '$100 Monthly Budget Alert' (50/90/100/150%) and"
+        " 'GREENLIGHT hackathon' $200 (40/75/90/100%)."
     )
     return 0
 
