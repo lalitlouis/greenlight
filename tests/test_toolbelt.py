@@ -1117,6 +1117,21 @@ def test_rating_boundary_returns_marginals_and_set():
     assert ctx.state["boundary_set:ratings_board"] == ["R"]
 
 
+def test_rating_boundary_emits_a_citable_sentence_registered_as_provenance():
+    """The marginal's number must travel to the report in a CITATION the verifier can
+    trace, not loose in the desk's prose (where an untraceable '57% of 125' was rejected
+    as unsupported). The tool returns a ready sentence carrying the numbers, attributes
+    it to our derived corpus by name, and registers it so a verbatim cite passes."""
+    ctx = make_ctx(agent_name="ratings_board")
+    r = toolbelt.rating_boundary(["pervasive language"], ctx)
+    cite = r["marginals"]["pervasive language"]["citation"]
+    assert "187" in cite and "99%" in cite  # the numbers live here
+    assert "ScriptRisk CARA descriptor corpus" in cite  # our corpus, not filmratings.com
+    assert "filmratings.com" not in r["source"].split(":")[0]  # named as ours in the headline
+    registered = [orig for _, orig in toolbelt._prov_bucket(ctx)]
+    assert cite in registered  # a verbatim cite of this sentence passes provenance
+
+
 # --- Night Counter review fixes -------------------------------------------
 
 

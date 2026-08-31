@@ -36,8 +36,12 @@
       <h2>Rating prediction — <span class="sec-hl">measured</span></h2>
       <p>We harvested the official CARA rating rationale for <b>4,755 films</b> from the MPA's own
       register (88% of our post-1990 corpus; the practice barely existed before 1990, so our scope
-      is post-1990 wide releases, stated plainly). Parsed into intensity-category descriptors,
-      they train a transparent model whose predictions carry a
+      is post-1990 wide releases, stated plainly). Of these, <b>4,544</b> parsed cleanly into
+      intensity-category descriptors — the <span class="sec-hl">CARA descriptor corpus</span> that
+      is the basis for the per-descriptor rating marginals a report cites and for the model below.
+      (This is a distinct corpus from the <b>6,302 released films</b> whose content profiles power
+      the nearest-comparables search on the rating panel — rationales measure the decision
+      boundary, films locate your neighbourhood.) The model carries a
       <span class="sec-hl">distribution-free coverage guarantee</span> (Mondrian split conformal):</p>
       <pre class="sec-evidence">held-out films: 937 (deterministic split, never trained on)
 conformal coverage: <span class="sec-ev-ok">92.2%</span> aggregate against a 90% target — guarantee per pooled group

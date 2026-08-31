@@ -262,6 +262,22 @@ def main() -> int:  # noqa: PLR0915 - a linear checklist, deliberately flat
         not prose_mismatch,
         f"prose-vs-coordinates: {prose_mismatch[:6]}",
     )
+    # A rating finding's marginal number must live in the citation the verifier can
+    # trace to the corpus, never loose in the prose (where an untraceable "57% of 125"
+    # was rejected as unsupported and read as fabrication). One place per percentage.
+    stat_in_prose = []
+    for f in flags:
+        if not (f.get("category") or "").startswith("rating_"):
+            continue
+        body = f"{f.get('finding', '')} {(f.get('remedy') or {}).get('detail', '')}"
+        if _re.search(r"\d\s*%|\bn\s*=\s*\d", body):
+            stat_in_prose.append(f["flag_id"])
+    check(
+        "invariant: rating findings carry no bare %/n= in prose (numbers live in citations)",
+        not stat_in_prose,
+        f"rating findings with a statistic loose in prose: {stat_in_prose[:6]} — the marginal "
+        "belongs in a rating_boundary citation, not the finding text",
+    )
     check(
         "invariant: no unexamined entities (every extracted item dispositioned)",
         not r.get("unexamined"),

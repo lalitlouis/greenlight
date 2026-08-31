@@ -30,23 +30,23 @@ PROCEDURE:
    The number of uses of strong language is a fact; find it, do not estimate it. For each
    driver note intensity and context (comic, realistic, brief, pervasive) — CARA weighs
    context, and so do you.
-2a. rating_boundary(descriptors) with the CARA-style descriptors you counted — it returns
-   the MEASURED decision boundary (per-descriptor rating distributions from 4,544 official
-   rationales) and a conformal prediction set with a 90% coverage guarantee. This is your
-   strongest citable evidence: quote the marginals ("'pervasive language' lands R in 99% of
-   187 official rationales — source: CARA via filmratings.com").
-   CITE WHAT SUPPORTS YOUR CLAIM — THIS APPLIES TO EVERY RATING DRIVER: the measured
-   marginals from rating_boundary ARE your strongest citation. Pair the counted driver
-   (find_in_script) with the matching marginal quoted verbatim ("drug use: PG-13 x%,
-   R y% across n official rationales") and frame the finding as measured boundary risk
-   (marginals + comparables + the conformal set) — never as an absolute bright-line
-   rule, and never supported by a generic article about CARA thresholds; the verifier
-   rejects generic-threshold citations every time (language and drug-use flags have
-   both died this way). Example for language: "pervasive language" lands R 99% while
-   "strong language" lands PG-13 89% — CARA's own glossary says multiple F-words CAN
-   stay PG-13, so citing that glossary under a hard "triggers R" premise is a
-   self-contradiction. A prediction outside the
-   conformal set will be rejected without a stated divergence reason.
+2a. rating_boundary(descriptors) with the CARA-style descriptors you counted — for each
+   matched descriptor it returns the MEASURED per-rating distribution across 4,544 official
+   CARA rationales as a ready-to-cite `citation` sentence, plus a conformal prediction set
+   with a ~90% coverage guarantee. This is your strongest evidence.
+   THE NUMBER LIVES IN THE CITATION, NEVER IN YOUR PROSE. File the marginal's `citation`
+   field VERBATIM as a citation on the finding; in the finding text name only the descriptor
+   and the band it implies ("pervasive language is an R-band driver"). Do NOT write a
+   percentage or an "n=" anywhere in the finding or remedy — a loose number the verifier
+   cannot trace to the corpus is exactly what gets rejected ("the empirical CARA data does
+   not appear in the excerpts"), and prose that paraphrases the marginal ("roughly 99%")
+   drifts from the citation. One descriptor may return both a specific marginal ("pervasive
+   language", n=187) and its parent category ("language"); cite the most specific match.
+   Frame the finding as measured boundary risk, never an absolute bright-line rule, and never
+   support a rating claim with a generic article about CARA thresholds — the verifier rejects
+   generic-threshold citations every time (language and drug-use flags have both died this
+   way). A prediction outside the conformal set will be rejected without a stated divergence
+   reason.
 
 2b. query_precedent(text, k) with a capsule of this script. THE CAPSULE NAMES THE FILM'S FORM
    BEFORE ITS CONTENT — content markers alone cannot tell a campus legal drama from a campus

@@ -2311,13 +2311,22 @@ def _parse_descriptor(desc: str, vocab: dict[str, Any]) -> tuple[str, str] | Non
     return (intensity or "unmodified", cat)
 
 
+# The derived corpus is cited by name — it is ScriptRisk's own aggregate, not
+# filmratings.com. filmratings.com is the provenance of the underlying rationales;
+# the 4,544-rationale marginal is our derivation, and a reader must be able to tell
+# the two corpora apart from the ratings corpus (6,302 released films) used for kNN.
+_CARA_CORPUS = "ScriptRisk CARA descriptor corpus: 4,544 official CARA rationales, filmratings.com"
+
+
 def rating_boundary(descriptors: list[str], tool_context: ToolContext) -> dict[str, Any]:
-    """Measured CARA decision boundary: per-descriptor rating distributions
-    across 4,544 official post-1990 rationales, plus the fitted model's
-    conformal prediction set for the combination. This is EVIDENCE — cite the
-    marginals verbatim (source: official CARA rationales, filmratings.com).
-    Free (no research budget). Call BEFORE file_rating_prediction; a
-    prediction outside the conformal set needs a stated divergence reason.
+    """Measured CARA decision boundary: per-descriptor rating distributions across
+    4,544 official post-1990 rationales, plus the fitted model's conformal prediction
+    set for the combination. This is EVIDENCE. Each matched marginal returns a ready
+    `citation` sentence carrying the numbers — file THAT verbatim as the finding's
+    citation; name only the descriptor in your finding prose, never the percentage
+    (a loose number the verifier cannot trace to the corpus is what gets rejected).
+    Free (no research budget). Call BEFORE file_rating_prediction; a prediction outside
+    the conformal set needs a stated divergence reason.
 
     descriptors: CARA-style intensity+category phrases matching what you
     counted, e.g. ["pervasive language", "some violence", "brief nudity"].
@@ -2347,11 +2356,19 @@ def rating_boundary(descriptors: list[str], tool_context: ToolContext) -> dict[s
             m = d["marginals"].get(key)
             if m:
                 n = sum(m.values())
+                dist = {r: f"{100 * c // n}%" for r, c in sorted(m.items(), key=lambda kv: -kv[1])}
+                # The desk cites THIS sentence verbatim (registered as provenance
+                # below), so a rating finding's percentage lives in a citation the
+                # verifier can trace to the corpus — never loose in the finding prose,
+                # where it read as an unsupported statistic and got rejected. The number
+                # appears in exactly one place, attributed to our derived corpus by name.
+                dist_str = ", ".join(f"{r} {p}" for r, p in dist.items())
                 marginals[key] = {
                     "n": n,
-                    "distribution": {
-                        r: f"{100 * c // n}%" for r, c in sorted(m.items(), key=lambda kv: -kv[1])
-                    },
+                    "distribution": dist,
+                    "citation": (
+                        f"'{key}': {dist_str} across {n} official CARA rationales ({_CARA_CORPUS})"
+                    ),
                 }
         for cand in (f"{intensity} {cat}", cat):
             if cand in idx:
@@ -2379,9 +2396,13 @@ def rating_boundary(descriptors: list[str], tool_context: ToolContext) -> dict[s
             c: round(pv, 3) for c, pv in sorted(probs.items(), key=lambda kv: -kv[1])
         },
         "conformal_prediction_set": pred_set,
-        "source": d["source"],
+        "source": _CARA_CORPUS,
     }
     if unmatched:
+        # Every unmatched descriptor is a rating driver that loses its measured
+        # marginal and falls back to qualitative language. Log the misses so the
+        # vocabulary can be aliased to cover the phrasings desks actually use.
+        _LOG.info("rating_boundary unmatched descriptors: %s", unmatched)
         out["warning"] = (
             f"{len(unmatched)} descriptor(s) did not match the measured vocabulary "
             f"({unmatched}); the prediction set EXCLUDES them and is advisory only, "
