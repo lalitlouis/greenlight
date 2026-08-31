@@ -1444,3 +1444,72 @@ def test_rating_findings_need_a_ratings_authority_not_any_gov():
     assert _authority_problem("HIGH", bbfc, "rating_language") is None
     # non-rating categories keep the general rule: gov qualifies
     assert _authority_problem("HIGH", council, "territory_uk_violence") is None
+
+
+# --- B8: citation provenance must not manufacture quotes --------------------
+
+
+def test_script_quotes_pass_provenance():
+    """_exists_in_state checked state['source'], a key NOTHING writes — the
+    pipeline seeds script_text. The leg was dead, so a desk quoting the
+    screenplay verbatim always failed and fell into the repair path."""
+    from greenlight.tools.toolbelt import _exists_in_state, _norm_for_match
+
+    state = {"script_text": "INT. MALL - DAY\n\nSTEVE\nSbarro, over in the Fremont mall.\n"}
+    assert _exists_in_state(_norm_for_match("Sbarro, over in the Fremont mall"), state)
+    assert not _exists_in_state(_norm_for_match("a tiger prowls the suite"), state)
+
+
+def test_repair_will_not_substitute_an_unrelated_source():
+    """The old test was 60% of the words in ANY ORDER against any registered
+    text — shared legal vocabulary alone could match, and the joined blob of a
+    whole search scored ~1.0, so the repair filed an arbitrary 800-char prefix
+    of a concatenation as the 'verbatim' citation."""
+    from greenlight.tools.toolbelt import _best_registry_match, _register_provenance
+
+    ctx = make_ctx()
+    unrelated = (
+        "A synchronization license is required from the music publisher before "
+        "any recording may be used in a motion picture soundtrack."
+    )
+    _register_provenance(ctx, [unrelated])
+    # same vocabulary, different claim, different order — must NOT be repaired
+    attempt = (
+        "The publisher of the motion picture must license any music recording "
+        "used before a required soundtrack synchronization."
+    )
+    assert _best_registry_match(attempt, ctx) is None
+
+
+def test_repair_returns_the_aligned_span_verbatim_not_a_prefix():
+    """A genuine loose transcription IS repaired — to the aligned span of the
+    ORIGINAL text (true casing/punctuation), not the candidate's first 800
+    characters and not the lowercased normalized form."""
+    from greenlight.tools.toolbelt import _best_registry_match, _register_provenance
+
+    ctx = make_ctx()
+    head = "Unrelated opening paragraph about parking permits and street closures. "
+    real = "The Rating Board assigns PG-13 when more than one sexual expletive appears."
+    _register_provenance(ctx, [head + real])
+    attempt = "The Rating Board assigns PG-13 when more than one expletive appears"
+    fix = _best_registry_match(attempt, ctx)
+    assert fix is not None
+    assert "Rating Board" in fix, "must preserve original casing, not the lowercased form"
+    assert "parking permits" not in fix, "must return the aligned span, not the prefix"
+
+
+def test_repaired_citations_are_marked_on_the_record():
+    """A rewritten citation is auditable: the text the report presents as
+    verbatim was not the desk's own, and the record says so."""
+    ctx = make_ctx()
+    ctx.invocation_id = "inv-repair-marked"
+    toolbelt._register_provenance(ctx, [RESEARCH_EXCERPT])
+    near_miss = (
+        "If the product appears in a negative light on screen, you may be "
+        "sued for product disparagement by them."
+    )
+    msg = file_good_flag(ctx, citations=[{**GOOD_CITATION, "excerpt": near_miss}])
+    assert msg.startswith("Filed"), msg
+    cit = ctx.state["flags:clearance_counsel"][-1]["citations"][0]
+    assert cit.get("repaired") is True
+    assert cit["excerpt"] == RESEARCH_EXCERPT, "must be the true source text"

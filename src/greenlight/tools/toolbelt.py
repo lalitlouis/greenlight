@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import asyncio
 import contextlib
+import difflib
 import hashlib
 import logging
 import os
@@ -932,11 +933,16 @@ _BUDGET_LOCK = threading.Lock()
 _INFLIGHT: dict[str, threading.Event] = {}
 _INFLIGHT_LOCK = threading.Lock()
 
-_PROV_TEXTS: dict[str, list[str]] = {}
+# (normalized, ORIGINAL) pairs. The original is kept because the repair path
+# and the handback hand text back to be filed as a VERBATIM citation — storing
+# only the normalized form meant every repaired excerpt shipped lowercased,
+# punctuation-rewritten and truncated mid-word, under a schema that calls the
+# field "Verbatim supporting text. No paraphrase."
+_PROV_TEXTS: dict[str, list[tuple[str, str]]] = {}
 _PROV_MAX_RUNS = 8
 
 
-def _prov_bucket(tool_context: ToolContext) -> list[str]:
+def _prov_bucket(tool_context: ToolContext) -> list[tuple[str, str]]:
     inv = str(getattr(tool_context, "invocation_id", "") or "run")
     if inv not in _PROV_TEXTS and len(_PROV_TEXTS) >= _PROV_MAX_RUNS:
         _PROV_TEXTS.pop(next(iter(_PROV_TEXTS)))  # drop the oldest run's registry
@@ -945,12 +951,12 @@ def _prov_bucket(tool_context: ToolContext) -> list[str]:
 
 def _register_provenance(tool_context: ToolContext, texts: list[str]) -> None:
     bucket = _prov_bucket(tool_context)
-    bucket.extend(_norm_for_match(x) for x in texts if x)
+    bucket.extend((_norm_for_match(x), x) for x in texts if x)
     # excerpts arrive as storage chunks; a desk quoting across a chunk boundary
     # is still verbatim — register the joined text as well
     joined = " ".join(x for x in texts if x)
     if joined:
-        bucket.append(_norm_for_match(joined))
+        bucket.append((_norm_for_match(joined), joined))
 
 
 def _register_tool_output(tool_context: ToolContext, obj: Any) -> None:
@@ -1039,12 +1045,23 @@ def _word_overlap_hit(needle: str, texts: list[str]) -> bool:
 
 
 _REPAIR_MIN_WORDS = 6
-_REPAIR_RATIO = 0.6  # 60-90%% overlap = paraphrase of a real retrieval; repairable
+# Order-preserving coverage of the needle by one source, anchored on a
+# contiguous run. 0.70 keeps the legitimate case working (a desk that inserts
+# "on screen" and "by them" into a real excerpt scores ~0.79 — the Winklevoss
+# shape, where 33 straight rejections once burned a desk's whole tail), while
+# ORDER plus the run anchor are what actually kill the substitution: unrelated
+# text sharing the same legal vocabulary scrambles to ~0.4 and has no 5-word
+# run in common. The ratio tunes leniency; ordering provides the safety.
+_REPAIR_RATIO = 0.70
+_REPAIR_MIN_RUN = 5
 _HANDBACK_RATIO = 0.25
+_REPAIR_MAX_EXTRA = 3.0  # a repair may not balloon the quote beyond this factor
 
 
 def _overlap_ratio(needle: str, candidate: str) -> float:
-    """Share of the needle's substantive words present in the candidate."""
+    """Share of the needle's substantive words present in the candidate.
+    Order-INSENSITIVE — only for ranking handback suggestions, never for
+    deciding that a citation may be rewritten."""
     min_word_len = 3
     words = [w for w in _norm_for_match(needle).split() if len(w) >= min_word_len]
     if len(words) < _REPAIR_MIN_WORDS:
@@ -1054,30 +1071,78 @@ def _overlap_ratio(needle: str, candidate: str) -> float:
     return len(need & cand) / len(need)
 
 
+_ALIGN_STRIP = ".,;:!?\"'()[]{}<>-" + "\u2013\u2014\u2026"
+
+
+def _align_tokens(s: str) -> list[str]:
+    return [w.strip(_ALIGN_STRIP) for w in s.split()]
+
+
+def _aligned_span(needle: str, cand_norm: str, cand_orig: str) -> tuple[float, int, str]:
+    """Align the needle against one registered text IN ORDER.
+
+    Returns (coverage, longest contiguous run, the aligned span of the ORIGINAL
+    text). Coverage is the order-preserving share of the needle's words the
+    candidate reproduces, so shared vocabulary in a different order no longer
+    counts as a match — which is what let an unrelated source, or the joined
+    blob of every excerpt from one search, score 1.0 on a set-intersection.
+    """
+    # strip punctuation for ALIGNMENT only: "light," and "light" are the same
+    # word, and treating them as different broke every block at a comma. Token
+    # count is preserved, so indices still map back to the original words.
+    nw = _align_tokens(_norm_for_match(needle))
+    cw = _align_tokens(cand_norm)
+    ow = cand_orig.split()
+    if len(nw) < _REPAIR_MIN_WORDS or not cw:
+        return 0.0, 0, ""
+    blocks = difflib.SequenceMatcher(None, nw, cw, autojunk=False).get_matching_blocks()
+    real = [b for b in blocks if b.size]
+    if not real:
+        return 0.0, 0, ""
+    matched = sum(b.size for b in real)
+    longest = max(b.size for b in real)
+    # the candidate's own words spanning the aligned region — NOT its first N
+    # characters, which is how a repair used to file the opening of an
+    # unrelated excerpt as the quote
+    start, end = real[0].b, real[-1].b + real[-1].size
+    span = " ".join(ow[start:end]) if len(ow) == len(cw) else cand_orig[:800]
+    return matched / len(nw), longest, span
+
+
 def _best_registry_match(attempt: str, tool_context: ToolContext) -> str | None:
     """The registered text the model was clearly reaching for, if any.
 
-    >=60% of the attempted quote's words in one registered text means the model
-    paraphrased a real retrieval (markdown stripped, line breaks normalized, a
-    word dropped) — hand the true verbatim text back so the FINDING survives the
-    FORMALITY. Below that, nothing retrieved resembles the quote: no repair.
+    A repair REWRITES a citation the report will present as verbatim, so the bar
+    is deliberately high: the candidate must reproduce >=85% of the attempted
+    quote's words IN ORDER, anchored on a contiguous run of >=5, and the span it
+    hands back may not balloon the quote. That is the signature of a real
+    retrieval the model transcribed loosely (markdown stripped, a word dropped).
+    The old test — 60% of the words in any order — matched on shared legal
+    vocabulary alone, so an unrelated source could be substituted and filed as
+    the verbatim citation.
     """
-    best, best_r = None, 0.0
-    for text in _prov_bucket(tool_context):
-        r = _overlap_ratio(attempt, text)
+    best_span, best_r = None, 0.0
+    for norm, orig in _prov_bucket(tool_context):
+        r, longest, span = _aligned_span(attempt, norm, orig)
+        if r < _REPAIR_RATIO or longest < _REPAIR_MIN_RUN or not span:
+            continue
+        if len(span.split()) > _REPAIR_MAX_EXTRA * max(1, len(attempt.split())):
+            continue
         if r > best_r:
-            best, best_r = text, r
-    return best[:800] if best is not None and best_r >= _REPAIR_RATIO else None
+            best_span, best_r = span, r
+    return best_span[:800] if best_span else None
 
 
 def _handback_candidates(attempts: list[str], tool_context: ToolContext) -> list[str]:
     """Closest registered texts to the failed quotes — race-free, from the
-    process registry — offered back in the rejection for verbatim copying."""
+    process registry — offered back in the rejection for verbatim copying.
+    Ranking may be loose here: the MODEL copies from these, nothing is
+    rewritten on its behalf."""
     scored: list[tuple[float, str]] = []
-    for text in _prov_bucket(tool_context):
-        r = max((_overlap_ratio(a, text) for a in attempts), default=0.0)
+    for norm, orig in _prov_bucket(tool_context):
+        r = max((_overlap_ratio(a, norm) for a in attempts), default=0.0)
         if r >= _HANDBACK_RATIO:
-            scored.append((r, text))
+            scored.append((r, orig))
     scored.sort(key=lambda x: -x[0])
     return [t[:400] for _, t in scored[:3]]
 
@@ -1170,10 +1235,11 @@ def _excerpt_exists(excerpt: str, tool_context: ToolContext) -> bool:
         return True
     # 1. the process-local registry — the authoritative source
     bucket = _PROV_TEXTS.get(str(getattr(tool_context, "invocation_id", "") or "run"), [])
-    for text in bucket:
+    norms = [n for n, _ in bucket]
+    for text in norms:
         if needle in text:
             return True
-    if _word_overlap_hit(needle, bucket):
+    if _word_overlap_hit(needle, norms):
         return True
     if os.getenv("GREENLIGHT_PROV_DEBUG"):
         with open("/tmp/prov_debug.jsonl", "a") as fh:
@@ -1186,7 +1252,13 @@ def _excerpt_exists(excerpt: str, tool_context: ToolContext) -> bool:
 def _exists_in_state(needle: str, state: Any) -> bool:
     """Secondary provenance sources kept in session state: the script itself,
     per-desk research indices, and precedent rationales."""
-    if needle in _norm_for_match(state.get("source") or ""):
+    # "source" is a key NOTHING writes — the pipeline seeds the screenplay as
+    # script_text. This leg was dead, so a desk quoting the screenplay verbatim
+    # (which file_flag's own rejection message names as legitimate) always
+    # failed provenance and fell through to the repair path, where an unrelated
+    # research excerpt could be substituted for the script quote.
+    script = state.get("script_text") or state.get("source") or ""
+    if needle in _norm_for_match(script):
         return True
     seen: set[str] = set()
     for desk in DESKS:
@@ -1573,6 +1645,7 @@ def file_flag(  # noqa: PLR0912 - a deliberate sequence of filing gates
         fix = _best_registry_match(c["excerpt"], tool_context)
         if fix is not None:
             c["excerpt"] = fix
+            c["repaired"] = True  # on the record: this text was not the desk's
             repaired += 1
         else:
             still_bad.append(c["excerpt"][:60])

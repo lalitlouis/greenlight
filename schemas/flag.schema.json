@@ -112,6 +112,10 @@
               "clickhouse",
               "local"
             ]
+          },
+          "repaired": {
+            "type": "boolean",
+            "description": "The desk's excerpt did not appear verbatim in anything this run retrieved, and file_flag replaced it with the aligned span of the source it was transcribing. On the record so a rewritten citation is auditable."
           }
         }
       }
