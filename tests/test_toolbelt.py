@@ -1442,8 +1442,12 @@ def test_rating_findings_need_a_ratings_authority_not_any_gov():
     assert _authority_problem("HIGH", council, "rating_language") is not None
     bbfc = [_cit("https://www.bbfc.co.uk/about-classification")]
     assert _authority_problem("HIGH", bbfc, "rating_language") is None
-    # non-rating categories keep the general rule: gov qualifies
-    assert _authority_problem("HIGH", council, "territory_uk_violence") is None
+    # run-8: a municipal council is not authority for ANY claim, not just
+    # rating — a UK national/agency or state source is. The council fails; a
+    # national gov (or two independent non-background sources) passes.
+    assert _authority_problem("HIGH", council, "territory_uk_violence") is not None
+    national = [_cit("https://www.gov.uk/guidance/x")]
+    assert _authority_problem("HIGH", national, "territory_uk_violence") is None
 
 
 # --- B8: citation provenance must not manufacture quotes --------------------
@@ -1592,3 +1596,38 @@ def test_eval_assertions_catch_run8_defects():
     assert dangling == ["F2008: severity upgraded"]  # F2008 not rendered
     stray = set(re.findall(r"\bS\d{3}\b", flags[0]["finding"])) - set(flags[0]["scene_ids"])
     assert stray == {"S064", "S099"}  # prose names scenes outside coordinates
+
+
+def test_weak_citations_pruned_when_a_strong_one_exists():
+    """A CARA claim citing filmratings AND a municipal .gov reads as
+    carelessness (run 8, highpointnc.gov cited 4x). Prune keeps the authority; a
+    non-rating finding drops only background-tier sources; dedup collapses
+    www/non-www duplicates (csatf.org, www.csatf.org)."""
+    from greenlight.tools.toolbelt import _prune_weak_citations
+
+    def c(u):
+        return {"url": u, "excerpt": u}
+
+    rating = [
+        c("https://www.filmratings.com/a"),
+        c("https://www.highpointnc.gov/b"),
+        c("https://www.filmratings.com/a"),
+    ]
+    pr = _prune_weak_citations(rating, "rating_language")
+    assert [x["url"] for x in pr] == ["https://www.filmratings.com/a"]
+    # non-rating: drop background (bandcamp) but keep mid-tier
+    mixed = [c("https://www.revolvermag.com/x"), c("https://natesu.bandcamp.com/y")]
+    assert [x["url"] for x in _prune_weak_citations(mixed, "sync_license")] == [
+        "https://www.revolvermag.com/x"
+    ]
+    # dedup www/non-www
+    assert (
+        len(
+            _prune_weak_citations(
+                [c("https://csatf.org/x"), c("https://www.csatf.org/x")], "stunt_fall"
+            )
+        )
+        == 1
+    )
+    # never empties: a lone weak source survives (the invariant holds)
+    assert len(_prune_weak_citations([c("https://natesu.bandcamp.com/y")], "sync_license")) == 1

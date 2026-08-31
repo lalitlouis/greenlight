@@ -1352,6 +1352,10 @@ BACKGROUND_HOSTS = {
     # run-7: cited as authority for a Lanham Act / classification claim
     "substack.com",  # a newsletter is not legal authority (fictionistas.substack)
     "songmeanings.com",  # crowd lyrics annotations, not publishing administration
+    # run-8: blogs and gateways cited for CARA / BBFC / child-labor / NIN splits
+    "wordpress.com",  # pekoeblaze.wordpress.com for BBFC classification
+    "bandcamp.com",  # natesu.bandcamp.com for NIN publishing administration
+    "ipfs.io",  # a content-gateway URL that may not resolve next week
 }
 
 _SCENE_ANCHOR_CAP = 8  # a finding spanning more scenes than this says "the script"
@@ -1388,13 +1392,23 @@ AUTHORITY_HOSTS = {
     # safety
     "csatf.org",
     "contractservices.org",
-    # registries / law
+    # registries / law — federal agencies must be named (structure alone can't
+    # tell uspto.gov from highpointnc.gov). Add a federal .gov here as it proves
+    # legitimate rather than trusting every "gov" label.
     "copyright.gov",
     "uspto.gov",
+    "osha.gov",
+    "sec.gov",
+    "ftc.gov",
+    "dol.gov",
     "wipo.int",
     "law.cornell.edu",
     "courtlistener.com",
     "justia.com",
+    # foreign national governments as FULL HOSTS — never the bare "gov.uk"
+    # suffix, which root-matches every council (belfastcity.gov.uk)
+    "legislation.gov.uk",
+    "uaelegislation.gov.ae",
     # music rights
     "ascap.com",
     "bmi.com",
@@ -1417,6 +1431,71 @@ def _host_root(url: str) -> str:
     return host if host in AUTHORITY_HOSTS | RATING_AUTHORITY_HOSTS else root
 
 
+# US state second-level .gov domains (dir.ca.gov, film.nv.gov are real
+# authorities). Municipal .gov domains — highpointnc.gov, belfastcity.gov.uk —
+# are NOT: a city site is not the CARA/BBFC/federal authority, and "any label
+# 'gov' = authority" waved four highpointnc.gov cites for CARA standards
+# straight through (run 8).
+_US_STATES = frozenset(
+    [
+        "al",
+        "ak",
+        "az",
+        "ar",
+        "ca",
+        "co",
+        "ct",
+        "de",
+        "fl",
+        "ga",
+        "hi",
+        "id",
+        "il",
+        "in",
+        "ia",
+        "ks",
+        "ky",
+        "la",
+        "me",
+        "md",
+        "ma",
+        "mi",
+        "mn",
+        "ms",
+        "mo",
+        "mt",
+        "ne",
+        "nv",
+        "nh",
+        "nj",
+        "nm",
+        "ny",
+        "nc",
+        "nd",
+        "oh",
+        "ok",
+        "or",
+        "pa",
+        "ri",
+        "sc",
+        "sd",
+        "tn",
+        "tx",
+        "ut",
+        "vt",
+        "va",
+        "wa",
+        "wv",
+        "wi",
+        "wy",
+        "dc",
+    ]
+)
+# bare national government sites, matched by EXACT host only (never as a root
+# suffix, which would sweep in every council under gov.uk / gov.ae)
+_NATIONAL_GOV_EXACT = frozenset({"gov.uk", "www.gov.uk", "gov.cn", "www.gov.cn"})
+
+
 def _is_authority_host(url: str) -> bool:
     seg = (url or "").split("/")[2:3]
     if not seg:
@@ -1425,9 +1504,19 @@ def _is_authority_host(url: str) -> bool:
     root = ".".join(host.split(".")[-2:])
     if host in AUTHORITY_HOSTS or root in AUTHORITY_HOSTS:
         return True
-    # any government domain, any TLD flavor: .gov, .gov.uk, gov.cn, .int
     parts = host.split(".")
-    return "gov" in parts or host.endswith(".int")
+    if host.endswith(".int") or host in _NATIONAL_GOV_EXACT:
+        return True
+    # US STATE domains only (xx.gov / dir.ca.gov). Everything else with a "gov"
+    # label — federal agencies AND foreign national governments — must be on the
+    # allowlist BY NAME. That is deliberate: it is the only way to keep a
+    # municipal .gov / council .gov.uk OUT (highpointnc.gov, belfastcity.gov.uk)
+    # while letting uspto.gov and gov.uk in, since the two are structurally
+    # identical and cannot be told apart by shape.
+    if "gov" in parts:
+        gi = parts.index("gov")
+        return gi >= 1 and parts[gi - 1] in _US_STATES
+    return False
 
 
 # A ratings claim needs a ratings authority — being government is not enough.
@@ -1483,6 +1572,51 @@ def _authority_problem(severity: str, cits: list[dict[str, Any]], category: str 
         + f". Current hosts: {hosts}. Re-run research() targeting an authority "
         "for this claim's domain, or file at the severity your sourcing carries."
     )
+
+
+_URL_HOST_IDX = 2  # "scheme:", "", "host", "rest" after split("/", 3)
+_URL_PATH_IDX = 3
+
+
+def _cit_key(url: str) -> str:
+    """host+path, www- and scheme-insensitive, trailing slash stripped — so
+    'csatf.org' and 'www.csatf.org' are ONE citation, not two (run 8)."""
+    parts = (url or "").split("/", 3)
+    if len(parts) > _URL_HOST_IDX:
+        host = parts[_URL_HOST_IDX].removeprefix("www.").lower()
+    else:
+        host = (url or "").lower()
+    path = ("/" + parts[_URL_PATH_IDX]).rstrip("/") if len(parts) > _URL_PATH_IDX else ""
+    return host + path
+
+
+def _dedupe_cits(cits: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    seen: set[str] = set()
+    out: list[dict[str, Any]] = []
+    for c in cits:
+        k = _cit_key(c.get("url") or "") or (c.get("excerpt") or "")[:60]
+        if k not in seen:
+            seen.add(k)
+            out.append(c)
+    return out
+
+
+def _prune_weak_citations(cits: list[dict[str, Any]], category: str) -> list[dict[str, Any]]:
+    """When a finding already has a strong source, the weak ones must not render
+    beside it — a CARA claim citing filmratings AND highpointnc.gov reads as
+    carelessness (run 8: the municipal site appeared four times). Never empties
+    the list; the citation invariant still holds."""
+    if len(cits) <= 1:
+        return _dedupe_cits(cits)
+    urls = [c.get("url") or "" for c in cits]
+    if category.startswith("rating_"):
+        strong = [
+            c for c, u in zip(cits, urls, strict=False) if _host_root(u) in RATING_AUTHORITY_HOSTS
+        ]
+        if strong:
+            return _dedupe_cits(strong)
+    keep = [c for c, u in zip(cits, urls, strict=False) if not _is_background_host(u)]
+    return _dedupe_cits(keep or cits)
 
 
 def _background_only_problem(severity: str, cits: list[dict[str, Any]]) -> str | None:
@@ -1705,6 +1839,9 @@ def file_flag(  # noqa: PLR0912 - a deliberate sequence of filing gates
                 "contiguous part):\n" + "\n".join(f"<<{q}>>" for q in quotable)
             )
         return _reject_or_stop(tool_context, entity_id, category, msg)
+
+    cits = _prune_weak_citations(cits, category)
+    flag["citations"] = cits
 
     cost_span_max = 50
     if est_cost_usd_low > 0 and est_cost_usd_high > cost_span_max * est_cost_usd_low:
