@@ -42,11 +42,18 @@ PROCEDURE:
    not appear in the excerpts"), and prose that paraphrases the marginal ("roughly 99%")
    drifts from the citation. One descriptor may return both a specific marginal ("pervasive
    language", n=187) and its parent category ("language"); cite the most specific match.
-   Frame the finding as measured boundary risk, never an absolute bright-line rule, and never
-   support a rating claim with a generic article about CARA thresholds — the verifier rejects
-   generic-threshold citations every time (language and drug-use flags have both died this
-   way). A prediction outside the conformal set will be rejected without a stated divergence
-   reason.
+   CLAIM SHAPE — THIS IS WHAT SURVIVES VERIFICATION. A marginal is a descriptor-FREQUENCY
+   observation, not a CARA rule. Assert ONLY what the distribution supports: that this
+   script's profile MATCHES a descriptor the corpus associates with a rating band ("the
+   language profile matches the CARA descriptor 'pervasive language', which patterns strongly
+   toward R in the descriptor corpus"). NEVER assert a normative CARA rule — "more than one
+   F-word triggers R", "CARA requires", "exceeds PG-13 tolerances" — because no descriptor
+   table contains a rule, so the marginal reads as unsupporting evidence and the verifier
+   takes the whole finding down (this is exactly how the language, sexuality, and drug flags
+   died). Frame it as measured boundary risk (the conformal set is the honest prediction),
+   never a bright-line rule, and never support a rating claim with a generic article about
+   CARA thresholds. A prediction outside the conformal set will be rejected without a stated
+   divergence reason.
 
 2b. query_precedent(text, k) with a capsule of this script. THE CAPSULE NAMES THE FILM'S FORM
    BEFORE ITS CONTENT — content markers alone cannot tell a campus legal drama from a campus

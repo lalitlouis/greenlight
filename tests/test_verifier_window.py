@@ -171,6 +171,47 @@ def test_apply_overturns_flips_only_the_contradicted_verdict():
     assert verdicts["F116"]["verdict"] == "UNSUPPORTED"  # genuinely absent: stands
 
 
+def _daughters_state():
+    # the fact (ages) is stated in S004; the finding argued from S084, which names
+    # the daughters but not their ages — the F3011 partial-window rejection.
+    s004 = "INT. BAR - DAY\n\nSTU\nHaylee is two, and Kaitlin is already four! Believe it?!\n"
+    s084 = "\f\nEXT. CHAPEL - DAY\n\nStu weds; Haylee and Kaitlin scatter petals.\n"
+    text = s004 + s084
+    return {
+        "script_text": text,
+        "scenes": [
+            {"scene_id": "S004", "raw_span": [0, len(s004)], "heading": "INT. BAR - DAY"},
+            {"scene_id": "S084", "raw_span": [len(s004), len(text)], "heading": "EXT. CHAPEL"},
+        ],
+    }
+
+
+def test_unstated_fact_overturn_finds_stated_fact_and_widens_coordinates():
+    from greenlight.agents.verification import _apply_overturns, _stated_fact_overturn
+
+    state = _daughters_state()
+    reason = (
+        "The scene text in S084 does not specify the ages of Stu's daughters "
+        "(Haylee and Kaitlin as age 2 and age 4), assuming unstated facts."
+    )
+    assert _stated_fact_overturn(reason, state) == ("Haylee, Kaitlin, Stu", "S004")
+    flags = [{"flag_id": "F3011", "scene_ids": ["S084"], "category": "minor_safety"}]
+    _apply_overturns(flags, {"F3011": {"verdict": "UNSUPPORTED", "reason": reason}}, state)
+    assert flags[0]["scene_ids"] == ["S004", "S084"]  # widened to where the fact is stated
+
+
+def test_unstated_fact_overturn_is_precise():
+    from greenlight.agents.verification import _stated_fact_overturn
+
+    state = _daughters_state()
+    # ages the script does not state near the names must NOT overturn
+    assert _stated_fact_overturn("Unstated: Haylee and Kaitlin are age 7 and age 9.", state) is None
+    # a single name cannot anchor a co-occurrence overturn
+    assert _stated_fact_overturn("Does not specify Haylee's age; unstated.", state) is None
+    # a genuine absence ruling is the other mechanism's job, not this one
+    assert _stated_fact_overturn("The tiger does not appear anywhere in the script.", state) is None
+
+
 def test_absent_terms_stems_do_not_punish_paraphrase():
     """Run 6: F205 died because 'bloody'/'gunfire' aren't literal — on a page
     with 'his lip explodes with blood'. Stems keep morphology out."""

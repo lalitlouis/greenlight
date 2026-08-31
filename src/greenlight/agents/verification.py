@@ -328,20 +328,33 @@ def _apply_overturns(
         v = verdicts.get(f["flag_id"])
         if not v or v.get("verdict") != "UNSUPPORTED":
             continue
-        hit = _overturned_by_script(str(v.get("reason") or ""), state)
+        reason = str(v.get("reason") or "")
+        hit = _overturned_by_script(reason, state)
+        claim = "absent"
+        if hit is None:
+            hit = _stated_fact_overturn(reason, state)
+            claim = "unstated"
         if hit is None:
             continue
         span, sid = hit
+        detail = (
+            f'the rejection asserted "{span[:80]}" is absent'
+            if claim == "absent"
+            else f"the rejection called the specifics ({span[:80]}) unstated"
+        )
         verdicts[f["flag_id"]] = {
             "verdict": "SUPPORTED",
             "reason": (
-                f'OVERTURNED by assertion: the rejection asserted "{span[:80]}" is absent, '
-                f"but the script contains it in {sid}. Original rejection: "
-                + str(v.get("reason") or "")[:200]
+                f"OVERTURNED by assertion: {detail}, but the script states it in {sid}. "
+                "Original rejection: " + reason[:200]
             ),
             "failure_mode": "none",
             "overridden": True,
         }
+        # Widen coordinates to the scene that carries the fact — the finding argued
+        # from a window that did not contain it (F3011: ages in S004, not S084).
+        if claim == "unstated" and sid not in (f.get("scene_ids") or []):
+            f["scene_ids"] = sorted({*(f.get("scene_ids") or []), sid}, key=lambda x: int(x[1:]))
         overturned.append((f["flag_id"], span, sid))
     return overturned
 
@@ -373,6 +386,136 @@ def _overturned_by_script(reason: str, state: Any) -> tuple[str, str] | None:
             )
             return span, sid
     return None
+
+
+# The sibling of the absence overturn, for the OTHER false-rejection shape: the
+# verifier calls a fact "unstated/assumed" because it read a partial window, when
+# the script states it elsewhere (F3011: the daughters' ages, in S004, not the
+# finding's own coordinates — which took the whole minor-safety finding down).
+_UNSTATED_RE = _re.compile(
+    r"unstated|assum\w+"
+    r"|does not (?:specify|state|mention|establish|say)"
+    r"|not (?:specified|stated|established)|no mention of",
+    _re.IGNORECASE,
+)
+_NUM_WORDS = {
+    "1": "one",
+    "2": "two",
+    "3": "three",
+    "4": "four",
+    "5": "five",
+    "6": "six",
+    "7": "seven",
+    "8": "eight",
+    "9": "nine",
+    "10": "ten",
+    "11": "eleven",
+    "12": "twelve",
+}
+# Common capitalized words a sentence throws off that are not the distinctive proper
+# nouns whose co-occurrence anchors the overturn.
+_COMMON_CAPS = frozenset(
+    {
+        "the",
+        "this",
+        "that",
+        "these",
+        "those",
+        "scene",
+        "script",
+        "screenplay",
+        "before",
+        "after",
+        "under",
+        "when",
+        "while",
+        "both",
+        "their",
+        "finding",
+        "flag",
+        "note",
+        "text",
+        "claim",
+        "cara",
+        "mpa",
+        "bbfc",
+        "int",
+        "ext",
+        "and",
+        "but",
+        "for",
+        "prohibition",
+        "does",
+        "did",
+        "how",
+        "what",
+        "where",
+        "why",
+        "who",
+        "was",
+        "were",
+        "has",
+        "have",
+        "its",
+        "it",
+        "he",
+        "she",
+        "they",
+        "them",
+        "his",
+        "her",
+        "if",
+        "no",
+        "not",
+    }
+)
+_NAME_NUM_NEAR = 40  # a claimed age/count must sit beside the name, not just in the scene
+_MIN_ANCHOR_NAMES = 2  # need >=2 distinctive names co-occurring for near-certainty
+_MAX_ANCHOR_SCENES = 3  # if the names appear together in more scenes, the anchor is ambiguous
+
+
+def _num_near_name(seg: str, propers: set[str], n: str) -> bool:
+    """Is number n (digit OR word form) within _NAME_NUM_NEAR chars of a named
+    person in this scene? 'Haylee is two' confirms; a stray 7 elsewhere does not."""
+    forms = [n] + ([_NUM_WORDS[n]] if n in _NUM_WORDS else [])
+    for p in propers:
+        for pm in _re.finditer(_re.escape(p.lower()), seg):
+            window = seg[max(0, pm.start() - _NAME_NUM_NEAR) : pm.end() + _NAME_NUM_NEAR]
+            if any(
+                _re.search(rf"(?<![A-Za-z0-9]){_re.escape(f)}(?![A-Za-z0-9])", window)
+                for f in forms
+            ):
+                return True
+    return False
+
+
+def _stated_fact_overturn(reason: str, state: Any) -> tuple[str, str] | None:
+    """Unstated-fact rejections: if the distinctive proper nouns the rejection names
+    (>= 2) all co-occur in ONE scene, and every number it claims sits beside a name
+    there (digit or word), the fact IS stated — the verifier reasoned from a partial
+    window. Returns (names, scene_id) to overturn and widen coordinates to. High
+    precision: ambiguous when the names appear together in more than three scenes."""
+    text = str(state.get("script_text") or "")
+    scenes = state.get("scenes", [])
+    if not text or not scenes or not _UNSTATED_RE.search(reason):
+        return None
+    propers = {
+        w for w in _re.findall(r"\b[A-Z][a-z]{2,}\b", reason) if w.lower() not in _COMMON_CAPS
+    }
+    if len(propers) < _MIN_ANCHOR_NAMES:
+        return None
+    nums = set(_re.findall(r"(?<![A-Za-z0-9])\d{1,3}(?![0-9])", reason))
+    matches: list[str] = []
+    for s in scenes:
+        seg = text[s["raw_span"][0] : s["raw_span"][1]].lower()
+        if not all(p.lower() in seg for p in propers):
+            continue
+        if nums and not all(_num_near_name(seg, propers, n) for n in nums):
+            continue
+        matches.append(s["scene_id"])
+    if not matches or len(matches) > _MAX_ANCHOR_SCENES:
+        return None
+    return ", ".join(sorted(propers)), matches[0]
 
 
 _STOPWORDS = frozenset(

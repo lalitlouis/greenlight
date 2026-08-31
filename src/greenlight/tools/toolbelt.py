@@ -1362,6 +1362,13 @@ BACKGROUND_HOSTS = {
     "ginflatables.com",  # inflatables vendor, cited for stunt-water safety
     "digitalcommons.georgiasouthern.edu",  # student thesis repo, cited for CARA
     "fsufilmhandbook.com",  # student film handbook, cited for stunt safety
+    # run-10: a HIGH SCHOOL newspaper survived verification as CARA authority —
+    # worse than the municipal .gov it slipped past. Plus local news and a blog
+    # cited as authority for venues and a Ninth Circuit trademark case.
+    "whstheshield.com",  # high school student newspaper, cited for CARA alcohol
+    "thoolie.com",  # cited as authority for Body English / Tao nightclubs
+    "ksl.com",  # Utah local news, cited for the Pure nightclub
+    "turtletalk.blog",  # a federal-Indian-law blog cited for a 9th Cir. trademark case
 }
 
 _SCENE_ANCHOR_CAP = 8  # a finding spanning more scenes than this says "the script"
