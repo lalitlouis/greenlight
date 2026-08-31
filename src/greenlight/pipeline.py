@@ -283,7 +283,19 @@ async def _salvage_verify(filed, verdicts, state, on_event):
             brief = f"Salvage: verified {len(verdicts)} filed flags after the abort."
             on_event({"type": "text", "agent": "verification_panel", "text": brief})
     except Exception:
-        pass  # truly unavailable — apply_verdicts fails open with markers
+        # apply_verdicts leaves a MISSING verdict untouched — it marks only the
+        # per-flag fail_open ones — so a wholesale failure here used to ship
+        # entirely unverified flags that render exactly like verified ones.
+        # Mark every flag explicitly: the report then withholds its score
+        # (verification_degraded) instead of scoring an unverified run.
+        verdicts = {
+            f["flag_id"]: {
+                "verdict": "SUPPORTED",
+                "reason": "verification unavailable — salvage path could not reach the verifier",
+                "fail_open": True,
+            }
+            for f in filed
+        }
     return verdicts
 
 
@@ -441,6 +453,12 @@ async def run(  # noqa: PLR0912, PLR0915 - one linear run sequence, deliberately
     else:
         verdicts = await _salvage_verify(filed, verdicts, state, on_event)
         kept, rejected = apply_verdicts(filed, verdicts)
+        # parity with the main panel: a sourcing-failure rejection becomes an
+        # open question rather than silently retiring the hazard. (Re-sourcing
+        # and the rating reconcile still do NOT run on this path — they need a
+        # live client, which is precisely what the abort suggests is missing.)
+        for key, entries in verification.demotion_entries(rejected).items():
+            state[key] = list(state.get(key) or []) + entries
     kept = adjudicator.merge_exact_duplicates(kept)
     adjudication_notes: list[str] = []
     if plan := state.get("adjudication"):

@@ -303,3 +303,50 @@ def test_failed_verifier_withholds_the_score_instead_of_inflating_it():
     # a fully verified run is unaffected
     clean = build_report("X", [make_flag("F101", "HIGH")], page_count=10)
     assert clean["greenlight_score"] == 92 and clean["verification_degraded"] is False
+
+
+# --- B5 / B13: verification must not misreport its own output ---------------
+
+
+def test_missing_verdicts_alone_do_not_mark_flags():
+    """Pins the underlying behaviour the salvage fix compensates for."""
+    from greenlight.agents.verification import apply_verdicts
+
+    kept, rejected = apply_verdicts([make_flag("F101", "HIGH")], {})
+    assert kept and not rejected
+    assert "verification_unavailable" not in kept[0], "unmarked is the trap"
+
+
+def test_failopen_verdicts_mark_every_flag_and_withhold_the_score():
+    from greenlight.agents.verification import apply_verdicts
+
+    flags = [make_flag("F101", "BLOCKER"), make_flag("F102", "HIGH")]
+    failopen = {
+        f["flag_id"]: {"verdict": "SUPPORTED", "reason": "unavailable", "fail_open": True}
+        for f in flags
+    }
+    kept, _ = apply_verdicts(flags, failopen)
+    assert all(f["verification_unavailable"] for f in kept)
+    rep = build_report("X", kept, page_count=10)
+    assert rep["greenlight_score"] is None and rep["verification_degraded"] is True
+
+
+def test_sourcing_failure_rejections_become_open_questions():
+    """Shared by the panel and the salvage path: a claim the verifier could not
+    SOURCE is not a claim it disproved, so its scenes must not read clean."""
+    from greenlight.agents.verification import demotion_entries
+
+    dropped = [
+        {
+            "flag_id": "F302",
+            "agent": "safety_underwriter",
+            "scene_ids": ["S074", "S080"],
+            "finding": "110mph in a convertible missing its passenger door.",
+            "failure_mode": "premise_unsupported",
+        },
+        {"flag_id": "F109", "agent": "clearance_counsel", "failure_mode": "script_misstatement"},
+    ]
+    out = demotion_entries(dropped)
+    assert list(out) == ["open_questions:safety_underwriter"], "only sourcing failures demote"
+    entry = out["open_questions:safety_underwriter"][0]
+    assert "F302" in entry and "S074, S080" in entry and "not" in entry

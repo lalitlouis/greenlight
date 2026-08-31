@@ -285,6 +285,28 @@ _ABSENCE_RE = _re.compile(
 )
 
 
+def demotion_entries(dropped: list[dict[str, Any]]) -> dict[str, list[str]]:
+    """{open_questions state key: entries} for sourcing-failure rejections.
+
+    A claim the verifier could not SOURCE is not a claim it disproved, so it
+    stays on the record as an honest unknown and its scenes never flip to "No
+    known issue". Shared so the salvage path behaves like the main one — that
+    divergence is how a fair CSATF-titles rejection took a 110mph missing-door
+    drive dark on runs that aborted.
+    """
+    out: dict[str, list[str]] = {}
+    for r in dropped:
+        if r.get("failure_mode") not in ("premise_unsupported", "citation_offtopic"):
+            continue
+        key = f"open_questions:{r.get('agent', 'clearance_counsel')}"
+        out.setdefault(key, []).append(
+            f"Unresolved ({r['flag_id']} rejected on citation support, claim not "
+            f"disproven; scenes {', '.join(r.get('scene_ids') or [])}): "
+            f"{str(r.get('finding', ''))[:280]}"
+        )
+    return out
+
+
 def _apply_overturns(
     flags: list[dict[str, Any]], verdicts: dict[str, dict[str, Any]], state: Any
 ) -> list[tuple[str, str, str]]:
@@ -952,6 +974,15 @@ class VerificationPanel(BaseAgent):
             )
             k2, _d2 = apply_verdicts([retry_flag], {r["flag_id"]: v2})
             if k2:
+                # The BASE verdict still says UNSUPPORTED — pipeline rebuilds
+                # record["verdicts"] from base ids only, so a recovered flag
+                # shipped in record["flags"] while the verdict beside it called
+                # it rejected. Promote the base verdict and clear the rejection
+                # metadata the retry_flag inherited via {**r}.
+                verdicts[r["flag_id"]] = v2
+                for stale in ("failure_mode", "rejection_reason", "recoverable"):
+                    for f in k2:
+                        f.pop(stale, None)
                 kept.extend(k2)
                 dropped = [d for d in dropped if d["flag_id"] != r["flag_id"]]
                 resourced_stats["recovered"] += 1
@@ -961,19 +992,9 @@ class VerificationPanel(BaseAgent):
         # "No known issue" silently (run 5: a fair CSATF-titles rejection took
         # a 110mph missing-door drive dark). Demote to the desk's open
         # questions — an honest unknown, on the record.
-        oq_delta: dict[str, list[str]] = {}
-        demoted = 0
-        for r in dropped:
-            if r.get("failure_mode") in ("premise_unsupported", "citation_offtopic"):
-                key = f"open_questions:{r.get('agent', 'clearance_counsel')}"
-                oq = oq_delta.get(key) or list(state.get(key) or [])
-                oq.append(
-                    f"Unresolved ({r['flag_id']} rejected on citation support, claim not "
-                    f"disproven; scenes {', '.join(r.get('scene_ids') or [])}): "
-                    f"{str(r.get('finding', ''))[:280]}"
-                )
-                oq_delta[key] = oq
-                demoted += 1
+        entries = demotion_entries(dropped)
+        oq_delta = {k: list(state.get(k) or []) + v for k, v in entries.items()}
+        demoted = sum(len(v) for v in entries.values())
         if demoted:
             yield Event(
                 invocation_id=ctx.invocation_id,
@@ -1025,10 +1046,13 @@ class VerificationPanel(BaseAgent):
         rejected = [
             fid for fid, v in verdicts.items() if ":" not in fid and v["verdict"] == "UNSUPPORTED"
         ]
+        # count each FLAG once: the ":resourced" duplicates made supported +
+        # partial + rejected exceed the number of flags verified
+        base = {fid: v for fid, v in verdicts.items() if ":" not in fid}
         summary = (
             f"Verified {len(flags)} flags: "
-            f"{sum(v['verdict'] == 'SUPPORTED' for v in verdicts.values())} supported, "
-            f"{sum(v['verdict'] == 'PARTIAL' for v in verdicts.values())} partial, "
+            f"{sum(v['verdict'] == 'SUPPORTED' for v in base.values())} supported, "
+            f"{sum(v['verdict'] == 'PARTIAL' for v in base.values())} partial, "
             f"{len(rejected)} rejected" + (f" ({', '.join(rejected)})" if rejected else "") + "."
         )
         yield Event(
