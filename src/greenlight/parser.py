@@ -59,7 +59,13 @@ _TIME_WORDS = {
     "SAME TIME",
     "THE WAKE",
 }
-_CUE_EXTENSION_RE = re.compile(r"\s*\((?:CONT'D|O\.S\.|O\.C\.|V\.O\.|OFF)\.?\)\s*$", re.IGNORECASE)
+# apostrophe-agnostic: the real script writes CONT'D with a CURLY apostrophe,
+# which the straight-quote form never matched — so "STEVE (CONT'D)" minted a
+# character distinct from "STEVE", splitting one speaker in two.
+_CUE_EXTENSION_RE = re.compile(
+    r"\s*\((?:CONT['\u2019]D|O\.S\.|O\.C\.|V\.O\.|OFF)\.?\)\s*$", re.IGNORECASE
+)
+_MAX_CUE_WORDS = 4  # a character name is a few words; an action line is many
 _TRANSITION_RE = re.compile(
     r"^(?:[A-Z ]+TO:|FADE (?:IN|OUT)[.:]?|SMASH CUT[.:]?|CUT TO BLACK[.:]?)$"
 )
@@ -133,8 +139,14 @@ def _is_cue(line: str, next_line: str | None) -> bool:
     if _TRANSITION_RE.match(stripped):
         return False
     bare = _CUE_EXTENSION_RE.sub("", stripped)
+    # a NAME has no comma and few words; an all-caps ACTION line ("THEY'RE
+    # CLOTHESLINED BY TWO CHAIRS", "ANNND ON STAGE ONE, PUT YOUR HANDS...")
+    # otherwise slipped through and became a speaking character
+    if "," in bare or len(bare.split()) > _MAX_CUE_WORDS:
+        return False
     letters = [c for c in bare if c.isalpha()]
-    return bool(letters) and bare == bare.upper() and not bare.endswith(".")
+    # a name does not end in sentence punctuation ("...DOUBLE STAXXX!")
+    return bool(letters) and bare == bare.upper() and not bare.endswith((".", "!", "?"))
 
 
 def strip_title_page(text: str) -> tuple[dict[str, str], int]:
@@ -170,6 +182,21 @@ _FRONT_MAX_LINES = 12
 _FRONT_TITLE_MAX_CHARS = 40
 
 
+_PROSE_RUN = 3  # consecutive lowercase-initial words that read as a sentence
+
+
+def _looks_like_prose(line: str) -> bool:
+    run = 0
+    for w in line.split():
+        if w[:1].islower():
+            run += 1
+            if run >= _PROSE_RUN:
+                return True
+        else:
+            run = 0
+    return False
+
+
 def _looks_like_front_matter(segment: str) -> bool:
     lines = [ln.strip() for ln in segment.split("\n") if ln.strip()]
     if not lines:
@@ -179,6 +206,13 @@ def _looks_like_front_matter(segment: str) -> bool:
             return False
         if _TRANSITION_RE.match(ln) or ln.upper().startswith("FADE IN"):
             return False  # transitions mean the movie has started
+        # PROSE means the film has started even without a slugline: a cold open
+        # ("OVER BLACK / A phone rings in the dark.") is page 1, not front
+        # matter, and misclassifying it shifted every scene page -1. A title
+        # page has no running sentence; three consecutive lowercase-initial
+        # words is a sentence. "Written by" / "September 30, 2007" never trip it.
+        if _looks_like_prose(ln):
+            return False
     if _FRONT_MARKER_RE.search("\n".join(lines)):
         return True
     # a short all-caps opening line reads as a display title page
@@ -214,7 +248,12 @@ def printed_page_count(text: str) -> int | None:
     still pages (the header read 110 pp against a real 111)."""
     if "\f" not in text:
         return None
-    return max(1, len(text.split("\f")) - _front_matter_feeds(text))
+    segments = text.split("\f")
+    # a source that ends with a form feed (pdftotext emits one after EVERY page,
+    # the last included) leaves a trailing empty segment that is not a page
+    if segments and not segments[-1].strip():
+        segments = segments[:-1]
+    return max(1, len(segments) - _front_matter_feeds(text))
 
 
 _SCENE_NUMBER_RE = __import__("re").compile(r"\s*#([A-Za-z0-9.\-]+)#\s*$")
@@ -355,7 +394,9 @@ def draft_identity(
         "revision_label": meta.get("revision") or "",
         "sha256": hashlib.sha256(source.encode()).hexdigest(),
         "bytes": len(source.encode()),
-        "pages": max((sc.get("page", 1) for sc in scenes), default=1),
+        # printed count first: max(scene page) undercounts when the last scene
+        # runs onto further pages (the "109 vs 111" the review flagged)
+        "pages": printed_page_count(source) or max((sc.get("page", 1) for sc in scenes), default=1),
         "scene_count": len(scenes),
         "scene_numbers": "script" if numbered >= max(1, len(scenes) // 2) else "generated",
     }

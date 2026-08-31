@@ -1349,6 +1349,9 @@ BACKGROUND_HOSTS = {
     "yelp.com",
     "trademarkia.com",
     "filmindependent.org",
+    # run-7: cited as authority for a Lanham Act / classification claim
+    "substack.com",  # a newsletter is not legal authority (fictionistas.substack)
+    "songmeanings.com",  # crowd lyrics annotations, not publishing administration
 }
 
 _SCENE_ANCHOR_CAP = 8  # a finding spanning more scenes than this says "the script"

@@ -195,3 +195,61 @@ def test_display_title_page_without_fountain_meta():
     _, scenes = parse_fountain(text)
     assert [s["page"] for s in scenes] == [1, 2]
     assert printed_page_count(text) == 3
+
+
+# --- run-7 review: cue false positives (C3), page edges (C2/C7) --------------
+
+
+def test_contd_curly_apostrophe_folds_to_the_speaker():
+    """The real script writes CONT'D with a curly apostrophe; the straight-quote
+    stripper never matched it, minting 'STEVE (CONT\u2019D)' as a separate character."""
+    from greenlight.parser import _CUE_EXTENSION_RE, _is_cue
+
+    assert _CUE_EXTENSION_RE.sub("", "STEVE (CONT\u2019D)").strip() == "STEVE"
+    assert _is_cue("STEVE (CONT\u2019D)", "Right this way.")
+
+
+def test_action_lines_are_not_character_cues():
+    from greenlight.parser import _is_cue
+
+    nxt = "and the crowd roars."
+    assert not _is_cue("ANNND ON STAGE ONE, PUT YOUR HANDS", nxt)  # comma + long
+    assert not _is_cue("THEY\u2019RE CLOTHESLINED BY TWO CHAIRS", nxt)  # 5 words
+    assert not _is_cue("TOGETHER FOR...DOUBLE STAXXX!", nxt)  # ends with !
+    # real cues still pass
+    assert _is_cue("VICK", "What?") and _is_cue("OFFICER BLADEN", "Step out.")
+
+
+def test_printed_page_count_ignores_a_trailing_form_feed():
+    """pdftotext emits a feed after EVERY page including the last, leaving a
+    trailing empty segment that is not a page (+1 overcount)."""
+    from greenlight.parser import printed_page_count
+
+    no_trailing = "INT. A - DAY\n\nx\n\fINT. B - DAY\n\ny\n"
+    trailing = no_trailing + "\f"
+    assert printed_page_count(trailing) == printed_page_count(no_trailing)
+
+
+def test_cold_open_prose_page_is_not_front_matter():
+    """A cold open ('OVER BLACK / a phone rings in the dark') is page 1, not a
+    title page — misclassifying it shifted every scene page -1."""
+    from greenlight.parser import parse_fountain, printed_page_count
+
+    text = (
+        "OVER BLACK\na phone rings somewhere in the dark room.\n"
+        "\fINT. APARTMENT - NIGHT\n\nShe answers.\n"
+    )
+    _, scenes = parse_fountain(text)
+    # the cold open IS page 1 (no slugline), so INT. APARTMENT is page 2 —
+    # before the fix the cold open was miscounted as front matter and the
+    # scene collapsed to page 1, undercounting the whole script by one
+    assert scenes[0]["page"] == 2
+    assert printed_page_count(text) == 2
+
+
+def test_title_page_still_reads_as_front_matter():
+    """The prose guard must not misfire on a real title page (no running
+    sentence): 'THE HANGOVER / Written by / ... / September 30, 2007'."""
+    from greenlight.parser import _looks_like_front_matter
+
+    assert _looks_like_front_matter("THE HANGOVER\nWritten by\nJon Lucas & Scott Moore\n2007")

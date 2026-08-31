@@ -59,6 +59,13 @@ PROCEDURE, per worklist item:
    regulator's practice is exactly the evidence you need. If a search result names the
    regulator's own guidance page but the excerpt is thin, fetch_page(url) retrieves the full
    text of the rule so you can cite the operative language, not a summary of it.
+   CLASSIFICATION AUTHORITY: a claim about a national classification body's standard (BBFC
+   category rules, CFA/SARFT prohibitions, UAE Media Council standards) must cite THAT BODY
+   or reporting on it — never a local council's licensing minutes. A city council
+   (belfastcity.gov.uk, nottinghamcity.gov.uk) is a government domain but not the BBFC; a
+   .gov URL is not automatically authority for a classification claim. If you cannot reach
+   the classification body's own material, file at MEDIUM and say the standard is asserted,
+   not sourced.
 3. file_flag ONE FLAG PER TERRITORY-ISSUE PAIR, category like "territory_cn_supernatural",
    "territory_uae_alcohol". Severity reflects release impact in that market — but a
    territory finding is BLOCKER ONLY when the film is undeliverable in its PRIMARY market
