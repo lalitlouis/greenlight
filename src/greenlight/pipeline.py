@@ -487,6 +487,12 @@ async def run(  # noqa: PLR0912, PLR0915 - one linear run sequence, deliberately
         named = {s for s in re.findall(r"\bS\d{3}\b", body) if s in _valid_sids}
         if named - set(f["scene_ids"]):
             f["scene_ids"] = sorted(set(f["scene_ids"]) | named, key=lambda x: int(x[1:]))
+        # Citations accrue past file_flag (verifier re-source, adjudicator merge),
+        # so the filing-time dedupe misses www/m./same-page duplicates that then
+        # render as two sources and inflate the count. Collapse them once here, at
+        # the single choke point every surface (web, PDF, one-sheet) reads from.
+        if f.get("citations"):
+            f["citations"] = toolbelt._dedupe_cits(f["citations"])
     kept.sort(key=lambda f: SEV_ORDER.get(f["severity"], 9))
 
     page_count = parser.printed_page_count(source) or (scenes[-1]["page"] if scenes else None)

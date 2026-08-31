@@ -1356,6 +1356,12 @@ BACKGROUND_HOSTS = {
     "wordpress.com",  # pekoeblaze.wordpress.com for BBFC classification
     "bandcamp.com",  # natesu.bandcamp.com for NIN publishing administration
     "ipfs.io",  # a content-gateway URL that may not resolve next week
+    # run-9: weak sources cited for venue / CARA / stunt / territory claims
+    "bayut.com",  # UAE property listings, cited for UAE media content standards
+    "squarespace.com",  # bare CDN / squarespace-hosted page (static1.squarespace.com)
+    "ginflatables.com",  # inflatables vendor, cited for stunt-water safety
+    "digitalcommons.georgiasouthern.edu",  # student thesis repo, cited for CARA
+    "fsufilmhandbook.com",  # student film handbook, cited for stunt safety
 }
 
 _SCENE_ANCHOR_CAP = 8  # a finding spanning more scenes than this says "the script"
@@ -1409,6 +1415,13 @@ AUTHORITY_HOSTS = {
     # suffix, which root-matches every council (belfastcity.gov.uk)
     "legislation.gov.uk",
     "uaelegislation.gov.ae",
+    # location / permit authorities (venue findings) — named exceptions to the
+    # municipal-.gov ban: a county film office IS the filming authority for its
+    # jurisdiction. Clark County is the Las Vegas permitting authority; banning
+    # every county .gov (run 9) took the actual venue authority with it.
+    "clarkcountynv.gov",
+    "filmla.com",
+    "lvmpd.com",
     # music rights
     "ascap.com",
     "bmi.com",
@@ -1579,11 +1592,12 @@ _URL_PATH_IDX = 3
 
 
 def _cit_key(url: str) -> str:
-    """host+path, www- and scheme-insensitive, trailing slash stripped — so
-    'csatf.org' and 'www.csatf.org' are ONE citation, not two (run 8)."""
+    """host+path, scheme- and subdomain-insensitive (www./m. stripped), trailing
+    slash stripped — so 'csatf.org', 'www.csatf.org' and 'm.csatf.org' are ONE
+    citation, not three (run 8: www; run 9: m.yelp.com beside yelp.com)."""
     parts = (url or "").split("/", 3)
     if len(parts) > _URL_HOST_IDX:
-        host = parts[_URL_HOST_IDX].removeprefix("www.").lower()
+        host = parts[_URL_HOST_IDX].lower().removeprefix("www.").removeprefix("m.")
     else:
         host = (url or "").lower()
     path = ("/" + parts[_URL_PATH_IDX]).rstrip("/") if len(parts) > _URL_PATH_IDX else ""

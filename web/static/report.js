@@ -421,7 +421,15 @@ function flagRow(f, opts) {
   main.appendChild(el("p", "finding", findingText));
 
   const cites = f.citations || [];
-  const hosts = [...new Set(cites.map((c) => (c.url || "").split("/")[2]).filter(Boolean))];
+  // Normalize the displayed host (strip www./m.) so distinct pages on one
+  // authority read as one source name — "csatf.org", not "csatf.org, www.csatf.org".
+  const hosts = [
+    ...new Set(
+      cites
+        .map((c) => ((c.url || "").split("/")[2] || "").replace(/^(www\.|m\.)/, ""))
+        .filter(Boolean),
+    ),
+  ];
   const label = [`${cites.length} citation${cites.length === 1 ? "" : "s"}`, hosts.join(", ")]
     .filter(Boolean)
     .join(" · ");

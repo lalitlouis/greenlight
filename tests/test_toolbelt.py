@@ -1433,6 +1433,35 @@ def test_kiwix_dump_counts_as_background():
     assert not _is_background_host("https://www.filmratings.com/rules")
 
 
+def test_county_film_offices_are_authority_municipal_gov_still_banned():
+    """A county/city film office IS the filming authority for its jurisdiction —
+    named exceptions to the municipal-.gov ban (run 9: the new rule banned Clark
+    County, the Las Vegas permitting authority, along with the noise it removed)."""
+    from greenlight.tools.toolbelt import _is_authority_host
+
+    assert _is_authority_host("https://clarkcountynv.gov/permits")
+    assert _is_authority_host("https://filmla.com/permit")
+    assert _is_authority_host("https://www.lvmpd.com/x")
+    assert _is_authority_host("https://film.nv.gov/x")  # US-state domain, always was
+    assert not _is_authority_host("https://highpointnc.gov/x")  # random municipality
+
+
+def test_citation_dedup_collapses_www_and_mobile_keeps_distinct_pages():
+    """csatf.org / www.csatf.org / m.csatf.org for one page are ONE source; two
+    different bulletins on one host stay two (run 8 www, run 9 m.yelp beside yelp)."""
+    from greenlight.tools.toolbelt import _dedupe_cits
+
+    cits = [
+        _cit("https://www.csatf.org/04_stunts/"),
+        _cit("https://csatf.org/04_stunts"),  # same page, non-www + trailing slash
+        _cit("https://m.yelp.com/biz/x"),
+        _cit("https://yelp.com/biz/x"),  # same page, non-mobile
+        _cit("https://www.csatf.org/01_firearms/"),  # distinct page, same host
+    ]
+    out = _dedupe_cits(cits)
+    assert len(out) == 3
+
+
 def test_rating_findings_need_a_ratings_authority_not_any_gov():
     """Run 6: committee.nottinghamcity.gov.uk cited for BBFC guidelines —
     government, but not a classification authority."""
