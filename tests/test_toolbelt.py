@@ -83,7 +83,7 @@ def file_good_flag(ctx, **overrides):
 def test_file_flag_happy_path():
     ctx = make_ctx()
     msg = file_good_flag(ctx)
-    assert msg.startswith("Filed F101")
+    assert msg.startswith("Filed F1001")
     (flag,) = ctx.state["flags:clearance_counsel"]
     assert flag["agent"] == "clearance_counsel"
     assert flag["citations"][0]["via"] == "parallel_search"
@@ -160,7 +160,7 @@ def test_flag_with_bogus_scene_is_rejected():
     assert msg.startswith("REJECTED")
     # ids are allocated process-locally (parallel batch writers can't share a
     # state counter); a rejection leaves a harmless gap, never a collision
-    assert file_good_flag(ctx).startswith("Filed F102")
+    assert file_good_flag(ctx).startswith("Filed F1002")
 
 
 def test_rejection_reports_all_errors_at_once():
@@ -254,7 +254,7 @@ def test_flag_ids_are_partitioned_per_desk():
     """Two desks filing concurrently must never mint the same flag id."""
     c1 = file_good_flag(make_ctx("clearance_counsel"))
     t1 = file_good_flag(make_ctx("territory_censor"))
-    assert c1.startswith("Filed F101") and t1.startswith("Filed F401")
+    assert c1.startswith("Filed F1001") and t1.startswith("Filed F4001")
 
 
 def test_query_precedent_degrades_gracefully(monkeypatch):
@@ -1513,3 +1513,62 @@ def test_repaired_citations_are_marked_on_the_record():
     cit = ctx.state["flags:clearance_counsel"][-1]["citations"][0]
     assert cit.get("repaired") is True
     assert cit["excerpt"] == RESEARCH_EXCERPT, "must be the true source text"
+
+
+# --- batch 2: coverage accuracy ---------------------------------------------
+
+
+def test_flag_ids_do_not_collide_past_ninety_nine():
+    """The per-desk sequence increments on every ATTEMPT including rejections
+    and is shared by four clearance batches plus retry and sweep. At 100
+    spacing, clearance's 101st id was F201 — ratings' first — and dedupe-by-id
+    would merge two unrelated findings."""
+    import itertools
+
+    from greenlight.tools.toolbelt import FLAG_ID_OFFSET
+
+    starts = sorted(FLAG_ID_OFFSET.values())
+    assert min(b - a for a, b in itertools.pairwise(starts)) >= 1000
+    ids = {d: f"F{off + 150}" for d, off in FLAG_ID_OFFSET.items()}
+    assert len(set(ids.values())) == len(ids), "150 flags on one desk must not collide"
+
+
+def test_sweeper_credit_is_desk_scoped():
+    """The sweeper runs under clearance_counsel__sweep for ALL desks, so an
+    entity_id alone cannot say which desk's question it answered. A desk-scoped
+    id can — which is what makes crediting it across desks safe."""
+    from greenlight.tools.toolbelt import sweep_work_item_id
+
+    tc = sweep_work_item_id("territory_censor", "E012")
+    assert tc == "SW-TC-E012"
+    assert tc != sweep_work_item_id("ratings_board", "E012")
+
+
+def test_sweeper_disposition_closes_a_non_clearance_entity():
+    """Before: the sweeper examined a territory entity, its work landed under
+    clearance_counsel__sweep, territory's family never included that name, so
+    the item was re-swept every round and rendered NOT EXAMINED despite being
+    examined."""
+    from greenlight.tools.toolbelt import sweep_work_item_id, unexamined_entities
+
+    tri = {
+        "entities": [{"entity_id": "E012", "surface": "Ghostbar", "scene_ids": ["S040"]}],
+        "territory_censor": [{"entity_id": "E012", "surface": "Ghostbar"}],
+    }
+    open_state = {"triage": tri}
+    assert [u["entity_id"] for u in unexamined_entities(open_state)] == ["E012"]
+    swept = {
+        "triage": tri,
+        "wi_done:clearance_counsel__sweep": [sweep_work_item_id("territory_censor", "E012")],
+    }
+    assert unexamined_entities(swept) == [], "the sweeper's work must count"
+
+
+def test_coverage_credit_requires_a_whole_word():
+    """`"ford" in "cannot afford"` credited entity Ford as covered, so a
+    short-surfaced entity could be skipped by every desk and never disclosed."""
+    from greenlight.tools.toolbelt import _mentions
+
+    assert not _mentions("ford", "the production cannot afford that location")
+    assert _mentions("ford", "a ford pickup is parked outside")
+    assert _mentions("crazy horse", "the crazy horse brawl needs a release")

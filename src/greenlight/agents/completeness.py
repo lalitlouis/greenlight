@@ -20,7 +20,11 @@ from google.adk.events import Event, EventActions
 from google.genai import types
 
 from greenlight.agents.common import make_desk
-from greenlight.tools.toolbelt import collapsed_desks, unexamined_entities
+from greenlight.tools.toolbelt import (
+    collapsed_desks,
+    sweep_work_item_id,
+    unexamined_entities,
+)
 
 _MAX_ROUNDS = 3
 _NAME_CAP = 8
@@ -113,22 +117,30 @@ class _CompletenessCheck(BaseAgent):
                 ),
             )
             return
+        # One item per (entity, owed desk). Entity items reached the sweeper
+        # with work_item_id None, so its dispositions could only ever be
+        # credited by entity_id — and the sweeper runs under the CLEARANCE
+        # name, so for ratings/safety/territory the work was invisible: swept,
+        # re-swept every round, then rendered NOT EXAMINED despite being
+        # examined. A desk-scoped id makes the credit exact.
         state["sweep_worklist"] = [
             {
                 "entity_id": m["entity_id"],
-                "work_item_id": m.get("work_item_id"),
+                "work_item_id": (m.get("work_item_id") or sweep_work_item_id(desk, m["entity_id"])),
                 "surface": m["surface"],
                 "scene_ids": m["scene_ids"],
                 "note": (
-                    f"Left undispositioned by: {', '.join(m.get('desks') or ['(unassigned)'])}. "
+                    f"Left undispositioned by: {desk}. "
                     "Answer THAT desk's question — a rights item (artwork, music, brand, "
                     "person, clip) gets the clearance treatment with research and citations "
                     "if exposure exists; never clear a FEATURED or PLOT_CRITICAL item on "
                     "vibes. Flag it, clear it with a reason, or note the open question — "
-                    "silence is not an option."
+                    "silence is not an option. Pass the work_item_id above to your "
+                    "disposition tool — it is how this item counts as answered."
                 ),
             }
             for m in missing
+            for desk in (m.get("desks") or ["(unassigned)"])
         ]
         named = ", ".join(f"'{m['surface'][:30]}'" for m in missing[:_NAME_CAP])
         more = f" (+{len(missing) - _NAME_CAP} more)" if len(missing) > _NAME_CAP else ""

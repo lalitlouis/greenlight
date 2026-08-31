@@ -459,10 +459,16 @@ async def run(  # noqa: PLR0912, PLR0915 - one linear run sequence, deliberately
         # live client, which is precisely what the abort suggests is missing.)
         for key, entries in verification.demotion_entries(rejected).items():
             state[key] = list(state.get(key) or []) + entries
-    kept = adjudicator.merge_exact_duplicates(kept)
+    # PLAN FIRST, then code dedupe. Reversed, merge_exact_duplicates absorbed
+    # flags the model's plan named as survivors — and apply_plan ignores unknown
+    # ids — so the whole action no-oped and its merge, category normalization
+    # and on-record rationale were lost, on exactly the duplicate-heavy runs the
+    # adjudicator exists for. The plan was generated from the PRE-dedupe
+    # verified_flags, so it must see that same set.
     adjudication_notes: list[str] = []
     if plan := state.get("adjudication"):
         kept, adjudication_notes = adjudicator.apply_plan(kept, plan)
+    kept = adjudicator.merge_exact_duplicates(kept)
     kept.sort(key=lambda f: SEV_ORDER.get(f["severity"], 9))
 
     page_count = parser.printed_page_count(source) or (scenes[-1]["page"] if scenes else None)

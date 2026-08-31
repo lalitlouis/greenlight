@@ -31,11 +31,16 @@ DESKS = ("clearance_counsel", "ratings_board", "safety_underwriter", "territory_
 
 # The four desks run concurrently under a ParallelAgent. Shared counters would race,
 # so flag ids are partitioned per desk and research budgets are per-desk keys.
+# Spaced 1000, not 100: the sequence is per-desk, shared by all four clearance
+# batches plus retry and sweep, and it increments on every ATTEMPT including
+# rejections. On an entity-dense script (batching exists because 100+ item
+# worklists happen) clearance passed 99 easily and F(100+101) collided with
+# ratings' F201 — two unrelated findings that dedupe-by-id would then merge.
 FLAG_ID_OFFSET = {
-    "clearance_counsel": 100,
-    "ratings_board": 200,
-    "safety_underwriter": 300,
-    "territory_censor": 400,
+    "clearance_counsel": 1000,
+    "ratings_board": 2000,
+    "safety_underwriter": 3000,
+    "territory_censor": 4000,
 }
 
 # --- clearance batching -----------------------------------------------------
@@ -89,6 +94,28 @@ def desk_work_items_done(state: Any, desk: str) -> set[str]:
     return out
 
 
+_SWEEP_WI_PREFIX = {
+    "clearance_counsel": "CC",
+    "ratings_board": "RB",
+    "safety_underwriter": "SU",
+    "territory_censor": "TC",
+}
+
+
+def sweep_work_item_id(desk: str, entity_id: str) -> str:
+    """Desk-scoped id for an entity handed to the completeness sweeper.
+
+    The sweeper runs under one name for all four desks, so an entity_id alone
+    cannot say WHICH desk's question its disposition answered. A desk-scoped id
+    can, which is what makes crediting it across desks safe."""
+    return f"SW-{_SWEEP_WI_PREFIX.get(desk, desk[:2].upper())}-{entity_id}"
+
+
+def _mentions(surface: str, text: str) -> bool:
+    """Whole-word containment — `"ford" in "cannot afford"` is not a mention."""
+    return re.search(rf"(?<!\w){re.escape(surface)}(?!\w)", text) is not None
+
+
 def unexamined_entities(state: Any) -> list[dict[str, Any]]:  # noqa: PLR0912 - three deliberate accounting sweeps
     """Worklist items their OWN desk never dispositioned, plus extracted
     entities on no worklist at all. Coverage is desk-scoped: safety clearing
@@ -124,8 +151,19 @@ def unexamined_entities(state: Any) -> list[dict[str, Any]]:  # noqa: PLR0912 - 
         covered, oqs = per_desk[desk]
         if eid in covered:
             return True
+        # The completeness sweeper is named clearance_counsel__sweep, so its
+        # work is only in THIS desk's family when the desk IS clearance. For
+        # ratings/safety/territory its dispositions were invisible: the item was
+        # examined, re-swept every round, and still rendered NOT EXAMINED.
+        # Credit it the way work items are already credited — by EXACT id, so a
+        # blanket sweep still cannot answer a question it never asked.
+        if sweep_work_item_id(desk, eid) in desk_work_items_done(state, desk):
+            return True
         surf = (surfaces.get(eid) or "").lower()
-        return bool(surf) and any(surf in q for q in oqs)
+        # word-boundary, not substring: "ford" inside "cannot afford" credited
+        # entity Ford as covered, so short-surfaced entities could be skipped by
+        # every desk, never swept, and never disclosed
+        return bool(surf) and any(_mentions(surf, q) for q in oqs)
 
     missing: dict[str, dict[str, Any]] = {}
     assigned: set[str] = set()
@@ -1845,6 +1883,29 @@ async def query_precedent(text: str, k: int, tool_context: ToolContext) -> dict[
     return out
 
 
+def _own_or_family(tool_context: ToolContext, prefix: str) -> Any:
+    """Read a per-agent key, preferring THIS agent's own value and falling back
+    to any instance in the desk family.
+
+    query_precedent and rating_boundary write under _agent_key (the full agent
+    name); file_rating_prediction read under _desk. Identical for the plain
+    ratings_board worker, never for ratings_board__retry — so after a ratings
+    collapse the retry's own query_precedent landed in
+    last_precedent:ratings_board__retry while the filing read
+    last_precedent:ratings_board, and EVERY prediction was rejected with "no
+    comparables on record" until the retry hit its iteration cap. The report
+    then shipped with no rating panel, precisely on the runs that had already
+    failed once.
+    """
+    own = tool_context.state.get(f"{prefix}:{_agent_key(tool_context)}")
+    if own:
+        return own
+    for name in batch_agent_names(_desk(tool_context)):
+        if val := tool_context.state.get(f"{prefix}:{name}"):
+            return val
+    return None
+
+
 # --- file_rating_prediction -------------------------------------------------
 
 
@@ -1898,8 +1959,7 @@ def file_rating_prediction(
     a prediction that contradicts its own evidence without a stated reason is
     rejected — the report's claim is "evidence, not opinion".
     """
-    desk = _desk(tool_context)
-    comparables = tool_context.state.get(f"last_precedent:{desk}")
+    comparables = _own_or_family(tool_context, "last_precedent")
     if not comparables:
         return (
             "REJECTED: no comparables on record. Call query_precedent first — the "
@@ -1908,7 +1968,7 @@ def file_rating_prediction(
     if predicted not in {"G", "PG", "PG-13", "R", "NC-17"}:
         return "REJECTED: predicted must be one of G, PG, PG-13, R, NC-17."
     majority = _comps_weighted_majority(comparables)
-    boundary_set = tool_context.state.get(f"boundary_set:{desk}") or []
+    boundary_set = _own_or_family(tool_context, "boundary_set") or []
     nearest = comparables[0] if comparables else None
     near_conflict = bool(
         nearest
@@ -1952,7 +2012,7 @@ def file_rating_prediction(
             "Either follow the evidence, or refile with divergence_reason stating "
             "specifically why the failing leg doesn't govern."
         )
-    meta = tool_context.state.get(f"last_precedent_meta:{desk}") or {}
+    meta = _own_or_family(tool_context, "last_precedent_meta") or {}
     tool_context.state["rating_prediction"] = {
         "predicted": predicted,
         "target": tool_context.state.get("target_rating"),

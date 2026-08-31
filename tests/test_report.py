@@ -350,3 +350,33 @@ def test_sourcing_failure_rejections_become_open_questions():
     assert list(out) == ["open_questions:safety_underwriter"], "only sourcing failures demote"
     entry = out["open_questions:safety_underwriter"][0]
     assert "F302" in entry and "S074, S080" in entry and "not" in entry
+
+
+def test_adjudication_plan_applies_before_code_dedupe():
+    """Reversed, merge_exact_duplicates absorbed the flag the plan named as
+    SURVIVOR; apply_plan ignores unknown ids, so the merge, the category
+    normalization and the rationale were all silently lost."""
+    from greenlight.agents.adjudicator import apply_plan, merge_exact_duplicates
+
+    a = make_flag("F1001", "MEDIUM")
+    b = make_flag("F1002", "HIGH")
+    for f in (a, b):
+        f["category"] = "music"  # same desk + category + scenes -> code dedupe pair
+    plan = {
+        "merges": [
+            {
+                "surviving_flag_id": "F1002",
+                "merged_flag_ids": ["F1001"],
+                "category": "sync_license",
+                "severity": "HIGH",
+                "rationale": "one licence, filed twice",
+            }
+        ],
+        "conflicts": [],
+    }
+    # plan first, then dedupe — the order pipeline now uses
+    out, notes = apply_plan([a, b], plan)
+    out = merge_exact_duplicates(out)
+    assert [f["flag_id"] for f in out] == ["F1002"]
+    assert out[0]["category"] == "sync_license", "the plan's normalization survived"
+    assert any("absorbed F1001" in n for n in notes)
