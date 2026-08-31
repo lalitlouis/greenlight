@@ -592,7 +592,7 @@ function injectChrome() {
       null,
       "Screenplays are encrypted in transit and at rest and never used to train AI models. " +
         "Cost figures are rule-of-thumb estimates, not quotes. ScriptRisk is a research tool, " +
-        "not legal advice. Built for the Agentic Cinema hackathon."
+        "not legal advice."
     )
   );
   fine.appendChild(el("p", null, "© 2026 SCRIPTRISK"));

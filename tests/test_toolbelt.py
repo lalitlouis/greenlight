@@ -1477,6 +1477,25 @@ def test_citation_dedup_collapses_www_and_mobile_keeps_distinct_pages():
     assert len(out) == 3
 
 
+def test_prune_keeps_the_derived_marginal_beside_filmratings():
+    """The rating_boundary marginal is a URL-less tool citation and the desk's
+    strongest, most specific evidence; the prune must not drop it for a generic
+    filmratings.com page (run 11: findings survived but cited filmratings, not the
+    4,544-rationale corpus, because the marginal read as weak)."""
+    from greenlight.tools.toolbelt import _prune_weak_citations
+
+    cits = [
+        _cit("https://www.filmratings.com/Content"),
+        {
+            "via": "rating_boundary",
+            "excerpt": "'pervasive language': R 99% across 187 official CARA rationales "
+            "(ScriptRisk CARA descriptor corpus)",
+        },
+    ]
+    kept = _prune_weak_citations(cits, "rating_language")
+    assert any("ScriptRisk CARA descriptor corpus" in (c.get("excerpt") or "") for c in kept)
+
+
 def test_rating_findings_need_a_ratings_authority_not_any_gov():
     """Run 6: committee.nottinghamcity.gov.uk cited for BBFC guidelines —
     government, but not a classification authority."""

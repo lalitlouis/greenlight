@@ -1622,6 +1622,16 @@ def _dedupe_cits(cits: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return out
 
 
+def _is_derived_marginal(c: dict[str, Any]) -> bool:
+    """Our own rating_boundary marginal — a URL-less tool citation, and the desk's
+    strongest, most specific rating evidence. It must count as authority, or the
+    prune below drops it (no URL) for a generic filmratings.com page and the
+    measured 4,544-rationale marginal never renders."""
+    return "ScriptRisk CARA descriptor corpus" in (c.get("excerpt") or "") or (
+        c.get("via") == "rating_boundary"
+    )
+
+
 def _prune_weak_citations(cits: list[dict[str, Any]], category: str) -> list[dict[str, Any]]:
     """When a finding already has a strong source, the weak ones must not render
     beside it — a CARA claim citing filmratings AND highpointnc.gov reads as
@@ -1632,7 +1642,9 @@ def _prune_weak_citations(cits: list[dict[str, Any]], category: str) -> list[dic
     urls = [c.get("url") or "" for c in cits]
     if category.startswith("rating_"):
         strong = [
-            c for c, u in zip(cits, urls, strict=False) if _host_root(u) in RATING_AUTHORITY_HOSTS
+            c
+            for c, u in zip(cits, urls, strict=False)
+            if _host_root(u) in RATING_AUTHORITY_HOSTS or _is_derived_marginal(c)
         ]
         if strong:
             return _dedupe_cits(strong)
