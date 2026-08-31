@@ -132,6 +132,44 @@ def test_form_feeds_anchor_real_pages():
     assert [s["page"] for s in scenes] == [1, 2, 4]
 
 
+def test_buried_heading_promoted_only_when_location_is_known():
+    """A prefix-less location line is a scene heading the writer left unmarked; it is
+    promoted only when the script names that location elsewhere with a real INT./EXT.
+    prefix (the Hangover rooftop/suite merge — a bare 'THE DEAN MARTIN SUITE' absorbed
+    the suite scene under the rooftop slugline, mis-anchoring every flag there).
+    Character cues and stray all-caps lines match no known location and must NOT mint
+    phantom scenes."""
+    text = (
+        "EXT. MANDALAY BAY ROOFTOP -- NIGHT\n\n"
+        "The guys drink on the ledge.\n\n"
+        "STU\nThis is a bad idea.\n\n"
+        "THE DEAN MARTIN SUITE\n\n"  # buried heading: base location known below -> promoted
+        "A live chicken wanders across the trashed suite.\n\n"
+        "INT. THE DEAN MARTIN SUITE -- MOMENTS LATER\n\n"
+        "They regroup.\n"
+    )
+    _, scenes = parse_fountain(text)
+    headings = [s["heading"] for s in scenes]
+    assert headings.count("THE DEAN MARTIN SUITE") == 1  # promoted exactly once
+    roof = next(s for s in scenes if "ROOFTOP" in s["heading"])
+    assert "chicken" not in " ".join(roof["action"]).lower()  # suite content split out
+
+
+def test_bare_allcaps_without_known_location_stays_in_scene():
+    """Bare all-caps lines are overwhelmingly character cues, not headings (1093 of
+    them in the real script); without a base-location match none may mint a scene."""
+    text = (
+        "INT. OFFICE -- DAY\n\n"
+        "She reads the memo.\n\n"
+        "MARGARET\nWe ship tonight.\n\n"  # cue: base 'MARGARET' matches no location
+        "THE BIG REVEAL\n\n"  # stray all-caps: base matches no location
+        "Everyone gasps.\n"
+    )
+    _, scenes = parse_fountain(text)
+    assert len(scenes) == 1
+    assert scenes[0]["heading"] == "INT. OFFICE -- DAY"
+
+
 def test_title_page_feeds_do_not_shift_printed_pages():
     """A PDF title page occupies page 1 of the FILE but page 0 of the printed
     script — scene pages must match the printed numbering (+1 bug, run 3)."""

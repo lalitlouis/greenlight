@@ -42,6 +42,37 @@ def is_scene_heading(stripped: str) -> bool:
     return _is_heading(stripped)
 
 
+# A buried scene heading: the writer dropped the INT./EXT. prefix, leaving a bare
+# location line ("THE DEAN MARTIN SUITE") the heading test misses, so its scene is
+# silently absorbed into the one above and every flag anchored there cites the wrong
+# slugline. Recovered only when the bare line's base location matches a real slugline
+# elsewhere in the SAME script — precision over recall, because a bare all-caps line
+# is far more often a character cue than a heading, and a wrong split mis-anchors
+# every downstream flag.
+_LOC_SEP_RE = re.compile(r"\s+-{1,2}\s+")  # " - " or " -- " between slug segments
+_MIN_BURIED_HEADING_LEN = 4
+
+
+def _base_location(text: str) -> str:
+    """First slug segment, upper-cased:
+    'THE DEAN MARTIN SUITE -- NIGHT' -> 'THE DEAN MARTIN SUITE'."""
+    return _LOC_SEP_RE.split(text.strip(), 1)[0].strip().upper()
+
+
+def _maybe_buried_heading(stripped: str) -> bool:
+    """Cheap structural screen for a prefix-less heading candidate (bare, all-caps,
+    no parenthetical/colon). Confirmed later only if its base location is one a real
+    slugline establishes — so this may pass a character cue; the base-location match
+    is what rejects it."""
+    if not stripped or "(" in stripped or stripped.endswith(":"):
+        return False
+    if len(stripped) < _MIN_BURIED_HEADING_LEN or stripped != stripped.upper():
+        return False
+    if _is_heading(stripped) or _TRANSITION_RE.match(stripped):
+        return False
+    return bool(re.search(r"[A-Z]", stripped))
+
+
 _TIME_WORDS = {
     "DAY",
     "NIGHT",
@@ -277,14 +308,32 @@ def parse_fountain(  # noqa: PLR0912, PLR0915 - one continuous scan loop
     """
     meta, body_start = strip_title_page(text)
 
-    # Locate scene heading line starts, as offsets into the original text.
+    # Locate scene heading line starts, as offsets into the original text. Real
+    # sluglines in the first sweep; bare-location candidates set aside, then confirmed
+    # against the base locations those real sluglines establish — a buried heading
+    # only counts if the script names its location elsewhere with a proper prefix.
     heading_positions: list[tuple[int, str]] = []
+    buried_candidates: list[tuple[int, str]] = []
     pos = body_start
     for line in text[body_start:].split("\n"):
         stripped = line.strip()
         if _is_heading(stripped) and not _TRANSITION_RE.match(stripped):
             heading_positions.append((pos, stripped))
+        elif _maybe_buried_heading(stripped):
+            buried_candidates.append((pos, stripped))
         pos += len(line) + 1
+
+    known_bases = {
+        _base_location(loc)
+        for _, heading in heading_positions
+        if (loc := _split_heading(heading)[1])
+    }
+    heading_positions.extend(
+        (cpos, cstripped)
+        for cpos, cstripped in buried_candidates
+        if _base_location(cstripped) in known_bases
+    )
+    heading_positions.sort(key=lambda hp: hp[0])
 
     scenes: list[dict[str, Any]] = []
     cumulative_lines = 0.0
