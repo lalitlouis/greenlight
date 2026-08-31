@@ -32,6 +32,34 @@ def flags_matching(flags, *, category_any=None, scenes_any=None, desk=None, text
     return out
 
 
+def desk_addressed(record, desk, terms):
+    """Did `desk` ADDRESS a topic — flag it, OR clear it with a reason that
+    names it, OR note it as an open question?
+
+    A desk that examines content and CLEARS it with a documented rationale has
+    not missed it. The drug seed is the case: brief, non-graphic cannabis is a
+    legitimate PG-13-boundary clearance, so a ratings desk that cleared it
+    ("...establishing a PG-13 boundary") covered it exactly as well as one that
+    filed a driver. Requiring a FLAG specifically failed a clean run on a
+    defensible judgment call (2026-08-30 gate). This checks coverage — was the
+    content examined — not which disposition the desk chose.
+    """
+    terms = [t.lower() for t in terms]
+    for f in record.get("flags", []):
+        if f.get("agent") != desk:
+            continue
+        blob = (f.get("category", "") + " " + f.get("finding", "")).lower()
+        if any(t in blob for t in terms):
+            return True
+    for c in (record.get("cleared") or {}).get(desk, []):
+        if any(t in str(c.get("reasoning", "")).lower() for t in terms):
+            return True
+    for q in (record.get("open_questions") or {}).get(desk, []):
+        if any(t in str(q).lower() for t in terms):
+            return True
+    return False
+
+
 def flags_about(flags, *, category_any=(), text_any=(), desk=None):
     """Category OR finding-text match — desks drift category slugs run to run."""
     # an empty filter must contribute NOTHING, not everything — a single-param
@@ -133,8 +161,10 @@ def main() -> int:  # noqa: PLR0915 - a linear checklist, deliberately flat
         "S003, S006, S011 — miscounting means find_in_script was skipped",
     )
     check(
-        "ratings: drug-use flag",
-        bool(flags_matching(flags, category_any=["drug"], desk="ratings_board")),
+        "ratings: drug use addressed (flagged or dispositioned)",
+        desk_addressed(r, "ratings_board", ["drug", "cannabis", "marijuana", "joint", "smok"]),
+        "the ratings desk must EXAMINE the drug content — a documented clearance "
+        "at the PG-13 boundary counts; only silence is a miss",
     )
 
     # --- Safety seeds
