@@ -380,3 +380,49 @@ def test_adjudication_plan_applies_before_code_dedupe():
     assert [f["flag_id"] for f in out] == ["F1002"]
     assert out[0]["category"] == "sync_license", "the plan's normalization survived"
     assert any("absorbed F1001" in n for n in notes)
+
+
+# --- run-7 review: binder self-consistency ----------------------------------
+
+
+def test_prose_named_scene_is_not_marked_no_known_issue():
+    """A scene a finding NAMES in its body must not also render 'No known issue'
+    (F3006 called S069 a heat scene while S069 got its own clean row)."""
+    from greenlight import binder
+
+    record = {
+        "flags": [
+            {
+                "flag_id": "F3006",
+                "agent": "safety_underwriter",
+                "scene_ids": ["S003", "S064"],
+                "citations": [{"excerpt": "x"}],
+                "severity": "MEDIUM",
+                "category": "weather_exposure",
+                "finding": "Desert heat exposure across S003, S064 and S069.",
+                "remedy": {"action": "ADD_SPECIALIST", "detail": "medic on set"},
+                "confidence": 0.9,
+            }
+        ],
+        "rejected_flags": [],
+        "open_questions": {},
+        "report": {},
+    }
+    scene_meta = {
+        f"S{i:03d}": {"heading": f"EXT. SCENE {i}", "page": i, "number": str(i)}
+        for i in (3, 64, 69)
+    }
+    data = binder.build(record, scene_meta)
+    rows_by_scene = {r["Scene"]: r for r in data["rows"]}
+    s069 = rows_by_scene.get("Sc. 69")
+    # the prose reference makes S069 "touched", so it folds into the finding
+    # that names it and never emits a standalone "No known issue" row
+    assert s069 is None or s069["Clearance status"] != "No known issue"
+
+
+def test_argued_scene_is_deterministic_by_scene_order():
+    from greenlight.binder import _argued_scene
+
+    f = {"finding": "argues from S046 and also S012", "remedy": {}}
+    # both named; the LOWEST by scene order wins regardless of prose order
+    assert _argued_scene(f, ["S012", "S046"]) == "S012"

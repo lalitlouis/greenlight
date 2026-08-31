@@ -11,8 +11,11 @@ from __future__ import annotations
 
 import csv
 import io
+import re as _re
 from collections import defaultdict
 from typing import Any
+
+_SCENE_REF_RE = _re.compile(r"\bS\d{3}\b")
 
 STATUS_BY_SEVERITY = {
     "BLOCKER": "DO NOT SHOOT AS WRITTEN — clearance/mitigation required",
@@ -247,7 +250,7 @@ def _is_determination(q: str) -> bool:
     )
 
 
-def _back_matter(record: dict[str, Any]) -> dict[str, Any]:
+def _back_matter(record: dict[str, Any]) -> dict[str, Any]:  # noqa: PLR0912 - accounting cases
     """Everything the report knows beyond the findings table — the binder is
     the artifact that reaches production counsel, so the verifier rejections,
     the adjudication, and the cleared determinations travel with it."""
@@ -266,7 +269,11 @@ def _back_matter(record: dict[str, Any]) -> dict[str, Any]:
     # cleared determinations move to a note, or 78 researched == 78 cleared
     # reads as an accounting impossibility next to 30 findings (run-4 review).
     flagged_ids = {f.get("entity_id") for f in record.get("flags", []) if f.get("entity_id")}
-    fold = (record.get("entity_accounting") or {}).get("fold") or {}
+    acct = record.get("entity_accounting") or {}
+    fold = acct.get("fold") or {}
+    # compounds/truncations counted as folded must not print in cleared, or the
+    # header's "N folded" contradicts the list (parity with the web renderer)
+    fragment_ids = set(acct.get("fragment_ids") or [])
     by_entity: dict[str, list[tuple[str, str]]] = {}
     script_level: list[dict[str, Any]] = []
     flagged_elsewhere = 0
@@ -274,6 +281,10 @@ def _back_matter(record: dict[str, Any]) -> dict[str, Any]:
         for c in items:
             # a short-form's clearance belongs to its canonical entity
             eid = fold.get(c.get("entity_id"), c.get("entity_id"))
+            # still a fragment after folding -> a compound/truncation, drop it;
+            # a short-form has folded to a real canonical and is kept there
+            if eid in fragment_ids:
+                continue
             if eid in flagged_ids:
                 flagged_elsewhere += 1
                 continue
@@ -360,13 +371,18 @@ def _not_examined_row(base: dict[str, str], names: list[str]) -> dict[str, str]:
     }
 
 
+def _prose_scenes(f: dict[str, Any]) -> list[str]:
+    """Every S### the finding's body or remedy names."""
+    body = f"{f.get('finding') or ''} {(f.get('remedy') or {}).get('detail') or ''}"
+    return _SCENE_REF_RE.findall(body)
+
+
 def _argued_scene(f: dict[str, Any], sids: list[str]) -> str:
     """The scene the finding's own text argues from, when it names one of its
-    anchors; the first anchor otherwise."""
-    import re as _re
-
-    body = f"{f.get('finding') or ''} {(f.get('remedy') or {}).get('detail') or ''}"
-    named = [s for s in _re.findall(r"\bS\d{3}\b", body) if s in sids]
+    anchors; the first anchor otherwise. Deterministic: among body-named anchors
+    it takes the LOWEST by scene order, not the first mentioned in prose — two
+    findings with the same anchors must land on the same row."""
+    named = sorted((s for s in _prose_scenes(f) if s in sids), key=_scene_sort_key)
     return named[0] if named else sids[0]
 
 
@@ -383,6 +399,7 @@ def build(  # noqa: PLR0912 - a deliberate sequence of row-emission cases
     # FREEWAY" and the Crazy Horse item anchored to the Dean Martin suite).
     # Repeating a finding per scene reads as duplicate exposure and
     # artificially inflates the log.
+    known_sids = set(scene_meta)
     by_scene: dict[str, list[dict[str, Any]]] = defaultdict(list)
     touched: set[str] = set()
     for f in record.get("flags", []):
@@ -390,6 +407,12 @@ def build(  # noqa: PLR0912 - a deliberate sequence of row-emission cases
             continue  # the invariant, applied here too: uncited findings do not exist
         sids = sorted(f.get("scene_ids") or ["(script-wide)"], key=_scene_sort_key)
         touched.update(sids)
+        # A scene a finding NAMES IN ITS PROSE must not also render "No known
+        # issue": F3006's body called S069 a heat-exposure scene while S069 got
+        # its own clean row — the report contradicting itself. The finding's
+        # own scene_ids are unchanged (they drive anchoring/coverage); this only
+        # stops a prose-named scene from reading clean.
+        touched.update(s for s in _prose_scenes(f) if s in known_sids)
         by_scene[_argued_scene(f, sids)].append({**f, "_all_scenes": sids})
 
     # Per-scene unexamined accounting: an entity no desk dispositioned must

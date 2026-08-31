@@ -13,6 +13,13 @@ from __future__ import annotations
 import re
 from typing import Any
 
+_TRUNCATION_PREFIXES = ("& ", "and ", "or ", ", ", "- ", "— ")
+
+
+def _is_truncation(surface: str) -> bool:
+    t = surface.strip().lower()
+    return not t or t in ("&", "and", "or") or t.startswith(_TRUNCATION_PREFIXES)
+
 
 def account(entities: list[dict[str, Any]]) -> dict[str, Any]:
     """{"researched", "distinct", "fragments", "fold"}. `fold` maps a folded
@@ -24,7 +31,10 @@ def account(entities: list[dict[str, Any]]) -> dict[str, Any]:
     ids = [str(e.get("entity_id") or "") for e in entities]
     n = len(surfaces)
     low = [s.lower() for s in surfaces]
-    frag = [not s or not s[0].isalpha() for s in surfaces]  # truncation artifacts ("& Forever…")
+    # A truncation artifact begins with a dangling connective ("& Forever Wedding").
+    # NOT "starts with a non-letter" — that wrongly folded real entities away
+    # ("1967 Cadillac Deville", ".357 MAGNUM"), shrinking the headline count.
+    frag = [_is_truncation(s) for s in surfaces]
 
     # Compounds ("Stu and Vick", "X & Y") whose component also stands alone are
     # groupings of existing entities, not entities.
@@ -58,4 +68,14 @@ def account(entities: list[dict[str, Any]]) -> dict[str, Any]:
                 fold[ids[i]] = ids[host]
 
     distinct = sum(1 for x in frag if not x)
-    return {"researched": n, "distinct": distinct, "fragments": n - distinct, "fold": fold}
+    # every folded/fragment id, so the cleared list can DROP them and reconcile
+    # with the headline: "distinct" entities and shown determinations must agree.
+    # (Header claimed "14 folded" while 10 compounds still printed in cleared.)
+    fragment_ids = [ids[i] for i in range(n) if frag[i] and ids[i]]
+    return {
+        "researched": n,
+        "distinct": distinct,
+        "fragments": n - distinct,
+        "fold": fold,
+        "fragment_ids": fragment_ids,
+    }

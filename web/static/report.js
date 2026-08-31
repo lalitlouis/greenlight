@@ -811,12 +811,20 @@ function clearedRows(record) {
   // cleared determinations are counted separately, never under the header.
   const flaggedIds = new Set((record.flags || []).map((f) => f.entity_id).filter(Boolean));
   const fold = record.entity_accounting?.fold || {};
+  // Compounds and truncations ("Stu and Vick", "& Forever Wedding") are counted
+  // as folded in the headline; they must also DROP from the cleared list or the
+  // header's "N folded" is a false claim that the list below contradicts.
+  const fragmentIds = new Set(record.entity_accounting?.fragment_ids || []);
   let flaggedElsewhere = 0;
   const entries = [];
   const bestByKey = new Map(); // one determination per (entity, desk) — folded
   for (const [desk, items] of Object.entries(record.cleared || {})) {
     for (const c of items || []) {
       const eid = fold[c.entity_id] || c.entity_id; // short forms fold to canonical
+      // drop only if STILL a fragment after folding: a short-form folds to a
+      // real canonical and survives there; a compound/truncation has no fold
+      // target and drops.
+      if (fragmentIds.has(eid)) continue;
       if (eid && flaggedIds.has(eid)) {
         flaggedElsewhere += 1;
         continue;
@@ -1160,10 +1168,19 @@ function renderReport(record) {
     const card = el("div", "card drivers-card");
     card.id = "sec-cost";
     const h = el("div", "drivers-head");
-    h.appendChild(el("h3", null, "Estimated clearance exposure"));
-    h.appendChild(el("b", "drivers-total", money(rep.est_clearance_cost_usd)));
+    // Lead with the TARGET-rating exposure when the adjudicator ruled some
+    // remedies moot on that path — the as-written sum was headlining a cost the
+    // report itself said the production avoids by hitting its target.
+    const paths = rep.est_cost_paths;
+    const headlineCost = paths?.target_rating || rep.est_clearance_cost_usd;
+    const targetLabel = paths?.target_rating ? " (target-rating path)" : "";
+    h.appendChild(el("h3", null, "Estimated clearance exposure" + targetLabel));
+    h.appendChild(el("b", "drivers-total", money(headlineCost)));
     card.appendChild(h);
     card.appendChild(el("p", "score-caveat",
+      (paths?.target_rating
+        ? `As written (before target-rating cuts): ${money(paths.as_written)}. `
+        : "") +
       "Desk-estimated ranges summed as independent remedies — dependencies between remedies are not modeled; treat as order-of-magnitude."));
     const ul = el("div", "drivers");
     drivers.forEach((f, i) => {

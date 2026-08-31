@@ -299,10 +299,18 @@ def demotion_entries(dropped: list[dict[str, Any]]) -> dict[str, list[str]]:
         if r.get("failure_mode") not in ("premise_unsupported", "citation_offtopic"):
             continue
         key = f"open_questions:{r.get('agent', 'clearance_counsel')}"
+        # Identify the unresolved item by its metadata — do NOT restate the
+        # desk's prose. That text was truncated mid-sentence ("...consume
+        # Jägermeister shots in") and carried the very specifics the citation
+        # failed to support (an alcohol-and-driving framing the script
+        # contradicts), turning a demotion into a back-door restatement of a
+        # claim verification had just declined to stand behind.
+        subject = str(r.get("category") or "finding").replace("_", " ")
+        scenes = ", ".join(r.get("scene_ids") or []) or "unspecified scenes"
         out.setdefault(key, []).append(
-            f"Unresolved ({r['flag_id']} rejected on citation support, claim not "
-            f"disproven; scenes {', '.join(r.get('scene_ids') or [])}): "
-            f"{str(r.get('finding', ''))[:280]}"
+            f"Unresolved — the {subject} finding ({r['flag_id']}, {scenes}) was filed but its "
+            "citation support did not hold. The claim was not disproven; it needs an "
+            "authoritative source before it can be relied on."
         )
     return out
 

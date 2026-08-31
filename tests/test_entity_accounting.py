@@ -88,3 +88,41 @@ def test_binder_back_matter_moves_flagged_entities_out_of_cleared():
     assert "Ghostbar" in cleared_texts
     assert "name cleared" not in cleared_texts  # E1 carries a finding
     assert any("carry findings" in c["text"] for c in back["cleared"] if c["desk"] == "note")
+
+
+# --- run-7 review: fragments must reconcile with the cleared list -----------
+
+
+def test_fragment_ids_exposed_and_reconcile_with_distinct():
+    out = account(
+        ents("Alan", "Alan Mervish", "Stu and Alan", "& Forever Wedding", "1967 Cadillac Deville")
+    )
+    ids = {
+        "E0": "Alan",
+        "E1": "Alan Mervish",
+        "E2": "Stu and Alan",
+        "E3": "& Forever Wedding",
+        "E4": "1967 Cadillac Deville",
+    }
+    # distinct = entities NOT in fragment_ids
+    kept = [ids[e] for e in ids if e not in set(out["fragment_ids"])]
+    assert out["distinct"] == len(kept)
+    assert "Alan Mervish" in kept and "1967 Cadillac Deville" in kept
+    # the short-form folds; the compound and truncation are fragments
+    assert "E0" in out["fold"]  # Alan -> Alan Mervish
+
+
+def test_digit_and_punctuation_starts_are_not_fragments():
+    """`not s[0].isalpha()` wrongly folded real entities ('1967 Cadillac',
+    '.357 MAGNUM') out of the headline count."""
+    out = account(ents("1967 Cadillac Deville convertible", ".357 MAGNUM", "& Forever Wedding"))
+    assert out["fragments"] == 1  # only the '&' truncation
+    assert out["distinct"] == 2
+
+
+def test_truncation_only_catches_leading_connectives():
+    from greenlight.entity_accounting import _is_truncation
+
+    assert _is_truncation("& Forever Wedding") and _is_truncation("and the crew")
+    assert not _is_truncation(".357 MAGNUM") and not _is_truncation("1967 Cadillac")
+    assert not _is_truncation("Mandalay Bay")
