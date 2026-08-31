@@ -464,14 +464,14 @@ function brandName() {
 
 /* ---------- shared header / footer ---------- */
 
+// FAQ and Contact live in the footer only — kept out of the top nav to keep it
+// to the primary destinations.
 const NAV_LINKS = [
   ["/home", "Home"],
   ["/writer", "Writer's Room"],
   ["/cases", "Case studies"],
   ["/how-it-works", "How it works"],
   ["/desks", "The desks"],
-  ["/faq", "FAQ"],
-  ["/contact", "Contact"],
 ];
 
 function injectChrome() {
