@@ -141,6 +141,16 @@ def _cap_scenes(flag: dict[str, Any], prior: list[str]) -> None:
         flag["scene_ids"] = ordered[:_SCENE_CAP]
 
 
+def _same_disposition(a: dict[str, Any], b: dict[str, Any]) -> bool:
+    """A NO_ACTION 'fine as written' finding is NOT the same finding as one that
+    demands a cut, even in the same category. Merging across that line buried an
+    R-rated S064 violence driver (bloody head trauma, gunfire, a vehicular
+    impact) inside a MEDIUM 'No Action' bat-attack note (run 8, F2008), so the
+    report cleared the exploding-lip scene."""
+    na = "NO_ACTION"
+    return (a["remedy"].get("action") == na) == (b["remedy"].get("action") == na)
+
+
 def merge_exact_duplicates(flags: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """Code-level dedupe BEFORE the model sees anything: same desk + same
     category + overlapping scenes is one finding, full stop. Keeps the higher
@@ -158,8 +168,14 @@ def merge_exact_duplicates(flags: list[dict[str, Any]]) -> list[dict[str, Any]]:
             # rating drivers are SCRIPT-WIDE claims by nature — same category
             # consolidates even across disjoint scenes (a run filed 17 separate
             # rating_language flags, one per instance; the count is one finding)
+            # — BUT only when they share a disposition: a NO_ACTION finding and
+            # an actionable one are two findings, not one.
             script_wide = flag["category"].startswith(("rating_", "territory_"))
-            if same_cat and (script_wide or set(existing["scene_ids"]) & set(flag["scene_ids"])):
+            if (
+                same_cat
+                and _same_disposition(existing, flag)
+                and (script_wide or set(existing["scene_ids"]) & set(flag["scene_ids"]))
+            ):
                 prior = list(existing["scene_ids"])
                 existing["scene_ids"] = sorted(set(existing["scene_ids"]) | set(flag["scene_ids"]))
                 _cap_scenes(existing, prior)
@@ -189,6 +205,7 @@ def apply_plan(
         survivor = by_id.get(action["surviving_flag_id"])
         if survivor is None or action["surviving_flag_id"] in absorbed:
             continue
+        sev_before = survivor["severity"]
         merged_real = [
             fid for fid in action["merged_flag_ids"] if fid in by_id and fid not in absorbed
         ]
@@ -223,12 +240,25 @@ def apply_plan(
         # merges apply the highest-severity rule above and nothing else.
         rationale = action.get("rationale", "")
         sid = action["surviving_flag_id"]
+        sev_changed = survivor["severity"] != sev_before
+        cat_changed = action.get("category") and action["category"] != flags_category_before.get(
+            sid
+        )
+        # Only note what ACTUALLY happened. A note said "F2008: severity upgraded
+        # from MEDIUM" while apply_plan's own rule REFUSED the upgrade — the
+        # report claimed a change that never occurred. A single-flag action that
+        # changed nothing produces no note.
         if merged_real:
             notes.append(f"{sid}: absorbed {', '.join(merged_real)} ({rationale})")
-        elif action.get("category") and action["category"] != flags_category_before.get(sid):
+        elif cat_changed and sev_changed:
+            notes.append(
+                f"{sid}: category -> {action['category']}, "
+                f"severity -> {survivor['severity']} ({rationale})"
+            )
+        elif cat_changed:
             notes.append(f"{sid}: category normalized to {action['category']} ({rationale})")
-        elif rationale:
-            notes.append(f"{sid}: {rationale}")
+        elif sev_changed:
+            notes.append(f"{sid}: severity -> {survivor['severity']} ({rationale})")
 
     result = [f for f in flags if f["flag_id"] not in absorbed]
     for c in plan.get("conflicts", []):

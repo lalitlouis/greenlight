@@ -235,6 +235,33 @@ def main() -> int:  # noqa: PLR0915 - a linear checklist, deliberately flat
         "invariant: every kept flag has a citation with an excerpt",
         all(f["citations"] and all(c["excerpt"].strip() for c in f["citations"]) for f in flags),
     )
+    # run-8 assertions: the report may not reference a finding that doesn't
+    # render, and a finding's prose may not name a scene outside its own
+    # coordinates — both shipped visible self-contradictions this run.
+    import re as _re
+
+    rendered_ids = {f["flag_id"] for f in flags}
+    dangling = [
+        n
+        for n in r.get("adjudication_notes", [])
+        if not set(_re.findall(r"\bF\d{3,4}\b", n)) <= rendered_ids
+    ]
+    check(
+        "invariant: no adjudication note references a non-rendered finding id",
+        not dangling,
+        f"dangling: {[n[:50] for n in dangling]}",
+    )
+    prose_mismatch = []
+    for f in flags:
+        body = f"{f.get('finding', '')} {(f.get('remedy') or {}).get('detail', '')}"
+        stray = set(_re.findall(r"\bS\d{3}\b", body)) - set(f.get("scene_ids") or [])
+        if stray:
+            prose_mismatch.append((f["flag_id"], sorted(stray)))
+    check(
+        "invariant: a finding's prose names no scene outside its coordinates",
+        not prose_mismatch,
+        f"prose-vs-coordinates: {prose_mismatch[:6]}",
+    )
     check(
         "invariant: no unexamined entities (every extracted item dispositioned)",
         not r.get("unexamined"),

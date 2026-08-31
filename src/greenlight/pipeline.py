@@ -469,6 +469,24 @@ async def run(  # noqa: PLR0912, PLR0915 - one linear run sequence, deliberately
     if plan := state.get("adjudication"):
         kept, adjudication_notes = adjudicator.apply_plan(kept, plan)
     kept = adjudicator.merge_exact_duplicates(kept)
+    # ASSERTION (run-8): no adjudication entry may reference a flag id that does
+    # not render. The Pro adjudicator hallucinated F2008/F2003 against its own
+    # input, and dedupe can absorb a flag a note already named — either way the
+    # report showed a note about a finding nobody could find. Drop those notes.
+    _rendered_ids = {f["flag_id"] for f in kept}
+    adjudication_notes = [
+        n for n in adjudication_notes if set(re.findall(r"\bF\d{3,4}\b", n)) <= _rendered_ids
+    ]
+    # A finding's prose may not name a scene outside its coordinates (assertion,
+    # run-8): F3006 argued about S069 in its body while S069 was not in its
+    # scene_ids and rendered its own clean row. Union the valid prose-named
+    # scenes in so prose and coordinates agree.
+    _valid_sids = {s["scene_id"] for s in scenes}
+    for f in kept:
+        body = f"{f.get('finding') or ''} {(f.get('remedy') or {}).get('detail') or ''}"
+        named = {s for s in re.findall(r"\bS\d{3}\b", body) if s in _valid_sids}
+        if named - set(f["scene_ids"]):
+            f["scene_ids"] = sorted(set(f["scene_ids"]) | named, key=lambda x: int(x[1:]))
     kept.sort(key=lambda f: SEV_ORDER.get(f["severity"], 9))
 
     page_count = parser.printed_page_count(source) or (scenes[-1]["page"] if scenes else None)

@@ -1572,3 +1572,23 @@ def test_coverage_credit_requires_a_whole_word():
     assert not _mentions("ford", "the production cannot afford that location")
     assert _mentions("ford", "a ford pickup is parked outside")
     assert _mentions("crazy horse", "the crazy horse brawl needs a release")
+
+
+def test_eval_assertions_catch_run8_defects():
+    """The two run-8 pre-release assertions, exercised directly."""
+    import re
+
+    flags = [
+        {
+            "flag_id": "F2007",
+            "finding": "violence in S064 and S099",
+            "remedy": {"detail": ""},
+            "scene_ids": ["S024"],
+        }
+    ]
+    notes = ["F2008: severity upgraded", "F2007: category normalized"]
+    rendered = {f["flag_id"] for f in flags}
+    dangling = [n for n in notes if not set(re.findall(r"\bF\d{3,4}\b", n)) <= rendered]
+    assert dangling == ["F2008: severity upgraded"]  # F2008 not rendered
+    stray = set(re.findall(r"\bS\d{3}\b", flags[0]["finding"])) - set(flags[0]["scene_ids"])
+    assert stray == {"S064", "S099"}  # prose names scenes outside coordinates

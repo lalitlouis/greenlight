@@ -426,3 +426,54 @@ def test_argued_scene_is_deterministic_by_scene_order():
     f = {"finding": "argues from S046 and also S012", "remedy": {}}
     # both named; the LOWEST by scene order wins regardless of prose order
     assert _argued_scene(f, ["S012", "S046"]) == "S012"
+
+
+# --- run-8: adjudication integrity + prose/coordinate reconciliation --------
+
+
+def test_no_action_finding_is_not_absorbed_by_dedupe():
+    """An R-driver violence finding must not be swallowed by a same-category
+    'No Action' finding — that cleared the exploding-lip scene (run-8 F2008)."""
+    from greenlight.agents.adjudicator import merge_exact_duplicates
+
+    no_action = {
+        **make_flag("F2007", "MEDIUM"),
+        "category": "rating_violence",
+        "remedy": {"action": "NO_ACTION", "detail": "fine as written"},
+    }
+    actionable = {
+        **make_flag("F2008", "HIGH"),
+        "category": "rating_violence",
+        "scene_ids": ["S064"],
+        "remedy": {"action": "CUT", "detail": "trim the gore"},
+    }
+    out = merge_exact_duplicates([no_action, actionable])
+    assert {f["flag_id"] for f in out} == {"F2007", "F2008"}
+    # two findings that SHARE a disposition still consolidate
+    dup = {**actionable, "flag_id": "F2010", "scene_ids": ["S066"]}
+    two_actionable = merge_exact_duplicates([actionable, dup])
+    assert len(two_actionable) == 1
+
+
+def test_apply_plan_does_not_claim_a_severity_change_it_refused():
+    """The note said 'F2008: severity upgraded from MEDIUM' while apply_plan's
+    own rule refused the MEDIUM->HIGH upgrade — a claimed change that never
+    happened."""
+    from greenlight.agents.adjudicator import apply_plan
+
+    flags = [make_flag("F2008", "MEDIUM")]
+    plan = {
+        "merges": [
+            {
+                "surviving_flag_id": "F2008",
+                "merged_flag_ids": [],
+                "category": "rating_violence",
+                "severity": "HIGH",
+                "rationale": "R",
+            }
+        ],
+        "conflicts": [],
+    }
+    out, notes = apply_plan(flags, plan)
+    assert out[0]["severity"] == "MEDIUM", "upgrade must still be refused"
+    assert not any("upgrad" in n.lower() for n in notes), "no note may claim the refused upgrade"
