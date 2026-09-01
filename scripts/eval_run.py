@@ -76,7 +76,7 @@ def flags_about(flags, *, category_any=(), text_any=(), desk=None):
     return out
 
 
-def main() -> int:  # noqa: PLR0915 - a linear checklist, deliberately flat
+def main() -> int:  # noqa: PLR0915, PLR0912 - a linear checklist, deliberately flat
     path = (
         sys.argv[1]
         if len(sys.argv) > 1
@@ -334,6 +334,60 @@ def main() -> int:  # noqa: PLR0915 - a linear checklist, deliberately flat
         "invariant: no cut-list beat asserts a normative CARA rule",
         not rule_beats,
         f"rule-shaped beats: {rule_beats[:3]}",
+    )
+    # run-13 item 6d: the clearance log emits a row for EVERY scene — a log
+    # that silently omits one contradicts its scene-by-scene premise. Derived
+    # equality, never a literal count.
+    from greenlight import binder as _binder
+
+    cov = _binder.build(r).get("scene_coverage") or {}
+    check(
+        "invariant: clearance log covers every scene (rows == scenes)",
+        cov.get("scenes") == cov.get("scenes_with_rows"),
+        f"scenes={cov.get('scenes')} scenes_with_rows={cov.get('scenes_with_rows')}",
+    )
+    # run-13 item 1b: no cleared determination asserts completed research
+    # without a receipt — the assembly rewrite should have fired.
+    import re as _re2
+
+    work_claim = _re2.compile(
+        r"negative check confirmed|confirmed no real[- ]world|search(?:es)? confirm(?:s|ed)? no",
+        _re2.IGNORECASE,
+    )
+    research = r.get("research") or {}
+    surf_by_id = {
+        str(e.get("entity_id") or ""): str(e.get("surface") or "") for e in r.get("entities") or []
+    }
+
+    def _receipted(eid: str) -> bool:
+        # mirrors the assembly's two receipt arms: per-entity key OR a batch
+        # sweep whose objective/query text names the surface — without the
+        # second arm this check would false-fire on honest batch-swept claims
+        if eid and any(k.startswith(f"research:{eid}:") for k in research):
+            return True
+        low = surf_by_id.get(eid, "").lower()
+        min_surface = 4
+        if len(low) < min_surface:
+            return False
+        return any(
+            low in str(v.get("objective") or "").lower()
+            or low in str(v.get("queries") or "").lower()
+            for v in research.values()
+            if isinstance(v, dict)
+        )
+
+    bad_claims = []
+    for _desk, items in (r.get("cleared") or {}).items():
+        for c in items or []:
+            if not work_claim.search(str(c.get("reasoning") or "")):
+                continue
+            eid = str(c.get("entity_id") or "")
+            if not _receipted(eid):
+                bad_claims.append(eid or str(c.get("reasoning") or "")[:40])
+    check(
+        "invariant: no work-performed claim in cleared without a research receipt",
+        not bad_claims,
+        f"unreceipted claims survived assembly: {bad_claims[:4]}",
     )
     check(
         "invariant: no unexamined entities (every extracted item dispositioned)",

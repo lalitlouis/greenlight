@@ -55,7 +55,20 @@ def _cost_paths(flags: list[dict[str, Any]]) -> dict[str, Any] | None:
     if not any(f.get("cost_excluded_on_target_path") for f in _scored(flags)):
         return None
     target = _cost_range([f for f in flags if not f.get("cost_excluded_on_target_path")])
-    return {"target_rating": target, "as_written": _cost_range(flags)}
+    # run-13 item 7: the delta is a set difference — name its members, so the
+    # renderer can say "Difference is F1012 (NIN sync, $40k-$80k)" instead of
+    # leaving the financing number unattributed. sum(excluded) reconstructs
+    # as_written - target to the dollar (pinned by test).
+    excluded = [
+        {
+            "flag_id": f["flag_id"],
+            "category": f.get("category", ""),
+            "est_cost_usd": (f.get("remedy") or {}).get("est_cost_usd"),
+        }
+        for f in flags
+        if f.get("cost_excluded_on_target_path")
+    ]
+    return {"target_rating": target, "as_written": _cost_range(flags), "excluded": excluded}
 
 
 def _added_days(flags: list[dict[str, Any]]) -> float | None:

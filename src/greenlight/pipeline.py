@@ -384,7 +384,15 @@ async def run(  # noqa: PLR0912, PLR0915 - one linear run sequence, deliberately
     source = Path(script_path).read_text()
     meta, scenes = parser.parse_fountain(source)
     # a worker's script file is named by run id — never let that become the title
-    title = meta.get("title") or title_hint or Path(script_path).stem
+    # The draft's own claim about itself outranks the uploaded filename: Fountain
+    # metadata first, then the structural PDF title page, then the hint (run-13:
+    # "The Hangover 2009" was the filename beating the title page's THE HANGOVER).
+    title = (
+        meta.get("title")
+        or parser.detect_structural_title(source)
+        or title_hint
+        or Path(script_path).stem
+    )
     draft = parser.draft_identity(source, meta, scenes, title)
     verbose = on_event is None  # CLI runs narrate to the console; server runs must
     # keep script-derived text (titles, findings, excerpts) OUT of stdout — stdout
@@ -633,6 +641,11 @@ async def run(  # noqa: PLR0912, PLR0915 - one linear run sequence, deliberately
     from greenlight import entity_accounting
 
     record["entity_accounting"] = entity_accounting.account(record["entities"])
+    # run-13 items 1 + 6a: display-only cleared-path transforms — cid strip,
+    # body-reference suppression index, receipt-gated work-claim rewrites.
+    record["guard_manifest"] = (
+        record.get("guard_manifest") or []
+    ) + entity_accounting.polish_record(record)
     return record
 
 

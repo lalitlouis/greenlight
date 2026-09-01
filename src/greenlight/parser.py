@@ -273,6 +273,39 @@ def _front_matter_feeds(text: str) -> int:
     return front
 
 
+_MAX_STRUCTURAL_TITLE = 60
+
+
+def detect_structural_title(text: str) -> str | None:
+    """The draft's own title from a metadata-less PDF title page (run-13 item 6e:
+    'The Hangover 2009' was the upload FILENAME winning over the title page,
+    which reads 'THE HANGOVER'). strip_title_page only parses Fountain key:value
+    metadata — a PDF's front matter is the leading FEED-delimited segment, the
+    same structural detection pagination uses. Tight conditions: the segment
+    must read as front matter, and its first non-empty line must be a short
+    ALL-CAPS non-slugline — else None and the caller's fallback stands."""
+    meta, _ = strip_title_page(text)
+    if meta.get("title") or "\f" not in text:
+        return None  # Fountain metadata wins upstream; no page feed, no title page
+    first_seg = text.split("\f", 1)[0]
+    if not _looks_like_front_matter(first_seg):
+        return None  # a cold open is page 1, not a title page
+    for line in first_seg.split("\n"):
+        st = line.strip()
+        if not st:
+            continue
+        if (
+            st == st.upper()
+            and len(st) <= _MAX_STRUCTURAL_TITLE
+            and not _is_heading(st)
+            and not _TRANSITION_RE.match(st)
+            and any(c.isalpha() for c in st)
+        ):
+            return st.title()
+        return None  # first non-empty line fails the shape: no structural claim
+    return None
+
+
 def printed_page_count(text: str) -> int | None:
     """Total printed pages when the source preserves form feeds; None otherwise.
     max(scene page) undercounts — script pages after the last scene heading are

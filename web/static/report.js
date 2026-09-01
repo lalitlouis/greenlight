@@ -837,6 +837,11 @@ function clearedRows(record) {
   // An entity carrying a surviving finding is not "no action needed" — its
   // cleared determinations are counted separately, never under the header.
   const flaggedIds = new Set((record.flags || []).map((f) => f.entity_id).filter(Boolean));
+  // run-13 item 1a: a finding that names an entity in its BODY (not just its
+  // structured slot) also claims that entity — a "no issue" row beside it is a
+  // contradiction. Only no-issue-shaped rows suppress; other facts stand.
+  const bodyFlagged = new Set(record.entity_accounting?.body_flagged_ids || []);
+  const NO_ISSUE_RE = /\b(?:no (?:known |real[- ]world )?(?:issue|conflict|risk|match|action)|negative check|clear(?:ed|ance)?)\b/i;
   const fold = record.entity_accounting?.fold || {};
   // Compounds and truncations ("Stu and Vick", "& Forever Wedding") are counted
   // as folded in the headline; they must also DROP from the cleared list or the
@@ -852,7 +857,7 @@ function clearedRows(record) {
       // real canonical and survives there; a compound/truncation has no fold
       // target and drops.
       if (fragmentIds.has(eid)) continue;
-      if (eid && flaggedIds.has(eid)) {
+      if (eid && (flaggedIds.has(eid) || (bodyFlagged.has(eid) && NO_ISSUE_RE.test(c.reasoning || "")))) {
         flaggedElsewhere += 1;
         continue;
       }
@@ -1216,7 +1221,12 @@ function renderReport(record) {
     card.appendChild(h);
     card.appendChild(el("p", "score-caveat",
       (paths?.target_rating
-        ? `As written (before target-rating cuts): ${money(paths.as_written)}. `
+        ? `As written (before target-rating cuts): ${money(paths.as_written)}. ` +
+          ((paths.excluded || []).length
+            ? `Difference is ${paths.excluded
+                .map((x) => `${x.flag_id} (${prettyCat(x.category)}${money(x.est_cost_usd) ? ", " + money(x.est_cost_usd) : ""})`)
+                .join(", ")} — excluded on the target path. `
+            : "")
         : "") +
       "Desk-estimated ranges summed as independent remedies — dependencies between remedies are not modeled; treat as order-of-magnitude."));
     const ul = el("div", "drivers");
@@ -1384,16 +1394,12 @@ function renderReport(record) {
   }
 
   if (cleared.rowCount) {
-    const sec = el("div", "section-head");
-    sec.id = "sec-cleared";
-    sec.appendChild(el("h2", null, `Reviewed & cleared — ${cleared.rowCount} items examined, no action needed`));
-    root.appendChild(sec);
-    const det = document.createElement("details");
-    det.className = "flags-informational";
-    const summ = document.createElement("summary");
-    summ.textContent = `Show ${cleared.total} determinations across ${cleared.rowCount} items`;
-    det.appendChild(summ);
+    // Build the list FIRST and derive every count from what was actually
+    // rendered — run 13 shipped a header claiming one more item than the list
+    // below it held. A count computed beside a list can drift; a count read
+    // off the list cannot.
     const ul = el("ul", "plain-list");
+    let detCount = 0; // determinations actually appended — the only honest total
     for (const [who, ds] of cleared.byEntity) {
       const li = el("li");
       li.appendChild(el("strong", null, who));
@@ -1403,6 +1409,7 @@ function renderReport(record) {
         sli.appendChild(el("span", "who", deskName(d.desk)));
         sli.appendChild(document.createTextNode(d.text));
         sub.appendChild(sli);
+        detCount += 1;
       }
       li.appendChild(sub);
       ul.appendChild(li);
@@ -1412,7 +1419,18 @@ function renderReport(record) {
       li.appendChild(el("span", "who", deskName(d.desk)));
       li.appendChild(document.createTextNode(d.text));
       ul.appendChild(li);
+      detCount += 1;
     }
+    const rows = ul.children.length;
+    const sec = el("div", "section-head");
+    sec.id = "sec-cleared";
+    sec.appendChild(el("h2", null, `Reviewed & cleared — ${rows} items examined, no action needed`));
+    root.appendChild(sec);
+    const det = document.createElement("details");
+    det.className = "flags-informational";
+    const summ = document.createElement("summary");
+    summ.textContent = `Show ${detCount} determinations across ${rows} items`;
+    det.appendChild(summ);
     det.appendChild(ul);
     root.appendChild(det);
     if (cleared.flaggedElsewhere) {

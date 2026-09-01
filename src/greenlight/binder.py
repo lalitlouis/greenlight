@@ -343,7 +343,10 @@ def _back_matter(record: dict[str, Any]) -> dict[str, Any]:  # noqa: PLR0912 - a
             {
                 "finding": f.get("flag_id", ""),
                 "category": _label(f),
-                "reason": _clip(str(f.get("rejection_reason") or ""), 400),
+                # the one field whose job is explaining a rejection is never
+                # ellipsized (run 13: F1006's reason cut mid-clause at 400); the
+                # high bound only guards a pathological blob, not a sentence
+                "reason": _clip(str(f.get("rejection_reason") or ""), 2000),
             }
             for f in record.get("rejected_flags", [])
         ],
@@ -409,11 +412,14 @@ def build(  # noqa: PLR0912 - a deliberate sequence of row-emission cases
     known_sids = set(scene_meta)
     by_scene: dict[str, list[dict[str, Any]]] = defaultdict(list)
     touched: set[str] = set()
+    covered_by: dict[str, list[str]] = defaultdict(list)  # sid -> flag ids naming it
     for f in record.get("flags", []):
         if not f.get("citations"):
             continue  # the invariant, applied here too: uncited findings do not exist
         sids = sorted(f.get("scene_ids") or ["(script-wide)"], key=_scene_sort_key)
         touched.update(sids)
+        for s in sids:
+            covered_by[s].append(f["flag_id"])
         # A scene a finding NAMES IN ITS PROSE must not also render "No known
         # issue": F3006's body called S069 a heat-exposure scene while S069 got
         # its own clean row — the report contradicting itself. The finding's
@@ -450,7 +456,24 @@ def build(  # noqa: PLR0912 - a deliberate sequence of row-emission cases
         if unex_here:
             rows.append(_not_examined_row(base, unex_here))
         if not flags and sid in touched:
-            continue  # covered by a finding anchored at an earlier scene
+            # run-13 item 6d: a silent skip here is how S050 vanished from a log
+            # whose premise is scene-by-scene coverage. Every scene emits a row;
+            # this one cross-references the finding(s) that cover it.
+            refs = ", ".join(dict.fromkeys(covered_by.get(sid, []))) or "a finding"
+            rows.append(
+                {
+                    **base,
+                    "Item": "—",
+                    "Category": "—",
+                    "Severity": "",
+                    "Clearance status": f"Covered by {refs} — anchored at another scene",
+                    "Remedy / licensing note": "",
+                    "Est. cost (USD)": "",
+                    "Sources": "",
+                    "Finding": "",
+                }
+            )
+            continue
         if not flags:
             if unex_here:
                 continue  # the NOT EXAMINED row already speaks for this scene
@@ -508,7 +531,14 @@ def build(  # noqa: PLR0912 - a deliberate sequence of row-emission cases
         if r["Severity"] in ("BLOCKER", "HIGH")
     ]
     used_columns = [c for c in COLUMNS if any(str(r.get(c, "")).strip() for r in rows)] or COLUMNS
+    # run-13 item 6d: the eval asserts rows == scenes, derived not literal —
+    # a log that silently omits a scene contradicts its scene-by-scene premise
+    scene_coverage = {
+        "scenes": len(scene_meta),
+        "scenes_with_rows": len(set(all_sids) & known_sids),
+    }
     return {
+        "scene_coverage": scene_coverage,
         "title": record.get("script_title") or "Untitled",
         "generated_at": (record.get("generated_at") or "")[:10],
         "score": rep.get("greenlight_score"),
