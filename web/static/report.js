@@ -1351,17 +1351,6 @@ function renderReport(record) {
 
 
 
-  if (!IS_CASE) {
-    const cta = el("div", "card rev-cta");
-    const b = el("a", "btn btn-secondary", "⟳ Analyze a revised draft");
-    b.href = "/?revise=" + encodeURIComponent(new URLSearchParams(window.location.search).get("run") || "");
-    b.title = "Upload the next draft — the new report opens with what changed since this one";
-    cta.appendChild(b);
-    cta.appendChild(el("span", "rev-cta-note",
-      "Upload your next draft and the new report leads with what changed — new, resolved, unchanged."));
-    root.appendChild(cta);
-  }
-
   const rev = window.__REVISION__;
   if (rev && rev.diff) {
     const d = rev.diff;

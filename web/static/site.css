@@ -1124,7 +1124,11 @@ mark.d-add { background: rgba(10, 143, 82, 0.16); color: var(--green-deep); bord
 .rn-chip.active b { background: rgba(255, 255, 255, 0.22); }
 .tally-link { cursor: pointer; border-radius: 12px; transition: background 0.15s ease; }
 .tally-link:hover { background: var(--band); }
-#sec-cost, #sec-rating, #sec-findings, #sec-rejected, #sec-questions, #sec-adjudication { scroll-margin-top: 128px; }
+/* every nav-chip target — Informational and Reviewed & cleared were missing, so
+   their titles scrolled under the sticky pill; 176px clears header + a wrapped
+   two-row nav */
+#sec-cost, #sec-rating, #sec-findings, #sec-informational, #sec-rejected,
+#sec-questions, #sec-cleared, #sec-adjudication { scroll-margin-top: 176px; }
 .fix-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
 .fix-cols .diff-box { margin-bottom: 0; }
 @media (max-width: 760px) { .fix-cols { grid-template-columns: 1fr; } .report-nav { border-radius: 16px; top: 58px; } }
@@ -1464,8 +1468,6 @@ tr.bd-sev-BLOCKER { background: rgba(224, 52, 42, 0.045); }
 .rev-list { margin: 6px 0 0; padding-left: 0; list-style: none; font-size: 14px; line-height: 1.75; }
 .rev-item-new b { color: var(--high, #e97c00); }
 .rev-item-resolved b { color: var(--green-deep, var(--green)); }
-.rev-cta { display: flex; align-items: center; gap: 16px; padding: 14px 20px; margin: 8px 0 18px; flex-wrap: wrap; }
-.rev-cta-note { font-size: 14px; color: var(--ink-2); }
 
 /* Cleared list grouped by entity: desk determinations nest flat under the name */
 .plain-list > li > .cleared-desks { display: flex; flex-direction: column; gap: 4px; margin: 8px 0 2px 4px; padding: 0; list-style: none; }
