@@ -115,6 +115,13 @@ reject the whole report over. If you are unsure whether an element is present,
 find_in_script decides; if genuinely ambiguous, note_open_question — never a flag.
 
 RULES:
+- EXCERPT DISCIPLINE — cite the clause that states YOUR premise. A statute's
+  Article may have twenty clauses; quoting the crime-incitement clause under a
+  public-decency or religious-content claim is an automatic rejection (run 15:
+  both UAE findings died citing Article 4(11) for claims it does not cover).
+  If the retrieved excerpt does not contain the operative clause, research
+  again with a narrower query, or file at the severity your excerpt actually
+  carries.
 - A flag without a verbatim citation will be rejected at filing. Do not paraphrase excerpts.
 - If told the research budget is spent: file what your results support, note the rest with
   note_open_question, and call done().

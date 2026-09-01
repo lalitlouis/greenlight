@@ -1282,6 +1282,27 @@ def _rating_marginal_gate(
     return None
 
 
+# run-15: the sync/master cost model kept flip-flopping (run 14 split Baba
+# O'Riley into two findings; run 15 bundled both rights into one) — a different
+# model each run moves the headline number on an unchanged script. Doctrine is
+# settled: composition and master are separately owned and separately priced,
+# so they file as TWO findings, always.
+def _sync_master_split_problem(category: str, finding: str, remedy_detail: str) -> str | None:
+    if "sync" not in (category or ""):
+        return None
+    blob = f"{finding} {remedy_detail}".lower()
+    if "master use license" in blob or "master-use license" in blob:
+        return (
+            "REJECTED, not filed: this sync finding bundles the master-use claim. "
+            "Composition and master are SEPARATELY OWNED rights with separate "
+            "licensors and separate fees — file this finding for the composition "
+            "sync license ONLY (drop the master clause), then file a second "
+            "finding with category master_use_license for the recording. One "
+            "flag per right keeps the cost roll-up stable run to run."
+        )
+    return None
+
+
 def _manifest_note(tool_context: ToolContext, entry: dict[str, Any]) -> None:
     """Append one guard-fire entry under this agent's own manifest key (per-agent
     keys — the batch-agent state rule). Pipeline unions all keys into
@@ -1995,6 +2016,18 @@ def file_flag(  # noqa: PLR0912 - a deliberate sequence of filing gates
 
     if hedge_problem := _rating_marginal_gate(tool_context, category, finding, flag):
         return _reject_or_stop(tool_context, entity_id, category, hedge_problem)
+
+    if split_problem := _sync_master_split_problem(category, finding, remedy_detail):
+        _manifest_note(
+            tool_context,
+            {
+                "guard": "sync_master_split",
+                "stage": "filing",
+                "category": category,
+                "entity": entity_id,
+            },
+        )
+        return _reject_or_stop(tool_context, entity_id, category, split_problem)
 
     if rule_problem := _normative_rule_problem(category, finding, remedy_detail):
         _manifest_note(

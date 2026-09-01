@@ -1584,6 +1584,27 @@ def test_hedge_without_marginal_rejected_at_filing():
     assert "REJECTED" in out and "rating_boundary" in out
 
 
+def test_sync_finding_bundling_master_claim_rejected():
+    """The sync/master cost model flip-flopped between runs (split in 14,
+    bundled in 15), moving the headline on an unchanged script. Pinned:
+    separately owned rights file as two findings."""
+    from greenlight.tools.toolbelt import _sync_master_split_problem
+
+    bundled = (
+        "Requires a synchronization license for the composition as well as a "
+        "master use license from the recording rights holder."
+    )
+    assert _sync_master_split_problem("sync_license", bundled, "") is not None
+    # a pure sync finding passes; a master-category finding noting the split passes
+    assert _sync_master_split_problem("sync_license", "Requires a sync license.", "") is None
+    assert (
+        _sync_master_split_problem(
+            "master_use_license", "Master rights are separate from the sync license.", ""
+        )
+        is None
+    )
+
+
 def test_cutlist_beats_reject_normative_rules():
     """Run-13 item 2: the cut list bypassed the filing gate; now a rule-shaped
     beat is rejected at file_rating_prediction with per-beat guidance."""

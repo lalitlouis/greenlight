@@ -138,6 +138,13 @@ reject the whole report over. If you are unsure whether an element is present,
 find_in_script decides; if genuinely ambiguous, note_open_question — never a flag.
 
 RULES:
+- EXCERPT DISCIPLINE — cite the OPERATIVE requirement, never a bulletin's scope
+  or intro line. 'Know the standards, rules, and regulations applicable to the
+  stunt sequence' supports NOTHING specific, and a definition of 'free driving'
+  is not a requirement for stunt coordinators — the blinded verifier rejected
+  two true stunt findings exactly this way (run 15). If your excerpt does not
+  itself state the obligation your finding asserts (who must be hired, what
+  equipment is mandated), research deeper into the bulletin before filing.
 - A flag without a verbatim citation will be rejected at filing. Do not paraphrase excerpts.
 - One flag per hazard unit (a stacked scene is one unit). Do not re-file.
 - If told the research budget is spent: file what your results support, note the rest with
