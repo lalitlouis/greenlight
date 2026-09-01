@@ -100,6 +100,14 @@ not state — a character's age inferred from "college student", commercial inju
 inferred from casual dialogue, casting or staging choices the text leaves open — fails
 its premise even if the assumption is plausible. The desk asserts; the text decides.
 
+FIGURES HAVE TWO HOMES, and a load-bearing figure must be found in its home. A
+SCRIPT-FACT figure (a character's age, an on-page count, a speed the action line
+states) that the severity rests on must appear in the scene text or search results
+shown — unresolved, the claim is UNSUPPORTED, not PARTIAL. A PREMISE figure (a
+statutory limit, a work-hour cap, a cost floor) lives in the CITED EXCERPTS and can
+never appear in a scene — judge it under the premise rules above, and never fault a
+scene for not containing a statute.
+
 REJECT WRONG-STANDARD CITATIONS: when a claim's authority is a named standard (a
 safety bulletin, statute, or guideline) and the excerpts show that standard governs
 a DIFFERENT activity than the one depicted — a vehicle camera-rig bulletin cited
@@ -576,6 +584,69 @@ def _stated_fact_overturn(reason: str, state: Any, finding: str = "") -> tuple[s
     if not matches or len(matches) > _MAX_ANCHOR_SCENES:
         return None
     return ", ".join(sorted(propers)), matches[0]
+
+
+# ---- coordinate completion (run-13 item 4): runs BEFORE verification ---------
+# A finding's evidence must sit inside its declared window before the verifier
+# judges it — run 10 rejected a true finding whose evidence lived outside the
+# window; run 11 silently passed a number asserted under the wrong scene. Only
+# SCRIPT-FACT figures anchor (ages, on-page counts): a number beside $, %, §,
+# or a statute/bulletin token is a PREMISE figure that resolves in excerpts,
+# never in scenes — as drafted without this split, the pass would have chased
+# F3009's legitimate NRS/CCR numbers.
+_PREMISE_NUM_CONTEXT = _re.compile(
+    r"[$§%]\s*[\d,]|[\d.]\s*%|\b(?:CFR|NRS|CCR|USC|Reg(?:\.|istration)?|Bulletin|No\.)"
+    r"\s*#?\s*\d|\d\s*(?:CFR|USC)|\bx\s?\d|\d\s?x\b",
+    _re.IGNORECASE,
+)
+_COORD_WIDEN_CAP = 2  # umbrella philosophy: widen a little, never re-anchor a sprawl
+
+
+def _scriptfact_nums(text: str) -> set[str]:
+    """1-3 digit numbers that could be facts ON THE PAGE (ages, counts, speeds)
+    — excludes numbers in premise context (money, percents, statutes, census
+    'x8' tallies) and scene ids (letter-adjacent digits never match)."""
+    out: set[str] = set()
+    for m in _re.finditer(r"(?<![A-Za-z0-9])(\d{1,3})(?![0-9])", text):
+        ctx = text[max(0, m.start() - 14) : m.end() + 14]
+        if _PREMISE_NUM_CONTEXT.search(ctx):
+            continue
+        out.add(m.group(1))
+    return out
+
+
+def _complete_coordinates(flag: dict[str, Any], state: Any) -> list[tuple[str, str, str]]:
+    """Resolve each number-anchored proper-noun claim in the FINDING body to a
+    scene; widen the flag's coordinates (cap +2) when a claim resolves outside
+    them. Per-claim: a number is tied to the names within _NAME_NUM_NEAR of it
+    in the body, and resolves only to a scene where those names appear with the
+    number beside one of them — the same proximity guards as the overturn.
+    Returns [(scene_id, number, names)] for the manifest."""
+    text = str(state.get("script_text") or "")
+    scenes = state.get("scenes", [])
+    body = str(flag.get("finding") or "")
+    if not text or not scenes or not body:
+        return []
+    declared = set(flag.get("scene_ids") or [])
+    added: list[tuple[str, str, str]] = []
+    for n in sorted(_scriptfact_nums(body)):
+        propers = _propers_near_numbers(body, {n})
+        if not propers:
+            continue
+        matches = []
+        for s in scenes:
+            seg = text[s["raw_span"][0] : s["raw_span"][1]].lower()
+            if all(p.lower() in seg for p in propers) and _num_near_name(seg, propers, n):
+                matches.append(s["scene_id"])
+        if not matches or len(matches) > _MAX_ANCHOR_SCENES:
+            continue  # unresolved or ambiguous: the verifier judges as filed
+        for sid in matches:
+            if sid not in declared and len(added) < _COORD_WIDEN_CAP:
+                added.append((sid, n, ", ".join(sorted(propers))))
+                declared.add(sid)
+    if added:
+        flag["scene_ids"] = sorted(declared, key=lambda x: int(x[1:]))
+    return added
 
 
 _FACT_PROP_CAP = 6  # survivors re-verified per run against established facts
@@ -1109,6 +1180,38 @@ class VerificationPanel(BaseAgent):
         from greenlight.tools.toolbelt import desk_flags
 
         flags = [f for d in DESKS for f in desk_flags(state, d)]
+        # Run-13 guard manifest: every guard fire this panel makes, queryable
+        # from the record — run 11 shipped an unaudited softener because "did
+        # it fire anywhere else?" was unanswerable from the deliverable.
+        manifest: list[dict[str, Any]] = []
+        # COORDINATE COMPLETION (pre-verification): the window must contain the
+        # evidence BEFORE the verifier judges against it.
+        for f in flags:
+            before = list(f.get("scene_ids") or [])
+            for sid, num, names in _complete_coordinates(f, state):
+                manifest.append(
+                    {
+                        "guard": "coordinate_completion",
+                        "stage": "pre_verification",
+                        "flag_id": f["flag_id"],
+                        "matched": f"{names} + {num}",
+                        "coords_before": before,
+                        "coords_after": list(f["scene_ids"]),
+                    }
+                )
+                yield Event(
+                    invocation_id=ctx.invocation_id,
+                    author=self.name,
+                    content=types.Content(
+                        role="model",
+                        parts=[
+                            types.Part(
+                                text=f"⚖ {f['flag_id']} coordinates widened to {sid} — the "
+                                f"body's claim ({names}, {num}) resolves there"
+                            )
+                        ],
+                    ),
+                )
         if not flags:
             yield Event(
                 invocation_id=ctx.invocation_id,
@@ -1163,6 +1266,19 @@ class VerificationPanel(BaseAgent):
         # BEFORE anything downstream (rejected_summary, demotions, reconcile)
         # can act on a false rejection.
         for fid, note, sid in _apply_overturns(flags, verdicts, state):
+            v_after = verdicts.get(fid, {})
+            manifest.append(
+                {
+                    "guard": "overturn",
+                    "stage": "post_verification",
+                    "flag_id": fid,
+                    "matched": note,
+                    "scene": sid,
+                    "verdict_after": v_after.get("verdict"),
+                    "overridden": bool(v_after.get("overridden")),
+                    "ground_overturned": bool(v_after.get("ground_overturned")),
+                }
+            )
             yield Event(
                 invocation_id=ctx.invocation_id,
                 author=self.name,
@@ -1330,6 +1446,15 @@ class VerificationPanel(BaseAgent):
                         "failure_mode": "script_misstatement",
                     }
                 )
+            manifest.append(
+                {
+                    "guard": "fact_propagation",
+                    "stage": "post_verification",
+                    "flag_id": fid,
+                    "outcome": "restated" if recovered else "dropped",
+                    "matched": v3["reason"][:160],
+                }
+            )
             yield Event(
                 invocation_id=ctx.invocation_id,
                 author=self.name,
@@ -1424,6 +1549,7 @@ class VerificationPanel(BaseAgent):
                     **{f"verdicts:{fid}": v for fid, v in verdicts.items()},
                     "verified_flags": kept,
                     "rejected_flags": dropped,
+                    "guard_manifest:verification": manifest,
                     "resource_stats": resourced_stats,
                     # compact context for the Adjudicator's consistency pass —
                     # it must see WHY things were rejected, not the full flags

@@ -1228,6 +1228,16 @@ _REJECT_MAX_RUNS = 4096
 _PROV_RETRY_LIMIT = 4
 
 
+def _manifest_note(tool_context: ToolContext, entry: dict[str, Any]) -> None:
+    """Append one guard-fire entry under this agent's own manifest key (per-agent
+    keys — the batch-agent state rule). Pipeline unions all keys into
+    record['guard_manifest']."""
+    key = f"guard_manifest:{_agent_key(tool_context)}"
+    entries = list(tool_context.state.get(key) or [])
+    entries.append(entry)
+    tool_context.state[key] = entries
+
+
 def _reject_or_stop(tool_context: ToolContext, entity_id: str, category: str, msg: str) -> str:
     """Route EVERY file_flag rejection through one retry ledger. The provenance
     path was capped but a contract-schema loop ran 62 identical retries
@@ -1912,6 +1922,16 @@ def file_flag(  # noqa: PLR0912 - a deliberate sequence of filing gates
         return _reject_or_stop(tool_context, entity_id, category, cap_problem)
 
     if rule_problem := _normative_rule_problem(category, finding, remedy_detail):
+        _manifest_note(
+            tool_context,
+            {
+                "guard": "normative_filing",
+                "stage": "filing",
+                "category": category,
+                "entity": entity_id,
+                "matched": rule_problem[:160],
+            },
+        )
         return _reject_or_stop(tool_context, entity_id, category, rule_problem)
 
     if reg_problem := _unverified_regs(tool_context, finding):

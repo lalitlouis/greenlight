@@ -303,6 +303,18 @@ _UNDERCOVERAGE_FLOOR = 0.5  # mirrors done()'s coverage refusal
 _UNDERCOVERAGE_MIN_WORKLIST = 8  # tiny worklists are noise at this ratio
 
 
+def _collect_guard_manifest(state: dict[str, Any]) -> list[dict[str, Any]]:
+    """Union every guard trail: the verification panel's, each desk agent's
+    filing-gate rejections (batch agents write under their own suffixed names —
+    the per-agent state-key rule), and assembly-stage guards."""
+    out = list(state.get("guard_manifest:verification") or [])
+    for desk in toolbelt.DESKS:
+        for name in toolbelt.batch_agent_names(desk):
+            out.extend(state.get(f"guard_manifest:{name}") or [])
+    out.extend(state.get("guard_manifest:assembly") or [])
+    return out
+
+
 def _incomplete_desks(state: dict[str, Any], verbose: bool) -> list[str]:
     """An empty desk is an error surface, never a clean bill. Two collapse
     classes, both disclosed loudly: a desk with a worklist and ZERO
@@ -535,6 +547,10 @@ async def run(  # noqa: PLR0912, PLR0915 - one linear run sequence, deliberately
         # greenlight-00185-7q5); local runs record "local". Without it a corpus
         # or code change under the panel cannot be attributed to a deploy.
         "build": os.environ.get("K_REVISION", "local"),
+        # Run-13: every guard fire, queryable from the record (internal — the
+        # report does not render it). Union of the verification panel's trail,
+        # each desk's filing-gate rejections, and assembly-stage guards.
+        "guard_manifest": _collect_guard_manifest(state),
         "elapsed_s": round(time.time() - t0, 1),
         "error": error,
         "research_failures": int(state.get("research_failures", 0)),

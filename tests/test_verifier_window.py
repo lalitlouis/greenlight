@@ -251,6 +251,50 @@ def test_mixed_grounds_strikes_false_ground_but_does_not_flip():
     assert flags[0]["scene_ids"] == ["S004", "S084"]  # coordinates still widened
 
 
+def test_coordinate_completion_widens_before_verification():
+    """Run-13 item 4: the finding's number-anchored claims resolve to scenes
+    BEFORE the verifier judges — the ages live in S004, the finding declared
+    S084 only. Widening happens upstream; the verdict then means something."""
+    from greenlight.agents.verification import _complete_coordinates
+
+    state = _daughters_state()
+    flag = {
+        "flag_id": "F3009",
+        "scene_ids": ["S084"],
+        "finding": "Two toddler daughters (Haylee, age 2, and Kaitlin, age 4) appear "
+        "in S084. Under NRS 609 and 8 CCR 11755, children aged 2 to 5 are limited "
+        "to 3 hours on set, and permits cost $500.",
+    }
+    added = _complete_coordinates(flag, state)
+    assert flag["scene_ids"] == ["S004", "S084"]  # widened to where the ages are stated
+    assert added and added[0][0] == "S004"
+    # premise figures never anchor: 609, 11755 (4+ digits, excluded), 3-hour cap
+    # near CCR context, $500 — none appear in the additions
+    nums_used = {a[1] for a in added}
+    assert nums_used <= {"2", "4"}
+
+
+def test_coordinate_completion_ignores_premise_figures_and_ambiguity():
+    from greenlight.agents.verification import _complete_coordinates, _scriptfact_nums
+
+    # statutes, money, percents, census tallies are premise figures
+    assert (
+        _scriptfact_nums(
+            "under NRS 609 and 29 CFR 1910, costs $15,000, 62% of films, 'shit' x8 spoken"
+        )
+        == set()
+    )
+    # a claim whose anchors appear in no scene widens nothing
+    state = _daughters_state()
+    flag = {
+        "flag_id": "F1",
+        "scene_ids": ["S084"],
+        "finding": "Melissa, age 9, and Teddy, age 7, are depicted.",
+    }
+    assert _complete_coordinates(flag, state) == []
+    assert flag["scene_ids"] == ["S084"]
+
+
 def test_misstatement_facts_collected_from_rejections():
     """Fact propagation's deterministic half: script_misstatement rejections yield
     (scenes, fact); sourcing failures contribute nothing."""
