@@ -1879,3 +1879,26 @@ def test_weak_citations_pruned_when_a_strong_one_exists():
     )
     # never empties: a lone weak source survives (the invariant holds)
     assert len(_prune_weak_citations([c("https://natesu.bandcamp.com/y")], "sync_license")) == 1
+
+
+def test_statute_cite_auto_attached_for_traceability():
+    """Gate #13: a desk that quotes the statute's OPERATIVE sentences while §933
+    sits elsewhere in the retrieved text keeps its good excerpts — the span
+    around the number is auto-attached so the reader can verify the cite."""
+    from greenlight.tools.toolbelt import _register_provenance, _uncited_statute_problem
+
+    ctx = make_ctx(agent_name="clearance_counsel")
+    _register_provenance(
+        ctx,
+        [
+            "14 U.S.C. 933 - Coast Guard insignia. No vessel or aircraft without "
+            "authority shall display any identifying insignia of the Coast Guard."
+        ],
+    )
+    cits = [{"excerpt": "No vessel or aircraft without authority shall display insignia."}]
+    problem = _uncited_statute_problem(
+        ctx, "trademark_use", "Under 14 U.S.C. § 933 this requires authority.", "", cits
+    )
+    assert problem is None
+    assert len(cits) == 2 and "933" in cits[1]["excerpt"] and cits[1]["repaired"]
+    assert cits[1]["source_type"] == "statute"

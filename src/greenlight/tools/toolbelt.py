@@ -1911,20 +1911,63 @@ def _statute_sections(text: str) -> set[str]:
     return out
 
 
+_CITE_WINDOW = 170  # chars either side of the section number in the source
+
+
 def _uncited_statute_problem(
-    tool_context: ToolContext, category: str, finding: str, remedy_detail: str
+    tool_context: ToolContext,
+    category: str,
+    finding: str,
+    remedy_detail: str,
+    cits: list[dict[str, Any]] | None = None,
 ) -> str | None:
     """Every statute section (and, in minor-safety findings, every hour cap)
     must appear in a text this run actually retrieved. Typed-from-memory
-    precision is the fabrication class wearing a suit."""
+    precision is the fabrication class wearing a suit.
+
+    Reader-traceability repair (gate #13): a desk that quotes a statute's
+    OPERATIVE sentences — good excerpt discipline — while the section number
+    sits elsewhere in the retrieved text is not punished with a refile; the
+    verbatim span AROUND the number is auto-attached as an extra citation, so
+    the reader can verify the cite from the excerpt beside it."""
     body = f"{finding} {remedy_detail}"
     needed = _statute_sections(body)
     if (category or "").startswith("minor"):
         needed |= {m.group(1) for m in _HOURS_RE.finditer(body)}
     if not needed:
         return None
-    prov = " ".join(norm for norm, _ in _prov_bucket(tool_context))
-    missing = sorted(n for n in needed if n not in prov)
+    excerpts = " ".join(str(c.get("excerpt") or "") for c in (cits or []))
+    prov_pairs = _prov_bucket(tool_context)
+    prov = " ".join(norm for norm, _ in prov_pairs)
+    missing = []
+    for n in sorted(needed):
+        if n in excerpts:
+            continue  # already reader-traceable
+        if n not in prov:
+            missing.append(n)
+            continue
+        if cits is None or len(n) < _MIN_SECTION_DIGITS:
+            continue  # hour caps: retrieved is enough; no auto-attach for 1-digit numbers
+        src = next((orig for _, orig in prov_pairs if n in orig), None)
+        if src:
+            i = src.index(n)
+            span = src[max(0, i - _CITE_WINDOW) : i + _CITE_WINDOW]
+            span = span[span.find(" ") + 1 : span.rfind(" ")] if " " in span else span
+            cits.append(
+                {
+                    "source_type": "statute",
+                    "title": "cited provision (auto-attached for traceability)",
+                    "url": None,
+                    "excerpt": span.strip(),
+                    "retrieved_at": None,
+                    "via": "local",
+                    "repaired": True,
+                }
+            )
+            _manifest_note(
+                tool_context,
+                {"guard": "statute_cite_attached", "stage": "filing", "matched": n},
+            )
     if not missing:
         return None
     return (
@@ -2099,7 +2142,9 @@ def file_flag(  # noqa: PLR0912, PLR0915 - a deliberate sequence of filing gates
     if reg_problem := _unverified_regs(tool_context, finding):
         return _reject_or_stop(tool_context, entity_id, category, reg_problem)
 
-    if statute_problem := _uncited_statute_problem(tool_context, category, finding, remedy_detail):
+    if statute_problem := _uncited_statute_problem(
+        tool_context, category, finding, remedy_detail, cits
+    ):
         _manifest_note(
             tool_context,
             {
