@@ -1477,6 +1477,65 @@ def test_citation_dedup_collapses_www_and_mobile_keeps_distinct_pages():
     assert len(out) == 3
 
 
+def test_normative_rule_claims_rejected_at_filing_for_rating_findings():
+    """Run 12: 'this census profile directly commands an R rating' survived as
+    PARTIAL after the prompt fix taught the desk to drop the marginal but keep the
+    rule. A prompt cannot hold this line; the filing gate can — and observation-
+    shaped claims must pass untouched."""
+    from greenlight.tools.toolbelt import _normative_rule_problem
+
+    rules = [
+        "this census profile directly commands an R rating unless remedied",
+        "graphic depictions require an R rating under CARA standards",
+        "CARA guidelines restrict PG-13 films to a single use",
+        "more than one use automatically triggers an R",
+        "this content exceeds PG-13 tolerances",
+    ]
+    for text in rules:
+        assert _normative_rule_problem("rating_language", text, "") is not None, text
+    observations = [
+        "the language profile matches the CARA descriptor 'pervasive language', "
+        "which patterns strongly toward R in the descriptor corpus",
+        "this driver creates strong R-band rating risk",
+        "content of this kind typically draws an R in official rationales",
+    ]
+    for text in observations:
+        assert _normative_rule_problem("rating_language", text, "") is None, text
+    # non-rating desks are out of scope — a safety bulletin genuinely REQUIRES things
+    assert _normative_rule_problem("stunt_vehicle", rules[1], "") is None
+
+
+def test_derived_marginal_citation_normalized_at_filing():
+    """The desk files the corpus marginal under whatever url it last researched
+    (run 12: filmratings.com), misattributing our aggregate. Filing normalizes it
+    to a URL-less rules_table citation named as ours."""
+    ctx = make_ctx(agent_name="ratings_board")
+    toolbelt.rating_boundary(["pervasive language"], ctx)  # registers provenance
+    marginal = (
+        "'pervasive language': R 99%, PG-13 0% across 187 official CARA rationales "
+        "(ScriptRisk CARA descriptor corpus: 4,544 official CARA rationales, filmratings.com)"
+    )
+    out = toolbelt.file_flag(
+        scene_ids=["S002"],
+        severity="MEDIUM",
+        category="rating_language",
+        finding="The language profile matches the CARA descriptor 'pervasive language'.",
+        citations=[
+            {"url": "https://www.filmratings.com/x", "excerpt": marginal, "via": "parallel_search"}
+        ],
+        remedy_action="REPLACE",
+        remedy_detail="Trim the strongest uses.",
+        confidence=0.8,
+        tool_context=ctx,
+    )
+    assert "Filed" in out
+    flag = toolbelt.desk_flags(ctx.state, "ratings_board")[-1]
+    cit = flag["citations"][0]
+    assert cit["url"] is None and cit["via"] == "local"
+    assert cit["source_type"] == "rules_table"
+    assert "ScriptRisk CARA descriptor corpus" in cit["title"]
+
+
 def test_prune_keeps_the_derived_marginal_beside_filmratings():
     """The rating_boundary marginal is a URL-less tool citation and the desk's
     strongest, most specific evidence; the prune must not drop it for a generic

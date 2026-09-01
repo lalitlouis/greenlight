@@ -194,10 +194,87 @@ def test_unstated_fact_overturn_finds_stated_fact_and_widens_coordinates():
         "The scene text in S084 does not specify the ages of Stu's daughters "
         "(Haylee and Kaitlin as age 2 and age 4), assuming unstated facts."
     )
-    assert _stated_fact_overturn(reason, state) == ("Haylee, Kaitlin, Stu", "S004")
+    # names anchored to the claimed numbers — Stu (outside the window) is noise
+    assert _stated_fact_overturn(reason, state) == ("Haylee, Kaitlin", "S004")
     flags = [{"flag_id": "F3011", "scene_ids": ["S084"], "category": "minor_safety"}]
-    _apply_overturns(flags, {"F3011": {"verdict": "UNSUPPORTED", "reason": reason}}, state)
+    verdicts = {"F3011": {"verdict": "UNSUPPORTED", "reason": reason}}
+    _apply_overturns(flags, verdicts, state)
+    assert verdicts["F3011"]["verdict"] == "SUPPORTED"  # pure unstated-fact ground: full flip
     assert flags[0]["scene_ids"] == ["S004", "S084"]  # widened to where the fact is stated
+
+
+def test_unstated_fact_overturn_reads_names_from_the_finding():
+    """Run 12: the rejection said only 'the daughters' — no names — so the anchor
+    names must come from the FINDING, tied to the claimed numbers there."""
+    from greenlight.agents.verification import _stated_fact_overturn
+
+    state = _daughters_state()
+    reason = (
+        "The claim relies on unstated script facts by asserting specific ages "
+        "(ages 2 and 4) for the daughters in S084, violating the rule against "
+        "multi-step inference regarding character ages."
+    )
+    finding = (
+        "Scene S084 features two young toddler daughters (Haylee, age 2, and "
+        "Kaitlin, age 4) running through a wedding crowd."
+    )
+    assert _stated_fact_overturn(reason, state, finding) == ("Haylee, Kaitlin", "S004")
+    assert _stated_fact_overturn(reason, state) is None  # without the finding: no anchor
+
+
+def test_mixed_grounds_strikes_false_ground_but_does_not_flip():
+    """A rejection standing on BOTH a false unstated-fact ground AND a real
+    sourcing ground must not blind-flip to SUPPORTED — strike the false ground,
+    keep the rejection as premise_unsupported so it demotes honestly."""
+    from greenlight.agents.verification import _apply_overturns
+
+    state = _daughters_state()
+    reason = (
+        "The claim asserts unstated ages (ages 2 and 4) for the daughters in S084. "
+        "Furthermore, the cited excerpts do not establish the asserted labor statutes."
+    )
+    flags = [
+        {
+            "flag_id": "F3009",
+            "scene_ids": ["S084"],
+            "category": "minor_safety",
+            "finding": "Two toddler daughters (Haylee, age 2, and Kaitlin, age 4) on set.",
+        }
+    ]
+    verdicts = {"F3009": {"verdict": "UNSUPPORTED", "reason": reason}}
+    out = _apply_overturns(flags, verdicts, state)
+    v = verdicts["F3009"]
+    assert v["verdict"] == "UNSUPPORTED"  # sourcing ground stands
+    assert v["failure_mode"] == "premise_unsupported"  # -> demotes to open questions
+    assert v.get("ground_overturned") and "S004" in v["reason"]
+    assert out and "struck" in out[0][1]
+    assert flags[0]["scene_ids"] == ["S004", "S084"]  # coordinates still widened
+
+
+def test_misstatement_facts_collected_from_rejections():
+    """Fact propagation's deterministic half: script_misstatement rejections yield
+    (scenes, fact); sourcing failures contribute nothing."""
+    from greenlight.agents.verification import _misstatement_facts
+
+    dropped = [
+        {
+            "flag_id": "F4012",
+            "failure_mode": "script_misstatement",
+            "scene_ids": ["S066", "S068"],
+            "rejection_reason": "In S066 the vehicle is stationary and parked; "
+            "in S068 the car is already stopped. Nobody drinks while driving.",
+        },
+        {
+            "flag_id": "F4011",
+            "failure_mode": "premise_unsupported",
+            "scene_ids": ["S008"],
+            "rejection_reason": "The excerpts do not establish the UAE rule.",
+        },
+    ]
+    facts = _misstatement_facts(dropped)
+    assert len(facts) == 1
+    sids, reason = facts[0]
+    assert sids == {"S066", "S068"} and "parked" in reason
 
 
 def test_unstated_fact_overturn_is_precise():

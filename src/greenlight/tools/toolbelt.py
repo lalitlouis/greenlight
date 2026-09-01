@@ -1369,6 +1369,10 @@ BACKGROUND_HOSTS = {
     "thoolie.com",  # cited as authority for Body English / Tao nightclubs
     "ksl.com",  # Utah local news, cited for the Pure nightclub
     "turtletalk.blog",  # a federal-Indian-law blog cited for a 9th Cir. trademark case
+    # run-12: operating-status claims — the report's highest-risk facts — resting
+    # on a directions site and a blog as sole sources
+    "mapquest.com",
+    "blogspot.com",
 }
 
 _SCENE_ANCHOR_CAP = 8  # a finding spanning more scenes than this says "the script"
@@ -1562,7 +1566,9 @@ def _authority_problem(severity: str, cits: list[dict[str, Any]], category: str 
         return None
     urls = [c.get("url") or "" for c in cits]
     if category.startswith("rating_"):
-        if any(_host_root(u) in RATING_AUTHORITY_HOSTS for u in urls):
+        if any(_host_root(u) in RATING_AUTHORITY_HOSTS for u in urls) or any(
+            _is_derived_marginal(c) for c in cits
+        ):
             return None
         hosts = ", ".join(sorted({(u.split("/")[2:3] or ["?"])[0] for u in urls})) or "none"
         return (
@@ -1657,7 +1663,11 @@ def _background_only_problem(severity: str, cits: list[dict[str, Any]]) -> str |
     and forums may inform, but they cannot carry a MEDIUM+ finding alone."""
     if severity not in ("BLOCKER", "HIGH", "MEDIUM"):
         return None
-    if not all(_is_background_host(c.get("url") or "") for c in cits):
+    # The derived rating_boundary marginal has no URL but is authoritative — a
+    # rating finding citing only the corpus must not read as background-only.
+    if not all(
+        _is_background_host(c.get("url") or "") and not _is_derived_marginal(c) for c in cits
+    ):
         return None
     return (
         "REJECTED, not filed: every citation is a background-tier source (fan "
@@ -1667,6 +1677,45 @@ def _background_only_problem(severity: str, cits: list[dict[str, Any]]) -> str |
         "statutes, or law-firm analysis. Re-run research() with "
         "restrict_to_domains targeting those, or lower the severity to LOW/FYI "
         "if the claim only merits background support."
+    )
+
+
+# Rule-shaped rating claims, deterministically. Run 10 rejected them (marginal
+# attached to a rule it cannot support); the run-11 prompt fix taught the desk to
+# stop attaching the marginal while KEEPING the rule — the verifier went quiet and
+# the desk got worse ("this census profile directly commands an R rating" survived
+# as PARTIAL). A prompt cannot hold this line; a filing gate can: no descriptor
+# table contains a rule, so a rating finding may only assert the observation.
+_NORMATIVE_RULE_RE = re.compile(
+    r"(?:directly\s+)?\b(?:commands?|mandates?|forces?|guarantees?|compels?)\s+"
+    r"(?:a|an|the)?\s*(?:G|PG|PG-13|R|NC-17)\b"
+    r"|\brequires?\s+(?:a|an|the)?\s*(?:G|PG|PG-13|R|NC-17)\s+rating"
+    r"|\bCARA\s+(?:rules?|guidelines?|standards?)\s+"
+    r"(?:require|restrict|mandate|prohibit|forbid|limit)"
+    r"|\bautomatic(?:ally)?\s+(?:triggers?|draws?|results?|receives?|earns?)"
+    r"|\btriggers?\s+(?:a|an)\s+(?:R|NC-17)\s+rating"
+    r"|\bexceeds?\s+PG-13\s+tolerances\b"
+    r"|\bunder\s+CARA\s+standards?,?\s+\w[^.]{0,60}?\brequires?\b",
+    re.IGNORECASE,
+)
+
+
+def _normative_rule_problem(category: str, finding: str, remedy_detail: str) -> str | None:
+    """A rating finding may not assert a normative CARA rule — the corpus measures
+    what CARA DID, not what it requires, so a rule claim is unverifiable by
+    construction and poisons the marginal cited beside it."""
+    if not category.startswith("rating_"):
+        return None
+    hit = _NORMATIVE_RULE_RE.search(finding or "") or _NORMATIVE_RULE_RE.search(remedy_detail or "")
+    if not hit:
+        return None
+    return (
+        f'REJECTED, not filed: the text asserts a normative CARA rule ("{hit.group(0)}"). '
+        "No descriptor table contains a rule — a distribution says what CARA did, not what "
+        "it requires — so the verifier cannot support this claim shape. Restate as the "
+        "OBSERVATION: the counted content matches CARA descriptor 'X', which patterns "
+        "toward <band> in the descriptor corpus (cite the rating_boundary marginal), and "
+        "frame the band as measured boundary risk, never an automatic outcome."
     )
 
 
@@ -1780,6 +1829,15 @@ def file_flag(  # noqa: PLR0912 - a deliberate sequence of filing gates
             "retrieved_at": None,
             "via": c.get("via", "parallel_search"),
         }
+        if _is_derived_marginal(cit):
+            # The desk files the corpus marginal under whatever url/via it last
+            # researched (run 12: url=filmratings.com, via=parallel_search), so our
+            # own aggregate rendered as filmratings' — misattribution both ways.
+            # Normalize: the marginal is a local tool citation, named as ours.
+            cit["url"] = None
+            cit["via"] = "local"  # schema enum; the title carries the attribution
+            cit["source_type"] = "rules_table"
+            cit["title"] = "ScriptRisk CARA descriptor corpus (4,544 official rationales)"
         cits.append(cit)
 
     flag: dict[str, Any] = {
@@ -1824,6 +1882,9 @@ def file_flag(  # noqa: PLR0912 - a deliberate sequence of filing gates
 
     if cap_problem := _umbrella_problem(category, scene_ids):
         return _reject_or_stop(tool_context, entity_id, category, cap_problem)
+
+    if rule_problem := _normative_rule_problem(category, finding, remedy_detail):
+        return _reject_or_stop(tool_context, entity_id, category, rule_problem)
 
     if reg_problem := _unverified_regs(tool_context, finding):
         return _reject_or_stop(tool_context, entity_id, category, reg_problem)

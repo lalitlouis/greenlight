@@ -531,6 +531,10 @@ async def run(  # noqa: PLR0912, PLR0915 - one linear run sequence, deliberately
         "script_path": str(script_path),
         "draft": draft,
         "generated_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
+        # Which build produced this record. Cloud Run injects K_REVISION (e.g.
+        # greenlight-00185-7q5); local runs record "local". Without it a corpus
+        # or code change under the panel cannot be attributed to a deploy.
+        "build": os.environ.get("K_REVISION", "local"),
         "elapsed_s": round(time.time() - t0, 1),
         "error": error,
         "research_failures": int(state.get("research_failures", 0)),

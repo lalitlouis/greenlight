@@ -315,14 +315,25 @@ def demotion_entries(dropped: list[dict[str, Any]]) -> dict[str, list[str]]:
     return out
 
 
+# A rejection resting on BOTH a false unstated-fact ground AND a real sourcing
+# ground (run 12, F3009: the ages ARE stated in S004, but the labor-statute
+# excerpts genuinely don't hold) must not be blind-flipped to SUPPORTED — strike
+# only the false ground and let the sourcing ground route it honestly.
+_SOURCING_GROUND_RE = _re.compile(
+    r"excerpts? (?:do(?:es)? not|fail|lack)|citations? (?:do(?:es)? not|fail)"
+    r"|not (?:establish|support)|no authoritative source",
+    _re.IGNORECASE,
+)
+
+
 def _apply_overturns(
     flags: list[dict[str, Any]], verdicts: dict[str, dict[str, Any]], state: Any
 ) -> list[tuple[str, str, str]]:
     """Assertion 1 over a verdict set: overturn every UNSUPPORTED verdict whose
-    reason asserts an absence the script text disproves. Mutates `verdicts`;
-    returns [(flag_id, span, scene_id)] for reporting. Runs on the main pass,
-    the re-source pass, and the salvage path — a false rejection must not
-    survive ANY route to the record."""
+    reason asserts an absence — or calls a fact unstated — that the script text
+    disproves. Mutates `verdicts`; returns [(flag_id, note, scene_id)] for
+    reporting. Runs on the main pass, the re-source pass, and the salvage path —
+    a false rejection must not survive ANY route to the record."""
     overturned: list[tuple[str, str, str]] = []
     for f in flags:
         v = verdicts.get(f["flag_id"])
@@ -332,15 +343,34 @@ def _apply_overturns(
         hit = _overturned_by_script(reason, state)
         claim = "absent"
         if hit is None:
-            hit = _stated_fact_overturn(reason, state)
+            hit = _stated_fact_overturn(reason, state, str(f.get("finding") or ""))
             claim = "unstated"
         if hit is None:
             continue
         span, sid = hit
+        # Widen coordinates to the scene that carries the fact — the finding argued
+        # from a window that did not contain it (F3009: ages in S004, not S084).
+        if claim == "unstated" and sid not in (f.get("scene_ids") or []):
+            f["scene_ids"] = sorted({*(f.get("scene_ids") or []), sid}, key=lambda x: int(x[1:]))
+        if claim == "unstated" and _SOURCING_GROUND_RE.search(reason):
+            verdicts[f["flag_id"]] = {
+                "verdict": "UNSUPPORTED",
+                "reason": (
+                    "GROUND PARTIALLY OVERTURNED: the 'unstated fact' objection was false — "
+                    f"the script states the specifics ({span[:60]}) in {sid}. The sourcing "
+                    "objection stands. Original rejection: " + reason[:200]
+                ),
+                "failure_mode": "premise_unsupported",
+                "ground_overturned": True,
+            }
+            overturned.append(
+                (f["flag_id"], f"false 'unstated fact' ground struck ({span[:50]})", sid)
+            )
+            continue
         detail = (
-            f'the rejection asserted "{span[:80]}" is absent'
+            f'the rejection asserted "{span[:60]}" is absent'
             if claim == "absent"
-            else f"the rejection called the specifics ({span[:80]}) unstated"
+            else f"the rejection called the specifics ({span[:60]}) unstated"
         )
         verdicts[f["flag_id"]] = {
             "verdict": "SUPPORTED",
@@ -351,11 +381,7 @@ def _apply_overturns(
             "failure_mode": "none",
             "overridden": True,
         }
-        # Widen coordinates to the scene that carries the fact — the finding argued
-        # from a window that did not contain it (F3011: ages in S004, not S084).
-        if claim == "unstated" and sid not in (f.get("scene_ids") or []):
-            f["scene_ids"] = sorted({*(f.get("scene_ids") or []), sid}, key=lambda x: int(x[1:]))
-        overturned.append((f["flag_id"], span, sid))
+        overturned.append((f["flag_id"], f"rejection OVERTURNED — {detail}", sid))
     return overturned
 
 
@@ -489,22 +515,51 @@ def _num_near_name(seg: str, propers: set[str], n: str) -> bool:
     return False
 
 
-def _stated_fact_overturn(reason: str, state: Any) -> tuple[str, str] | None:
-    """Unstated-fact rejections: if the distinctive proper nouns the rejection names
-    (>= 2) all co-occur in ONE scene, and every number it claims sits beside a name
-    there (digit or word), the fact IS stated — the verifier reasoned from a partial
-    window. Returns (names, scene_id) to overturn and widen coordinates to. High
+def _propers_near_numbers(body: str, nums: set[str]) -> set[str]:
+    """Distinctive capitalized names within _NAME_NUM_NEAR chars of a claimed
+    number in `body` — the names the claim actually ties its numbers to
+    ('Haylee, age 2' -> Haylee), excluding sentence-case noise."""
+    out: set[str] = set()
+    for n in nums:
+        forms = [n] + ([_NUM_WORDS[n]] if n in _NUM_WORDS else [])
+        for form in forms:
+            for m in _re.finditer(rf"(?<![A-Za-z0-9]){_re.escape(form)}(?![A-Za-z0-9])", body):
+                window = body[max(0, m.start() - _NAME_NUM_NEAR) : m.end() + _NAME_NUM_NEAR]
+                out |= {
+                    w
+                    for w in _re.findall(r"\b[A-Z][a-z]{2,}\b", window)
+                    if w.lower() not in _COMMON_CAPS
+                }
+    return out
+
+
+def _stated_fact_overturn(reason: str, state: Any, finding: str = "") -> tuple[str, str] | None:
+    """Unstated-fact rejections: if the distinctive proper nouns the claim ties its
+    numbers to (>= 2) all co-occur in ONE scene, and every claimed number sits beside
+    a name there (digit or word), the fact IS stated — the verifier reasoned from a
+    partial window. Names are anchored to the numbers first (in the reason, then the
+    FINDING — run 12's rejection said only 'the daughters'; the finding names them);
+    whole-reason extraction is the fallback. Returns (names, scene_id). High
     precision: ambiguous when the names appear together in more than three scenes."""
     text = str(state.get("script_text") or "")
     scenes = state.get("scenes", [])
     if not text or not scenes or not _UNSTATED_RE.search(reason):
         return None
-    propers = {
-        w for w in _re.findall(r"\b[A-Z][a-z]{2,}\b", reason) if w.lower() not in _COMMON_CAPS
-    }
+    # Numbers come only from the sentence(s) carrying the unstated-fact ground —
+    # a mixed rejection's sourcing sentence contributes statute numbers (NRS 609,
+    # 3-hour limits) that would poison the scene match.
+    sentences = _re.split(r"(?<=[.;])\s+", reason)
+    claim_text = " ".join(s for s in sentences if _UNSTATED_RE.search(s)) or reason
+    nums = set(_re.findall(r"(?<![A-Za-z0-9])\d{1,3}(?![0-9])", claim_text))
+    propers = _propers_near_numbers(claim_text, nums)
+    if len(propers) < _MIN_ANCHOR_NAMES and finding:
+        propers |= _propers_near_numbers(finding, nums)
+    if len(propers) < _MIN_ANCHOR_NAMES:
+        propers = {
+            w for w in _re.findall(r"\b[A-Z][a-z]{2,}\b", reason) if w.lower() not in _COMMON_CAPS
+        }
     if len(propers) < _MIN_ANCHOR_NAMES:
         return None
-    nums = set(_re.findall(r"(?<![A-Za-z0-9])\d{1,3}(?![0-9])", reason))
     matches: list[str] = []
     for s in scenes:
         seg = text[s["raw_span"][0] : s["raw_span"][1]].lower()
@@ -516,6 +571,27 @@ def _stated_fact_overturn(reason: str, state: Any) -> tuple[str, str] | None:
     if not matches or len(matches) > _MAX_ANCHOR_SCENES:
         return None
     return ", ".join(sorted(propers)), matches[0]
+
+
+_FACT_PROP_CAP = 6  # survivors re-verified per run against established facts
+
+
+def _misstatement_facts(dropped: list[dict[str, Any]]) -> list[tuple[set[str], str]]:
+    """The script facts that script_misstatement rejections establish, with the
+    scenes they speak about — [(scene_ids, rejection_reason)]. A verifier that
+    caught S066 parked has established a fact about S066 for the WHOLE report,
+    not just its own finding; every survivor sharing those scenes must face it
+    (run 12: F4012 rejected for 'drinking while driving' being false while F2003
+    shipped the same claim with a remedy)."""
+    facts: list[tuple[set[str], str]] = []
+    for r in dropped:
+        if r.get("failure_mode") != "script_misstatement":
+            continue
+        reason = str(r.get("rejection_reason") or "")
+        sids = set(_re.findall(r"\bS\d{3}\b", reason)) or set(r.get("scene_ids") or [])
+        if reason and sids:
+            facts.append((sids, reason))
+    return facts
 
 
 _STOPWORDS = frozenset(
@@ -1042,18 +1118,13 @@ class VerificationPanel(BaseAgent):
         # absent when the full-text search finds it. Deterministic, and it runs
         # BEFORE anything downstream (rejected_summary, demotions, reconcile)
         # can act on a false rejection.
-        for fid, span, sid in _apply_overturns(flags, verdicts, state):
+        for fid, note, sid in _apply_overturns(flags, verdicts, state):
             yield Event(
                 invocation_id=ctx.invocation_id,
                 author=self.name,
                 content=types.Content(
                     role="model",
-                    parts=[
-                        types.Part(
-                            text=f"⚖ {fid} rejection OVERTURNED — it asserted "
-                            f'"{span[:60]}" is absent; the script contains it in {sid}'
-                        )
-                    ],
+                    parts=[types.Part(text=f"⚖ {fid} {note}; the script states it in {sid}")],
                 ),
             )
         kept, dropped = apply_verdicts(flags, verdicts)
@@ -1137,6 +1208,86 @@ class VerificationPanel(BaseAgent):
                 kept.extend(k2)
                 dropped = [d for d in dropped if d["flag_id"] != r["flag_id"]]
                 resourced_stats["recovered"] += 1
+
+        # FACT PROPAGATION (run 12): verifiers are per-finding, so a script fact
+        # one rejection establishes never reached the verifier of a SURVIVING
+        # finding asserting the contradicted claim — the report shipped three
+        # descriptions of one script moment: one rejected as wrong, one right,
+        # one wrong with a remedy. Re-verify every survivor sharing scenes with
+        # a script_misstatement rejection, with the established facts on the
+        # record; a survivor the facts impeach gets one correct-and-refile round,
+        # then drops. Deterministic collection and application; the model only
+        # re-judges inside the already-blinded verifier.
+        facts = _misstatement_facts(dropped)
+        for f in [f for f in kept if any(set(f.get("scene_ids") or []) & fs for fs, _ in facts)][
+            :_FACT_PROP_CAP
+        ]:
+            fid = f["flag_id"]
+            blocks = [r for fs, r in facts if set(f.get("scene_ids") or []) & fs]
+            fact_ctx = (
+                "\n\nESTABLISHED SCRIPT FACTS — independent verification of THIS screenplay "
+                "already confirmed these about the scenes below; they are authoritative over "
+                "the claim's script facts:\n" + "\n".join(f"- {b}" for b in blocks)
+            )
+            v3 = await self._verify_one(
+                client, f, _scene_context(f, state) + fact_ctx, _search_context(f, state), sem
+            )
+            if v3.get("fail_open") or not (
+                v3["verdict"] == "UNSUPPORTED" and v3.get("failure_mode") == "script_misstatement"
+            ):
+                continue  # the facts do not impeach this survivor; first verdict stands
+            verdicts[fid + ":pre_facts"] = verdicts.get(fid, {})
+            evidence = (
+                _scene_context(f, state)
+                + fact_ctx
+                + "\n\nFULL-SCRIPT SEARCH (authoritative):\n"
+                + _search_context(f, state)
+            )
+            fixed = await self._correct_finding(
+                client, {**f, "rejection_reason": v3["reason"]}, evidence, sem
+            )
+            recovered = False
+            if fixed:
+                retry_flag = {**f, "finding": fixed, "fact_reconciled": True}
+                v4 = await self._verify_one(
+                    client,
+                    retry_flag,
+                    _scene_context(retry_flag, state) + fact_ctx,
+                    _search_context(retry_flag, state),
+                    sem,
+                )
+                if v4["verdict"] != "UNSUPPORTED":
+                    f["finding"] = fixed
+                    f["fact_reconciled"] = True
+                    verdicts[fid] = v4
+                    recovered = True
+            if not recovered:
+                kept = [k for k in kept if k["flag_id"] != fid]
+                verdicts[fid] = v3
+                dropped.append(
+                    {
+                        **f,
+                        "rejection_reason": v3["reason"],
+                        "failure_mode": "script_misstatement",
+                    }
+                )
+            yield Event(
+                invocation_id=ctx.invocation_id,
+                author=self.name,
+                content=types.Content(
+                    role="model",
+                    parts=[
+                        types.Part(
+                            text=(
+                                f"⚖ {fid} restated against established script facts"
+                                if recovered
+                                else f"⚖ {fid} DROPPED by fact propagation — it asserts a claim "
+                                "a verified rejection already disproved: " + v3["reason"][:120]
+                            )
+                        )
+                    ],
+                ),
+            )
 
         # A sourcing-failure rejection must not RETIRE a real hazard: the claim
         # may be true with better citations, and its scenes must never flip to

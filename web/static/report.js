@@ -476,7 +476,7 @@ function renderPrediction(root, pred) {
   const cset = pred.conformal_set || [];
   if (cset.length) {
     const setBox = el("div", "pred-box pred-set");
-    setBox.appendChild(el("span", "pred-label", "The guarantee (90% per rating group)"));
+    setBox.appendChild(el("span", "pred-label", "Coverage (90% per rating group)"));
     const badges = el("div", "pred-set-badges");
     for (const r of cset) {
       badges.appendChild(el("b", "rating-badge r-" + r + (r === pred.predicted ? "" : " set-alt"), r));
@@ -484,7 +484,7 @@ function renderPrediction(root, pred) {
     setBox.appendChild(badges);
     setBox.appendChild(el("span", "pred-set-note",
       cset.length === 1
-        ? "The measured CARA boundary commits to a single rating for this descriptor profile."
+        ? "The measured CARA boundary narrows to a single rating for this descriptor profile — an observation over the corpus, not a commitment."
         : "The measured CARA boundary spans these ratings for this profile — a boundary script, honestly labeled."));
     ratings.appendChild(setBox);
   }
@@ -1168,8 +1168,15 @@ function renderReport(record) {
     root.appendChild(warn);
   }
 
+  // The panel headlines the TARGET-path total when est_cost_paths exists, so a
+  // flag the adjudicator ruled moot on that path must not rank as one of its
+  // drivers (run 12: the #3 driver was a sync license the target path excludes —
+  // the financing number contradicted its own ranking).
+  const onTargetPath = rep.est_cost_paths?.target_rating
+    ? (f) => !f.cost_excluded_on_target_path
+    : () => true;
   const drivers = (record.flags || [])
-    .filter((f) => f.remedy?.est_cost_usd)
+    .filter((f) => f.remedy?.est_cost_usd && onTargetPath(f))
     .sort((a, b) => b.remedy.est_cost_usd[1] - a.remedy.est_cost_usd[1])
     .slice(0, 3);
   if (drivers.length && rep.est_clearance_cost_usd) {

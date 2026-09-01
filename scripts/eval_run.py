@@ -278,6 +278,27 @@ def main() -> int:  # noqa: PLR0915 - a linear checklist, deliberately flat
         f"rating findings with a statistic loose in prose: {stat_in_prose[:6]} — the marginal "
         "belongs in a rating_boundary citation, not the finding text",
     )
+    # A rating finding may not assert a normative CARA rule ("directly commands an
+    # R rating") — the corpus measures what CARA did, not what it requires, and a
+    # rule-shaped claim is unverifiable by construction. The filing gate enforces
+    # this; the assertion catches any path around it (adjudicator rewording, older
+    # records).
+    from greenlight.tools.toolbelt import _NORMATIVE_RULE_RE
+
+    rule_shaped = []
+    for f in flags:
+        if not (f.get("category") or "").startswith("rating_"):
+            continue
+        body = f"{f.get('finding', '')} {(f.get('remedy') or {}).get('detail', '')}"
+        m = _NORMATIVE_RULE_RE.search(body)
+        if m:
+            rule_shaped.append((f["flag_id"], m.group(0)[:40]))
+    check(
+        "invariant: no rating finding asserts a normative CARA rule",
+        not rule_shaped,
+        f"rule-shaped rating claims: {rule_shaped[:4]} — state the descriptor-frequency "
+        "observation, never what CARA 'requires'",
+    )
     check(
         "invariant: no unexamined entities (every extracted item dispositioned)",
         not r.get("unexamined"),
