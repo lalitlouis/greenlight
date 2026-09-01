@@ -1069,7 +1069,7 @@ function renderReport(record) {
         ? rep.verification_degraded
           ? "The independent verifier could not run for at least one finding, so those " +
             "findings are unverified and the number is withheld: an unverified analysis " +
-            "must never score like a verified one. Rerun the analysis."
+            "must never score like a verified one."
           : "A desk returned no dispositions of its own, so the number is withheld: fewer " +
             "findings from a failed desk must never read as lower risk. Rerun the analysis."
         : "The score is an ordinal risk index — a deterministic summary of finding severities, " +
@@ -1077,6 +1077,33 @@ function renderReport(record) {
           "compare drafts by findings, not by small score moves."
     )
   );
+  if (withheld && rep.verification_degraded && !IS_CASE) {
+    // A transient verifier failure should cost a 30-second retry, never a full
+    // paid re-run — retry ONLY the unverified findings and recompute the score.
+    const retry = el("button", "btn btn-secondary", "Retry verification — free, ~30s");
+    retry.type = "button";
+    retry.addEventListener("click", async () => {
+      retry.disabled = true;
+      retry.textContent = "Re-verifying…";
+      try {
+        const res = await fetch(`/api/runs/${encodeURIComponent(RUN_ID)}/reverify`, {
+          method: "POST",
+        });
+        if (!res.ok) throw new Error(String(res.status));
+        const s = await res.json();
+        if (s.still_unavailable) {
+          retry.textContent = `Verifier still unavailable for ${s.still_unavailable} finding(s) — try again shortly`;
+          retry.disabled = false;
+        } else {
+          window.location.reload();
+        }
+      } catch {
+        retry.textContent = "Retry verification — free, ~30s";
+        retry.disabled = false;
+      }
+    });
+    meta.appendChild(retry);
+  }
   const proj = el("span", "proj");
   proj.appendChild(
     document.createTextNode(

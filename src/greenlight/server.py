@@ -1901,6 +1901,41 @@ async def delete_run(run_id: str, request: Request) -> dict[str, bool]:
     return {"ok": True}
 
 
+@app.post("/api/runs/{run_id}/reverify")
+async def reverify_run(run_id: str, request: Request) -> dict[str, Any]:
+    """Retry ONLY the unverified findings of a finished run (run-16: a transient
+    verifier failure withheld the score, and the sole remedy the UI offered was
+    a full paid re-run for a few cents of failed calls). Owner-gated when the
+    run is owned; URL possession is the capability for anonymous runs — the
+    same trust model as delete. Curated demo records are refused."""
+    run_id = _safe_id(run_id)
+    if _disk_record(run_id) is not None:
+        raise HTTPException(403, "Curated demo records cannot be re-verified here")
+    try:
+        owner = await asyncio.to_thread(storage.load_owner, run_id)
+    except storage.OwnerLookupError as e:
+        raise HTTPException(
+            503, "Could not verify who owns this run. Try again in a moment."
+        ) from e
+    if owner:
+        user = _current_user(request)
+        if not user or user["sub"] != owner:
+            raise HTTPException(403, "This run belongs to a signed-in account")
+    if (runstate.get_state(run_id) or {}).get("status") == "running":
+        raise HTTPException(409, "The analysis is still running")
+    record = await asyncio.to_thread(storage.load_record, run_id)
+    script = await asyncio.to_thread(storage.load_script, run_id)
+    if not record or not script:
+        raise HTTPException(404, "No such run")
+    from greenlight.reverify import reverify_record
+
+    summary = await reverify_record(record, script)
+    if summary["retried"]:
+        await asyncio.to_thread(storage.save_record, run_id, record)
+    _log("run_reverified", run_id=run_id, **{k: v for k, v in summary.items() if k != "rejected"})
+    return summary
+
+
 def _disk_record(run_id: str) -> dict[str, Any] | None:
     # run ids are our own file stems — refuse anything path-shaped.
     if not run_id.replace("_", "").replace("-", "").isalnum():
