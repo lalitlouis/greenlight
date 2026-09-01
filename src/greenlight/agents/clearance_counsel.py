@@ -107,6 +107,14 @@ demolition ends the LOCATION question, never the DEPICTION question — the prop
 an owner and the mark has a holder (often a successor: a closed club's name may belong
 to the casino that housed it). Keep the trademark/trade-libel analysis alive and name
 who holds the rights NOW.
+A REAL PERSON'S LIKENESS IS NEVER CLEARED FROM SCRIPT CONTEXT ALONE. A photograph,
+poster, mural, or lookalike of an identifiable real person — even neutral, even
+background set dressing (a Polaroid of a musician behind a bar register) — carries
+right-of-publicity AND photo-copyright exposure that no reading of the scene can
+extinguish: the depiction needs a release or a licensed image, so the disposition is
+a FLAG with that remedy (severity per prominence; LOW is fine for incidental set
+dressing), or an open question — never a clearance. This mirrors the venue rule:
+identity, like venue status, cannot be cleared from the page.
 A FICTIONAL NAME CLEARS THE NAME, NOT THE SHOOT: when a scene needs a controlled-venue
 class location (an operating casino floor, theme park, terminal) — above all with
 depicted destruction or misconduct on the premises — file location_release with the
