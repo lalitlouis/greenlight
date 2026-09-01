@@ -76,6 +76,12 @@ function scenePopover() {
   pop.id = "scene-pop";
   pop.addEventListener("mouseenter", () => clearTimeout(popHideTimer));
   pop.addEventListener("mouseleave", hideScenePop);
+  document.addEventListener("click", (e) => {
+    if (!pop.contains(e.target)) pop.classList.add("hidden");
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") pop.classList.add("hidden");
+  });
   document.body.appendChild(pop);
   return pop;
 }

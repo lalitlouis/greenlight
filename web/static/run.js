@@ -41,6 +41,7 @@ function showScenePop(anchor, sid) {
   if (!text) return; // source not loaded (or not visible to this viewer): no popover
   clearTimeout(popHideTimer);
   const pop = scenePopover();
+  pop.dataset.sid = sid;
   pop.textContent = "";
   const head = el("div", "sp-head");
   head.appendChild(el("b", null, sid));
@@ -64,8 +65,18 @@ function buildSceneStrip(scenes) {
     card.appendChild(head);
     card.appendChild(el("div", "rts-dots"));
     card.appendChild(el("div", "rts-pins"));
-    card.addEventListener("mouseenter", () => showScenePop(card, s.scene_id));
-    card.addEventListener("mouseleave", hideScenePop);
+    // click to preview, click again / outside / Escape to close — the hover
+    // popover covered the whole panel and trapped the scroll (owner, run 17)
+    card.title = "Click to preview the scene";
+    card.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const pop = document.getElementById("scene-pop");
+      if (pop && !pop.classList.contains("hidden") && pop.dataset.sid === s.scene_id) {
+        pop.classList.add("hidden");
+        return;
+      }
+      showScenePop(card, s.scene_id);
+    });
     strip.appendChild(card);
   }
   rt.built = true;
