@@ -1902,3 +1902,23 @@ def test_statute_cite_auto_attached_for_traceability():
     assert problem is None
     assert len(cits) == 2 and "933" in cits[1]["excerpt"] and cits[1]["repaired"]
     assert cits[1]["source_type"] == "statute"
+
+
+def test_prune_never_drops_statute_citations():
+    """Gate #14: the auto-attached §933 span (url-less -> background by default)
+    was pruned beside web hosts — the same class that once pruned the derived
+    marginal. A verbatim provision is never the weak citation."""
+    from greenlight.tools.toolbelt import _prune_weak_citations
+
+    cits = [
+        _cit("https://www.uscg.mil/rules"),
+        {
+            "source_type": "statute",
+            "excerpt": "14 U.S.C. 933 - No vessel shall display insignia...",
+            "url": None,
+            "via": "local",
+            "repaired": True,
+        },
+    ]
+    kept = _prune_weak_citations(cits, "trademark_use")
+    assert any(c.get("source_type") == "statute" for c in kept)

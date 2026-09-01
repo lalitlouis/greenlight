@@ -1774,7 +1774,17 @@ def _prune_weak_citations(
         ]
         if strong:
             return _dedupe_cits(strong)
-    keep = [c for c, u in zip(cits, urls, strict=False) if not _is_background_host(u)]
+    keep = [
+        c
+        for c, u in zip(cits, urls, strict=False)
+        # a URL-less citation reads as background by default, which pruned first
+        # the derived marginal (run 11) and then the auto-attached statute span
+        # (gate #14) — verbatim provisions and our own tool citations are never
+        # the weak ones
+        if not _is_background_host(u)
+        or c.get("source_type") == "statute"
+        or _is_derived_marginal(c, tool_context)
+    ]
     return _dedupe_cits(keep or cits)
 
 
