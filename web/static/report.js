@@ -1581,38 +1581,6 @@ function renderReport(record) {
     FX.staggerIn(root.querySelectorAll(".flag"));
   }
 
-  // Anonymous and owned live runs (hex ids) can be deleted from here; curated
-  // demo records (run_*/case_* stems) cannot — the server refuses those anyway.
-  if (!IS_CASE && /^w?[0-9a-f]{11,12}$/.test(RUN_ID)) {
-    const zone = el("div", "card delete-zone");
-    zone.appendChild(
-      el("p", null, "Done with this analysis? Deleting removes the script, the report, and the run record from our storage.")
-    );
-    const btn = el("button", "btn btn-danger", "Delete this analysis");
-    btn.type = "button";
-    btn.addEventListener("click", async () => {
-      const sure = await confirmDialog({
-        title: "Delete this analysis?",
-        message: "The report, the run record, and your uploaded script are removed from our storage permanently. This cannot be undone.",
-        confirmLabel: "Delete permanently",
-        danger: true,
-      });
-      if (!sure) return;
-      btn.disabled = true;
-      btn.textContent = "Deleting…";
-      try {
-        const res = await fetch(`/api/runs/${encodeURIComponent(RUN_ID)}`, { method: "DELETE" });
-        if (!res.ok) throw new Error((await res.json()).detail || res.statusText);
-        window.location.href = "/home";
-      } catch (e) {
-        btn.disabled = false;
-        btn.textContent = "Delete this analysis";
-        zone.appendChild(el("p", "delete-err", "Could not delete: " + e.message));
-      }
-    });
-    zone.appendChild(btn);
-    root.appendChild(zone);
-  }
 
   if (window.location.hash) {
     focusFlag(document.querySelector(window.location.hash));
