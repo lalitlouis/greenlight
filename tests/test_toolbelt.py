@@ -1584,6 +1584,35 @@ def test_hedge_without_marginal_rejected_at_filing():
     assert "REJECTED" in out and "rating_boundary" in out
 
 
+def test_statute_sections_extracts_cites_not_noise():
+    from greenlight.tools.toolbelt import _statute_sections
+
+    assert _statute_sections("under 29 CFR 1910.28 and NRS Chapter 609") == {"1910", "609"}
+    assert _statute_sections("per 8 CCR § 11755 and Labor Code (§ 1308.5)") == {"11755", "1308"}
+    # bulletin numbers, resolution ordinals, and title numbers are NOT sections
+    assert _statute_sections("CSATF Safety Bulletin #4 and Resolution No. 23 of 2017") == set()
+
+
+def test_uncited_statute_rejected_at_filing_until_quoted():
+    """A section typed from memory is the fabrication class wearing a suit —
+    it files only when a retrieved text this run contains the number. Hour caps
+    gate ONLY in minor-safety findings (a stunt finding's '4 hours of
+    rehearsal' is planning prose — named negative control)."""
+    from greenlight.tools.toolbelt import _register_provenance, _uncited_statute_problem
+
+    ctx = make_ctx(agent_name="safety_underwriter")
+    finding = "Under NRS 609, minors are limited to 3 hours of work."
+    problem = _uncited_statute_problem(ctx, "minor_safety", finding, "")
+    assert problem and "609" in problem and "3" in problem
+    # the desk retrieves the provision -> the same finding files
+    _register_provenance(ctx, ["NRS 609.240: a child under 5 may work 3 hours per day."])
+    assert _uncited_statute_problem(ctx, "minor_safety", finding, "") is None
+    # hour figures outside minor-safety never gate
+    assert (
+        _uncited_statute_problem(ctx, "stunt_fight", "Allow 4 hours of rehearsal time.", "") is None
+    )
+
+
 def test_sync_finding_bundling_master_claim_rejected():
     """The sync/master cost model flip-flopped between runs (split in 14,
     bundled in 15), moving the headline on an unchanged script. Pinned:

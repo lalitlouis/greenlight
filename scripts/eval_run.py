@@ -389,6 +389,27 @@ def main() -> int:  # noqa: PLR0915, PLR0912 - a linear checklist, deliberately 
         not bad_claims,
         f"unreceipted claims survived assembly: {bad_claims[:4]}",
     )
+    # run-15 follow-up: uncited precision. A statute section a finding names must
+    # appear in that finding's OWN citation excerpts — reader-traceable, not just
+    # somewhere in the run's research (the filing gate covers that weaker bound).
+    from greenlight.tools.toolbelt import _statute_sections
+
+    untraceable = []
+    for f in flags:
+        body = f"{f.get('finding', '')} {(f.get('remedy') or {}).get('detail', '')}"
+        secs = _statute_sections(body)
+        if not secs:
+            continue
+        excerpts = " ".join(str(c.get("excerpt") or "") for c in f.get("citations") or [])
+        missing = sorted(s for s in secs if s not in excerpts)
+        if missing:
+            untraceable.append((f["flag_id"], missing))
+    check(
+        "invariant: statute sections in findings trace to their own excerpts",
+        not untraceable,
+        f"typed-from-memory cites: {untraceable[:4]} — the reader must be able to "
+        "verify a section number from the excerpt beside it",
+    )
     check(
         "invariant: no unexamined entities (every extracted item dispositioned)",
         not r.get("unexamined"),

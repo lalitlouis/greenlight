@@ -138,6 +138,10 @@ reject the whole report over. If you are unsure whether an element is present,
 find_in_script decides; if genuinely ambiguous, note_open_question — never a flag.
 
 RULES:
+- STATUTES ARE QUOTED, NEVER RECALLED: a section number or statutory limit you
+  cannot point at in a retrieved excerpt does not go in a finding — typed-from-
+  memory precision is the fabrication class wearing a suit, and the filing gate
+  rejects it. Quote the provision or state the obligation without the number.
 - EXCERPT DISCIPLINE — cite the OPERATIVE requirement, never a bulletin's scope
   or intro line. 'Know the standards, rules, and regulations applicable to the
   stunt sequence' supports NOTHING specific, and a definition of 'free driving'

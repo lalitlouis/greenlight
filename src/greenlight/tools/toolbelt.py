@@ -1883,6 +1883,60 @@ def _unverified_regs(tool_context: ToolContext, finding: str) -> str | None:
     )
 
 
+# run-15 follow-up (the reviewer's named class): uncited PRECISION. A statute
+# section typed from memory looks identically authoritative to a retrieved one —
+# and the child-labor hour caps drifted between runs (3h/4.5h vs 4h/2h) because
+# nothing tied them to a source. A precise premise figure must trace to a
+# retrieved text or it does not file.
+_STATUTE_CITE_RE = re.compile(
+    r"\b(?:\d+\s+)?(?:CFR|C\.F\.R\.|NRS|CCR|USC|U\.S\.C\.)\s*(?:§+\s*)?(?:Chapter\s+)?([\d.]+)"
+    r"|\bLabor\s+Code\b[^.;]{0,20}?§*\s*([\d.]+)"
+    r"|§+\s*([\d.]+)",
+    re.IGNORECASE,
+)
+_MIN_SECTION_DIGITS = 3  # '29 CFR 1910.28' -> gate on 1910, never on the title 29
+# hour caps gate ONLY in minor-safety findings — the known drift class. A stunt
+# finding's '4 hours of rehearsal' is planning prose, not a statutory limit
+# (anti-oscillation: named negative control, pinned in tests).
+_HOURS_RE = re.compile(r"(\d+(?:\.\d+)?)\s*hours?\b", re.IGNORECASE)
+
+
+def _statute_sections(text: str) -> set[str]:
+    out: set[str] = set()
+    for m in _STATUTE_CITE_RE.finditer(text or ""):
+        num = next((g for g in m.groups() if g), "")
+        whole = num.split(".")[0]
+        if len(whole) >= _MIN_SECTION_DIGITS:
+            out.add(whole)
+    return out
+
+
+def _uncited_statute_problem(
+    tool_context: ToolContext, category: str, finding: str, remedy_detail: str
+) -> str | None:
+    """Every statute section (and, in minor-safety findings, every hour cap)
+    must appear in a text this run actually retrieved. Typed-from-memory
+    precision is the fabrication class wearing a suit."""
+    body = f"{finding} {remedy_detail}"
+    needed = _statute_sections(body)
+    if (category or "").startswith("minor"):
+        needed |= {m.group(1) for m in _HOURS_RE.finditer(body)}
+    if not needed:
+        return None
+    prov = " ".join(norm for norm, _ in _prov_bucket(tool_context))
+    missing = sorted(n for n in needed if n not in prov)
+    if not missing:
+        return None
+    return (
+        f"REJECTED, not filed: the figure(s) {missing} (statute section or statutory "
+        "limit) appear in NO source retrieved this run — a precise number typed from "
+        "memory reads as authoritative and cannot be verified. research() the actual "
+        "provision (restrict_to_domains law.cornell.edu, govinfo.gov, dir.ca.gov, "
+        "leg.state.nv.us) and QUOTE the text that states it, or state the obligation "
+        "without the number."
+    )
+
+
 def _clip_words(text: str, limit: int) -> str:
     """Cap at a word boundary — a mid-word slice reads as a data bug."""
     if len(text) <= limit:
@@ -1897,7 +1951,7 @@ def _strip_json_escapes(text: str) -> str:
     return re.sub(r"\\+([\"'])", r"\1", text or "")
 
 
-def file_flag(  # noqa: PLR0912 - a deliberate sequence of filing gates
+def file_flag(  # noqa: PLR0912, PLR0915 - a deliberate sequence of filing gates
     scene_ids: list[str],
     severity: str,
     category: str,
@@ -2044,6 +2098,19 @@ def file_flag(  # noqa: PLR0912 - a deliberate sequence of filing gates
 
     if reg_problem := _unverified_regs(tool_context, finding):
         return _reject_or_stop(tool_context, entity_id, category, reg_problem)
+
+    if statute_problem := _uncited_statute_problem(tool_context, category, finding, remedy_detail):
+        _manifest_note(
+            tool_context,
+            {
+                "guard": "uncited_statute",
+                "stage": "filing",
+                "category": category,
+                "entity": entity_id,
+                "matched": statute_problem[:120],
+            },
+        )
+        return _reject_or_stop(tool_context, entity_id, category, statute_problem)
 
     if src_problem := _background_only_problem(severity, cits, tool_context):
         return _reject_or_stop(tool_context, entity_id, category, src_problem)

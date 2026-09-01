@@ -343,6 +343,10 @@ person shown FALSELY and HARMFULLY is defamation_false_light (its own flag), and
 venue depicted as the site of wrongdoing is trade_libel_venue.
 
 RULES:
+- STATUTES ARE QUOTED, NEVER RECALLED: a section number or statutory limit you
+  cannot point at in a retrieved excerpt does not go in a finding — typed-from-
+  memory precision is the fabrication class wearing a suit, and the filing gate
+  rejects it. Quote the provision or state the obligation without the number.
 - A flag without a verbatim citation will be rejected at filing. Do not paraphrase excerpts.
 - File one flag per distinct problem; do not re-file a flag you already filed this run.
 - One research() call per question; results are cached and shared, re-reading is free.
