@@ -1534,6 +1534,12 @@ def test_derived_marginal_citation_normalized_at_filing():
     assert cit["url"] is None and cit["via"] == "local"
     assert cit["source_type"] == "rules_table"
     assert "ScriptRisk CARA descriptor corpus" in cit["title"]
+    # a fact-propagation restate marks the flag; the frozen schema must admit it
+    # (undeclared, it killed a full case-study run at report build, 2026-09-01)
+    from greenlight.contracts import validate
+
+    flag["fact_reconciled"] = True
+    validate("flag", flag)
 
 
 def test_structured_marginal_attaches_at_filing_and_validates():

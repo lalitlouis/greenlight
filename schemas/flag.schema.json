@@ -196,6 +196,10 @@
       "type": "boolean",
       "description": "Set by the adjudication plan: this flag's remedy cost is moot when the production follows the target-rating path. The flag still renders; the report's target-path cost total excludes it."
     },
+    "fact_reconciled": {
+      "type": "boolean",
+      "description": "Set when fact propagation restated this finding (and its remedy) against script facts an independent rejection established. The restated text is what renders; the guard manifest carries the trail."
+    },
     "marginal": {
       "type": "object",
       "description": "rating_* findings only: the measured CARA descriptor marginal, populated deterministically at filing from the desk's last rating_boundary call — never model-supplied. A rating finding without it does not render (it demotes to open questions and withholds the score).",

@@ -38,7 +38,7 @@ CASE_BUDGETS = {
 
 # slug -> (source: cache filename OR gcs run id, target rating)
 CASES = {
-    "reservoir_dogs": ("_reservoir_dogs.fountain", "R"),
+    # "reservoir_dogs": ("_reservoir_dogs.fountain", "R"),  # done 2026-09-01 02:45
     "clerks": ("_clerks.fountain", "R"),
     "little_miss_sunshine": ("_little_miss_sunshine.fountain", "R"),
     "the_social_network": ("gcs:2bec8312bc50", "PG-13"),
@@ -69,7 +69,7 @@ def wait_for_quiet() -> None:
         time.sleep(120)
 
 
-def main() -> int:
+def main() -> int:  # noqa: PLR0915, PLR0912 - a linear per-case sequence
     failures = []
     for slug, (src, target) in CASES.items():
         out = ROOT / "runs" / f"case_{slug}.json"
@@ -108,6 +108,14 @@ def main() -> int:
                     + ("retrying once" if attempt == 1 else "giving up, existing case kept"),
                     flush=True,
                 )
+            except Exception as exc:  # one case's bug must not kill the batch
+                # (a ContractViolation at report build killed the whole batch
+                # after Clerks' full paid analysis, 2026-09-01)
+                print(
+                    f"{slug}: CRASH {type(exc).__name__}: {exc} — existing case kept",
+                    flush=True,
+                )
+                break
         if record is None:
             failures.append(slug)
             continue
