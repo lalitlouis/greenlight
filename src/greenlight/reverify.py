@@ -22,32 +22,21 @@ from greenlight import parser
 from greenlight import report as report_mod
 from greenlight.agents.verification import (
     _RETRY_HTTP,
-    MODEL,
-    Verdict,
-    _blinded_prompt,
     _scene_context,
     _search_context,
     apply_verdicts,
+    call_verifier,
     demotion_entries,
 )
 
 
 async def _verify_once(client: Any, flag: dict[str, Any], state: dict[str, Any]) -> dict[str, Any]:
-    """One verifier call, no ladder — the caller decides retry policy. Raises on
-    transport failure (the caller keeps the honest unverified state)."""
-    from google.genai import types
-
-    res = await client.aio.models.generate_content(
-        model=MODEL,
-        contents=_blinded_prompt(flag, _scene_context(flag, state), _search_context(flag, state)),
-        config=types.GenerateContentConfig(
-            response_mime_type="application/json",
-            response_schema=Verdict,
-            temperature=0.0,
-        ),
+    """One block-aware verifier call, no ladder — the caller decides retry
+    policy. Raises on transport failure (the caller keeps the honest unverified
+    state)."""
+    return await call_verifier(
+        client, flag, _scene_context(flag, state), _search_context(flag, state)
     )
-    v = Verdict.model_validate_json(res.text)
-    return {"verdict": v.verdict, "reason": v.reason, "failure_mode": v.failure_mode}
 
 
 async def reverify_record(record: dict[str, Any], script_text: str, verify=None) -> dict[str, Any]:
@@ -61,6 +50,7 @@ async def reverify_record(record: dict[str, Any], script_text: str, verify=None)
         "retried": len(targets),
         "verified": 0,
         "still_unavailable": 0,
+        "blocked": 0,
         "rejected": [],
         "score": (record.get("report") or {}).get("greenlight_score"),
     }
@@ -92,8 +82,15 @@ async def reverify_record(record: dict[str, Any], script_text: str, verify=None)
         except Exception:
             summary["still_unavailable"] += 1
             continue  # still down — the honest unverified state stands
+        if v.get("fail_open") and v.get("content_filtered"):
+            # deterministic platform block — retries cannot help; label honestly
+            f["verification_blocked"] = True
+            verdicts[fid] = v
+            summary["blocked"] += 1
+            continue
         verdicts[fid] = v
         f.pop("verification_unavailable", None)
+        f.pop("verification_blocked", None)
         kept_one, dropped_one = apply_verdicts([f], {fid: v})
         if dropped_one:
             flags = [x for x in flags if x["flag_id"] != fid]

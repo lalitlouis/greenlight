@@ -44,6 +44,74 @@ MODEL = FLASH_MODEL
 _CONCURRENCY = 10
 _MAX_ATTEMPTS = 5
 
+# The platform's prohibited-content filter can block the verifier's PROMPT when
+# the scene window carries a script's most extreme content (Wolf of Wall Street,
+# 2026-09-01: two findings unverifiable forever; retries useless — the block is
+# deterministic). Fallback: verify the PREMISE against the excerpts with the
+# scene text withheld, capped at PARTIAL — a verdict that never saw the page
+# must not claim full support. If the flag/excerpts themselves are blocked too,
+# fail open with an honest content-filter marker.
+_CENSORED_CTX = (
+    "[SCENE TEXT WITHHELD — the platform content filter blocked it. Judge ONLY "
+    "whether the cited excerpts support the claim's premise. Make NO ruling on "
+    "script facts: never assert what the scenes do or do not contain. SUPPORTED "
+    "is unavailable to you — answer PARTIAL (premise holds) or UNSUPPORTED "
+    "(premise unsupported by the excerpts).]"
+)
+
+
+def _prompt_blocked(res: Any) -> bool:
+    fb = getattr(res, "prompt_feedback", None)
+    return bool(fb and getattr(fb, "block_reason", None))
+
+
+async def call_verifier(
+    client: Any, flag: dict[str, Any], script_context: str, search_results: str
+) -> dict[str, Any]:
+    """One verification attempt, block-aware. Raises on transport failure or an
+    empty non-blocked response (the caller's retry ladder handles those)."""
+    res = await client.aio.models.generate_content(
+        model=MODEL,
+        contents=_blinded_prompt(flag, script_context, search_results),
+        config=types.GenerateContentConfig(
+            response_mime_type="application/json",
+            response_schema=Verdict,
+            temperature=0.0,
+        ),
+    )
+    if res.text is None and _prompt_blocked(res):
+        res = await client.aio.models.generate_content(
+            model=MODEL,
+            contents=_blinded_prompt(flag, _CENSORED_CTX, search_results),
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json",
+                response_schema=Verdict,
+                temperature=0.0,
+            ),
+        )
+        if res.text is None:
+            # the finding/excerpts themselves trip the filter: honestly unverifiable
+            return {
+                "verdict": "SUPPORTED",
+                "reason": "verifier unavailable — the platform content filter blocked "
+                "the verification prompt (retries cannot help)",
+                "fail_open": True,
+                "content_filtered": True,
+            }
+        v = Verdict.model_validate_json(res.text)
+        verdict = "PARTIAL" if v.verdict == "SUPPORTED" else v.verdict
+        return {
+            "verdict": verdict,
+            "reason": v.reason
+            + " (script-fact check withheld by the platform content filter; premise-only "
+            "verification, capped at PARTIAL)",
+            "failure_mode": v.failure_mode,
+            "content_filtered": True,
+        }
+    v = Verdict.model_validate_json(res.text)
+    return {"verdict": v.verdict, "reason": v.reason, "failure_mode": v.failure_mode}
+
+
 SEVERITY_ORDER = ["BLOCKER", "HIGH", "MEDIUM", "LOW", "FYI"]
 
 
@@ -868,7 +936,10 @@ def apply_verdicts(
             if v is not None and v.get("fail_open"):
                 # the verifier never ran — the flag survives, but it must not
                 # impersonate a verified finding on any surface
-                kept.append({**flag, "verification_unavailable": True})
+                marked_flag = {**flag, "verification_unavailable": True}
+                if v.get("content_filtered"):
+                    marked_flag["verification_blocked"] = True
+                kept.append(marked_flag)
             else:
                 kept.append(flag)
             continue
@@ -1177,21 +1248,7 @@ class VerificationPanel(BaseAgent):
             delay = 10.0
             for attempt in range(_MAX_ATTEMPTS):
                 try:
-                    res = await client.aio.models.generate_content(
-                        model=MODEL,
-                        contents=_blinded_prompt(flag, script_context, search_results),
-                        config=types.GenerateContentConfig(
-                            response_mime_type="application/json",
-                            response_schema=Verdict,
-                            temperature=0.0,
-                        ),
-                    )
-                    v = Verdict.model_validate_json(res.text)
-                    return {
-                        "verdict": v.verdict,
-                        "reason": v.reason,
-                        "failure_mode": v.failure_mode,
-                    }
+                    return await call_verifier(client, flag, script_context, search_results)
                 except Exception:
                     if attempt == _MAX_ATTEMPTS - 1:
                         # Fail open with a marker: never silently drop a flag

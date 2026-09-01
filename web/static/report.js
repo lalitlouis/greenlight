@@ -427,7 +427,10 @@ function flagRow(f, opts) {
   const top = el("div", "flag-top");
   top.appendChild(glossTip(el("span", `sev-chip sev-${f.severity}`, f.severity), f.severity));
   if (f.verification_unavailable) {
-    top.appendChild(el("span", "sev-chip chip-partial", "unverified — verifier unavailable"));
+    top.appendChild(el("span", "sev-chip chip-partial",
+      f.verification_blocked
+        ? "unverified — blocked by the platform content filter"
+        : "unverified — verifier unavailable"));
   }
   top.appendChild(el("span", "cat", prettyCat(f.category)));
   top.appendChild(el("span", "by by-" + f.agent, prettyCat(f.agent)));
@@ -1091,7 +1094,9 @@ function renderReport(record) {
         });
         if (!res.ok) throw new Error(String(res.status));
         const s = await res.json();
-        if (s.still_unavailable) {
+        if (s.blocked && !s.still_unavailable) {
+          retry.textContent = `The platform content filter blocks verification for ${s.blocked} finding(s) — retrying cannot help; the score stays honestly withheld`;
+        } else if (s.still_unavailable) {
           retry.textContent = `Verifier still unavailable for ${s.still_unavailable} finding(s) — try again shortly`;
           retry.disabled = false;
         } else {

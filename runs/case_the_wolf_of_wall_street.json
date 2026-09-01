@@ -40,6 +40,11 @@
         "S136",
         "S151"
       ]
+    },
+    {
+      "guard": "reverify",
+      "stage": "post_run",
+      "outcome": "2 verified, 0 still unavailable, 0 rejected"
     }
   ],
   "elapsed_s": 1086.8,
@@ -2730,7 +2735,7 @@
       "entity_id": null,
       "severity": "HIGH",
       "category": "rating_sexuality",
-      "finding": "The screenplay depicts explicit sexual acts, oral sex, and graphic nudity across numerous scenes including S005, S052, S054, S069, S078, S087, S094, and S117. This profile matches the CARA descriptors 'graphic nudity' and 'strong sexual content', which pattern heavily toward R in the descriptor corpus.",
+      "finding": "[partially supported] The screenplay depicts explicit sexual acts, oral sex, and graphic nudity across numerous scenes including S005, S052, S054, S069, S078, S087, S094, and S117. This profile matches the CARA descriptors 'graphic nudity' and 'strong sexual content', which pattern heavily toward R in the descriptor corpus.",
       "citations": [
         {
           "source_type": "rules_table",
@@ -2775,8 +2780,7 @@
           "G": "0%"
         },
         "source": "ScriptRisk CARA descriptor corpus (4,544 official rationales)"
-      },
-      "verification_unavailable": true
+      }
     },
     {
       "flag_id": "F2003",
@@ -3269,7 +3273,7 @@
       "entity_id": null,
       "severity": "HIGH",
       "category": "territory_uae_sexuality",
-      "finding": "The screenplay features graphic sexual encounters, orgies, and prostitution across scenes S005, S052, S054, S069, S077, S078, S094, and S182. Under the UAE Media Council (and historical National Media Council) classification and public decency guidelines, explicit depictions of sexual intercourse, fellatio, and full-frontal nudity are subject to extensive mandatory cuts for theatrical and broadcast release in the UAE and wider GCC market. Historically, over 24 sexually explicit sequences and substantial nudity were excised to create the regional release cut.",
+      "finding": "[partially supported] The screenplay features graphic sexual encounters, orgies, and prostitution across scenes S005, S052, S054, S069, S077, S078, S094, and S182. Under the UAE Media Council (and historical National Media Council) classification and public decency guidelines, explicit depictions of sexual intercourse, fellatio, and full-frontal nudity are subject to extensive mandatory cuts for theatrical and broadcast release in the UAE and wider GCC market. Historically, over 24 sexually explicit sequences and substantial nudity were excised to create the regional release cut.",
       "citations": [
         {
           "source_type": "web",
@@ -3298,7 +3302,6 @@
         "est_added_days": 0
       },
       "confidence": 0.95,
-      "verification_unavailable": true,
       "cost_excluded_on_target_path": true
     },
     {
@@ -4085,9 +4088,10 @@
       "failure_mode": "none"
     },
     "F2002": {
-      "verdict": "SUPPORTED",
-      "reason": "verifier unavailable",
-      "fail_open": true
+      "verdict": "PARTIAL",
+      "reason": "Scene text is withheld so script facts cannot be confirmed, making SUPPORTED unavailable. The cited CARA descriptor corpus excerpts directly support the statistical premise that 'graphic nudity' (99% R, 0% PG-13) and 'strong sexual content' (94% R, 3% PG-13) pattern overwhelmingly toward an R rating. (script-fact check withheld by the platform content filter; premise-only verification, capped at PARTIAL)",
+      "failure_mode": "none",
+      "content_filtered": true
     },
     "F2003": {
       "verdict": "SUPPORTED",
@@ -4175,9 +4179,10 @@
       "failure_mode": "none"
     },
     "F4006": {
-      "verdict": "SUPPORTED",
-      "reason": "verifier unavailable",
-      "fail_open": true
+      "verdict": "PARTIAL",
+      "reason": "The cited news reports confirm that the UAE National Media Council mandates extensive cuts to explicit sexual content and nudity for regional theatrical release (including historically excising 24 sexually explicit sequences from comparable releases). Because the scene text is withheld, full verification of the specific script facts cannot be completed, limiting the verdict to PARTIAL. (script-fact check withheld by the platform content filter; premise-only verification, capped at PARTIAL)",
+      "failure_mode": "none",
+      "content_filtered": true
     },
     "F4007": {
       "verdict": "PARTIAL",
@@ -4187,10 +4192,15 @@
   },
   "report": {
     "script_title": "The Wolf of Wall Street",
-    "generated_at": "2026-09-01T13:22:56-0700",
-    "greenlight_score": null,
-    "dimension_scores": {},
-    "verification_degraded": true,
+    "generated_at": "2026-09-01T13:51:30-0700",
+    "greenlight_score": 21,
+    "dimension_scores": {
+      "clearance_counsel": 82,
+      "ratings_board": 71,
+      "safety_underwriter": 51,
+      "territory_censor": 69
+    },
+    "verification_degraded": false,
     "counts": {
       "BLOCKER": 0,
       "HIGH": 15,
@@ -4205,8 +4215,8 @@
       "clearance_counsel": 8
     },
     "est_clearance_cost_usd": [
-      316100,
-      879500
+      324100,
+      899500
     ],
     "est_added_days": 3,
     "est_cost_paths": {
@@ -4215,8 +4225,8 @@
         779500
       ],
       "as_written": [
-        316100,
-        879500
+        324100,
+        899500
       ],
       "excluded": [
         {
@@ -4429,7 +4439,7 @@
         "entity_id": null,
         "severity": "HIGH",
         "category": "rating_sexuality",
-        "finding": "The screenplay depicts explicit sexual acts, oral sex, and graphic nudity across numerous scenes including S005, S052, S054, S069, S078, S087, S094, and S117. This profile matches the CARA descriptors 'graphic nudity' and 'strong sexual content', which pattern heavily toward R in the descriptor corpus.",
+        "finding": "[partially supported] The screenplay depicts explicit sexual acts, oral sex, and graphic nudity across numerous scenes including S005, S052, S054, S069, S078, S087, S094, and S117. This profile matches the CARA descriptors 'graphic nudity' and 'strong sexual content', which pattern heavily toward R in the descriptor corpus.",
         "citations": [
           {
             "source_type": "rules_table",
@@ -4474,8 +4484,7 @@
             "G": "0%"
           },
           "source": "ScriptRisk CARA descriptor corpus (4,544 official rationales)"
-        },
-        "verification_unavailable": true
+        }
       },
       {
         "flag_id": "F2003",
@@ -4968,7 +4977,7 @@
         "entity_id": null,
         "severity": "HIGH",
         "category": "territory_uae_sexuality",
-        "finding": "The screenplay features graphic sexual encounters, orgies, and prostitution across scenes S005, S052, S054, S069, S077, S078, S094, and S182. Under the UAE Media Council (and historical National Media Council) classification and public decency guidelines, explicit depictions of sexual intercourse, fellatio, and full-frontal nudity are subject to extensive mandatory cuts for theatrical and broadcast release in the UAE and wider GCC market. Historically, over 24 sexually explicit sequences and substantial nudity were excised to create the regional release cut.",
+        "finding": "[partially supported] The screenplay features graphic sexual encounters, orgies, and prostitution across scenes S005, S052, S054, S069, S077, S078, S094, and S182. Under the UAE Media Council (and historical National Media Council) classification and public decency guidelines, explicit depictions of sexual intercourse, fellatio, and full-frontal nudity are subject to extensive mandatory cuts for theatrical and broadcast release in the UAE and wider GCC market. Historically, over 24 sexually explicit sequences and substantial nudity were excised to create the regional release cut.",
         "citations": [
           {
             "source_type": "web",
@@ -4997,7 +5006,6 @@
           "est_added_days": 0
         },
         "confidence": 0.95,
-        "verification_unavailable": true,
         "cost_excluded_on_target_path": true
       },
       {

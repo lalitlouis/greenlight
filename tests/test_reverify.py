@@ -81,3 +81,69 @@ def test_reverify_keeps_honest_withhold_when_still_down():
     assert s["still_unavailable"] == 2 and s["verified"] == 0
     assert sum(1 for f in rec["flags"] if f.get("verification_unavailable")) == 2
     assert rec["report"]["greenlight_score"] is None  # withheld stands
+
+
+def test_call_verifier_censored_fallback_caps_at_partial():
+    """A prompt the platform filter blocks retries with the scene text withheld
+    and judges the premise only — capped at PARTIAL, never full SUPPORTED
+    without the script-fact check. Both-blocked fails open with the filter
+    named (Wolf of Wall Street, 2026-09-01)."""
+    import asyncio
+
+    from greenlight.agents.verification import call_verifier
+
+    class _Res:
+        def __init__(self, text, blocked=False):
+            self.text = text
+            self.prompt_feedback = (
+                type("FB", (), {"block_reason": "PROHIBITED_CONTENT"})() if blocked else None
+            )
+
+    class _Models:
+        def __init__(self, responses):
+            self._r = list(responses)
+
+        async def generate_content(self, **kw):
+            return self._r.pop(0)
+
+    class _Client:
+        def __init__(self, responses):
+            self.aio = type("A", (), {"models": _Models(responses)})()
+
+    flag = {
+        "flag_id": "F101",
+        "finding": "x",
+        "citations": [],
+        "remedy": {"action": "REPLACE", "detail": "y"},
+        "scene_ids": [],
+        "severity": "MEDIUM",
+        "category": "rating_language",
+    }
+    ok = '{"verdict": "SUPPORTED", "reason": "premise holds", "failure_mode": "none"}'
+    v = asyncio.run(call_verifier(_Client([_Res(None, blocked=True), _Res(ok)]), flag, "ctx", ""))
+    assert v["verdict"] == "PARTIAL" and v["content_filtered"]
+    assert "content filter" in v["reason"]
+
+    v2 = asyncio.run(
+        call_verifier(_Client([_Res(None, blocked=True), _Res(None, blocked=True)]), flag, "c", "")
+    )
+    assert v2["fail_open"] and v2["content_filtered"]
+
+
+def test_reverify_counts_blocked_separately_and_keeps_withhold():
+    rec = _record()
+
+    async def verify(flag):
+        return {
+            "verdict": "SUPPORTED",
+            "reason": "verifier unavailable — content filter",
+            "fail_open": True,
+            "content_filtered": True,
+        }
+
+    s = asyncio.run(reverify_record(rec, SCRIPT, verify=verify))
+    assert s["blocked"] == 2 and s["verified"] == 0
+    assert all(
+        f.get("verification_blocked") for f in rec["flags"] if f.get("verification_unavailable")
+    )
+    assert rec["report"]["greenlight_score"] is None  # withheld stands, honestly labeled

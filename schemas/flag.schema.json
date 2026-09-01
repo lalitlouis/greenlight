@@ -170,6 +170,10 @@
       "minimum": 0,
       "maximum": 1
     },
+    "verification_blocked": {
+      "type": "boolean",
+      "description": "The platform content filter blocked the verification prompt for this finding — deterministic, retries cannot help. Renders as unverified with the filter named."
+    },
     "verification_unavailable": {
       "type": "boolean",
       "description": "True when the verifier could not run and the flag survives fail-open \u2014 rendered as unverified, never as verified."
