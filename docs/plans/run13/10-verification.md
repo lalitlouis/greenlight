@@ -30,10 +30,24 @@ File: `src/greenlight/agents/verification.py`. Items 4, 5, 2b, 6b.
 2. **Keep the post-verification overturn as a backstop** (rejections phrased on
    grounds the upstream pass can't parse). Expected fire rate after relocation:
    ~zero; the manifest records both stages so that expectation is checkable.
-3. **New verifier rule in `VERIFIER_PROMPT`**: a claim containing a figure that
-   load-bears on severity (an age triggering a work-hour cap, a count crossing
-   a threshold) must resolve inside the finding's coordinates. Unresolved is
-   UNSUPPORTED, not PARTIAL.
+3. **New verifier rule in `VERIFIER_PROMPT`** — with a distinction the first
+   draft of this plan got wrong: findings carry two kinds of figures, and only
+   one lives in the script. A **script-fact figure** (a character's age, an
+   on-page count, a speed the action line states) that load-bears on severity
+   must resolve inside the finding's coordinates — unresolved is UNSUPPORTED,
+   not PARTIAL. A **premise figure** (a statutory limit like the 3-hour work
+   cap, a cost floor, an OSHA threshold) can never resolve to a scene and must
+   resolve in the cited excerpts instead — the existing premise rules already
+   govern it. Without this split, the rule would reject F3009's legitimate
+   NRS/CCR numbers — the exact class-boundary regression this batch is
+   supposed to end.
+   Likewise the upstream widening pass only anchors script-fact figures: a
+   number adjacent to $, %, §, CFR/NRS/Bulletin tokens never participates,
+   and the existing scene-side proximity guard (number must sit beside the
+   name IN the scene) is what makes a stray cost figure inert.
+   Widening also respects the umbrella philosophy: it adds at most 2 scenes
+   per finding (manifest-recorded); a finding that would need more is left for
+   the verifier to judge as filed.
 4. `pipeline.py`'s post-assembly prose-union stays as the final belt — cheap,
    deterministic, and the prose-vs-coordinates eval assertion still enforces it.
 

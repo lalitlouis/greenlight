@@ -23,10 +23,19 @@ set, exactly as if the flag's entity slot named it. Same rendering path, same
 "counted there, not here" note — the three run-13 rows collapse into F1016
 with no desk-output change.
 
-Precision guards (this is display-only, so favor precision):
+Precision guards (this is display-only, so favor precision — each one exists
+because of a named false-positive it prevents):
+- **Body only, never remedy.** A remedy mentioning an entity operationally
+  ("negotiate with MGM management") is not a finding ABOUT them; matching
+  remedies would suppress MGM's legitimate cleared row. The finding body names
+  its subjects; the remedy names counterparties.
 - Match the **canonical folded surface** (post-`fold`), word-boundary, case-
   insensitive — never single-token surfaces shorter than 4 chars (a "Doug"
-  substring match inside an unrelated word must not suppress).
+  substring inside an unrelated word must not suppress).
+- The harm being prevented is CONTRADICTION (a "no issue" row beside a finding
+  about the same subject), so suppression applies only to determinations whose
+  text is a no-issue/negative-check shape — a determination recording a
+  different fact about the same entity stands.
 - Suppression is recorded in the manifest-adjacent accounting (counts must
   still reconcile: distinct entities = shown determinations + suppressed).
 
@@ -42,8 +51,14 @@ as a normative rule.
 Deterministic sweep at record assembly over cleared determination text:
 - Phrase class: "negative check confirmed", "confirmed no real-world",
   "search confirms no", "verified (that )?no" (list pinned in tests).
-- **Receipt check**: the entity has a research receipt iff the record carries a
-  `research:{entity_id}:*` key (or a research entry naming the entity id).
+- **Receipt check — batch sweeps count.** An entity has a research receipt if
+  the record carries a per-entity `research:{entity_id}:*` key **or** any
+  research entry whose stored query/objective text names the entity's surface
+  (word-boundary). Name-commonality sweeps are often ONE batch call covering
+  twenty names with entity_id='' — without the text-match arm, every entity a
+  real sweep covered would have its TRUE determination rewritten to "sweep
+  recommended," destroying honest work (the Clark-County failure mode applied
+  to receipts).
 - With a receipt: text stands (the claim is true — do not weaken honest work).
 - Without: rewrite to what the evidence supports —
   "Fictional character; name-commonality sweep recommended — see F####"

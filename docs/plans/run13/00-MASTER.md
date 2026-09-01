@@ -4,6 +4,35 @@ Seven feedback items from the run-13 review, planned before any code changes.
 Each component doc states: current behavior (file:line), the defect, the planned
 change, the regression contract, and the test plan. Nothing here is built yet.
 
+## Why we keep oscillating, and the policy that ends it
+
+Every fix→regression cycle so far shares one root cause: **a class boundary
+drawn from a single observed instance.** Ban municipal .gov → lose Clark
+County (a real authority). Prune weak citations → prune the derived marginal
+(the strongest evidence). Ban rule verbs → the desk launders the rule into
+unbanned phrasing. Build an overturn from one rejection's wording → it fires
+zero times on the next run's wording.
+
+Standing policy for every gate, ban, or suppression in this batch and after:
+
+1. **Positive controls** — the observed failures it must catch, as tests.
+2. **Named negative controls** — the legitimate neighbors it must NOT catch,
+   as tests, named before building ("within swimwear coverage" beside "within
+   PG-13 parameters"; batch-sweep receipts beside missing receipts; remedy
+   mentions beside body subjects).
+3. **A pre-registered predicted casualty** — what this change may break on the
+   next run, written down first (the F1019 discipline), so the read-off is
+   never retrofitted.
+4. **Fail visible, never silent** — a guard that cannot act cleanly records
+   the miss in the manifest and leaves the text alone; a guard that removes
+   something routes it to open questions, never to nothing; a guard that guts
+   a desk withholds the score, never improves it.
+
+This plan set was itself reviewed against the policy before building; the
+review found and fixed four boundary defects (statute figures vs script
+figures, score inflation via demotion, batch-sweep receipts, remedy-mention
+suppression) — each is called out in its component doc.
+
 ## The one rule this batch keeps applying
 
 The rule-vs-observation contract, now applied to its third and fourth fields:

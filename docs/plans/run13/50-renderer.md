@@ -25,9 +25,21 @@ rendered as a number. The kNN panel proves the data pipeline works (8-of-8,
 3. The eval gains the assertion: every rendered `rating_*` finding carries a
    populated marginal.
 
+### The gate must not inflate the score (invariant interaction — critical)
+Demoting a rating finding removes it from score computation: fewer findings =
+a HIGHER score. Left alone, a run where the marginal fields fail would gut the
+ratings desk and the hero number would go UP — violating "the score is
+withheld, never inflated, when a desk could not do its job." Therefore:
+**any hard-gate demotion marks `ratings_board` in `desks_incomplete`**, which
+routes the report through the existing score-withheld path. A run where the
+gate fires shows "Score withheld" with the reason — never a better number.
+Eval assertion added: no record may carry a marginal-gate demotion AND a
+numeric score.
+
 ### Predicted failure (budgeted in 00-MASTER)
-If the fields don't populate on the next run, rating findings drop to zero and
-the open-questions section says why. That is the designed, visible failure.
+If the fields don't populate on the next run, rating findings demote to open
+questions, the score is withheld, and the report says why. That is the
+designed, visible failure.
 
 ## Item 6c — header counts derive from rendered lists
 

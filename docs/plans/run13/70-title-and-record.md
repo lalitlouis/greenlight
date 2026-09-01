@@ -20,9 +20,13 @@ string.
 
 ## Planned change
 1. Title precedence, deterministic:
-   1. the draft's own title-page metadata (already parsed by
-      `strip_title_page` — Fountain `Title:` / PDF title-page first line);
-   2. else the uploaded filename, cleaned (current behavior, as fallback only).
+   1. Fountain `Title:` metadata when present (`strip_title_page` parses it);
+   2. else — NEW, small — the structural title-page heuristic for PDFs:
+      `strip_title_page` returns `{}` for the real Hangover PDF (verified),
+      but the draft's title is the front matter's first line ("THE HANGOVER").
+      Extract it only under tight conditions: first non-empty line of detected
+      front matter, ALL-CAPS, ≤60 chars, not a scene heading — else skip.
+   3. else the uploaded filename, cleaned (current behavior, as fallback only).
 2. Pipeline/server wiring: the parse's title metadata flows back into
    `script_title` when present; the filename-derived title is used only when
    the draft has no title page.
