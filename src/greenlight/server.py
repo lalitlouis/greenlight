@@ -632,11 +632,53 @@ async def my_runs(request: Request) -> list[dict[str, Any]]:
             actual = state.get("status")
             if actual == "running":
                 r["live"] = True
-            elif actual in ("done", "error"):
+            elif actual in ("done", "error", "stopped"):
                 r["status"] = actual
         return rs
 
     return await asyncio.to_thread(_confirm_live, runs)
+
+
+@app.post("/api/my/runs/{run_id}/stop")
+async def stop_my_run(run_id: str, request: Request) -> dict[str, Any]:
+    """Owner-initiated stop: cancel the worker job execution (Cloud Run sends it
+    SIGTERM) and write the terminal state HERE — the worker may never get to.
+    Marking the doc frees the concurrency slot (count_running keys on
+    status == 'running') and stops the header pulse and My-reports 'running'
+    state on the next poll."""
+    user = _current_user(request)
+    if user is None:
+        raise HTTPException(401, "Sign in first.")
+    run_id = _safe_id(run_id)
+    owner = await asyncio.to_thread(storage.load_owner, run_id)
+    if owner is None or owner != user["sub"]:
+        raise HTTPException(404, "Not one of your reports.")
+    state = runstate.get_state(run_id) or {}
+    if state.get("status") != "running":
+        return {"ok": True, "already_finished": True}
+    exec_name = state.get("execution")
+    if exec_name:
+
+        def _cancel() -> None:
+            from google.cloud import run_v2
+
+            run_v2.ExecutionsClient().cancel_execution(
+                request=run_v2.CancelExecutionRequest(name=str(exec_name))
+            )
+
+        # already finished, already cancelled, or a stale name — the doc
+        # write below is the terminal truth either way
+        with contextlib.suppress(Exception):
+            await asyncio.to_thread(_cancel)
+    runstate.run_set(
+        run_id,
+        {
+            "status": "stopped",
+            "error": "Stopped by the owner",
+            "finished_at": _time_module.time(),
+        },
+    )
+    return {"ok": True}
 
 
 @app.delete("/api/my/runs/{run_id}")
@@ -1911,7 +1953,7 @@ def _dispatch_worker(run_id: str) -> None:
     project = os.environ["GOOGLE_CLOUD_PROJECT"]
     region = os.getenv("WORKER_REGION", "us-central1")
     client = run_v2.JobsClient()
-    client.run_job(
+    op = client.run_job(
         request=run_v2.RunJobRequest(
             name=f"projects/{project}/locations/{region}/jobs/{WORKER_JOB}",
             overrides=run_v2.RunJobRequest.Overrides(
@@ -1924,6 +1966,11 @@ def _dispatch_worker(run_id: str) -> None:
             ),
         )
     )
+    # The operation's metadata is the Execution resource; its name is what an
+    # owner-initiated stop cancels. Best-effort — without it, stop still marks
+    # the run doc terminal and the reaper covers the rest.
+    with contextlib.suppress(Exception):
+        runstate.run_set(run_id, {"execution": op.metadata.name})
 
 
 def _handle_or_404(run_id: str) -> RunHandle:

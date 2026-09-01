@@ -531,10 +531,9 @@ function injectChrome() {
     applyThemeIcon();
   });
   actions.appendChild(theme);
-  const cta = el("button", "btn btn-primary", "Analyze a screenplay");
-  cta.type = "button";
-  cta.addEventListener("click", promptUpload);
-  actions.appendChild(cta);
+  // No "Analyze a screenplay" CTA in the header — runs cost real money, so the
+  // entry points live deliberately on the home page (hero + CTA band), not on
+  // every page's chrome. Pages with their own upload hooks keep them.
   const authSlot = el("span", "auth-slot");
   authSlot.id = "auth-slot";
   actions.appendChild(authSlot);

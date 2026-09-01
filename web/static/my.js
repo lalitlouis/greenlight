@@ -14,13 +14,15 @@ function rowFor(r) {
   const doneHref = r.kind === "writer" ? `/writer?run=${encodeURIComponent(r.id)}` : `/report?run=${encodeURIComponent(r.id)}`;
   const main = el("div", "my-main");
   const title = el("a", "my-title", r.title || r.id);
-  title.href = running ? liveHref : doneHref;
+  if (r.status === "stopped") title.removeAttribute("href");
+  else title.href = running ? liveHref : doneHref;
   main.appendChild(title);
   const meta = el("p", "my-meta");
   const bits = [r.kind === "writer" ? "Writer's Room" : "Clearance report", fmtDate(r.generated_at)];
   if (running) bits.push("running now");
   if (stalled) bits.push("stalled — safe to delete");
   if (r.status === "error") bits.push("failed");
+  if (r.status === "stopped") bits.push("stopped — no report was produced");
   if (r.score != null) bits.push(`score ${r.score}/100`);
   if (r.verdict) bits.push(r.verdict);
   if (r.flags) bits.push(`${r.flags} findings`);
@@ -34,10 +36,41 @@ function rowFor(r) {
     badge.appendChild(el("span", null, "Running"));
     row.appendChild(badge);
   }
-  const open = el("a", "btn btn-secondary", running ? "Watch live" : "Open");
-  open.href = title.href;
-  row.appendChild(open);
-  if (running) return row;
+  if (r.status !== "stopped") {
+    // a stopped run produced no report — nothing to open
+    const open = el("a", "btn btn-secondary", running ? "Watch live" : "Open");
+    open.href = title.href;
+    row.appendChild(open);
+  }
+  if (running) {
+    const stop = el("button", "btn btn-danger", "Stop");
+    stop.type = "button";
+    stop.addEventListener("click", async () => {
+      const sure = await confirmDialog({
+        title: `Stop "${r.title || r.id}"?`,
+        message:
+          "The analysis is cancelled cleanly and no report is produced. " +
+          "Work already done is discarded. This cannot be resumed.",
+        confirmLabel: "Stop the analysis",
+        danger: true,
+      });
+      if (!sure) return;
+      stop.disabled = true;
+      stop.textContent = "Stopping…";
+      try {
+        const res = await fetch(`/api/my/runs/${encodeURIComponent(r.id)}/stop`, {
+          method: "POST",
+        });
+        if (!res.ok) throw new Error(String(res.status));
+        window.location.reload();
+      } catch {
+        stop.disabled = false;
+        stop.textContent = "Stop";
+      }
+    });
+    row.appendChild(stop);
+    return row;
+  }
 
   const del = el("button", "btn btn-danger", "Delete");
   del.type = "button";

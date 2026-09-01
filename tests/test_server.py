@@ -466,6 +466,33 @@ def test_simulator_refused_on_case_studies(monkeypatch):
         assert "case studies" in res.json()["detail"].lower()
 
 
+def test_stop_run_requires_owner(monkeypatch):
+    """Owner-initiated stop: signed-out gets 401; a signed-in non-owner gets the
+    same 404 as delete (no existence oracle); the owner of a running doc gets a
+    clean terminal write ('stopped') even when no execution name was captured."""
+    from greenlight import server
+
+    monkeypatch.setattr(server, "_current_user", lambda req: None)
+    assert client.post("/api/my/runs/abc123/stop").status_code == 401
+
+    monkeypatch.setattr(server, "_current_user", lambda req: {"sub": "u1", "email": "a@b.c"})
+    monkeypatch.setattr(server.storage, "load_owner", lambda rid: "someone-else")
+    assert client.post("/api/my/runs/abc123/stop").status_code == 404
+
+    monkeypatch.setattr(server.storage, "load_owner", lambda rid: "u1")
+    monkeypatch.setattr(server.runstate, "get_state", lambda rid: {"status": "running"})
+    written = {}
+    monkeypatch.setattr(server.runstate, "run_set", lambda rid, st: written.update(st) or True)
+    res = client.post("/api/my/runs/abc123/stop")
+    assert res.status_code == 200 and res.json()["ok"]
+    assert written["status"] == "stopped" and written["finished_at"]
+
+    # already finished: no terminal overwrite
+    monkeypatch.setattr(server.runstate, "get_state", lambda rid: {"status": "done"})
+    res = client.post("/api/my/runs/abc123/stop")
+    assert res.json().get("already_finished")
+
+
 def test_static_js_is_text_not_binary():
     """A stray NUL byte in report.js made `file` and grep treat a shipped source
     file as binary — every grep over it silently returned nothing, which is how
