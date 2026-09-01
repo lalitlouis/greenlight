@@ -361,3 +361,30 @@ def test_absent_terms_stems_do_not_punish_paraphrase():
     absent = _absent_terms("Bloody violence as automatic gunfire erupts near a tiger.", script)
     assert "bloody" not in absent  # blood is on the page
     assert "tiger" in absent  # contamination still caught
+
+
+def test_coordinate_completion_resolves_through_a_single_bond():
+    """'minor Sam (10) and dog Barnacle aboard' — the neighbor Barnacle must not
+    sink the Sam+10 claim: a claim resolves through ANY one (number, name) bond
+    that holds in the body and in a scene (gate #12: both climax findings died
+    on 'age not established' while S002 stated it)."""
+    from greenlight.agents.verification import _complete_coordinates
+
+    s002 = "INT. BAR - DAY\n\nSAM (10) sits at the end of the bar.\n"
+    s011 = "\f\nEXT. BOAT - NIGHT\n\nFire spreads. Sam and Barnacle huddle.\n"
+    text = s002 + s011
+    state = {
+        "script_text": text,
+        "scenes": [
+            {"scene_id": "S002", "raw_span": [0, len(s002)], "heading": "INT. BAR"},
+            {"scene_id": "S011", "raw_span": [len(s002), len(text)], "heading": "EXT. BOAT"},
+        ],
+    }
+    flag = {
+        "flag_id": "F3001",
+        "scene_ids": ["S011"],
+        "finding": "A stacked sequence with minor Sam (10) and dog Barnacle aboard amidst fire.",
+    }
+    added = _complete_coordinates(flag, state)
+    assert ("S002", "10", "Sam") in added
+    assert flag["scene_ids"] == ["S002", "S011"]

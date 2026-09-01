@@ -697,20 +697,30 @@ def _complete_coordinates(flag: dict[str, Any], state: Any) -> list[tuple[str, s
         return []
     declared = set(flag.get("scene_ids") or [])
     added: list[tuple[str, str, str]] = []
+    # SINGLE (number, name) bonds, never a windowed union: 'minor Sam (10) and
+    # dog Barnacle aboard' puts Barnacle beside Sam's age, and requiring the dog
+    # in the age's scene sank the claim — both climax findings then died on
+    # 'age not established' (gate #12). A claim resolves through ANY one bond
+    # that holds in the body AND in a scene; widening is additive (the verifier
+    # sees more, never less), so the ambiguity cap is the precision guard.
+    bonds: list[tuple[str, str]] = []
     for n in sorted(_scriptfact_nums(body)):
-        propers = _propers_near_numbers(body, {n})
-        if not propers:
-            continue
+        for m in _re.finditer(rf"(?<![A-Za-z0-9]){_re.escape(n)}(?![0-9])", body):
+            window = body[max(0, m.start() - _NAME_NUM_NEAR) : m.end() + _NAME_NUM_NEAR]
+            for p in _re.findall(r"\b[A-Z][a-z]{2,}\b", window):
+                if p.lower() not in _COMMON_CAPS and (n, p) not in bonds:
+                    bonds.append((n, p))
+    for n, name in bonds:
         matches = []
         for s in scenes:
             seg = text[s["raw_span"][0] : s["raw_span"][1]].lower()
-            if all(p.lower() in seg for p in propers) and _num_near_name(seg, propers, n):
+            if _num_near_name(seg, {name}, n):
                 matches.append(s["scene_id"])
         if not matches or len(matches) > _MAX_ANCHOR_SCENES:
             continue  # unresolved or ambiguous: the verifier judges as filed
         for sid in matches:
             if sid not in declared and len(added) < _COORD_WIDEN_CAP:
-                added.append((sid, n, ", ".join(sorted(propers))))
+                added.append((sid, n, name))
                 declared.add(sid)
     if added:
         flag["scene_ids"] = sorted(declared, key=lambda x: int(x[1:]))
