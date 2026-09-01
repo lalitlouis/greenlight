@@ -1385,15 +1385,23 @@ function renderReport(record) {
   actionable.forEach((f) => flags.appendChild(flagRow(f, { expanded: f.severity === "BLOCKER" })));
   root.appendChild(flags);
   if (informational.length) {
+    // the nav chip needs a titled landing, like every other section — the bare
+    // fold read as an untitled block
+    const infoHead = el("div", "section-head");
+    infoHead.id = "sec-informational";
+    infoHead.appendChild(el("h2", null, "Informational — LOW & FYI"));
+    infoHead.appendChild(
+      el("p", "lede", "Cheap local fixes and awareness items. Nothing here blocks production.")
+    );
+    root.appendChild(infoHead);
     const wrap = el("details", "flags-informational");
-    wrap.id = "sec-informational";
     const names = informational
       .map((f) => ENTITY_SURFACE[f.entity_id] || prettyCat(f.category))
       .filter(Boolean);
     const shown = names.slice(0, 5).join(", ") + (names.length > 5 ? ` +${names.length - 5} more` : "");
     const sum = el("summary", null,
       `${informational.length} informational item${informational.length === 1 ? "" : "s"} (LOW / FYI): ` +
-      `${shown} — expand for the full findings; nothing here blocks production`);
+      `${shown} — expand for the full findings`);
     wrap.appendChild(sum);
     const list = el("div", "flags");
     informational.forEach((f) => list.appendChild(flagRow(f, {})));
