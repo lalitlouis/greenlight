@@ -497,6 +497,17 @@ function injectChrome() {
   }
   inner.appendChild(nav);
 
+  // "My reports" gets its own stop in the gap between the nav and the actions —
+  // not a dropdown option — and pulses while one of the user's analyses is
+  // running. Hidden until auth confirms a signed-in user.
+  const mid = el("div", "nav-mid");
+  const myLink = el("a", path === "/my" ? "active" : null, "My reports");
+  myLink.href = "/my";
+  myLink.id = "nav-my";
+  myLink.hidden = true;
+  mid.appendChild(myLink);
+  inner.appendChild(mid);
+
   const actions = el("div", "header-actions");
   const theme = el("button", "theme-toggle");
   theme.type = "button";
@@ -696,7 +707,12 @@ async function hydrateAuth() {
       menu.appendChild(it);
       return it;
     };
-    mkItem("My reports", "/my");
+    // "My reports" lives in the header bar (nav-mid), not in this menu
+    const navMy = document.getElementById("nav-my");
+    if (navMy) {
+      navMy.hidden = false;
+      watchMyRuns(navMy);
+    }
     if (window.__isAdmin) mkItem("Admin", "/admin");
     const out = el("button", "auth-menu-item auth-menu-out", "Sign out");
     out.type = "button";
@@ -728,6 +744,30 @@ async function hydrateAuth() {
   } catch {
     /* nav works without auth */
   }
+}
+
+function watchMyRuns(link) {
+  /* Pulse the "My reports" header link while one of the user's analyses is
+     running: check on load, re-poll every 20s only while something is live,
+     and re-check when the tab regains focus. The header works without it. */
+  let timer = null;
+  const check = async () => {
+    try {
+      const res = await fetch("/api/my/runs");
+      if (!res.ok) return;
+      const runs = await res.json();
+      const running = Array.isArray(runs) && runs.some((r) => r.status === "running");
+      link.classList.toggle("running", running);
+      clearTimeout(timer);
+      if (running) timer = setTimeout(check, 20000);
+    } catch {
+      /* transient — keep whatever state the link has */
+    }
+  };
+  check();
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) check();
+  });
 }
 
 function beacon(level, event, detail) {
