@@ -160,6 +160,23 @@ main { min-height: 60vh; padding: 56px 0 96px; }
   z-index: 20;
 }
 .site-header .container { max-width: 1320px; }
+.breadcrumbs { border-bottom: 1px solid var(--line); background: var(--bg); }
+.breadcrumbs .container { max-width: 1320px; }
+.breadcrumbs ol {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  list-style: none;
+  margin: 0;
+  padding: 9px 0;
+  font-size: 13.5px;
+  color: var(--ink-3);
+}
+.breadcrumbs li { display: flex; align-items: center; gap: 4px; }
+.breadcrumbs li + li::before { content: "›"; color: var(--ink-3); opacity: 0.7; padding: 0 3px; }
+.breadcrumbs a { color: var(--ink-2); }
+.breadcrumbs a:hover { color: var(--ink); }
+.breadcrumbs [aria-current="page"] { color: var(--ink-3); }
 .header-inner { display: flex; align-items: center; gap: 20px; height: 60px; }
 .brand { display: flex; align-items: center; gap: 9px; color: #f5f5f7; }
 .brand:hover { text-decoration: none; }
@@ -271,6 +288,20 @@ main:has(> .hero-band:first-child) { padding-top: 0; }
   color: var(--ink);
 }
 :root[data-theme="light"] .cta-band h2 { color: var(--ink); }
+/* light-mode gaps: the band overrides recolored the headings but left the CTA
+   paragraph and the pipeline SVG on their dark-mode near-white fills — invisible
+   on the cream band (SCRIPT/VERIFY vanished; the CTA subtitle unreadable). */
+:root[data-theme="light"] .cta-band p { color: var(--ink-2); }
+:root[data-theme="light"] .hero-band .pipeline-svg rect {
+  fill: rgba(255, 252, 244, 0.55);
+  stroke: rgba(42, 36, 20, 0.3);
+}
+:root[data-theme="light"] .hero-band .pipeline-svg text { fill: var(--ink-2); }
+:root[data-theme="light"] .hero-band .pipeline-svg g:nth-of-type(2) text { fill: #4f46e5; }
+:root[data-theme="light"] .hero-band .pipeline-svg g:nth-of-type(3) text { fill: #9333ea; }
+:root[data-theme="light"] .hero-band .pipeline-svg g:nth-of-type(4) text { fill: #b45309; }
+:root[data-theme="light"] .hero-band .pipeline-svg g:nth-of-type(5) text { fill: #0284c7; }
+:root[data-theme="light"] .hero-band .pipeline-svg .accent text { fill: #241a05; }
 .hero-band .hero h1 { color: #f8f4e9; }
 .hero-band .hero .sub { color: rgba(248, 244, 233, 0.82); }
 .hero-band .hero-note { color: rgba(248, 244, 233, 0.55); }

@@ -532,6 +532,53 @@ function injectChrome() {
   header.appendChild(inner);
   document.body.prepend(header);
 
+  // Breadcrumbs: one shared implementation so every inner page gets the same
+  // trail. Home and the landing page carry none; /cases/<slug> gets three levels.
+  const CRUMB_LABELS = {
+    writer: "Writer's Room",
+    cases: "Case studies",
+    "how-it-works": "How it works",
+    desks: "The desks",
+    faq: "FAQ",
+    contact: "Contact",
+    methodology: "Methodology",
+    compare: "Compare tools",
+    security: "Security",
+    terms: "Terms of service",
+    privacy: "Privacy policy",
+    report: "Report",
+    run: "Analysis",
+    account: "Account",
+    admin: "Admin",
+  };
+  const segs = path.split("/").filter(Boolean);
+  if (segs.length && !["home", "landing"].includes(segs[0])) {
+    const first = CRUMB_LABELS[segs[0]] || segs[0].replace(/-/g, " ").replace(/\b\w/g, (ch) => ch.toUpperCase());
+    const crumbs = el("nav", "breadcrumbs");
+    crumbs.setAttribute("aria-label", "Breadcrumb");
+    const ol = el("ol");
+    const li = (node) => { const item = el("li"); item.appendChild(node); return item; };
+    const homeA = el("a", null, "Home");
+    homeA.href = "/home";
+    ol.appendChild(li(homeA));
+    if (segs.length > 1) {
+      const firstA = el("a", null, first);
+      firstA.href = "/" + segs[0];
+      ol.appendChild(li(firstA));
+      const leaf = el("span", null, segs[1].replace(/-/g, " ").replace(/\b\w/g, (ch) => ch.toUpperCase()));
+      leaf.setAttribute("aria-current", "page");
+      ol.appendChild(li(leaf));
+    } else {
+      const leaf = el("span", null, first);
+      leaf.setAttribute("aria-current", "page");
+      ol.appendChild(li(leaf));
+    }
+    const wrap = el("div", "container");
+    wrap.appendChild(ol);
+    crumbs.appendChild(wrap);
+    header.insertAdjacentElement("afterend", crumbs);
+  }
+
   const footer = el("footer", "site-footer");
   const finner = el("div", "container footer-inner");
 
