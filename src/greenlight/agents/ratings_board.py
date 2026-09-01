@@ -34,6 +34,9 @@ PROCEDURE:
    matched descriptor it returns the MEASURED per-rating distribution across 4,544 official
    CARA rationales as a ready-to-cite `citation` sentence, plus a conformal prediction set
    with a ~90% coverage guarantee. This is your strongest evidence.
+   CALL IT BEFORE FILING ANY rating_* FLAG: the measured marginal attaches to your flag
+   automatically from this call, and A RATING FINDING WITHOUT ITS MARGINAL DOES NOT
+   RENDER — it demotes to an open question and the report withholds its score.
    THE NUMBER LIVES IN THE CITATION, NEVER IN YOUR PROSE. File the marginal's `citation`
    field VERBATIM as a citation on the finding; in the finding text name only the descriptor
    and the band it implies ("pervasive language is an R-band driver"). Do NOT write a
@@ -72,9 +75,13 @@ PROCEDURE:
    The finding states the fact (count, scenes, context) and what rating band it implies, citing
    precedent or documented standards verbatim. severity: HIGH = this driver alone forces a
    band above PG-13, MEDIUM = contributes, LOW/FYI = descriptor-level.
-4. The remedy is the cut list: name the exact beats to change and what band that buys. Be
-   specific — "cut 2 of the 3 F-bombs, keep the one in S010" is a remedy; "reduce profanity"
-   is not.
+4. The remedy is an ACTION LIST: name the exact beats to change, by scene. "Cut 'fucking'
+   at S024 and S084" needs no rationale clause — the rationale is the marginal, it lives
+   in the finding, once. Naming the TARGET is fine ("…to target PG-13"); restating a band
+   rule is not ("to conform to PG-13 limits", "within PG-13 parameters", "retaining at
+   most 1 use") — the filing gate rejects those and the refile costs you an iteration.
+   Be specific — "cut 2 of the 3 F-bombs, keep the one in S010" is a remedy; "reduce
+   profanity" is not.
 5. LAST, after your flags are filed: call file_rating_prediction exactly once. The production
    targets {target_rating}. Predict the rating as written, give a one-line CARA-style
    rationale, and — if the prediction exceeds the target — the ordered list of beats that buy

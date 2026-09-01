@@ -352,6 +352,25 @@ function fixControls(f) {
 
 function flagExpand(f) {
   const ex = el("div", "expand");
+  // The measured marginal leads the evidence block on rating findings — the
+  // number the corpus actually shows, structured, never model-typed. A rating
+  // finding without this field does not render at all (the assembly hard gate).
+  if (f.marginal) {
+    const m = f.marginal;
+    const card = el("div", "cite marginal-card");
+    const dist = Object.entries(m.distribution || {})
+      .map(([r, p]) => `${r} ${p}`)
+      .join(" · ");
+    card.appendChild(el("b", null, `'${m.descriptor}' — ${dist}`));
+    const base = m.base_rate
+      ? ` Corpus base rate: ${Object.entries(m.base_rate).map(([r, p]) => `${r} ${p}`).join(" · ")}.`
+      : "";
+    card.appendChild(
+      el("p", "src", `Across ${(m.n || 0).toLocaleString("en-US")} official CARA rationales carrying this descriptor.${base}`)
+    );
+    card.appendChild(el("span", "via", m.source || "ScriptRisk CARA descriptor corpus"));
+    ex.appendChild(card);
+  }
   const cites = f.citations || [];
   const citeWrap = el("div");
   cites.forEach((c, i) => citeWrap.appendChild(citationCard(c, i, cites.length)));

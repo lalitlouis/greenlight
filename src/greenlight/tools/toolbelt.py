@@ -1228,6 +1228,60 @@ _REJECT_MAX_RUNS = 4096
 _PROV_RETRY_LIMIT = 4
 
 
+# run-13 item 3: which descriptor family answers for each rating category —
+# the structured marginal attaches by the FLAG's category, most specific
+# descriptor first, from the desk's last rating_boundary call.
+_CATEGORY_FAMILY = {
+    "rating_language": "language",
+    "rating_violence": "violence",
+    "rating_drug_use": "drugs",
+    "rating_alcohol": "alcohol",
+    "rating_sexuality": "sexual_content",
+    "rating_thematic_elements": "thematic",
+}
+# The hedge that substituted for the number in runs 10-12. Allowed only when
+# the structured marginal is attached (then it summarizes a shown figure).
+_MARGINAL_HEDGE_RE = re.compile(r"\bpatterns\s+(?:strongly\s+)?(?:toward|across)\b", re.IGNORECASE)
+
+
+def _attach_marginal(tool_context: ToolContext, category: str) -> dict[str, Any] | None:
+    """The structured marginal for this flag's category family, from the desk's
+    last rating_boundary call — deterministic, never model-supplied. Most
+    specific descriptor wins ('pervasive language' over 'language'); None when
+    the family had no match (the render hard gate makes that visible)."""
+    fam = _CATEGORY_FAMILY.get(category)
+    if not fam:
+        return None
+    last = tool_context.state.get(f"marginal_last:{_agent_key(tool_context)}") or {}
+    candidates = [k for k in last if k == fam or k.endswith(" " + fam)]
+    if not candidates:
+        return None
+    best = max(candidates, key=len)  # intensity-qualified beats bare
+    return dict(last[best])
+
+
+def _rating_marginal_gate(
+    tool_context: ToolContext, category: str, finding: str, flag: dict[str, Any]
+) -> str | None:
+    """run-13 item 3: attach the structured marginal from the desk's last
+    rating_boundary call (tool-supplied, never model-typed); reject the hedge
+    that substituted for the missing number in runs 10-12."""
+    if not category.startswith("rating_"):
+        return None
+    marginal = _attach_marginal(tool_context, category)
+    if marginal:
+        flag["marginal"] = marginal
+        return None
+    if _MARGINAL_HEDGE_RE.search(finding):
+        return (
+            "REJECTED, not filed: the finding hedges ('patterns toward') with no "
+            "measured marginal behind it. Call rating_boundary with the descriptors "
+            "you counted FIRST — the marginal attaches to the flag automatically — "
+            "then refile. A rating finding without its marginal will not render."
+        )
+    return None
+
+
 def _manifest_note(tool_context: ToolContext, entry: dict[str, Any]) -> None:
     """Append one guard-fire entry under this agent's own manifest key (per-agent
     keys — the batch-agent state rule). Pipeline unions all keys into
@@ -1733,7 +1787,15 @@ _NORMATIVE_RULE_RE = re.compile(
     r"|\bautomatic(?:ally)?\s+(?:triggers?|draws?|results?|receives?|earns?)"
     r"|\btriggers?\s+(?:a|an)\s+(?:R|NC-17)\s+rating"
     r"|\bexceeds?\s+PG-13\s+tolerances\b"
-    r"|\bunder\s+CARA\s+standards?,?\s+\w[^.]{0,60}?\brequires?\b",
+    r"|\bunder\s+CARA\s+standards?,?\s+\w[^.]{0,60}?\brequires?\b"
+    # run-13: the phrase class the run-12 list missed — every pattern anchored
+    # to a rating token, so "within swimwear coverage" (a real wardrobe remedy)
+    # passes while "within PG-13 parameters" is caught.
+    r"|\bconform(?:s|ing)?\s+to\s+(?:the\s+)?(?:G|PG|PG-13|R|NC-17)\b"
+    r"|\bwithin\s+(?:the\s+)?(?:G|PG|PG-13|R|NC-17)(?:-band)?"
+    r"[\w\s,-]{0,40}?(?:parameters?|limits?|tolerances?|boundar(?:y|ies)|guidelines?)"
+    r"|\bmaintain\s+(?:alignment|compliance)\s+with\s+(?:the\s+)?(?:G|PG|PG-13|R|NC-17)\b"
+    r"|\bretain(?:ing)?\s+(?:at\s+most|no\s+more\s+than)\s+\d",
     re.IGNORECASE,
 )
 
@@ -1920,6 +1982,9 @@ def file_flag(  # noqa: PLR0912 - a deliberate sequence of filing gates
 
     if cap_problem := _umbrella_problem(category, scene_ids):
         return _reject_or_stop(tool_context, entity_id, category, cap_problem)
+
+    if hedge_problem := _rating_marginal_gate(tool_context, category, finding, flag):
+        return _reject_or_stop(tool_context, entity_id, category, hedge_problem)
 
     if rule_problem := _normative_rule_problem(category, finding, remedy_detail):
         _manifest_note(
@@ -2241,6 +2306,27 @@ def file_rating_prediction(
     a prediction that contradicts its own evidence without a stated reason is
     rejected — the report's claim is "evidence, not opinion".
     """
+    # run-13 item 2: the cut list bypassed the filing gate and carried the
+    # normative rules the finding gate had banned. Same contract: a beat is an
+    # ACTION ("Cut X at S024"); the rule it serves lives in the finding, once.
+    offending = [(b, m.group(0)) for b in beats_to_cut if (m := _NORMATIVE_RULE_RE.search(b or ""))]
+    if offending:
+        _manifest_note(
+            tool_context,
+            {
+                "guard": "normative_cutlist",
+                "stage": "filing",
+                "matched": "; ".join(m for _, m in offending)[:160],
+            },
+        )
+        listing = "\n- ".join(f'"{b[:90]}" (asserts: {m})' for b, m in offending)
+        return (
+            "REJECTED, not filed: these cut-list beats assert a CARA rule — a beat is "
+            "the ACTION alone (what to cut/replace/restage, named by scene); naming the "
+            "TARGET is fine ('…to target PG-13'), asserting the rule is not. Rewrite and "
+            "refile once:\n- " + listing
+        )
+
     comparables = _own_or_family(tool_context, "last_precedent")
     if not comparables:
         return (
@@ -2500,6 +2586,22 @@ def rating_boundary(descriptors: list[str], tool_context: ToolContext) -> dict[s
         for cand in (f"{intensity} {cat}", cat):
             if cand in idx:
                 x[idx[cand]] = 1.0
+    # Structured marginals for file_flag to attach (run-13 item 3): the field is
+    # populated by THIS tool's last result, keyed per agent — never typed by the
+    # model. base_rate = the descriptor corpus' own rating shares.
+    totals = d.get("rating_totals") or {}
+    tsum = sum(totals.values()) or 1
+    base_rate = {r: f"{100 * c // tsum}%" for r, c in sorted(totals.items(), key=lambda kv: -kv[1])}
+    tool_context.state[f"marginal_last:{_agent_key(tool_context)}"] = {
+        key: {
+            "descriptor": key,
+            "n": m["n"],
+            "distribution": m["distribution"],
+            "base_rate": base_rate or None,
+            "source": "ScriptRisk CARA descriptor corpus (4,544 official rationales)",
+        }
+        for key, m in marginals.items()
+    }
     z = [sum(wc[j] * x[j] for j in range(len(x)) if x[j]) for wc in d["model"]["weights"]]
     mx = max(z)
     e = [_math.exp(v - mx) for v in z]

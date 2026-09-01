@@ -195,6 +195,19 @@
     "cost_excluded_on_target_path": {
       "type": "boolean",
       "description": "Set by the adjudication plan: this flag's remedy cost is moot when the production follows the target-rating path. The flag still renders; the report's target-path cost total excludes it."
+    },
+    "marginal": {
+      "type": "object",
+      "description": "rating_* findings only: the measured CARA descriptor marginal, populated deterministically at filing from the desk's last rating_boundary call — never model-supplied. A rating finding without it does not render (it demotes to open questions and withholds the score).",
+      "required": ["descriptor", "n", "distribution", "source"],
+      "additionalProperties": false,
+      "properties": {
+        "descriptor": {"type": "string"},
+        "n": {"type": "integer"},
+        "distribution": {"type": "object"},
+        "base_rate": {"type": ["object", "null"]},
+        "source": {"type": "string"}
+      }
     }
   }
 }

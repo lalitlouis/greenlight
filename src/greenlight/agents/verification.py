@@ -649,6 +649,38 @@ def _complete_coordinates(flag: dict[str, Any], state: Any) -> list[tuple[str, s
     return added
 
 
+_MIN_SCRUBBED_BEAT = 15  # a remainder shorter than this is no longer an action
+
+
+def _scrub_cutlist(beats: list[str]) -> tuple[list[str], list[tuple[str, str]]]:
+    """Strip rule-shaped clauses from cut-list beats, keeping the action.
+    Returns (scrubbed_beats, misses) where each miss is (original_beat,
+    matched_phrase) for a beat that could not be cleanly stripped — those ship
+    unmodified. Never deletes a beat."""
+    from greenlight.tools.toolbelt import _NORMATIVE_RULE_RE
+
+    out: list[str] = []
+    misses: list[tuple[str, str]] = []
+    for beat in beats:
+        m = _NORMATIVE_RULE_RE.search(beat or "")
+        if not m:
+            out.append(beat)
+            continue
+        # excise the clause containing the match: back to the nearest clause
+        # delimiter, forward to the sentence end
+        start = max(beat.rfind(",", 0, m.start()), beat.rfind(";", 0, m.start()))
+        start = start if start >= 0 else m.start()
+        end_m = _re.search(r"[.;]", beat[m.end() :])
+        end = m.end() + end_m.start() if end_m else len(beat)
+        remainder = (beat[:start].rstrip(" ,;") + beat[end:]).strip(" ,;")
+        if len(remainder) >= _MIN_SCRUBBED_BEAT and not _NORMATIVE_RULE_RE.search(remainder):
+            out.append(remainder if remainder.endswith(".") else remainder + ".")
+        else:
+            out.append(beat)  # fail visible, never mangle
+            misses.append((beat, m.group(0)))
+    return out, misses
+
+
 _FACT_PROP_CAP = 6  # survivors re-verified per run against established facts
 
 
@@ -1502,6 +1534,24 @@ class VerificationPanel(BaseAgent):
         pred = state.get("rating_prediction")
         if pred and dropped:
             revised = await self._reconcile_rating(client, pred, kept, dropped, sem)
+            # run-13 item 2: the reconcile rewrites the cut list POST-filing, so
+            # the filing gate never sees it. Scrub rule-shaped clauses from each
+            # beat — the action survives, the justification dies; a beat the
+            # scrub cannot cleanly fix ships UNMODIFIED and is manifest-recorded
+            # (fail visible, never mangle silently).
+            if revised is not None and revised.get("beats_to_cut"):
+                scrubbed, misses = _scrub_cutlist(revised["beats_to_cut"])
+                revised["beats_to_cut"] = scrubbed
+                for beat, matched in misses:
+                    manifest.append(
+                        {
+                            "guard": "normative_cutlist_scrub",
+                            "stage": "post_reconcile",
+                            "outcome": "unstripped",
+                            "matched": matched,
+                            "beat": beat[:120],
+                        }
+                    )
             if revised is not None and (
                 revised["rationale"] != pred.get("rationale")
                 or revised["beats_to_cut"] != (pred.get("beats_to_cut") or [])

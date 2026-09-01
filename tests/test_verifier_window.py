@@ -295,6 +295,25 @@ def test_coordinate_completion_ignores_premise_figures_and_ambiguity():
     assert flag["scene_ids"] == ["S084"]
 
 
+def test_cutlist_scrub_keeps_actions_and_fails_visible():
+    """Post-reconcile beats carry rule clauses the filing gate never saw. The
+    scrub strips the clause and keeps the action; a beat it cannot cleanly fix
+    ships UNMODIFIED and is reported as a miss — never mangled, never deleted."""
+    from greenlight.agents.verification import _scrub_cutlist
+
+    beats = [
+        "Cut the spoken 'fucking' in S084, retaining at most 1 non-sexual use.",
+        "Restage the S055 bull sequence as slapstick.",  # clean: untouched
+        "Conform to PG-13 language limits.",  # the clause IS the beat: miss
+    ]
+    out, misses = _scrub_cutlist(beats)
+    assert len(out) == 3  # never deletes a beat
+    assert out[0] == "Cut the spoken 'fucking' in S084."  # action survives
+    assert out[1] == beats[1]
+    assert out[2] == beats[2]  # unmodified, fail visible
+    assert len(misses) == 1 and misses[0][0] == beats[2]
+
+
 def test_misstatement_facts_collected_from_rejections():
     """Fact propagation's deterministic half: script_misstatement rejections yield
     (scenes, fact); sourcing failures contribute nothing."""

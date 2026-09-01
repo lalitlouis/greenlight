@@ -280,6 +280,19 @@
           "items": {
             "type": "number"
           }
+        },
+        "excluded": {
+          "type": "array",
+          "description": "Every flag the adjudication ruled off the target path — the structured source of the delta attribution line. sum(excluded costs) == as_written - target_rating, to the dollar.",
+          "items": {
+            "type": "object",
+            "required": ["flag_id", "category"],
+            "properties": {
+              "flag_id": {"type": "string"},
+              "category": {"type": "string"},
+              "est_cost_usd": {"type": ["array", "null"]}
+            }
+          }
         }
       }
     },

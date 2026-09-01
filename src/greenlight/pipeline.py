@@ -507,8 +507,42 @@ async def run(  # noqa: PLR0912, PLR0915 - one linear run sequence, deliberately
             f["citations"] = toolbelt._dedupe_cits(f["citations"])
     kept.sort(key=lambda f: SEV_ORDER.get(f["severity"], 9))
 
+    # HARD GATE (run-13 item 3): a rating finding without its measured marginal
+    # does not render as a finding — three runs of "the plumbing works but
+    # nothing came out" is what a soft check buys. It demotes to the ratings
+    # desk's open questions (absence must never render as clean), and the gate
+    # firing marks the desk incomplete so the SCORE IS WITHHELD — demotion must
+    # never make the hero number go UP.
+    _no_marginal = [
+        f for f in kept if (f.get("category") or "").startswith("rating_") and not f.get("marginal")
+    ]
+    _assembly_manifest: list[dict[str, Any]] = []
+    if _no_marginal:
+        kept = [f for f in kept if f not in _no_marginal]
+        oq_key = "open_questions:ratings_board"
+        oq = list(state.get(oq_key) or [])
+        for f in _no_marginal:
+            oq.append(
+                f"Unresolved — the {str(f.get('category', '')).replace('_', ' ')} finding "
+                f"({f['flag_id']}, {', '.join(f.get('scene_ids') or [])}) was filed without a "
+                "measured CARA marginal, so it does not render as a finding. The driver may be "
+                "real; rerun with rating_boundary evidence."
+            )
+            _assembly_manifest.append(
+                {
+                    "guard": "marginal_hard_gate",
+                    "stage": "assembly",
+                    "flag_id": f["flag_id"],
+                    "outcome": "demoted_to_open_question",
+                }
+            )
+        state[oq_key] = oq
+    state["guard_manifest:assembly"] = _assembly_manifest
+
     page_count = parser.printed_page_count(source) or (scenes[-1]["page"] if scenes else None)
     incomplete = _incomplete_desks(state, verbose)
+    if _no_marginal and "ratings_board" not in incomplete:
+        incomplete.append("ratings_board")
     the_report = report_mod.build_report(
         title,
         kept,

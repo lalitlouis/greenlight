@@ -305,6 +305,36 @@ def main() -> int:  # noqa: PLR0915 - a linear checklist, deliberately flat
         f"rule-shaped rating claims: {rule_shaped[:4]} — state the descriptor-frequency "
         "observation, never what CARA 'requires'",
     )
+    # run-13 item 3: the marginal must actually render — three runs of "the
+    # plumbing works but nothing came out" is what a soft check buys.
+    no_marginal = [
+        f["flag_id"]
+        for f in flags
+        if (f.get("category") or "").startswith("rating_") and not f.get("marginal")
+    ]
+    check(
+        "invariant: every rendered rating finding carries its measured marginal",
+        not no_marginal,
+        f"rating findings without a structured marginal: {no_marginal[:4]} — the hard "
+        "gate should have demoted these",
+    )
+    # ...and the gate must never make the score BETTER: a demotion means the
+    # ratings desk could not do its job, so the score is withheld.
+    gate_fired = any(g.get("guard") == "marginal_hard_gate" for g in r.get("guard_manifest") or [])
+    score = (r.get("report") or {}).get("greenlight_score")
+    check(
+        "invariant: a marginal-gate demotion never coexists with a numeric score",
+        not (gate_fired and score is not None),
+        f"gate fired with score={score} — demotion inflated the number instead of withholding it",
+    )
+    # the cut list is remedy surface too: no beat may assert a CARA rule
+    beats = ((r.get("report") or {}).get("rating_prediction") or {}).get("beats_to_cut") or []
+    rule_beats = [b[:60] for b in beats if _NORMATIVE_RULE_RE.search(b or "")]
+    check(
+        "invariant: no cut-list beat asserts a normative CARA rule",
+        not rule_beats,
+        f"rule-shaped beats: {rule_beats[:3]}",
+    )
     check(
         "invariant: no unexamined entities (every extracted item dispositioned)",
         not r.get("unexamined"),

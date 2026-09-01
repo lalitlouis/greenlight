@@ -1536,6 +1536,70 @@ def test_derived_marginal_citation_normalized_at_filing():
     assert "ScriptRisk CARA descriptor corpus" in cit["title"]
 
 
+def test_structured_marginal_attaches_at_filing_and_validates():
+    """Run-13 item 3: the marginal the report renders is attached by the TOOL
+    from the desk's last rating_boundary call — descriptor, n, distribution,
+    base_rate — never typed by the model. Most specific descriptor wins."""
+    from greenlight.contracts import validate
+
+    ctx = make_ctx(agent_name="ratings_board")
+    real = toolbelt.rating_boundary(["pervasive language"], ctx)["marginals"]["pervasive language"][
+        "citation"
+    ]
+    out = toolbelt.file_flag(
+        scene_ids=["S002"],
+        severity="MEDIUM",
+        category="rating_language",
+        finding="The language profile matches the CARA descriptor 'pervasive language'.",
+        citations=[{"excerpt": real, "via": "local"}],
+        remedy_action="REPLACE",
+        remedy_detail="Cut the two strongest uses at S002.",
+        confidence=0.8,
+        tool_context=ctx,
+    )
+    assert "Filed" in out, out
+    flag = toolbelt.desk_flags(ctx.state, "ratings_board")[-1]
+    m = flag.get("marginal")
+    assert m and m["descriptor"] == "pervasive language" and m["n"] == 187
+    assert m["distribution"].get("R") == "99%"
+    assert m["base_rate"] and "R" in m["base_rate"]  # corpus rating shares
+    validate("flag", flag)  # the announced schema change admits the field
+
+
+def test_hedge_without_marginal_rejected_at_filing():
+    """'patterns toward' was substituting for the number (runs 10-12): without a
+    rating_boundary call behind it, the hedge is rejected with guidance."""
+    ctx = make_ctx(agent_name="ratings_board")  # NO rating_boundary call
+    out = toolbelt.file_flag(
+        scene_ids=["S002"],
+        severity="MEDIUM",
+        category="rating_language",
+        finding="The profile patterns strongly toward R.",
+        citations=[{"url": "https://www.filmratings.com/x", "excerpt": "Brief strong language"}],
+        remedy_action="REPLACE",
+        remedy_detail="Cut the strongest uses.",
+        confidence=0.8,
+        tool_context=ctx,
+    )
+    assert "REJECTED" in out and "rating_boundary" in out
+
+
+def test_cutlist_beats_reject_normative_rules():
+    """Run-13 item 2: the cut list bypassed the filing gate; now a rule-shaped
+    beat is rejected at file_rating_prediction with per-beat guidance."""
+    ctx = make_ctx(agent_name="ratings_board")
+    out = toolbelt.file_rating_prediction(
+        predicted="R",
+        rationale="for pervasive language",
+        beats_to_cut=[
+            "Cut 'fucking' at S024.",  # clean action: fine
+            "Moderate profanity, retaining at most 1 isolated use to conform to PG-13 limits.",
+        ],
+        tool_context=ctx,
+    )
+    assert "REJECTED" in out and "ACTION alone" in out
+
+
 def test_prune_keeps_the_derived_marginal_beside_filmratings():
     """The rating_boundary marginal is a URL-less tool citation and the desk's
     strongest, most specific evidence; the prune must not drop it for a generic
