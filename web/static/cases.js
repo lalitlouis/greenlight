@@ -31,7 +31,10 @@ async function loadCases() {
       const top = el("div", "rc-top");
       top.appendChild(el("span", "case-title", `${c.title} (${c.year})`));
       if (c.score != null) {
-        top.appendChild(el("span", "score-pill " + caseTone(c.score, c.blockers), `${c.score}/100`));
+        const ring = el("span", "case-score " + caseTone(c.score, c.blockers));
+        ring.style.setProperty("--scorepct", String(c.score));
+        ring.appendChild(el("b", null, String(c.score)));
+        top.appendChild(ring);
       }
       card.appendChild(top);
       card.appendChild(el("p", "case-hook-line", c.hook || ""));
