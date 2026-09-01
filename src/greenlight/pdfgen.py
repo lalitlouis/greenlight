@@ -74,11 +74,13 @@ def binder_pdf(data: dict[str, Any]) -> bytes:
             if d.get("scene_numbers") == "script"
             else "generated scene coordinates"
         )
+        build = data.get("build")
+        build_s = f" · build {build}" if build and build != "local" else ""
         story.append(Spacer(1, 4))
         story.append(
             Paragraph(
                 f"This report is valid only for this draft: {d.get('pages', '?')} pp · "
-                f"{prov} · SHA-256 {d['sha256'][:12]}…",
+                f"{prov} · SHA-256 {d['sha256'][:12]}…{build_s}",
                 sub_style,
             )
         )

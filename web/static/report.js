@@ -1060,7 +1060,10 @@ function renderReport(record) {
       // totals 600px apart is how a report loses a reader's trust
       `${(record.flags || []).filter((f) => (f.citations || []).length > 0).length} findings · ` +
         `${(record.rejected_flags || []).length} rejected in verification · ` +
-        entityHeadline(record)
+        entityHeadline(record) +
+        // build attribution: a corpus or code change under the panel must be
+        // traceable to a deploy from the artifact itself
+        (record.build && record.build !== "local" ? ` · build ${record.build}` : "")
     )
   );
   meta.appendChild(proj);

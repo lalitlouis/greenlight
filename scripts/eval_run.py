@@ -293,6 +293,12 @@ def main() -> int:  # noqa: PLR0915 - a linear checklist, deliberately flat
         m = _NORMATIVE_RULE_RE.search(body)
         if m:
             rule_shaped.append((f["flag_id"], m.group(0)[:40]))
+    # text fields are fungible under a lexical gate: the Pro adjudicator writes
+    # AFTER filing, so its notes are a surface the filing gate never sees
+    for n in r.get("adjudication_notes", []):
+        m = _NORMATIVE_RULE_RE.search(n)
+        if m:
+            rule_shaped.append(("adjudication", m.group(0)[:40]))
     check(
         "invariant: no rating finding asserts a normative CARA rule",
         not rule_shaped,

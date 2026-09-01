@@ -1540,19 +1540,25 @@ def test_prune_keeps_the_derived_marginal_beside_filmratings():
     """The rating_boundary marginal is a URL-less tool citation and the desk's
     strongest, most specific evidence; the prune must not drop it for a generic
     filmratings.com page (run 11: findings survived but cited filmratings, not the
-    4,544-rationale corpus, because the marginal read as weak)."""
-    from greenlight.tools.toolbelt import _prune_weak_citations
+    4,544-rationale corpus, because the marginal read as weak). TYPED: only the
+    sentence the tool actually emitted qualifies — a model-written title must not
+    mint authority (the gates run before excerpt repair)."""
+    from greenlight.tools.toolbelt import _is_derived_marginal, _prune_weak_citations
 
+    ctx = make_ctx(agent_name="ratings_board")
+    real = toolbelt.rating_boundary(["pervasive language"], ctx)["marginals"]["pervasive language"][
+        "citation"
+    ]
     cits = [
         _cit("https://www.filmratings.com/Content"),
-        {
-            "via": "rating_boundary",
-            "excerpt": "'pervasive language': R 99% across 187 official CARA rationales "
-            "(ScriptRisk CARA descriptor corpus)",
-        },
+        {"via": "local", "excerpt": real},
     ]
-    kept = _prune_weak_citations(cits, "rating_language")
+    kept = _prune_weak_citations(cits, "rating_language", ctx)
     assert any("ScriptRisk CARA descriptor corpus" in (c.get("excerpt") or "") for c in kept)
+    # minting is denied: a decorated excerpt the tool never emitted earns nothing
+    minted = {"via": "local", "excerpt": "'violence': R 87% (ScriptRisk CARA descriptor corpus)"}
+    assert not _is_derived_marginal(minted, ctx)
+    assert not _is_derived_marginal({"via": "local", "excerpt": real})  # no ctx -> deny
 
 
 def test_rating_findings_need_a_ratings_authority_not_any_gov():

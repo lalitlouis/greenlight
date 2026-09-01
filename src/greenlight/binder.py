@@ -173,7 +173,14 @@ def _hosts(f: dict[str, Any]) -> list[str]:
     hosts: list[str] = []
     for c in f.get("citations", []):
         seg = (c.get("url") or "").split("/")[2:3]
-        host = _tier_label(seg[0]) if seg else ""
+        if seg:
+            host = _tier_label(seg[0])
+        elif c.get("source_type") == "rules_table":
+            # our derived corpus — labeled as a self-citation, never rendered as
+            # if it were an external host beside filmratings.com
+            host = "ScriptRisk corpus (own aggregate)"
+        else:
+            host = ""
         if host and host not in hosts:
             hosts.append(host)
     return hosts

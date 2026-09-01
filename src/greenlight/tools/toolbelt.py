@@ -987,6 +987,21 @@ def _prov_bucket(tool_context: ToolContext) -> list[tuple[str, str]]:
     return _PROV_TEXTS.setdefault(inv, [])
 
 
+# The marginal sentences rating_boundary ACTUALLY emitted this run — the only
+# texts that earn the derived-marginal authority tier. A title string the model
+# writes must never mint authority: the gates run before excerpt repair, so a
+# decorated excerpt could clear authority and then be repaired to different text
+# after the gate had already passed. Typed registry, exact-match only.
+_MARGINAL_TEXTS: dict[str, set[str]] = {}
+
+
+def _marginal_bucket(tool_context: ToolContext) -> set[str]:
+    inv = str(getattr(tool_context, "invocation_id", "") or "run")
+    if inv not in _MARGINAL_TEXTS and len(_MARGINAL_TEXTS) >= _PROV_MAX_RUNS:
+        _MARGINAL_TEXTS.pop(next(iter(_MARGINAL_TEXTS)))
+    return _MARGINAL_TEXTS.setdefault(inv, set())
+
+
 def _register_provenance(tool_context: ToolContext, texts: list[str]) -> None:
     bucket = _prov_bucket(tool_context)
     bucket.extend((_norm_for_match(x), x) for x in texts if x)
@@ -1556,7 +1571,12 @@ RATING_AUTHORITY_HOSTS = {
 }
 
 
-def _authority_problem(severity: str, cits: list[dict[str, Any]], category: str = "") -> str | None:
+def _authority_problem(
+    severity: str,
+    cits: list[dict[str, Any]],
+    category: str = "",
+    tool_context: ToolContext | None = None,
+) -> str | None:
     """Default-deny sourcing for the report's loudest claims. A BLOCKER needs
     at least one allowlisted authority; a HIGH needs an authority OR two
     distinct non-background hosts corroborating each other. Rating categories
@@ -1567,7 +1587,7 @@ def _authority_problem(severity: str, cits: list[dict[str, Any]], category: str 
     urls = [c.get("url") or "" for c in cits]
     if category.startswith("rating_"):
         if any(_host_root(u) in RATING_AUTHORITY_HOSTS for u in urls) or any(
-            _is_derived_marginal(c) for c in cits
+            _is_derived_marginal(c, tool_context) for c in cits
         ):
             return None
         hosts = ", ".join(sorted({(u.split("/")[2:3] or ["?"])[0] for u in urls})) or "none"
@@ -1628,17 +1648,22 @@ def _dedupe_cits(cits: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return out
 
 
-def _is_derived_marginal(c: dict[str, Any]) -> bool:
+def _is_derived_marginal(c: dict[str, Any], tool_context: ToolContext | None = None) -> bool:
     """Our own rating_boundary marginal — a URL-less tool citation, and the desk's
     strongest, most specific rating evidence. It must count as authority, or the
     prune below drops it (no URL) for a generic filmratings.com page and the
-    measured 4,544-rationale marginal never renders."""
-    return "ScriptRisk CARA descriptor corpus" in (c.get("excerpt") or "") or (
-        c.get("via") == "rating_boundary"
-    )
+    measured 4,544-rationale marginal never renders. TYPED, not title-matched:
+    only an excerpt rating_boundary actually emitted this run qualifies — a title
+    string the model writes cannot mint authority. Without a tool_context there is
+    no registry, so the answer is no."""
+    if tool_context is None:
+        return False
+    return _norm_for_match(c.get("excerpt") or "") in _marginal_bucket(tool_context)
 
 
-def _prune_weak_citations(cits: list[dict[str, Any]], category: str) -> list[dict[str, Any]]:
+def _prune_weak_citations(
+    cits: list[dict[str, Any]], category: str, tool_context: ToolContext | None = None
+) -> list[dict[str, Any]]:
     """When a finding already has a strong source, the weak ones must not render
     beside it — a CARA claim citing filmratings AND highpointnc.gov reads as
     carelessness (run 8: the municipal site appeared four times). Never empties
@@ -1650,7 +1675,7 @@ def _prune_weak_citations(cits: list[dict[str, Any]], category: str) -> list[dic
         strong = [
             c
             for c, u in zip(cits, urls, strict=False)
-            if _host_root(u) in RATING_AUTHORITY_HOSTS or _is_derived_marginal(c)
+            if _host_root(u) in RATING_AUTHORITY_HOSTS or _is_derived_marginal(c, tool_context)
         ]
         if strong:
             return _dedupe_cits(strong)
@@ -1658,7 +1683,9 @@ def _prune_weak_citations(cits: list[dict[str, Any]], category: str) -> list[dic
     return _dedupe_cits(keep or cits)
 
 
-def _background_only_problem(severity: str, cits: list[dict[str, Any]]) -> str | None:
+def _background_only_problem(
+    severity: str, cits: list[dict[str, Any]], tool_context: ToolContext | None = None
+) -> str | None:
     """A legal conclusion needs at least one non-background source. Fan wikis
     and forums may inform, but they cannot carry a MEDIUM+ finding alone."""
     if severity not in ("BLOCKER", "HIGH", "MEDIUM"):
@@ -1666,7 +1693,8 @@ def _background_only_problem(severity: str, cits: list[dict[str, Any]]) -> str |
     # The derived rating_boundary marginal has no URL but is authoritative — a
     # rating finding citing only the corpus must not read as background-only.
     if not all(
-        _is_background_host(c.get("url") or "") and not _is_derived_marginal(c) for c in cits
+        _is_background_host(c.get("url") or "") and not _is_derived_marginal(c, tool_context)
+        for c in cits
     ):
         return None
     return (
@@ -1829,7 +1857,7 @@ def file_flag(  # noqa: PLR0912 - a deliberate sequence of filing gates
             "retrieved_at": None,
             "via": c.get("via", "parallel_search"),
         }
-        if _is_derived_marginal(cit):
+        if _is_derived_marginal(cit, tool_context):
             # The desk files the corpus marginal under whatever url/via it last
             # researched (run 12: url=filmratings.com, via=parallel_search), so our
             # own aggregate rendered as filmratings' — misattribution both ways.
@@ -1889,9 +1917,9 @@ def file_flag(  # noqa: PLR0912 - a deliberate sequence of filing gates
     if reg_problem := _unverified_regs(tool_context, finding):
         return _reject_or_stop(tool_context, entity_id, category, reg_problem)
 
-    if src_problem := _background_only_problem(severity, cits):
+    if src_problem := _background_only_problem(severity, cits, tool_context):
         return _reject_or_stop(tool_context, entity_id, category, src_problem)
-    if auth_problem := _authority_problem(severity, cits, category):
+    if auth_problem := _authority_problem(severity, cits, category, tool_context):
         return _reject_or_stop(tool_context, entity_id, category, auth_problem)
 
     # Excerpt provenance: a citation's excerpt must exist VERBATIM in material this
@@ -1934,7 +1962,7 @@ def file_flag(  # noqa: PLR0912 - a deliberate sequence of filing gates
             )
         return _reject_or_stop(tool_context, entity_id, category, msg)
 
-    cits = _prune_weak_citations(cits, category)
+    cits = _prune_weak_citations(cits, category, tool_context)
     flag["citations"] = cits
 
     cost_span_max = 50
@@ -2443,13 +2471,12 @@ def rating_boundary(descriptors: list[str], tool_context: ToolContext) -> dict[s
                 # where it read as an unsupported statistic and got rejected. The number
                 # appears in exactly one place, attributed to our derived corpus by name.
                 dist_str = ", ".join(f"{r} {p}" for r, p in dist.items())
-                marginals[key] = {
-                    "n": n,
-                    "distribution": dist,
-                    "citation": (
-                        f"'{key}': {dist_str} across {n} official CARA rationales ({_CARA_CORPUS})"
-                    ),
-                }
+                sentence = (
+                    f"'{key}': {dist_str} across {n} official CARA rationales ({_CARA_CORPUS})"
+                )
+                marginals[key] = {"n": n, "distribution": dist, "citation": sentence}
+                # typed registry: only sentences emitted HERE earn the marginal tier
+                _marginal_bucket(tool_context).add(_norm_for_match(sentence))
         for cand in (f"{intensity} {cat}", cat):
             if cand in idx:
                 x[idx[cand]] = 1.0

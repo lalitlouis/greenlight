@@ -60,6 +60,11 @@ class _RatingReconcile(BaseModel):
     beats_to_cut: list[str]
 
 
+class _CorrectedFlag(BaseModel):
+    finding: str
+    remedy: str
+
+
 VERIFIER_PROMPT = """\
 You are an independent citation verifier for a screenplay clearance report. You are shown one
 claim, the screenplay scenes it anchors to, and the source excerpts cited for it — never the
@@ -924,6 +929,45 @@ def _fresh_citations(
 class VerificationPanel(BaseAgent):
     """Runtime fan-out: one Gemini verifier per flag, concurrently, blinded."""
 
+    async def _correct_finding_and_remedy(
+        self, client: Any, flag: dict[str, Any], script_context: str, sem: asyncio.Semaphore
+    ) -> tuple[str, str] | None:
+        """Fact-propagation correction: rewrite BOTH the finding and the remedy to
+        state only what the established facts and scene text support. Correcting
+        the body while the remedy still directs cutting a beat that is not in the
+        script is the landed-structurally failure again. Returns (finding,
+        remedy_detail) or None when the core claim does not survive."""
+        remedy = (flag.get("remedy") or {}).get("detail") or ""
+        prompt = (
+            "A clearance finding contradicts script facts that independent verification "
+            "has established. Rewrite the FINDING and its REMEDY to state only what the "
+            "scene text and established facts below support, preserving the underlying "
+            "exposure claim if it survives. If the core claim does not survive, reply "
+            "with exactly: UNSALVAGEABLE.\n\n"
+            f"FINDING:\n{flag.get('finding', '')}\n\n"
+            f"REMEDY:\n{remedy}\n\n"
+            f"WHY IT FAILED:\n{flag.get('rejection_reason', '')}\n\n"
+            f"SCENE TEXT AND ESTABLISHED FACTS:\n{script_context}\n\n"
+            'Reply as JSON: {"finding": "...", "remedy": "..."} (or UNSALVAGEABLE).'
+        )
+        async with sem:
+            try:
+                res = await client.aio.models.generate_content(
+                    model=MODEL,
+                    contents=prompt,
+                    config=types.GenerateContentConfig(
+                        response_mime_type="application/json",
+                        response_schema=_CorrectedFlag,
+                        temperature=0.0,
+                    ),
+                )
+                out = _CorrectedFlag.model_validate_json(res.text)
+            except Exception:
+                return None
+        if not out.finding.strip() or "UNSALVAGEABLE" in out.finding[:40].upper():
+            return None
+        return out.finding.strip()[:1500], out.remedy.strip()[:1500]
+
     async def _correct_finding(
         self, client: Any, flag: dict[str, Any], script_context: str, sem: asyncio.Semaphore
     ) -> str | None:
@@ -1243,12 +1287,26 @@ class VerificationPanel(BaseAgent):
                 + "\n\nFULL-SCRIPT SEARCH (authoritative):\n"
                 + _search_context(f, state)
             )
-            fixed = await self._correct_finding(
+            corrected = await self._correct_finding_and_remedy(
                 client, {**f, "rejection_reason": v3["reason"]}, evidence, sem
             )
             recovered = False
-            if fixed:
-                retry_flag = {**f, "finding": fixed, "fact_reconciled": True}
+            if corrected:
+                new_finding, new_remedy = corrected
+                # The refile re-enters the filing gate: a corrected rating finding
+                # that launders the rule back in is not a recovery.
+                from greenlight.tools.toolbelt import _normative_rule_problem
+
+                if _normative_rule_problem(f.get("category", ""), new_finding, new_remedy):
+                    corrected = None
+            if corrected:
+                new_finding, new_remedy = corrected
+                retry_flag = {
+                    **f,
+                    "finding": new_finding,
+                    "remedy": {**(f.get("remedy") or {}), "detail": new_remedy},
+                    "fact_reconciled": True,
+                }
                 v4 = await self._verify_one(
                     client,
                     retry_flag,
@@ -1257,7 +1315,8 @@ class VerificationPanel(BaseAgent):
                     sem,
                 )
                 if v4["verdict"] != "UNSUPPORTED":
-                    f["finding"] = fixed
+                    f["finding"] = new_finding
+                    f["remedy"] = {**(f.get("remedy") or {}), "detail": new_remedy}
                     f["fact_reconciled"] = True
                     verdicts[fid] = v4
                     recovered = True
