@@ -549,7 +549,13 @@ async def run(  # noqa: PLR0912, PLR0915 - one linear run sequence, deliberately
 
     page_count = parser.printed_page_count(source) or (scenes[-1]["page"] if scenes else None)
     incomplete = _incomplete_desks(state, verbose)
-    if _no_marginal and "ratings_board" not in incomplete:
+    # Calibration (gate #11 collision): ONE demoted rating finding beside
+    # surviving marginal-carrying ones is an ordinary demotion — an honest open
+    # question, like any sourcing failure — and must not withhold the score.
+    # The inflation danger is the gate GUTTING the desk: demotions that leave
+    # ZERO rendered rating findings mark it incomplete and withhold.
+    _rating_left = any((f.get("category") or "").startswith("rating_") for f in kept)
+    if _no_marginal and not _rating_left and "ratings_board" not in incomplete:
         incomplete.append("ratings_board")
     the_report = report_mod.build_report(
         title,

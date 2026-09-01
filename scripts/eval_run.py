@@ -323,9 +323,14 @@ def main() -> int:  # noqa: PLR0915, PLR0912 - a linear checklist, deliberately 
     gate_fired = any(g.get("guard") == "marginal_hard_gate" for g in r.get("guard_manifest") or [])
     score = (r.get("report") or {}).get("greenlight_score")
     check(
-        "invariant: a marginal-gate demotion never coexists with a numeric score",
-        not (gate_fired and score is not None),
-        f"gate fired with score={score} — demotion inflated the number instead of withholding it",
+        "invariant: a marginal-gate demotion that guts the ratings desk never scores",
+        not (
+            gate_fired
+            and not any((f.get("category") or "").startswith("rating_") for f in flags)
+            and score is not None
+        ),
+        f"gate left ZERO rating findings yet score={score} — a gutted desk must withhold; "
+        "one demotion beside surviving marginals is an ordinary demotion and scores normally",
     )
     # the cut list is remedy surface too: no beat may assert a CARA rule
     beats = ((r.get("report") or {}).get("rating_prediction") or {}).get("beats_to_cut") or []
