@@ -1004,7 +1004,6 @@ function buildReportNav(record, rep) {
 
   const nav = el("nav", "report-nav");
   nav.setAttribute("aria-label", "Report sections");
-  nav.appendChild(el("span", "rn-label", "In this report"));
   const chips = [];
   for (const [id, label, count] of entries) {
     const a = el("a", "rn-chip");

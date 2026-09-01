@@ -100,6 +100,8 @@ h4 { font-size: 17px; font-weight: 650; }
 p { margin: 0 0 16px; }
 
 .container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+/* the report is a working document, not an article — let it use the screen */
+.container-wide { max-width: 1360px; }
 main { min-height: 60vh; padding: 56px 0 96px; }
 /* the run page is a working dashboard, not an article — give it more room */
 .run-body .container { max-width: 1320px; }
