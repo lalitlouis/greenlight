@@ -318,35 +318,101 @@ function renderFix(container, fix, flagId) {
   }
 }
 
+/* Multi-select fix queue: check findings, draft their fixes in PARALLEL from
+   one bar (client-side pool of 4 — kind to the model quota; the server's
+   hourly rate limit still counts each). Each patch renders into its own
+   finding as it lands; one failure never stops the rest. */
+const FIX_QUEUE = new Map(); // flag_id -> {f, btn, result, box}
+const FIX_POOL = 4;
+
+async function draftFix(f, btn, result) {
+  btn.disabled = true;
+  btn.textContent = "Drafting a fix — ~20s…";
+  try {
+    const res = await fetch("/api/fix", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ run_id: RUN_ID, flag_id: f.flag_id }),
+    });
+    if (!res.ok) throw new Error(await res.text());
+    renderFix(result, await res.json(), f.flag_id);
+    btn.textContent = "Draft another fix";
+    return true;
+  } catch (e) {
+    toast(`Fix failed (${f.flag_id}): ` + e.message.slice(0, 140), true);
+    btn.textContent = "Propose a fix";
+    throw e;
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function refreshFixBar() {
+  let bar = $("fix-batch-bar");
+  const n = [...FIX_QUEUE.values()].filter((q) => q.box.checked).length;
+  if (!n) {
+    bar?.remove();
+    return;
+  }
+  if (!bar) {
+    bar = el("div", "export-bar");
+    bar.id = "fix-batch-bar";
+    const label = el("span", "eb-label");
+    label.id = "fb-label";
+    bar.appendChild(label);
+    const go = el("button", "btn btn-primary eb-btn", "Draft them");
+    go.id = "fb-go";
+    go.type = "button";
+    go.addEventListener("click", async () => {
+      const picked = [...FIX_QUEUE.values()].filter((q) => q.box.checked);
+      go.disabled = true;
+      let done = 0;
+      let rateLimited = false;
+      const queue = [...picked];
+      const worker = async () => {
+        while (queue.length && !rateLimited) {
+          const q = queue.shift();
+          try {
+            await draftFix(q.f, q.btn, q.result);
+            q.box.checked = false;
+          } catch (e) {
+            if (String(e.message || "").includes("429")) rateLimited = true;
+          }
+          done += 1;
+          go.textContent = `Drafting… ${done}/${picked.length}`;
+        }
+      };
+      await Promise.all(Array.from({ length: Math.min(FIX_POOL, picked.length) }, worker));
+      if (rateLimited) toast("Hourly fix limit reached — the rest are still selected.", true);
+      go.disabled = false;
+      go.textContent = "Draft them";
+      refreshFixBar();
+    });
+    bar.appendChild(go);
+    document.body.appendChild(bar);
+  }
+  $("fb-label").textContent = `${n} fix${n === 1 ? "" : "es"} selected — drafted in parallel`;
+}
+
 function fixControls(f) {
   const wrap = el("div", "fix-wrap");
   const row = el("div", "fix-row");
   const btn = el("button", "btn btn-secondary fix-btn", "Propose a fix");
   btn.type = "button";
   row.appendChild(btn);
+  const pick = el("label", "fix-pick");
+  const box = document.createElement("input");
+  box.type = "checkbox";
+  box.addEventListener("change", refreshFixBar);
+  pick.appendChild(box);
+  pick.appendChild(document.createTextNode("queue"));
+  row.appendChild(pick);
   row.appendChild(el("span", "fix-beta", "Free during beta · $39/script after"));
   wrap.appendChild(row);
   const result = el("div", "fix-result");
   wrap.appendChild(result);
-  btn.addEventListener("click", async () => {
-    btn.disabled = true;
-    btn.textContent = "Drafting a fix — ~20s…";
-    try {
-      const res = await fetch("/api/fix", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ run_id: RUN_ID, flag_id: f.flag_id }),
-      });
-      if (!res.ok) throw new Error(await res.text());
-      renderFix(result, await res.json(), f.flag_id);
-      btn.textContent = "Draft another fix";
-    } catch (e) {
-      toast("Fix failed: " + e.message.slice(0, 160), true);
-      btn.textContent = "Propose a fix";
-    } finally {
-      btn.disabled = false;
-    }
-  });
+  FIX_QUEUE.set(f.flag_id, { f, btn, result, box });
+  btn.addEventListener("click", () => draftFix(f, btn, result).catch(() => {}));
   return wrap;
 }
 
