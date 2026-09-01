@@ -830,7 +830,7 @@ function entityHeadline(record) {
   // inflate the headline (78 raw vs ~58 distinct on a real script).
   const acct = record.entity_accounting;
   if (acct && acct.distinct != null) {
-    const frag = acct.fragments ? ` (${acct.fragments} name fragments folded)` : "";
+    const frag = acct.fragments ? ` (${acct.fragments} name fragment${acct.fragments === 1 ? "" : "s"} folded)` : "";
     return `${acct.distinct} entities researched${frag}`;
   }
   return `${(record.entities || []).length} entities researched`;
