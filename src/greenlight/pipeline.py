@@ -545,6 +545,13 @@ async def run(  # noqa: PLR0912, PLR0915 - one linear run sequence, deliberately
                 }
             )
         state[oq_key] = oq
+        # gate #15: the dangling-note filter ran BEFORE this gate existed in the
+        # sequence — a demoted finding's adjudication note survived it. Re-filter
+        # against what actually renders now.
+        _rendered_now = {f["flag_id"] for f in kept}
+        adjudication_notes = [
+            n for n in adjudication_notes if set(re.findall(r"\bF\d{3,4}\b", n)) <= _rendered_now
+        ]
     state["guard_manifest:assembly"] = _assembly_manifest
 
     page_count = parser.printed_page_count(source) or (scenes[-1]["page"] if scenes else None)
