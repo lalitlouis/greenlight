@@ -682,6 +682,7 @@ def _scrub_cutlist(beats: list[str]) -> tuple[list[str], list[tuple[str, str]]]:
 
 
 _FACT_PROP_CAP = 6  # survivors re-verified per run against established facts
+_FAIL_OPEN_RETRY_CAP = 3  # transient rescue, not an outage-masking loop
 
 
 def _misstatement_facts(dropped: list[dict[str, Any]]) -> list[tuple[set[str], str]]:
@@ -1317,6 +1318,43 @@ class VerificationPanel(BaseAgent):
                 content=types.Content(
                     role="model",
                     parts=[types.Part(text=f"⚖ {fid} {note}; the script states it in {sid}")],
+                ),
+            )
+        # FAIL-OPEN SECOND CHANCE: a verifier call that exhausted its ladder
+        # inside the fan-out's rate-limit window marks its finding unverified and
+        # WITHHOLDS THE SCORE — twice now on feature-length runs (run 11, run 13)
+        # over a single transient. The burst is over here, so one serial retry
+        # usually lands. Capped: a systemic outage must not add N more ladders.
+        fail_open = [f for f in flags if verdicts.get(f["flag_id"], {}).get("fail_open")]
+        for f in fail_open[:_FAIL_OPEN_RETRY_CAP]:
+            fid = f["flag_id"]
+            v2 = await self._verify_one(
+                client, f, _scene_context(f, state), _search_context(f, state), sem
+            )
+            if v2.get("fail_open"):
+                continue  # still down — the honest withhold stands
+            _tmp = {fid: v2}
+            _apply_overturns([f], _tmp, state)  # assertion 1 screens the retry verdict too
+            verdicts[fid] = _tmp[fid]
+            manifest.append(
+                {
+                    "guard": "fail_open_retry",
+                    "stage": "post_fanout",
+                    "flag_id": fid,
+                    "outcome": verdicts[fid]["verdict"],
+                }
+            )
+            yield Event(
+                invocation_id=ctx.invocation_id,
+                author=self.name,
+                content=types.Content(
+                    role="model",
+                    parts=[
+                        types.Part(
+                            text=f"⚖ {fid} verifier retry after fan-out → "
+                            f"{verdicts[fid]['verdict']} (was unverified fail-open)"
+                        )
+                    ],
                 ),
             )
         kept, dropped = apply_verdicts(flags, verdicts)
