@@ -77,7 +77,12 @@ def main() -> int:
         case_meta = existing.get("case") or {}
         title = case_meta.get("title") or slug.replace("_", " ").title()
 
-        if src.startswith("gcs:"):
+        cached = ROOT / ".cache" / "case_scripts" / f"_{slug}.fountain"
+        if src.startswith("gcs:") and cached.exists():
+            # a prior regen already materialized the script locally — the GCS
+            # run id may be long-deleted (all three were, 2026-09-01)
+            path = cached
+        elif src.startswith("gcs:"):
             text = storage.load_script(src[4:])
             if not text:
                 print(f"{slug}: MISSING script in GCS — skipped")
