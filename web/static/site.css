@@ -615,6 +615,18 @@ a.step-card:hover { text-decoration: none; box-shadow: var(--shadow-lg); }
 .score.good b { color: var(--go-deep); }
 .score.mid b { color: var(--high); }
 .score.bad b { color: var(--blocker); }
+.rpt-head {
+  display: flex;
+  align-items: center;
+  gap: 34px;
+  flex-wrap: wrap;
+  padding: 34px 38px;
+  border-radius: 26px;
+  background:
+    radial-gradient(520px 260px at 8% 0%, color-mix(in srgb, var(--green) 9%, transparent), transparent 60%),
+    radial-gradient(420px 240px at 100% 100%, color-mix(in srgb, var(--gold, #c8991f) 7%, transparent), transparent 60%),
+    var(--surface);
+}
 .score-meta { display: flex; flex-direction: column; gap: 8px; min-width: 260px; flex: 1; }
 .verdict { font-size: 27px; font-weight: 700; letter-spacing: -0.015em; }
 .verdict.bad { color: var(--blocker); }
@@ -625,18 +637,27 @@ a.step-card:hover { text-decoration: none; box-shadow: var(--shadow-lg); }
 .est-note { font-size: 14.5px; color: var(--ink-3); }
 .tally { display: flex; gap: 12px; flex-wrap: wrap; }
 .tally > div { display: flex; flex-direction: column; align-items: center; gap: 2px; background: var(--band); border-radius: 14px; padding: 12px 18px; min-width: 82px; }
-.tally b { font-size: 26px; font-weight: 750; }
+.tally b { font-size: 27px; font-weight: 750; }
+.tally b.sev-BLOCKER { color: var(--blocker); }
+.tally b.sev-HIGH { color: var(--high); }
+.tally b.sev-MEDIUM { color: var(--medium); }
+.tally b.sev-LOW { color: var(--low); }
+.tally b.sev-FYI { color: var(--ink-3); }
 .tally span { font-size: 13.5px; font-weight: 550; color: var(--ink-3); }
 
-.section-head { margin: 44px 0 18px; }
+.section-head { margin: 56px 0 18px; }
+.section-head h2::after { content: ""; display: block; width: 34px; height: 4px; border-radius: 980px; background: var(--green); margin-top: 10px; }
 .section-head h2 { font-size: clamp(24px, 2.6vw, 32px); margin-bottom: 4px; }
 .section-head .lede { color: var(--ink-2); font-size: 17px; }
 .flags { display: flex; flex-direction: column; gap: 16px; }
-.flag { position: relative; display: grid; grid-template-columns: 104px 1fr 150px; gap: 22px; padding: 24px 26px 24px 30px; overflow: hidden; }
+.flag { position: relative; display: grid; grid-template-columns: 104px 1fr 150px; gap: 22px; padding: 22px 26px 22px 30px; overflow: hidden; border-radius: 18px; transition: transform 0.16s ease, box-shadow 0.16s ease; }
+.flag:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
 @media (max-width: 900px) { .flag { grid-template-columns: 1fr; gap: 12px; } }
 .flag.rejected { opacity: 0.6; background: var(--band); }
 .flag.rejected .finding { text-decoration: line-through; text-decoration-color: rgba(224, 52, 42, 0.5); }
-.sev-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 4px; }
+.sev-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 5px; }
+.flag:has(.bar-BLOCKER), .flag:has(.bar-HIGH) { box-shadow: inset 5px 0 22px -14px color-mix(in srgb, var(--high) 55%, transparent); }
+.flag:has(.bar-BLOCKER) { box-shadow: inset 5px 0 22px -14px color-mix(in srgb, var(--blocker) 55%, transparent); }
 .bar-BLOCKER { background: var(--blocker); }
 .bar-HIGH { background: var(--high); }
 .bar-MEDIUM { background: var(--medium); }
@@ -654,12 +675,15 @@ a.step-card:hover { text-decoration: none; box-shadow: var(--shadow-lg); }
 .by-ratings_board { color: var(--desk-ratings); background: rgba(147, 51, 234, 0.08); }
 .by-safety_underwriter { color: #92400e; background: rgba(217, 119, 6, 0.1); }
 .by-territory_censor { color: #075985; background: rgba(2, 132, 199, 0.08); }
-.finding { margin: 0 0 12px; font-size: 17px; line-height: 1.6; max-width: 76ch; }
+.finding { margin: 0 0 10px; font-size: 16px; line-height: 1.62; max-width: 74ch; color: var(--ink-2); }
+.finding.clamped { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.find-more { border: 0; background: none; padding: 0; margin: -4px 0 10px; font-size: 14.5px; font-weight: 600; color: var(--green-deep); cursor: pointer; }
+.find-more:hover { text-decoration: underline; }
 .cite-toggle { border: 0; background: none; color: var(--green-deep); font-size: 16px; font-weight: 550; cursor: pointer; padding: 0; }
 .cite-toggle:hover { text-decoration: underline; }
 .expand { margin-top: 16px; display: flex; flex-direction: column; gap: 12px; }
-.cite { background: var(--band); border-left: 3px solid var(--green); border-radius: 10px; padding: 14px 18px; }
-.cite q { display: block; font-size: 16px; line-height: 1.6; color: var(--ink-2); quotes: "“" "”"; }
+.cite { background: var(--band); border-left: 3px solid var(--green); border-radius: 12px; padding: 14px 18px; }
+.cite q { display: block; font-size: 15.5px; line-height: 1.6; color: var(--ink-2); quotes: "“" "”"; }
 .cite .src { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; font-size: 15px; color: var(--ink-3); }
 .cite .via { font-weight: 650; color: var(--green-deep); font-size: 14px; }
 .remedy { display: flex; gap: 14px; align-items: baseline; background: var(--green-tint); border-radius: 10px; padding: 14px 18px; }
@@ -668,7 +692,7 @@ a.step-card:hover { text-decoration: none; box-shadow: var(--shadow-lg); }
 .conf { font-size: 14.5px; color: var(--ink-3); }
 .rejection { font-size: 16px; color: var(--blocker); background: rgba(224, 52, 42, 0.06); border-radius: 10px; padding: 14px 18px; line-height: 1.6; }
 .cost { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; text-align: right; font-size: 14px; color: var(--ink-3); }
-.cost b { font-size: 18px; font-weight: 700; color: var(--ink); letter-spacing: -0.01em; }
+.cost b { font-family: var(--display); font-size: 21px; font-weight: 680; color: var(--ink); letter-spacing: -0.015em; }
 .plain-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; }
 .plain-list li { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 15px 20px; font-size: 16px; color: var(--ink-2); line-height: 1.6; }
 .plain-list .who { font-size: 14.5px; font-weight: 650; color: var(--green-deep); margin-right: 10px; text-transform: capitalize; }
@@ -689,7 +713,8 @@ a.step-card:hover { text-decoration: none; box-shadow: var(--shadow-lg); }
 .pred-rationale { margin: 0 0 6px; font-size: 18px; letter-spacing: -0.01em; }
 .pred-evidence { margin: 0; font-size: 17px; color: var(--green-deep); font-weight: 600; }
 .comps { display: flex; flex-direction: column; gap: 10px; }
-.comp-row { display: grid; grid-template-columns: 64px 1fr 150px; gap: 18px; align-items: center; background: var(--band); border-radius: 14px; padding: 13px 18px; }
+.comp-row { display: grid; grid-template-columns: 64px 1fr 150px; gap: 18px; align-items: center; background: var(--band); border-radius: 14px; padding: 12px 18px; transition: background 0.15s ease; }
+.comp-row:hover { background: var(--line); }
 @media (max-width: 760px) { .comp-row { grid-template-columns: 52px 1fr; } .comp-sim { display: none; } }
 .comp-rating { font-size: 15.5px; font-weight: 700; text-align: center; padding: 5px 0; border-radius: 10px; color: #fff; background: var(--low); }
 .comp-rating.r-R, .comp-rating.r-NC-17 { background: var(--blocker); }
@@ -781,7 +806,9 @@ a.step-card:hover { text-decoration: none; box-shadow: var(--shadow-lg); }
 .drivers-head h3 { margin: 0; }
 .drivers-total { font-size: 26px; font-weight: 750; letter-spacing: -0.02em; }
 .drivers { display: flex; flex-direction: column; gap: 8px; }
-.driver { display: flex; align-items: center; gap: 14px; background: var(--band); border: 0; border-radius: 12px; padding: 12px 16px; font-family: inherit; font-size: 17px; cursor: pointer; text-align: left; }
+.driver { position: relative; display: flex; align-items: center; gap: 14px; background: var(--band); border: 0; border-radius: 12px; padding: 12px 16px; font-family: inherit; font-size: 16.5px; cursor: pointer; text-align: left; overflow: hidden; }
+.driver::before { content: ""; position: absolute; inset: 0 auto 0 0; width: var(--w, 0%); background: color-mix(in srgb, var(--green) 12%, transparent); pointer-events: none; }
+.driver > * { position: relative; }
 .driver:hover { background: var(--line); }
 .driver-rank { width: 26px; height: 26px; border-radius: 50%; background: var(--surface); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14.5px; flex: none; }
 .driver-name { flex: 1; text-transform: capitalize; font-weight: 550; }

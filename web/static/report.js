@@ -506,7 +506,23 @@ function flagRow(f, opts) {
     findingText = findingText.slice("[partially supported] ".length);
     top.appendChild(glossTip(el("span", "sev-chip chip-partial", "PARTIAL — verified with caveats"), "PARTIAL"));
   }
-  main.appendChild(el("p", "finding", findingText));
+  const findP = el("p", "finding clamped", findingText);
+  main.appendChild(findP);
+  // fold long findings to 3 lines — the text is the product, so it expands in
+  // place; nothing is truncated away
+  requestAnimationFrame(() => {
+    if (findP.scrollHeight > findP.clientHeight + 4) {
+      const more = el("button", "find-more", "Read more ▾");
+      more.type = "button";
+      more.addEventListener("click", () => {
+        const open = findP.classList.toggle("clamped");
+        more.textContent = open ? "Read more ▾" : "Show less ▴";
+      });
+      findP.after(more);
+    } else {
+      findP.classList.remove("clamped");
+    }
+  });
 
   const cites = f.citations || [];
   // Normalize the displayed host (strip www./m.) so distinct pages on one
@@ -1328,8 +1344,10 @@ function renderReport(record) {
         : "") +
       "Desk-estimated ranges summed as independent remedies — dependencies between remedies are not modeled; treat as order-of-magnitude."));
     const ul = el("div", "drivers");
+    const maxHigh = Math.max(...drivers.map((f) => f.remedy.est_cost_usd[1]));
     drivers.forEach((f, i) => {
       const row = el("button", "driver");
+      row.style.setProperty("--w", `${Math.round((100 * f.remedy.est_cost_usd[1]) / maxHigh)}%`);
       row.type = "button";
       row.addEventListener("click", () => focusFlag($("flag-" + f.flag_id)));
       row.appendChild(el("span", "driver-rank", String(i + 1)));
