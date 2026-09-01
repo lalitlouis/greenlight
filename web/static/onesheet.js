@@ -1,4 +1,4 @@
-/* The Greenlight One-Sheet: one page, the whole verdict. Deterministic render
+/* The ScriptRisk one-sheet: one page, the whole verdict. Deterministic render
    of a run record in the brand's dark "movie one-sheet" language — the artifact
    a producer pins to the wall or attaches to the E&O email. */
 
