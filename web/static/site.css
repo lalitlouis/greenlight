@@ -99,8 +99,10 @@ h3 { font-size: 21px; font-weight: 650; letter-spacing: -0.014em; }
 h4 { font-size: 17px; font-weight: 650; }
 p { margin: 0 0 16px; }
 
-.container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
-/* the report is a working document, not an article — let it use the screen */
+/* every page uses the screen (owner call, 2026-09-01) — 1080 left dead
+   margins on real displays. Grids and cards scale; long-form prose pages keep
+   readable measure via their own card widths. */
+.container { max-width: 1360px; margin: 0 auto; padding: 0 24px; }
 .container-wide { max-width: 1360px; }
 main { min-height: 60vh; padding: 56px 0 96px; }
 /* the run page is a working dashboard, not an article — give it more room */
