@@ -1452,6 +1452,16 @@ BACKGROUND_HOSTS = {
     # on a directions site and a blog as sole sources
     "mapquest.com",
     "blogspot.com",
+    # run-14: F1016 rendered ELEVEN citations — a social post and nightlife
+    # listicles piled beside the Clark County authority
+    "x.com",
+    "twitter.com",
+    "1800lasvegas.com",
+    "nocovernightclubs.com",
+    "thelifeofluxury.com",
+    "las-vegas-theater.com",
+    "seeing-stars.com",
+    "uniquevenues.com",
 }
 
 _SCENE_ANCHOR_CAP = 8  # a finding spanning more scenes than this says "the script"

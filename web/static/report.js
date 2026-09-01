@@ -1461,7 +1461,10 @@ function renderReport(record) {
   }
 
   if (window.FX?.on) {
-    FX.scoreRing(scoreBox, typeof score === "number" ? score : 0);
+    // A withheld score must never animate to 0 — the ring painted "0/100"
+    // (catastrophic script) over the honest em-dash on run 14's withheld
+    // report. No number, no ring; the static "—" stands.
+    if (typeof score === "number") FX.scoreRing(scoreBox, score);
     FX.growBars(root);
     FX.staggerIn(root.querySelectorAll(".flag"));
   }
