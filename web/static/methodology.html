@@ -41,9 +41,10 @@
       is the basis for the per-descriptor rating marginals a report cites and for the model below.
       We report a marginal only at <b>n&nbsp;&ge;&nbsp;20</b>; below that it is an anecdote, not a
       base rate, and the report falls back to the broader parent category.
-      (This is a distinct corpus from the <b>6,302 released films</b> whose content profiles power
-      the nearest-comparables search on the rating panel — rationales measure the decision
-      boundary, films locate your neighbourhood.) The model carries a
+      (The same official rationales, embedded, also power the nearest-comparables search on the
+      rating panel and the What-If simulator — one corpus measures the decision boundary and
+      locates your neighbourhood. A broader 6,302-film content-profile corpus remains behind
+      the first-look pitch comparables, where topical similarity is the right instrument.) The model carries a
       <span class="sec-hl">distribution-free coverage guarantee</span> (Mondrian split conformal):</p>
       <pre class="sec-evidence">held-out films: 937 (deterministic split, never trained on)
 conformal coverage: <span class="sec-ev-ok">92.2%</span> aggregate against a 90% target — guarantee per pooled group

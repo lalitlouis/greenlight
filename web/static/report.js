@@ -578,7 +578,7 @@ function renderPrediction(root, pred) {
   const sec = el("div", "section-head");
   sec.id = "sec-rating";
   sec.appendChild(el("h2", null, "Rating prediction"));
-  sec.appendChild(el("p", "lede", `Evidence, not opinion — your nearest comparables from ${corpusN()} released films (corpus updated Aug 2026).`));
+  sec.appendChild(el("p", "lede", `Evidence, not opinion — your nearest neighbours among ${rationaleN()} official CARA rating rationales.`));
   root.appendChild(sec);
 
   const card = el("div", "card pred-card");
@@ -637,7 +637,7 @@ function renderPrediction(root, pred) {
   meta.appendChild(el("p", "pred-evidence", line));
   const base = pred.corpus_base_rates || {};
   if (base[pred.predicted]) {
-    let baseLine = `Base rate: ${base[pred.predicted]}% of all ${corpusN()} corpus films are rated ${pred.predicted} — the neighbours ${same + (typeof stricter === "number" ? stricter : 0) > Math.round((base[pred.predicted] / 100) * comps.length) ? "add lift over" : "match"} that baseline.`;
+    let baseLine = `Base rate: ${base[pred.predicted]}% of the ${rationaleN()} rationale-corpus films are rated ${pred.predicted} — the neighbours ${same + (typeof stricter === "number" ? stricter : 0) > Math.round((base[pred.predicted] / 100) * comps.length) ? "add lift over" : "match"} that baseline.`;
     if (pred.distance_spread && pred.distance_spread < 0.05) {
       baseLine += ` Distances span only ${pred.distance_spread}, so weigh the base rate as much as the neighbour set.`;
     }

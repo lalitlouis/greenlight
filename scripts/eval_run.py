@@ -14,6 +14,7 @@ from __future__ import annotations
 import glob
 import json
 import os
+import re
 import sys
 
 
@@ -206,6 +207,24 @@ def main() -> int:  # noqa: PLR0915, PLR0912 - a linear checklist, deliberately 
         "rating prediction filed with comparables",
         bool(pred and len(pred.get("comparables", [])) >= 6),
         "query_precedent -> file_rating_prediction; needs the corpus loaded",
+    )
+    # Run 17: comparables come from cara_rationales — each row's excerpt is the
+    # film's OFFICIAL rationale and must carry that row's own rating token
+    # ("Rated R for ..." on an R row). A Wikipedia lead here means the corpus
+    # regressed to plot-space; a token mismatch means corpus rows are mixed up.
+    _comps = (pred or {}).get("comparables") or []
+    check(
+        "every comparable excerpt is its own official rationale",
+        bool(_comps)
+        and all(
+            re.match(
+                rf"^Rated\s+{re.escape(str(c.get('rating', '')))}\s+for\s+",
+                str(c.get("rationale", "")),
+                re.I,
+            )
+            for c in _comps
+        ),
+        "rationale-space comparables (docs/plans/run17-rationale-space.md)",
     )
     check(
         "cut list present when prediction exceeds target",

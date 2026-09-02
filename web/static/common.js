@@ -27,10 +27,15 @@ function deskShort(id) {
   return d ? d[3] : prettyCat(id);
 }
 
-const CORPUS_FILMS = 6302; // released-film comparables corpus — single source
+const CORPUS_FILMS = 6302; // harvested released-film corpus — single source
+const CORPUS_RATIONALES = 4733; // films with an OFFICIAL CARA rationale (run 17 comparables corpus)
 
 function corpusN() {
   return CORPUS_FILMS.toLocaleString("en-US");
+}
+
+function rationaleN() {
+  return CORPUS_RATIONALES.toLocaleString("en-US");
 }
 
 const $ = (id) => document.getElementById(id);

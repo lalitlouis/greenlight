@@ -2289,13 +2289,13 @@ _BASE_RATES_CACHE: dict[str, dict[str, float]] = {}
 
 
 def _corpus_base_rates() -> dict[str, float]:
-    """Rating distribution across the whole corpus — the denominator that tells
-    the reader whether the neighbours add lift over the base rate."""
+    """Rating distribution across the rationale corpus (the same table the
+    comparables come from — one denominator, run 17)."""
     if "rates" not in _BASE_RATES_CACHE:
         try:
             rows = (
                 _clickhouse_client()
-                .query("SELECT rating, count() FROM rating_rationales GROUP BY rating")
+                .query("SELECT rating, count() FROM cara_rationales GROUP BY rating")
                 .result_rows
             )
             total = sum(int(c) for _, c in rows) or 1
@@ -2306,30 +2306,28 @@ def _corpus_base_rates() -> dict[str, float]:
 
 
 async def query_precedent(text: str, k: int, tool_context: ToolContext) -> dict[str, Any]:
-    """Find the k nearest released films in a corpus of 6,302 rated releases.
+    """Find the k released films whose OFFICIAL CARA rating rationale is
+    nearest to this script's content profile — 4,733 films with their
+    filmratings.com rationale, embedded in rationale-space.
 
-    text: a capsule profile of THIS script, 2-3 sentences, in this order:
-      1. GENRE, REGISTER, AND SETTING FIRST — "a dialogue-driven biographical
-         drama about a corporate founding, told through legal depositions",
-         "a slow-burn rural ghost story", "an ensemble heist comedy". The
-         corpus is embedded from film descriptions, so genre and tone are what
-         place you in the right neighbourhood.
-      2. THEN the rating-relevant content elements with their framing —
-         "pervasive strong language; brief cocaine use at a party, not
-         endorsed; no violence; no nudity". Framing matters: depicted-vs-
-         endorsed and on-screen-vs-recounted change ratings.
-    A bare content list ("sex, drugs, language") lands you among shock
-    comedies regardless of genre — always lead with what kind of film this is.
+    text: the CARA-style rationale you would file for THIS script — the same
+    descriptor phrasing rating_boundary parses: intensity + category with
+    framing qualifiers, e.g. "for strong bloody violence, pervasive language,
+    and brief drug use". Derive intensities from the measured census, not
+    impression. Do NOT send genre, plot, or setting — the corpus is official
+    rationale strings, and only descriptor phrasing lands in the right
+    neighbourhood ("a heist comedy with..." matches nothing).
     k: how many comparables, typically 8.
 
-    Returns released films with their actual rating, a content-profile line
-    (drawn from the film's Wikipedia article lead — NOT the CARA rationale;
-    source_url attached), and distance (smaller = more similar). Cite it with
-    source_type "precedent" and via "clickhouse", quoting the profile line
-    verbatim as the excerpt and never presenting it as CARA's own wording —
-    the official rationales live in rating_boundary's marginals. If you get an
-    error field back, the corpus is unavailable: fall back to research() on
-    documented CARA standards instead.
+    Returns released films with their actual rating, the film's OFFICIAL CARA
+    rationale (this IS the board's own wording — quote it verbatim as the
+    excerpt, source_url attached), and distance (smaller = more similar; 0.0
+    means a film was rated with this exact phrase). Cite with source_type
+    "precedent" and via "clickhouse". Distance ~0 neighbours carrying a
+    different rating than the majority are signal, not noise — the same
+    profile drew different ratings (often era drift); say so rather than
+    hiding the split. If you get an error field back, the corpus is
+    unavailable: fall back to research() on documented CARA standards.
     """
     if _missing_env := [v for v in ("CLICKHOUSE_HOST", "CLICKHOUSE_PASSWORD") if not os.getenv(v)]:
         return {
@@ -2345,9 +2343,9 @@ async def query_precedent(text: str, k: int, tool_context: ToolContext) -> dict[
                     """
             SELECT title, year, rating, rationale, source_url,
                    cosineDistance(embedding, %(vec)s) AS distance
-            FROM rating_rationales
+            FROM cara_rationales
             WHERE lower(title) != lower(%(skip_title)s)
-            ORDER BY distance ASC
+            ORDER BY distance ASC, year DESC
             LIMIT %(k)s
             """,
                     parameters={

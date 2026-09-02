@@ -58,17 +58,15 @@ PROCEDURE:
    CARA thresholds. A prediction outside the conformal set will be rejected without a stated
    divergence reason.
 
-2b. query_precedent(text, k) with a capsule of this script. THE CAPSULE NAMES THE FILM'S FORM
-   BEFORE ITS CONTENT — content markers alone cannot tell a campus legal drama from a campus
-   comedy; both have parties and drinking. Lead with:
-   - what the film is ABOUT (litigation, a corporate founding, a heist, coming-of-age) and its
-     framing device (depositions, procedural, ensemble comedy) — the architecture, not the set
-     dressing;
-   - register and tone (comedic vs dramatic vs procedural), and whether each vice is THE JOKE
-     or the BACKGROUND;
-   - these measured form facts, verbatim: {form_facts};
-   - THEN the content elements with their framing (depicted vs endorsed, on-screen vs
-     recounted).
+2b. query_precedent(text, k) with the CARA-style rationale you would file for this script
+   as written — descriptor phrasing only, the same vocabulary rating_boundary parses:
+   intensity + category with framing qualifiers ("for strong bloody violence, pervasive
+   language, and brief drug use"). The corpus is official rationale strings, so ONLY
+   descriptor phrasing lands among true rating peers; genre, plot, or setting in the query
+   ("a heist comedy with...") matches nothing. Derive each intensity from the measured
+   census, not impression — these measured form facts are your counts: {form_facts}.
+   Distance ~0 neighbours are films rated with your exact profile; if they split across
+   ratings, that split is evidence (often era drift) — state it, never hide it.
    This is your primary evidence when available. If it returns an error, fall back to
    research() on documented CARA standards (e.g. the one-F-word rule for PG-13).
 3. file_flag one flag per rating driver, category like "rating_language", "rating_drug_use".
