@@ -19,8 +19,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from eval_invariants import shared_invariants
-from eval_run import flags_matching
-from eval_run import flags_about
+from eval_run import flags_about, flags_matching
 
 PASS, MISS = "\033[32mPASS\033[0m", "\033[31mMISS\033[0m"
 results: list[bool] = []
