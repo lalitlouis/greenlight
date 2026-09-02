@@ -100,6 +100,7 @@
       "additionalProperties": false,
       "properties": {
         "descriptors": {"type": "array", "items": {"type": "string"}, "description": "Canonical CARA-style descriptors (one per category) the conformal_set was computed from — persisted so the set is auditable and reproducible."},
+        "set_floor": {"type": "array", "items": {"type": "string"}, "description": "Descriptors whose own marginal puts >=90% of >=50 films at one rating; that rating is floored into the conformal set (the additive model cannot exclude a rating a single descriptor carries at that rate)."},
         "predicted": {
           "type": "string",
           "enum": [

@@ -238,7 +238,18 @@ def test_b10_spread_caution_only_when_the_neighbours_split(monkeypatch):
     assert "caution" not in out  # unanimous R at spread 0.007: the norm, not a warning
     rows_holder["rows"][0] = ("B", 2001, "PG-13", "Rated PG-13 for language.", None, 0.05)
     out = asyncio.run(toolbelt.query_precedent("for language", 8, make_ctx("ratings_board")))
-    assert "split" in out["caution"] and "base rate" in out["caution"]
+    assert "caution" not in out  # 7 of 8 R is a clear plurality, not a split (batch 4)
+    for k in range(4):
+        rows_holder["rows"][k] = (
+            "B",
+            2001,
+            "PG-13",
+            "Rated PG-13 for language.",
+            None,
+            0.05 + k / 1000,
+        )
+    out = asyncio.run(toolbelt.query_precedent("for language", 8, make_ctx("ratings_board")))
+    assert "plurality" in out["caution"] and "base rate" in out["caution"]
 
 
 # --- B11: the normative-rule regex ----------------------------------------------
@@ -481,3 +492,48 @@ def test_b16_bare_string_queries_reach_the_live_search_as_a_list(monkeypatch):
     monkeypatch.setattr(toolbelt, "_live_search", fake_search)
     asyncio.run(toolbelt.research("q", "coors light disparagement", "E001", make_ctx()))
     assert seen["queries"] == ["coors light disparagement"]
+
+
+def test_dominant_descriptor_floor_keeps_r_in_the_set():
+    """Live Hangover report: 'pervasive language' (R in ~99% of 187 rationales)
+    with two PG-13-shaped descriptors narrowed the set to {PG-13}. A rating one
+    descriptor carries at >= 90% of >= 50 films cannot leave the set."""
+    from greenlight.tools.toolbelt import boundary_eval
+
+    ev = boundary_eval(
+        ["pervasive language", "crude sexual content", "some violence", "thematic elements"]
+    )
+    assert "R" in ev["prediction_set"]
+    assert any(f.startswith("pervasive language") for f in ev["set_floor"])
+    soft = boundary_eval(["language", "brief drugs"])
+    assert soft["set_floor"] == []  # 'language' alone is ~80% R — no floor
+
+
+def test_recompute_boundary_after_rating_rejection():
+    from greenlight.agents.verification import _recompute_boundary_after_drop
+
+    pred = {
+        "predicted": "R",
+        "descriptors": ["pervasive language", "unmodified drugs"],
+        "conformal_set": ["PG-13"],
+    }
+    dropped = [{"flag_id": "F2005", "category": "rating_drug_use"}]
+    kept_no_drugs = [{"flag_id": "F2001", "category": "rating_language"}]
+    new, note = _recompute_boundary_after_drop(pred, dropped, kept_no_drugs)
+    assert note and note["dropped_descriptors"] == ["unmodified drugs"]
+    assert new["descriptors"] == ["pervasive language"] and "R" in new["conformal_set"]
+    assert new["reconciled_after_verification"] is True
+    # a family another SURVIVING rating finding still carries stays
+    kept_with_drugs = [*kept_no_drugs, {"flag_id": "F2009", "category": "rating_drug_use"}]
+    same, none = _recompute_boundary_after_drop(pred, dropped, kept_with_drugs)
+    assert none is None and same is pred
+
+
+def test_scene_count_claim_must_match_coordinates():
+    from greenlight.tools.toolbelt import _scene_count_problem
+
+    ids = ["S007", "S008", "S012"]
+    problem = _scene_count_problem("Mandalay Bay is the setting across 15 scenes.", "", ids)
+    assert problem and "15 scenes" in problem and "3 scene id" in problem
+    assert _scene_count_problem("Appears in 3 scenes (S007, S008, S012).", "", ids) is None
+    assert _scene_count_problem("A recurring location across the script.", "", ids) is None

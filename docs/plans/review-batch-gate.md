@@ -174,3 +174,37 @@ contains R; the desk left "thematic" out; 8/8 comparables R; no divergence neede
 Q6 ✓ (no `contract_after_gates`, no refused attach). Rejections: animal_safety (verifier
 judged the bulletin excerpts too generic — substance is its call, the number gate only proves
 the number) and CN drug use (variance); re-source 0/2. Deploy follows.
+
+## Batch 4 (from the live Hangover read-off, 2026-09-01 late) — before roll 5
+
+Owner reviewed the live Hangover report on 00212. Fixed at class:
+- Coverage set contradicted the desk, the comparables and the corpus ({PG-13} over a profile
+  carrying 'pervasive language', R 99%): dominant-descriptor FLOOR — a rating one descriptor
+  carries at >=90% of >=50 films stays in the set (`set_floor` persisted, schema additive);
+  the set is RECOMPUTED deterministically when a rating finding is rejected or demoted, dropping
+  the descriptor only that finding supplied (`conformal_set_recomputed` in the manifest);
+  the divergence line renders when the desk's call sits outside the SET, not only when it
+  differs from the neighbour majority; an empty reason renders as an honest sentence.
+- "Descriptors evaluated" leaked `sexual_content` / `unmodified` — humanised.
+- Withdrawn-finding notices split from Open questions on web, binder, PDF (own count; no
+  nested "(later rejected…)" annotation inside the template).
+- Header: "67 entities researched: 14 carry findings, 53 cleared" beside the 53 + 14 items line.
+- Prose scene counts must not exceed the coordinates (filing gate + eval).
+- Spread caution only when no rating holds a clear plurality (<5 of 8), tool + renderer.
+- Bulletin numbers verify only from csatf.org or the local index, not third-party mentions.
+- Ratings prompt: 'thematic elements' is CARA's mature-subject PG/PG-13 wording, never adult
+  venues; alcohol is its own family, never 'drugs'.
+- Eval: three new invariants (floor honoured; no descriptor from a rejected-only family;
+  prose scene count <= coordinates) → 50 checks. Old records: roll 4 and roll 2 re-graded below.
+
+## Roll 5 predictions
+
+- S1 exit 0; 50/50.
+- S2 The fixture profile (language / drugs / violence) has no >=90% descriptor unless the desk
+  writes "pervasive language" — `set_floor` empty or names exactly that; set {R} or {PG-13, R}.
+- S3 If any rating finding is rejected, `conformal_set_recomputed` appears and `descriptors`
+  no longer carries its family; divergence line present whenever predicted ∉ set.
+- S4 No "N scenes" claim above the chips; no third-party bulletin verification; withdrawn
+  notices (if any) render apart from open questions.
+- S5 Everything roll 4 held (scene structure, tattoo/Nighthawks separate, pyro BLOCKER with
+  csatf excerpts, licensor traceability) holds again.

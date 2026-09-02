@@ -2433,13 +2433,19 @@ def _bulletin_numbers(text: str) -> set[str]:
 
 
 def _bulletin_in_citation(n: str, c: dict[str, Any]) -> bool:
-    """A citation carries bulletin n when its csatf.org URL names the number
-    ('/16PYROTECHNIC.pdf', '/04_safety_bltn_stunts/'), its excerpt says
-    'Bulletin #n', or its excerpt is the bulletin's official title line."""
+    """A citation carries bulletin n only from an OFFICIAL source: a csatf.org URL
+    naming the number ('/16PYROTECHNIC.pdf', '/04_safety_bltn_stunts/'), or the
+    local index line (`via: local`) whose excerpt is the bulletin's title or says
+    'Bulletin #n'. A third-party page that merely mentions the number does not
+    verify it (a studio-teacher site's mirror carried Bulletin #6 on a live
+    report, 2026-09-01)."""
     url = str(c.get("url") or "")
     excerpt = str(c.get("excerpt") or "")
-    if "csatf" in url.lower() and re.search(rf"/0?{n}(?=[_A-Za-z.])", url):
+    official = "csatf" in _host_of(url) if url else False
+    if official and re.search(rf"/0?{n}(?=[_A-Za-z.])", url):
         return True
+    if not (official or c.get("via") == "local"):
+        return False
     if re.search(rf"\bBulletin\s*#?\s*0?{n}\b", excerpt, re.IGNORECASE):
         return True
     title = _csatf_index().get(n, "")
@@ -2536,6 +2542,25 @@ def _provision_span(n: str, prov_pairs: list[tuple[str, str]]) -> str | None:
                 continue
             return span
     return None
+
+
+_SCENE_COUNT_RE = re.compile(r"\b(\d{1,3})\s+scenes\b", re.IGNORECASE)
+
+
+def _scene_count_problem(finding: str, remedy_detail: str, scene_ids: list[str]) -> str | None:
+    """Prose that counts more scenes than the finding's coordinates show — a live
+    report said 'across 15 scenes' above ten scene chips (2026-09-01). The chips
+    are the coordinates; a number they do not show reads as a data bug."""
+    claimed = [int(n) for n in _SCENE_COUNT_RE.findall(f"{finding} {remedy_detail}")]
+    if not claimed or max(claimed) <= len(scene_ids):
+        return None
+    return (
+        f"REJECTED, not filed: the text claims {max(claimed)} scenes but the finding lists "
+        f"{len(scene_ids)} scene id(s). The coordinates ARE the count the reader sees: list "
+        f"every scene you mean (the anchor cap is {_SCENE_ANCHOR_CAP}; anchor to the strongest) "
+        "or describe the element as recurring across the script — never a number the "
+        "coordinates do not show."
+    )
 
 
 def _clip_words(text: str, limit: int) -> str:
@@ -2846,6 +2871,9 @@ def file_flag(  # noqa: PLR0912, PLR0915 - a deliberate sequence of filing gates
             "correct id.",
         )
 
+    if count_problem := _scene_count_problem(finding, remedy_detail, scene_ids):
+        return _reject_or_stop(tool_context, entity_id, category, count_problem)
+
     # the gates above may have repaired or attached citations AFTER the flag's own
     # validation passed — re-check the assembled flag so a deterministic-layer
     # slip surfaces as a refile at filing, never as a crash at build_report
@@ -3017,11 +3045,17 @@ async def query_precedent(text: str, k: int, tool_context: ToolContext) -> dict[
     # In rationale-space every neighbour sits within a few hundredths; a tight
     # spread is the norm, not a warning. The caution is for the case where the
     # equally-close neighbours DISAGREE — then the base rate must weigh in.
-    ratings = {c.get("rating") for c in comparables if c.get("rating")}
-    if spread is not None and spread < 0.05 and len(ratings) > 1:  # noqa: PLR2004
+    tally: dict[str, int] = {}
+    for c in comparables:
+        if c.get("rating"):
+            tally[c["rating"]] = tally.get(c["rating"], 0) + 1
+    top_share = (max(tally.values()) / len(comparables)) if tally and comparables else 1.0
+    # "split" means no clear plurality (under 5 of 8) — 6 of 8 R is a majority,
+    # and the caution once fired on exactly that (live Hangover report, 2026-09-01)
+    if spread is not None and spread < 0.05 and top_share < 0.625:  # noqa: PLR2004
         out["caution"] = (
-            f"the neighbours are equally close (distances span only {spread}) and split "
-            f"across {sorted(ratings)} — weigh the corpus base rate"
+            f"the neighbours are equally close (distances span only {spread}) and no rating "
+            f"holds a clear plurality ({tally}) — weigh the corpus base rate"
         )
     return out
 
@@ -3227,6 +3261,7 @@ def file_rating_prediction(
         "distance_spread": meta.get("spread"),
         "comps_majority": majority,
         "conformal_set": list(boundary_set),
+        "set_floor": list(_own_or_family(tool_context, "boundary_floor") or []),
         "divergence_reason": divergence_reason.strip(),
         "nearest_conflict": (
             {
@@ -3434,6 +3469,38 @@ def _predict_set(d: dict[str, Any], x: list[float]) -> tuple[dict[str, float], l
     return probs, pred_set
 
 
+_FLOOR_SHARE = 0.90
+_FLOOR_MIN_N = 50
+_RATING_ORDER_LIST = ["G", "PG", "PG-13", "R", "NC-17"]
+
+
+def _dominant_floor(
+    d: dict[str, Any], canonical: dict[str, str], pred_set: list[str]
+) -> tuple[list[str], list[str]]:
+    """A single descriptor whose OWN marginal puts >= 90% of >= 50 films at one
+    rating is the measured boundary for that descriptor — the additive logistic
+    model may not exclude that rating from the set. A live Hangover report showed
+    the set narrowing to {PG-13} over a profile carrying 'pervasive language'
+    (R in 99% of 187 rationales) because two PG-13-shaped descriptors outvoted
+    it (2026-09-01). Returns (set, floor notes)."""
+    out = list(pred_set)
+    floors: list[str] = []
+    for key in canonical.values():
+        m = d["marginals"].get(key)
+        if not m:
+            continue
+        n = sum(m.values())
+        if n < _FLOOR_MIN_N:
+            continue
+        rating, count = max(m.items(), key=lambda kv: kv[1])
+        if count / n >= _FLOOR_SHARE:
+            if rating not in out:
+                out.append(rating)
+            floors.append(f"{key} → {rating} in {_pct(count, n)} of {n} official rationales")
+    out.sort(key=lambda r: _RATING_ORDER_LIST.index(r) if r in _RATING_ORDER_LIST else 99)
+    return out, floors
+
+
 def boundary_eval(descriptors: list[str]) -> dict[str, Any]:
     """Pure boundary evaluation for a set of CARA-style descriptor phrases —
     the same marginals + conformal math as rating_boundary, with no session
@@ -3471,6 +3538,7 @@ def boundary_eval(descriptors: list[str]) -> dict[str, Any]:
                 }
     canonical = _canonical_descriptors(parsed)
     probs, pred_set = _predict_set(d, _featurize(canonical, idx, len(feats)))
+    pred_set, floors = _dominant_floor(d, canonical, pred_set)
     return {
         "matched": matched,
         "unmatched": unmatched,
@@ -3478,6 +3546,7 @@ def boundary_eval(descriptors: list[str]) -> dict[str, Any]:
         "marginals": marginals,
         "probabilities": {c: round(v, 3) for c, v in sorted(probs.items(), key=lambda kv: -kv[1])},
         "prediction_set": pred_set,
+        "set_floor": floors,
     }
 
 
@@ -3560,6 +3629,7 @@ def rating_boundary(descriptors: list[str], tool_context: ToolContext) -> dict[s
     )
     tool_context.state[mkey] = merged
     probs, pred_set = _predict_set(d, _featurize(canonical, idx, len(feats)))
+    pred_set, floors = _dominant_floor(d, canonical, pred_set)
     # The set hard-gates file_rating_prediction ONLY when every descriptor
     # matched: a set built from silently-dropped inputs once rejected a desk's
     # correct R prediction as "outside the evidence". Partial input = advisory.
@@ -3570,6 +3640,7 @@ def rating_boundary(descriptors: list[str], tool_context: ToolContext) -> dict[s
     tool_context.state[f"boundary_descriptors:{_agent_key(tool_context)}"] = list(
         canonical.values()
     )
+    tool_context.state[f"boundary_floor:{_agent_key(tool_context)}"] = floors
     out: dict[str, Any] = {
         "matched_descriptors": matched,
         "unmatched_descriptors": unmatched,

@@ -1253,6 +1253,48 @@ def _refile_gate_problem(flag: dict[str, Any], *, check_authority: bool) -> str 
 _RATING_RANK = {"G": 0, "PG": 1, "PG-13": 2, "R": 3, "NC-17": 4}
 
 
+def _recompute_boundary_after_drop(
+    pred: dict[str, Any], dropped: list[dict[str, Any]], kept: list[dict[str, Any]]
+) -> tuple[dict[str, Any], dict[str, Any] | None]:
+    """A rejected rating finding takes its DESCRIPTOR out of the coverage set's
+    inputs — a live report's set still rested on 'drugs' after the finding that
+    supplied it was rejected (2026-09-01). Pure: boundary_eval on the surviving
+    descriptors. A family another SURVIVING rating finding still carries stays.
+    Returns (new prediction, manifest note) or (pred, None) when nothing changes."""
+    from greenlight.tools.toolbelt import _marginal_families, boundary_eval
+
+    descs = list(pred.get("descriptors") or [])
+    if not descs:
+        return pred, None
+    surviving_fams: set[str] = set()
+    for f in kept:
+        cat = str(f.get("category") or "")
+        if cat.startswith("rating_"):
+            surviving_fams.update(_marginal_families(cat))
+    gone: set[str] = set()
+    for r in dropped:
+        cat = str(r.get("category") or "")
+        if cat.startswith("rating_"):
+            gone.update(fam for fam in _marginal_families(cat) if fam not in surviving_fams)
+    keep = [d for d in descs if not any(d == fam or d.endswith(" " + fam) for fam in gone)]
+    if keep == descs:
+        return pred, None
+    ev = boundary_eval(keep) if keep else {}
+    new = {
+        **pred,
+        "descriptors": keep,
+        "conformal_set": list(ev.get("prediction_set") or []),
+        "set_floor": list(ev.get("set_floor") or []),
+        "reconciled_after_verification": True,
+    }
+    note = {
+        "dropped_descriptors": [d for d in descs if d not in keep],
+        "set_before": list(pred.get("conformal_set") or []),
+        "set_after": new["conformal_set"],
+    }
+    return new, note
+
+
 def _cut_list_at_target(pred: dict[str, Any]) -> bool:
     """A cut list is a lever TOWARD a target; when the prediction already sits
     at or below the target there is nothing to cut toward, and rendering "the
@@ -1882,6 +1924,32 @@ class VerificationPanel(BaseAgent):
         # self-contradiction (four live case pages: predicted R == target R with
         # "the cut list toward R"). Drop it here whatever the desk or the
         # reconcile produced; the original stays on pre_verification.
+        # The coverage set's INPUTS must describe the post-verification finding
+        # set too: a rejected rating finding takes its descriptor with it and the
+        # set is recomputed deterministically (boundary_eval is pure).
+        cur = rating_delta.get("rating_prediction") or pred
+        if cur and dropped:
+            recomputed, set_note = _recompute_boundary_after_drop(cur, dropped, kept)
+            if set_note:
+                rating_delta["rating_prediction"] = recomputed
+                manifest.append(
+                    {"guard": "conformal_set_recomputed", "stage": "post_verification", **set_note}
+                )
+                yield Event(
+                    invocation_id=ctx.invocation_id,
+                    author=self.name,
+                    content=types.Content(
+                        role="model",
+                        parts=[
+                            types.Part(
+                                text="⚖ coverage set recomputed without "
+                                f"{set_note['dropped_descriptors']}: "
+                                f"{set_note['set_before']} → {set_note['set_after']}"
+                            )
+                        ],
+                    ),
+                )
+
         cur = rating_delta.get("rating_prediction") or pred
         if cur and _cut_list_at_target(cur) and (cur.get("beats_to_cut") or []):
             rating_delta["rating_prediction"] = {

@@ -55,9 +55,12 @@ def test_csatf_url_or_excerpt_carries_the_number():
     assert _uncited_bulletin_problem(ctx, "Bulletin #16 applies.", "", by_url) is None
     by_slug = [{"url": "https://www.csatf.org/04_safety_bltn_stunts/", "excerpt": "x"}]
     assert _uncited_bulletin_problem(ctx, "Bulletins #4 and #17", "", by_slug) is not None
+    # a third-party page that merely MENTIONS the number does not verify it
     by_slug.append(
         {"url": "https://example.org/x", "excerpt": "See Safety Bulletin #17, Water Hazards."}
     )
+    assert _uncited_bulletin_problem(ctx, "Bulletins #4 and #17", "", by_slug) is not None
+    by_slug.append({"url": "https://www.csatf.org/17_safety_bltn_water_hazards/", "excerpt": "x"})
     assert _uncited_bulletin_problem(ctx, "Bulletins #4 and #17", "", by_slug) is None
 
 

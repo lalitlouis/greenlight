@@ -480,6 +480,11 @@ def finalize_record_after_verification(record: dict[str, Any]) -> list[dict[str,
         return re.sub(r"\b(F\d{3,4})\b(\s*(?:,|and|&|/)\s*)\1\b", r"\1", out)
 
     def _annotate(text: str) -> str:
+        # the withdrawn-notice template already states the rejection; annotating
+        # its id produced "(F1018 (later rejected …), S030…)" on a live report
+        if text.startswith(_UNRESOLVED_TEMPLATE):
+            return text
+
         def sub(m: re.Match[str]) -> str:
             fid = m.group(1)
             if fid in kept_ids:
@@ -771,6 +776,18 @@ async def run(  # noqa: PLR0912, PLR0915 - one linear run sequence, deliberately
                     "flag_ids": [f["flag_id"] for f in _no_marginal],
                 }
             )
+            # the coverage set's inputs, however, recompute deterministically —
+            # boundary_eval is pure and needs no client
+            from greenlight.agents.verification import _recompute_boundary_after_drop
+
+            _new_pred, _set_note = _recompute_boundary_after_drop(
+                state["rating_prediction"], _no_marginal, kept
+            )
+            if _set_note:
+                state["rating_prediction"] = _new_pred
+                _assembly_manifest.append(
+                    {"guard": "conformal_set_recomputed", "stage": "assembly", **_set_note}
+                )
         # gate #15: the dangling-note filter ran BEFORE this gate existed in the
         # sequence — a demoted finding's adjudication note survived it. Re-filter
         # against what actually renders now.

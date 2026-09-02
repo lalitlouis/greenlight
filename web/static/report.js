@@ -671,16 +671,31 @@ function renderPrediction(root, pred) {
     // In rationale-space every neighbour sits within a few hundredths; a tight
     // spread only matters when the neighbours DISAGREE (equally close, split
     // vote). Unanimous neighbours at spread 0.02 are the corpus agreeing.
-    const unanimous = Object.keys(tallies).length <= 1;
-    if (pred.distance_spread && pred.distance_spread < 0.05 && !unanimous) {
-      baseLine += ` The neighbours are equally close (distances span only ${pred.distance_spread}) and split, so weigh the base rate as much as the neighbour set.`;
+    // "split" means no clear plurality (under 5 of 8), not merely non-unanimous —
+    // 6 of 8 R is a majority, and the caution once fired on exactly that
+    const topShare = comps.length ? Math.max(...Object.values(tallies)) / comps.length : 1;
+    if (pred.distance_spread && pred.distance_spread < 0.05 && topShare < 0.625) {
+      baseLine += ` The neighbours are equally close (distances span only ${pred.distance_spread}) and no rating holds a clear plurality, so weigh the base rate as much as the neighbour set.`;
     }
     meta.appendChild(el("p", "pred-evidence pred-base", baseLine));
   }
-  const divergeShown = pred.comps_majority && pred.comps_majority !== pred.predicted && pred.divergence_reason;
+  // The desk can diverge from TWO instruments: the neighbour majority and the
+  // coverage set. A live report showed R against a {PG-13} set with the reason
+  // hidden because only the majority was checked (2026-09-01).
+  const setArr = Array.isArray(pred.conformal_set) ? pred.conformal_set : [];
+  const outsideSet = setArr.length > 0 && !setArr.includes(pred.predicted);
+  const majorityDiffers = pred.comps_majority && pred.comps_majority !== pred.predicted;
+  const divergeShown = (majorityDiffers || outsideSet) && pred.divergence_reason;
   if (divergeShown) {
+    const against = [
+      majorityDiffers ? `its ${pred.comps_majority} neighbours` : null,
+      outsideSet ? `the ${setArr.join("/")} coverage set` : null,
+    ].filter(Boolean).join(" and ");
     meta.appendChild(el("p", "pred-evidence pred-diverge",
-      `Why the desk diverges from its ${pred.comps_majority} neighbours: ${pred.divergence_reason}`));
+      `Why the desk diverges from ${against}: ${pred.divergence_reason}`));
+  } else if (outsideSet) {
+    meta.appendChild(el("p", "pred-evidence pred-diverge",
+      `The desk's ${pred.predicted} call sits outside the ${setArr.join("/")} coverage set and recorded no reason — weigh the measured set as the evidence.`));
   }
   const nc = pred.nearest_conflict;
   if (nc && nc.title) {
@@ -691,9 +706,18 @@ function renderPrediction(root, pred) {
       // the desk's reasoning renders once, in the divergence line above
       (divergeShown || !pred.divergence_reason ? "" : ` The desk's reasoning: ${pred.divergence_reason}`)));
   }
+  const humanDescriptor = (d) => {
+    const t = String(d).replace(/_/g, " ");
+    const m = t.match(/^unmodified (.+)$/);
+    return m ? `${m[1]} (no modifier)` : t;
+  };
   if ((pred.descriptors || []).length) {
     meta.appendChild(el("p", "pred-evidence pred-descriptors",
-      `Descriptors evaluated for the coverage set: ${pred.descriptors.join(" · ")}.`));
+      `Descriptors evaluated for the coverage set: ${pred.descriptors.map(humanDescriptor).join(" · ")}.`));
+  }
+  if ((pred.set_floor || []).length) {
+    meta.appendChild(el("p", "pred-evidence pred-descriptors",
+      `Floor: ${pred.set_floor.map((x) => String(x).replace(/_/g, " ")).join("; ")} — a rating one descriptor carries at that rate stays in the set.`));
   }
   head.appendChild(meta);
   card.appendChild(head);
@@ -1000,6 +1024,12 @@ function renderWhatIf(out, d, pred, baseTarget, total, nCuts) {
 // required") through note_open_question. Those are findings of safety, not
 // unknowns — render them in their own section so "Open questions" means
 // exactly what it says.
+// The demotion template a rejected finding leaves behind ("Unresolved — the X
+// finding (F123, S004) was filed but its citation support did not hold").
+function isWithdrawnNotice(q) {
+  return /^Unresolved —/.test(String(q));
+}
+
 function isDetermination(q) {
   const t = String(q);
   if (/\?\s*$/.test(t)) return false;
@@ -1017,6 +1047,13 @@ function entityHeadline(record) {
   const acct = record.entity_accounting;
   if (acct && acct.distinct != null) {
     const frag = acct.fragments ? ` (${acct.fragments} name fragment${acct.fragments === 1 ? "" : "s"} folded)` : "";
+    // "67 entities researched" beside "67 items examined" read as one number
+    // twice; show how the entities divide so the two headers reconcile
+    const ex = acct.items_examined;
+    if (ex && ex.entity_rows != null && acct.distinct >= ex.entity_rows) {
+      const carry = acct.distinct - ex.entity_rows;
+      return `${acct.distinct} entities researched: ${carry} carry findings, ${ex.entity_rows} cleared${frag}`;
+    }
     return `${acct.distinct} entities researched${frag}`;
   }
   return `${(record.entities || []).length} entities researched`;
@@ -1099,7 +1136,7 @@ function buildReportNav(record, rep) {
   const cited = (record.flags || []).filter((f) => (f.citations || []).length > 0);
   const routed = new Set(Object.values(record.oq_followups || {}).flat());
   const oqRaw = Object.values(record.open_questions || {}).flat();
-  const oqCount = oqRaw.filter((q) => !isDetermination(q) && !routed.has(q)).length;
+  const oqCount = oqRaw.filter((q) => !isDetermination(q) && !routed.has(q) && !isWithdrawnNotice(q)).length;
   const clearedCount = clearedRows(record).rowCount;
   // sec-cost only renders when at least one flag carries a cost — the chip
   // must not link to a section that doesn't exist
@@ -1607,21 +1644,41 @@ function renderReport(record) {
   const oq = record.open_questions || {};
   const routedFollowups = new Set(Object.values(record.oq_followups || {}).flat());
   const oqAll = Object.entries(oq).flatMap(([desk, qs]) => qs.map((q) => [desk, q]));
-  const oqItems = oqAll.filter(([, q]) => !isDetermination(q) && !routedFollowups.has(q));
+  const oqLive = oqAll.filter(([, q]) => !isDetermination(q) && !routedFollowups.has(q));
+  // a withdrawn finding's notice is not an unknown the desk raised — it is a
+  // sourcing failure already listed under Rejected; keep the two counts apart
+  const oqItems = oqLive.filter(([, q]) => !isWithdrawnNotice(q));
+  const withdrawn = oqLive.filter(([, q]) => isWithdrawnNotice(q));
   const cleared = clearedRows(record);
-  if (oqItems.length) {
+  if (oqItems.length || withdrawn.length) {
     const sec = el("div", "section-head");
     sec.id = "sec-questions";
-    sec.appendChild(el("h2", null, `Open questions — ${oqItems.length} honest unknowns`));
+    sec.appendChild(el("h2", null, oqItems.length
+      ? `Open questions — ${oqItems.length} honest unknown${oqItems.length === 1 ? "" : "s"}`
+      : "Open questions"));
     root.appendChild(sec);
-    const ul = el("ul", "plain-list");
-    for (const [desk, q] of oqItems) {
-      const li = el("li", "note-" + desk);
-      li.appendChild(el("span", "who", prettyCat(desk)));
-      li.appendChild(document.createTextNode(q));
-      ul.appendChild(li);
+    if (oqItems.length) {
+      const ul = el("ul", "plain-list");
+      for (const [desk, q] of oqItems) {
+        const li = el("li", "note-" + desk);
+        li.appendChild(el("span", "who", prettyCat(desk)));
+        li.appendChild(document.createTextNode(q));
+        ul.appendChild(li);
+      }
+      root.appendChild(ul);
     }
-    root.appendChild(ul);
+    if (withdrawn.length) {
+      root.appendChild(el("h3", "sub-head", `Withdrawn for sourcing — ${withdrawn.length}`));
+      root.appendChild(el("p", "muted", "Filed, then rejected because the citations did not hold. The claims were not disproven; each is listed under Rejected with the verifier's reason."));
+      const ul = el("ul", "plain-list");
+      for (const [desk, q] of withdrawn) {
+        const li = el("li", "note-" + desk);
+        li.appendChild(el("span", "who", prettyCat(desk)));
+        li.appendChild(document.createTextNode(q));
+        ul.appendChild(li);
+      }
+      root.appendChild(ul);
+    }
   }
 
   if (cleared.rowCount) {

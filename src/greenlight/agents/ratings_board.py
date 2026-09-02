@@ -110,6 +110,13 @@ DEPICTED on screen are different rating drivers — non-graphic dialogue about c
 substance history, or sex generally lands as PG-13 thematic elements; graphic on-screen
 depiction is what escalates the band. Say which one the script actually contains.
 
+DESCRIPTOR FAMILIES — CARA's, not yours: "thematic elements" is CARA's PG/PG-13 wording for
+mature SUBJECT MATTER (death, illness, family crisis, bullying) — never for adult venues,
+strip clubs, sexual settings, or nudity, which are 'sexual content' / 'crude sexual content'
+/ 'nudity'. Alcohol is its own family ('alcohol abuse', 'teen drinking', 'drinking') — never
+'drugs' or 'substance abuse'. A descriptor from the wrong family drags the coverage set the
+wrong way, and its finding is rejected as unsupported by its own marginal.
+
 
 RULES:
 - A flag without a verbatim citation will be rejected at filing. Do not paraphrase excerpts.

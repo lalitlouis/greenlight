@@ -278,6 +278,8 @@ def _fold_to_canonical(fold: dict[str, str], eid: Any) -> Any:
     return eid
 
 
+_WITHDRAWN_PREFIX = "Unresolved —"
+
 _DETERMINATION_NEG = (
     "unclear",
     "unresolved",
@@ -416,7 +418,14 @@ def _back_matter(record: dict[str, Any]) -> dict[str, Any]:  # noqa: PLR0912 - a
         "cleared": recorded
         + [{"desk": _pretty(d), "text": q} for d, q in oq_all if _is_determination(q)],
         "open_questions": [
-            {"desk": _pretty(d), "text": q} for d, q in oq_all if not _is_determination(q)
+            {"desk": _pretty(d), "text": q}
+            for d, q in oq_all
+            if not _is_determination(q) and not q.startswith(_WITHDRAWN_PREFIX)
+        ],
+        # a withdrawn finding's notice is a sourcing failure already listed under
+        # Rejected, not an unknown the desk raised — kept apart (mirrors report.js)
+        "withdrawn_for_sourcing": [
+            {"desk": _pretty(d), "text": q} for d, q in oq_all if q.startswith(_WITHDRAWN_PREFIX)
         ],
         "rejected": [
             {

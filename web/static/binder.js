@@ -171,6 +171,14 @@ function bdRender(data) {
       return li;
     }));
   }
+  if ((bm.withdrawn_for_sourcing || []).length) {
+    section(`Withdrawn for sourcing (${bm.withdrawn_for_sourcing.length}) — filed, then rejected on citations; listed under Rejected with the verifier's reason`, plainList(bm.withdrawn_for_sourcing, (it) => {
+      const li = el("li");
+      li.appendChild(el("span", "who", it.desk));
+      li.appendChild(document.createTextNode(it.text));
+      return li;
+    }));
+  }
   if ((bm.rejected || []).length) {
     section(`Rejected in verification (${bm.rejected.length}) — the cross-examination working`, plainList(bm.rejected, (it) => {
       const li = el("li");

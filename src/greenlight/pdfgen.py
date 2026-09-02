@@ -196,6 +196,10 @@ def binder_pdf(data: dict[str, Any]) -> bytes:
         [f"[{q['desk']}] {q['text']}" for q in bm.get("open_questions") or []],
     )
     _sec(
+        f"Withdrawn for sourcing ({len(bm.get('withdrawn_for_sourcing') or [])})",
+        [f"[{q['desk']}] {q['text']}" for q in bm.get("withdrawn_for_sourcing") or []],
+    )
+    _sec(
         f"Rejected in verification ({len(bm.get('rejected') or [])})",
         [f"{r['finding']} ({r['category']}): {r['reason']}" for r in bm.get("rejected") or []],
     )

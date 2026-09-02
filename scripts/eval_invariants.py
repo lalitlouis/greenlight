@@ -304,6 +304,64 @@ def shared_invariants(  # noqa: PLR0912, PLR0915 - a flat checklist, deliberatel
             "no target on record — nothing to compare",
         )
     conf_set = pred.get("conformal_set") or []
+    # batch 4: the set's inputs and the set itself must be coherent with the record
+    from greenlight.tools.toolbelt import _boundary_data, _marginal_families
+
+    _bd = _boundary_data()
+    floor_missing = []
+    for dsc in pred.get("descriptors") or []:
+        m = _bd["marginals"].get(dsc)
+        if not m:
+            continue
+        n = sum(m.values())
+        rating, count = max(m.items(), key=lambda kv: kv[1])
+        if n >= 50 and count / n >= 0.90 and conf_set and rating not in conf_set:
+            floor_missing.append((dsc, rating))
+    check(
+        "invariant: a rating one descriptor carries at >=90% stays in the coverage set",
+        not floor_missing,
+        f"dominant descriptors excluded from the set: {floor_missing[:3]}",
+    )
+    _rej_rating = [
+        f
+        for f in (r.get("rejected_flags") or [])
+        if str(f.get("category") or "").startswith("rating_")
+    ]
+    _kept_fams: set[str] = set()
+    for f in flags:
+        if str(f.get("category") or "").startswith("rating_"):
+            _kept_fams.update(_marginal_families(str(f.get("category") or "")))
+    _gone_fams: set[str] = set()
+    for f in _rej_rating:
+        _gone_fams.update(
+            fam for fam in _marginal_families(str(f.get("category") or "")) if fam not in _kept_fams
+        )
+    stale_desc = [
+        d
+        for d in (pred.get("descriptors") or [])
+        if any(d == g or d.endswith(" " + g) for g in _gone_fams)
+    ]
+    check(
+        "invariant: the coverage set rests on no descriptor whose only finding was rejected",
+        not stale_desc,
+        f"descriptors from rejected-only families: {stale_desc[:3]}",
+    )
+    _count_re = re.compile(r"\b(\d{1,3})\s+scenes\b", re.IGNORECASE)
+    over_count = [
+        (
+            f["flag_id"],
+            max(int(x) for x in _count_re.findall(_body(f))),
+            len(f.get("scene_ids") or []),
+        )
+        for f in flags
+        if _count_re.findall(_body(f))
+        and max(int(x) for x in _count_re.findall(_body(f))) > len(f.get("scene_ids") or [])
+    ]
+    check(
+        "invariant: a finding's prose never counts more scenes than its coordinates show",
+        not over_count,
+        f"prose count > coordinates: {over_count[:3]}",
+    )
     check(
         "invariant: a prediction outside its conformal set states a divergence reason",
         not pred or not conf_set or predicted in conf_set or bool(pred.get("divergence_reason")),
