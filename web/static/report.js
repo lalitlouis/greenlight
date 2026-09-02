@@ -637,7 +637,12 @@ function renderPrediction(root, pred) {
   meta.appendChild(el("p", "pred-evidence", line));
   const base = pred.corpus_base_rates || {};
   if (base[pred.predicted]) {
-    let baseLine = `Base rate: ${base[pred.predicted]}% of the ${rationaleN()} rationale-corpus films are rated ${pred.predicted} — the neighbours ${same + (typeof stricter === "number" ? stricter : 0) > Math.round((base[pred.predicted] / 100) * comps.length) ? "add lift over" : "match"} that baseline.`;
+    const atOrOver = same + (typeof stricter === "number" ? stricter : 0);
+    const expected = Math.round((base[pred.predicted] / 100) * comps.length);
+    // three-way: below-baseline neighbours are evidence toward the softer
+    // side and must never read as a "match" (THE NIGHT COUNTER, 1-of-8 vs 56%)
+    const baseVerb = atOrOver > expected ? "add lift over" : atOrOver < expected ? "sit under" : "match";
+    let baseLine = `Base rate: ${base[pred.predicted]}% of the ${rationaleN()} rationale-corpus films are rated ${pred.predicted} — the neighbours ${baseVerb} that baseline${baseVerb === "sit under" ? ", evidence toward the softer side" : ""}.`;
     if (pred.distance_spread && pred.distance_spread < 0.05) {
       baseLine += ` Distances span only ${pred.distance_spread}, so weigh the base rate as much as the neighbour set.`;
     }
@@ -1585,7 +1590,7 @@ function renderReport(record) {
           "p",
           "lede",
           `${cleared.flaggedElsewhere} further determination${cleared.flaggedElsewhere === 1 ? "" : "s"} ` +
-            "concern entities that carry findings — they are counted there, not here."
+            `${cleared.flaggedElsewhere === 1 ? "concerns" : "concern"} entities that carry findings — they are counted there, not here.`
         )
       );
     }
