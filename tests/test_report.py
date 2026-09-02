@@ -507,3 +507,157 @@ def test_cleared_row_citing_a_kept_finding_moves_to_the_note():
     texts = [c["text"] for c in bm["cleared"]]
     assert not any("F2001" in t for t in texts if "further determination" not in t)
     assert any("further determination" in t for t in texts)
+
+
+# ---- review 2026-09-01 (Worker 4A): assembly integrity pass -----------------
+
+
+def _rec_for_finalize():
+    f1 = make_flag("F4003", "HIGH", agent="territory_censor")
+    f1["category"] = "territory_cn_drug_use"
+    f1["entity_id"] = "E001"
+    f1["scene_ids"] = ["S003"]
+    f1["finding"] = "Cannabis in S003; see also F4004 for the UAE angle."
+    f2 = make_flag("F1009", "HIGH")
+    f2["category"] = "sync_license"
+    f2["entity_id"] = "E009"
+    f2["scene_ids"] = ["S004"]
+    return {
+        "flags": [f1, f2],
+        "report": {"flags": [f1, f2]},
+        "rejected_flags": [dict(make_flag("F4008", "HIGH"), rejection_reason="x")],
+        "withdrawn_flag_ids": ["F2003"],
+        "absorbed_into": {"F4004": "F4003"},
+        "scene_meta": {"S003": {"heading": "EXT. PIER"}, "S004": {"heading": "INT. CHURCH"}},
+        "entities": [
+            {"entity_id": "E001", "surface": "cannabis joint"},
+            {"entity_id": "E009", "surface": "Hallelujah"},
+        ],
+        "entity_accounting": {"fold": {}, "fragment_ids": [], "body_flagged_ids": []},
+        "cleared": {
+            "territory_censor": [
+                {"entity_id": "", "reasoning": "Drug use addressed under F4003 and F4004."},
+                {"entity_id": "", "reasoning": "Cleared; the alt-cut point sits in F4008."},
+            ],
+            "completeness_sweep": [
+                {"entity_id": "E050", "reasoning": "Swept; language handled in F2003."}
+            ],
+        },
+        "adjudication_notes": ["F4004: absorbed F4009 (dup)", "conflict: F4003 vs F1009 remedies"],
+        "open_questions": {
+            "clearance_counsel": [
+                "Confirm whether Sony controls 100% of Hallelujah sync rights.",
+                "Unresolved — the artwork finding (F1006, S002) was filed but its citation "
+                "support did not hold.",
+                "Is the Boston Whaler logo visible?",
+            ],
+            "territory_censor": ["Does F4003's alt cut satisfy UAE exhibitors?"],
+        },
+    }
+
+
+def test_finalize_rewrites_absorbed_ids_and_annotates_rejected_and_withdrawn():
+    from greenlight.pipeline import finalize_record_after_verification
+
+    rec = _rec_for_finalize()
+    manifest = finalize_record_after_verification(rec)
+    tc = rec["cleared"]["territory_censor"]
+    # absorbed id -> survivor, and the duplicated reference collapses to one
+    assert tc[0]["reasoning"] == "Drug use addressed under F4003."
+    # rejected id annotated (every bucket, sweep included)
+    assert "F4008 (later rejected in verification — see Rejected)" in tc[1]["reasoning"]
+    sweep = rec["cleared"]["completeness_sweep"][0]["reasoning"]
+    assert "F2003 (withdrawn — see Open questions)" in sweep
+    # finding text rewritten too, and the report's flag list shares the objects
+    assert "F4004" not in rec["flags"][0]["finding"]
+    assert rec["report"]["flags"][0]["finding"] == rec["flags"][0]["finding"]
+    # annotation is idempotent
+    finalize_record_after_verification(rec)
+    assert tc[1]["reasoning"].count("later rejected") == 1
+    # dangling adjudication note dropped AFTER the rewrite (F4009 never rendered)
+    assert rec["adjudication_notes"] == ["conflict: F4003 vs F1009 remedies"]
+    assert not [m for m in manifest if m["guard"] == "prose_scene_missing"]
+
+
+def test_finalize_routes_open_questions_to_their_findings():
+    from greenlight.pipeline import finalize_record_after_verification
+
+    rec = _rec_for_finalize()
+    finalize_record_after_verification(rec)
+    # names the flagged entity's surface (same desk) -> follow-up on F1009
+    assert rec["oq_followups"]["F1009"] == [
+        "Confirm whether Sony controls 100% of Hallelujah sync rights."
+    ]
+    # names a rendered same-desk id -> follow-up on F4003
+    assert rec["oq_followups"]["F4003"] == ["Does F4003's alt cut satisfy UAE exhibitors?"]
+    # the Unresolved template and unrelated questions stay
+    cc = rec["open_questions"]["clearance_counsel"]
+    assert len(cc) == 2 and cc[0].startswith("Unresolved —") and "Boston Whaler" in cc[1]
+    assert rec["open_questions"]["territory_censor"] == []
+    # the header decomposition is on the record
+    assert rec["entity_accounting"]["items_examined"] == {
+        "entity_rows": 0,
+        "script_level": 2,  # the annotated 'Cleared; ... F4008' row + the sweep row
+        "flagged_elsewhere": 1,  # the row citing rendered F4003
+    }
+
+
+def test_finalize_records_prose_naming_a_phantom_scene():
+    from greenlight.pipeline import finalize_record_after_verification
+
+    rec = _rec_for_finalize()
+    rec["flags"][1]["finding"] = "Hallelujah plays in S004 and S049."
+    manifest = finalize_record_after_verification(rec)
+    hits = [m for m in manifest if m["guard"] == "prose_scene_missing"]
+    assert hits == [
+        {
+            "guard": "prose_scene_missing",
+            "stage": "assembly",
+            "flag_id": "F1009",
+            "scene_ids": ["S049"],
+        }
+    ]
+
+
+def test_absorption_map_covers_plan_and_code_dedupe_with_chains():
+    from greenlight.pipeline import _absorption_map
+
+    a = make_flag("F101", "HIGH")
+    b = make_flag("F102", "MEDIUM")  # plan merges b into a
+    c = make_flag("F103", "MEDIUM")  # code dedupe: same desk/category/scene as a
+    d = make_flag("F104", "LOW")  # rating: script-wide, disjoint scenes
+    e = make_flag("F105", "LOW", agent="ratings_board")
+    for f in (a, b, c):
+        f["category"] = "trademark_use"
+    d["category"] = e["category"] = "rating_language"
+    d["agent"] = "ratings_board"
+    d["scene_ids"] = ["S009"]
+    plan = {"merges": [{"surviving_flag_id": "F101", "merged_flag_ids": ["F102"]}]}
+    out = _absorption_map([a, b, c, d, e], [a, e], plan)
+    assert out == {"F102": "F101", "F103": "F101", "F104": "F105"}
+    # chain: plan says F102 -> F101, but F101 itself was deduped into F100
+    z = dict(make_flag("F100", "HIGH"), category="trademark_use")
+    out2 = _absorption_map([z, a, b], [z], plan)
+    assert out2 == {"F101": "F100", "F102": "F100"}
+
+
+def test_cost_paths_excluded_built_from_scored_and_days_split():
+    from greenlight.report import _added_days, _cost_paths
+
+    kept = make_flag("F1", "HIGH", cost=[100, 200], days=3)
+    moot = make_flag("F2", "MEDIUM", cost=[50, 60], days=9)
+    moot["cost_excluded_on_target_path"] = True
+    failopen = make_flag("F3", "MEDIUM", cost=[1000, 2000], days=30)
+    failopen["cost_excluded_on_target_path"] = True
+    failopen["verification_unavailable"] = True
+    paths = _cost_paths([kept, moot, failopen])
+    # the fail-open flag is outside every total, so also outside the delta
+    assert [e["flag_id"] for e in paths["excluded"]] == ["F2"]
+    lo = sum(e["est_cost_usd"][0] for e in paths["excluded"])
+    hi = sum(e["est_cost_usd"][1] for e in paths["excluded"])
+    assert [
+        paths["as_written"][0] - paths["target_rating"][0],
+        paths["as_written"][1] - paths["target_rating"][1],
+    ] == [lo, hi]
+    assert paths["as_written_days"] == 9 and paths["target_rating_days"] == 3
+    assert _added_days([kept, moot, failopen]) == 9

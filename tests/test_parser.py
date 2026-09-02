@@ -291,3 +291,77 @@ def test_title_page_still_reads_as_front_matter():
     from greenlight.parser import _looks_like_front_matter
 
     assert _looks_like_front_matter("THE HANGOVER\nWritten by\nJon Lucas & Scott Moore\n2007")
+
+
+# --- 2026-09-01 review: false headings (A4), cue extensions & places (C3),
+# --- shooting numbers (C5), screen-start pages (C1) ---------------------------
+
+
+def test_est_and_caliber_lines_do_not_open_scenes():
+    """'EST. 1895 READS THE SIGN.' and '.45 AIMED AT HIS HEAD' each opened a scene,
+    shifting every later scene_id (the anchor of every flag). A founding-date
+    line and a caliber line are action; a real EST. slugline still is a heading."""
+    from greenlight.parser import _is_heading
+
+    text = (
+        "INT. BAR - NIGHT\n\nBob walks in. A sign hangs over the door.\n\n"
+        "EST. 1895 READS THE SIGN.\n\nBob sits.\n\n"
+        ".45 AIMED AT HIS HEAD, BOB FREEZES.\n\nBOB\nHello.\n\n"
+        "Est. 1895 reads the sign over the door.\n\n"
+        "EXT. STREET - DAY\n\nBob leaves.\n"
+    )
+    _, scenes = parse_fountain(text)
+    assert [s["heading"] for s in scenes] == ["INT. BAR - NIGHT", "EXT. STREET - DAY"]
+    assert _is_heading("EST. THE HARBOR - DAWN")
+    assert _is_heading("EST: HARBOR - DAY")
+    assert not _is_heading("EST. 1895 READS THE SIGN.")
+    assert not _is_heading("Est. 1895 reads the sign.")
+    assert not _is_heading(".45 AIMED AT HIS HEAD, BOB FREEZES.")
+    assert _is_heading(".HARBOR AT NIGHT")  # a forced heading still works
+
+
+def test_shooting_script_numbers_are_captured_not_eaten():
+    """'12 INT. BAR - NIGHT 12' carries the production's locked number: capture
+    it (additive `number`, heading text unchanged) instead of stripping it and
+    reporting the draft as unnumbered. A trailing number with no leading twin is
+    part of the location ('ROOM 237'), not a scene number."""
+    from greenlight.parser import draft_identity
+
+    text = "12 INT. BAR - NIGHT 12\n\nx\n\n13 INT. ROOM 237 13\n\ny\n\nINT. ROOM 237\n\nz\n"
+    _, scenes = parse_fountain(text)
+    assert [s.get("number") for s in scenes] == ["12", "13", None]
+    assert scenes[0]["heading"] == "12 INT. BAR - NIGHT 12"  # raw line preserved
+    assert [s["location"] for s in scenes] == ["BAR", "ROOM 237", "ROOM 237"]
+    assert draft_identity(text, {}, scenes, "X")["scene_numbers"] == "script"
+
+
+def test_cue_extensions_fold_and_places_are_not_speakers():
+    """Any trailing parenthetical is a cue extension: 'BOB (INTO PHONE)' and
+    'BOB (V.O.)' are BOB. A revision asterisk rides along ("DONNIE (CONT'D) *").
+    'MILE MARKER 26' is a place, not a numbered extra; 'COP 2' still speaks."""
+    from greenlight.parser import _is_cue
+
+    text = (
+        "INT. A - DAY\n\nBOB (INTO PHONE)\nHello?\n\nBOB\nBye.\n\n"
+        "BOB (V.O.)\nLater.\n\nBOB (CONT\u2019D) *\nStill me.\n"
+    )
+    _, scenes = parse_fountain(text)
+    assert scenes[0]["characters"] == ["BOB"]
+    assert {d["character"] for d in scenes[0]["dialogue"]} == {"BOB"}
+    assert not _is_cue("MILE MARKER 26", "The car passes it.")
+    assert not _is_cue("HIGHWAY 61", "stretches ahead.")
+    assert _is_cue("COP 2", "Freeze!") and _is_cue("GIRL #2", "Hi.")
+    assert not _is_cue("(beat)", "text")  # a bare parenthetical is never a cue
+
+
+def test_screen_start_only_page_is_page_one_not_front_matter():
+    """A page holding only 'OVER BLACK' or only 'SUPER: 1979' is where the film
+    starts; classifying it as front matter shifted every scene page -1."""
+    from greenlight.parser import _looks_like_front_matter, printed_page_count
+
+    assert not _looks_like_front_matter("OVER BLACK")
+    assert not _looks_like_front_matter("SUPER: 1979")
+    assert _looks_like_front_matter("THE HANGOVER\nWritten by\nJon Lucas & Scott Moore\n2007")
+    text = "OVER BLACK\n\fINT. APARTMENT - NIGHT\n\nShe answers.\n"
+    _, scenes = parse_fountain(text)
+    assert scenes[0]["page"] == 2 and printed_page_count(text) == 2

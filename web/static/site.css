@@ -1584,3 +1584,8 @@ tr.bd-sev-BLOCKER { background: rgba(224, 52, 42, 0.045); }
 .switch input:checked + .slider { background: var(--blocker); }
 .switch input:checked + .slider::before { transform: translateX(18px); }
 .switch input:disabled + .slider { opacity: 0.5; cursor: default; }
+
+/* open points routed onto their finding (review B12) + descriptors line */
+.flag-followups { margin: 6px 0 4px; }
+.flag-followup { margin: 4px 0; font-size: 13.5px; line-height: 1.5; color: var(--ink-2); border-left: 3px solid var(--line-2, #c9c2ac); padding-left: 10px; }
+.pred-descriptors { color: var(--ink-3); }

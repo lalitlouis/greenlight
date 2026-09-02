@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from datetime import date as _date
 from typing import Any
 
 from google.adk.agents import LlmAgent, LoopAgent
@@ -128,8 +129,15 @@ def _nudge_tool_use(llm_request) -> None:
     """The territory failure mode: the model muses in prose, calls no tools,
     and the LoopAgent silently exhausts its iterations with zero dispositions.
     If the last model turn produced no function call, append a hard reminder —
-    prose turns are invisible; only tool calls exist."""
-    _nudge_tool_use(llm_request)
+    prose turns are invisible; only tool calls exist.
+
+    NOT WIRED (deliberately): this is an opt-in candidate for a
+    before_model_callback, pending a gated fixture run — it changes what every
+    desk sees on a prose turn, so it ships through the eval, not by default. The
+    2026-09-01 review found it calling itself (infinite recursion had it ever
+    been registered); that is fixed here so wiring it later is a one-line change.
+    The stall class it targets is currently held by filing pressure in the desk
+    prompts and the desk-retry path in the completeness gate."""
     contents = llm_request.contents or []
     last_model = next((c for c in reversed(contents) if c.role == "model"), None)
     if last_model is None:
@@ -222,6 +230,15 @@ def prune_stale_tool_results(callback_context, llm_request):
 
 
 COVERAGE_RULE = """
+
+A CLEARED ITEM IS SILENCE, NOT A FLAG. Never file a flag whose conclusion is that nothing is
+wrong or no action is needed, and never one whose finding describes something ABSENT from the
+script ("no minor is present", "no live animal appears", "if X were added..."). If the element
+is not written, there is nothing to underwrite — move on. Speculative if/then findings are
+noise a producer will reject the whole report over. If you are unsure whether an element is
+present, find_in_script decides; if genuinely ambiguous, note_open_question — never a flag.
+The one NO_ACTION finding that is real: a territory "release without that market" remedy that
+states the creative trade-off — it reports a decision the producer must make, not an absence.
 
 COVERAGE ROLL-CALL — the contract for finishing. Your assignment is YOUR WORKLIST and
 nothing else: the entity table is shared context for disambiguation, not your list.
@@ -334,6 +351,11 @@ def make_desk(
         # a cut list against the guess while the record stored the real one.
         target = str(ctx.state.get("target_rating") or "no fixed target")
         text = text.replace("{target_rating}", target)
+        # Public-domain arithmetic rolls with the calendar: US copyright runs 95
+        # years from publication, so works published in (this year - 96) or
+        # earlier are PD on 1 January of this year. The prompt used to hard-code
+        # "In 2026 ... 1930 or earlier", which turns wrong every New Year.
+        text = text.replace("{pd_cutoff}", str(_date.today().year - 96))
         return text
 
     worker = LlmAgent(

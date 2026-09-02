@@ -138,3 +138,105 @@ def test_structural_title_from_pdf_front_matter():
         detect_structural_title("a quiet morning in the palisades.\n\x0c\nINT. A - DAY\nx.\n")
         is None
     )
+
+
+# ---- review 2026-09-01 (Worker 4A): the shared eval invariants ---------------
+
+
+def _invariants():
+    import importlib.util
+    import pathlib
+
+    path = pathlib.Path(__file__).resolve().parents[1] / "scripts" / "eval_invariants.py"
+    spec = importlib.util.spec_from_file_location("eval_invariants", path)
+    mod = importlib.util.module_from_spec(spec)
+    assert spec.loader is not None
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def test_term_arithmetic_catches_the_off_by_one_and_allows_pd_from():
+    inv = _invariants()
+    bad = "Created in 1942, the artwork remains protected through 2038 (95 years post-publication)."
+    assert inv.term_arithmetic_problems(bad) == [
+        "1942 + 95 years is through 2037, text says through 2038"
+    ]
+    assert (
+        inv.term_arithmetic_problems(
+            "Published 1942; 95 years of protection, so it enters the public domain in 2038."
+        )
+        == []
+    )
+    assert inv.term_arithmetic_problems("Protected through 2037 (95 years from 1942).") == []
+    # a stunt's rehearsal hours and a 1968 film with no expiry: nothing to check
+    assert inv.term_arithmetic_problems("4 hours of rehearsal; the 1968 film.") == []
+
+
+def test_rightsholder_names_must_trace_to_the_findings_own_excerpts():
+    inv = _invariants()
+    flag = {
+        "category": "sync_license",
+        "finding": (
+            "Sync license from Sony Music Publishing (controlling the catalog / Badams "
+            "Music); Legacy Recordings holds the master."
+        ),
+        "remedy": {"detail": ""},
+        "citations": [{"excerpt": "Hallelujah — Copyright Sony/ATV Music Publishing"}],
+    }
+    assert inv.untraceable_rightsholders(flag) == ["Badams Music", "Legacy Recordings"]
+
+
+def test_scene_labels_expand_to_scene_ids():
+    inv = _invariants()
+    assert inv.expand_scene_label("S002, S004-S005, S009", {}) == {
+        "S002",
+        "S004",
+        "S005",
+        "S009",
+    }
+    nums = {"1": "S001", "2": "S002", "3": "S003", "9": "S009"}
+    assert inv.expand_scene_label("Sc. 1-3, 9", nums) == {"S001", "S002", "S003", "S009"}
+
+
+def test_shared_invariants_flag_cut_list_direction_and_phantom_references():
+    inv = _invariants()
+    flag = {
+        "flag_id": "F1",
+        "agent": "ratings_board",
+        "category": "rating_language",
+        "severity": "HIGH",
+        "scene_ids": ["S001"],
+        "finding": "Three F-words in S001; see F700 for the drug driver.",
+        "remedy": {"detail": "", "est_cost_usd": [0, 0]},
+        "citations": [{"excerpt": "x"}],
+        "marginal": {"descriptor": "language", "n": 1, "distribution": {}, "source": "s"},
+    }
+    rec = {
+        "flags": [flag],
+        "rejected_flags": [],
+        "verdicts": {"F1": {"verdict": "SUPPORTED"}},
+        "scene_meta": {"S001": {"heading": "INT. BAR", "number": ""}},
+        "cleared": {},
+        "open_questions": {},
+        "report": {
+            "greenlight_score": 50,
+            "counts": {"HIGH": 1},
+            "by_agent": {"ratings_board": 1},
+            "est_clearance_cost_usd": [0, 0],
+            "rating_prediction": {
+                "predicted": "R",
+                "target": "R",
+                "beats_to_cut": ["Cut the F-words"],
+                "comparables": [],
+                "conformal_set": ["R"],
+            },
+        },
+    }
+    results = {name: (ok, note) for name, ok, note in inv.shared_invariants(rec)}
+    assert results["invariant: cut list present iff the prediction exceeds the target"][0] is False
+    key = (
+        "invariant: no cleared/open-question/finding text cites an id that neither renders "
+        "nor is rejected"
+    )
+    assert results[key][0] is False and "F700" in results[key][1]
+    assert results["invariant: counts, by_agent, cost, days and pages reconcile with the flags"][0]

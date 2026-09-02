@@ -6,6 +6,61 @@ them. Append-only; newest entries at the top. Bigger architecture decisions live
 
 ---
 
+## 2026-09-01 — Full-codebase review implemented: 44 defects, one batch, 89 new tests
+
+The six-area review (docs/REVIEW-2026-09-01.md) found every documented learning present in
+the code except the verifier regression set, and 44 defects that let a false finding render
+or made the report disagree with itself. All were fixed in one deterministic batch (no run,
+no spend), pinned by 89 new tests (286 → 375), `make check` green. What changed, by class:
+
+- **False keeps closed.** The overturn guards no longer flip a sourcing rejection to
+  SUPPORTED (F1004 in the gate record was a citation_offtopic rejection rendered as
+  verified): a no-number rejection cannot anchor, the capitalized-word fallback is gone,
+  and any sourcing ground strikes at most the false ground. Re-sourced, refiled, and
+  fact-propagated flags now pass the same authority/statute/sync-master/normative gates
+  as a first filing; reverify shares the pipeline's post-verification finalizer.
+- **Instruments made stable.** One descriptor per category is canonicalised before the
+  boundary model sees it and the list is persisted on the record (`descriptors`, schema
+  additive) — sixteen same-script runs had produced four different conformal sets. The
+  attached marginal is the descriptor the finding names (the longest-key rule had let the
+  parser token "unmodified" win). A neighbour at distance 0.0 now weighs as an exact match,
+  not as 1.0. Marginal and comparables corpora are labelled as two corpora with one
+  rounding rule. Cut lists are dropped, at filing and after reconcile, when the prediction
+  is already at target.
+- **Deterministic inputs corrected.** Census regexes count compounds and stop counting the
+  "chink in the armor" idiom; the parser no longer mints scenes from "EST. 1895" or ".45"
+  and now captures shooting-script numbers; the safety prompt's firearms bulletin number
+  (#38 was severe weather) is gone in favour of the lookup tool; the public-domain year is a
+  substituted placeholder; three prompt self-contradictions (ratings rule vs claim shape,
+  safety anchor vs burn-ban, territory NO_ACTION) are resolved; `apply_plan` refuses the
+  merges and renames its own instruction forbids.
+- **Surfaces reconciled.** Web and binder route cleared rows on kept ids alike; absorbed
+  ids are rewritten to their survivor everywhere; open questions that restate a finding
+  render under it; fail-open markers, withheld cause, and the two-path cost reach every
+  print surface; scene labels are never truncated.
+- **Gates widened.** `scripts/eval_invariants.py` is shared by both evals (the scale gate
+  had drifted to a subset). New assertions: phantom-id references, prose scenes that do not
+  exist, cut-list direction (E2 closed), majority-vote recompute, conformal set reproduced
+  from descriptors, counts/cost/days/pages reconciliation, non-vacuous binder coverage,
+  year+term arithmetic, rightsholder-name traceability. The cached record grades 44/46;
+  both misses are real defects in that record's desk output (Nighthawks "through 2038";
+  licensors named in prose that no excerpt carries). `eval_comps` benchmarks the shipped
+  `cara_rationales` corpus.
+
+Scene-structure proof: both fixtures and all six case scripts parse to identical scene ids
+and headings before and after; the two OCR'd, feed-less case texts (LMS, Wolf) would move
+some page numbers on regeneration because mangled cues are now read as speakers.
+
+Left open, stated: budgets/counters still live in ADK state keys under the parallel-delta
+merge; `_nudge_tool_use` fixed but unwired (a gated change); rating reconcile after a
+marginal-gate demotion is manifest-recorded, not executed; the PDF page-cap truncation count
+is computed but not yet written to the record; no cut-beat "pre-removed word" gate (the class
+has not reproduced locally); music-fee tiering and the severity-vs-cost assertion remain
+backlog; the model-judged verifier pair set remains roadmap. Prompts, parser, and tool
+contracts changed, so the next fixture gate run is required before deploy.
+
+---
+
 ## 2026-08-27 — Ratings corpus: 2,487 → 6,302 (the complete MPA era, not 10,000)
 
 Target was "increase to 10,000." Measured the universe first: Wikidata holds 6,760 films

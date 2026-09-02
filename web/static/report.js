@@ -138,7 +138,8 @@ let CURRENT_RECORD = null; // the rendered record — reference updates recomput
 // renderReport before adjudication notes are drawn. A reference to an id
 // outside this set is reasoning over a finding that no longer ships — mark
 // it rather than render a dead link. (Referential integrity, review item #4.)
-let KNOWN_FLAG_IDS = null;
+let KNOWN_FLAG_IDS = null; // every id that renders somewhere (kept + rejected) — for reference chips
+let KEPT_FLAG_IDS = null; // ids that COUNT as findings — for the cleared list's counted-there routing
 let ENTITY_SURFACE = {};
 
 function linkifyRefs(text) {
@@ -432,9 +433,19 @@ function flagExpand(f) {
     const dist = Object.entries(m.distribution || {})
       .map(([r, p]) => `${r} ${p}`)
       .join(" · ");
-    card.appendChild(el("b", null, `'${m.descriptor}' — ${dist}`));
+    // "unmodified language" is the parser's key for a bare descriptor — a
+    // reader sees CARA wording, not our internal token
+    const label = /^unmodified\s+/i.test(m.descriptor || "")
+      ? `${String(m.descriptor).replace(/^unmodified\s+/i, "")} (no modifier)`
+      : m.descriptor;
+    card.appendChild(el("b", null, `'${label}' — ${dist}`));
+    // TWO corpora appear on this report: the descriptor corpus (parsed
+    // rationales) here, and the comparables corpus in the prediction panel.
+    // Each names its own denominator so the numbers read as two corpora, not
+    // as a contradiction (review B5).
+    const corpusN = m.corpus_n ? `the ${Number(m.corpus_n).toLocaleString("en-US")}-rationale descriptor corpus` : "the descriptor corpus";
     const base = m.base_rate
-      ? ` Corpus base rate: ${Object.entries(m.base_rate).map(([r, p]) => `${r} ${p}`).join(" · ")}.`
+      ? ` Base rate across ${corpusN}: ${Object.entries(m.base_rate).map(([r, p]) => `${r} ${p}`).join(" · ")}.`
       : "";
     card.appendChild(
       el("p", "src", `Across ${(m.n || 0).toLocaleString("en-US")} official CARA rationales carrying this descriptor.${base}`)
@@ -530,6 +541,20 @@ function flagRow(f, opts) {
       findP.classList.remove("clamped");
     }
   });
+
+  // An open question the desk raised ABOUT this finding travels with it —
+  // one item, not a finding plus a second "honest unknown" on the same entity
+  const followups = (CURRENT_RECORD?.oq_followups || {})[f.flag_id] || [];
+  if (followups.length) {
+    const fu = el("div", "flag-followups");
+    for (const q of followups) {
+      const p = el("p", "flag-followup");
+      p.appendChild(el("b", null, "Open point on this finding: "));
+      p.appendChild(document.createTextNode(q));
+      fu.appendChild(p);
+    }
+    main.appendChild(fu);
+  }
 
   const cites = f.citations || [];
   // Normalize the displayed host (strip www./m.) so distinct pages on one
@@ -642,9 +667,13 @@ function renderPrediction(root, pred) {
     // three-way: below-baseline neighbours are evidence toward the softer
     // side and must never read as a "match" (THE NIGHT COUNTER, 1-of-8 vs 56%)
     const baseVerb = atOrOver > expected ? "add lift over" : atOrOver < expected ? "sit under" : "match";
-    let baseLine = `Base rate: ${base[pred.predicted]}% of the ${rationaleN()} rationale-corpus films are rated ${pred.predicted} — the neighbours ${baseVerb} that baseline${baseVerb === "sit under" ? ", evidence toward the softer side" : ""}.`;
-    if (pred.distance_spread && pred.distance_spread < 0.05) {
-      baseLine += ` Distances span only ${pred.distance_spread}, so weigh the base rate as much as the neighbour set.`;
+    let baseLine = `Base rate: ${base[pred.predicted]}% of the ${rationaleN()} films with an official CARA rationale (the comparables corpus) are rated ${pred.predicted} — the neighbours ${baseVerb} that baseline${baseVerb === "sit under" ? ", evidence toward the softer side" : ""}.`;
+    // In rationale-space every neighbour sits within a few hundredths; a tight
+    // spread only matters when the neighbours DISAGREE (equally close, split
+    // vote). Unanimous neighbours at spread 0.02 are the corpus agreeing.
+    const unanimous = Object.keys(tallies).length <= 1;
+    if (pred.distance_spread && pred.distance_spread < 0.05 && !unanimous) {
+      baseLine += ` The neighbours are equally close (distances span only ${pred.distance_spread}) and split, so weigh the base rate as much as the neighbour set.`;
     }
     meta.appendChild(el("p", "pred-evidence pred-base", baseLine));
   }
@@ -655,12 +684,16 @@ function renderPrediction(root, pred) {
   }
   const nc = pred.nearest_conflict;
   if (nc && nc.title) {
-    const art = /^[RN]/.test(pred.predicted) ? "An" : "A";
+    // A shared rationale is not a shared story: in rationale-space the nearest
+    // neighbour is the film whose official wording is closest, nothing more.
     meta.appendChild(el("p", "pred-evidence pred-diverge",
-      `Your closest comparable — ${nc.title} (${nc.rating}, distance ${nc.distance}) — is near enough that it may be this story's released form. ` +
-      `${art} ${pred.predicted} read on the draft as written is not a contradiction: shooting drafts routinely overshoot the released cut` +
+      `The nearest official rationale — ${nc.title} (rated ${nc.rating}, distance ${nc.distance}) — is rated differently from the desk's ${pred.predicted} call.` +
       // the desk's reasoning renders once, in the divergence line above
-      (divergeShown || !pred.divergence_reason ? `; the cut list below is the path back to ${nc.rating}.` : ` — the desk's reasoning: ${pred.divergence_reason}`)));
+      (divergeShown || !pred.divergence_reason ? "" : ` The desk's reasoning: ${pred.divergence_reason}`)));
+  }
+  if ((pred.descriptors || []).length) {
+    meta.appendChild(el("p", "pred-evidence pred-descriptors",
+      `Descriptors evaluated for the coverage set: ${pred.descriptors.join(" · ")}.`));
   }
   head.appendChild(meta);
   card.appendChild(head);
@@ -695,20 +728,34 @@ function renderPrediction(root, pred) {
   }
   card.appendChild(list);
 
+  // A cut list is a path DOWN to the target. When the prediction already sits
+  // at or under the target there is no path to draw — four live case pages
+  // printed "The cut list toward R" under a predicted R (review B6). Old
+  // records may still carry beats; label them for what they are.
+  const atTarget =
+    pred.target && ORDER.indexOf(pred.predicted) >= 0 && ORDER.indexOf(pred.target) >= 0 &&
+    ORDER.indexOf(pred.predicted) <= ORDER.indexOf(pred.target);
   if ((pred.beats_to_cut || []).length) {
     // Case studies show the cut list as ANALYSIS, never as a live control: each
     // projection re-runs the evidence pipeline and spends budget, and these are
     // public pages. The server refuses them too — this just keeps the UI honest.
-    const interactive = !IS_CASE;
+    const interactive = !IS_CASE && !atTarget;
     const cuts = el("div", "cuts");
     cuts.appendChild(
       el(
         "div",
         "blk-label",
-        `The cut list toward ${pred.target || (interactive ? "your target" : "the target")}` +
-          (interactive ? " — test each cut" : "")
+        atTarget
+          ? `Cuts considered (already at ${pred.target})`
+          : `The cut list toward ${pred.target || (interactive ? "your target" : "the target")}` +
+            (interactive ? " — test each cut" : "")
       )
     );
+    if (atTarget) {
+      cuts.appendChild(
+        el("p", "cuts-hint", `The prediction is already ${pred.predicted} against a ${pred.target} target — these are softening options, not a path to a rating.`)
+      );
+    }
     if (interactive) {
       cuts.appendChild(
         el("p", "cuts-hint", "Check cuts to test your revised content profile — live against the measured CARA boundary and the corpus of official rating rationales. Cuts are levers, not guarantees: the simulator measures how far each one actually moves the rating.")
@@ -789,6 +836,14 @@ function initWhatIf(cutsRoot, pred) {
       const d = await res.json();
       if (seq !== _whatifSeq) return; // a newer toggle superseded this one
       clearInterval(tick);
+      if (d.unavailable || d.error) {
+        // an honest "not now" from the server — a dependency blipped; nothing
+        // was cached, so the next toggle is a fresh attempt
+        out.textContent = "";
+        out.appendChild(el("p", "wi-err", d.error || "Could not project right now — try again shortly."));
+        setProjectedBadge(null);
+        return;
+      }
       renderWhatIf(out, d, pred, baseTarget, total, cuts.length + extra.length);
       maybeOfferSuggestions(out, cutsRoot, pred, d, cuts, extra);
       setProjectedBadge(d.projected);
@@ -879,8 +934,10 @@ function renderWhatIf(out, d, pred, baseTarget, total, nCuts) {
   const head = el("div", "wi-head");
   head.appendChild(el("b", "rating-badge sm r-" + d.projected, d.projected));
   const moved = newTarget - baseTarget;
-  // Most specific matched marginal (smallest n) carries the boundary numbers.
-  const marg = (d.boundary?.marginals || [])[0];
+  // The DRIVER descriptor — the matched marginal that most draws the projected
+  // rating — carries the boundary numbers; the old "smallest n" pick could quote
+  // a descriptor that argued against the projection.
+  const marg = d.boundary?.driver || (d.boundary?.marginals || [])[0];
   const margPct = marg?.distribution?.[d.projected];
   let verdict;
   if (d.basis === "boundary" && marg) {
@@ -904,6 +961,14 @@ function renderWhatIf(out, d, pred, baseTarget, total, nCuts) {
   head.appendChild(el("p", "wi-verdict", verdict));
   out.appendChild(head);
   if (d.revised_rationale) out.appendChild(el("p", "wi-rationale", "Revised profile: “" + d.revised_rationale + "”"));
+  if (d.neighbors_sparse && d.basis !== "boundary") {
+    out.appendChild(
+      el("p", "wi-note", "The revised profile is a few words, so nearest-rationale neighbours are a weak instrument here — a sparse rationale sits next to films rated for that one thing alone. Read the neighbours as colour, not as the verdict.")
+    );
+  }
+  if (d.neighbors_unavailable) {
+    out.appendChild(el("p", "wi-note", "Comparables were unavailable for this projection; the measured boundary answered alone."));
+  }
   if (d.projected !== pred.target && d.basis !== "boundary") {
     out.appendChild(
       el("p", "wi-note", "The rating hinges on the whole content profile, not only the flagged beats — the simulator re-runs the real comparables search, so it will disagree with the cut list when the remaining content still patterns higher. That honesty is the product.")
@@ -985,12 +1050,15 @@ function clearedRows(record) {
         flaggedElsewhere += 1;
         continue;
       }
-      // A determination whose own reasoning cites a rendered finding is a
+      // A determination whose own reasoning cites a SURVIVING finding is a
       // cross-reference, not a clearance — "dispositioned in F2001" under a
       // "no action needed" header contradicts the HIGH flag it points at
       // (THE NIGHT COUNTER profanity row). Route it to the counted-there note.
+      // KEPT ids only: a rejected finding counts nowhere, so a row citing one
+      // prints here with its "(later rejected…)" annotation, exactly as the
+      // binder prints it (review B4 — the two surfaces disagreed).
       const citedIds = (c.reasoning || "").match(/\bF\d{3,4}\b/g) || [];
-      if (citedIds.some((id) => (KNOWN_FLAG_IDS || new Set()).has(id))) {
+      if (citedIds.some((id) => (KEPT_FLAG_IDS || new Set()).has(id))) {
         flaggedElsewhere += 1;
         continue;
       }
@@ -1029,8 +1097,9 @@ function clearedRows(record) {
 
 function buildReportNav(record, rep) {
   const cited = (record.flags || []).filter((f) => (f.citations || []).length > 0);
+  const routed = new Set(Object.values(record.oq_followups || {}).flat());
   const oqRaw = Object.values(record.open_questions || {}).flat();
-  const oqCount = oqRaw.filter((q) => !isDetermination(q)).length;
+  const oqCount = oqRaw.filter((q) => !isDetermination(q) && !routed.has(q)).length;
   const clearedCount = clearedRows(record).rowCount;
   // sec-cost only renders when at least one flag carries a cost — the chip
   // must not link to a section that doesn't exist
@@ -1086,7 +1155,7 @@ function buildReportNav(record, rep) {
 }
 
 const GLOSSARY = {
-  PARTIAL: "The blinded verifier confirmed the script facts, but the cited excerpts support a weaker or narrower claim than the desk filed. The rule: severity is capped at MEDIUM and the finding carries this marker. It tracks what the evidence proves, not how many citations there are.",
+  PARTIAL: "The blinded verifier confirmed the script facts, but the cited excerpts support a weaker or narrower claim than the desk filed. This is a citation-confidence marker only — severity remains the desk's risk judgment and is not capped. It tracks what the evidence proves, not how many citations there are.",
   // remedy verbs
   REPLACE: "Swap the element for a cleared or fictional alternative (a prop, a name, a track).",
   OBTAIN_LICENSE: "Negotiate permission from the rights holder — the estimate is the going rate, not a quote.",
@@ -1123,6 +1192,7 @@ function renderReport(record) {
   KNOWN_FLAG_IDS = new Set(
     [...(record.flags || []), ...(record.rejected_flags || [])].map((f) => f.flag_id).filter(Boolean)
   );
+  KEPT_FLAG_IDS = new Set((record.flags || []).map((f) => f.flag_id).filter(Boolean));
   window.__REVISION__ = record.revision || null;
   CURRENT_RECORD = record;
   const root = $("report");
@@ -1535,8 +1605,9 @@ function renderReport(record) {
   }
 
   const oq = record.open_questions || {};
+  const routedFollowups = new Set(Object.values(record.oq_followups || {}).flat());
   const oqAll = Object.entries(oq).flatMap(([desk, qs]) => qs.map((q) => [desk, q]));
-  const oqItems = oqAll.filter(([, q]) => !isDetermination(q));
+  const oqItems = oqAll.filter(([, q]) => !isDetermination(q) && !routedFollowups.has(q));
   const cleared = clearedRows(record);
   if (oqItems.length) {
     const sec = el("div", "section-head");
@@ -1585,6 +1656,15 @@ function renderReport(record) {
     const sec = el("div", "section-head");
     sec.id = "sec-cleared";
     sec.appendChild(el("h2", null, `Reviewed & cleared — ${rows} items examined, no action needed`));
+    // "39 entities researched" up top vs "47 items examined" here: the reader
+    // could not do that arithmetic (review B13). Show the decomposition —
+    // entity rows plus script-wide checks (territory axis sweeps, census).
+    const entityRows = cleared.byEntity.size;
+    const scriptRows = cleared.scriptLevel.length;
+    if (scriptRows) {
+      sec.appendChild(el("p", "lede",
+        `${entityRows} ${entityRows === 1 ? "entity" : "entities"} + ${scriptRows} script-wide ${scriptRows === 1 ? "check" : "checks"} (territory axis sweeps, the language census, and other whole-script determinations).`));
+    }
     root.appendChild(sec);
     const det = document.createElement("details");
     det.className = "flags-informational";
@@ -1632,7 +1712,15 @@ function renderReport(record) {
 
 
   if (window.location.hash) {
-    focusFlag(document.querySelector(window.location.hash));
+    // an invalid selector in the hash throws; inside the load try/catch that
+    // wiped a fully rendered report (review B17)
+    let node = null;
+    try {
+      node = document.querySelector(window.location.hash);
+    } catch {
+      node = null;
+    }
+    if (node) focusFlag(node);
   }
 }
 

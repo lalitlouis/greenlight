@@ -60,9 +60,30 @@ function osRender(record) {
   const cost = money(rep.est_clearance_cost_usd);
   if (cost) {
     const c = el("p", "os-cost");
-    c.appendChild(document.createTextNode("Estimated clearance exposure "));
-    c.appendChild(el("b", null, cost));
+    // two-path totals print wherever a total prints (parity with the report)
+    const tgt = rep.est_cost_paths && rep.est_cost_paths.target_rating ? money(rep.est_cost_paths.target_rating) : null;
+    if (tgt && tgt !== cost) {
+      c.appendChild(document.createTextNode("Estimated clearance exposure as written "));
+      c.appendChild(el("b", null, cost));
+      c.appendChild(document.createTextNode(" · target-rating path "));
+      c.appendChild(el("b", null, tgt));
+    } else {
+      c.appendChild(document.createTextNode("Estimated clearance exposure "));
+      c.appendChild(el("b", null, cost));
+    }
     left.appendChild(c);
+  }
+  // the quiet surface must not be the one that hides incompleteness
+  const unex = record.unexamined || [];
+  if (unex.length) {
+    left.appendChild(el("p", "os-verdict v-bad", `${unex.length} extracted item${unex.length === 1 ? "" : "s"} NOT EXAMINED by any desk — those scenes are not cleared.`));
+  }
+  for (const desk of record.desks_incomplete || []) {
+    left.appendChild(el("p", "os-verdict v-bad", `INCOMPLETE — the ${deskName(desk)} desk returned no dispositions; its scenes are not cleared.`));
+  }
+  const unverifiedN = (record.flags || []).filter((f) => f.verification_unavailable).length;
+  if (unverifiedN) {
+    left.appendChild(el("p", "os-verdict v-mid", `${unverifiedN} finding${unverifiedN === 1 ? "" : "s"} UNVERIFIED — the verifier could not run on ${unverifiedN === 1 ? "it" : "them"}; excluded from the score.`));
   }
   hero.appendChild(left);
 
@@ -97,7 +118,16 @@ function osRender(record) {
       row.appendChild(el("b", "os-sev sev-chip sev-" + f.severity, f.severity));
       const main = el("div", "os-flag-main");
       main.appendChild(el("span", "os-flag-cat", prettyCat(f.category)));
-      main.appendChild(el("span", "os-flag-txt", (f.finding || "").slice(0, 170) + ((f.finding || "").length > 170 ? "…" : "")));
+      if (f.verification_unavailable) {
+        main.appendChild(el("span", "sev-chip chip-partial", f.verification_blocked ? "unverified — blocked by the platform content filter" : "unverified — verifier unavailable"));
+      }
+      // the marker is a chip, not raw bracket text in the finding line
+      let txt = f.finding || "";
+      if (txt.startsWith("[partially supported] ")) {
+        txt = txt.slice("[partially supported] ".length);
+        main.appendChild(el("span", "sev-chip chip-partial", "PARTIAL — verified with caveats"));
+      }
+      main.appendChild(el("span", "os-flag-txt", txt.slice(0, 170) + (txt.length > 170 ? "…" : "")));
       row.appendChild(main);
       const right = el("div", "os-flag-right");
       // cost lives at remedy.est_cost_usd; the flat est_cost_usd_* names are
@@ -119,10 +149,16 @@ function osRender(record) {
     strip.appendChild(el("b", "rating-badge sm r-" + pred.predicted, pred.predicted));
     const rtxt = el("div", "os-rating-txt");
     const comps = pred.comparables || [];
-    const same = comps.filter((c) => c.rating === pred.predicted).length;
+    // "at or stricter", the same count the one-sheet PDF and the report print —
+    // this page once counted exact matches only, so two one-sheets disagreed
+    const ORDER = ["G", "PG", "PG-13", "R", "NC-17"];
+    const predIdx = ORDER.indexOf(pred.predicted);
+    const atOrAbove = predIdx >= 0
+      ? comps.filter((c) => ORDER.indexOf(c.rating) >= predIdx).length
+      : comps.filter((c) => c.rating === pred.predicted).length;
     rtxt.appendChild(
       el("span", "os-rating-line",
-        `Predicted ${pred.predicted}${pred.target && pred.target !== pred.predicted ? " · production target " + pred.target : ""} — ${same} of ${comps.length} nearest released comparables agree`)
+        `Predicted ${pred.predicted}${pred.target && pred.target !== pred.predicted ? " · production target " + pred.target : ""} — ${atOrAbove} of ${comps.length} nearest released comparables rate ${pred.predicted} or stricter`)
     );
     if (pred.rationale) rtxt.appendChild(el("span", "os-rating-why", pred.rationale));
     strip.appendChild(rtxt);

@@ -55,8 +55,8 @@ GreenlightPipeline                  SequentialAgent
 │   │                               fresh conversations; caches/provenance shared,
 │   │                               all mutable state keys per-agent)
 │   ├── RatingsBoard                LoopAgent(max_iterations=6)
-│   ├── SafetyUnderwriter           LoopAgent(max_iterations=6)
-│   └── TerritoryCensor             LoopAgent(max_iterations=8)
+│   ├── SafetyUnderwriter           LoopAgent(max_iterations=8)
+│   └── TerritoryCensor             LoopAgent(max_iterations=12)
 ├── CompletenessGate                LoopAgent(≤3) — deterministic check + sweep desk;
 │                                   refuses to advance while any extracted entity lacks
 │                                   a disposition (absence must never render as clean)

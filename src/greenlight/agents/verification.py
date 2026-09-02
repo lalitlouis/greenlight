@@ -65,6 +65,22 @@ def _prompt_blocked(res: Any) -> bool:
     return bool(fb and getattr(fb, "block_reason", None))
 
 
+_BLOCK_FINISH_REASONS = frozenset({"SAFETY", "PROHIBITED_CONTENT", "BLOCKLIST", "SPII"})
+
+
+def _candidate_blocked(res: Any) -> bool:
+    """A response with no text whose first candidate finished on a content
+    filter is the SAME deterministic block as a prompt block — retrying it is
+    ~25s of nothing (the Wolf lesson). Without a readable finish reason the
+    answer is no, and the retry ladder keeps treating it as transient."""
+    for c in (getattr(res, "candidates", None) or [])[:1]:
+        fr = getattr(c, "finish_reason", None)
+        name = str(getattr(fr, "name", None) or fr or "").upper()
+        if name in _BLOCK_FINISH_REASONS:
+            return True
+    return False
+
+
 async def call_verifier(
     client: Any, flag: dict[str, Any], script_context: str, search_results: str
 ) -> dict[str, Any]:
@@ -79,7 +95,7 @@ async def call_verifier(
             temperature=0.0,
         ),
     )
-    if res.text is None and _prompt_blocked(res):
+    if res.text is None and (_prompt_blocked(res) or _candidate_blocked(res)):
         res = await client.aio.models.generate_content(
             model=MODEL,
             contents=_blinded_prompt(flag, _CENSORED_CTX, search_results),
@@ -366,6 +382,54 @@ _ABSENCE_RE = _re.compile(
 )
 
 
+# The absence sentence must be ABOUT the script (never about an excerpt), and
+# the quote it calls absent must be the quote nearest the absence phrase — a
+# supporting quote sitting beside a genuinely absent token ("'zippo' … found
+# nowhere in the screenplay", Reservoir Dogs F2004) is not a false absence.
+_SCRIPT_TOKEN_RE = _re.compile(
+    r"\b(?:script|screenplay|scenes?|pages?|dialogue|action|text|s\d{3})\b", _re.IGNORECASE
+)
+_EVIDENCE_TOKEN_RE = _re.compile(
+    r"\b(?:excerpts?|citations?|cited|sources?|snippets?)\b", _re.IGNORECASE
+)
+_ANY_QUOTE_RE = _re.compile(
+    '["\u201c]([^"\u201c\u201d]{2,160})["\u201d]'
+    "|(?:^|[\\s(\\[\u2014\u2013-])[\u2018']([^\u2018\u2019']{2,160})[\u2019'](?=$|[\\s).,;:!?\\]])"
+)
+
+
+def _mask_quotes(text: str) -> str:
+    """Same length as `text`, quoted contents replaced by 'x' — so sentence
+    boundaries are found outside quotes ('Sbarro?!' must not end a sentence)."""
+    out = list(text)
+    for m in _ANY_QUOTE_RE.finditer(text):
+        g = 1 if m.group(1) is not None else 2
+        for i in range(m.start(g), m.end(g)):
+            out[i] = "x"
+    return "".join(out)
+
+
+def _sentence_bounds(masked: str, pos: int) -> tuple[int, int]:
+    start = max((masked.rfind(ch, 0, pos) for ch in ".;!?"), default=-1) + 1
+    ends = [i for i in (masked.find(ch, pos) for ch in ".;!?") if i >= 0]
+    return start, (min(ends) if ends else len(masked))
+
+
+def _quote_nearest(text: str, lo: int, hi: int, at: int) -> str | None:
+    """Content of the quoted token in text[lo:hi] nearest to offset `at` —
+    the one ending before it if any, else the one starting after it."""
+    before: tuple[int, str] | None = None
+    after: tuple[int, str] | None = None
+    for m in _ANY_QUOTE_RE.finditer(text, lo, hi):
+        content = m.group(1) if m.group(1) is not None else m.group(2)
+        if m.end() <= at and (before is None or m.end() > before[0]):
+            before = (m.end(), content)
+        elif m.start() >= at and (after is None or m.start() < after[0]):
+            after = (m.start(), content)
+    hit = before or after
+    return hit[1] if hit else None
+
+
 def demotion_entries(dropped: list[dict[str, Any]]) -> dict[str, list[str]]:
     """{open_questions state key: entries} for sourcing-failure rejections.
 
@@ -401,10 +465,19 @@ def demotion_entries(dropped: list[dict[str, Any]]) -> dict[str, list[str]]:
 # excerpts genuinely don't hold) must not be blind-flipped to SUPPORTED — strike
 # only the false ground and let the sourcing ground route it honestly.
 _SOURCING_GROUND_RE = _re.compile(
-    r"excerpts? (?:do(?:es)? not|fail|lack)|citations? (?:do(?:es)? not|fail)"
-    r"|not (?:establish|support)|no authoritative source",
+    r"(?:excerpts?|citations?|sources?|snippets?)\b[^.;]{0,120}?"
+    r"\b(?:do(?:es)? not|did not|fails?|failed|lacks?|cannot|never|is|are)\b"
+    r"[^.;]{0,24}?\b(?:support|establish|address|contain|mention|show|provide|off-topic"
+    r"|unrelated|generic|only|silent)"
+    r"|off-topic|unrelated to|does not address|addresses only|provides? no support"
+    r"|fails? to establish|not (?:establish|support)|no authoritative source",
     _re.IGNORECASE,
 )
+# A verdict the verifier itself filed as a SOURCING failure is never flipped
+# to SUPPORTED by a script-text assertion: the script can prove a fact is
+# stated, never that an off-topic citation supports a premise (run
+# 2026-09-01 F1004: an off-topic prop-design blog shipped as "verified").
+_SOURCING_FAILURE_MODES = frozenset({"premise_unsupported", "citation_offtopic"})
 
 
 def _apply_overturns(
@@ -414,7 +487,12 @@ def _apply_overturns(
     reason asserts an absence — or calls a fact unstated — that the script text
     disproves. Mutates `verdicts`; returns [(flag_id, note, scene_id)] for
     reporting. Runs on the main pass, the re-source pass, and the salvage path —
-    a false rejection must not survive ANY route to the record."""
+    a false rejection must not survive ANY route to the record.
+
+    A rejection that ALSO rests on a sourcing ground (its failure_mode, or its
+    prose) is never flipped: only the false ground is struck and the sourcing
+    objection stands, so the flag demotes honestly instead of shipping as
+    verified on a citation the verifier declined to stand behind."""
     overturned: list[tuple[str, str, str]] = []
     for f in flags:
         v = verdicts.get(f["flag_id"])
@@ -433,20 +511,23 @@ def _apply_overturns(
         # from a window that did not contain it (F3009: ages in S004, not S084).
         if claim == "unstated" and sid not in (f.get("scene_ids") or []):
             f["scene_ids"] = sorted({*(f.get("scene_ids") or []), sid}, key=lambda x: int(x[1:]))
-        if claim == "unstated" and _SOURCING_GROUND_RE.search(reason):
+        ground = "'unstated fact'" if claim == "unstated" else "'absent from the script'"
+        sourcing = v.get("failure_mode") in _SOURCING_FAILURE_MODES or bool(
+            _SOURCING_GROUND_RE.search(reason)
+        )
+        if sourcing:
+            mode = v.get("failure_mode")
             verdicts[f["flag_id"]] = {
                 "verdict": "UNSUPPORTED",
                 "reason": (
-                    "GROUND PARTIALLY OVERTURNED: the 'unstated fact' objection was false — "
+                    f"GROUND PARTIALLY OVERTURNED: the {ground} objection was false — "
                     f"the script states the specifics ({span[:60]}) in {sid}. The sourcing "
-                    "objection stands. Original rejection: " + reason[:200]
+                    "objection stands. Original rejection: " + reason
                 ),
-                "failure_mode": "premise_unsupported",
+                "failure_mode": mode if mode in _SOURCING_FAILURE_MODES else "premise_unsupported",
                 "ground_overturned": True,
             }
-            overturned.append(
-                (f["flag_id"], f"false 'unstated fact' ground struck ({span[:50]})", sid)
-            )
+            overturned.append((f["flag_id"], f"false {ground} ground struck ({span[:50]})", sid))
             continue
         detail = (
             f'the rejection asserted "{span[:60]}" is absent'
@@ -457,7 +538,7 @@ def _apply_overturns(
             "verdict": "SUPPORTED",
             "reason": (
                 f"OVERTURNED by assertion: {detail}, but the script states it in {sid}. "
-                "Original rejection: " + reason[:200]
+                "Original rejection: " + reason
             ),
             "failure_mode": "none",
             "overridden": True,
@@ -470,28 +551,43 @@ def _overturned_by_script(reason: str, state: Any) -> tuple[str, str] | None:
     """ASSERTION 1 (run-6 harness): no rejection may assert that a string is
     absent when a full-text search of the script finds it. Returns (span,
     scene_id) when the rejection quotes text that EXISTS in the script and the
-    surrounding sentence asserts its absence — the deterministic catch for
-    'The line X does not appear in the screenplay' about a line that does."""
+    sentence around it asserts ITS absence from the SCRIPT — the deterministic
+    catch for 'The line X does not appear in the screenplay' about a line that
+    does. Precision guards: the absence phrase must sit in the same sentence as
+    the quote, that sentence must speak of the script (not of an excerpt or
+    citation), and the quote nearest the phrase must be this one — a supporting
+    quote beside a genuinely absent token never flips."""
     text = str(state.get("script_text") or "")
     if not text or not reason:
         return None
     low_reason = reason.lower()
+    masked = _mask_quotes(low_reason)
     for span in _quoted_spans(reason):
         pos = _find_in_script(span, text)
         if pos < 0:
             continue  # quote genuinely absent — the rejection may stand
         qpos = low_reason.find(span.lower()[:40])
-        window = low_reason[max(0, qpos - 90) : qpos + len(span) + 90] if qpos >= 0 else low_reason
-        if _ABSENCE_RE.search(window):
-            sid = next(
-                (
-                    s["scene_id"]
-                    for s in state.get("scenes", [])
-                    if s["raw_span"][0] <= pos < s["raw_span"][1]
-                ),
-                "the script",
-            )
-            return span, sid
+        if qpos < 0:
+            continue
+        lo, hi = _sentence_bounds(masked, qpos)
+        sentence = low_reason[lo:hi]
+        m = _ABSENCE_RE.search(sentence)
+        if not m:
+            continue
+        if _EVIDENCE_TOKEN_RE.search(sentence) or not _SCRIPT_TOKEN_RE.search(sentence):
+            continue  # about an excerpt, or not about the script at all
+        nearest = _quote_nearest(low_reason, lo, hi, lo + m.start())
+        if nearest is None or _canon(nearest).strip() != _canon(span).strip():
+            continue  # the absence is asserted about a different quote
+        sid = next(
+            (
+                sc["scene_id"]
+                for sc in state.get("scenes", [])
+                if sc["raw_span"][0] <= pos < sc["raw_span"][1]
+            ),
+            "the script",
+        )
+        return span, sid
     return None
 
 
@@ -620,7 +716,7 @@ def _stated_fact_overturn(reason: str, state: Any, finding: str = "") -> tuple[s
     a name there (digit or word), the fact IS stated — the verifier reasoned from a
     partial window. Names are anchored to the numbers first (in the reason, then the
     FINDING — run 12's rejection said only 'the daughters'; the finding names them);
-    whole-reason extraction is the fallback. Returns (names, scene_id). High
+    there is deliberately NO whole-reason fallback. Returns (names, scene_id). High
     precision: ambiguous when the names appear together in more than three scenes."""
     text = str(state.get("script_text") or "")
     scenes = state.get("scenes", [])
@@ -632,13 +728,15 @@ def _stated_fact_overturn(reason: str, state: Any, finding: str = "") -> tuple[s
     sentences = _re.split(r"(?<=[.;])\s+", reason)
     claim_text = " ".join(s for s in sentences if _UNSTATED_RE.search(s)) or reason
     nums = set(_re.findall(r"(?<![A-Za-z0-9])\d{1,3}(?![0-9])", claim_text))
+    if not nums:
+        # No claimed number means nothing to check beside a name. The old
+        # fallback — every capitalized word in the rejection — flipped an
+        # off-topic-citation rejection to SUPPORTED because a newspaper's own
+        # name co-occurred in one scene (F1004, 2026-09-01).
+        return None
     propers = _propers_near_numbers(claim_text, nums)
     if len(propers) < _MIN_ANCHOR_NAMES and finding:
         propers |= _propers_near_numbers(finding, nums)
-    if len(propers) < _MIN_ANCHOR_NAMES:
-        propers = {
-            w for w in _re.findall(r"\b[A-Z][a-z]{2,}\b", reason) if w.lower() not in _COMMON_CAPS
-        }
     if len(propers) < _MIN_ANCHOR_NAMES:
         return None
     matches: list[str] = []
@@ -646,7 +744,7 @@ def _stated_fact_overturn(reason: str, state: Any, finding: str = "") -> tuple[s
         seg = text[s["raw_span"][0] : s["raw_span"][1]].lower()
         if not all(p.lower() in seg for p in propers):
             continue
-        if nums and not all(_num_near_name(seg, propers, n) for n in nums):
+        if not all(_num_near_name(seg, propers, n) for n in nums):
             continue
         matches.append(s["scene_id"])
     if not matches or len(matches) > _MAX_ANCHOR_SCENES:
@@ -935,9 +1033,11 @@ def _blinded_prompt(flag: dict[str, Any], script_context: str, search_results: s
 def apply_verdicts(
     flags: list[dict[str, Any]], verdicts: dict[str, dict[str, Any]]
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
-    """Pure function: (surviving flags, rejected flags). PARTIAL caps severity at
-    MEDIUM and marks the finding; UNSUPPORTED drops the flag. Missing verdicts keep
-    the flag untouched — a broken verifier must not silently delete findings."""
+    """Pure function: (surviving flags, rejected flags). PARTIAL keeps the filed
+    severity and marks the finding "[partially supported]" (a citation-confidence
+    marker, never a severity cap — run-3 decision); UNSUPPORTED drops the flag.
+    Missing verdicts keep the flag untouched — a broken verifier must not
+    silently delete findings."""
     kept: list[dict[str, Any]] = []
     rejected: list[dict[str, Any]] = []
     for flag in flags:
@@ -993,19 +1093,9 @@ async def _verify_flag(
         delay = 10.0
         for attempt in range(_MAX_ATTEMPTS):
             try:
-                res = await client.aio.models.generate_content(
-                    model=MODEL,
-                    contents=_blinded_prompt(flag, script_context, search_results),
-                    config=types.GenerateContentConfig(
-                        response_mime_type="application/json",
-                        response_schema=Verdict,
-                        temperature=0.0,
-                    ),
-                )
-                v = Verdict.model_validate_json(res.text)
-                # mirror _verify_one: without failure_mode a salvage-path
-                # rejection is permanently mislabeled "none" on the record
-                return {"verdict": v.verdict, "reason": v.reason, "failure_mode": v.failure_mode}
+                # same block-aware call as the panel: the salvage path gets the
+                # censored fallback too, and failure_mode is never mislabeled
+                return await call_verifier(client, flag, script_context, search_results)
             except Exception:
                 if attempt == _MAX_ATTEMPTS - 1:
                     # Fail open with a marker: never silently drop a flag
@@ -1109,6 +1199,69 @@ def _fresh_citations(
         if len(cits) >= _RESOURCE_CITES:
             break
     return cits
+
+
+def _is_local_cite(c: dict[str, Any]) -> bool:
+    return c.get("via") == "local" or c.get("source_type") in ("statute", "marginal")
+
+
+def _refile_gate_problem(flag: dict[str, Any], *, check_authority: bool) -> str | None:
+    """The filing gates a re-sourced or refiled flag must pass AGAIN. Re-source
+    replaces citations and refile rewrites the text; neither went through
+    file_flag, so a HIGH could return on one blog excerpt, a statute finding
+    could lose its provision, a sync finding could re-bundle the master claim.
+    Pure checks only (no ToolContext here): the authority tier, statute
+    traceability to the flag's OWN excerpts, sync/master separation, and the
+    normative-rule ban. Rating flags keep their tool-emitted marginal citation
+    (via=local) and that stands in for the typed-registry authority check."""
+    from greenlight.tools.toolbelt import (
+        _authority_problem,
+        _normative_rule_problem,
+        _statute_sections,
+        _sync_master_split_problem,
+    )
+
+    cat = str(flag.get("category") or "")
+    sev = str(flag.get("severity") or "")
+    finding = str(flag.get("finding") or "")
+    detail = str((flag.get("remedy") or {}).get("detail") or "")
+    cits = list(flag.get("citations") or [])
+    if check_authority and not (cat.startswith("rating_") and any(_is_local_cite(c) for c in cits)):
+        problem = _authority_problem(sev, cits, cat)
+        if problem:
+            return "re-source gate (authority tier): " + problem
+    secs = _statute_sections(f"{finding} {detail}")
+    if secs:
+        excerpts = " ".join(str(c.get("excerpt") or "") for c in cits)
+        missing = sorted(
+            n for n in secs if not _re.search(rf"(?<![\d.]){_re.escape(n)}(?!\d)", excerpts)
+        )
+        if missing:
+            return (
+                f"re-source gate (statute traceability): section(s) {missing} named in the "
+                "finding appear in none of its own excerpts"
+            )
+    problem = _sync_master_split_problem(cat, finding, detail)
+    if problem:
+        return "refile gate (sync/master): " + problem
+    problem = _normative_rule_problem(cat, finding, detail)
+    if problem:
+        return "refile gate (normative rule): " + problem
+    return None
+
+
+_RATING_RANK = {"G": 0, "PG": 1, "PG-13": 2, "R": 3, "NC-17": 4}
+
+
+def _cut_list_at_target(pred: dict[str, Any]) -> bool:
+    """A cut list is a lever TOWARD a target; when the prediction already sits
+    at or below the target there is nothing to cut toward, and rendering "the
+    cut list toward R" under a predicted R contradicts the card above it."""
+    p, t = pred.get("predicted"), pred.get("target")
+    return p in _RATING_RANK and t in _RATING_RANK and _RATING_RANK[p] <= _RATING_RANK[t]
+
+
+_PARTIAL_PREFIX_RE = _re.compile(r"^\s*\[partially supported\]\s*")
 
 
 class VerificationPanel(BaseAgent):
@@ -1244,7 +1397,8 @@ class VerificationPanel(BaseAgent):
                 return None
         if not out.rationale.strip():
             return None
-        return {"rationale": out.rationale.strip(), "beats_to_cut": out.beats_to_cut}
+        beats = [] if _cut_list_at_target(pred) else out.beats_to_cut
+        return {"rationale": out.rationale.strip(), "beats_to_cut": beats}
 
     async def _verify_one(
         self,
@@ -1459,13 +1613,45 @@ class VerificationPanel(BaseAgent):
                 if not fixed:
                     continue
                 retry_flag = {**r, "finding": fixed, "resourced": True}
+                gate = _refile_gate_problem(retry_flag, check_authority=False)
             else:
                 new_cits = await asyncio.to_thread(_fresh_citations, r, state)
                 if not new_cits:
                     continue
-                retry_flag = {**r, "citations": new_cits, "resourced": True}
+                # tool-emitted citations (statute provision spans, marginals)
+                # are not what failed — a wholesale replacement dropped them and
+                # the finding's own section numbers became untraceable
+                local = [c for c in (r.get("citations") or []) if _is_local_cite(c)]
+                retry_flag = {**r, "citations": local + new_cits, "resourced": True}
+                gate = _refile_gate_problem(retry_flag, check_authority=True)
             retry_flag.pop("rejection_reason", None)
             retry_flag.pop("recoverable", None)
+            if gate:
+                # the re-source did not clear the filing bar: the rejection stands
+                verdicts[r["flag_id"] + ":resourced"] = {
+                    "verdict": "UNSUPPORTED",
+                    "reason": gate,
+                    "failure_mode": r.get("failure_mode") or "premise_unsupported",
+                }
+                manifest.append(
+                    {
+                        "guard": "resource_gate",
+                        "stage": "re_source",
+                        "flag_id": r["flag_id"],
+                        "matched": gate[:160],
+                    }
+                )
+                yield Event(
+                    invocation_id=ctx.invocation_id,
+                    author=self.name,
+                    content=types.Content(
+                        role="model",
+                        parts=[
+                            types.Part(text=f"↻ {r['flag_id']} re-source refused: {gate[:140]}")
+                        ],
+                    ),
+                )
+                continue
             v2 = await self._verify_one(
                 client,
                 retry_flag,
@@ -1529,6 +1715,9 @@ class VerificationPanel(BaseAgent):
             v3 = await self._verify_one(
                 client, f, _scene_context(f, state) + fact_ctx, _search_context(f, state), sem
             )
+            _tmp3 = {fid: v3}
+            _apply_overturns([f], _tmp3, state)  # assertion 1 screens fact-prop verdicts too
+            v3 = _tmp3[fid]
             if v3.get("fail_open") or not (
                 v3["verdict"] == "UNSUPPORTED" and v3.get("failure_mode") == "script_misstatement"
             ):
@@ -1545,21 +1734,21 @@ class VerificationPanel(BaseAgent):
             )
             recovered = False
             if corrected:
-                new_finding, new_remedy = corrected
-                # The refile re-enters the filing gate: a corrected rating finding
-                # that launders the rule back in is not a recovery.
-                from greenlight.tools.toolbelt import _normative_rule_problem
-
-                if _normative_rule_problem(f.get("category", ""), new_finding, new_remedy):
-                    corrected = None
-            if corrected:
-                new_finding, new_remedy = corrected
+                # the model may echo the PARTIAL marker; the verdict decides it
+                new_finding = _PARTIAL_PREFIX_RE.sub("", corrected[0])
+                new_remedy = corrected[1]
                 retry_flag = {
                     **f,
                     "finding": new_finding,
                     "remedy": {**(f.get("remedy") or {}), "detail": new_remedy},
                     "fact_reconciled": True,
                 }
+                # The refile re-enters the filing gates: a corrected rating finding
+                # that launders the rule back in, re-bundles the master claim, or
+                # names a section its excerpts lack is not a recovery.
+                if _refile_gate_problem(retry_flag, check_authority=False):
+                    corrected = None
+            if corrected:
                 v4 = await self._verify_one(
                     client,
                     retry_flag,
@@ -1567,10 +1756,15 @@ class VerificationPanel(BaseAgent):
                     _search_context(retry_flag, state),
                     sem,
                 )
+                _tmp4 = {fid: v4}
+                _apply_overturns([retry_flag], _tmp4, state)
+                v4 = _tmp4[fid]
                 if v4["verdict"] != "UNSUPPORTED":
-                    f["finding"] = new_finding
-                    f["remedy"] = {**(f.get("remedy") or {}), "detail": new_remedy}
-                    f["fact_reconciled"] = True
+                    # through apply_verdicts, so the PARTIAL marker (or the fail-
+                    # open chip) on the rendered finding matches the recorded verdict
+                    k4, _d4 = apply_verdicts([retry_flag], {fid: v4})
+                    f.clear()
+                    f.update(k4[0])
                     verdicts[fid] = v4
                     recovered = True
             if not recovered:
@@ -1683,6 +1877,46 @@ class VerificationPanel(BaseAgent):
                         ],
                     ),
                 )
+
+        # A cut list under a prediction already at or below its target is a
+        # self-contradiction (four live case pages: predicted R == target R with
+        # "the cut list toward R"). Drop it here whatever the desk or the
+        # reconcile produced; the original stays on pre_verification.
+        cur = rating_delta.get("rating_prediction") or pred
+        if cur and _cut_list_at_target(cur) and (cur.get("beats_to_cut") or []):
+            rating_delta["rating_prediction"] = {
+                **cur,
+                "beats_to_cut": [],
+                "reconciled_after_verification": True,
+                "pre_verification": cur.get("pre_verification")
+                or {
+                    "rationale": pred.get("rationale") if pred else None,
+                    "beats_to_cut": pred.get("beats_to_cut") if pred else None,
+                },
+            }
+            manifest.append(
+                {
+                    "guard": "cut_list_at_target",
+                    "stage": "post_verification",
+                    "matched": (
+                        f"predicted {cur.get('predicted')} at/below target {cur.get('target')}"
+                    ),
+                    "dropped": len(cur.get("beats_to_cut") or []),
+                }
+            )
+            yield Event(
+                invocation_id=ctx.invocation_id,
+                author=self.name,
+                content=types.Content(
+                    role="model",
+                    parts=[
+                        types.Part(
+                            text=f"⚖ cut list dropped — predicted {cur.get('predicted')} already "
+                            f"sits at or below the {cur.get('target')} target"
+                        )
+                    ],
+                ),
+            )
 
         rejected = [
             fid for fid, v in verdicts.items() if ":" not in fid and v["verdict"] == "UNSUPPORTED"

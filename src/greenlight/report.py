@@ -59,23 +59,33 @@ def _cost_paths(flags: list[dict[str, Any]]) -> dict[str, Any] | None:
     # renderer can say "Difference is F1012 (NIN sync, $40k-$80k)" instead of
     # leaving the financing number unattributed. sum(excluded) reconstructs
     # as_written - target to the dollar (pinned by test).
+    # built from _scored(): a fail-open flag is outside every total, so it must
+    # be outside the delta attribution too or excluded != as_written - target
     excluded = [
         {
             "flag_id": f["flag_id"],
             "category": f.get("category", ""),
             "est_cost_usd": (f.get("remedy") or {}).get("est_cost_usd"),
         }
-        for f in flags
+        for f in _scored(flags)
         if f.get("cost_excluded_on_target_path")
     ]
-    return {"target_rating": target, "as_written": _cost_range(flags), "excluded": excluded}
+    return {
+        "target_rating": target,
+        "as_written": _cost_range(flags),
+        "excluded": excluded,
+        # the schedule splits the same way the money does (review B16)
+        "as_written_days": _added_days(flags),
+        "target_rating_days": _added_days(flags, target_path=True),
+    }
 
 
-def _added_days(flags: list[dict[str, Any]]) -> float | None:
+def _added_days(flags: list[dict[str, Any]], target_path: bool = False) -> float | None:
     days = [
         f["remedy"]["est_added_days"]
         for f in _scored(flags)
         if f["remedy"].get("est_added_days") is not None
+        and not (target_path and f.get("cost_excluded_on_target_path"))
     ]
     # Remedies overlap in schedule; summing them would be dishonest. The critical
     # path is the longest single remedy.

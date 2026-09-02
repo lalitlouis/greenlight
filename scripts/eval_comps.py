@@ -1,18 +1,24 @@
 #!/usr/bin/env python3
-"""Comparables benchmark: does the corpus neighbourhood match the film's FORM?
+"""Comparables benchmark for the RATIONALE-SPACE corpus (run 17).
 
-The failure this guards against (2026-08-27 review): content markers alone
-put The Social Network next to Showgirls, then next to college comedies.
-Fixed probes in the form-first capsule style assert that known film shapes
-land among their actual genre neighbours, that the distance-weighted majority
-tracks the released rating, and that the old content-only capsule style is
-measurably worse (the diff prints, so regressions are visible, not vibes).
+`query_precedent` now searches `cara_rationales` — 4,733 official
+filmratings.com rationale strings embedded on their "for ..." clause — with a
+CARA-style descriptor profile, not a genre capsule. This benchmark asks the
+question that corpus can answer: does a descriptor profile land among films
+CARA rated for the same content, does the shared inverse-distance vote track
+the rating those descriptors pattern to, and is every neighbour's excerpt its
+own official rationale (the eval assertion, exercised live)?
+
+The pre-run-17 version of this script probed genre affinity on the plot-space
+table; that path is retired, and genre affinity is a documented casualty of
+run 17 (docs/plans/run17-rationale-space.md, P4) — not a regression.
 
 Live embeddings + ClickHouse (a few cents). Not a unit test: `make comps-gate`.
 """
 
 from __future__ import annotations
 
+import re
 import sys
 from pathlib import Path
 
@@ -25,8 +31,9 @@ load_dotenv(ROOT / ".env")
 
 from greenlight.tools.toolbelt import (  # noqa: E402
     _clickhouse_client,
-    _comps_weighted_majority,
     _embed,
+    boundary_eval,
+    comps_weighted_majority,
 )
 
 GREEN = "\033[32m"
@@ -35,119 +42,69 @@ DIM = "\033[2m"
 R_ = "\033[0m"
 
 
-def neighbours(capsule: str, k: int = 8) -> list[dict]:
-    vec = _embed(capsule)
+def neighbours(profile: str, k: int = 8) -> list[dict]:
+    """Mirror of query_precedent's query: same table, same columns, same order."""
+    vec = _embed(profile)
     rows = (
         _clickhouse_client()
         .query(
-            "SELECT title, rating, cosineDistance(embedding, %(v)s) d "
-            "FROM rating_rationales ORDER BY d ASC LIMIT %(k)s",
-            parameters={"v": vec, "k": k},
+            """
+            SELECT title, year, rating, rationale,
+                   cosineDistance(embedding, %(vec)s) AS distance
+            FROM cara_rationales
+            ORDER BY distance ASC, year DESC
+            LIMIT %(k)s
+            """,
+            parameters={"vec": vec, "k": k},
         )
         .result_rows
     )
-    return [{"title": t, "rating": r, "distance": float(d)} for t, r, d in rows]
+    return [
+        {"title": t, "year": y, "rating": r, "rationale": ra, "distance": float(d)}
+        for t, y, r, ra, d in rows
+    ]
 
 
+# Descriptor profiles (what the desk now sends), the rating band the measured
+# boundary expects, and the descriptor phrases boundary_eval should agree on.
 PROBES = [
     {
-        "name": "dialogue-driven founder legal drama (TSN-shaped)",
-        "capsule": (
-            "A dialogue-driven biographical drama about the founding of a technology "
-            "company, told through legal depositions and campus scenes at an Ivy League "
-            "university. 189 scenes; 74% of the text is dialogue (dialogue-driven); "
-            "procedural register, dramatic not comedic — the drinking is background, "
-            "never the joke. Pervasive strong language, college drinking, brief cocaine "
-            "use at a party, some sexual content; no violence."
-        ),
-        "want_any": [
-            "steve jobs",
-            "jobs",
-            "blackberry",
-            "tesla",
-            "the social network",
-            "moneyball",
-            "the big short",
-            "margin call",
-            "the founder",
-            "equity",
-            "pain hustlers",
-            "the hummingbird project",
-            "dumb money",
-            "air",
-        ],
-        "want_min": 3,
-        "veto_top4": [
-            "neighbors",
-            "american pie",
-            "22 jump street",
-            "booksmart",
-            "life of the party",
-            "shithouse",
-            "big time adolescence",
-            "dirty grandpa",
-            "showgirls",
-            "hustlers",
-            "magic mike",
-            "a dirty shame",
-            "bad lieutenant",
-        ],
-        "majority_in": ["PG-13", "R"],
+        "name": "pervasive language + strong violence (hard R)",
+        "profile": "for pervasive language, strong bloody violence and some drug use",
+        "descriptors": ["pervasive language", "strong bloody violence", "some drug use"],
+        "majority_in": ["R"],
     },
     {
-        "name": "quiet coastal grief drama (fixture-shaped)",
-        "capsule": (
-            "A quiet, dialogue-forward drama about grief in a small fishing harbor "
-            "town — a family working out a death over boats, bars, and a funeral. "
-            "12 scenes; balanced dialogue and action; dramatic register, no comedy. "
-            "Strong language in bursts, brief violence, a scattering of drug use; "
-            "no sexual content."
-        ),
-        "want_any": [
-            "manchester by the sea",
-            "coda",
-            "finestkind",
-            "blow the man down",
-            "the peanut butter falcon",
-            "sound of metal",
-            "leave no trace",
-        ],
-        "want_min": 1,
-        "veto_top4": ["showgirls", "american pie", "dirty grandpa"],
+        "name": "fixture-shaped: language, brief drugs, some violence",
+        "profile": "for language, brief drug use and some violence",
+        "descriptors": ["language", "brief drug use", "some violence"],
         "majority_in": ["R", "PG-13"],
     },
     {
-        "name": "animated family adventure",
-        "capsule": (
-            "A bright animated family adventure about a young animal hero on a quest "
-            "with comic sidekicks. Ensemble comedy register, song numbers, slapstick "
-            "peril only; no language, no substances, no sexual content."
-        ),
-        "want_any": [],
-        "want_min": 0,
-        "veto_top4": ["showgirls", "neighbors"],
-        "majority_in": ["G", "PG"],
+        "name": "one-F-word PG-13 (brief strong language)",
+        "profile": "for brief strong language",
+        "descriptors": ["brief strong language"],
+        "majority_in": ["PG-13"],
     },
     {
-        "name": "hard-R action revenge thriller",
-        "capsule": (
-            "A relentless action revenge thriller — a professional killer cuts through "
-            "a criminal underworld. Action-forward (25% dialogue), stylized register; "
-            "pervasive graphic gun violence, strong language throughout, brief drug "
-            "material; no sexual content."
-        ),
-        "want_any": [],
-        "want_min": 0,
-        "veto_top4": [],
-        "majority_in": ["R"],
+        "name": "mild thematic elements (PG)",
+        "profile": "for mild thematic elements and some language",
+        "descriptors": ["mild thematic elements", "some language"],
+        "majority_in": ["PG", "PG-13"],
+    },
+    {
+        "name": "graphic nudity + sexual content (R/NC-17)",
+        "profile": "for graphic nudity, strong sexual content and language",
+        "descriptors": ["graphic nudity", "strong sexual content", "language"],
+        "majority_in": ["R", "NC-17"],
     },
 ]
 
-# The pre-fix capsule style for the TSN shape — kept so the improvement (or a
-# regression) is a printed diff, not a memory.
-OLD_STYLE_TSN = (
-    "Pervasive strong language, sexual content, drug use, and alcohol abuse "
-    "involving college students; brief nudity in party scenes."
+# The retired genre capsule, printed once so the mismatch it produces on the
+# rationale table stays visible: a plot sentence lands nowhere useful here.
+OLD_STYLE_GENRE_CAPSULE = (
+    "A dialogue-driven biographical drama about the founding of a technology "
+    "company, told through legal depositions and campus scenes."
 )
 
 
@@ -155,19 +112,22 @@ def main() -> int:
     passes = 0
     checks = 0
 
-    print(f"{DIM}old-style capsule (content markers only), TSN shape:{R_}")
-    for n in neighbours(OLD_STYLE_TSN, 8):
+    print(f"{DIM}retired genre capsule against the rationale table (expect noise):{R_}")
+    for n in neighbours(OLD_STYLE_GENRE_CAPSULE, 5):
         print(f"  {DIM}{n['distance']:.3f}  {n['rating']:<6} {n['title']}{R_}")
 
     for probe in PROBES:
-        ns = neighbours(probe["capsule"], 8)
-        titles = [n["title"].lower() for n in ns]
-        top4 = titles[:4]
-        majority = _comps_weighted_majority(ns)
+        ns = neighbours(probe["profile"], 8)
+        majority = comps_weighted_majority(ns)
+        boundary = boundary_eval(probe["descriptors"])
+        pred_set = boundary.get("prediction_set") or []
 
-        print(f"\n{probe['name']}  (weighted majority: {majority})")
+        print(f"\n{probe['name']}  (weighted majority: {majority}; boundary set: {pred_set})")
         for n in ns:
-            print(f"  {n['distance']:.3f}  {n['rating']:<6} {n['title']}")
+            print(
+                f"  {n['distance']:.3f}  {n['rating']:<6} {n['title']}  "
+                f"{DIM}{n['rationale'][:70]}{R_}"
+            )
 
         def grade(ok: bool, label: str) -> None:
             nonlocal passes, checks
@@ -175,20 +135,22 @@ def main() -> int:
             passes += ok
             print(f"  [{GREEN}PASS{R_}]" if ok else f"  [{RED}MISS{R_}]", label)
 
-        if probe["want_min"]:
-            hits = sum(1 for t in titles if any(w in t for w in probe["want_any"]))
-            grade(
-                hits >= probe["want_min"],
-                f"≥{probe['want_min']} genre-true neighbours ({hits} found)",
-            )
-        if probe["veto_top4"]:
-            bad = [t for t in top4 if any(v in t for v in probe["veto_top4"])]
-            grade(
-                not bad, f"no vetoed titles in the top 4 {('— ' + ', '.join(bad)) if bad else ''}"
-            )
+        grade(majority in probe["majority_in"], f"weighted majority in {probe['majority_in']}")
         grade(
-            majority in probe["majority_in"],
-            f"weighted majority in {probe['majority_in']}",
+            all(
+                re.match(rf"^Rated\s+{re.escape(n['rating'])}\s+for\s+", n["rationale"], re.I)
+                for n in ns
+            ),
+            "every neighbour's excerpt is its own official rationale",
+        )
+        grade(
+            not boundary.get("unmatched"),
+            f"boundary parses every descriptor (unmatched: {boundary.get('unmatched')})",
+        )
+        grade(
+            not pred_set or majority in pred_set or len(pred_set) > 1,
+            "instruments agree: the vote sits inside the conformal set (or the set is not "
+            "a singleton)",
         )
 
     print(f"\n{passes}/{checks}")

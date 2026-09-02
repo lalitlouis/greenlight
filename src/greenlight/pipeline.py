@@ -327,11 +327,7 @@ def _incomplete_desks(state: dict[str, Any], verbose: bool) -> list[str]:
         tri = tri.model_dump()
     for d in DESKS:
         worklist = tri.get(d) or []
-        n_disp = (
-            len(toolbelt.desk_flags(state, d))
-            + len(toolbelt.desk_open_questions(state, d))
-            + len(toolbelt.desk_cleared(state, d))
-        )
+        n_disp = _own_dispositions(state, d)
         if worklist and n_disp == 0:
             incomplete.append(d)
             if verbose:
@@ -346,6 +342,23 @@ def _incomplete_desks(state: dict[str, Any], verbose: bool) -> list[str]:
                     "assigned items (under-coverage)"
                 )
     return incomplete
+
+
+def _own_dispositions(state: dict[str, Any], desk: str) -> int:
+    """A desk's OWN dispositions, counted per ENTITY. Mirrors
+    toolbelt.collapsed_desks (the gate's retry signature): the completeness
+    sweeper's generalist clearances do not count for the desk, and a desk that
+    filed three flags on one song dispositioned one item, not three (review
+    2026-09-01 B16 — the under-coverage ratio inflated on multi-flag entities)."""
+    flags = toolbelt.desk_flags(state, desk)
+    cleared = toolbelt.desk_cleared_own(state, desk)
+    entities = {f.get("entity_id") for f in flags if f.get("entity_id")} | {
+        c.get("entity_id") for c in cleared if isinstance(c, dict) and c.get("entity_id")
+    }
+    scene_level = sum(1 for f in flags if not f.get("entity_id")) + sum(
+        1 for c in cleared if not (isinstance(c, dict) and c.get("entity_id"))
+    )
+    return len(entities) + scene_level + len(toolbelt.desk_open_questions(state, desk))
 
 
 def _desk_coverage(state: dict[str, Any]) -> dict[str, dict[str, int]]:
@@ -369,6 +382,203 @@ def _desk_coverage(state: dict[str, Any]) -> dict[str, dict[str, int]]:
             "work_items_done": len(assigned_ids & toolbelt.desk_work_items_done(state, d)),
         }
     return out
+
+
+_FLAG_ID_RE = re.compile(r"\bF\d{3,4}\b")
+# an id not yet carrying its "(later rejected …)" / "(withdrawn …)" annotation
+_UNANNOTATED_ID_RE = re.compile(r"\b(F\d{3,4})\b(?! \((?:later rejected|withdrawn))")
+_UNRESOLVED_TEMPLATE = "Unresolved —"
+_MIN_ROUTE_SURFACE = 4  # 'Sam' inside a word must never route a question
+
+
+def _absorption_map(
+    before: list[dict[str, Any]], after: list[dict[str, Any]], plan: dict[str, Any] | None
+) -> dict[str, str]:
+    """{absorbed flag id -> surviving flag id} across BOTH merge paths. The
+    plan names its survivors; code dedupe does not, so an absorbed flag is
+    matched to the survivor the same way merge_exact_duplicates would have
+    (same desk, same category, same disposition, script-wide or scene
+    overlap). Chains resolve to their fixpoint. Review 2026-09-01 B4: 1-8
+    flags per run vanished with every cross-reference to them left dangling."""
+    after_ids = {f["flag_id"] for f in after}
+    planned: dict[str, str] = {}
+    for action in (plan or {}).get("merges", []) or []:
+        for fid in action.get("merged_flag_ids") or []:
+            planned[fid] = str(action.get("surviving_flag_id") or "")
+    out: dict[str, str] = {}
+    for f in before:
+        fid = f["flag_id"]
+        if fid in after_ids:
+            continue
+        survivor = planned.get(fid)
+        if survivor not in after_ids:
+            survivor = None
+            script_wide = str(f.get("category") or "").startswith(("rating_", "territory_"))
+            no_action = (f.get("remedy") or {}).get("action") == "NO_ACTION"
+            for g in after:
+                if g.get("agent") != f.get("agent") or g.get("category") != f.get("category"):
+                    continue
+                if ((g.get("remedy") or {}).get("action") == "NO_ACTION") != no_action:
+                    continue
+                if script_wide or set(g.get("scene_ids") or []) & set(f.get("scene_ids") or []):
+                    survivor = g["flag_id"]
+                    break
+        if survivor:
+            out[fid] = survivor
+    for k in list(out):
+        seen, v = {k}, out[k]
+        while v in out and v not in seen:
+            seen.add(v)
+            v = out[v]
+        out[k] = v
+    return out
+
+
+def finalize_record_after_verification(record: dict[str, Any]) -> list[dict[str, Any]]:  # noqa: PLR0912, PLR0915 - one integrity pass, deliberately linear
+    """The ONE post-verification integrity pass over an assembled record —
+    shared by the live pipeline and the reverify endpoint so the two cannot
+    drift (review 2026-09-01 A5/B4/B12). Mutates the record; returns guard-
+    manifest entries. Deterministic.
+
+    1. Absorbed ids (merge/dedupe) are rewritten to their survivor everywhere
+       prose can cite a finding: cleared reasoning, open questions, finding and
+       remedy text, adjudication notes.
+    2. Rejected ids carry "(later rejected in verification — see Rejected)" and
+       marginal-gate withdrawals "(withdrawn — see Open questions)" — in EVERY
+       cleared bucket (the sweeper's included), never only the desks'.
+    3. Adjudication notes may only name ids that render.
+    4. A finding whose prose names a scene the script does not have is
+       manifest-recorded (the eval fails it; the filing gate rejects it live).
+    5. An open question that names a rendered same-desk finding, or the surface
+       of an entity carrying one, is a FOLLOW-UP on that finding, not a second
+       item in the unknowns count — routed to record["oq_followups"].
+    6. entity_accounting.items_examined: the decomposition behind
+       "N items examined", so the header can be reconciled by a reader.
+    """
+    from greenlight import entity_accounting
+
+    manifest: list[dict[str, Any]] = []
+    flags: list[dict[str, Any]] = record.get("flags") or []
+    rep_flags: list[dict[str, Any]] = (record.get("report") or {}).get("flags") or []
+    kept_ids = {f["flag_id"] for f in flags}
+    rejected_ids = {
+        f.get("flag_id") for f in record.get("rejected_flags") or [] if f.get("flag_id")
+    }
+    withdrawn = set(record.get("withdrawn_flag_ids") or [])
+    raw_absorbed = record.get("absorbed_into") or {}
+    # a flag absorbed into a survivor the marginal gate later withdrew is itself
+    # withdrawn — its id must annotate, not dangle
+    withdrawn |= {k for k, v in raw_absorbed.items() if v in withdrawn}
+    absorbed = {k: v for k, v in raw_absorbed.items() if v in kept_ids}
+    record["absorbed_into"] = absorbed
+
+    def _rewrite(text: str) -> str:
+        if not absorbed:
+            return text
+        out = _FLAG_ID_RE.sub(lambda m: absorbed.get(m.group(0), m.group(0)), text)
+        # "F4003 and F4003" after a rewrite is one reference, not two
+        return re.sub(r"\b(F\d{3,4})\b(\s*(?:,|and|&|/)\s*)\1\b", r"\1", out)
+
+    def _annotate(text: str) -> str:
+        def sub(m: re.Match[str]) -> str:
+            fid = m.group(1)
+            if fid in kept_ids:
+                return fid
+            if fid in rejected_ids:
+                return f"{fid} (later rejected in verification — see Rejected)"
+            if fid in withdrawn:
+                return f"{fid} (withdrawn — see Open questions)"
+            return fid
+
+        return _UNANNOTATED_ID_RE.sub(sub, text)
+
+    # 1 + 2: cleared (every bucket), findings, remedies
+    for _desk, items in (record.get("cleared") or {}).items():
+        for c in items or []:
+            if isinstance(c, dict) and c.get("reasoning"):
+                c["reasoning"] = _annotate(_rewrite(str(c["reasoning"])))
+    seen_flag_objs: set[int] = set()
+    for f in [*flags, *rep_flags]:
+        if id(f) in seen_flag_objs:
+            continue
+        seen_flag_objs.add(id(f))
+        if f.get("finding"):
+            f["finding"] = _annotate(_rewrite(str(f["finding"])))
+        rem = f.get("remedy") or {}
+        if rem.get("detail"):
+            rem["detail"] = _annotate(_rewrite(str(rem["detail"])))
+    # 3: adjudication notes — rewrite absorbed ids, then drop anything dangling
+    notes = [_rewrite(str(n)) for n in record.get("adjudication_notes") or []]
+    record["adjudication_notes"] = [n for n in notes if set(_FLAG_ID_RE.findall(n)) <= kept_ids]
+    # 4: prose naming a scene the script does not have
+    scene_meta = record.get("scene_meta")
+    if isinstance(scene_meta, dict) and scene_meta:
+        for f in flags:
+            body = f"{f.get('finding') or ''} {(f.get('remedy') or {}).get('detail') or ''}"
+            missing = sorted(set(re.findall(r"\bS\d{3}\b", body)) - set(scene_meta))
+            if missing:
+                manifest.append(
+                    {
+                        "guard": "prose_scene_missing",
+                        "stage": "assembly",
+                        "flag_id": f["flag_id"],
+                        "scene_ids": missing,
+                    }
+                )
+    # 5: open-question routing
+    surf_by_id = {
+        str(e.get("entity_id") or ""): str(e.get("surface") or "")
+        for e in record.get("entities") or []
+        if e.get("entity_id")
+    }
+    fold = (record.get("entity_accounting") or {}).get("fold") or {}
+    followups: dict[str, list[str]] = {
+        k: list(v) for k, v in (record.get("oq_followups") or {}).items() if k in kept_ids
+    }
+    new_oq: dict[str, list[Any]] = {}
+    for desk, qs in (record.get("open_questions") or {}).items():
+        desk_flags = [f for f in flags if f.get("agent") == desk]
+        desk_ids = [f["flag_id"] for f in desk_flags]
+        keep: list[Any] = []
+        for q in qs or []:
+            text = _annotate(_rewrite(str(q)))
+            if text.startswith(_UNRESOLVED_TEMPLATE):
+                keep.append(text)  # names a rejected/withdrawn id by design
+                continue
+            target = next((fid for fid in desk_ids if fid in set(_FLAG_ID_RE.findall(text))), None)
+            if target is None:
+                for f in desk_flags:
+                    eid = str(f.get("entity_id") or "")
+                    surfaces = {surf_by_id.get(eid, ""), surf_by_id.get(fold.get(eid, eid), "")}
+                    for surface in surfaces:
+                        if len(surface) >= _MIN_ROUTE_SURFACE and re.search(
+                            rf"(?<!\w){re.escape(surface)}(?!\w)", text, re.IGNORECASE
+                        ):
+                            target = f["flag_id"]
+                            break
+                    if target:
+                        break
+            if target:
+                followups.setdefault(target, []).append(text)
+                manifest.append(
+                    {
+                        "guard": "open_question_routed",
+                        "stage": "assembly",
+                        "flag_id": target,
+                        "desk": desk,
+                        "matched": text[:120],
+                    }
+                )
+            else:
+                keep.append(text)
+        new_oq[desk] = keep
+    record["open_questions"] = new_oq
+    record["oq_followups"] = followups
+    # 6: the header decomposition
+    acct = record.get("entity_accounting")
+    if isinstance(acct, dict):
+        acct["items_examined"] = entity_accounting.items_examined(record)
+    return manifest
 
 
 async def run(  # noqa: PLR0912, PLR0915 - one linear run sequence, deliberately explicit
@@ -486,9 +696,12 @@ async def run(  # noqa: PLR0912, PLR0915 - one linear run sequence, deliberately
     # adjudicator exists for. The plan was generated from the PRE-dedupe
     # verified_flags, so it must see that same set.
     adjudication_notes: list[str] = []
-    if plan := state.get("adjudication"):
+    _pre_merge = list(kept)
+    plan = state.get("adjudication")
+    if plan:
         kept, adjudication_notes = adjudicator.apply_plan(kept, plan)
     kept = adjudicator.merge_exact_duplicates(kept)
+    absorbed_into = _absorption_map(_pre_merge, kept, plan)
     # ASSERTION (run-8): no adjudication entry may reference a flag id that does
     # not render. The Pro adjudicator hallucinated F2008/F2003 against its own
     # input, and dedupe can absorb a flag a note already named — either way the
@@ -545,6 +758,19 @@ async def run(  # noqa: PLR0912, PLR0915 - one linear run sequence, deliberately
                 }
             )
         state[oq_key] = oq
+        if state.get("rating_prediction"):
+            # the reconcile that trims a rejected finding's clause from the
+            # rationale/cut list runs inside the verification panel with a live
+            # client; an assembly-stage demotion has none. Say so on the record
+            # rather than leave the panel silently resting on a withdrawn driver.
+            _assembly_manifest.append(
+                {
+                    "guard": "marginal_hard_gate",
+                    "stage": "assembly",
+                    "outcome": "rating_reconcile_not_run",
+                    "flag_ids": [f["flag_id"] for f in _no_marginal],
+                }
+            )
         # gate #15: the dangling-note filter ran BEFORE this gate existed in the
         # sequence — a demoted finding's adjudication note survived it. Re-filter
         # against what actually renders now.
@@ -576,21 +802,6 @@ async def run(  # noqa: PLR0912, PLR0915 - one linear run sequence, deliberately
         await runner.session_service.delete_session(
             app_name=APP_NAME, user_id=USER_ID, session_id=session.id
         )
-
-    # Referential integrity for the cleared section: a desk's clearance note
-    # written mid-run may cite a flag id the verifier later rejected ("flagged
-    # as BLOCKER under F401") — without this, the report points at findings
-    # that no longer exist.
-    rejected_ids = {f.get("flag_id") for f in rejected if f.get("flag_id")}
-    if rejected_ids:
-        pat = re.compile(r"\b(" + "|".join(sorted(rejected_ids)) + r")\b")
-        for d in DESKS:
-            for entry in toolbelt.desk_cleared(state, d):
-                reasoning = entry.get("reasoning") or ""
-                if pat.search(reasoning):
-                    entry["reasoning"] = pat.sub(
-                        r"\1 (later rejected in verification — see Rejected)", reasoning
-                    )
 
     record = {
         "script_title": title,
@@ -630,6 +841,8 @@ async def run(  # noqa: PLR0912, PLR0915 - one linear run sequence, deliberately
         "verdicts": verdicts,
         "report": the_report,
         "adjudication_notes": adjudication_notes,
+        "absorbed_into": absorbed_into,
+        "withdrawn_flag_ids": [f["flag_id"] for f in _no_marginal],
         "open_questions": {d: toolbelt.desk_open_questions(state, d) for d in DESKS},
         "cleared": {
             **{d: toolbelt.desk_cleared_own(state, d) for d in DESKS},
@@ -659,6 +872,10 @@ async def run(  # noqa: PLR0912, PLR0915 - one linear run sequence, deliberately
     record["guard_manifest"] = (
         record.get("guard_manifest") or []
     ) + entity_accounting.polish_record(record)
+    # the shared post-verification integrity pass (also run by reverify):
+    # absorbed-id rewrite, rejected/withdrawn annotation in every bucket,
+    # dangling notes, phantom prose scenes, open-question routing, header math
+    record["guard_manifest"] = record["guard_manifest"] + finalize_record_after_verification(record)
     return record
 
 

@@ -14,6 +14,7 @@ see docs/TECH_SPEC.md.
 
 from __future__ import annotations
 
+import re
 from typing import Any, Literal
 
 from google.adk.agents import LlmAgent
@@ -190,11 +191,105 @@ def merge_exact_duplicates(flags: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return kept
 
 
-def apply_plan(
+# The category vocabulary each desk's prompt names, mirrored here so a plan's
+# rename is validated in CODE (the instruction's "Do NOT" lines were model-honoured
+# only — 2026-09-01 review, B8). Ratings and territory slugs follow a pattern;
+# the boundary asset's descriptor families are the ratings set, so any
+# rating_<family> is admissible and the toolbelt decides what carries a marginal.
+_DESK_VOCAB: dict[str, frozenset[str]] = {
+    "clearance_counsel": frozenset(
+        {
+            "sync_license",
+            "master_use_license",
+            "trademark_disparagement",
+            "trademark_use",
+            "right_of_publicity",
+            "defamation_false_light",
+            "trade_libel_venue",
+            "underlying_rights",
+            "artwork_license",
+            "film_clip_license",
+            "publication_clearance",
+            "government_insignia",
+            "location_release",
+            "name_clearance",
+        }
+    ),
+    "safety_underwriter": frozenset(
+        {
+            "stunt_pyro",
+            "stunt_fall",
+            "stunt_vehicle",
+            "stunt_water",
+            "stunt_fight",
+            "firearms_blanks",
+            "animal_safety",
+            "minor_safety",
+            "weather_exposure",
+        }
+    ),
+}
+_TERRITORY_CAT_RE = re.compile(
+    r"^territory_(?:us|uk|cn|uae)_(?:supernatural|drug_use|alcohol|violence|sexuality|"
+    r"religious_content|state_authority|illegal_acts|product_depiction)$"
+)
+_RATING_CAT_RE = re.compile(r"^rating_[a-z][a-z_]{1,40}$")
+# Distinct legal theories the instruction forbids collapsing into a broader slug.
+_PROTECTED_CATEGORIES = frozenset(
+    {"defamation_false_light", "trade_libel_venue", "underlying_rights"}
+)
+_RIGHTS_PAIR = frozenset({"sync_license", "master_use_license"})
+
+
+def _desk_of(flag: dict[str, Any]) -> str:
+    agent = str(flag.get("agent") or "")
+    return agent.split("__", 1)[0]
+
+
+def category_admissible(desk: str, category: str) -> bool:
+    """Is `category` a slug this desk's vocabulary admits?"""
+    if desk == "territory_censor":
+        return bool(_TERRITORY_CAT_RE.match(category))
+    if desk == "ratings_board":
+        return bool(_RATING_CAT_RE.match(category))
+    vocab = _DESK_VOCAB.get(desk)
+    return category in vocab if vocab else True  # unknown desk: no vocabulary to enforce
+
+
+def _merge_refusal(survivor: dict[str, Any], other: dict[str, Any]) -> str | None:
+    """Why a plan may NOT fold `other` into `survivor` — None when the merge is
+    allowed. Each rule mirrors an instruction line the model was trusted with."""
+    if _desk_of(survivor) != _desk_of(other):
+        return "different desks (a safety and a territory finding on one scene are two findings)"
+    if not _same_disposition(survivor, other):
+        return "a NO_ACTION finding and an actionable one are two findings"
+    if {survivor.get("category"), other.get("category")} == _RIGHTS_PAIR:
+        return "sync and master-use are separate licences from separate licensors"
+    return None
+
+
+def _rename_refusal(survivor: dict[str, Any], new_category: str) -> str | None:
+    old = survivor.get("category")
+    if new_category == old:
+        return None
+    if old in _PROTECTED_CATEGORIES:
+        return f"{old} is a distinct legal theory and survives as filed"
+    if not category_admissible(_desk_of(survivor), new_category):
+        return f"'{new_category}' is not in the {_desk_of(survivor)} vocabulary"
+    return None
+
+
+def apply_plan(  # noqa: PLR0912, PLR0915 - one plan walk, guards inline
     flags: list[dict[str, Any]], plan: dict[str, Any]
 ) -> tuple[list[dict[str, Any]], list[str]]:
     """Apply an adjudication plan deterministically. Unknown ids are ignored; a flag
-    the plan does not touch survives unchanged. Returns (flags, applied_notes)."""
+    the plan does not touch survives unchanged. Returns (flags, applied_notes).
+
+    The instruction's merge rules are ENFORCED here, not trusted: a merge across
+    desks, across the NO_ACTION line, or of a sync/master pair is refused; so is a
+    rename to a slug outside the desk's vocabulary or away from a protected legal
+    theory. A refused action leaves every participant rendering unchanged and adds
+    an "adjudication refused" note naming only ids that still render."""
     by_id = {f["flag_id"]: f for f in flags}
     flags_category_before = {f["flag_id"]: f["category"] for f in flags}
     absorbed: set[str] = set()
@@ -206,9 +301,20 @@ def apply_plan(
         if survivor is None or action["surviving_flag_id"] in absorbed:
             continue
         sev_before = survivor["severity"]
-        merged_real = [
+        rationale = action.get("rationale", "")
+        candidates = [
             fid for fid in action["merged_flag_ids"] if fid in by_id and fid not in absorbed
         ]
+        merged_real: list[str] = []
+        for fid in candidates:
+            why = _merge_refusal(survivor, by_id[fid])
+            if why:
+                notes.append(
+                    f"adjudication refused: merge of {fid} into "
+                    f"{action['surviving_flag_id']} — {why} ({rationale})"
+                )
+                continue
+            merged_real.append(fid)
         for fid in merged_real:
             other = by_id[fid]
             prior = list(survivor["scene_ids"])
@@ -234,16 +340,22 @@ def apply_plan(
             # proposal (MEDIUM or below) is refused outright, not clamped.
             final_rank = 1 if plan_rank == 1 and action.get("rationale") else 0
         survivor["severity"] = ranks[min(final_rank, len(ranks) - 1)]
-        if action.get("category"):
-            survivor["category"] = action["category"]
+        new_cat = action.get("category") or ""
+        if new_cat:
+            why = _rename_refusal(survivor, new_cat)
+            if why:
+                notes.append(
+                    f"adjudication refused: rename of {action['surviving_flag_id']} to "
+                    f"{new_cat} — {why} ({rationale})"
+                )
+                new_cat = ""  # the survivor keeps its filed category
+            else:
+                survivor["category"] = new_cat
         # PARTIAL is a confidence marker, not a severity cap (run-3 decision) —
         # merges apply the highest-severity rule above and nothing else.
-        rationale = action.get("rationale", "")
         sid = action["surviving_flag_id"]
         sev_changed = survivor["severity"] != sev_before
-        cat_changed = action.get("category") and action["category"] != flags_category_before.get(
-            sid
-        )
+        cat_changed = bool(new_cat) and new_cat != flags_category_before.get(sid)
         # Only note what ACTUALLY happened. A note said "F2008: severity upgraded
         # from MEDIUM" while apply_plan's own rule REFUSED the upgrade — the
         # report claimed a change that never occurred. A single-flag action that
@@ -252,11 +364,10 @@ def apply_plan(
             notes.append(f"{sid}: absorbed {', '.join(merged_real)} ({rationale})")
         elif cat_changed and sev_changed:
             notes.append(
-                f"{sid}: category -> {action['category']}, "
-                f"severity -> {survivor['severity']} ({rationale})"
+                f"{sid}: category -> {new_cat}, severity -> {survivor['severity']} ({rationale})"
             )
         elif cat_changed:
-            notes.append(f"{sid}: category normalized to {action['category']} ({rationale})")
+            notes.append(f"{sid}: category normalized to {new_cat} ({rationale})")
         elif sev_changed:
             notes.append(f"{sid}: severity -> {survivor['severity']} ({rationale})")
 

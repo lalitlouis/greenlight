@@ -99,6 +99,7 @@
       ],
       "additionalProperties": false,
       "properties": {
+        "descriptors": {"type": "array", "items": {"type": "string"}, "description": "Canonical CARA-style descriptors (one per category) the conformal_set was computed from — persisted so the set is auditable and reproducible."},
         "predicted": {
           "type": "string",
           "enum": [

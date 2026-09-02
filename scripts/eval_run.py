@@ -14,8 +14,10 @@ from __future__ import annotations
 import glob
 import json
 import os
-import re
 import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from eval_invariants import shared_invariants
 
 
 def flags_matching(flags, *, category_any=None, scenes_any=None, desk=None, text_any=None):
@@ -58,6 +60,11 @@ def desk_addressed(record, desk, terms):
     for q in (record.get("open_questions") or {}).get(desk, []):
         if any(t in str(q).lower() for t in terms):
             return True
+    # a question routed under one of the desk's own findings still ADDRESSED it
+    desk_ids = {f.get("flag_id") for f in record.get("flags", []) if f.get("agent") == desk}
+    for fid, qs in (record.get("oq_followups") or {}).items():
+        if fid in desk_ids and any(any(t in str(q).lower() for t in terms) for q in qs or []):
+            return True
     return False
 
 
@@ -77,7 +84,7 @@ def flags_about(flags, *, category_any=(), text_any=(), desk=None):
     return out
 
 
-def main() -> int:  # noqa: PLR0915, PLR0912 - a linear checklist, deliberately flat
+def main() -> int:
     path = (
         sys.argv[1]
         if len(sys.argv) > 1
@@ -208,252 +215,9 @@ def main() -> int:  # noqa: PLR0915, PLR0912 - a linear checklist, deliberately 
         bool(pred and len(pred.get("comparables", [])) >= 6),
         "query_precedent -> file_rating_prediction; needs the corpus loaded",
     )
-    # Run 17: comparables come from cara_rationales — each row's excerpt is the
-    # film's OFFICIAL rationale and must carry that row's own rating token
-    # ("Rated R for ..." on an R row). A Wikipedia lead here means the corpus
-    # regressed to plot-space; a token mismatch means corpus rows are mixed up.
-    _comps = (pred or {}).get("comparables") or []
-    check(
-        "every comparable excerpt is its own official rationale",
-        bool(_comps)
-        and all(
-            re.match(
-                rf"^Rated\s+{re.escape(str(c.get('rating', '')))}\s+for\s+",
-                str(c.get("rationale", "")),
-                re.I,
-            )
-            for c in _comps
-        ),
-        "rationale-space comparables (docs/plans/run17-rationale-space.md)",
-    )
-    check(
-        "cut list present when prediction exceeds target",
-        bool(
-            not pred
-            or pred.get("predicted") in (pred.get("target"), None)
-            or pred.get("beats_to_cut")
-        ),
-    )
-
-    # --- Verification health
-    verdicts = r.get("verdicts") or {}
-    verdict_ids = {str(k).split(":")[0] for k in verdicts}
-    kept_ids = {f.get("flag_id") for f in flags}
-    check(
-        "verification: ran on every kept flag, rejection rate <= 40%",
-        bool(verdicts)
-        and kept_ids <= verdict_ids
-        and not any(f.get("verification_unavailable") for f in flags)
-        and len(rejected) <= 0.4 * max(1, len(rejected) + len(flags)),
-        f"{len(rejected)} rejected / {len(rejected) + len(flags)} filed; verdicts for "
-        f"{len(verdict_ids)} flags — zero rejections is legitimate when the desks' filing "
-        "gates already blocked the weak flags; a sleeping verifier shows as missing "
-        "verdicts or fail-open markers, and those fail this check",
-    )
-    check(
-        "invariant: every kept flag has a citation with an excerpt",
-        all(f["citations"] and all(c["excerpt"].strip() for c in f["citations"]) for f in flags),
-    )
-    # run-8 assertions: the report may not reference a finding that doesn't
-    # render, and a finding's prose may not name a scene outside its own
-    # coordinates — both shipped visible self-contradictions this run.
-    import re as _re
-
-    rendered_ids = {f["flag_id"] for f in flags}
-    dangling = [
-        n
-        for n in r.get("adjudication_notes", [])
-        if not set(_re.findall(r"\bF\d{3,4}\b", n)) <= rendered_ids
-    ]
-    check(
-        "invariant: no adjudication note references a non-rendered finding id",
-        not dangling,
-        f"dangling: {[n[:50] for n in dangling]}",
-    )
-    prose_mismatch = []
-    for f in flags:
-        body = f"{f.get('finding', '')} {(f.get('remedy') or {}).get('detail', '')}"
-        stray = set(_re.findall(r"\bS\d{3}\b", body)) - set(f.get("scene_ids") or [])
-        if stray:
-            prose_mismatch.append((f["flag_id"], sorted(stray)))
-    check(
-        "invariant: a finding's prose names no scene outside its coordinates",
-        not prose_mismatch,
-        f"prose-vs-coordinates: {prose_mismatch[:6]}",
-    )
-    # A rating finding's marginal number must live in the citation the verifier can
-    # trace to the corpus, never loose in the prose (where an untraceable "57% of 125"
-    # was rejected as unsupported and read as fabrication). One place per percentage.
-    stat_in_prose = []
-    for f in flags:
-        if not (f.get("category") or "").startswith("rating_"):
-            continue
-        body = f"{f.get('finding', '')} {(f.get('remedy') or {}).get('detail', '')}"
-        if _re.search(r"\d\s*%|\bn\s*=\s*\d", body):
-            stat_in_prose.append(f["flag_id"])
-    check(
-        "invariant: rating findings carry no bare %/n= in prose (numbers live in citations)",
-        not stat_in_prose,
-        f"rating findings with a statistic loose in prose: {stat_in_prose[:6]} — the marginal "
-        "belongs in a rating_boundary citation, not the finding text",
-    )
-    # A rating finding may not assert a normative CARA rule ("directly commands an
-    # R rating") — the corpus measures what CARA did, not what it requires, and a
-    # rule-shaped claim is unverifiable by construction. The filing gate enforces
-    # this; the assertion catches any path around it (adjudicator rewording, older
-    # records).
-    from greenlight.tools.toolbelt import _NORMATIVE_RULE_RE
-
-    rule_shaped = []
-    for f in flags:
-        if not (f.get("category") or "").startswith("rating_"):
-            continue
-        body = f"{f.get('finding', '')} {(f.get('remedy') or {}).get('detail', '')}"
-        m = _NORMATIVE_RULE_RE.search(body)
-        if m:
-            rule_shaped.append((f["flag_id"], m.group(0)[:40]))
-    # text fields are fungible under a lexical gate: the Pro adjudicator writes
-    # AFTER filing, so its notes are a surface the filing gate never sees
-    for n in r.get("adjudication_notes", []):
-        m = _NORMATIVE_RULE_RE.search(n)
-        if m:
-            rule_shaped.append(("adjudication", m.group(0)[:40]))
-    check(
-        "invariant: no rating finding asserts a normative CARA rule",
-        not rule_shaped,
-        f"rule-shaped rating claims: {rule_shaped[:4]} — state the descriptor-frequency "
-        "observation, never what CARA 'requires'",
-    )
-    # run-13 item 3: the marginal must actually render — three runs of "the
-    # plumbing works but nothing came out" is what a soft check buys.
-    no_marginal = [
-        f["flag_id"]
-        for f in flags
-        if (f.get("category") or "").startswith("rating_") and not f.get("marginal")
-    ]
-    check(
-        "invariant: every rendered rating finding carries its measured marginal",
-        not no_marginal,
-        f"rating findings without a structured marginal: {no_marginal[:4]} — the hard "
-        "gate should have demoted these",
-    )
-    # ...and the gate must never make the score BETTER: a demotion means the
-    # ratings desk could not do its job, so the score is withheld.
-    gate_fired = any(g.get("guard") == "marginal_hard_gate" for g in r.get("guard_manifest") or [])
-    score = (r.get("report") or {}).get("greenlight_score")
-    check(
-        "invariant: a marginal-gate demotion that guts the ratings desk never scores",
-        not (
-            gate_fired
-            and not any((f.get("category") or "").startswith("rating_") for f in flags)
-            and score is not None
-        ),
-        f"gate left ZERO rating findings yet score={score} — a gutted desk must withhold; "
-        "one demotion beside surviving marginals is an ordinary demotion and scores normally",
-    )
-    # the cut list is remedy surface too: no beat may assert a CARA rule
-    beats = ((r.get("report") or {}).get("rating_prediction") or {}).get("beats_to_cut") or []
-    rule_beats = [b[:60] for b in beats if _NORMATIVE_RULE_RE.search(b or "")]
-    check(
-        "invariant: no cut-list beat asserts a normative CARA rule",
-        not rule_beats,
-        f"rule-shaped beats: {rule_beats[:3]}",
-    )
-    # run-13 item 6d: the clearance log emits a row for EVERY scene — a log
-    # that silently omits one contradicts its scene-by-scene premise. Derived
-    # equality, never a literal count.
-    from greenlight import binder as _binder
-
-    cov = _binder.build(r).get("scene_coverage") or {}
-    check(
-        "invariant: clearance log covers every scene (rows == scenes)",
-        cov.get("scenes") == cov.get("scenes_with_rows"),
-        f"scenes={cov.get('scenes')} scenes_with_rows={cov.get('scenes_with_rows')}",
-    )
-    # run-13 item 1b: no cleared determination asserts completed research
-    # without a receipt — the assembly rewrite should have fired.
-    import re as _re2
-
-    work_claim = _re2.compile(
-        r"negative check confirmed|confirmed no real[- ]world|search(?:es)? confirm(?:s|ed)? no",
-        _re2.IGNORECASE,
-    )
-    research = r.get("research") or {}
-    surf_by_id = {
-        str(e.get("entity_id") or ""): str(e.get("surface") or "") for e in r.get("entities") or []
-    }
-
-    def _receipted(eid: str) -> bool:
-        # mirrors the assembly's two receipt arms: per-entity key OR a batch
-        # sweep whose objective/query text names the surface — without the
-        # second arm this check would false-fire on honest batch-swept claims
-        if eid and any(k.startswith(f"research:{eid}:") for k in research):
-            return True
-        low = surf_by_id.get(eid, "").lower()
-        min_surface = 4
-        if len(low) < min_surface:
-            return False
-        return any(
-            low in str(v.get("objective") or "").lower()
-            or low in str(v.get("queries") or "").lower()
-            for v in research.values()
-            if isinstance(v, dict)
-        )
-
-    bad_claims = []
-    for _desk, items in (r.get("cleared") or {}).items():
-        for c in items or []:
-            if not work_claim.search(str(c.get("reasoning") or "")):
-                continue
-            eid = str(c.get("entity_id") or "")
-            if not _receipted(eid):
-                bad_claims.append(eid or str(c.get("reasoning") or "")[:40])
-    check(
-        "invariant: no work-performed claim in cleared without a research receipt",
-        not bad_claims,
-        f"unreceipted claims survived assembly: {bad_claims[:4]}",
-    )
-    # run-15 follow-up: uncited precision. A statute section a finding names must
-    # appear in that finding's OWN citation excerpts — reader-traceable, not just
-    # somewhere in the run's research (the filing gate covers that weaker bound).
-    from greenlight.tools.toolbelt import _statute_sections
-
-    untraceable = []
-    for f in flags:
-        body = f"{f.get('finding', '')} {(f.get('remedy') or {}).get('detail', '')}"
-        secs = _statute_sections(body)
-        if not secs:
-            continue
-        excerpts = " ".join(str(c.get("excerpt") or "") for c in f.get("citations") or [])
-        missing = sorted(s for s in secs if s not in excerpts)
-        if missing:
-            untraceable.append((f["flag_id"], missing))
-    check(
-        "invariant: statute sections in findings trace to their own excerpts",
-        not untraceable,
-        f"typed-from-memory cites: {untraceable[:4]} — the reader must be able to "
-        "verify a section number from the excerpt beside it",
-    )
-    check(
-        "invariant: no unexamined entities (every extracted item dispositioned)",
-        not r.get("unexamined"),
-        f"unexamined={[u.get('surface') for u in r.get('unexamined') or []][:8]} — absence "
-        "must never render as cleanliness",
-    )
-    tc_cov = (r.get("desk_coverage") or {}).get("territory_censor") or {}
-    check(
-        "territory: all 12 axis sweeps dispositioned by work-item id",
-        tc_cov.get("work_items_done", 0) >= 12,
-        f"territory work_items_done={tc_cov.get('work_items_done')} "
-        f"of {tc_cov.get('work_items_assigned')} assigned — the 12 axis sweeps "
-        "are now mechanical, not prompt folklore",
-    )
-    check(
-        "invariant: no desk collapsed (worklist with zero dispositions)",
-        not r.get("desks_incomplete"),
-        f"desks_incomplete={r.get('desks_incomplete')} — the territory 5->0 failure class; "
-        "silence must never grade as a clean bill",
-    )
+    # Every script-independent invariant lives in scripts/eval_invariants.py,
+    # shared with the scale gate so the two cannot drift (review 2026-09-01 §C).
+    checks.extend(shared_invariants(r, rejection_cap=0.4))
 
     print(f"\nEval of {path} — {len(flags)} kept, {len(rejected)} rejected\n")
     passed = 0

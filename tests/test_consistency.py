@@ -118,3 +118,37 @@ def test_gwet_ac1_stable_under_prevalence():
 
     assert gwet_ac1_binary([[True, True], [False, False]]) == 1.0
     assert gwet_ac1_binary([[True]]) is None
+
+
+# ---- review 2026-09-01 (Worker 4A) ------------------------------------------
+
+
+def test_short_token_containment_does_not_merge():
+    from greenlight.consistency import _fuzzy_same
+
+    assert _fuzzy_same("nighthawks", "edward hopper s nighthawks")  # distinctive token
+    assert _fuzzy_same("edward hopper", "edward hopper s nighthawks")  # two tokens
+    assert not _fuzzy_same("ford", "harrison ford")
+    assert not _fuzzy_same("bar", "harbor bar")
+    assert not _fuzzy_same("sam", "sam whitlock")
+
+
+def test_second_finding_per_key_is_its_own_row():
+    f1 = {"flag_id": "F1", "entity_id": "E1", "category": "trademark_use", "scene_ids": ["S001"]}
+    f2 = {"flag_id": "F2", "entity_id": "E1", "category": "trademark_use", "scene_ids": ["S007"]}
+    r1 = _rec([f1, f2], {"E1": "Coors Light"})
+    r2 = _rec([dict(f1, flag_id="F9"), dict(f2, flag_id="F8")], {"E1": "Coors Light"})
+    m = match_runs([r1, r2])
+    assert m["union_size"] == 2
+    assert all(g["agreement"] == "2/2" for g in m["groups"])
+    assert {g["category"] for g in m["groups"]} == {"trademark_use"}  # ordinal not shown
+
+
+def test_entityless_findings_anchor_on_heading_when_scene_meta_present():
+    f = {"flag_id": "F1", "entity_id": None, "category": "stunt_water", "scene_ids": ["S009"]}
+    old = {**_rec([f], {}), "scene_meta": {"S009": {"heading": "EXT. HARBOR - NIGHT"}}}
+    # the revised draft inserted a scene: the same beat is now S010
+    g = dict(f, flag_id="F2", scene_ids=["S010"])
+    new = {**_rec([g], {}), "scene_meta": {"S010": {"heading": "EXT. HARBOR - NIGHT"}}}
+    m = match_runs([old, new])
+    assert m["union_size"] == 1 and m["groups"][0]["agreement"] == "2/2"

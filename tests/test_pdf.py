@@ -35,3 +35,73 @@ def test_pdf_extraction_yields_parseable_text():
 
     _, scenes = parse_fountain(text)
     assert scenes and scenes[0]["int_ext"] == "INT"
+
+
+def test_binder_pdf_escapes_title_markup():
+    """reportlab Paragraph parses mini-XML — an unescaped '<' in a title raised
+    ValueError and 500'd the download (review B17)."""
+    from greenlight import pdfgen
+
+    data = {
+        "title": "A <B> & C's Movie",
+        "generated_at": "2026-09-01",
+        "score": None,
+        "verification_degraded": True,
+        "counts": {"HIGH": 1},
+        "draft": {"sha256": "abc123def456ghi", "pages": 3, "scene_numbers": "generated"},
+        "columns": ["Scene", "Item", "Severity", "Clearance status", "Finding"],
+        "rows": [
+            {
+                "Scene": "S001",
+                "Item": "Bar & <Grill>",
+                "Severity": "HIGH",
+                "Clearance status": (
+                    "UNVERIFIED (verifier unavailable) — License / mitigation required"
+                ),
+                "Finding": "F100",
+            }
+        ],
+        "est_cost": [100, 200],
+        "est_cost_paths": {"as_written": [100, 200], "target_rating": [100, 150]},
+        "back_matter": {"cleared": [{"desk": "Clearance Counsel", "text": "<ok> & fine"}]},
+        "disclaimer": "Not legal advice <really> & truly.",
+    }
+    pdf = pdfgen.binder_pdf(data)
+    assert pdf.startswith(b"%PDF")
+
+
+def test_onesheet_pdf_renders_withheld_and_unverified_record():
+    from greenlight import pdfgen
+
+    record = {
+        "script_title": "Slack <Tide> & Co",
+        "generated_at": "2026-09-01",
+        "flags": [
+            {
+                "flag_id": "F1",
+                "severity": "BLOCKER",
+                "category": "stunt_pyro",
+                "finding": "[partially supported] Fire.",
+                "remedy": {"est_cost_usd": [1, 2]},
+                "verification_unavailable": True,
+                "citations": [{"url": "https://x", "excerpt": "y"}],
+            }
+        ],
+        "rejected_flags": [],
+        "unexamined": [{"surface": "Ford", "scene_ids": ["S001"]}],
+        "desks_incomplete": ["territory_censor"],
+        "report": {
+            "greenlight_score": None,
+            "verification_degraded": True,
+            "counts": {"BLOCKER": 1},
+            "est_clearance_cost_usd": [1, 2],
+            "est_cost_paths": {"as_written": [1, 2], "target_rating": [0, 1]},
+            "rating_prediction": {
+                "predicted": "R",
+                "target": "PG-13",
+                "comparables": [{"rating": "R"}],
+            },
+        },
+    }
+    pdf = pdfgen.onesheet_pdf(record)
+    assert pdf.startswith(b"%PDF")

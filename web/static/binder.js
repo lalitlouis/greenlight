@@ -13,15 +13,34 @@ function bdRender(data) {
   left.appendChild(el("p", "bd-kicker", "Production clearance log"));
   left.appendChild(el("h1", "bd-title", data.title));
   const counts = data.counts || {};
+  // a null score is WITHHELD, and the cause travels with it — "—/100" read as
+  // a missing number, not a decision
+  const scoreTxt = data.score == null
+    ? (data.verification_degraded ? "withheld — verification unavailable" : "withheld — analysis incomplete")
+    : `${data.score}/100`;
+  // two-path totals: the web report leads with the target-rating path, so the
+  // binder must print both or it headlines a number the report says is avoided
+  const paths = data.est_cost_paths || null;
+  const tgt = paths && paths.target_rating ? money(paths.target_rating) : null;
+  const costTxt = data.est_cost
+    ? (tgt && tgt !== money(data.est_cost)
+        ? ` · est. exposure as written ${money(data.est_cost)} · target-rating path ${tgt}`
+        : ` · est. exposure ${money(data.est_cost)}`)
+    : "";
   left.appendChild(
     el("p", "bd-sub",
-      `Generated ${data.generated_at} · Greenlight Score ${data.score ?? "—"}/100 · ` +
+      `Generated ${data.generated_at} · Greenlight Score ${scoreTxt} · ` +
       ["BLOCKER", "HIGH", "MEDIUM", "LOW", "FYI"]
         .filter((t) => counts[t])
         .map((t) => `${counts[t]} ${t.toLowerCase()}`)
         .join(", ") +
-      (data.est_cost ? ` · est. exposure ${money(data.est_cost)}` : ""))
+      costTxt)
   );
+  if (data.unverified_rows) {
+    left.appendChild(
+      el("p", "bd-sub", `${data.unverified_rows} row${data.unverified_rows === 1 ? "" : "s"} marked UNVERIFIED — the independent verifier could not run on them; they are desk claims, excluded from the score and totals.`)
+    );
+  }
   const d = data.draft || {};
   if (d.sha256) {
     const bits = [
@@ -55,7 +74,8 @@ function bdRender(data) {
       // t.cost is a preformatted label: "5,000-20,000" wants a $; "no fee
       // expected" must not become "$no fee expected"
       const costTxt = t.cost ? (/^\d/.test(t.cost) ? ` · $${t.cost}` : ` · ${t.cost}`) : "";
-      li.appendChild(document.createTextNode(` ${t.finding} — ${t.label} (${t.scene})` + costTxt));
+      const unv = t.unverified ? " · UNVERIFIED" : "";
+      li.appendChild(document.createTextNode(` ${t.finding} — ${t.label} (${t.scene})` + costTxt + unv));
       ul.appendChild(li);
     }
     box.appendChild(ul);

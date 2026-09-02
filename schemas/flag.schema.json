@@ -214,7 +214,8 @@
         "n": {"type": "integer"},
         "distribution": {"type": "object"},
         "base_rate": {"type": ["object", "null"]},
-        "source": {"type": "string"}
+        "source": {"type": "string"},
+        "corpus_n": {"type": "integer", "description": "Size of the descriptor corpus the base_rate is computed over (the parsed-rationale subset), so a reader can tell it apart from the comparables corpus."}
       }
     }
   }

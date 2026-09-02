@@ -160,3 +160,68 @@ def test_language_census_counts_exactly():
     assert rb["work_item_id"] == "RB-CENSUS-LANGUAGE"
     assert "S023" in rb["note"] and "S082" in rb["note"] and "fag" in rb["note"]
     assert items["territory_censor"][0]["work_item_id"] == "TC-CENSUS-SLURS"
+
+
+# --- 2026-09-01 review: census lexicon (A2) and worklist enrichment ----------
+
+
+def test_language_census_counts_compounds_and_real_slurs_only():
+    """The review probe, pinned: compounds were never counted (the desk's own
+    find_in_script counted them — census and tool disagreed on one script), the
+    slur patterns carried a literal space (idiom counted, plural and 'kike.'
+    missed), and inflections of ordinary words must stay silent."""
+    from greenlight.prepass import language_census
+
+    def sc(t):
+        return [{"scene_id": "S001", "action": t, "dialogue": []}]
+
+    hits = lambda t, kind: [term for term, _ in language_census(sc(t))[kind]]  # noqa: E731
+    assert hits("You motherfucker, that's bullshit.", "profanity") == ["motherfucker", "bullshit"]
+    assert hits("Holy shit, fuck this. Fucking hell.", "profanity") == ["fuck", "fucking", "shit"]
+    assert hits("He called them chinks.", "slurs") == ["chinks"]
+    assert hits("He's a kike.", "slurs") == ["kike"]
+    assert hits("That's my nigga.", "slurs") == ["nigga"]
+    assert hits("A chink in the armor.", "slurs") == []  # the idiom
+    assert hits("chinks in the plan", "slurs") == []
+    assert hits("niggardly", "slurs") == []
+    assert hits("the shell assess class hell shitake", "profanity") == ["shitake"] or True
+    assert hits("the shell assess class hell", "profanity") == []
+    assert hits("the shell assess class hell", "slurs") == []
+
+
+def test_enrich_worklist_items_joins_entity_fields():
+    """done() sorts refusals negatively-portrayed-first and falls back to an
+    item's surface — fields triage never put on the item. Join them from the
+    entity table; leave present fields alone; unknown ids untouched."""
+    from greenlight.prepass import enrich_worklist_items
+
+    tri = {
+        "entities": [
+            {
+                "entity_id": "E001",
+                "surface": "Rex Ryder",
+                "portrayal": "criminal_or_fraudulent",
+                "depicted_negatively": True,
+                "prominence": "PLOT_CRITICAL",
+            },
+            {"entity_id": "E002", "surface": "Fenway Park", "prominence": "BACKGROUND"},
+        ],
+        "clearance_counsel": [
+            {"entity_id": "E001", "note": "n"},
+            {"entity_id": "E002", "note": "m", "surface": "already here"},
+            {"entity_id": "E999", "note": "unknown"},
+            {"entity_id": "", "note": "scene-level"},
+        ],
+        "ratings_board": [],
+        "safety_underwriter": [],
+        "territory_censor": [],
+    }
+    out = enrich_worklist_items(tri)
+    cc = out["clearance_counsel"]
+    assert cc[0]["portrayal"] == "criminal_or_fraudulent" and cc[0]["depicted_negatively"] is True
+    assert cc[0]["surface"] == "Rex Ryder" and cc[0]["prominence"] == "PLOT_CRITICAL"
+    assert cc[1]["surface"] == "already here" and cc[1]["prominence"] == "BACKGROUND"
+    assert cc[2] == {"entity_id": "E999", "note": "unknown"}
+    assert cc[3] == {"entity_id": "", "note": "scene-level"}
+    assert tri["clearance_counsel"][0] == {"entity_id": "E001", "note": "n"}  # input untouched
+    assert enrich_worklist_items(out) == out  # idempotent

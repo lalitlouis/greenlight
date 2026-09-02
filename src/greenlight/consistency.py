@@ -21,16 +21,23 @@ _FUZZY_THRESHOLD = 0.8
 _TOKEN_JACCARD = 0.75  # a wholly different token (Cameron vs Tyler) is a different entity
 _NEAR_MISS_FLOOR = 0.55  # unmerged pairs above this get logged for hand review
 _MIN_RATERS = 2  # a row needs two observations to say anything about agreement
+# Single-token containment merges only for a distinctive token: "nighthawks" ⊆
+# "edward hopper s nighthawks" is one finding; "ford" ⊆ "harrison ford", "bar" ⊆
+# "harbor bar", "sam" ⊆ "sam whitlock" are not (review 2026-09-01 B17).
+_CONTAIN_MIN_CHARS = 8
 
 
 def _fuzzy_same(a: str, b: str) -> bool:
     """Punctuation/spelling drift merges; a distinct token does not.
     Containment also merges: "nighthawks" and "edward hopper s nighthawks"
     are one finding whose surface one desk elaborated — requiring ratio
-    alone left both as singletons in the first feature-scale k=3."""
+    alone left both as singletons in the first feature-scale k=3. A short
+    single token contained in a longer surface is NOT containment (Ford /
+    Harrison Ford are different entities in the same category)."""
     ta, tb = set(a.split()), set(b.split())
     if ta and tb and (ta <= tb or tb <= ta):
-        return True
+        small = a if len(ta) <= len(tb) else b
+        return len(small.split()) >= 2 or len(small) >= _CONTAIN_MIN_CHARS  # noqa: PLR2004
     if difflib.SequenceMatcher(None, a, b).ratio() < _FUZZY_THRESHOLD:
         return False
     union = ta | tb
@@ -47,13 +54,23 @@ def normalize_surface(surface: str) -> str:
     return " ".join(s.split())
 
 
-def finding_key(flag: dict[str, Any], entities: dict[str, str]) -> tuple[str, str]:
-    """(normalized surface | scene anchor, category). Stable across runs."""
+def finding_key(
+    flag: dict[str, Any],
+    entities: dict[str, str],
+    scene_meta: dict[str, Any] | None = None,
+) -> tuple[str, str]:
+    """(normalized surface | scene anchor, category). Stable across runs.
+
+    An entity-less finding anchors on its first scene's HEADING when the record
+    carries scene_meta (headings survive a draft inserting a scene; positional
+    S### ids do not — review C10), else on the scene id."""
     surface = entities.get(flag.get("entity_id") or "", "")
     if surface:
         return (normalize_surface(surface), flag.get("category", ""))
     sids = sorted(flag.get("scene_ids") or ["(none)"])
-    return (f"@{sids[0]}", flag.get("category", ""))
+    heading = str(((scene_meta or {}).get(sids[0]) or {}).get("heading") or "")
+    anchor = normalize_surface(heading) if heading else sids[0]
+    return (f"@{anchor}", flag.get("category", ""))
 
 
 def match_runs(records: list[dict[str, Any]]) -> dict[str, Any]:
@@ -65,8 +82,17 @@ def match_runs(records: list[dict[str, Any]]) -> dict[str, Any]:
     for rec in records:
         ents = {e.get("entity_id"): e.get("surface", "") for e in rec.get("entities", [])}
         keyed: dict[tuple[str, str], dict[str, Any]] = {}
+        occurrences: dict[tuple[str, str], int] = {}
         for f in rec.get("flags", []):
-            keyed.setdefault(finding_key(f, ents), f)
+            base = finding_key(f, ents, rec.get("scene_meta"))
+            n = occurrences.get(base, 0)
+            occurrences[base] = n + 1
+            # a SECOND finding on the same (surface, category) — two trademark
+            # flags on one brand — is its own row, not invisible (review C10);
+            # the ordinal rides on the category so fuzzy surface matching cannot
+            # collapse it back onto the first
+            key = base if n == 0 else (base[0], f"{base[1]}#{n + 1}")
+            keyed[key] = f
         per_run_keys.append(keyed)
 
     canon: list[tuple[str, str]] = []
@@ -109,7 +135,7 @@ def match_runs(records: list[dict[str, Any]]) -> dict[str, Any]:
     groups = [
         {
             "key": "|".join(k),
-            "category": k[1],
+            "category": k[1].split("#", 1)[0],
             "label": k[0],
             "runs": presence[k],
             "agreement": f"{sum(presence[k])}/{len(records)}",

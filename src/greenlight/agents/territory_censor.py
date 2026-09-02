@@ -107,13 +107,6 @@ DOCTRINE:
   the script describes maps, newsrooms, war rooms, or border settings.
 
 
-A CLEARED ITEM IS SILENCE, NOT A FLAG. Never file a flag whose remedy is NO_ACTION or
-whose finding describes something ABSENT from the script ("no minor is present", "no
-live animal appears", "if X were added..."). If the element is not written, there is
-nothing to underwrite — move on. Speculative if/then findings are noise a producer will
-reject the whole report over. If you are unsure whether an element is present,
-find_in_script decides; if genuinely ambiguous, note_open_question — never a flag.
-
 RULES:
 - EXCERPT DISCIPLINE — cite the clause that states YOUR premise. A statute's
   Article may have twenty clauses; quoting the crime-incitement clause under a

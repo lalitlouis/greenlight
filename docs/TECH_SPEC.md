@@ -29,12 +29,12 @@ GreenlightPipeline                  SequentialAgent
 ├── Triage                          LlmAgent  -> Entity[] + per-desk worklists
 ├── GatekeeperPanel                 ParallelAgent — the desks, concurrent
 │   ├── ClearanceDepartment         ParallelAgent — up to 4 batch agents
-│   │   └── clearance_counsel__bN   LoopAgent(max_iterations=10) each, over a
+│   │   └── clearance_counsel__bN   LoopAgent(max_iterations=14) each, over a
 │   │                               bounded ~25-item slice with a FRESH
 │   │                               conversation (context bounded by construction)
 │   ├── RatingsBoard                LoopAgent(max_iterations=6)
-│   ├── SafetyUnderwriter           LoopAgent(max_iterations=6)
-│   └── TerritoryCensor             LoopAgent(max_iterations=8)
+│   ├── SafetyUnderwriter           LoopAgent(max_iterations=8)
+│   └── TerritoryCensor             LoopAgent(max_iterations=12)
 ├── CompletenessGate                LoopAgent(≤3): deterministic unexamined-set check +
 │                                   a scoped sweep desk; verification is not reached while
 │                                   any extracted entity lacks a disposition
@@ -57,7 +57,7 @@ Every desk gets the same tools; they differ only in instruction and worklist.
 | `research(objective, queries)` | Parallel Search. `objective` is the clearance question in prose. |
 | `fetch_page(url, objective)` | Parallel Extract — full-page retrieval when a search excerpt is too thin to cite. |
 | `deep_research(question)` | Parallel Task API — last-resort multi-source investigation for BLOCKER-deciding chains; ≤2 per desk, 3 budget credits. |
-| `query_precedent(text, k)` | ClickHouse kNN over released-film content profiles. |
+| `query_precedent(text, k)` | ClickHouse kNN over official CARA rating rationales (`cara_rationales`, 4,733 films) in rationale-space — run 17. |
 | `file_flag(flag)` | Emit a finding. Schema-validated; a flag without a citation is rejected; cited excerpts must exist VERBATIM in retrieved material (near-misses are auto-repaired from the provenance registry, and every rejection path is retry-capped). |
 | `note_open_question(text)` | Record something the desk could not resolve. Surfaced in the report — an honest unknown beats a confident guess. |
 | `done(reason)` | Self-terminate. Sets `tool_context.actions.escalate = True`, which is how a `LoopAgent` exits early. |
@@ -70,8 +70,9 @@ docstrings are written for a model, not a human.
 Three independent stops, because a research loop that cannot end is a bill:
 
 1. **Self-termination** — the desk calls `done()` and escalates. The tool REFUSES
-   closure (twice, max) below 50% worklist coverage while budget remains — early
-   quitting is a measured failure mode, so the contract is mechanical, not prose.
+   closure while assigned work items remain undispositioned and >=3 research budget is
+   left (no refusal cap since 2026-08-28 — the iteration ceiling is the only other stop);
+   early quitting is a measured failure mode, so the contract is mechanical, not prose.
 2. **`max_iterations`** — a hard ceiling per desk.
 3. **Research budget** — a per-run cap on `research()` calls, enforced in the tool. When exhausted
    the tool returns "budget spent, file what you have," which the desk handles gracefully.
@@ -86,7 +87,8 @@ but not the desk's reasoning**, and answers one question: does this source actua
 claim?
 
 - `SUPPORTED` — flag stands.
-- `PARTIAL` — flag stands, severity capped at MEDIUM, marked "partially supported."
+- `PARTIAL` — flag stands, marked "partially supported." A citation-confidence marker only —
+  it has not capped severity since 2026-08-29 (a blank-fire stunt had sorted below a location fee).
 - `UNSUPPORTED` — flag is dropped and logged. It never reaches the report.
 
 Withholding the desk's reasoning is deliberate: a verifier shown the argument tends to ratify it.
@@ -192,8 +194,11 @@ visible or it may as well not exist.
 - Schema validation on every emitted object.
 - Parser unit tests against the fixture screenplay.
 - Desk tests replay cassettes; no live API calls in the suite.
-- **Verifier regression set:** hand-labelled flag/citation pairs, including deliberately
-  unsupported ones. If the verifier stops rejecting those, it has silently broken.
+- **Verifier regression set:** deterministic regression cases drawn from production records
+  for the verdict-processing layer (`tests/test_overturn_guards.py`: rejections that must
+  stay rejected, true overturns that must fire). A hand-labelled flag/citation pair set that
+  exercises the model-judged verdict itself is roadmap, not shipped — cassettes would make it
+  free to run.
 - `make check` runs lint plus the forbidden-dependency scan.
 
 ## Risks

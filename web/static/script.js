@@ -60,7 +60,12 @@ function renderScript(record, data) {
   root.appendChild(view);
 
   if (window.location.hash) {
-    const node = document.querySelector(window.location.hash);
+    let node = null;
+    try {
+      node = document.querySelector(window.location.hash); // an invalid hash must not wipe the page
+    } catch {
+      node = null;
+    }
     if (node) {
       node.scrollIntoView({ behavior: "smooth", block: "start" });
       node.classList.add("hilite");

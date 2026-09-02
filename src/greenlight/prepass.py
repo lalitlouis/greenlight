@@ -90,10 +90,17 @@ _TERRITORIES = ["CN", "UAE"]
 # clearance product: exact profanity/slur inventory is a rating and territory
 # fact, and a regex never forgets an occurrence the way a model can (run 3
 # dropped two of three F-words and the slur entirely).
+# Each pattern is wrapped in \b...\b at match time. Compounds are spelled out
+# because the leading \b otherwise excludes them: "motherfucker" and "bullshit"
+# were never counted while the desk's own find_in_script("fuck") counted them,
+# so census and tool disagreed on the same script (2026-09-01 review, A2). The
+# two slur patterns once carried a literal space ("chink s?"), which counted the
+# idiom "a chink in the armor" and missed "chinks" and "kike." — the idiom is
+# excluded explicitly ("chink(s) in ...") and the plural is a real optional s.
 _PROFANITY = [
-    r"fuck\w*",
-    r"shit\w*",
-    r"cunt",
+    r"(?:mother|cluster)?fuck\w*",
+    r"(?:bull|dip|horse|chicken|ape|jack)?shit\w*",
+    r"cunts?",
     r"cocksucker\w*",
     r"goddamn\w*",
     r"asshole\w*",
@@ -102,9 +109,9 @@ _PROFANITY = [
 _SLURS = [
     r"fag(?:got)?s?",
     r"retard(?:ed|s)?",
-    r"nigger\w*",
-    r"chink s?",
-    r"kike s?",
+    r"nigg(?:er\w*|as?)",
+    r"chinks?(?!\s+in\b)",
+    r"kikes?",
     r"tranny",
 ]
 
@@ -168,6 +175,38 @@ def census_work_items(census: dict[str, list[tuple[str, str]]]) -> dict[str, lis
             }
         )
     return items
+
+
+_ENRICH_FIELDS = ("surface", "portrayal", "depicted_negatively", "prominence")
+
+
+def enrich_worklist_items(tri: dict[str, Any]) -> dict[str, Any]:
+    """Join `surface`, `portrayal`, `depicted_negatively`, `prominence` from the
+    entity table onto every desk worklist item that names an entity_id and lacks
+    them. Triage writes items as {entity_id, note}; done() sorts its refusals
+    "negatively portrayed first" and falls back to matching an item's surface in
+    open questions — both read fields that were never on the item, so the
+    hard-people-first contract was inert (2026-09-01 review). Additive, idempotent;
+    fields already present are left alone."""
+    out = dict(tri)
+    by_id = {
+        e.get("entity_id"): e
+        for e in out.get("entities") or []
+        if isinstance(e, dict) and e.get("entity_id")
+    }
+    for desk in _WI_PREFIX:
+        items = []
+        for raw in out.get(desk) or []:
+            item = raw
+            if isinstance(raw, dict) and raw.get("entity_id") in by_id:
+                ent = by_id[raw["entity_id"]]
+                item = dict(raw)
+                for f in _ENRICH_FIELDS:
+                    if f not in item and f in ent:
+                        item[f] = ent[f]
+            items.append(item)
+        out[desk] = items
+    return out
 
 
 def assign_work_item_ids(tri: dict[str, Any]) -> dict[str, Any]:
@@ -440,7 +479,7 @@ def build_agent():
                 new_tri[desk_name] = list(new_tri.get(desk_name) or []) + [
                     it for it in extra if it["work_item_id"] not in have
                 ]
-            new_tri = assign_work_item_ids(new_tri)
+            new_tri = assign_work_item_ids(enrich_worklist_items(new_tri))
             parts_txt = []
             if items:
                 parts_txt.append(

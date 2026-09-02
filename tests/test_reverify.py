@@ -147,3 +147,91 @@ def test_reverify_counts_blocked_separately_and_keeps_withhold():
         f.get("verification_blocked") for f in rec["flags"] if f.get("verification_unavailable")
     )
     assert rec["report"]["greenlight_score"] is None  # withheld stands, honestly labeled
+
+
+def test_reverify_screens_rejections_with_the_overturn_guards_and_finalizes():
+    """A rejection asserting the script lacks a line it contains is overturned
+    exactly as the live panel would; the shared post-verification pass runs."""
+    rec = _record()
+    rec["flags"][1]["finding"] = "Stu says 'Hello there, friend.' in S001."
+    rec["cleared"] = {"ratings_board": [{"entity_id": "", "reasoning": "Handled in F103."}]}
+
+    async def verify(flag):
+        if flag["flag_id"] == "F102":
+            return {
+                "verdict": "UNSUPPORTED",
+                "reason": "The line 'Hello there, friend.' does not appear in the screenplay.",
+                "failure_mode": "script_misstatement",
+            }
+        return {
+            "verdict": "UNSUPPORTED",
+            "reason": "excerpts do not establish the premise",
+            "failure_mode": "premise_unsupported",
+        }
+
+    summary = asyncio.run(reverify_record(rec, SCRIPT, verify=verify))
+    assert summary["verified"] == 1 and summary["rejected"] == ["F103"]
+    assert rec["verdicts"]["F102"]["verdict"] == "SUPPORTED"
+    assert rec["verdicts"]["F102"].get("overridden") is True
+    assert any(m["guard"] == "overturn" and m["stage"] == "reverify" for m in rec["guard_manifest"])
+    # the cleared row citing the now-rejected F103 is annotated (finalize ran)
+    assert (
+        "F103 (later rejected in verification — see Rejected)"
+        in (rec["cleared"]["ratings_board"][0]["reasoning"])
+    )
+    assert "oq_followups" in rec
+
+
+def test_reverify_reconciles_the_rating_panel_when_a_rating_flag_falls():
+    rec = _record()
+    rec["report"]["rating_prediction"] = {
+        "predicted": "R",
+        "target": "PG-13",
+        "rationale": "for language and brief drug use",
+        "beats_to_cut": ["Cut the F-words", "Trim the joint"],
+        "comparables": [],
+    }
+    seen = {}
+
+    async def verify(flag):
+        return {
+            "verdict": "UNSUPPORTED",
+            "reason": "excerpts do not establish the premise",
+            "failure_mode": "premise_unsupported",
+        }
+
+    async def reconcile(pred, kept, dropped):
+        seen["dropped"] = [d["flag_id"] for d in dropped]
+        return {"rationale": "for language", "beats_to_cut": ["Cut the F-words"]}
+
+    asyncio.run(reverify_record(rec, SCRIPT, verify=verify, reconcile=reconcile))
+    assert seen["dropped"] == ["F102", "F103"]
+    pred = rec["report"]["rating_prediction"]
+    assert pred["rationale"] == "for language"
+    assert pred["beats_to_cut"] == ["Cut the F-words"]
+    assert pred["reconciled_after_verification"] is True
+    assert pred["pre_verification"]["beats_to_cut"] == ["Cut the F-words", "Trim the joint"]
+
+
+def test_reverify_without_a_reconciler_says_so_on_the_manifest():
+    rec = _record()
+    rec["report"]["rating_prediction"] = {
+        "predicted": "R",
+        "target": "PG-13",
+        "rationale": "for language",
+        "beats_to_cut": ["Cut the F-words"],
+        "comparables": [],
+    }
+
+    async def verify(flag):
+        return {
+            "verdict": "UNSUPPORTED",
+            "reason": "excerpts do not establish the premise",
+            "failure_mode": "premise_unsupported",
+        }
+
+    asyncio.run(reverify_record(rec, SCRIPT, verify=verify))
+    assert any(
+        m["guard"] == "rating_reconcile" and m["outcome"] == "not_run"
+        for m in rec["guard_manifest"]
+    )

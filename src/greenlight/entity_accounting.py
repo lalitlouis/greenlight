@@ -80,8 +80,21 @@ def polish_record(record: dict[str, Any]) -> list[dict[str, Any]]:
         if len(s) >= _MIN_SUPPRESS_SURFACE and re.search(rf"\b{re.escape(s.lower())}\b", bodies)
     )
     acct = record.get("entity_accounting")
+    fold = (acct or {}).get("fold") or {} if isinstance(acct, dict) else {}
+    # canonicalise through the fold: a finding that names the short form claims
+    # the canonical entity too (B14) — and expose the canonical flagged set so
+    # every renderer tests the same ids instead of re-deriving them
+    body_flagged = sorted({*body_flagged, *(fold.get(e, e) for e in body_flagged)})
+    flagged_ids = sorted(
+        {
+            fold.get(eid, eid)
+            for f in record.get("flags") or []
+            if (eid := str(f.get("entity_id") or ""))
+        }
+    )
     if isinstance(acct, dict):
         acct["body_flagged_ids"] = body_flagged
+        acct["flagged_ids"] = flagged_ids
 
     research = record.get("research") or {}
 
@@ -182,6 +195,18 @@ def account(entities: list[dict[str, Any]]) -> dict[str, Any]:
             if ids[i] and ids[host]:
                 fold[ids[i]] = ids[host]
 
+    # Chains fold to a FIXPOINT: "Bob" -> "Bob's" -> "Bob's Burgers" must land
+    # on the canonical entity, not on an intermediate the renderers then drop
+    # as a fragment (review 2026-09-01 B14: single-hop folding lost E1's
+    # clearance entirely). Cycle-guarded; deterministic.
+    for src in list(fold):
+        seen = {src}
+        dst = fold[src]
+        while dst in fold and dst not in seen:
+            seen.add(dst)
+            dst = fold[dst]
+        fold[src] = dst
+
     distinct = sum(1 for x in frag if not x)
     # every folded/fragment id, so the cleared list can DROP them and reconcile
     # with the headline: "distinct" entities and shown determinations must agree.
@@ -193,4 +218,81 @@ def account(entities: list[dict[str, Any]]) -> dict[str, Any]:
         "fragments": n - distinct,
         "fold": fold,
         "fragment_ids": fragment_ids,
+    }
+
+
+# The web's isDetermination(), ported verbatim (report.js): an open question
+# shaped like a clearance counts as a script-level cleared row, not an unknown.
+_OQ_QUESTION_RE = re.compile(r"\?\s*$")
+_OQ_UNRESOLVED_RE = re.compile(
+    r"\b(unclear|unresolved|unknown|unable|could(?:n't| not)|pending|unverified"
+    r"|needs? (?:further|manual)|open question)\b",
+    re.IGNORECASE,
+)
+_OQ_DETERMINATION_RE = re.compile(
+    r"\bno (?:synchronization|sync|master(?:[- ]use)?|licen[cs]e|clearance|release|permit"
+    r"|action)\b[^.?]*\b(?:required|needed|necessary)\b",
+    re.IGNORECASE,
+)
+
+
+def is_determination(text: Any) -> bool:
+    t = str(text)
+    if _OQ_QUESTION_RE.search(t) or _OQ_UNRESOLVED_RE.search(t):
+        return False
+    return bool(re.search(r"\bcleared\b", t, re.IGNORECASE)) or bool(_OQ_DETERMINATION_RE.search(t))
+
+
+def items_examined(record: dict[str, Any]) -> dict[str, int]:
+    """The decomposition behind "N items examined" (review B13): the web's
+    clearedRows() row count is distinct cleared ENTITIES plus SCRIPT-LEVEL
+    determinations (territory axis sweeps, desk-wide clearances, determination-
+    shaped open questions). Computed here, once, so every surface can print
+    "31 entities + 16 script-wide checks" and a reader can reconcile it against
+    "39 entities researched". Mirrors report.js clearedRows exactly, keyed on
+    KEPT flag ids (a determination citing a rendered finding is counted there,
+    not here)."""
+    acct = record.get("entity_accounting") or {}
+    fold = acct.get("fold") or {}
+    fragment_ids = set(acct.get("fragment_ids") or [])
+    body_flagged = set(acct.get("body_flagged_ids") or [])
+    flags = record.get("flags") or []
+    kept_ids = {f.get("flag_id") for f in flags if f.get("flag_id")}
+    flagged_ids = set(acct.get("flagged_ids") or []) | {
+        fold.get(eid, eid) for f in flags if (eid := str(f.get("entity_id") or ""))
+    }
+    surf_by_id = {
+        str(e.get("entity_id") or ""): str(e.get("surface") or "")
+        for e in record.get("entities") or []
+        if e.get("entity_id")
+    }
+    entity_rows: set[str] = set()
+    script_level = 0
+    flagged_elsewhere = 0
+    for _desk, items in (record.get("cleared") or {}).items():
+        for c in items or []:
+            raw = str(c.get("entity_id") or "")
+            eid = fold.get(raw, raw)
+            if eid in fragment_ids:
+                continue
+            reasoning = str(c.get("reasoning") or "")
+            if eid and (
+                eid in flagged_ids or (eid in body_flagged and _NO_ISSUE_RE.search(reasoning))
+            ):
+                flagged_elsewhere += 1
+                continue
+            if any(fid in kept_ids for fid in re.findall(r"\bF\d{3,4}\b", reasoning)):
+                flagged_elsewhere += 1
+                continue
+            who = surf_by_id.get(eid) or surf_by_id.get(raw)
+            if who:
+                entity_rows.add(who)
+            else:
+                script_level += 1
+    for _desk, qs in (record.get("open_questions") or {}).items():
+        script_level += sum(1 for q in qs or [] if is_determination(q))
+    return {
+        "entity_rows": len(entity_rows),
+        "script_level": script_level,
+        "flagged_elsewhere": flagged_elsewhere,
     }

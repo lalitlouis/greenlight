@@ -126,3 +126,78 @@ def test_truncation_only_catches_leading_connectives():
     assert _is_truncation("& Forever Wedding") and _is_truncation("and the crew")
     assert not _is_truncation(".357 MAGNUM") and not _is_truncation("1967 Cadillac")
     assert not _is_truncation("Mandalay Bay")
+
+
+# ---- review 2026-09-01 (Worker 4A) ------------------------------------------
+
+
+def test_fold_chains_resolve_to_the_canonical_entity():
+    """Bob -> Bob's -> Bob's Burgers must fold to Bob's Burgers in one hop of
+    lookup (single-hop folding dropped the short form's clearance entirely)."""
+    out = account(ents("Bob", "Bob's", "Bob's Burgers"))
+    assert out["fold"]["E0"] == "E2"
+    assert out["fold"]["E1"] == "E2"
+    assert out["distinct"] == 1
+
+
+def test_polish_exposes_canonical_flagged_ids_and_body_flags():
+    from greenlight.entity_accounting import polish_record
+
+    rec = {
+        "entities": [
+            {"entity_id": "E0", "surface": "Bob"},
+            {"entity_id": "E1", "surface": "Bob's Burgers"},
+            {"entity_id": "E2", "surface": "Nighthawks"},
+        ],
+        "unexamined": [],
+        "flags": [
+            {"flag_id": "F1", "entity_id": "E0", "finding": "Nighthawks hangs crooked."},
+        ],
+        "cleared": {},
+        "research": {},
+        "entity_accounting": account(
+            [
+                {"entity_id": "E0", "surface": "Bob"},
+                {"entity_id": "E1", "surface": "Bob's Burgers"},
+                {"entity_id": "E2", "surface": "Nighthawks"},
+            ]
+        ),
+    }
+    polish_record(rec)
+    acct = rec["entity_accounting"]
+    assert acct["flagged_ids"] == ["E1"]  # E0 canonicalised through the fold
+    assert acct["body_flagged_ids"] == ["E2"]
+
+
+def test_items_examined_mirrors_the_web_row_count():
+    from greenlight.entity_accounting import items_examined
+
+    rec = {
+        "entities": [
+            {"entity_id": "E1", "surface": "Coors Light"},
+            {"entity_id": "E2", "surface": "Thermos"},
+            {"entity_id": "E3", "surface": "Stu and Alan"},
+        ],
+        "flags": [{"flag_id": "F1007", "entity_id": "E1", "agent": "clearance_counsel"}],
+        "entity_accounting": {"fold": {}, "fragment_ids": ["E3"], "body_flagged_ids": []},
+        "cleared": {
+            "clearance_counsel": [
+                {"entity_id": "E1", "reasoning": "Neutral use, cleared."},  # flagged -> elsewhere
+                {"entity_id": "E2", "reasoning": "Generic term, no clearance required."},
+                {"entity_id": "E3", "reasoning": "compound"},  # fragment -> dropped
+                {"entity_id": "", "reasoning": "Axis sweep: no sexual content."},
+                {"entity_id": "", "reasoning": "Language accounted for in F1007."},  # cited
+            ],
+            "territory_censor": [
+                {"entity_id": "E2", "reasoning": "No cuts required for the Thermos."},
+            ],
+        },
+        "open_questions": {
+            "ratings_board": ["Alcohol scenes cleared at PG-13.", "Is the joint visible?"]
+        },
+    }
+    out = items_examined(rec)
+    # Thermos across two desks is ONE entity row; one script-level clearance
+    # (the row citing F1007 is counted under the finding) plus one
+    # determination-shaped open question
+    assert out == {"entity_rows": 1, "script_level": 2, "flagged_elsewhere": 2}

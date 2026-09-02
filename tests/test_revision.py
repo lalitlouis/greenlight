@@ -58,3 +58,13 @@ def test_same_text_flagged_as_variance_not_changes():
     d = diff_records(r, _rec([_flag("F2", "E9", "c")], {"E9": "Thing"}, sha="same"))
     assert d["drafts"]["same_text"] is True
     assert len(d["unchanged"]) == 1
+
+
+def test_inserted_scene_does_not_flip_an_unchanged_entityless_finding():
+    old = _rec([dict(_flag("F1", None, "stunt_water"), scene_ids=["S009"])], {}, sha="a")
+    old["scene_meta"] = {"S009": {"heading": "EXT. HARBOR - NIGHT"}}
+    new = _rec([dict(_flag("F2", None, "stunt_water"), scene_ids=["S010"])], {}, sha="b")
+    new["scene_meta"] = {"S010": {"heading": "EXT. HARBOR - NIGHT"}}
+    d = diff_records(old, new)
+    assert d["new"] == [] and d["resolved"] == []
+    assert [f["flag_id"] for f in d["unchanged"]] == ["F2"]

@@ -272,11 +272,22 @@ def desk_cleared_own(state: Any, desk: str) -> list[Any]:
 
 
 def desk_budget_left(state: Any, desk: str) -> int:
-    batch_keys = [f"research_budget:{n}" for n in batch_agent_names(desk)[1:]]
-    batch_vals = [state.get(k) for k in batch_keys]
+    """Research budget the desk family still holds. Batch agents partition the
+    desk budget (their keys REPLACE the base once any exists); retry and sweep
+    instances hold their own small allowance ON TOP — once a retry key existed,
+    the old sum silently dropped the base key and the run summary lied."""
+    names = batch_agent_names(desk)[1:]
+    batch_vals = [
+        state.get(f"research_budget:{n}") for n in names if not n.endswith(("__sweep", "__retry"))
+    ]
+    extra_vals = [
+        state.get(f"research_budget:{n}") for n in names if n.endswith(("__sweep", "__retry"))
+    ]
     if any(v is not None for v in batch_vals):
-        return sum(int(v) for v in batch_vals if v is not None)
-    return int(state.get(f"research_budget:{desk}") or 0)
+        base = sum(int(v) for v in batch_vals if v is not None)
+    else:
+        base = int(state.get(f"research_budget:{desk}") or 0)
+    return base + sum(int(v) for v in extra_vals if v is not None)
 
 
 def _triage_dict(state: Any) -> dict[str, Any]:
@@ -557,7 +568,7 @@ def _compact(raw: dict[str, Any]) -> list[dict[str, Any]]:
     return out
 
 
-async def research(  # noqa: PLR0915 - one linear cache/dedupe/live sequence
+async def research(  # noqa: PLR0912, PLR0915 - one linear cache/dedupe/live sequence
     objective: str,
     queries: list[str],
     entity_id: str,
@@ -597,6 +608,12 @@ async def research(  # noqa: PLR0915 - one linear cache/dedupe/live sequence
             if str(d).strip() and str(d).strip().lower() not in ("none", "null")
         ] or None
 
+    # A bare string for `queries` used to reach the live API as a list of
+    # characters and 400 — counted toward the breaker as an outage.
+    if isinstance(queries, str):
+        queries = [queries]
+    queries = [str(q).strip() for q in (queries or []) if str(q).strip()]
+
     # Key on entity AND question: an ownership chase asks several different
     # questions about one entity, and each deserves its own search. Identical
     # questions still share across desks. Geo/domain modifiers change the answer
@@ -614,10 +631,7 @@ async def research(  # noqa: PLR0915 - one linear cache/dedupe/live sequence
     key = f"research:{entity_id}:{q_hash}" if entity_id else f"research:{q_hash}"
     cached = tool_context.state.get(key)
     if cached is not None:
-        _register_provenance(
-            tool_context,
-            [x for r in cached["results"] for x in [r.get("title", ""), *r.get("excerpts", [])]],
-        )
+        _register_results(tool_context, cached["results"])
         return {"cached": True, "results": cached["results"], "search_id": cached["search_id"]}
 
     # Cross-run cache: identical questions reuse identical sources for a week.
@@ -629,10 +643,7 @@ async def research(  # noqa: PLR0915 - one linear cache/dedupe/live sequence
     if stored is not None:
         tool_context.state[key] = {k: v for k, v in stored.items() if not k.startswith("_")}
         _index_research_key(tool_context, key)
-        _register_provenance(
-            tool_context,
-            [x for r in stored["results"] for x in [r.get("title", ""), *r.get("excerpts", [])]],
-        )
+        _register_results(tool_context, stored["results"])
         return {"cached": True, "results": stored["results"], "search_id": stored["search_id"]}
 
     budget_key = _budget_key(tool_context)
@@ -670,14 +681,7 @@ async def research(  # noqa: PLR0915 - one linear cache/dedupe/live sequence
                 tool_context.state[budget_key] = int(tool_context.state.get(budget_key, 0)) + 1
             tool_context.state[key] = {k: v for k, v in stored2.items() if not k.startswith("_")}
             _index_research_key(tool_context, key)
-            _register_provenance(
-                tool_context,
-                [
-                    x
-                    for r in stored2["results"]
-                    for x in [r.get("title", ""), *r.get("excerpts", [])]
-                ],
-            )
+            _register_results(tool_context, stored2["results"])
             return {
                 "cached": True,
                 "deduped_in_flight": True,
@@ -715,10 +719,7 @@ async def research(  # noqa: PLR0915 - one linear cache/dedupe/live sequence
     }
     tool_context.state[key] = record
     _index_research_key(tool_context, key)
-    _register_provenance(
-        tool_context,
-        [x for r in compacted for x in [r.get("title", ""), *r.get("excerpts", [])]],
-    )
+    _register_results(tool_context, compacted)
     await asyncio.to_thread(
         _durable_cache_store, q_hash if not entity_id else f"{entity_id}-{q_hash}", record
     )
@@ -762,24 +763,23 @@ async def fetch_page(url: str, objective: str, tool_context: ToolContext) -> dic
     key = "extract:" + hashlib.sha1(f"{url}|{objective}".encode()).hexdigest()[:12]
     cached = tool_context.state.get(key)
     if cached is not None:
-        _register_provenance(
-            tool_context,
-            [x for r in cached["results"] for x in [r.get("title") or "", *r.get("excerpts", [])]],
-        )
+        _register_results(tool_context, cached["results"])
         return {"cached": True, "results": cached["results"]}
 
     stored = await asyncio.to_thread(_durable_cache_load, key)
     if stored is not None:
         tool_context.state[key] = {k: v for k, v in stored.items() if not k.startswith("_")}
         _index_research_key(tool_context, key)
-        _register_provenance(
-            tool_context,
-            [x for r in stored["results"] for x in [r.get("title") or "", *r.get("excerpts", [])]],
-        )
+        _register_results(tool_context, stored["results"])
         return {"cached": True, "results": stored["results"]}
 
     budget_key = _budget_key(tool_context)
-    budget = int(tool_context.state.get(budget_key, 0))
+    # atomic decrement + fresh-read refunds: a refund written from a stale
+    # snapshot re-credited a parallel call's spend (B11)
+    with _BUDGET_LOCK:
+        budget = int(tool_context.state.get(budget_key, 0))
+        if budget > 0:
+            tool_context.state[budget_key] = budget - 1
     if budget <= 0:
         return {
             "error": "research budget spent",
@@ -788,12 +788,11 @@ async def fetch_page(url: str, objective: str, tool_context: ToolContext) -> dic
                 "you could not resolve with note_open_question, then call done()."
             ),
         }
-    tool_context.state[budget_key] = budget - 1
     session_id = f"scriptrisk-{getattr(tool_context, 'invocation_id', '') or 'run'}"[:64]
     try:
         raw = await asyncio.to_thread(_live_extract, [url], objective, session_id=session_id)
     except Exception as exc:  # page fetch can fail on robots/paywalls — refund, keep working
-        tool_context.state[budget_key] = budget
+        _refund_budget(tool_context, budget_key, 1)
         _live_call_failed(tool_context, "extract", exc)
         return {
             "error": f"fetch failed: {type(exc).__name__}",
@@ -817,7 +816,7 @@ async def fetch_page(url: str, objective: str, tool_context: ToolContext) -> dic
             }
         )
     if not results:
-        tool_context.state[budget_key] = budget  # nothing usable: refund
+        _refund_budget(tool_context, budget_key, 1)  # nothing usable: refund
         errs = [
             e.get("error_type") or e.get("message") or "unavailable" for e in raw.get("errors", [])
         ]
@@ -828,10 +827,7 @@ async def fetch_page(url: str, objective: str, tool_context: ToolContext) -> dic
     record = {"objective": objective, "results": results}
     tool_context.state[key] = record
     _index_research_key(tool_context, key)
-    _register_provenance(
-        tool_context,
-        [x for r in results for x in [r.get("title") or "", *r.get("excerpts", [])]],
-    )
+    _register_results(tool_context, results)
     await asyncio.to_thread(_durable_cache_store, key, record)
     return {"cached": False, "budget_remaining": budget - 1, "results": results}
 
@@ -897,27 +893,36 @@ async def deep_research(question: str, entity_id: str, tool_context: ToolContext
             "citations": cached.get("citations"),
         }
 
+    # The allowance is per DESK FAMILY (docstring: "2 per desk"), read across
+    # every instance's own key — four clearance batches once held 8 deep runs
+    # between them. Writes stay on this agent's key (the per-agent state rule).
     used_key = f"deep_used:{_agent_key(tool_context)}"
     used = int(tool_context.state.get(used_key, 0))
-    if used >= _DEEP_MAX_PER_DESK:
+    family_used = sum(
+        int(tool_context.state.get(f"deep_used:{n}", 0) or 0)
+        for n in batch_agent_names(_desk(tool_context))
+    )
+    if family_used >= _DEEP_MAX_PER_DESK:
         return {
             "error": "deep research allowance spent for this desk",
             "guidance": "Use research(), or note the question with note_open_question.",
         }
     budget_key = _budget_key(tool_context)
-    budget = int(tool_context.state.get(budget_key, 0))
+    with _BUDGET_LOCK:
+        budget = int(tool_context.state.get(budget_key, 0))
+        if budget >= _DEEP_COST:
+            tool_context.state[budget_key] = budget - _DEEP_COST
     if budget < _DEEP_COST:
         return {
             "error": f"deep research costs {_DEEP_COST} budget; {budget} remains",
             "guidance": "Note the question with note_open_question and finish the worklist.",
         }
     tool_context.state[used_key] = used + 1
-    tool_context.state[budget_key] = budget - _DEEP_COST
     processor = os.getenv("PARALLEL_TASK_PROCESSOR", "core")
     try:
         raw = await asyncio.to_thread(_live_task, question, processor)
     except Exception as exc:  # slow-path API failure: refund; the allowance stays spent
-        tool_context.state[budget_key] = budget
+        _refund_budget(tool_context, budget_key, _DEEP_COST)
         _live_call_failed(tool_context, "task", exc)
         return {
             "error": f"deep research failed: {type(exc).__name__}",
@@ -945,10 +950,8 @@ async def deep_research(question: str, entity_id: str, tool_context: ToolContext
     record = {"question": question, "answer": answer, "citations": citations}
     tool_context.state[key] = record
     _index_research_key(tool_context, key)
-    _register_provenance(
-        tool_context,
-        [answer] + [x for c in citations for x in [c.get("title") or "", *c.get("excerpts", [])]],
-    )
+    _register_provenance(tool_context, [answer])
+    _register_results(tool_context, citations)
     await asyncio.to_thread(_durable_cache_store, key, record)
     return {
         "cached": False,
@@ -977,6 +980,14 @@ _INFLIGHT_LOCK = threading.Lock()
 # punctuation-rewritten and truncated mid-word, under a schema that calls the
 # field "Verbatim supporting text. No paraphrase."
 _PROV_TEXTS: dict[str, list[tuple[str, str]]] = {}
+# normalized text -> the URL it was retrieved from, when a source is known. A
+# repair that resolves an excerpt to a DIFFERENT source than the desk's URL
+# re-points the citation, so excerpt and URL always describe one page.
+_PROV_URLS: dict[str, dict[str, str]] = {}
+# texts our LOCAL tools returned (bbfc_cut_precedent, csatf_bulletin,
+# rating_boundary, verify_trademark): typed so a `via: local` citation the desk
+# writes on a web excerpt cannot borrow the local-tool tier.
+_LOCAL_TEXTS: dict[str, list[str]] = {}
 _PROV_MAX_RUNS = 8
 
 
@@ -1002,7 +1013,9 @@ def _marginal_bucket(tool_context: ToolContext) -> set[str]:
     return _MARGINAL_TEXTS.setdefault(inv, set())
 
 
-def _register_provenance(tool_context: ToolContext, texts: list[str]) -> None:
+def _register_provenance(
+    tool_context: ToolContext, texts: list[str], url: str | None = None
+) -> None:
     bucket = _prov_bucket(tool_context)
     bucket.extend((_norm_for_match(x), x) for x in texts if x)
     # excerpts arrive as storage chunks; a desk quoting across a chunk boundary
@@ -1010,6 +1023,54 @@ def _register_provenance(tool_context: ToolContext, texts: list[str]) -> None:
     joined = " ".join(x for x in texts if x)
     if joined:
         bucket.append((_norm_for_match(joined), joined))
+    if url:
+        inv = str(getattr(tool_context, "invocation_id", "") or "run")
+        if inv not in _PROV_URLS and len(_PROV_URLS) >= _PROV_MAX_RUNS:
+            _PROV_URLS.pop(next(iter(_PROV_URLS)))
+        urls = _PROV_URLS.setdefault(inv, {})
+        for x in texts:
+            if x:
+                urls.setdefault(_norm_for_match(x), url)
+        if joined:
+            urls.setdefault(_norm_for_match(joined), url)
+
+
+def _register_results(tool_context: ToolContext, results: list[dict[str, Any]]) -> None:
+    """Register every result's title and excerpts, each under ITS OWN url —
+    the cross-source repair contract depends on knowing which page a text
+    came from."""
+    for r in results or []:
+        if not isinstance(r, dict):
+            continue
+        texts = [r.get("title") or "", *(r.get("excerpts") or [])]
+        _register_provenance(tool_context, texts, url=r.get("url") or None)
+
+
+def _local_bucket(tool_context: ToolContext) -> list[str]:
+    inv = str(getattr(tool_context, "invocation_id", "") or "run")
+    if inv not in _LOCAL_TEXTS and len(_LOCAL_TEXTS) >= _PROV_MAX_RUNS:
+        _LOCAL_TEXTS.pop(next(iter(_LOCAL_TEXTS)))
+    return _LOCAL_TEXTS.setdefault(inv, [])
+
+
+def _is_local_tool_cite(c: dict[str, Any], tool_context: ToolContext | None) -> bool:
+    """A `via: local` citation whose excerpt a LOCAL tool actually returned this
+    run (typed registry, substring of a registered text). Never background; it
+    may carry MEDIUM+ (a BBFC cuts record or a CSATF bulletin line is the
+    regulator's own text). Without a registry the answer is no."""
+    if tool_context is None or c.get("via") != "local":
+        return False
+    if c.get("source_type") == "statute" or _is_derived_marginal(c, tool_context):
+        return True
+    needle = _norm_for_match(c.get("excerpt") or "").strip(" \"'.…-")
+    if len(needle) < _MIN_PROVENANCE_CHARS:
+        return False
+    return any(needle in t for t in _local_bucket(tool_context))
+
+
+def _refund_budget(tool_context: ToolContext, budget_key: str, n: int) -> None:
+    with _BUDGET_LOCK:
+        tool_context.state[budget_key] = int(tool_context.state.get(budget_key, 0)) + n
 
 
 def _register_tool_output(tool_context: ToolContext, obj: Any) -> None:
@@ -1039,6 +1100,7 @@ def _register_tool_output(tool_context: ToolContext, obj: Any) -> None:
     with contextlib.suppress(Exception):
         texts.append(_json.dumps(obj, ensure_ascii=False))
     _register_provenance(tool_context, texts)
+    _local_bucket(tool_context).extend(_norm_for_match(t) for t in texts if t)
 
 
 def _index_research_key(tool_context: ToolContext, key: str) -> None:
@@ -1174,7 +1236,7 @@ def _best_registry_match(attempt: str, tool_context: ToolContext) -> str | None:
     vocabulary alone, so an unrelated source could be substituted and filed as
     the verbatim citation.
     """
-    best_span, best_r = None, 0.0
+    best_span, best_r, best_norm = None, 0.0, ""
     for norm, orig in _prov_bucket(tool_context):
         r, longest, span = _aligned_span(attempt, norm, orig)
         if r < _REPAIR_RATIO or longest < _REPAIR_MIN_RUN or not span:
@@ -1182,8 +1244,17 @@ def _best_registry_match(attempt: str, tool_context: ToolContext) -> str | None:
         if len(span.split()) > _REPAIR_MAX_EXTRA * max(1, len(attempt.split())):
             continue
         if r > best_r:
-            best_span, best_r = span, r
-    return best_span[:800] if best_span else None
+            best_span, best_r, best_norm = span, r, norm
+    if not best_span:
+        return None
+    inv = str(getattr(tool_context, "invocation_id", "") or "run")
+    _LAST_REPAIR_URL[inv] = (_PROV_URLS.get(inv) or {}).get(best_norm, "")
+    return best_span[:800]
+
+
+# the source URL of the most recent repair, per run — read by file_flag right
+# after _best_registry_match so a repaired excerpt and its URL name one page
+_LAST_REPAIR_URL: dict[str, str] = {}
 
 
 def _handback_candidates(attempts: list[str], tool_context: ToolContext) -> list[str]:
@@ -1231,32 +1302,100 @@ _PROV_RETRY_LIMIT = 4
 # run-13 item 3: which descriptor family answers for each rating category —
 # the structured marginal attaches by the FLAG's category, most specific
 # descriptor first, from the desk's last rating_boundary call.
-_CATEGORY_FAMILY = {
-    "rating_language": "language",
-    "rating_violence": "violence",
-    "rating_drug_use": "drugs",
-    "rating_alcohol": "alcohol",
-    "rating_sexuality": "sexual_content",
-    "rating_thematic_elements": "thematic",
+_CATEGORY_FAMILY: dict[str, list[str]] = {
+    "rating_language": ["language"],
+    "rating_violence": ["violence"],
+    "rating_drug_use": ["drugs"],
+    "rating_drugs": ["drugs"],
+    "rating_alcohol": ["alcohol"],
+    "rating_sexuality": ["sexual_content", "nudity", "suggestive"],
+    "rating_sexual_content": ["sexual_content", "nudity", "suggestive"],
+    "rating_nudity": ["nudity"],
+    "rating_thematic_elements": ["thematic"],
+    "rating_thematic": ["thematic"],
+    "rating_gore": ["gore"],
+    "rating_crude_humor": ["crude_humor"],
+    "rating_smoking": ["smoking"],
+    "rating_horror": ["horror", "disturbing"],
+    "rating_disturbing": ["disturbing"],
+    "rating_suicide": ["suicide"],
+    "rating_sexual_violence": ["sexual_violence"],
+    "rating_peril": ["peril"],
+    "rating_action": ["action"],
+    "rating_suggestive": ["suggestive"],
 }
+
+
+def _marginal_families(category: str) -> list[str]:
+    """Descriptor families that answer for a rating category. Explicit map
+    first; then the slug itself (rating_<family>); then any vocabulary category
+    whose name appears in the slug — so a driver outside the six original
+    families (nudity, gore, smoking…) can carry its marginal instead of being
+    demoted by the render gate for a mapping gap."""
+    if category in _CATEGORY_FAMILY:
+        return list(_CATEGORY_FAMILY[category])
+    cats = list(((_boundary_data().get("vocabulary") or {}).get("categories") or {}).keys())
+    slug = category.removeprefix("rating_")
+    if slug in cats:
+        return [slug]
+    return [c for c in cats if c in slug or c.rstrip("s") in slug]
+
+
+def _descriptor_named(key: str, finding_low: str) -> bool:
+    """Does the finding name THIS descriptor? Qualified keys ("brief drugs")
+    match `<intensity> <any vocabulary variant>` ("brief drug use"); bare or
+    unmodified keys match the variant in quotes ('language')."""
+    vocab = _boundary_data().get("vocabulary") or {}
+    head, _, cat = key.partition(" ")
+    if not cat:
+        head, cat = "", key
+    variants = [v for v in (vocab.get("categories") or {}).get(cat, []) if v]
+    if not variants:
+        return False
+    if head and head != "unmodified":
+        return any(
+            re.search(rf"\b{re.escape(head)}\s+{re.escape(v)}", finding_low) for v in variants
+        )
+    quotes_l, quotes_r = "['\"\u2018\u201c]", "['\"\u2019\u201d]"  # straight + curly
+    return any(re.search(rf"{quotes_l}{re.escape(v)}{quotes_r}", finding_low) for v in variants)
+
+
 # The hedge that substituted for the number in runs 10-12. Allowed only when
 # the structured marginal is attached (then it summarizes a shown figure).
 _MARGINAL_HEDGE_RE = re.compile(r"\bpatterns\s+(?:strongly\s+)?(?:toward|across)\b", re.IGNORECASE)
 
 
-def _attach_marginal(tool_context: ToolContext, category: str) -> dict[str, Any] | None:
+def _attach_marginal(
+    tool_context: ToolContext, category: str, finding: str = ""
+) -> dict[str, Any] | None:
     """The structured marginal for this flag's category family, from the desk's
-    last rating_boundary call — deterministic, never model-supplied. Most
-    specific descriptor wins ('pervasive language' over 'language'); None when
-    the family had no match (the render hard gate makes that visible)."""
-    fam = _CATEGORY_FAMILY.get(category)
-    if not fam:
+    rating_boundary calls — deterministic, never model-supplied. Ranked: the
+    descriptor the FINDING names first; then intensity-qualified ('brief
+    drugs', smallest n = most specific); then the unmodified form; then the bare
+    category. "Longest key wins" once let the parser token 'unmodified' beat
+    every real modifier (F2003 named 'brief drugs', its card said 'unmodified
+    drugs'). None when the family had no match (the render hard gate makes
+    that visible)."""
+    fams = _marginal_families(category)
+    if not fams:
         return None
     last = tool_context.state.get(f"marginal_last:{_agent_key(tool_context)}") or {}
-    candidates = [k for k in last if k == fam or k.endswith(" " + fam)]
+    candidates = [k for k in last if any(k == f or k.endswith(" " + f) for f in fams)]
     if not candidates:
         return None
-    best = max(candidates, key=len)  # intensity-qualified beats bare
+    low = (finding or "").lower()
+
+    def _rank(k: str) -> tuple[int, int, int]:
+        if " " not in k:
+            tier = 3
+        elif k.startswith("unmodified "):
+            tier = 2
+        else:
+            tier = 1
+        n = int((last[k] or {}).get("n") or 0)
+        return (0 if _descriptor_named(k, low) else 1, tier, n)
+
+    best = min(candidates, key=_rank)
     return dict(last[best])
 
 
@@ -1268,7 +1407,7 @@ def _rating_marginal_gate(
     that substituted for the missing number in runs 10-12."""
     if not category.startswith("rating_"):
         return None
-    marginal = _attach_marginal(tool_context, category)
+    marginal = _attach_marginal(tool_context, category, finding)
     if marginal:
         flag["marginal"] = marginal
         return None
@@ -1291,7 +1430,7 @@ def _sync_master_split_problem(category: str, finding: str, remedy_detail: str) 
     if "sync" not in (category or ""):
         return None
     blob = f"{finding} {remedy_detail}".lower()
-    if "master use license" in blob or "master-use license" in blob:
+    if re.search(r"\bmaster(?:[- ]use|[- ]recording)?[- ](?:licen[cs]e|licensing|rights)\b", blob):
         return (
             "REJECTED, not filed: this sync finding bundles the master-use claim. "
             "Composition and master are SEPARATELY OWNED rights with separate "
@@ -1368,23 +1507,32 @@ def _quotable_excerpts(entity_id: str, tool_context: ToolContext, limit: int = 3
 
 
 def _excerpt_exists(excerpt: str, tool_context: ToolContext) -> bool:
+    return _excerpt_provenance(excerpt, tool_context) is not None
+
+
+def _excerpt_provenance(excerpt: str, tool_context: ToolContext) -> str | None:
+    """How the excerpt is known: "exact" (verbatim in a registered text or the
+    script/state), "overlap" (>=90% of its words in ONE registered text, order
+    not checked — filed marked `repaired`, never as verbatim), or None."""
     needle = _norm_for_match(excerpt).strip(" \"'.…-")
     if len(needle) < _MIN_PROVENANCE_CHARS:
-        return True
+        return "exact"
     # 1. the process-local registry — the authoritative source
     bucket = _PROV_TEXTS.get(str(getattr(tool_context, "invocation_id", "") or "run"), [])
     norms = [n for n, _ in bucket]
     for text in norms:
         if needle in text:
-            return True
+            return "exact"
+    if _exists_in_state(needle, tool_context.state):
+        return "exact"
     if _word_overlap_hit(needle, norms):
-        return True
+        return "overlap"
     if os.getenv("GREENLIGHT_PROV_DEBUG"):
         with open("/tmp/prov_debug.jsonl", "a") as fh:
             import json as _json
 
             fh.write(_json.dumps({"needle": needle[:400], "bucket_n": len(bucket)}) + "\n")
-    return _exists_in_state(needle, tool_context.state)
+    return None
 
 
 def _exists_in_state(needle: str, state: Any) -> bool:
@@ -1496,14 +1644,106 @@ def state_get_list(tool_context: ToolContext, prefix: str) -> list[str]:
     return out
 
 
+# country-code second-level domains: the registrable root of darkroom.bbfc.co.uk
+# is bbfc.co.uk, not co.uk (which once made every UK subdomain unclassifiable)
+_CC_SLD = frozenset(
+    {
+        "co.uk",
+        "org.uk",
+        "gov.uk",
+        "ac.uk",
+        "me.uk",
+        "net.uk",
+        "ltd.uk",
+        "plc.uk",
+        "com.au",
+        "net.au",
+        "org.au",
+        "gov.au",
+        "edu.au",
+        "com.br",
+        "gov.br",
+        "org.br",
+        "net.br",
+        "co.jp",
+        "or.jp",
+        "ne.jp",
+        "go.jp",
+        "ac.jp",
+        "co.nz",
+        "org.nz",
+        "govt.nz",
+        "net.nz",
+        "co.za",
+        "org.za",
+        "gov.za",
+        "co.in",
+        "gov.in",
+        "org.in",
+        "net.in",
+        "ac.in",
+        "com.cn",
+        "gov.cn",
+        "org.cn",
+        "net.cn",
+        "edu.cn",
+        "com.mx",
+        "gob.mx",
+        "org.mx",
+        "com.ar",
+        "gov.ar",
+        "org.ar",
+        "com.sg",
+        "gov.sg",
+        "org.sg",
+        "co.kr",
+        "go.kr",
+        "or.kr",
+        "com.hk",
+        "gov.hk",
+        "org.hk",
+        "com.tw",
+        "gov.tw",
+        "org.tw",
+        "co.il",
+        "gov.il",
+        "org.il",
+        "com.tr",
+        "gov.tr",
+        "org.tr",
+        "gc.ca",
+    }
+)
+
+
+def _host_of(url: str) -> str:
+    """Lower-cased host with `www.` stripped; a scheme-less URL is parsed as
+    https so it is classified by its host, not defaulted to background."""
+    u = (url or "").strip()
+    if not u:
+        return ""
+    if "://" not in u:
+        u = "https://" + u.lstrip("/")
+    seg = u.split("/")[2:3]
+    if not seg:
+        return ""
+    return seg[0].lower().removeprefix("www.").split(":")[0]
+
+
+def _root_of(host: str) -> str:
+    parts = host.split(".")
+    if len(parts) >= 3 and ".".join(parts[-2:]) in _CC_SLD:  # noqa: PLR2004
+        return ".".join(parts[-3:])
+    return ".".join(parts[-2:])
+
+
 def _is_background_host(url: str) -> bool:
     if "wikipedia_en_all" in (url or "") or "/kiwix" in (url or ""):
         return True  # offline Wikipedia dumps on personal domains ARE Wikipedia
-    seg = (url or "").split("/")[2:3]
-    if not seg:
+    host = _host_of(url)
+    if not host:
         return True
-    host = seg[0].removeprefix("www.")
-    root = ".".join(host.split(".")[-2:])
+    root = _root_of(host)
     return host in BACKGROUND_HOSTS or root in BACKGROUND_HOSTS
 
 
@@ -1557,11 +1797,10 @@ AUTHORITY_HOSTS = {
 
 
 def _host_root(url: str) -> str:
-    seg = (url or "").split("/")[2:3]
-    if not seg:
+    host = _host_of(url)
+    if not host:
         return ""
-    host = seg[0].removeprefix("www.")
-    root = ".".join(host.split(".")[-2:])
+    root = _root_of(host)
     return host if host in AUTHORITY_HOSTS | RATING_AUTHORITY_HOSTS else root
 
 
@@ -1631,11 +1870,10 @@ _NATIONAL_GOV_EXACT = frozenset({"gov.uk", "www.gov.uk", "gov.cn", "www.gov.cn"}
 
 
 def _is_authority_host(url: str) -> bool:
-    seg = (url or "").split("/")[2:3]
-    if not seg:
+    host = _host_of(url)
+    if not host:
         return False
-    host = seg[0].removeprefix("www.")
-    root = ".".join(host.split(".")[-2:])
+    root = _root_of(host)
     if host in AUTHORITY_HOSTS or root in AUTHORITY_HOSTS:
         return True
     parts = host.split(".")
@@ -1646,10 +1884,10 @@ def _is_authority_host(url: str) -> bool:
     # allowlist BY NAME. That is deliberate: it is the only way to keep a
     # municipal .gov / council .gov.uk OUT (highpointnc.gov, belfastcity.gov.uk)
     # while letting uspto.gov and gov.uk in, since the two are structurally
-    # identical and cannot be told apart by shape.
-    if "gov" in parts:
-        gi = parts.index("gov")
-        return gi >= 1 and parts[gi - 1] in _US_STATES
+    # identical and cannot be told apart by shape. "gov" counts ONLY as the
+    # top-level label: ca.gov.example.com and in.gov.br are not state sites.
+    if parts[-1] == "gov":
+        return len(parts) >= 2 and parts[-2] in _US_STATES  # noqa: PLR2004
     return False
 
 
@@ -1685,7 +1923,7 @@ def _authority_problem(
             _is_derived_marginal(c, tool_context) for c in cits
         ):
             return None
-        hosts = ", ".join(sorted({(u.split("/")[2:3] or ["?"])[0] for u in urls})) or "none"
+        hosts = ", ".join(sorted({_host_of(u) or "?" for u in urls})) or "none"
         return (
             f"REJECTED, not filed: a {severity} ratings finding must cite a ratings "
             "authority (filmratings.com, motionpictures.org, BBFC) or a major trade "
@@ -1695,16 +1933,15 @@ def _authority_problem(
         )
     if any(_is_authority_host(u) for u in urls):
         return None
-    _host_idx = 2  # scheme://host/...
-    distinct = {
-        u.split("/")[_host_idx].removeprefix("www.")
-        for u in urls
-        if not _is_background_host(u) and len(u.split("/")) > _host_idx
-    }
+    # a LOCAL tool's own record (BBFC cuts, CSATF bulletin text, an auto-attached
+    # statute span) is the regulator's text — authority without a URL
+    if any(_is_local_tool_cite(c, tool_context) for c in cits):
+        return None
+    distinct = {_host_of(u) for u in urls if _host_of(u) and not _is_background_host(u)}
     corroborated = 2  # two independent non-background sources
     if severity == "HIGH" and len(distinct) >= corroborated:
         return None
-    hosts = ", ".join(sorted({(u.split("/")[2:3] or ["?"])[0] for u in urls})) or "none"
+    hosts = ", ".join(sorted({_host_of(u) or "?" for u in urls})) or "none"
     return (
         f"REJECTED, not filed: a {severity} finding must rest on at least one "
         "ALLOWLISTED authority (regulator, government/court, rights registry, "
@@ -1747,7 +1984,7 @@ def _is_derived_marginal(c: dict[str, Any], tool_context: ToolContext | None = N
     """Our own rating_boundary marginal — a URL-less tool citation, and the desk's
     strongest, most specific rating evidence. It must count as authority, or the
     prune below drops it (no URL) for a generic filmratings.com page and the
-    measured 4,544-rationale marginal never renders. TYPED, not title-matched:
+    measured descriptor-corpus marginal never renders. TYPED, not title-matched:
     only an excerpt rating_boundary actually emitted this run qualifies — a title
     string the model writes cannot mint authority. Without a tool_context there is
     no registry, so the answer is no."""
@@ -1784,6 +2021,7 @@ def _prune_weak_citations(
         if not _is_background_host(u)
         or c.get("source_type") == "statute"
         or _is_derived_marginal(c, tool_context)
+        or _is_local_tool_cite(c, tool_context)
     ]
     return _dedupe_cits(keep or cits)
 
@@ -1798,7 +2036,9 @@ def _background_only_problem(
     # The derived rating_boundary marginal has no URL but is authoritative — a
     # rating finding citing only the corpus must not read as background-only.
     if not all(
-        _is_background_host(c.get("url") or "") and not _is_derived_marginal(c, tool_context)
+        _is_background_host(c.get("url") or "")
+        and not _is_derived_marginal(c, tool_context)
+        and not _is_local_tool_cite(c, tool_context)
         for c in cits
     ):
         return None
@@ -1825,18 +2065,34 @@ _NORMATIVE_RULE_RE = re.compile(
     r"|\brequires?\s+(?:a|an|the)?\s*(?:G|PG|PG-13|R|NC-17)\s+rating"
     r"|\bCARA\s+(?:rules?|guidelines?|standards?)\s+"
     r"(?:require|restrict|mandate|prohibit|forbid|limit)"
-    r"|\bautomatic(?:ally)?\s+(?:triggers?|draws?|results?|receives?|earns?)"
+    r"|\bautomatic(?:ally)?\s+(?:triggers?|draws?|results?\s+in|receives?|earns?)\s+"
+    r"(?:a|an|the)?\s*(?:G|PG|PG-13|R|NC-17)\b"
     r"|\btriggers?\s+(?:a|an)\s+(?:R|NC-17)\s+rating"
+    # the laundered arithmetic rule: "more than one F-word triggers R",
+    # "two or more uses draw an R", "a second use typically draws R"
+    r"|\b(?:more\s+than\s+one|two\s+or\s+more|multiple|a\s+second|any\s+additional)"
+    r"\s+[\w-]+(?:\s+[\w-]+)?\s+(?:typically\s+|usually\s+|generally\s+)?"
+    r"(?:triggers?|draws?|earns?|warrants?|requires?|means?|receives?)\s+"
+    r"(?:a|an|the)?\s*(?:G|PG|PG-13|R|NC-17)\b"
     r"|\bexceeds?\s+PG-13\s+tolerances\b"
     r"|\bunder\s+CARA\s+standards?,?\s+\w[^.]{0,60}?\brequires?\b"
     # run-13: the phrase class the run-12 list missed — every pattern anchored
     # to a rating token, so "within swimwear coverage" (a real wardrobe remedy)
     # passes while "within PG-13 parameters" is caught.
     r"|\bconform(?:s|ing)?\s+to\s+(?:the\s+)?(?:G|PG|PG-13|R|NC-17)\b"
-    r"|\bwithin\s+(?:the\s+)?(?:G|PG|PG-13|R|NC-17)(?:-band)?"
+    # the rating token is a WORD: "within Reasonable limits" / "within
+    # Regulatory limits" once matched on the R of Reasonable
+    r"|\bwithin\s+(?:the\s+)?(?:G|PG|PG-13|R|NC-17)\b(?:-band)?"
     r"[\w\s,-]{0,40}?(?:parameters?|limits?|tolerances?|boundar(?:y|ies)|guidelines?)"
     r"|\bmaintain\s+(?:alignment|compliance)\s+with\s+(?:the\s+)?(?:G|PG|PG-13|R|NC-17)\b"
-    r"|\bretain(?:ing)?\s+(?:at\s+most|no\s+more\s+than)\s+\d",
+    # the count-allowance clause: anchored to a rating token OR to the language
+    # count it launders ("retaining at most 1 non-sexual use") — a plain
+    # "retain no more than 3 takes" is production prose and passes
+    r"|\bretain(?:ing)?\s+(?:at\s+most|no\s+more\s+than)\s+\d+(?:"
+    r"[^.;]{0,60}?\b(?:for|to\s+(?:keep|stay|remain|hold|conform|qualify)|under|within|at)\s+"
+    r"(?:a|an|the)?\s*(?:G|PG|PG-13|R|NC-17)\b"
+    r"|\s+(?:[\w-]+\s+){0,3}?(?:uses?|f-?words?|f-?bombs?|instances?|occurrences?"
+    r"|utterances?|profanit\w*|expletives?)\b)",
     re.IGNORECASE,
 )
 
@@ -1879,7 +2135,10 @@ def _umbrella_problem(category: str, scene_ids: list[str]) -> str | None:
 def _unverified_regs(tool_context: ToolContext, finding: str) -> str | None:
     """A cited registration number must resolve on the register — an invented
     one would look identically authoritative (review item #8)."""
-    cited = re.findall(r"[Rr]eg(?:istration)?\.?\s*#?\s*([0-9]{6,8})", finding)
+    cited = re.findall(
+        r"(?:U\.?S\.?\s+)?[Rr]eg(?:istration)?\.?\s*(?:No\.?|Number|#)?\s*([0-9]{6,8})",
+        finding,
+    )
     if not cited:
         return None
     verified = set(state_get_list(tool_context, "verified_marks"))
@@ -1941,53 +2200,103 @@ def _uncited_statute_problem(
     verbatim span AROUND the number is auto-attached as an extra citation, so
     the reader can verify the cite from the excerpt beside it."""
     body = f"{finding} {remedy_detail}"
-    needed = _statute_sections(body)
+    sections = _statute_sections(body)
+    hours: set[str] = set()
     if (category or "").startswith("minor"):
-        needed |= {m.group(1) for m in _HOURS_RE.finditer(body)}
-    if not needed:
+        hours = {m.group(1) for m in _HOURS_RE.finditer(body)}
+    if not sections and not hours:
         return None
     excerpts = " ".join(str(c.get("excerpt") or "") for c in (cits or []))
     prov_pairs = _prov_bucket(tool_context)
     prov = " ".join(norm for norm, _ in prov_pairs)
     missing = []
-    for n in sorted(needed):
-        if n in excerpts:
+    # token-anchored membership: "8" in "2018" and "933" in "$1,933" are not the
+    # figure — the bare-substring test made the hour-cap gate inert (A7)
+    for n in sorted(hours):
+        if _hour_present(n, excerpts) or _hour_present(n, prov):
+            continue  # hour caps: retrieved is enough; never auto-attached
+        missing.append(f"{n} hours")
+    for n in sorted(sections):
+        if _section_present(n, excerpts):
             continue  # already reader-traceable
-        if n not in prov:
+        if not _section_present(n, prov):
             missing.append(n)
             continue
-        if cits is None or len(n) < _MIN_SECTION_DIGITS:
-            continue  # hour caps: retrieved is enough; no auto-attach for 1-digit numbers
-        src = next((orig for _, orig in prov_pairs if n in orig), None)
-        if src:
-            i = src.index(n)
-            span = src[max(0, i - _CITE_WINDOW) : i + _CITE_WINDOW]
-            span = span[span.find(" ") + 1 : span.rfind(" ")] if " " in span else span
-            cits.append(
-                {
-                    "source_type": "statute",
-                    "title": "cited provision (auto-attached for traceability)",
-                    "url": None,
-                    "excerpt": span.strip(),
-                    "retrieved_at": None,
-                    "via": "local",
-                    "repaired": True,
-                }
-            )
-            _manifest_note(
-                tool_context,
-                {"guard": "statute_cite_attached", "stage": "filing", "matched": n},
-            )
+        if cits is None:
+            continue
+        span = _provision_span(n, prov_pairs)
+        if span is None:
+            # retrieved only as a title fragment ("USC 933 - Coast Guard ensigns
+            # and"), never as quotable provision text: the reader could not
+            # verify the number from it, so it does not attach
+            missing.append(n)
+            continue
+        cits.append(
+            {
+                "source_type": "statute",
+                "title": "cited provision (auto-attached for traceability)",
+                "url": None,
+                "excerpt": span,
+                "retrieved_at": None,
+                "via": "local",
+                "repaired": True,
+            }
+        )
+        _manifest_note(
+            tool_context,
+            {"guard": "statute_cite_attached", "stage": "filing", "matched": n},
+        )
     if not missing:
         return None
     return (
         f"REJECTED, not filed: the figure(s) {missing} (statute section or statutory "
-        "limit) appear in NO source retrieved this run — a precise number typed from "
-        "memory reads as authoritative and cannot be verified. research() the actual "
-        "provision (restrict_to_domains law.cornell.edu, govinfo.gov, dir.ca.gov, "
-        "leg.state.nv.us) and QUOTE the text that states it, or state the obligation "
-        "without the number."
+        "limit) appear in NO quotable source text retrieved this run — a precise number "
+        "typed from memory, or seen only in a page title, reads as authoritative and "
+        "cannot be verified. research() the actual provision (restrict_to_domains "
+        "law.cornell.edu, govinfo.gov, dir.ca.gov, leg.state.nv.us) and QUOTE the text "
+        "that states it, or state the obligation without the number."
     )
+
+
+def _section_present(n: str, text: str) -> bool:
+    """The section number as its own token: not inside a longer number, a
+    dollar figure, or a year."""
+    return re.search(rf"(?<![\d.,$]){re.escape(n)}(?![\d])", text or "") is not None
+
+
+def _hour_present(n: str, text: str) -> bool:
+    """The hour figure bound to the word 'hour(s)' — '4 hours', '4-hour',
+    '4.5 hours', '4 to 6 hours' — never a bare digit somewhere in the text."""
+    pat = rf"(?<![\d.]){re.escape(n)}(?:\s*(?:-|to|\u2013)\s*\d+(?:\.\d+)?)?\s*-?\s*hours?\b"
+    return re.search(pat, text or "", re.IGNORECASE) is not None
+
+
+_PROVISION_MIN_WORDS = 8
+
+
+def _provision_span(n: str, prov_pairs: list[tuple[str, str]]) -> str | None:
+    """A quotable span around the section number from a registered text —
+    at least _PROVISION_MIN_WORDS words, carrying the section token and
+    sentence punctuation, so a page title never files as a provision."""
+    for _, orig in prov_pairs:
+        for m in re.finditer(rf"(?<![\d.,$]){re.escape(n)}(?![\d])", orig):
+            i = m.start()
+            span = orig[max(0, i - _CITE_WINDOW) : i + _CITE_WINDOW]
+            span = span[span.find(" ") + 1 : span.rfind(" ")] if " " in span else span
+            span = span.strip()
+            if len(span.split()) < _PROVISION_MIN_WORDS:
+                continue
+            if not re.search(r"[.;:]", span):
+                continue  # no sentence — a heading or a navigation fragment
+            if not re.search(
+                rf"(?:§|U\.?S\.?C\.?|CFR|C\.F\.R\.|NRS|CCR|Section|Sec\.|Code|Chapter)"
+                rf"[^\n]{{0,25}}?{re.escape(n)}|{re.escape(n)}\s*[.(]",
+                span,
+                re.IGNORECASE,
+            ):
+                continue
+            return span
+    return None
 
 
 def _clip_words(text: str, limit: int) -> str:
@@ -2075,7 +2384,7 @@ def file_flag(  # noqa: PLR0912, PLR0915 - a deliberate sequence of filing gates
             cit["url"] = None
             cit["via"] = "local"  # schema enum; the title carries the attribution
             cit["source_type"] = "rules_table"
-            cit["title"] = "ScriptRisk CARA descriptor corpus (4,544 official rationales)"
+            cit["title"] = _cara_corpus_short()
         cits.append(cit)
 
     flag: dict[str, Any] = {
@@ -2186,13 +2495,25 @@ def file_flag(  # noqa: PLR0912, PLR0915 - a deliberate sequence of filing gates
     # desk can never again burn its tail on one filing.
     repaired = 0
     still_bad: list[str] = []
+    inv = str(getattr(tool_context, "invocation_id", "") or "run")
     for c in cits:
-        if _excerpt_exists(c["excerpt"], tool_context):
+        kind = _excerpt_provenance(c["excerpt"], tool_context)
+        if kind == "exact":
+            continue
+        if kind == "overlap":
+            # the words are all there but the order was not checked — on the
+            # record as repaired, never presented as the desk's verbatim copy
+            c["repaired"] = True
             continue
         fix = _best_registry_match(c["excerpt"], tool_context)
         if fix is not None:
             c["excerpt"] = fix
             c["repaired"] = True  # on the record: this text was not the desk's
+            src_url = _LAST_REPAIR_URL.pop(inv, "")
+            if src_url and c.get("url") and _cit_key(src_url) != _cit_key(c["url"]):
+                # the excerpt resolved to a DIFFERENT page than the desk cited —
+                # excerpt and URL must name one source
+                c["url"] = src_url
             repaired += 1
         else:
             still_bad.append(c["excerpt"][:60])
@@ -2216,6 +2537,17 @@ def file_flag(  # noqa: PLR0912, PLR0915 - a deliberate sequence of filing gates
     flag["citations"] = cits
 
     cost_span_max = 50
+    free_plus_paid_max = 1000
+    if est_cost_usd_low == 0 and est_cost_usd_high > free_plus_paid_max:
+        return _reject_or_stop(
+            tool_context,
+            entity_id,
+            category,
+            f"REJECTED, not filed: cost range 0-{est_cost_usd_high} merges a FREE path and "
+            "a PAID path — those are two remedies. Give the range for the RECOMMENDED "
+            "remedy only (a free line change is 0-0); name the alternative and its "
+            "figure in remedy_detail.",
+        )
     if est_cost_usd_low > 0 and est_cost_usd_high > cost_span_max * est_cost_usd_low:
         return _reject_or_stop(
             tool_context,
@@ -2234,6 +2566,17 @@ def file_flag(  # noqa: PLR0912, PLR0915 - a deliberate sequence of filing gates
             entity_id,
             category,
             f"REJECTED, not filed: unknown scene ids {bad}. Use ids from your worklist.",
+        )
+    # prose is coordinates too: a finding that says "S049" in a 45-scene script
+    # points the reader at nothing (live Reservoir Dogs case, A6)
+    if stray := sorted(set(re.findall(r"\bS\d{3}\b", f"{finding} {remedy_detail}")) - known):
+        return _reject_or_stop(
+            tool_context,
+            entity_id,
+            category,
+            f"REJECTED, not filed: the finding text names scene id(s) {stray} that do not "
+            "exist in this script. Name only scenes from your worklist — refile with the "
+            "correct id.",
         )
 
     _state_append(tool_context, f"flags:{_agent_key(tool_context)}", flag)
@@ -2385,10 +2728,14 @@ async def query_precedent(text: str, k: int, tool_context: ToolContext) -> dict[
     }
     _register_provenance(tool_context, [c.get("rationale", "") for c in comparables])
     out: dict[str, Any] = {"comparables": comparables, "corpus_base_rates": base_rates}
-    if spread and spread < 0.05:  # noqa: PLR2004 - tight-cluster caution threshold
+    # In rationale-space every neighbour sits within a few hundredths; a tight
+    # spread is the norm, not a warning. The caution is for the case where the
+    # equally-close neighbours DISAGREE — then the base rate must weigh in.
+    ratings = {c.get("rating") for c in comparables if c.get("rating")}
+    if spread is not None and spread < 0.05 and len(ratings) > 1:  # noqa: PLR2004
         out["caution"] = (
-            f"distances span only {spread} — the neighbourhood is not discriminating "
-            "strongly; weigh the corpus base rate as much as the neighbours"
+            f"the neighbours are equally close (distances span only {spread}) and split "
+            f"across {sorted(ratings)} — weigh the corpus base rate"
         )
     return out
 
@@ -2419,7 +2766,26 @@ def _own_or_family(tool_context: ToolContext, prefix: str) -> Any:
 # --- file_rating_prediction -------------------------------------------------
 
 
-_NEAR_IDENTITY_DISTANCE = 0.30  # below this, the neighbour may be the same story
+# below this the nearest neighbour's OFFICIAL RATIONALE is essentially identical
+# to the desk's — not the same story (a shared rationale is not a shared film),
+# just a same-profile film the board rated differently, which must be answered
+_NEAR_IDENTITY_DISTANCE = 0.01
+
+_RATING_RANK = {"G": 0, "PG": 1, "PG-13": 2, "R": 3, "NC-17": 4}
+
+
+def rating_rank(rating: str | None) -> int:
+    """Ordinal position of an MPA rating (G=0 … NC-17=4); -1 for anything else.
+    Public so the cut-list direction rule is ONE rule wherever it is applied."""
+    return _RATING_RANK.get(str(rating or "").strip().upper().replace(" ", ""), -1)
+
+
+def _distance_of(c: dict[str, Any]) -> float:
+    """A missing distance is unknown (1.0); a distance of 0.0 is an EXACT
+    rationale match and the strongest vote there is — `or 1.0` once turned the
+    best evidence into the weakest."""
+    d = c.get("distance")
+    return 1.0 if d is None else float(d)
 
 
 def comps_weighted_majority(comparables: list[dict[str, Any]]) -> str:
@@ -2436,7 +2802,7 @@ def _comps_weighted_majority(comparables: list[dict[str, Any]]) -> str:
     weights: dict[str, float] = {}
     for c in comparables:
         r = c.get("rating") or ""
-        d = float(c.get("distance") or 1.0)
+        d = _distance_of(c)
         weights[r] = weights.get(r, 0.0) + 1.0 / (d + 0.05)
     return max(weights, key=lambda k: weights[k]) if weights else ""
 
@@ -2503,7 +2869,7 @@ def file_rating_prediction(
     nearest = comparables[0] if comparables else None
     near_conflict = bool(
         nearest
-        and float(nearest.get("distance") or 1.0) < _NEAR_IDENTITY_DISTANCE
+        and _distance_of(nearest) < _NEAR_IDENTITY_DISTANCE
         and nearest.get("rating")
         and nearest["rating"] != predicted
     )
@@ -2515,11 +2881,10 @@ def file_rating_prediction(
         for c in comparables:
             tally[c["rating"]] = tally.get(c["rating"], 0) + 1
         near_note = (
-            f" Your NEAREST comparable, '{nearest['title']}' at distance "
-            f"{nearest['distance']}, is rated {nearest['rating']} — close enough that "
-            "it may be this very story's released form; a rating that contradicts it "
-            "must say why (a draft often overshoots its released cut — if that is the "
-            "case, say so and point at the cut list)."
+            f" The nearest official rationale, '{nearest['title']}' (distance "
+            f"{nearest['distance']}), is essentially identical to yours and is rated "
+            f"{nearest['rating']} — the board rated this profile differently from your "
+            "call; say specifically why your prediction departs from it."
             if near_conflict
             else ""
         )
@@ -2544,12 +2909,34 @@ def file_rating_prediction(
             "specifically why the failing leg doesn't govern."
         )
     meta = _own_or_family(tool_context, "last_precedent_meta") or {}
+    target = tool_context.state.get("target_rating")
+    beats = list(beats_to_cut)
+    dropped_note = ""
+    if beats and target and rating_rank(predicted) <= rating_rank(target) >= 0:
+        # a cut list "toward R" under a predicted R contradicted the card on four
+        # live case pages — beats exist only when the prediction EXCEEDS the target
+        _manifest_note(
+            tool_context,
+            {
+                "guard": "cut_list_dropped_at_target",
+                "stage": "filing",
+                "predicted": predicted,
+                "target": target,
+                "dropped": len(beats),
+            },
+        )
+        beats = []
+        dropped_note = (
+            f" Cut list dropped: predicted {predicted} is at or below the target {target}, "
+            "so there is nothing to cut toward."
+        )
     tool_context.state["rating_prediction"] = {
         "predicted": predicted,
-        "target": tool_context.state.get("target_rating"),
+        "target": target,
         "rationale": rationale,
         "comparables": comparables,
-        "beats_to_cut": list(beats_to_cut),
+        "beats_to_cut": beats,
+        "descriptors": list(_own_or_family(tool_context, "boundary_descriptors") or []),
         "corpus_base_rates": meta.get("base_rates") or {},
         "distance_spread": meta.get("spread"),
         "comps_majority": majority,
@@ -2568,7 +2955,7 @@ def file_rating_prediction(
     dist: dict[str, int] = {}
     for c in comparables:
         dist[c["rating"]] = dist.get(c["rating"], 0) + 1
-    return f"Prediction filed: {predicted}. Comparable ratings: {dist}."
+    return f"Prediction filed: {predicted}. Comparable ratings: {dist}.{dropped_note}"
 
 
 # --- note_open_question -----------------------------------------------------
@@ -2690,9 +3077,75 @@ def _parse_descriptor(desc: str, vocab: dict[str, Any]) -> tuple[str, str] | Non
 
 # The derived corpus is cited by name — it is ScriptRisk's own aggregate, not
 # filmratings.com. filmratings.com is the provenance of the underlying rationales;
-# the 4,544-rationale marginal is our derivation, and a reader must be able to tell
-# the two corpora apart from the ratings corpus (6,302 released films) used for kNN.
-_CARA_CORPUS = "ScriptRisk CARA descriptor corpus: 4,544 official CARA rationales, filmratings.com"
+# the marginal is our derivation over the PARSED subset of the harvest (the films
+# whose official rationale parsed into descriptors, ~4.5k), and a reader must be
+# able to tell it apart from the kNN comparables corpus (`cara_rationales`, every
+# harvested official rationale, 4,733 films — run 17). Both labels carry their
+# own count, derived from the asset, never typed.
+
+
+def _corpus_n() -> int:
+    return int(sum((_boundary_data().get("rating_totals") or {}).values()))
+
+
+def _cara_corpus_label() -> str:
+    return (
+        f"ScriptRisk CARA descriptor corpus: {_corpus_n():,} official CARA rationales, "
+        "filmratings.com"
+    )
+
+
+def _cara_corpus_short() -> str:
+    return f"ScriptRisk CARA descriptor corpus ({_corpus_n():,} official rationales)"
+
+
+def _pct(c: float, n: float) -> str:
+    """One decimal everywhere a percentage is printed — the marginal card, the
+    citation sentence and the comparables panel must round the same way."""
+    return f"{100.0 * c / n:.1f}%" if n else "0.0%"
+
+
+def _canonical_descriptors(parsed: list[tuple[str, str, str]]) -> dict[str, str]:
+    """ONE descriptor per category: the first intensity-qualified phrase wins
+    over the unmodified form; among several qualified phrases the first listed
+    stands. Passing both 'language' and 'strong language' once set three
+    mutually exclusive features at once — a profile no film has — and the
+    conformal set flipped with the desk's phrasing on an unchanged script (B1).
+    Returns {category: "<intensity> <category>"} in first-seen order."""
+    out: dict[str, str] = {}
+    for _desc, intensity, cat in parsed:
+        key = f"{intensity} {cat}"
+        cur = out.get(cat)
+        if cur is None or (cur.startswith("unmodified ") and not key.startswith("unmodified ")):
+            out[cat] = key
+    return out
+
+
+def _featurize(canonical: dict[str, str], idx: dict[str, int], n_feats: int) -> list[float]:
+    x = [0.0] * (n_feats + 1)
+    x[-1] = 1.0
+    for key in canonical.values():
+        cat = key.split(" ", 1)[1]
+        for cand in (key, cat):
+            if cand in idx:
+                x[idx[cand]] = 1.0
+    return x
+
+
+def _predict_set(d: dict[str, Any], x: list[float]) -> tuple[dict[str, float], list[str]]:
+    import math as _math
+
+    z = [sum(wc[j] * x[j] for j in range(len(x)) if x[j]) for wc in d["model"]["weights"]]
+    mx = max(z)
+    e = [_math.exp(v - mx) for v in z]
+    ssum = sum(e)
+    probs = {c: e[i] / ssum for i, c in enumerate(d["model"]["classes"])}
+    pred_set = [
+        c
+        for i, c in enumerate(d["model"]["classes"])
+        if 1.0 - probs[c] <= d["model"]["conformal_q"][str(i)]
+    ]
+    return probs, pred_set
 
 
 def boundary_eval(descriptors: list[str]) -> dict[str, Any]:
@@ -2700,25 +3153,25 @@ def boundary_eval(descriptors: list[str]) -> dict[str, Any]:
     the same marginals + conformal math as rating_boundary, with no session
     state and no citation registry. Built for the What-If simulator (run 17):
     a post-cut rationale is too sparse for text-neighbor kNN, and this measured
-    instrument is the honest one there."""
-    import math as _math
-
+    instrument is the honest one there. Duplicate descriptors of one category
+    collapse to the most specific, exactly as rating_boundary does, so the two
+    instruments agree on identical input."""
     d = _boundary_data()
     vocab = d.get("vocabulary") or {}
     feats = d["model"]["features"]
     idx = {k: i for i, k in enumerate(feats)}
-    x = [0.0] * (len(feats) + 1)
-    x[-1] = 1.0
     matched: list[str] = []
     unmatched: list[str] = []
+    parsed: list[tuple[str, str, str]] = []
     marginals: dict[str, Any] = {}
     for desc in descriptors:
-        parsed = _parse_descriptor(desc, vocab)
-        if parsed is None:
+        p = _parse_descriptor(desc, vocab)
+        if p is None:
             unmatched.append(desc)
             continue
-        intensity, cat = parsed
+        intensity, cat = p
         matched.append(desc)
+        parsed.append((desc, intensity, cat))
         for key in (f"{intensity} {cat}", cat):
             m = d["marginals"].get(key)
             if m and key not in marginals:
@@ -2727,25 +3180,15 @@ def boundary_eval(descriptors: list[str]) -> dict[str, Any]:
                     "descriptor": key,
                     "n": n,
                     "distribution": {
-                        r: f"{100 * c // n}%" for r, c in sorted(m.items(), key=lambda kv: -kv[1])
+                        r: _pct(c, n) for r, c in sorted(m.items(), key=lambda kv: -kv[1])
                     },
                 }
-        for cand in (f"{intensity} {cat}", cat):
-            if cand in idx:
-                x[idx[cand]] = 1.0
-    z = [sum(wc[j] * x[j] for j in range(len(x)) if x[j]) for wc in d["model"]["weights"]]
-    mx = max(z)
-    e = [_math.exp(v - mx) for v in z]
-    ssum = sum(e)
-    probs = {c: e[i] / ssum for i, c in enumerate(d["model"]["classes"])}
-    pred_set = [
-        c
-        for i, c in enumerate(d["model"]["classes"])
-        if 1.0 - probs[c] <= d["model"]["conformal_q"][str(i)]
-    ]
+    canonical = _canonical_descriptors(parsed)
+    probs, pred_set = _predict_set(d, _featurize(canonical, idx, len(feats)))
     return {
         "matched": matched,
         "unmatched": unmatched,
+        "canonical_descriptors": list(canonical.values()),
         "marginals": marginals,
         "probabilities": {c: round(v, 3) for c, v in sorted(probs.items(), key=lambda kv: -kv[1])},
         "prediction_set": pred_set,
@@ -2754,98 +3197,103 @@ def boundary_eval(descriptors: list[str]) -> dict[str, Any]:
 
 def rating_boundary(descriptors: list[str], tool_context: ToolContext) -> dict[str, Any]:
     """Measured CARA decision boundary: per-descriptor rating distributions across
-    4,544 official post-1990 rationales, plus the fitted model's conformal prediction
-    set for the combination. This is EVIDENCE. Each matched marginal returns a ready
+    the parsed corpus of official post-1990 rationales (the exact film count is in
+    every citation sentence), plus the fitted model's conformal prediction set for
+    the combination. This is EVIDENCE. Each matched marginal returns a ready
     `citation` sentence carrying the numbers — file THAT verbatim as the finding's
     citation; name only the descriptor in your finding prose, never the percentage
     (a loose number the verifier cannot trace to the corpus is what gets rejected).
     Free (no research budget). Call BEFORE file_rating_prediction; a prediction outside
     the conformal set needs a stated divergence reason.
 
-    descriptors: CARA-style intensity+category phrases matching what you
-    counted, e.g. ["pervasive language", "some violence", "brief nudity"].
-    The return names matched_descriptors and unmatched_descriptors — if any
-    came back unmatched, rephrase them and call again; the prediction set is
-    only a filing gate when EVERY descriptor matched.
+    Call it ONCE with ONE descriptor per category — the most specific phrase the
+    measured census supports ("pervasive language" for many uses, "brief strong
+    language" for one) — e.g. ["pervasive language", "some violence", "brief
+    drug use"]. Duplicates of one category are collapsed to the most specific
+    (the collapsed list comes back as canonical_descriptors and is recorded on
+    the prediction), so passing both "language" and "strong language" buys
+    nothing. The return names matched_descriptors and unmatched_descriptors —
+    if any came back unmatched, rephrase them and call again; the prediction set
+    is only a filing gate when EVERY descriptor matched.
     """
-    import math as _math
-
     d = _boundary_data()
     vocab = d.get("vocabulary") or {}
     marginals = {}
     feats = d["model"]["features"]
     idx = {k: i for i, k in enumerate(feats)}
-    x = [0.0] * (len(feats) + 1)
-    x[-1] = 1.0
     matched: list[str] = []
     unmatched: list[str] = []
+    parsed: list[tuple[str, str, str]] = []
+    label = _cara_corpus_label()
     for desc in descriptors:
-        parsed = _parse_descriptor(desc, vocab)
-        if parsed is None:
+        p = _parse_descriptor(desc, vocab)
+        if p is None:
             unmatched.append(desc)
             continue
-        intensity, cat = parsed
+        intensity, cat = p
         matched.append(desc)
+        parsed.append((desc, intensity, cat))
         for key in (f"{intensity} {cat}", cat):
             m = d["marginals"].get(key)
             if m:
                 n = sum(m.values())
-                dist = {r: f"{100 * c // n}%" for r, c in sorted(m.items(), key=lambda kv: -kv[1])}
+                dist = {r: _pct(c, n) for r, c in sorted(m.items(), key=lambda kv: -kv[1])}
                 # The desk cites THIS sentence verbatim (registered as provenance
                 # below), so a rating finding's percentage lives in a citation the
                 # verifier can trace to the corpus — never loose in the finding prose,
                 # where it read as an unsupported statistic and got rejected. The number
                 # appears in exactly one place, attributed to our derived corpus by name.
-                dist_str = ", ".join(f"{r} {p}" for r, p in dist.items())
-                sentence = (
-                    f"'{key}': {dist_str} across {n} official CARA rationales ({_CARA_CORPUS})"
-                )
+                dist_str = ", ".join(f"{r} {p_}" for r, p_ in dist.items())
+                sentence = f"'{key}': {dist_str} across {n} official CARA rationales ({label})"
                 marginals[key] = {"n": n, "distribution": dist, "citation": sentence}
                 # typed registry: only sentences emitted HERE earn the marginal tier
                 _marginal_bucket(tool_context).add(_norm_for_match(sentence))
-        for cand in (f"{intensity} {cat}", cat):
-            if cand in idx:
-                x[idx[cand]] = 1.0
+    canonical = _canonical_descriptors(parsed)
     # Structured marginals for file_flag to attach (run-13 item 3): the field is
-    # populated by THIS tool's last result, keyed per agent — never typed by the
-    # model. base_rate = the descriptor corpus' own rating shares.
+    # populated by this tool's results, keyed per agent — never typed by the
+    # model — and MERGED across calls, so a desk that measured language on one
+    # turn and violence on the next still carries both. base_rate = the descriptor
+    # corpus' own rating shares, rounded like every other percentage.
     totals = d.get("rating_totals") or {}
     tsum = sum(totals.values()) or 1
-    base_rate = {r: f"{100 * c // tsum}%" for r, c in sorted(totals.items(), key=lambda kv: -kv[1])}
-    tool_context.state[f"marginal_last:{_agent_key(tool_context)}"] = {
-        key: {
-            "descriptor": key,
-            "n": m["n"],
-            "distribution": m["distribution"],
-            "base_rate": base_rate or None,
-            "source": "ScriptRisk CARA descriptor corpus (4,544 official rationales)",
+    base_rate = {r: _pct(c, tsum) for r, c in sorted(totals.items(), key=lambda kv: -kv[1])}
+    mkey = f"marginal_last:{_agent_key(tool_context)}"
+    merged = dict(tool_context.state.get(mkey) or {})
+    merged.update(
+        {
+            key: {
+                "descriptor": key,
+                "n": m["n"],
+                "distribution": m["distribution"],
+                "base_rate": base_rate or None,
+                "corpus_n": int(tsum),
+                "source": _cara_corpus_short(),
+            }
+            for key, m in marginals.items()
         }
-        for key, m in marginals.items()
-    }
-    z = [sum(wc[j] * x[j] for j in range(len(x)) if x[j]) for wc in d["model"]["weights"]]
-    mx = max(z)
-    e = [_math.exp(v - mx) for v in z]
-    ssum = sum(e)
-    probs = {c: e[i] / ssum for i, c in enumerate(d["model"]["classes"])}
-    pred_set = [
-        c
-        for i, c in enumerate(d["model"]["classes"])
-        if 1.0 - probs[c] <= d["model"]["conformal_q"][str(i)]
-    ]
+    )
+    tool_context.state[mkey] = merged
+    probs, pred_set = _predict_set(d, _featurize(canonical, idx, len(feats)))
     # The set hard-gates file_rating_prediction ONLY when every descriptor
     # matched: a set built from silently-dropped inputs once rejected a desk's
     # correct R prediction as "outside the evidence". Partial input = advisory.
     complete = bool(matched) and not unmatched
     tool_context.state[f"boundary_set:{_agent_key(tool_context)}"] = pred_set if complete else []
+    # the descriptors the set was computed from — persisted on the prediction so
+    # a conformal set is auditable and reproducible from the record (B1)
+    tool_context.state[f"boundary_descriptors:{_agent_key(tool_context)}"] = list(
+        canonical.values()
+    )
     out: dict[str, Any] = {
         "matched_descriptors": matched,
         "unmatched_descriptors": unmatched,
+        "canonical_descriptors": list(canonical.values()),
         "marginals": marginals,
         "model_probabilities": {
             c: round(pv, 3) for c, pv in sorted(probs.items(), key=lambda kv: -kv[1])
         },
         "conformal_prediction_set": pred_set,
-        "source": _CARA_CORPUS,
+        "source": label,
     }
     if unmatched:
         # Every unmatched descriptor is a rating driver that loses its measured
@@ -3136,7 +3584,9 @@ def done(reason: str, tool_context: ToolContext) -> str:
         if item.get("entity_id") in covered:
             return True
         surface = (item.get("surface") or "").lower()
-        return bool(surface) and any(surface in q for q in oq_texts)
+        # whole-word, like the completeness gate's `_mentions` — done() once
+        # credited "ford" against "afford" and the gate re-opened the item
+        return bool(surface) and any(_mentions(surface, q) for q in oq_texts)
 
     missing = [w for w in worklist if not _addressed(w)]
     # The Summers failure: desks clear the easy people and swallow the hard

@@ -1745,6 +1745,11 @@ async def whatif_rating(body: WhatIfBody, request: Request) -> dict[str, Any]:
     result = await asyncio.to_thread(
         whatif_mod.project, record, run_id, body.cuts[:12], body.extra[:4]
     )
+    if result.get("unavailable"):
+        # a live dependency blipped: an honest payload the page renders, not a
+        # 500 toast (review C11); nothing was cached, so a retry is a fresh try
+        _log("whatif_unavailable", run_id=run_id, detail=result.get("detail"))
+        return {"error": result["error"], "unavailable": True}
     if "error" in result:
         raise HTTPException(400, result["error"])
     _log("whatif", run_id=run_id, cuts=len(body.cuts), projected=result.get("projected"))

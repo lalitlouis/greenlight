@@ -1125,7 +1125,7 @@ def test_rating_boundary_emits_a_citable_sentence_registered_as_provenance():
     ctx = make_ctx(agent_name="ratings_board")
     r = toolbelt.rating_boundary(["pervasive language"], ctx)
     cite = r["marginals"]["pervasive language"]["citation"]
-    assert "187" in cite and "99%" in cite  # the numbers live here
+    assert "187" in cite and "99.5%" in cite  # the numbers live here, one decimal
     assert "ScriptRisk CARA descriptor corpus" in cite  # our corpus, not filmratings.com
     assert "filmratings.com" not in r["source"].split(":")[0]  # named as ours in the headline
     registered = [orig for _, orig in toolbelt._prov_bucket(ctx)]
@@ -1510,11 +1510,12 @@ def test_derived_marginal_citation_normalized_at_filing():
     (run 12: filmratings.com), misattributing our aggregate. Filing normalizes it
     to a URL-less rules_table citation named as ours."""
     ctx = make_ctx(agent_name="ratings_board")
-    toolbelt.rating_boundary(["pervasive language"], ctx)  # registers provenance
-    marginal = (
-        "'pervasive language': R 99%, PG-13 0% across 187 official CARA rationales "
-        "(ScriptRisk CARA descriptor corpus: 4,544 official CARA rationales, filmratings.com)"
-    )
+    # the tool's own sentence (registers provenance); its corpus count is derived
+    # from the asset, never typed
+    marginal = toolbelt.rating_boundary(["pervasive language"], ctx)["marginals"][
+        "pervasive language"
+    ]["citation"]
+    assert "across 187 official CARA rationales (ScriptRisk CARA descriptor corpus:" in marginal
     out = toolbelt.file_flag(
         scene_ids=["S002"],
         severity="MEDIUM",
@@ -1567,7 +1568,7 @@ def test_structured_marginal_attaches_at_filing_and_validates():
     flag = toolbelt.desk_flags(ctx.state, "ratings_board")[-1]
     m = flag.get("marginal")
     assert m and m["descriptor"] == "pervasive language" and m["n"] == 187
-    assert m["distribution"].get("R") == "99%"
+    assert m["distribution"].get("R") == "99.5%"
     assert m["base_rate"] and "R" in m["base_rate"]  # corpus rating shares
     validate("flag", flag)  # the announced schema change admits the field
 

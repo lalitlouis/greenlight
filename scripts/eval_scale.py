@@ -17,7 +17,8 @@ import json
 import os
 import sys
 
-sys.path.insert(0, __file__.rsplit("/", 2)[0] + "/scripts")
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from eval_invariants import shared_invariants
 from eval_run import flags_about
 
 PASS, MISS = "\033[32mPASS\033[0m", "\033[31mMISS\033[0m"
@@ -40,31 +41,13 @@ def main() -> int:
     rep = r.get("report") or {}
     flags = r.get("flags") or []
     rejected = r.get("rejected_flags") or []
-    ids = [f.get("flag_id") for f in flags]
-    all_filed = len(flags) + len(rejected)
     print(f"grading {path}: {len(flags)} kept / {len(rejected)} rejected\n")
 
     # --- structural health at scale -----------------------------------------
-    check("run completed without error", not r.get("error"), str(r.get("error"))[:60])
     check(
         "wall clock under 30 minutes", (r.get("elapsed_s") or 9e9) < 1800, f"{r.get('elapsed_s')}s"
     )
     check("no research failures", not r.get("research_failures"))
-    check("flag ids unique", len(ids) == len(set(ids)), f"{len(ids)} ids")
-    rate = len(rejected) / max(1, all_filed)
-    verdicts = r.get("verdicts") or {}
-    verdict_ids = {str(k).split(":")[0] for k in verdicts}
-    kept_ids = {f.get("flag_id") for f in flags}
-    check(
-        "verification: ran on every kept flag, rejection rate <= 45%",
-        bool(verdicts)
-        and kept_ids <= verdict_ids
-        and not any(f.get("verification_unavailable") for f in flags)
-        and rate <= 0.45,
-        f"{rate:.0%} rejected; verdicts for {len(verdict_ids)} flags — zero rejections is "
-        "legitimate when filing gates block weak flags; a sleeping verifier shows as "
-        "missing verdicts or fail-open markers",
-    )
     pred = rep.get("rating_prediction") or {}
     check(
         "rating prediction filed with comparables",
@@ -77,16 +60,12 @@ def main() -> int:
         "pre-noise-reduction era; the 2026-08-29 validation kept 11 flags while passing all "
         "14 content seeds, which is the direct thinness measure",
     )
-    check(
-        "invariant: no desk collapsed (worklist with zero dispositions)",
-        not r.get("desks_incomplete"),
-        f"desks_incomplete={r.get('desks_incomplete')}",
-    )
-    check(
-        "invariant: no unexamined entities (every extracted item dispositioned)",
-        not r.get("unexamined"),
-        f"{len(r.get('unexamined') or [])} unexamined",
-    )
+    # --- every script-independent invariant, shared with the fixture gate ------
+    # (run health, citation invariant, referential integrity, prose/coordinates,
+    # rating marginals + normative rule, cut-list direction, reconciliation,
+    # binder coverage, receipts, statutes, unexamined, collapse, territory axes)
+    for name, ok, note in shared_invariants(r, rejection_cap=0.45):
+        check(name, ok, note)
 
     # --- seeded traps --------------------------------------------------------
     check(

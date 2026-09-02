@@ -19,12 +19,36 @@ from greenlight.contracts import validate
 # carrying shooting-script scene numbers ("12 INT. BAR - NIGHT 12"), or a forced
 # heading starting with a period (which must then read like a slugline, not prose —
 # OCR of a sentence that lost its first word also starts with a period).
+# Two false-heading classes the 2026-09-01 review reproduced, each of which
+# shifted every later scene_id: an "EST. 1895 ..." founding-date line (EST is a
+# heading prefix only when an UPPERCASE slug follows it, never a digit), and a
+# ".45 AIMED AT HIS HEAD" caliber line (a forced heading may not start with a
+# digit). EST is matched case-sensitively — "Est. 1895 reads the sign" is prose.
 _HEADING_RE = re.compile(
-    r"^(?:\d+[A-Z]?\s+)?(?:\.(?=[A-Z0-9])|(?:INT\.?/EXT|EXT\.?/INT|INT|EXT|EST|I/E)[.:\s])",
+    r"^(?:\d+[A-Z]?\s+)?"
+    r"(?:\.(?=[A-Z])|(?:INT\.?/EXT|EXT\.?/INT|INT|EXT|I/E)[.:\s]"
+    r"|(?-i:EST[.:]\s+(?=[A-Z][A-Z'\-. ]{2,})))",
     re.IGNORECASE,
 )
-_SCENE_NUM_PREFIX = re.compile(r"^\d+[A-Z]?\s+")
-_SCENE_NUM_SUFFIX = re.compile(r"\s+\d+[A-Z]?$")
+_SCENE_NUM_PREFIX = re.compile(r"^(\d+[A-Z]?)\s+")
+_SCENE_NUM_SUFFIX = re.compile(r"\s+(\d+[A-Z]?)$")
+
+
+def _shooting_number(heading: str) -> tuple[str, str]:
+    """Shooting-script numbers ("12 INT. BAR - NIGHT 12") -> ("INT. BAR - NIGHT", "12").
+    The LEADING number is the coordinate; the trailing copy is stripped only when
+    it repeats the leading one. A trailing number with no leading twin is part of
+    the location ("INT. ROOM 237") and stays — the old unconditional suffix strip
+    turned Room 237 into "ROOM" and never captured a real number (C5)."""
+    m = _SCENE_NUM_PREFIX.match(heading)
+    if not m:
+        return heading, ""
+    number = m.group(1)
+    body = heading[m.end() :]
+    tail = _SCENE_NUM_SUFFIX.search(body)
+    if tail and tail.group(1) == number:
+        body = body[: tail.start()]
+    return body.strip(), number
 
 
 def _is_heading(stripped: str) -> bool:
@@ -93,9 +117,15 @@ _TIME_WORDS = {
 # apostrophe-agnostic: the real script writes CONT'D with a CURLY apostrophe,
 # which the straight-quote form never matched — so "STEVE (CONT'D)" minted a
 # character distinct from "STEVE", splitting one speaker in two.
-_CUE_EXTENSION_RE = re.compile(
-    r"\s*\((?:CONT['\u2019]D|O\.S\.|O\.C\.|V\.O\.|OFF)\.?\)\s*$", re.IGNORECASE
-)
+# ...and generalized (2026-09-01 review, C3): ANY trailing parenthetical is a cue
+# extension — "BOB (INTO PHONE)" and "BOB (V.O.)" are BOB, not three characters.
+# A trailing revision asterisk ("DONNIE (CONT'D) *", the WGA colored-page mark)
+# rides along with the extension.
+_CUE_EXTENSION_RE = re.compile(r"\s*\([^()]{1,40}\)\s*\*?\s*$")
+# "COP 2" / "GUARD 3" are numbered extras (real cues); "MILE MARKER 26" /
+# "HIGHWAY 61" are places. Numbered extras never run into double digits in
+# practice, so a trailing number >= 10 marks a location, not a speaker.
+_LOCATION_NUMBER_RE = re.compile(r"\b[1-9]\d+$")
 _MAX_CUE_WORDS = 4  # a character name is a few words; an action line is many
 _TRANSITION_RE = re.compile(
     r"^(?:[A-Z ]+TO:|FADE (?:IN|OUT)[.:]?|SMASH CUT[.:]?|CUT TO BLACK[.:]?)$"
@@ -130,7 +160,7 @@ def _split_heading(heading: str) -> tuple[str, str, str]:
     """'INT./EXT. MARGARET ROSE - WHEELHOUSE - NIGHT - CONTINUOUS'
     -> ('INT/EXT', 'MARGARET ROSE - WHEELHOUSE', 'NIGHT - CONTINUOUS').
     Also handles '12 INT. BAR - NIGHT 12' and 'INT: BEDROOM. MORNING'."""
-    text = _SCENE_NUM_SUFFIX.sub("", _SCENE_NUM_PREFIX.sub("", heading)).lstrip(".").strip()
+    text = _shooting_number(heading)[0].lstrip(".").strip()
     upper = text.upper()
     if upper.startswith(("INT./EXT", "INT/EXT", "EXT./INT", "EXT/INT", "I/E")):
         int_ext = "INT/EXT"
@@ -175,6 +205,8 @@ def _is_cue(line: str, next_line: str | None) -> bool:
     # otherwise slipped through and became a speaking character
     if "," in bare or len(bare.split()) > _MAX_CUE_WORDS:
         return False
+    if _LOCATION_NUMBER_RE.search(bare):
+        return False  # "MILE MARKER 26" is a place; numbered extras stop at 9
     letters = [c for c in bare if c.isalpha()]
     # a name does not end in sentence punctuation ("...DOUBLE STAXXX!")
     return bool(letters) and bare == bare.upper() and not bare.endswith((".", "!", "?"))
@@ -228,6 +260,17 @@ def _looks_like_prose(line: str) -> bool:
     return False
 
 
+# Screenplay openers that carry no slugline and no sentence — a page holding only
+# "OVER BLACK" or "SUPER: 1979" is page 1 of the film, not a title page (C1: the
+# short-all-caps and Key: rules both misread it and shifted every page -1).
+_SCREEN_START_RE = re.compile(
+    r"^(?:OVER BLACK|BLACK SCREEN|BLACK\.?|DARKNESS\.?|SUPER(?:IMPOSE)?\b|TITLE CARD\b"
+    r"|TITLE OVER\b|FADE (?:IN|UP)\b|WE OPEN\b|OPEN ON\b|CLOSE ON\b|ANGLE ON\b"
+    r"|INSERT\b|MONTAGE\b|CHYRON\b)",
+    re.IGNORECASE,
+)
+
+
 def _looks_like_front_matter(segment: str) -> bool:
     lines = [ln.strip() for ln in segment.split("\n") if ln.strip()]
     if not lines:
@@ -237,6 +280,8 @@ def _looks_like_front_matter(segment: str) -> bool:
             return False
         if _TRANSITION_RE.match(ln) or ln.upper().startswith("FADE IN"):
             return False  # transitions mean the movie has started
+        if _SCREEN_START_RE.match(ln):
+            return False  # "OVER BLACK" / "SUPER:" — the film has started
         # PROSE means the film has started even without a slugline: a cold open
         # ("OVER BLACK / A phone rings in the dark.") is page 1, not front
         # matter, and misclassifying it shifted every scene page -1. A title
@@ -324,12 +369,17 @@ _SCENE_NUMBER_RE = __import__("re").compile(r"\s*#([A-Za-z0-9.\-]+)#\s*$")
 
 
 def _extract_scene_number(heading: str) -> tuple[str, str]:
-    """Fountain scene-number syntax: "INT. HOUSE - DAY #42A#" -> ("INT. HOUSE - DAY", "42A").
-    Locked production numbers are a shared coordinate system — carry them, never invent."""
+    """Fountain scene-number syntax: "INT. HOUSE - DAY #42A#" -> ("INT. HOUSE - DAY", "42A"),
+    and shooting-script margin numbers: "12 INT. BAR - NIGHT 12" -> ("INT. BAR - NIGHT", "12").
+    Locked production numbers are a shared coordinate system — carry them, never invent.
+    Before C5 the margin numbers were stripped and never captured, so a locked draft
+    reported `scene_numbers: "generated"`."""
     m = _SCENE_NUMBER_RE.search(heading)
-    if not m:
-        return heading, ""
-    return heading[: m.start()].rstrip(), m.group(1)
+    if m:
+        return heading[: m.start()].rstrip(), m.group(1)
+    # margin numbers stay IN the heading text (raw_span slices start with it and
+    # the marked-up script shows the line as written); only the number is lifted
+    return heading, _shooting_number(heading)[1]
 
 
 def parse_fountain(  # noqa: PLR0912, PLR0915 - one continuous scan loop

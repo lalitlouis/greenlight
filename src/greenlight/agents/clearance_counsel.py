@@ -38,8 +38,10 @@ BACKGROUND. A chain may spend remaining budget only after pass 1 is complete; if
 dies mid-chain, note_open_question the unresolved hop — the pass-1 filings survive.
 
 PUBLIC-DOMAIN ARITHMETIC — do it, never vibe it: US copyright runs 95 years from
-publication. In 2026 that means works published 1930 or earlier are PD; a 1942 painting
-(Nighthawks) is protected until 2038, a 1968 film until 2064. And a NAMED artwork
+publication. Today that means works published {pd_cutoff} or earlier are PD; a 1942
+painting (Nighthawks) is protected through 2037 (public domain from 1 January 2038), a
+1968 film through 2063 (PD from 2064). State the expiry as "through <year>", and make the
+arithmetic visible (publication year + 95). And a NAMED artwork
 depicted on screen never silent-clears regardless of status: if your conclusion is
 "no license needed", record it with record_clearance stating the PD basis — the
 producer needs the cleared-because-X on paper, not an empty report, and a
@@ -314,8 +316,8 @@ ADDITIONAL SWEEPS (standard clearance practice):
   them, find_in_script locates every scene the entity appears in — never abandon a
   finding to an open question because the worklist lacked scene ids.
 - PUBLIC DOMAIN BY AGE: before flagging a music or text license, check the composition
-  date — US copyright has expired for works published 95+ years ago (as of 2026, before
-  1931) and for traditional hymns/folk works; a PD composition needs no sync license
+  date — US copyright has expired for works published 95+ years ago ({pd_cutoff} or
+  earlier, rolling) and for traditional hymns/folk works; a PD composition needs no sync license
   (a specific modern RECORDING of it still needs its master license). State the PD basis
   with a citation when you rely on it.
 
@@ -328,11 +330,10 @@ SEVERITY: BLOCKER = cannot shoot or release as written (e.g. a required license 
 assumed obtainable). HIGH = will not clear without action and money. MEDIUM = needs action,
 routine. LOW = courtesy/best practice. FYI = producer should know, no action.
 
-A CLEARED ITEM IS SILENCE, NOT A FLAG. Never file a flag whose conclusion is that no action
-is needed — "this is public domain" or "no clearance required" are legal opinions this report
-must not assert. If you are confident an item clears, move on and spend the budget on the next
-item; if not fully confident, note_open_question. The report asserts risks; it never certifies
-safety.
+CLEARANCE'S OWN COROLLARY to "a cleared item is silence" (the shared rule is below): "this
+is public domain" or "no clearance required" are legal opinions this report must not assert
+as findings — they go in record_clearance with the basis. If not fully confident,
+note_open_question. The report asserts risks; it never certifies safety.
 
 CATEGORY VOCABULARY — use EXACTLY these slugs (pick the closest; do not invent variants):
 sync_license, master_use_license, trademark_disparagement, trademark_use, right_of_publicity,

@@ -65,20 +65,46 @@ def _embed_cached(text: str) -> list[float]:
     return vec
 
 
+_FALLBACK_INTENSITIES = (
+    "pervasive", "graphic", "strong bloody", "strong", "intense", "sustained", "crude",
+    "brief", "mild", "some", "partial", "brutal", "grisly", "explicit", "bloody",
+)  # fmt: skip
+
+
+def _intensities() -> tuple[str, ...]:
+    """The harvest vocabulary's intensity words (embedded in the boundary asset)
+    so the splitter re-binds exactly what the corpus parser re-binds."""
+    try:
+        vocab = (toolbelt._boundary_data().get("vocabulary") or {}).get("intensities") or []
+        words = tuple(str(w).lower() for w in vocab)
+        return tuple(dict.fromkeys([*words, "bloody"]))
+    except Exception:
+        return _FALLBACK_INTENSITIES
+
+
 def _descriptor_phrases(rationale: str) -> list[str]:
     """Split a CARA-style rationale into descriptor phrases for boundary_eval.
     "Rated R for pervasive language, some violence and brief nudity." ->
-    ["pervasive language", "some violence", "brief nudity"]."""
+    ["pervasive language", "some violence", "brief nudity"]. A bare intensity
+    fragment re-binds to what follows it ("strong, bloody violence" -> "strong
+    bloody violence"), mirroring the harvest parser — otherwise the boundary
+    reports an unmatched "strong" and the simulator falls back to kNN on exactly
+    the heavy-violence profiles."""
     import re
 
     t = rationale.strip().strip("\u201c\u201d\"' ")
     t = re.sub(r"^\s*(rated\s+[\w-]+\s+)?for\s+", "", t, flags=re.I)
     t = t.rstrip(". ").strip("\u201c\u201d\"' ")
     parts: list[str] = []
+    intensities = _intensities()
     for chunk in re.split(r",|;", t):
         for raw in re.split(r"\s+and\s+", chunk):
             piece = raw.strip().strip("\u201c\u201d\"' ")
-            if piece:
+            if not piece:
+                continue
+            if parts and parts[-1].lower() in intensities:
+                parts[-1] = f"{parts[-1]} {piece}"[:80]
+            else:
                 parts.append(piece[:80])
     return parts[:8]
 
@@ -122,7 +148,14 @@ def project(
     if (cached := storage.load_research(key)) is not None:
         return cached
 
-    revised = _revise_rationale(rationale, cuts)
+    try:
+        revised = _revise_rationale(rationale, cuts)
+    except Exception as exc:  # the only model step; a 500 here was a blank toast
+        return {
+            "error": "The profile rewrite is unavailable right now — try again shortly.",
+            "unavailable": True,
+            "detail": type(exc).__name__,
+        }
 
     # The measured boundary is the primary instrument for a post-cut profile.
     # kNN re-embeds the revised rationale text, and a sparse rationale ("for
@@ -152,29 +185,79 @@ def project(
     # rationale strings embedded in rationale-space (scripts/ingest_cara_corpus).
     # The content-profile table matched plots ("films ABOUT swearing"), which
     # is what put Swearnet atop a one-F-word profile.
-    vec = _embed_cached(revised)
-    rows = (
-        toolbelt._clickhouse_client()
-        .query(
-            """
-        SELECT title, year, rating, source_url, rationale,
-               cosineDistance(embedding, %(vec)s) AS distance
-        FROM cara_rationales
-        WHERE lower(title) != lower(%(skip_title)s)
-        ORDER BY distance ASC, year DESC
-        LIMIT 8
-        """,
-            parameters={
-                "vec": vec,
-                # the film itself must not vote in its own What-If — the live
-                # prediction excludes self-matches (query_precedent); this
-                # query never inherited that until now
-                "skip_title": str(record.get("script_title") or ""),
-            },
-        )
-        .result_rows
+    comparables, neighbors_error = _neighbors(revised, str(record.get("script_title") or ""))
+    tally: dict[str, int] = {}
+    for c in comparables:
+        tally[c["rating"]] = tally.get(c["rating"], 0) + 1
+    # ONE voting rule, shared with the live prediction — plain plurality here
+    # once let the same neighbours answer differently in two report panels
+    neighbors_vote = toolbelt.comps_weighted_majority(comparables) or "?"
+    b_set = boundary.get("prediction_set") or []
+    boundary_answers = bool(
+        b_set and len(b_set) == 1 and boundary.get("matched") and not boundary.get("unmatched")
     )
-    comparables = [
+    if boundary_answers:
+        projected, basis = b_set[0], "boundary"
+    elif comparables:
+        projected, basis = neighbors_vote, "neighbors"
+    else:
+        # neither instrument can answer: say so, never a 500 and never a guess
+        return {
+            "error": "Comparables are unavailable right now and the measured boundary does "
+            "not narrow this profile to one rating — try again shortly.",
+            "unavailable": True,
+            "detail": neighbors_error,
+            "boundary": boundary,
+            "revised_rationale": revised,
+        }
+    if boundary_answers and boundary.get("marginals"):
+        boundary["driver"] = _driver_marginal(boundary["marginals"], projected)
+    result = {
+        "projected": projected,
+        "basis": basis,
+        "neighbors_vote": neighbors_vote,
+        "boundary": boundary,
+        "neighbors_sparse": neighbors_sparse,
+        "neighbors_unavailable": bool(neighbors_error),
+        "tally": tally,
+        "revised_rationale": revised,
+        "comparables": comparables,
+        "cuts_applied": len(cuts),
+    }
+    if not neighbors_error:
+        storage.save_research(key, result)  # a degraded answer is never cached
+    return result
+
+
+def _neighbors(revised: str, skip_title: str) -> tuple[list[dict[str, Any]], str]:
+    """The eight nearest official rationales, or ([], why-not). The embed and
+    the ClickHouse query are live dependencies; a blip must degrade to
+    "comparables unavailable", not surface as a 500 (review C11)."""
+    try:
+        vec = _embed_cached(revised)
+        rows = (
+            toolbelt._clickhouse_client()
+            .query(
+                """
+            SELECT title, year, rating, source_url, rationale,
+                   cosineDistance(embedding, %(vec)s) AS distance
+            FROM cara_rationales
+            WHERE lower(title) != lower(%(skip_title)s)
+            ORDER BY distance ASC, year DESC
+            LIMIT 8
+            """,
+                parameters={
+                    "vec": vec,
+                    # the film itself must not vote in its own What-If — the live
+                    # prediction excludes self-matches (query_precedent)
+                    "skip_title": skip_title,
+                },
+            )
+            .result_rows
+        )
+    except Exception as exc:
+        return [], type(exc).__name__
+    return [
         {
             "title": r[0],
             "year": r[1],
@@ -185,31 +268,24 @@ def project(
             "distance": round(float(r[5]), 4),
         }
         for r in rows
-    ]
-    tally: dict[str, int] = {}
-    for c in comparables:
-        tally[c["rating"]] = tally.get(c["rating"], 0) + 1
-    # ONE voting rule, shared with the live prediction — plain plurality here
-    # once let the same neighbours answer differently in two report panels
-    neighbors_vote = toolbelt.comps_weighted_majority(comparables) or "?"
-    b_set = boundary.get("prediction_set") or []
-    if b_set and len(b_set) == 1 and boundary.get("matched") and not boundary.get("unmatched"):
-        projected, basis = b_set[0], "boundary"
-    else:
-        projected, basis = neighbors_vote, "neighbors"
-    result = {
-        "projected": projected,
-        "basis": basis,
-        "neighbors_vote": neighbors_vote,
-        "boundary": boundary,
-        "neighbors_sparse": neighbors_sparse,
-        "tally": tally,
-        "revised_rationale": revised,
-        "comparables": comparables,
-        "cuts_applied": len(cuts),
-    }
-    storage.save_research(key, result)
-    return result
+    ], ""
+
+
+def _driver_marginal(marginals: list[dict[str, Any]], projected: str) -> dict[str, Any] | None:
+    """The descriptor that most drives the projected rating: among matched
+    marginals, the one whose share for `projected` is highest (ties -> smaller
+    n, i.e. more specific). The renderer's old rule — marginals[0], the smallest
+    n overall — could quote a descriptor that argues AGAINST the projection."""
+
+    def share(m: dict[str, Any]) -> float:
+        raw = str((m.get("distribution") or {}).get(projected, "0")).rstrip("%")
+        try:
+            return float(raw)
+        except ValueError:
+            return 0.0
+
+    ranked = sorted(marginals, key=lambda m: (-share(m), m.get("n", 0)))
+    return dict(ranked[0]) if ranked else None
 
 
 _SUGGEST_PROMPT = """A screenplay's content profile is being edited toward a target MPA rating.
@@ -218,7 +294,7 @@ CURRENT (revised) CONTENT PROFILE:
 {revised}
 
 TARGET RATING: {target}
-Of its 8 nearest released comparables, {n_higher} still rate {projected}.
+{evidence}
 
 ALREADY-PLANNED CUTS (do not repeat these):
 {cuts}
@@ -258,7 +334,7 @@ def suggest(
     planned = [beats[i] for i in sorted(set(cut_indices)) if 0 <= i < len(beats)] + list(
         extra_cuts or []
     )
-    n_higher = base["tally"].get(base["projected"], 0)
+    evidence = suggest_evidence(base)
 
     from google.genai import types
 
@@ -270,8 +346,7 @@ def suggest(
         contents=_SUGGEST_PROMPT.format(
             revised=revised,
             target=target,
-            n_higher=n_higher,
-            projected=base["projected"],
+            evidence=evidence,
             cuts="\n".join(f"- {c}" for c in planned) or "- (none)",
         ),
         config=types.GenerateContentConfig(temperature=0.0),
@@ -282,3 +357,23 @@ def suggest(
     result = {"suggestions": suggestions, "based_on": revised}
     storage.save_research(key, result)
     return result
+
+
+def suggest_evidence(base: dict[str, Any]) -> str:
+    """The one evidence sentence the suggestion prompt reasons from. When the
+    measured boundary carried the projection, the neighbours are NOT the
+    evidence and must not be cited as if they were (the Swearnet class);
+    quote the driving marginal instead."""
+    projected = base.get("projected") or "?"
+    if base.get("basis") == "boundary":
+        drv = (base.get("boundary") or {}).get("driver") or {}
+        pct = (drv.get("distribution") or {}).get(projected)
+        if drv.get("descriptor") and pct:
+            return (
+                f"On the measured CARA boundary the revised profile still reads {projected}: "
+                f"'{drv['descriptor']}' draws {projected} in {pct} of {drv.get('n', '?')} "
+                "official rationales."
+            )
+        return f"On the measured CARA boundary the revised profile still reads {projected}."
+    n_higher = (base.get("tally") or {}).get(projected, 0)
+    return f"Of its 8 nearest released comparables, {n_higher} still rate {projected}."

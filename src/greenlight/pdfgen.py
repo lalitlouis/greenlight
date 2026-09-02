@@ -44,10 +44,15 @@ def binder_pdf(data: dict[str, Any]) -> bytes:
         bottomMargin=0.45 * inch,
         title=f"{data['title']} — Clearance Log",
     )
+    import html as _html
+
     story: list[Any] = []
     title_style = ParagraphStyle("t", fontName="Times-Bold", fontSize=20, leading=24, textColor=INK)
     sub_style = ParagraphStyle("s", fontName="Helvetica", fontSize=8.5, textColor=FAINT)
-    story.append(Paragraph(f"{data['title']} — Production Clearance Log", title_style))
+    # reportlab Paragraph parses mini-XML: a title with "<" or a bare "&" is a
+    # crash or a corrupted header — every record string is escaped
+    title = _html.escape(str(data.get("title") or "Untitled"))
+    story.append(Paragraph(f"{title} — Production Clearance Log", title_style))
     counts = data.get("counts") or {}
     tiers = ", ".join(
         f"{counts[t]} {t.lower()}"
@@ -56,17 +61,16 @@ def binder_pdf(data: dict[str, Any]) -> bytes:
     )
     story.append(
         Paragraph(
-            f"Generated {data['generated_at']} · Greenlight Score "
-            + (
-                "WITHHELD (analysis incomplete)"
-                if data.get("score") is None
-                else f"{data.get('score')}/100"
-            )
+            f"Generated {_html.escape(str(data.get('generated_at') or ''))} · Greenlight Score "
+            + score_label(data.get("score"), bool(data.get("verification_degraded")))
             + " (ordinal risk index, not a probability) · "
             f"{tiers} · prepared by ScriptRisk (scriptrisk.com)",
             sub_style,
         )
     )
+    cost_line = cost_paths_label(data.get("est_cost"), data.get("est_cost_paths"))
+    if cost_line:
+        story.append(Paragraph(_html.escape(cost_line), sub_style))
     d = data.get("draft") or {}
     if d.get("sha256"):
         prov = (
@@ -79,8 +83,10 @@ def binder_pdf(data: dict[str, Any]) -> bytes:
         story.append(Spacer(1, 4))
         story.append(
             Paragraph(
-                f"This report is valid only for this draft: {d.get('pages', '?')} pp · "
-                f"{prov} · SHA-256 {d['sha256'][:12]}…{build_s}",
+                _html.escape(
+                    f"This report is valid only for this draft: {d.get('pages', '?')} pp · "
+                    f"{prov} · SHA-256 {str(d['sha256'])[:12]}…{build_s}"
+                ),
                 sub_style,
             )
         )
@@ -197,9 +203,51 @@ def binder_pdf(data: dict[str, Any]) -> bytes:
     _sec("Sources cited", [" · ".join(bm.get("sources") or [])] if bm.get("sources") else [])
 
     story.append(Spacer(1, 12))
-    story.append(Paragraph(data.get("disclaimer", ""), sub_style))
+    story.append(Paragraph(_html.escape(str(data.get("disclaimer", ""))), sub_style))
     doc.build(story)
     return buf.getvalue()
+
+
+def score_label(score: Any, verification_degraded: bool) -> str:
+    """The score line, with WHY it is withheld — a verifier outage is not an
+    incomplete desk, and the paper artifact must say which."""
+    if score is None:
+        return (
+            "WITHHELD (verification unavailable)"
+            if verification_degraded
+            else "WITHHELD (analysis incomplete)"
+        )
+    return f"{score}/100"
+
+
+def _money(pair: Any) -> str:
+    ok = (
+        isinstance(pair, list | tuple)
+        and len(pair) == 2
+        and all(isinstance(x, int | float) for x in pair)
+    )
+    if not ok:
+        return ""
+    if pair[0] == 0 and pair[1] == 0:
+        return "no fee expected"
+    return f"${pair[0]:,.0f}–${pair[1]:,.0f}"
+
+
+def cost_paths_label(est_cost: Any, paths: Any) -> str:
+    """One sentence every printed surface shares: as-written total, and the
+    target-rating path total when the adjudication ruled remedies mutually
+    exclusive — the web report leads with the target path; paper must not
+    quietly headline the other number."""
+    as_written = _money(est_cost)
+    if not as_written:
+        return ""
+    tgt = _money((paths or {}).get("target_rating")) if isinstance(paths, dict) else ""
+    if tgt and tgt != as_written:
+        return (
+            f"Estimated clearance exposure: as written {as_written} · target-rating path {tgt} "
+            "(some remedies are mutually exclusive)"
+        )
+    return f"Estimated clearance exposure: {as_written}"
 
 
 def _distinct_entities(record: dict[str, Any]) -> int:
@@ -277,7 +325,11 @@ def onesheet_pdf(record: dict[str, Any]) -> bytes:
 
     y -= 0.35 * inch
     verdict = (
-        "Score withheld — analysis incomplete"
+        (
+            "Score withheld — verification unavailable"
+            if rep.get("verification_degraded")
+            else "Score withheld — analysis incomplete"
+        )
         if withheld
         else f"Not cleared — {blockers} blocker(s)"
         if blockers
@@ -296,12 +348,34 @@ def onesheet_pdf(record: dict[str, Any]) -> bytes:
         f"{len(record.get('rejected_flags', []))} rejected in verification · "
         f"{_distinct_entities(record)} entities researched",
     )
-    cost = rep.get("est_clearance_cost_usd")
-    if cost and len(cost) == 2:
+    cost_line = cost_paths_label(rep.get("est_clearance_cost_usd"), rep.get("est_cost_paths"))
+    if cost_line:
         y -= 0.26 * inch
         c.setFont("Helvetica-Bold", 11)
         c.setFillColor(CREAM)
-        c.drawString(margin, y, f"Estimated clearance exposure ${cost[0]:,.0f}–${cost[1]:,.0f}")
+        c.drawString(margin, y, cost_line[:110])
+    # the quiet surface must not be the one that hides incompleteness
+    unex = record.get("unexamined") or []
+    incomplete = record.get("desks_incomplete") or []
+    unverified = [f for f in record.get("flags", []) if f.get("verification_unavailable")]
+    for warn in (
+        f"{len(unex)} extracted item(s) NOT EXAMINED by any desk — their scenes are not cleared"
+        if unex
+        else "",
+        f"INCOMPLETE — {', '.join(str(d) for d in incomplete)} returned no dispositions"
+        if incomplete
+        else "",
+        f"{len(unverified)} finding(s) UNVERIFIED (verifier unavailable) — desk claims, excluded "
+        "from the score"
+        if unverified
+        else "",
+    ):
+        if not warn:
+            continue
+        y -= 0.22 * inch
+        c.setFont("Helvetica-Bold", 8.5)
+        c.setFillColor(SEV_COLORS["HIGH"])
+        c.drawString(margin, y, warn[:120])
 
     # desk scores
     y -= 0.55 * inch
@@ -343,7 +417,10 @@ def onesheet_pdf(record: dict[str, Any]) -> bytes:
         c.drawString(margin, y, sev)
         c.setFillColor(CREAM)
         c.setFont("Helvetica-Bold", 9.5)
-        c.drawString(margin + 62, y, (f.get("category", "").replace("_", " ").title())[:40])
+        cat = (f.get("category", "").replace("_", " ").title())[:40]
+        if f.get("verification_unavailable"):
+            cat = "UNVERIFIED · " + cat[:28]
+        c.drawString(margin + 62, y, cat)
         c.setFillColor(colors.HexColor("#9aa3b2"))
         c.setFont("Helvetica", 8)
         finding = (f.get("finding") or "")[:150].replace("\n", " ")

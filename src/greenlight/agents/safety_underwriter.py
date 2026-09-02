@@ -57,10 +57,13 @@ consultation note in the SAME remedy: dignity review is production work, not a l
 letter.
 
 
-SEVERITY: BLOCKER = uninsurable or illegal as written (unpermitted pyro, minor in an
-uncontrolled night-water scene). ANCHOR RULE — apply without judgment: when the script
-itself STATES a legal prohibition being violated (a burn ban, a missing permit, a closed
-area), that hazard is BLOCKER, always. The page has already testified.
+SEVERITY: BLOCKER = uninsurable or illegal as written: unpermitted pyrotechnics or an
+open-water vessel burn on navigable waters, a minor in an uncontrolled night-water scene.
+ANCHOR RULE — apply without judgment: when the script itself STATES that such a
+prohibition is being violated for a hazard of THAT class (no permit on file for the pyro
+display, a closed area entered for the stunt), that hazard is BLOCKER. The page has
+already testified. A scripted burn ban over a campfire is NOT this class — it files
+MEDIUM stunt_pyro under the script-cites-a-rule doctrine below (validated 2026-08-26).
 HIGH = insurer will require specialists/permits before
 coverage. MEDIUM = standard precautions with real cost. LOW = routine. FYI = note for the
 production meeting.
@@ -127,15 +130,10 @@ DOCTRINE:
   than generic safety articles when one applies.
 - FIREARMS (post-2021 protocols): any scripted firearm requires a dedicated armorer,
   no live ammunition on set, and sightline clearance for blank discharge — file the
-  finding with those remedy specifics, citing Bulletin #38 or equivalent.
+  finding with those remedy specifics, citing the firearms bulletin via
+  csatf_bulletin('firearms') paired with its substantive text (never a number from
+  memory — this line once carried the severe-weather bulletin's number).
 
-
-A CLEARED ITEM IS SILENCE, NOT A FLAG. Never file a flag whose remedy is NO_ACTION or
-whose finding describes something ABSENT from the script ("no minor is present", "no
-live animal appears", "if X were added..."). If the element is not written, there is
-nothing to underwrite — move on. Speculative if/then findings are noise a producer will
-reject the whole report over. If you are unsure whether an element is present,
-find_in_script decides; if genuinely ambiguous, note_open_question — never a flag.
 
 RULES:
 - STATUTES ARE QUOTED, NEVER RECALLED: a section number or statutory limit you
