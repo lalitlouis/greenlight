@@ -24,6 +24,18 @@ SUFFIX_TOKENS = {
 # "Ringgold v. Black Entertainment Television" names a CASE, not a licensor — the
 # first gate run flagged it as an untraceable rightsholder (false positive).
 _CASE_CITE_BEFORE = re.compile(r"\bv(?:s)?\.?\s*$", re.IGNORECASE)
+# ...and the plaintiff side: "Warner Bros. Entertainment Inc. v. S. Reed Christenson"
+_CASE_CITE_AFTER = re.compile(
+    r"^\.?(?:\s+(?:Inc|LLC|Ltd|Corp|Co)\.?,?)?\s+v(?:s)?\.?\s", re.IGNORECASE
+)
+# sentence-initial or verb-initial capitalised words glued onto a name ("Under Warner
+# Bros. Entertainment", "Licensed by …") are not part of the holder's name
+_LEAD_STOPWORDS = {
+    "under", "licensed", "license", "licence", "in", "from", "by", "the", "a", "an", "per",
+    "see", "apply", "contact", "via", "with", "and", "or", "of", "to", "at", "on", "for",
+    "as", "its", "this", "that", "these", "obtain", "secure", "through", "while", "both",
+    "if", "when", "where", "because", "since", "although", "unless", "then", "also",
+}  # fmt: skip
 
 
 def norm(s: str) -> str:
@@ -42,7 +54,12 @@ def rightsholder_names(text: str) -> list[str]:
         start = m.start(1)
         if _CASE_CITE_BEFORE.search(text[max(0, start - 8) : start]):
             continue
-        name = m.group(1).strip()
+        if _CASE_CITE_AFTER.match(text[m.end(1) : m.end(1) + 24]):
+            continue
+        words = m.group(1).strip().split()
+        while len(words) > 1 and words[0].lower().strip(".,") in _LEAD_STOPWORDS:
+            words.pop(0)
+        name = " ".join(words)
         if not distinctive_tokens(name):
             continue
         out.append(name)

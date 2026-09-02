@@ -304,3 +304,23 @@ Six cases, case-grade budgets, sequential (~10–20 min each, ~$2–3 each). Pre
 Publishing: the case records ship in the image — the owner reviews six summary lines, then
 `safe_deploy` publishes /cases; the landing hero's Reservoir Dogs number is checked against
 the new record.
+
+## Case regen read-off (2026-09-02 13:48–15:10 PDT, six cases, $20.25, REGEN_EXIT=0)
+
+V1 ✓ all six complete; every comparable excerpt official; `descriptors` + `set_floor` on every
+record (pervasive language floors R on five; strong bloody violence on Reservoir Dogs).
+V2 partial: HIGH tiers largely stable with visible churn (Hangover lost firearms/minor/fall
+HIGHs to MEDIUM and gained a location HIGH; LMS gained several; TSN gained sync/artwork/pyro).
+Scores: RD 37→32, Clerks 29→30, LMS 36→24, TSN 29→21, Wolf 21→25, Hangover 20→25.
+V3 ✓ scene ids and headings identical on all six; page shifts LMS 29 scenes, Wolf 90 scenes
+(OCR'd cues now read as speakers); RD and Wolf now carry the script's own scene numbers.
+V4 ✗ on Wolf: two licence findings (F1009 Universal Studios, F1014 "Warner Bros.
+Entertainment Inc") named owners their excerpts do not carry — both RE-SOURCED flags: the
+re-source gate checked authority/statute/sync-master/normative but not licensor traceability
+(added after that gate was written), and the Warner name is the PLAINTIFF of a case citation the
+extractor did not skip. Fixed: licensor traceability on the refile gate; plaintiff-position case
+names and sentence-initial words excluded from the extractor. Wolf re-run below; the other five
+show no untraced owners.
+V5 as predicted but the other way: TSN's set moved {PG-13} → {R} because the desk wrote
+"pervasive language" (floor) for a film CARA rated PG-13 — the floor is only as good as the
+desk's intensity word; logged as desk-descriptor judgment, not a code defect.

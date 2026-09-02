@@ -122,3 +122,35 @@ def test_merged_citations_are_pruned_and_capped():
     assert out[0]["excerpt"] == "csatf 0"
     only_bg = [{"url": "https://reddit.com/r/x", "excerpt": "forum"}]
     assert _merge_citations(only_bg, []) == only_bg  # never empties
+
+
+def test_plaintiff_position_case_name_is_not_a_rightsholder():
+    body = "Under Warner Bros. Entertainment Inc. v. S. Reed Christenson, tattoos are protected."
+    assert rightsholder_names(body) == []
+    assert rightsholder_names("Licensed by Warner Bros. Entertainment Inc. for the clip.") == [
+        "Warner Bros. Entertainment Inc"
+    ]
+
+
+def test_refile_gate_requires_licensor_traceability_after_resource():
+    from greenlight.agents.verification import _refile_gate_problem
+
+    flag = {
+        "flag_id": "F1009",
+        "category": "film_clip_license",
+        "severity": "LOW",
+        "finding": "A clip license from rights owner Universal Studios is required.",
+        "remedy": {"detail": ""},
+        "citations": [
+            {
+                "url": "https://www.warnerbros.com/clip-licensing",
+                "excerpt": "Clip and still licensing info.",
+            }
+        ],
+    }
+    problem = _refile_gate_problem(flag, check_authority=False)
+    assert problem and "licensor traceability" in problem and "Universal Studios" in problem
+    flag["citations"].append(
+        {"url": "https://www.nbcuniversal.com/x", "excerpt": "Universal Studios licenses clips."}
+    )
+    assert _refile_gate_problem(flag, check_authority=False) is None

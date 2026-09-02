@@ -1221,6 +1221,23 @@ def _refile_gate_problem(flag: dict[str, Any], *, check_authority: bool) -> str 
         _sync_master_split_problem,
     )
 
+    # licensor traceability (added after the first gate roll): a re-source replaces
+    # the citations wholesale, so an owner the finding names must appear in the
+    # NEW excerpts — two Wolf of Wall Street findings shipped naming Universal and
+    # Warner with re-sourced excerpts that carried neither (case regen 2026-09-02)
+    cat0 = str(flag.get("category") or "")
+    if _re.search(r"licen[cs]e|clearance", cat0, _re.IGNORECASE):
+        from greenlight.names import untraceable_rightsholders
+
+        body0 = f"{flag.get('finding') or ''} {(flag.get('remedy') or {}).get('detail') or ''}"
+        excerpts0 = " ".join(str(c.get("excerpt") or "") for c in flag.get("citations") or [])
+        missing0 = untraceable_rightsholders(body0, excerpts0)
+        if missing0:
+            return (
+                f"re-source gate (licensor traceability): the finding names {missing0} but no "
+                "re-sourced excerpt carries them"
+            )
+
     cat = str(flag.get("category") or "")
     sev = str(flag.get("severity") or "")
     finding = str(flag.get("finding") or "")
