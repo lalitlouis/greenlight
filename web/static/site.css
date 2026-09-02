@@ -1086,6 +1086,7 @@ mark.d-add { background: rgba(10, 143, 82, 0.16); color: var(--green-deep); bord
 .wi-verdict { margin: 0; font-size: 16px; line-height: 1.5; font-weight: 550; }
 .wi-rationale { margin: 10px 0 0; font-size: 14.5px; font-style: italic; color: var(--fyi); }
 .wi-comps { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.wi-comps-label { flex-basis: 100%; font-size: 13px; font-style: normal; color: var(--ink-3); }
 .wi-comp { display: inline-flex; align-items: center; gap: 7px; font-size: 14px; color: var(--ink-2); border: 1px solid var(--line); border-radius: 980px; padding: 3px 12px 3px 4px; }
 .wi-r { font-size: 12px; font-weight: 800; color: #fff; border-radius: 980px; padding: 2px 8px; }
 .wi-r.r-R, .wi-r.r-NC-17 { background: var(--blocker); }

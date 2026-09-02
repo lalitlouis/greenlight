@@ -36,6 +36,10 @@ text only."""
 _EMBED_MEMO: dict[str, list[float]] = {}
 _EMBED_MEMO_MAX = 512
 
+# Below this, a rationale is too thin to embed meaningfully — kNN neighbors
+# collapse onto the corpus outlier cluster and stop answering the question.
+_SPARSE_RATIONALE_CHARS = 60
+
 
 def _embed_cached(text: str) -> list[float]:
     """Rationale embeddings are pure functions of their text — repeated What-If
@@ -59,6 +63,24 @@ def _embed_cached(text: str) -> list[float]:
         _EMBED_MEMO.pop(next(iter(_EMBED_MEMO)))
     _EMBED_MEMO[key] = vec
     return vec
+
+
+def _descriptor_phrases(rationale: str) -> list[str]:
+    """Split a CARA-style rationale into descriptor phrases for boundary_eval.
+    "Rated R for pervasive language, some violence and brief nudity." ->
+    ["pervasive language", "some violence", "brief nudity"]."""
+    import re
+
+    t = rationale.strip().strip("\u201c\u201d\"' ")
+    t = re.sub(r"^\s*(rated\s+[\w-]+\s+)?for\s+", "", t, flags=re.I)
+    t = t.rstrip(". ").strip("\u201c\u201d\"' ")
+    parts: list[str] = []
+    for chunk in re.split(r",|;", t):
+        for raw in re.split(r"\s+and\s+", chunk):
+            piece = raw.strip().strip("\u201c\u201d\"' ")
+            if piece:
+                parts.append(piece[:80])
+    return parts[:8]
 
 
 def _revise_rationale(rationale: str, cuts: list[str]) -> str:
@@ -96,11 +118,36 @@ def project(
         return {"error": "No cuts selected."}
 
     mask = ",".join(str(i) for i in sorted(set(cut_indices))) + "|" + "|".join(extras)
-    key = "whatif:" + hashlib.sha256(f"{run_id}|{mask}|{rationale}".encode()).hexdigest()[:24]
+    key = "whatif:v2:" + hashlib.sha256(f"{run_id}|{mask}|{rationale}".encode()).hexdigest()[:24]
     if (cached := storage.load_research(key)) is not None:
         return cached
 
     revised = _revise_rationale(rationale, cuts)
+
+    # The measured boundary is the primary instrument for a post-cut profile.
+    # kNN re-embeds the revised rationale text, and a sparse rationale ("for
+    # brief strong language") collapses onto the corpus's outlier cluster —
+    # films rated R/NC-17 *solely* for language — answering "whose rationale
+    # text looks like this?" instead of "what does this profile rate?" (the
+    # Swearnet-neighbors run, 2026-09-01). When every descriptor matches the
+    # vocabulary and the conformal set is a single rating, that measured
+    # answer IS the projection; neighbors become secondary color.
+    phrases = _descriptor_phrases(revised)
+    boundary: dict[str, Any] = {}
+    try:
+        b = toolbelt.boundary_eval(phrases)
+        boundary = {
+            "matched": b["matched"],
+            "unmatched": b["unmatched"],
+            "prediction_set": b["prediction_set"],
+            "probabilities": b["probabilities"],
+            # specific (intensity+category) marginals first — smaller n
+            "marginals": sorted(b["marginals"].values(), key=lambda m: m["n"]),
+        }
+    except Exception:
+        boundary = {}
+    neighbors_sparse = len(phrases) <= 1 or len(revised) < _SPARSE_RATIONALE_CHARS
+
     vec = _embed_cached(revised)
     rows = (
         toolbelt._clickhouse_client()
@@ -138,9 +185,18 @@ def project(
         tally[c["rating"]] = tally.get(c["rating"], 0) + 1
     # ONE voting rule, shared with the live prediction — plain plurality here
     # once let the same neighbours answer differently in two report panels
-    projected = toolbelt.comps_weighted_majority(comparables) or "?"
+    neighbors_vote = toolbelt.comps_weighted_majority(comparables) or "?"
+    b_set = boundary.get("prediction_set") or []
+    if b_set and len(b_set) == 1 and boundary.get("matched") and not boundary.get("unmatched"):
+        projected, basis = b_set[0], "boundary"
+    else:
+        projected, basis = neighbors_vote, "neighbors"
     result = {
         "projected": projected,
+        "basis": basis,
+        "neighbors_vote": neighbors_vote,
+        "boundary": boundary,
+        "neighbors_sparse": neighbors_sparse,
         "tally": tally,
         "revised_rationale": revised,
         "comparables": comparables,

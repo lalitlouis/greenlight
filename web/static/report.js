@@ -864,8 +864,22 @@ function renderWhatIf(out, d, pred, baseTarget, total, nCuts) {
   const head = el("div", "wi-head");
   head.appendChild(el("b", "rating-badge sm r-" + d.projected, d.projected));
   const moved = newTarget - baseTarget;
+  // Most specific matched marginal (smallest n) carries the boundary numbers.
+  const marg = (d.boundary?.marginals || [])[0];
+  const margPct = marg?.distribution?.[d.projected];
   let verdict;
-  if (d.projected === pred.target) {
+  if (d.basis === "boundary" && marg) {
+    // The measured boundary is the instrument for a post-cut profile — a
+    // sparse revised rationale embeds next to language-outlier films and the
+    // kNN answers the wrong question (the Swearnet-neighbors run).
+    const numbers = margPct
+      ? ` — “${marg.descriptor}” draws ${d.projected} in ${margPct} of ${marg.n.toLocaleString()} official rationales`
+      : "";
+    verdict =
+      d.projected === pred.target
+        ? `These ${nCuts} cut${nCuts === 1 ? "" : "s"} reach ${pred.target} on the measured boundary${numbers}.`
+        : `Still ${d.projected} on the measured boundary${numbers}. These beats weren't what was driving it.`;
+  } else if (d.projected === pred.target) {
     verdict = `These ${nCuts} cut${nCuts === 1 ? "" : "s"} flip the projection: ${newTarget} of ${total} nearest comparables now rate ${pred.target}.`;
   } else if (moved > 0) {
     verdict = `Closer, not clear: ${pred.target} comparables move ${baseTarget} → ${newTarget} of ${total}. What remains in the profile still patterns with ${d.projected} films.`;
@@ -875,12 +889,21 @@ function renderWhatIf(out, d, pred, baseTarget, total, nCuts) {
   head.appendChild(el("p", "wi-verdict", verdict));
   out.appendChild(head);
   if (d.revised_rationale) out.appendChild(el("p", "wi-rationale", "Revised profile: “" + d.revised_rationale + "”"));
-  if (d.projected !== pred.target) {
+  if (d.projected !== pred.target && d.basis !== "boundary") {
     out.appendChild(
       el("p", "wi-note", "The rating hinges on the whole content profile, not only the flagged beats — the simulator re-runs the real comparables search, so it will disagree with the cut list when the remaining content still patterns higher. That honesty is the product.")
     );
   }
   const row = el("div", "wi-comps");
+  // Neighbors are secondary color once the boundary carries the verdict — and
+  // when the revised profile is a few words, say why they can mislead.
+  if (d.basis === "boundary") {
+    const lbl =
+      d.neighbors_sparse && d.neighbors_vote && d.neighbors_vote !== d.projected
+        ? `Nearest released-film rationales (caution: a profile this brief textually neighbors films rated ${d.neighbors_vote} for language alone — the boundary above is the instrument here):`
+        : "Nearest released-film rationales:";
+    row.appendChild(el("i", "wi-comps-label", lbl));
+  }
   for (const c of (d.comparables || []).slice(0, 5)) {
     const chipEl = el("span", "wi-comp r-line-" + c.rating);
     chipEl.appendChild(el("b", "wi-r r-" + c.rating, c.rating));

@@ -2697,6 +2697,63 @@ def _parse_descriptor(desc: str, vocab: dict[str, Any]) -> tuple[str, str] | Non
 _CARA_CORPUS = "ScriptRisk CARA descriptor corpus: 4,544 official CARA rationales, filmratings.com"
 
 
+def boundary_eval(descriptors: list[str]) -> dict[str, Any]:
+    """Pure boundary evaluation for a set of CARA-style descriptor phrases —
+    the same marginals + conformal math as rating_boundary, with no session
+    state and no citation registry. Built for the What-If simulator (run 17):
+    a post-cut rationale is too sparse for text-neighbor kNN, and this measured
+    instrument is the honest one there."""
+    import math as _math
+
+    d = _boundary_data()
+    vocab = d.get("vocabulary") or {}
+    feats = d["model"]["features"]
+    idx = {k: i for i, k in enumerate(feats)}
+    x = [0.0] * (len(feats) + 1)
+    x[-1] = 1.0
+    matched: list[str] = []
+    unmatched: list[str] = []
+    marginals: dict[str, Any] = {}
+    for desc in descriptors:
+        parsed = _parse_descriptor(desc, vocab)
+        if parsed is None:
+            unmatched.append(desc)
+            continue
+        intensity, cat = parsed
+        matched.append(desc)
+        for key in (f"{intensity} {cat}", cat):
+            m = d["marginals"].get(key)
+            if m and key not in marginals:
+                n = sum(m.values())
+                marginals[key] = {
+                    "descriptor": key,
+                    "n": n,
+                    "distribution": {
+                        r: f"{100 * c // n}%" for r, c in sorted(m.items(), key=lambda kv: -kv[1])
+                    },
+                }
+        for cand in (f"{intensity} {cat}", cat):
+            if cand in idx:
+                x[idx[cand]] = 1.0
+    z = [sum(wc[j] * x[j] for j in range(len(x)) if x[j]) for wc in d["model"]["weights"]]
+    mx = max(z)
+    e = [_math.exp(v - mx) for v in z]
+    ssum = sum(e)
+    probs = {c: e[i] / ssum for i, c in enumerate(d["model"]["classes"])}
+    pred_set = [
+        c
+        for i, c in enumerate(d["model"]["classes"])
+        if 1.0 - probs[c] <= d["model"]["conformal_q"][str(i)]
+    ]
+    return {
+        "matched": matched,
+        "unmatched": unmatched,
+        "marginals": marginals,
+        "probabilities": {c: round(v, 3) for c, v in sorted(probs.items(), key=lambda kv: -kv[1])},
+        "prediction_set": pred_set,
+    }
+
+
 def rating_boundary(descriptors: list[str], tool_context: ToolContext) -> dict[str, Any]:
     """Measured CARA decision boundary: per-descriptor rating distributions across
     4,544 official post-1990 rationales, plus the fitted model's conformal prediction
