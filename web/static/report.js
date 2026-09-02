@@ -877,10 +877,10 @@ function renderWhatIf(out, d, pred, baseTarget, total, nCuts) {
       : "";
     verdict =
       d.projected === pred.target
-        ? `These ${nCuts} cut${nCuts === 1 ? "" : "s"} reach ${pred.target} on the measured boundary${numbers}.`
+        ? `${nCuts === 1 ? "This cut reaches" : `These ${nCuts} cuts reach`} ${pred.target} on the measured boundary${numbers}.`
         : `Still ${d.projected} on the measured boundary${numbers}. These beats weren't what was driving it.`;
   } else if (d.projected === pred.target) {
-    verdict = `These ${nCuts} cut${nCuts === 1 ? "" : "s"} flip the projection: ${newTarget} of ${total} nearest comparables now rate ${pred.target}.`;
+    verdict = `${nCuts === 1 ? "This cut flips" : `These ${nCuts} cuts flip`} the projection: ${newTarget} of ${total} nearest comparables now rate ${pred.target}.`;
   } else if (moved > 0) {
     verdict = `Closer, not clear: ${pred.target} comparables move ${baseTarget} → ${newTarget} of ${total}. What remains in the profile still patterns with ${d.projected} films.`;
   } else {
