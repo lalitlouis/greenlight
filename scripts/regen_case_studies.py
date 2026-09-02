@@ -38,7 +38,7 @@ CASE_BUDGETS = {
 
 # slug -> (source: cache filename OR gcs run id, target rating)
 CASES = {
-    # "reservoir_dogs": ("_reservoir_dogs.fountain", "R"),  # done 2026-09-01 02:45
+    "reservoir_dogs": ("_reservoir_dogs.fountain", "R"),
     "clerks": ("_clerks.fountain", "R"),
     "little_miss_sunshine": ("_little_miss_sunshine.fountain", "R"),
     "the_social_network": ("gcs:2bec8312bc50", "PG-13"),

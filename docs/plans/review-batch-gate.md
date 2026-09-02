@@ -285,3 +285,22 @@ defamation-flagged" counterweight used `flags_about`, which unions category OR t
 doctrine-correct right_of_publicity flag on the Springsteen tribute POSTER (S045) counted as
 a defamation flag; the anecdote (S011) was not flagged and the finding says so. Negative
 checks are now conjunctive (`flags_matching`). No product code changed; nothing to deploy.
+
+## Case-study regeneration on 00213 (owner go 2026-09-02 ~13:20 PDT) — pre-registered
+
+Six cases, case-grade budgets, sequential (~10–20 min each, ~$2–3 each). Predictions:
+- V1 All six complete without abort; each record carries rationale-space comparables
+  ("Rated X for …" excerpts), `descriptors`, and a coverage set that contains R for every
+  R-rated film whose profile carries a >=90% descriptor (Wolf: graphic nudity / pervasive
+  language; Hangover: pervasive language) — the floor is visible in `set_floor`.
+- V2 Scores move only through findings: HIGH tier stable per case vs the 2026-09-01 records
+  (music chains, controlled venues, pyro/stunts); LOW/MEDIUM tail and category slugs drift.
+- V3 Little Miss Sunshine and Wolf show page-number shifts vs their prior records (OCR'd cues
+  now read as speakers); scene ids and headings identical for all six.
+- V4 No finding carries >6 citations; no prose scene count above its chips; every licence
+  finding traces its owners; withdrawn notices render apart from open questions.
+- V5 Soft spots (information): the conformal set on The Social Network (released PG-13,
+  predicted R in the prior record) — the floor and the reconciled descriptors may move it.
+Publishing: the case records ship in the image — the owner reviews six summary lines, then
+`safe_deploy` publishes /cases; the landing hero's Reservoir Dogs number is checked against
+the new record.
