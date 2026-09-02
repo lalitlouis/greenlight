@@ -160,3 +160,17 @@ deterministic slip surfaces as a refile at filing. Test pins every auto-attach p
 - Q6 No `contract_after_gates` or `refused: citation shape` entry in the guard manifest; the
   bulletin gate attaches `rules_table` index lines or rejects, and the run completes with a
   record.
+
+## Roll 4 read-off (run_20260901_232929, 23:18–23:29 PDT, exit 0, $1.74) — 47/47, GREEN
+
+Q1 ✓ · Q2 ✓ (stunt_pyro F3001 BLOCKER on S008/S010/S011 with csatf #16 PYROTECHNIC and #19
+FLAMES excerpts) · Q3 ✓ (BLOCKER 1 / HIGH 9: pyro, sync, master, language, drug use, minor,
+water, firearms, CN supernatural, UAE drug; score 28; cost $104k–273k — under the predicted
+$150k band because the sync/master quotes came in lower this run, desk cost variance) ·
+Q4 ✓ (scene_meta identical; tattoo F1004/E007 and Nighthawks F1003/E001 separate; only
+absorption is same-category entity-less safety; zero overturns; `uncited_licensor` fired twice
+at filing and every licence finding traces its owners) · Q5 held the good way (set {PG-13, R}
+contains R; the desk left "thematic" out; 8/8 comparables R; no divergence needed) ·
+Q6 ✓ (no `contract_after_gates`, no refused attach). Rejections: animal_safety (verifier
+judged the bulletin excerpts too generic — substance is its call, the number gate only proves
+the number) and CN drug use (variance); re-source 0/2. Deploy follows.
