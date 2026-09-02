@@ -235,3 +235,12 @@ granularity variance, stated.
 - T2 No kept finding carries more than 6 citations; merged findings keep their strongest.
 - T3 Everything roll 5 held holds again (scene structure, tattoo/Nighthawks, pyro BLOCKER with
   csatf excerpts, no scene-count claims, divergence present whenever predicted ∉ set).
+
+## Roll 6 read-off (run_20260902_004149, 00:24–00:41 PDT, exit 0, $1.68) — 50/50, GREEN
+
+T1 ✓ (every licence finding traces its owners; `licensor_cite_attached` ×2 with the name
+verified inside the span) · T2 ✓ (max 3 citations on any finding; the one absorption is two
+same-category safety flags) · T3 ✓ (scene_meta identical; tattoo F1007/E005 and Nighthawks
+F1003/E001 separate; pyro BLOCKER on its csatf #16 excerpt; no scene-count claims; 0
+rejections, 0 overturns; set {PG, PG-13} vs predicted R with the divergence reason on the
+record — the F-word-count residual, stated). 21 kept, score 28, cost $127k–368k. Deploy follows.
