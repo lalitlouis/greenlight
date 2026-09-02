@@ -244,3 +244,19 @@ same-category safety flags) · T3 ✓ (scene_meta identical; tattoo F1007/E005 a
 F1003/E001 separate; pyro BLOCKER on its csatf #16 excerpt; no scene-count claims; 0
 rejections, 0 overturns; set {PG, PG-13} vs predicted R with the divergence reason on the
 record — the F-word-count residual, stated). 21 kept, score 28, cost $127k–368k. Deploy follows.
+
+## Scale gate (fixtures/scale_gate.fountain, 100 scenes, ~95 entities) — on 00213, pre-registered
+
+The wide-coverage check for the census, parser, prompt, and filing-gate changes; the last
+scale-gate grade on record is 20/23 (2026-08-29) before eval_scale gained the shared invariants.
+
+- U1 Run exits 0 without abort or salvage; 12–20 min; ~$5–10.
+- U2 Structural tier clean: no id collision, no rejection loop, 0 unexamined, 0 collapsed desks,
+  rating filed with comparables, territory 12 axis sweeps by id.
+- U3 Shared invariants all green (citations, phantom ids, prose scenes, cut-list direction,
+  vote recompute, floor, rejected-only descriptors, scene counts, reconciliation).
+- U4 Seed grade: every k=3 pass-1 miss class stays green (music sync+master split, Nighthawks,
+  tattoo, Coors disparagement); the controlled-venue location remedy remains the known soft
+  seed (has failed most runs).
+- U5 Soft spots that are information, not regression: rightsholder traceability on a
+  brand-dense script (many licence findings); kept-findings floor (>=10).
