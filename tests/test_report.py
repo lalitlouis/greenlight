@@ -477,3 +477,33 @@ def test_apply_plan_does_not_claim_a_severity_change_it_refused():
     out, notes = apply_plan(flags, plan)
     assert out[0]["severity"] == "MEDIUM", "upgrade must still be refused"
     assert not any("upgrad" in n.lower() for n in notes), "no note may claim the refused upgrade"
+
+
+def test_cleared_row_citing_a_kept_finding_moves_to_the_note():
+    """A disposition receipt like 'dispositioned in F2001' is a cross-reference,
+    not a clearance — it must not print under 'no action needed' (THE NIGHT
+    COUNTER profanity row, 2026-09-01)."""
+    from greenlight import binder
+
+    record = {
+        "flags": [
+            {"flag_id": "F2001", "agent": "ratings_board", "entity_id": "e-lang", "citations": []}
+        ],
+        "entities": [{"entity_id": "e-prof", "surface": "Profanity"}],
+        "cleared": {
+            "ratings_board": [
+                {
+                    "entity_id": "e-prof",
+                    "reasoning": "Profanity evaluated and formally dispositioned "
+                    "in language census finding F2001.",
+                },
+                {"entity_id": "e-prof2", "reasoning": "No known issue for this mention."},
+            ]
+        },
+        "open_questions": {},
+        "report": {},
+    }
+    bm = binder._back_matter(record)
+    texts = [c["text"] for c in bm["cleared"]]
+    assert not any("F2001" in t for t in texts if "further determination" not in t)
+    assert any("further determination" in t for t in texts)

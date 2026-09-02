@@ -985,6 +985,15 @@ function clearedRows(record) {
         flaggedElsewhere += 1;
         continue;
       }
+      // A determination whose own reasoning cites a rendered finding is a
+      // cross-reference, not a clearance — "dispositioned in F2001" under a
+      // "no action needed" header contradicts the HIGH flag it points at
+      // (THE NIGHT COUNTER profanity row). Route it to the counted-there note.
+      const citedIds = (c.reasoning || "").match(/\bF\d{3,4}\b/g) || [];
+      if (citedIds.some((id) => (KNOWN_FLAG_IDS || new Set()).has(id))) {
+        flaggedElsewhere += 1;
+        continue;
+      }
       const who = ENTITY_SURFACE[eid] || ENTITY_SURFACE[c.entity_id] || null;
       if (who) {
         const key = who + "\u0000" + desk;

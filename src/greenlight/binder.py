@@ -276,6 +276,7 @@ def _back_matter(record: dict[str, Any]) -> dict[str, Any]:  # noqa: PLR0912 - a
     # cleared determinations move to a note, or 78 researched == 78 cleared
     # reads as an accounting impossibility next to 30 findings (run-4 review).
     flagged_ids = {f.get("entity_id") for f in record.get("flags", []) if f.get("entity_id")}
+    kept_flag_ids = {f.get("flag_id") for f in record.get("flags", []) if f.get("flag_id")}
     acct = record.get("entity_accounting") or {}
     fold = acct.get("fold") or {}
     # compounds/truncations counted as folded must not print in cleared, or the
@@ -293,6 +294,14 @@ def _back_matter(record: dict[str, Any]) -> dict[str, Any]:  # noqa: PLR0912 - a
             if eid in fragment_ids:
                 continue
             if eid in flagged_ids:
+                flagged_elsewhere += 1
+                continue
+            # A determination whose own reasoning cites a surviving finding is
+            # a cross-reference, not a clearance — "dispositioned in F2001"
+            # must never print under "no action needed" beside the HIGH flag
+            # it points at (THE NIGHT COUNTER profanity row; web parity).
+            cited = set(_re.findall(r"\bF\d{3,4}\b", c.get("reasoning", "")))
+            if cited & kept_flag_ids:
                 flagged_elsewhere += 1
                 continue
             who = _unescape(ents.get(eid) or ents.get(c.get("entity_id")) or "")
