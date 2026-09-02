@@ -88,3 +88,25 @@ rejection on the previous record).
 - R5 Soft spot: the tattoo seed is desk+verifier dependent (rejected on 182958, merged on
   222041) — a third failure mode would be a plain miss; that would be red, and the fix would
   be at the desk/citation class, not the grader.
+
+## Roll 2 read-off (run_20260901_223815, 22:28–22:38 PDT, exit 0, $1.89) — 46/46
+
+R1 ✓ · R2 ✓ (Krane tattoo F1007/E005 renders on its own line; Nighthawks F1004/E001 separate;
+the only absorption is two entity-less safety flags of one category) · R3 ✓ (`uncited_licensor`
+fired once at filing; every licence finding now traces Sony / Columbia / Universal to its own
+excerpts) · R4 ✓ (scene_meta identical; census identical; zero overturns) · R5 held (the
+tattoo filed and survived).
+Rating: predicted R, set {PG-13}, descriptors persisted ("thematic" included again), 5/8 comps
+R, divergence stated — the same residual as roll 1.
+NOT predicted, and the reason this green is not a clean bill: the stunt_pyro BLOCKER (the
+seeded climax, kept as PARTIAL in every prior run) was REJECTED on the merits — its ONLY
+citation was a 33 CFR 100.501 definition line ("Captain of the Port Representative means…");
+the CSATF #16/#19 excerpts it carried in roll 1 were gone. Re-source attempted 2, recovered 0;
+the new re-source gate did not fire (no `resource_gate` manifest entry), so the batch did not
+cause the loss. It demoted honestly to an open question; score 43 (was 29–30), cost
+$87k–258k (was $179k–449k). Likely mechanism: the statute gate demanded the "100" of
+"33 CFR Part 100" in an excerpt and the desk REPLACED its bulletin citations with the CFR line
+instead of adding to them. The climax seed passed via the water stunt, so the grader did not
+see the pyro finding go. Next class fixes (not yet built): a bulletin-number gate mirroring
+the statute/licensor rule; rejection messages that say ADD, never replace; a climax seed that
+names the pyro burn.
