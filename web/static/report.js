@@ -624,15 +624,15 @@ function renderPrediction(root, pred) {
   let line;
   if (stricter > 0 && predIdx >= 0) {
     const parts = ORDER.slice(predIdx).filter((r) => tallies[r]).map((r) => `${tallies[r]} ${r}`);
-    line = `${same + stricter} of your ${comps.length} nearest released comparables are rated ${pred.predicted} or stricter (${parts.join(", ")}) — the neighbourhood runs harder than the prediction, not softer.`;
+    line = `${same + stricter} of your ${comps.length} nearest released comparables ${same + stricter === 1 ? "is" : "are"} rated ${pred.predicted} or stricter (${parts.join(", ")}) — the neighbourhood runs harder than the prediction, not softer.`;
   } else {
-    line = `${same} of your ${comps.length} nearest released comparables are rated ${pred.predicted}.`;
+    line = `${same} of your ${comps.length} nearest released comparables ${same === 1 ? "is" : "are"} rated ${pred.predicted}.`;
   }
   // The neighbours' verdict is computed ONCE, server-side, by the shared
   // weighted rule (pred.comps_majority) — a client-side plurality here once
   // contradicted the weighted line rendered a few rows below.
   if (pred.comps_majority && pred.comps_majority !== pred.predicted) {
-    line += ` The weighted neighbour majority is ${pred.comps_majority} — see the desk's stated reasoning below.`;
+    line += ` The weighted neighbour majority is ${pred.comps_majority}; the desk's reasoning for diverging is below.`;
   }
   meta.appendChild(el("p", "pred-evidence", line));
   const base = pred.corpus_base_rates || {};
@@ -643,16 +643,19 @@ function renderPrediction(root, pred) {
     }
     meta.appendChild(el("p", "pred-evidence pred-base", baseLine));
   }
-  if (pred.comps_majority && pred.comps_majority !== pred.predicted && pred.divergence_reason) {
+  const divergeShown = pred.comps_majority && pred.comps_majority !== pred.predicted && pred.divergence_reason;
+  if (divergeShown) {
     meta.appendChild(el("p", "pred-evidence pred-diverge",
-      `The comparables' weighted majority is ${pred.comps_majority}; the desk diverges: ${pred.divergence_reason}`));
+      `Why the desk diverges from its ${pred.comps_majority} neighbours: ${pred.divergence_reason}`));
   }
   const nc = pred.nearest_conflict;
   if (nc && nc.title) {
+    const art = /^[RN]/.test(pred.predicted) ? "An" : "A";
     meta.appendChild(el("p", "pred-evidence pred-diverge",
-      `Note: your closest comparable — ${nc.title} (${nc.rating}, distance ${nc.distance}) — is near enough that it may be this story's released form. ` +
-      `A ${pred.predicted} read on the draft as written is not a contradiction: shooting drafts routinely overshoot the released cut` +
-      (pred.divergence_reason ? ` — the desk's reasoning: ${pred.divergence_reason}` : `; the cut list below is the path back to ${nc.rating}.`)));
+      `Your closest comparable — ${nc.title} (${nc.rating}, distance ${nc.distance}) — is near enough that it may be this story's released form. ` +
+      `${art} ${pred.predicted} read on the draft as written is not a contradiction: shooting drafts routinely overshoot the released cut` +
+      // the desk's reasoning renders once, in the divergence line above
+      (divergeShown || !pred.divergence_reason ? `; the cut list below is the path back to ${nc.rating}.` : ` — the desk's reasoning: ${pred.divergence_reason}`)));
   }
   head.appendChild(meta);
   card.appendChild(head);
@@ -1528,7 +1531,7 @@ function renderReport(record) {
     root.appendChild(sec);
     const ul = el("ul", "plain-list");
     for (const [desk, q] of oqItems) {
-      const li = el("li");
+      const li = el("li", "note-" + desk);
       li.appendChild(el("span", "who", prettyCat(desk)));
       li.appendChild(document.createTextNode(q));
       ul.appendChild(li);
@@ -1548,7 +1551,7 @@ function renderReport(record) {
       li.appendChild(el("strong", null, who));
       const sub = el("ul", "plain-list cleared-desks");
       for (const d of ds) {
-        const sli = el("li");
+        const sli = el("li", "note-" + d.desk);
         sli.appendChild(el("span", "who", deskName(d.desk)));
         sli.appendChild(document.createTextNode(d.text));
         sub.appendChild(sli);
@@ -1558,7 +1561,7 @@ function renderReport(record) {
       ul.appendChild(li);
     }
     for (const d of cleared.scriptLevel) {
-      const li = el("li");
+      const li = el("li", "note-" + d.desk);
       li.appendChild(el("span", "who", deskName(d.desk)));
       li.appendChild(document.createTextNode(d.text));
       ul.appendChild(li);
@@ -1596,7 +1599,8 @@ function renderReport(record) {
     root.appendChild(sec);
     const ul = el("ul", "plain-list");
     for (const n of notes) {
-      const li = el("li");
+      const li = el("li", "note-adjudicator");
+      li.appendChild(el("span", "who", "Adjudicator"));
       li.appendChild(linkifyRefs(n));
       ul.appendChild(li);
     }
