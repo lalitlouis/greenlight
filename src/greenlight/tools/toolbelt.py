@@ -2329,18 +2329,26 @@ _LICENSOR_MIN_WORDS = 6
 def _licensor_span(name: str, prov_pairs: list[tuple[str, str]]) -> tuple[str, str] | None:
     """(span, matched_norm_text) — a quotable span around the licensor's name in a
     registered text, so the reader can verify the owner from the excerpt beside
-    the claim. None when no retrieved text names the holder."""
+    the claim. The span must still CONTAIN the name after the word-boundary trim:
+    roll 5 attached a Sony press-release span whose trim had cut the name off the
+    edge, and the eval read the owner as untraced (2026-09-02). None when no
+    retrieved text names the holder."""
     toks = name.split()
     pat = re.compile(r"\W+".join(re.escape(t) for t in toks), re.IGNORECASE)
     for norm_text, orig in prov_pairs:
         m = pat.search(orig)
         if not m:
             continue
-        span = orig[max(0, m.start() - _CITE_WINDOW) : m.end() + _CITE_WINDOW]
-        if " " in span:
-            span = span[span.find(" ") + 1 : span.rfind(" ")]
-        span = span.strip()
-        if len(span.split()) < _LICENSOR_MIN_WORDS:
+        lo, hi = max(0, m.start() - _CITE_WINDOW), min(len(orig), m.end() + _CITE_WINDOW)
+        # trim to word boundaries OUTSIDE the match, never across it
+        if lo > 0:
+            cut = orig.find(" ", lo, m.start())
+            lo = cut + 1 if cut != -1 else lo
+        if hi < len(orig):
+            cut = orig.rfind(" ", m.end(), hi)
+            hi = cut if cut != -1 else hi
+        span = orig[lo:hi].strip()
+        if len(span.split()) < _LICENSOR_MIN_WORDS or not pat.search(span):
             continue
         return span, norm_text
     return None
@@ -2827,6 +2835,24 @@ def file_flag(  # noqa: PLR0912, PLR0915 - a deliberate sequence of filing gates
 
     cits = _prune_weak_citations(cits, category, tool_context)
     flag["citations"] = cits
+    # the traceability gates ran BEFORE repair and pruning — re-check the names
+    # against the citations that will actually render (roll 5: an attached span
+    # that had lost its name shipped as "traceable")
+    if _LICENSOR_CATEGORY_RE.search(category or ""):
+        from greenlight.names import untraceable_rightsholders as _untraced
+
+        _left = _untraced(
+            f"{finding} {remedy_detail}", " ".join(str(c.get("excerpt") or "") for c in cits)
+        )
+        if _left:
+            return _reject_or_stop(
+                tool_context,
+                entity_id,
+                category,
+                f"REJECTED, not filed: after citation repair the rightsholder(s) {_left} are "
+                "named in no excerpt on this flag. Quote the line that names the holder, or "
+                "state the licence obligation without naming the owner.",
+            )
 
     cost_span_max = 50
     free_plus_paid_max = 1000

@@ -208,3 +208,30 @@ Owner reviewed the live Hangover report on 00212. Fixed at class:
   notices (if any) render apart from open questions.
 - S5 Everything roll 4 held (scene structure, tattoo/Nighthawks separate, pyro BLOCKER with
   csatf excerpts, licensor traceability) holds again.
+
+## Roll 5 read-off (run_20260902_001843, 00:06–00:18 PDT, exit 0, $1.85) — 49/50
+
+S1 ✗ by one: rightsholder traceability MISS on F1014 ("Sony Music Entertainment"). The
+licensor gate fired twice (CNHI, Prelinger — correct rejections) and ATTACHED a Sony
+press-release span for F1014, but the span's word-boundary trim had cut the name off the edge
+of the registered text, so the attached excerpt did not contain the owner it was attached for.
+Fix: `_licensor_span` trims outside the match only and re-checks the name survives; file_flag
+re-checks every named licensor against the citations that actually render, after repair and
+pruning. Tests pin both edges.
+S2 held the honest way: set {PG-13}, predicted R, divergence reason present; no floor (bare
+'language' is ~80% R — the F-word count is not in the vocabulary; logged residual).
+S3 n/a (0 rejections). S4 ✓ (no scene-count claims; bulletin numbers only from csatf.org or
+the local index — three `bulletin_cite_attached`). S5 ✓ except granularity: the desk filed
+four stunt_pyro flags for the S008–S011 sequence and code dedupe folded them (same category,
+entity-less, overlapping scenes — the rule working) into one BLOCKER carrying 13 citations,
+incl. epa.gov, a South Carolina film office, and a studio-teacher mirror. Fix: merged
+citations are deduped, background-pruned, and capped at 6 on both merge paths. The minor and
+water hazards live in that finding's prose this run rather than as their own lines — desk
+granularity variance, stated.
+
+## Roll 6 predictions
+
+- T1 exit 0; 50/50 — every licence finding traces its owners after repair and pruning.
+- T2 No kept finding carries more than 6 citations; merged findings keep their strongest.
+- T3 Everything roll 5 held holds again (scene structure, tattoo/Nighthawks, pyro BLOCKER with
+  csatf excerpts, no scene-count claims, divergence present whenever predicted ∉ set).

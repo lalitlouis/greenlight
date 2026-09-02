@@ -93,3 +93,32 @@ def test_dedupe_never_merges_two_entities():
     assert [f["flag_id"] for f in kept] == ["F1", "F2"]
     same = merge_exact_duplicates([flag("F1", "E001", ["S002"]), flag("F3", "E001", ["S002"])])
     assert [f["flag_id"] for f in same] == ["F1"]
+
+
+def test_licensor_span_keeps_the_name_when_it_sits_at_the_edge():
+    from greenlight.tools.toolbelt import _licensor_span
+
+    tail = (
+        "Hallelujah appears on Jeff Buckley's GRACE: LEGACY EDITION, a three-disc set issued "
+        "to commemorate the album's original Columbia release by Sony Music Entertainment"
+    )
+    hit = _licensor_span("Sony Music Entertainment", [(tail.lower(), tail)])
+    assert hit and "Sony Music Entertainment" in hit[0]
+    head = "Sony Music Entertainment controls the Buckley master; licensing runs through its desk."
+    hit = _licensor_span("Sony Music Entertainment", [(head.lower(), head)])
+    assert hit and hit[0].startswith("Sony Music Entertainment")
+
+
+def test_merged_citations_are_pruned_and_capped():
+    from greenlight.agents.adjudicator import _merge_citations
+
+    mine = [{"url": f"https://www.csatf.org/{i}", "excerpt": f"csatf {i}"} for i in range(4)]
+    theirs = [{"url": "https://reddit.com/r/x", "excerpt": "forum"}] + [
+        {"url": f"https://www.osha.gov/{i}", "excerpt": f"osha {i}"} for i in range(4)
+    ]
+    out = _merge_citations(mine, theirs)
+    assert len(out) == 6
+    assert all("reddit" not in (c.get("url") or "") for c in out)
+    assert out[0]["excerpt"] == "csatf 0"
+    only_bg = [{"url": "https://reddit.com/r/x", "excerpt": "forum"}]
+    assert _merge_citations(only_bg, []) == only_bg  # never empties

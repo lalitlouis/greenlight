@@ -152,6 +152,36 @@ def _same_disposition(a: dict[str, Any], b: dict[str, Any]) -> bool:
     return (a["remedy"].get("action") == na) == (b["remedy"].get("action") == na)
 
 
+_MERGED_CITATION_CAP = 6
+
+
+def _merge_citations(
+    mine: list[dict[str, Any]], theirs: list[dict[str, Any]]
+) -> list[dict[str, Any]]:
+    """Union two findings' citations WITHOUT building a pile: dedupe by excerpt,
+    drop background hosts when an authoritative or local source is present, and
+    cap the list (roll 5 folded four pyro filings into one BLOCKER carrying 13
+    sources, including a South Carolina film office for a New England harbor).
+    Never empties; the survivor's own order comes first."""
+    from greenlight.tools.toolbelt import _is_background_host
+
+    seen: set[str] = set()
+    merged: list[dict[str, Any]] = []
+    for c in [*mine, *theirs]:
+        ex = str(c.get("excerpt") or "")
+        if ex in seen:
+            continue
+        seen.add(ex)
+        merged.append(c)
+    strong = [
+        c
+        for c in merged
+        if not c.get("url") or c.get("via") == "local" or not _is_background_host(str(c["url"]))
+    ]
+    kept = strong or merged
+    return kept[:_MERGED_CITATION_CAP] if len(kept) > _MERGED_CITATION_CAP else kept
+
+
 def _same_entity(a: dict[str, Any], b: dict[str, Any]) -> bool:
     """Two findings about two DIFFERENT entities are two findings, whatever their
     category: the first post-review gate run folded the Krane schooner tattoo
@@ -191,8 +221,7 @@ def merge_exact_duplicates(flags: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 prior = list(existing["scene_ids"])
                 existing["scene_ids"] = sorted(set(existing["scene_ids"]) | set(flag["scene_ids"]))
                 _cap_scenes(existing, prior)
-                seen = {c["excerpt"] for c in existing["citations"]}
-                existing["citations"] += [c for c in flag["citations"] if c["excerpt"] not in seen]
+                existing["citations"] = _merge_citations(existing["citations"], flag["citations"])
                 if sev_rank[flag["severity"]] < sev_rank[existing["severity"]]:
                     existing["severity"] = flag["severity"]
                 merged = True
@@ -333,10 +362,7 @@ def apply_plan(  # noqa: PLR0912, PLR0915 - one plan walk, guards inline
             prior = list(survivor["scene_ids"])
             survivor["scene_ids"] = sorted(set(survivor["scene_ids"]) | set(other["scene_ids"]))
             _cap_scenes(survivor, prior)
-            seen_excerpts = {c["excerpt"] for c in survivor["citations"]}
-            survivor["citations"] += [
-                c for c in other["citations"] if c["excerpt"] not in seen_excerpts
-            ]
+            survivor["citations"] = _merge_citations(survivor["citations"], other["citations"])
             absorbed.add(fid)
         # Severity: highest among participants. The plan may downgrade by at most one
         # step (with its rationale on record) — never upgrade past the evidence, never
