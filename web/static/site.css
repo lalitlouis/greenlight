@@ -679,10 +679,13 @@ a.step-card:hover { text-decoration: none; box-shadow: var(--shadow-lg); }
 .by-ratings_board { color: var(--desk-ratings); background: rgba(147, 51, 234, 0.08); }
 .by-safety_underwriter { color: #92400e; background: rgba(217, 119, 6, 0.1); }
 .by-territory_censor { color: #075985; background: rgba(2, 132, 199, 0.08); }
-.finding { margin: 0 0 10px; font-size: 16px; line-height: 1.62; max-width: 74ch; color: var(--ink-2); }
+.finding { position: relative; margin: 0 0 10px; font-size: 16px; line-height: 1.62; max-width: 74ch; color: var(--ink-2); }
 .finding.clamped { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-.find-more { border: 0; background: none; padding: 0; margin: -4px 0 10px; font-size: 14.5px; font-weight: 600; color: var(--green-deep); cursor: pointer; }
+.find-more { display: inline-block; border: 0; background: none; padding: 0; margin: 0 0 0 8px; font-size: 14.5px; font-weight: 600; line-height: inherit; color: var(--green-deep); cursor: pointer; }
 .find-more:hover { text-decoration: underline; }
+/* while clamped, the toggle sits at the end of the last visible line, fading
+   over the cut-off text; expanded, it flows inline after the sentence */
+.finding.clamped .find-more { position: absolute; right: 0; bottom: 0; margin: 0; padding-left: 36px; background: linear-gradient(90deg, transparent, var(--surface) 40%); }
 .cite-toggle { border: 0; background: none; color: var(--green-deep); font-size: 16px; font-weight: 550; cursor: pointer; padding: 0; }
 .cite-toggle:hover { text-decoration: underline; }
 .expand { margin-top: 16px; display: flex; flex-direction: column; gap: 12px; }

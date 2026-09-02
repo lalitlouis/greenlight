@@ -518,7 +518,9 @@ function flagRow(f, opts) {
         const open = findP.classList.toggle("clamped");
         more.textContent = open ? "Read more ▾" : "Show less ▴";
       });
-      findP.after(more);
+      // inline with the finding text: overlaid on the last clamped line
+      // (right edge, with a fade), flowing after the sentence once open
+      findP.appendChild(more);
     } else {
       findP.classList.remove("clamped");
     }
