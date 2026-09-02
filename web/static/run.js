@@ -6,7 +6,7 @@
 
 const MAX_TRACE_LINES = 250;
 let SCENE_HEADINGS = {}; // scene_id -> heading, for narrating which scene is being read
-let SCENE_TEXT = {}; // scene_id -> script text, for the hover preview
+let SCENE_TEXT = {}; // scene_id -> script text, for the inline scene expansion
 const rt = {
   built: false,
   backlog: [], // ops that arrived before the strip existed
@@ -36,21 +36,6 @@ async function loadSceneHeadings(id) {
 
 /* scenePopover/hideScenePop/placeScenePop live in common.js */
 
-function showScenePop(anchor, sid) {
-  const text = SCENE_TEXT[sid];
-  if (!text) return; // source not loaded (or not visible to this viewer): no popover
-  clearTimeout(popHideTimer);
-  const pop = scenePopover();
-  pop.dataset.sid = sid;
-  pop.textContent = "";
-  const head = el("div", "sp-head");
-  head.appendChild(el("b", null, sid));
-  head.appendChild(el("span", null, SCENE_HEADINGS[sid] || ""));
-  pop.appendChild(head);
-  pop.appendChild(el("pre", "sp-text", text));
-  placeScenePop(pop, anchor);
-}
-
 function buildSceneStrip(scenes) {
   const strip = $("scene-strip");
   if (!strip || !scenes.length) return;
@@ -62,21 +47,19 @@ function buildSceneStrip(scenes) {
     head.appendChild(el("span", "rts-num", s.scene_id));
     head.appendChild(el("span", "rts-heading", s.heading.slice(0, 60)));
     head.appendChild(el("span", "rts-page", "p." + s.page));
-    head.appendChild(el("span", "rts-view", "Read \u25B8"));
     card.appendChild(head);
     card.appendChild(el("div", "rts-dots"));
     card.appendChild(el("div", "rts-pins"));
-    // click to preview, click again / outside / Escape to close — the hover
-    // popover covered the whole panel and trapped the scroll (owner, run 17)
-    card.title = "Click to preview the scene";
+    // click expands the scene text inline (accordion) — the popover covered
+    // the panel; clicks inside the expanded text never collapse it
+    card.title = "Click to read the scene";
     card.addEventListener("click", (e) => {
-      e.stopPropagation();
-      const pop = document.getElementById("scene-pop");
-      if (pop && !pop.classList.contains("hidden") && pop.dataset.sid === s.scene_id) {
-        pop.classList.add("hidden");
-        return;
-      }
-      showScenePop(card, s.scene_id);
+      if (e.target.closest(".rts-body")) return;
+      const open = card.querySelector(".rts-body");
+      if (open) { open.remove(); return; }
+      const text = SCENE_TEXT[s.scene_id];
+      if (!text) return;
+      card.appendChild(el("pre", "rts-body", text));
     });
     strip.appendChild(card);
   }
