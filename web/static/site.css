@@ -967,7 +967,10 @@ mark.d-add { background: rgba(10, 143, 82, 0.16); color: var(--green-deep); bord
 
 /* the studio room */
 .studio-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-.studio-toggle { border: 0; background: none; color: var(--green-deep); font-size: 15.5px; font-weight: 600; cursor: pointer; }
+.studio-toggle { border: 0; background: none; color: var(--green-deep); font-size: 15.5px; font-weight: 800; cursor: pointer; }
+.studio-toggle.pulse { animation: togglePulse 1.5s ease-in-out infinite; }
+@keyframes togglePulse { 0%, 100% { opacity: 1; text-shadow: none; } 50% { opacity: 0.55; text-shadow: 0 0 10px currentColor; } }
+@media (prefers-reduced-motion: reduce) { .studio-toggle.pulse { animation: none; } }
 .studio-feed { display: flex; flex-direction: column; gap: 10px; padding: 14px 18px; max-height: 320px; overflow-y: auto; }
 .studio-feed:empty { display: none; }
 .studio-card { border-radius: 12px; padding: 12px 16px; background: var(--band); border-left: 4px solid var(--line-2); }
@@ -989,7 +992,11 @@ mark.d-add { background: rgba(10, 143, 82, 0.16); color: var(--green-deep); bord
 .strip-count { font-size: 14.5px; font-weight: 650; color: var(--green-deep); font-variant-numeric: tabular-nums; }
 
 .scene-strip { max-height: 66vh; overflow-y: auto; padding: 14px 16px 18px; display: flex; flex-direction: column; gap: 8px; scroll-behavior: smooth; }
-.rt-scene { position: relative; border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; background: var(--surface); transition: border-color 0.3s ease, box-shadow 0.4s ease; }
+.rt-scene { position: relative; border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; background: var(--surface); transition: border-color 0.3s ease, box-shadow 0.4s ease; cursor: pointer; }
+.rt-scene:hover { border-color: var(--green-deep); }
+.rts-view { flex: none; font-size: 13px; font-weight: 700; color: var(--green-deep); opacity: 0.75; }
+.rt-scene:hover .rts-view { opacity: 1; text-decoration: underline; }
+.strip-hint { font-size: 13.5px; color: var(--ink-3); }
 .rts-head { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
 .rts-num { font-size: 13px; font-weight: 700; color: var(--fyi); font-variant-numeric: tabular-nums; flex: none; }
 .rts-heading { font-size: 15px; font-weight: 650; color: var(--ink-2); letter-spacing: 0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }

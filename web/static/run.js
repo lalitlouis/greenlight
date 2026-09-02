@@ -62,6 +62,7 @@ function buildSceneStrip(scenes) {
     head.appendChild(el("span", "rts-num", s.scene_id));
     head.appendChild(el("span", "rts-heading", s.heading.slice(0, 60)));
     head.appendChild(el("span", "rts-page", "p." + s.page));
+    head.appendChild(el("span", "rts-view", "Read \u25B8"));
     card.appendChild(head);
     card.appendChild(el("div", "rts-dots"));
     card.appendChild(el("div", "rts-pins"));
@@ -1097,8 +1098,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const body = $("feeds-body");
     if (!body) return;
     const hidden = body.classList.toggle("hidden");
-    $("feeds-toggle").textContent = hidden ? "Show" : "Hide";
+    const btn = $("feeds-toggle");
+    btn.textContent = hidden ? "Show" : "Hide";
+    // discovered — stop drawing the eye for the rest of the session
+    btn.classList.remove("pulse");
+    try { sessionStorage.setItem("feeds-seen", "1"); } catch (e) { /* fine */ }
   };
+  try {
+    if (!sessionStorage.getItem("feeds-seen")) $("feeds-toggle")?.classList.add("pulse");
+  } catch (e) { $("feeds-toggle")?.classList.add("pulse"); }
   $("feeds-head")?.addEventListener("click", toggleFeeds);
   $("feeds-head")?.addEventListener("keydown", (e) => {
     if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleFeeds(); }
