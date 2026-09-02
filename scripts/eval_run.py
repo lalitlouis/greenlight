@@ -109,30 +109,25 @@ def main() -> int:
         bool(flags_matching(flags, category_any=["disparagement"])),
         "Coors Light rant",
     )
+    # entity seeds match on the seed's TEXT: category slugs drift run to run, but a
+    # category-only hit passed vacuously when the tattoo flag had been merged away
+    # into the Nighthawks flag (gate run 2026-09-01) — the entity is the identity
     check(
         "tattoo flagged as visual artwork (Krane schooner)",
-        bool(flags_about(flags, category_any=["artwork", "art_"], text_any=["tattoo", "krane"])),
+        bool(flags_matching(flags, text_any=["tattoo", "krane"])),
         "depicted custom tattoo by a named artist — the Whitmill scenario",
     )
     check(
         "artwork flagged (Nighthawks)",
-        bool(
-            flags_about(flags, category_any=["artwork", "art_"], text_any=["nighthawks", "hopper"])
-        ),
+        bool(flags_matching(flags, text_any=["nighthawks", "hopper"])),
     )
     check(
         "likeness flagged (Springsteen photo)",
-        bool(
-            flags_about(
-                flags,
-                category_any=["publicity", "likeness", "personality"],
-                text_any=["springsteen"],
-            )
-        ),
+        bool(flags_matching(flags, text_any=["springsteen"])),
     )
     check(
         "film clip flagged (Jaws)",
-        bool(flags_about(flags, category_any=["film_clip", "clip"], text_any=["jaws"])),
+        bool(flags_matching(flags, text_any=["jaws"])),
     )
     check(
         "no 'all clear' assertions filed as flags",

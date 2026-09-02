@@ -1,0 +1,90 @@
+# Gate run — review batch (commit ea21a58), pre-registered 2026-09-01
+
+Written BEFORE the fixture run starts, per the anti-oscillation policy (run13/00-MASTER):
+the read-off is judged against these lines, not retrofitted to them.
+
+## What changed since the last green gate (35/35 on run 17)
+
+Prompts (ratings one-call/one-descriptor rule, LANGUAGE MATH removed; safety anchor scoped,
+firearms bulletin via lookup; territory NO_ACTION line; cleared-item-is-silence moved to
+COMMON; PD-year placeholder), parser (EST./.45 no longer headings; shooting numbers
+captured), census regexes, filing gates (phantom scene ids rejected; statute auto-attach
+requires a quotable span; cost span rejects $0–>$1,000; normative regex tightened;
+sync/master phrase list), rating tools (canonical descriptors, marginal selection, one
+rounding rule, distance-0 weight, cut list dropped at target), verification (no full flip on
+sourcing grounds; gates on re-source/refile/fact-prop), assembly (absorbed-id rewrite, OQ
+follow-ups, items_examined), eval (46 checks via scripts/eval_invariants.py).
+
+## Predictions
+
+- P1 Run exits 0 (no abort, no salvage), 10–15 min, ~$2–5.
+- P2 Eval 46/46. If not, the misses are one of the named soft spots below, and each is a
+  real desk defect to fix at its class — not a reason to relax an assertion.
+- P3 Scene structure identical to run_20260901_182958 (12 scenes, same headings and pages).
+- P4 Census unchanged on this fixture: 'fucking' ×3 at S003/S006/S011, no slurs.
+- P5 Rating: predicted R; `descriptors` present, one per category (language / drugs /
+  violence); conformal set {R} or {PG-13, R}; 8/8 comparables R with official "Rated R for"
+  excerpts; base rate shows 56.2% of 4,733 on the panel and one-decimal marginals on cards.
+- P6 Every rating finding's marginal names the descriptor its prose names (no "unmodified"
+  where the finding says "brief").
+- P7 Expected casualty: the Gloucester Daily Times publication_clearance finding (F1004
+  class) either files with an on-topic citation or falls to Open questions. It must NOT
+  render as verified on a prop-design blog. Kept-flag count may be 18 rather than 19.
+- P8 guard_manifest may show new filing gates firing (prose_scene_missing, statute attach
+  refusal, cost-span $0) with no refile loop (retry caps hold; no desk hits its iteration
+  ceiling on a rejection loop).
+- P9 No overturn flips a citation_offtopic / premise_unsupported verdict; any overturn on
+  record is a stated-fact or absence overturn with a number-anchored ground.
+- P10 Soft spots (a MISS here is information, not regression): rightsholder-name
+  traceability (desk names a licensor no excerpt carries); year+term arithmetic (desk
+  writes 2038 for Nighthawks again — the prompt now says 2037).
+- P11 Cleared section: ratings census row routes to "counted there" (cites F2002-class);
+  header reads "N entities + M script-wide checks"; no row cites an absorbed id.
+
+## Decision rule
+
+Green (46/46, exit 0, P3/P9 hold) → `make deploy` via safe_deploy, then the scale gate as
+budget allows. Red → fix at the class, pin with a test, roll again. No deploy on a red.
+
+## Roll 1 read-off (run_20260901_222041, 22:11–22:20 PDT, exit 0, $1.55) — 45/46 as graded then
+
+P1 ✓ · P3 ✓ (scene_meta identical) · P4 ✓ (three 'fucking', S003/S006/S011) · P6 ✓ (F2003 card =
+'brief drugs', prose = 'brief drugs') · P7 ✓ (F1008 publication_clearance rejected as off-topic,
+demoted to an open question; no false overturn; 18 kept) · P8 ✓ (statute attach + one OQ routed;
+no refile loop) · P9 ✓ (zero overturns) · P11 ✓ (31 entities + 13 script-wide checks; one
+follow-up under F1001).
+P5 ✗ in part: predicted R, but conformal set {PG, PG-13} — the desk added "thematic elements"
+to the profile and the joint model reads that profile as PG-13; divergence reason stated;
+set reproduces from the persisted descriptors (invariant passed). Residual desk variance:
+the vocabulary cannot encode F-word COUNT, so "language" is ambiguous between one-F-word
+PG-13 and three-F-word R. Logged, not changed.
+P10 fired: rightsholder traceability MISS — F1001 named Sony Music Publishing beside an
+excerpt saying only "Composed by Leonard Cohen"; F1002 named Columbia/Sony Music
+Entertainment on generic licensing text (both genuine); F1003's "Black Entertainment" was the
+extractor reading a case citation (false positive).
+NOT predicted: code dedupe merged the Krane tattoo flag (E009, SUPPORTED) into the Nighthawks
+flag (E001) — same desk, same category, shared S002 — and the tattoo seed check passed on
+category alone. A verified finding vanished; the grader hid it (and had hidden the same seed's
+rejection on the previous record).
+
+## Fixes at the class before roll 2 (commit follows)
+
+- Licensor-name FILING gate (`_uncited_licensor_problem`, toolbelt): names in licence/clearance
+  findings must appear in the flag's excerpts; retrieved-but-unquoted → auto-attached with its
+  source URL; unretrieved → rejected with a "quote the repertory line" message. Extractor shared
+  with both evals via `greenlight/names.py`; case citations ("v. X") excluded.
+- `merge_exact_duplicates` and the plan-merge refusal require the same entity_id.
+- Entity seed checks (tattoo, Nighthawks, Springsteen, Jaws) match on TEXT, not category.
+  Re-graded: old record 43/46 (its tattoo flag had been rejected), roll 1 44/46.
+
+## Roll 2 predictions
+
+- R1 exit 0; 46/46.
+- R2 A Krane tattoo artwork_license flag renders as its OWN line (E009), Nighthawks separate;
+  `absorbed_into` empty or same-entity only.
+- R3 Licence findings either quote the licensor (possibly via `licensor_cite_attached`) or
+  name no owner; `uncited_licensor` may appear in the guard manifest with no refile loop.
+- R4 Scene structure identical; census identical; no overturn of a sourcing rejection.
+- R5 Soft spot: the tattoo seed is desk+verifier dependent (rejected on 182958, merged on
+  222041) — a third failure mode would be a plain miss; that would be red, and the fix would
+  be at the desk/citation class, not the grader.

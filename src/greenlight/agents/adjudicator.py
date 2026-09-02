@@ -152,6 +152,16 @@ def _same_disposition(a: dict[str, Any], b: dict[str, Any]) -> bool:
     return (a["remedy"].get("action") == na) == (b["remedy"].get("action") == na)
 
 
+def _same_entity(a: dict[str, Any], b: dict[str, Any]) -> bool:
+    """Two findings about two DIFFERENT entities are two findings, whatever their
+    category: the first post-review gate run folded the Krane schooner tattoo
+    (artwork_license, S002) into the Nighthawks print (artwork_license, S002/S007)
+    and a verified, SUPPORTED finding vanished from the report (2026-09-01).
+    Entity-less findings (script-level rating/territory claims) keep the old rule."""
+    ea, eb = a.get("entity_id") or "", b.get("entity_id") or ""
+    return not ea or not eb or ea == eb
+
+
 def merge_exact_duplicates(flags: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """Code-level dedupe BEFORE the model sees anything: same desk + same
     category + overlapping scenes is one finding, full stop. Keeps the higher
@@ -174,6 +184,7 @@ def merge_exact_duplicates(flags: list[dict[str, Any]]) -> list[dict[str, Any]]:
             script_wide = flag["category"].startswith(("rating_", "territory_"))
             if (
                 same_cat
+                and _same_entity(existing, flag)
                 and _same_disposition(existing, flag)
                 and (script_wide or set(existing["scene_ids"]) & set(flag["scene_ids"]))
             ):
@@ -261,6 +272,8 @@ def _merge_refusal(survivor: dict[str, Any], other: dict[str, Any]) -> str | Non
     allowed. Each rule mirrors an instruction line the model was trusted with."""
     if _desk_of(survivor) != _desk_of(other):
         return "different desks (a safety and a territory finding on one scene are two findings)"
+    if not _same_entity(survivor, other):
+        return "different entities (the Nighthawks print and the Krane tattoo are two artworks)"
     if not _same_disposition(survivor, other):
         return "a NO_ACTION finding and an actionable one are two findings"
     if {survivor.get("category"), other.get("category")} == _RIGHTS_PAIR:

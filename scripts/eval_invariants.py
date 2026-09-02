@@ -17,6 +17,8 @@ from __future__ import annotations
 import re
 from typing import Any
 
+from greenlight.names import untraceable_rightsholders as _untraceable_names
+
 Check = tuple[str, bool, str]
 
 RATING_RANK = {"G": 0, "PG": 1, "PG-13": 2, "R": 3, "NC-17": 4}
@@ -33,20 +35,8 @@ _UNTIL = re.compile(
     re.IGNORECASE,
 )
 _UNRESOLVED_TEMPLATE = "Unresolved —"
-# a rightsholder-shaped proper noun: up to three capitalised words then a
-# corporate/institutional suffix. The distinctive tokens (not the suffix, not
-# stopwords) must appear in the finding's OWN excerpts — the statute-section
-# rule applied to names (review 2026-09-01 A9).
-_RIGHTSHOLDER = re.compile(
-    r"\b((?:[A-Z][\w&'.\-/]*\s+){0,3}"
-    r"(?:Music|Publishing|Records|Recordings|Entertainment|Pictures|Studios|Society|Museum"
-    r"|Estate|Inc\.?|LLC|Group|Corporation|Company|Foundation|Trust|Archive|Archives))\b"
-)
-_SUFFIX_TOKENS = {
-    "music", "publishing", "records", "recordings", "entertainment", "pictures", "studios",
-    "society", "museum", "estate", "inc", "llc", "group", "corporation", "company",
-    "foundation", "trust", "archive", "archives", "the", "of", "and", "for", "a", "an",
-}  # fmt: skip
+# the rightsholder extractor is SHARED with the filing gate (greenlight.names) —
+# the gate and the assertion cannot drift apart
 
 
 def expand_scene_label(label: str, number_to_sid: dict[str, str]) -> set[str]:
@@ -117,17 +107,8 @@ def term_arithmetic_problems(text: str) -> list[str]:
 def untraceable_rightsholders(flag: dict[str, Any]) -> list[str]:
     """Rightsholder-shaped names in a *_license finding whose distinctive tokens
     appear in none of that finding's excerpts. Pure; exposed for tests."""
-    excerpts = _norm(" ".join(str(c.get("excerpt") or "") for c in flag.get("citations") or []))
-    excerpt_tokens = set(excerpts.split())
-    out: list[str] = []
-    for m in _RIGHTSHOLDER.finditer(_body(flag)):
-        name = m.group(1).strip()
-        tokens = [t for t in _norm(name).split() if t not in _SUFFIX_TOKENS]
-        if not tokens:
-            continue
-        if not all(t in excerpt_tokens for t in tokens):
-            out.append(name)
-    return sorted(set(out))
+    excerpts = " ".join(str(c.get("excerpt") or "") for c in flag.get("citations") or [])
+    return _untraceable_names(_body(flag), excerpts)
 
 
 def shared_invariants(  # noqa: PLR0912, PLR0915 - a flat checklist, deliberately linear

@@ -2273,6 +2273,91 @@ def _hour_present(n: str, text: str) -> bool:
 
 _PROVISION_MIN_WORDS = 8
 
+# licensor names gate every category that licenses or clears a right
+_LICENSOR_CATEGORY_RE = re.compile(r"licen[cs]e|clearance", re.IGNORECASE)
+_LICENSOR_MIN_WORDS = 6
+
+
+def _licensor_span(name: str, prov_pairs: list[tuple[str, str]]) -> tuple[str, str] | None:
+    """(span, matched_norm_text) — a quotable span around the licensor's name in a
+    registered text, so the reader can verify the owner from the excerpt beside
+    the claim. None when no retrieved text names the holder."""
+    toks = name.split()
+    pat = re.compile(r"\W+".join(re.escape(t) for t in toks), re.IGNORECASE)
+    for norm_text, orig in prov_pairs:
+        m = pat.search(orig)
+        if not m:
+            continue
+        span = orig[max(0, m.start() - _CITE_WINDOW) : m.end() + _CITE_WINDOW]
+        if " " in span:
+            span = span[span.find(" ") + 1 : span.rfind(" ")]
+        span = span.strip()
+        if len(span.split()) < _LICENSOR_MIN_WORDS:
+            continue
+        return span, norm_text
+    return None
+
+
+def _uncited_licensor_problem(
+    tool_context: ToolContext,
+    category: str,
+    finding: str,
+    remedy_detail: str,
+    cits: list[dict[str, Any]] | None = None,
+) -> str | None:
+    """A licence/clearance finding that NAMES a rightsholder must carry that
+    name in its own excerpts — the statute-section rule applied to names. The
+    first post-review gate run filed "100% controlled by Sony Music Publishing"
+    beside an excerpt saying only "Composed by Leonard Cohen" (2026-09-01):
+    factually right, evidentially typed from memory. Retrieved-but-unquoted
+    names are auto-attached (the desk excerpted the wrong line, not the wrong
+    source); names in no retrieved text reject."""
+    if not _LICENSOR_CATEGORY_RE.search(category or ""):
+        return None
+    from greenlight.names import rightsholder_names, untraceable_rightsholders
+
+    body = f"{finding} {remedy_detail}"
+    if not rightsholder_names(body):
+        return None
+    excerpts = " ".join(str(c.get("excerpt") or "") for c in (cits or []))
+    missing = untraceable_rightsholders(body, excerpts)
+    if not missing:
+        return None
+    prov_pairs = _prov_bucket(tool_context)
+    inv = str(getattr(tool_context, "invocation_id", "") or "run")
+    urls = _PROV_URLS.get(inv) or {}
+    still_missing: list[str] = []
+    for name in missing:
+        hit = _licensor_span(name, prov_pairs)
+        if hit is None or cits is None:
+            still_missing.append(name)
+            continue
+        span, norm_text = hit
+        cits.append(
+            {
+                "source_type": "web",
+                "title": "licensor named in retrieved source (auto-attached for traceability)",
+                "url": urls.get(norm_text) or None,
+                "excerpt": span,
+                "retrieved_at": None,
+                "repaired": True,
+            }
+        )
+        _manifest_note(
+            tool_context,
+            {"guard": "licensor_cite_attached", "stage": "filing", "matched": name[:60]},
+        )
+    if not still_missing:
+        return None
+    return (
+        f"REJECTED, not filed: the finding names rightsholder(s) {still_missing} that appear "
+        "in NO source retrieved this run. An ownership claim typed from memory is the "
+        "fabrication class wearing a suit — research() the repertory, label, or licensing "
+        "listing (ASCAP/BMI Songview, the label's licensing page, the museum or ARS "
+        "record) and QUOTE the line that names the holder, or state the licence "
+        "obligation without naming the owner."
+    )
+
 
 def _provision_span(n: str, prov_pairs: list[tuple[str, str]]) -> str | None:
     """A quotable span around the section number from a registered text —
@@ -2475,6 +2560,21 @@ def file_flag(  # noqa: PLR0912, PLR0915 - a deliberate sequence of filing gates
             },
         )
         return _reject_or_stop(tool_context, entity_id, category, statute_problem)
+
+    if licensor_problem := _uncited_licensor_problem(
+        tool_context, category, finding, remedy_detail, cits
+    ):
+        _manifest_note(
+            tool_context,
+            {
+                "guard": "uncited_licensor",
+                "stage": "filing",
+                "category": category,
+                "entity": entity_id,
+                "matched": licensor_problem[:120],
+            },
+        )
+        return _reject_or_stop(tool_context, entity_id, category, licensor_problem)
 
     if src_problem := _background_only_problem(severity, cits, tool_context):
         return _reject_or_stop(tool_context, entity_id, category, src_problem)
