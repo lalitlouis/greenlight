@@ -324,3 +324,12 @@ show no untraced owners.
 V5 as predicted but the other way: TSN's set moved {PG-13} → {R} because the desk wrote
 "pervasive language" (floor) for a film CARA rated PG-13 — the floor is only as good as the
 desk's intensity word; logged as desk-descriptor judgment, not a code defect.
+
+## Wolf re-run (15:15–15:29 PDT, $3.64) — clean
+
+No untraced owners across seven licence/clearance findings (`uncited_licensor` ×2 fired,
+`licensor_cite_attached` ×3); max 3 citations; 0 unexamined; set {R} with three floors
+(pervasive language, strong sexual content, graphic nudity), 8/8 comparables R; 34 kept /
+2 rejected (Bo Dietl publicity and a UK language flag, both on citation grounds), score 21.
+All six case records are now clean on every shared invariant; publish = safe_deploy (the
+records ship in the image). Case regen total: $23.89 for seven runs.
