@@ -271,3 +271,17 @@ rule; every seed miss is an item clearance had not reached. Ops follow-up (logge
 fixed): the run breathed for ~2.5 h on a dead network before the DNS error surfaced —
 the 900 s inactivity watchdog should bound a network-unreachable stall the same way it
 bounds a silent one. Re-launched at the time stamp below with the same predictions U1–U5.
+
+## Scale gate attempt 2 (run_20260902_130947, 12:54–13:10 PDT, exit 0, $3.32) — 49/49 after a grader fix
+
+U1 ✓ (15.7 min) · U2 ✓ (0 unexamined, 0 collapsed, clearance 113/113 work items, territory
+17/17, rating filed with comparables) · U3 ✓ (every shared invariant green, incl. floor,
+rejected-only descriptors, scene counts, vote recompute) · U4 ✓ (sync + master split, Nighthawks,
+serpent tattoo, Coors disparagement, AND the controlled-venue remedy — the seed that had failed
+most runs) · U5 ✓ (licensor gate fired twice; every licence finding traces its owners).
+Rating: predicted R, set {PG-13, R} ∋ R, majority R. 23 kept / 0 rejected, score 34.
+The single MISS as first graded (48/49) was the GRADER: the "neutral Springsteen story NOT
+defamation-flagged" counterweight used `flags_about`, which unions category OR text, so the
+doctrine-correct right_of_publicity flag on the Springsteen tribute POSTER (S045) counted as
+a defamation flag; the anecdote (S011) was not flagged and the finding says so. Negative
+checks are now conjunctive (`flags_matching`). No product code changed; nothing to deploy.

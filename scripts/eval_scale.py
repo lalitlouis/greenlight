@@ -140,9 +140,12 @@ def main() -> int:
             for f in casino
         ),
     )
+    # NEGATIVE checks are conjunctive (category AND text): flags_about unions the two,
+    # and a doctrine-correct right_of_publicity flag on the Springsteen POSTER read as
+    # "defamation-flagged" (scale gate 2026-09-02) — the anecdote itself was not flagged
     check(
         "defamation counterweight: neutral Springsteen story NOT defamation-flagged",
-        not flags_about(flags, category_any=["defamation"], text_any=["springsteen"]),
+        not flags_matching(flags, category_any=["defamation"], text_any=["springsteen"]),
     )
     check(
         "safety: pyro/minor climax flagged",
