@@ -9,6 +9,7 @@ The writer stays the author — these are proposals with a rationale, not edits.
 from __future__ import annotations
 
 import asyncio
+import logging
 import os
 from typing import Any
 
@@ -17,6 +18,7 @@ from pydantic import BaseModel, Field
 from greenlight.models import PRO_MODEL
 
 MODEL = PRO_MODEL
+_LOG = logging.getLogger("greenlight.fixer")
 MAX_SCENE_CHARS = 9000
 _ATTEMPTS = 2
 
@@ -105,7 +107,7 @@ async def propose_fix(flag: dict[str, Any], scene_texts: dict[str, str]) -> dict
     )
 
     last_error = "no valid patches"
-    for _ in range(_ATTEMPTS):
+    for attempt in range(_ATTEMPTS):
         try:
             res = await client.aio.models.generate_content(
                 model=MODEL,
@@ -116,12 +118,37 @@ async def propose_fix(flag: dict[str, Any], scene_texts: dict[str, str]) -> dict
                     temperature=0.3,
                 ),
             )
+            if res.text is None:
+                # A safety-filter block is deterministic — retrying burns the
+                # user's ~25s for the same answer (the Wolf verifier lesson).
+                block = getattr(getattr(res, "prompt_feedback", None), "block_reason", None)
+                _LOG.warning(
+                    "fix draft blocked: flag=%s block_reason=%s", flag.get("flag_id"), block
+                )
+                return {
+                    "error": "The model declined to rewrite this scene's content "
+                    "(safety filter). Apply the remedy manually — the finding text "
+                    "and remedy describe the exact change."
+                }
             proposal = FixProposal.model_validate_json(res.text)
             patches = validate_patches([p.model_dump() for p in proposal.patches], scene_texts)
             if patches:
                 return {"summary": proposal.summary, "patches": patches}
             last_error = "the drafted patches did not match the scene text"
+            _LOG.warning(
+                "fix draft unusable: flag=%s attempt=%s %s patches, none matched",
+                flag.get("flag_id"),
+                attempt + 1,
+                len(proposal.patches),
+            )
         except Exception as e:
             last_error = f"{type(e).__name__}"
+            # fail visible: the 502's cause must be reconstructable from logs
+            _LOG.warning(
+                "fix draft attempt failed: flag=%s attempt=%s error=%r",
+                flag.get("flag_id"),
+                attempt + 1,
+                e,
+            )
             await asyncio.sleep(5)
     return {"error": f"Could not draft a clean fix ({last_error}). Try again."}

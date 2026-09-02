@@ -334,7 +334,12 @@ async function draftFix(f, btn, result) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ run_id: RUN_ID, flag_id: f.flag_id }),
     });
-    if (!res.ok) throw new Error(await res.text());
+    if (!res.ok) {
+      const raw = await res.text();
+      let msg = raw;
+      try { msg = JSON.parse(raw).detail || raw; } catch { /* not JSON */ }
+      throw new Error(msg);
+    }
     renderFix(result, await res.json(), f.flag_id);
     btn.textContent = "Draft another fix";
     return true;
