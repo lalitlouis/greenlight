@@ -981,11 +981,16 @@ function onResult(record) {
   bumpProgress();
   clearInterval(state.timer);
   state.es?.close();
+  // The run is over: every desk is terminal, streamed or not. A desk whose
+  // events never reached this tab used to sit on "waiting" forever — reconcile
+  // its flag count from the record itself, the authoritative tally.
   for (const id of DESK_IDS) {
-    if (state.desks[id]?.started) {
-      state.desks[id].done = true;
-      setDeskStatus(id);
-    }
+    const d = state.desks[id];
+    if (!d) continue;
+    const fromRecord = (record?.flags || []).filter((f) => f.agent === id).length;
+    if (!d.started || fromRecord > d.flags) d.flags = fromRecord;
+    d.done = true;
+    setDeskStatus(id);
   }
   stashRecord(state.reportId, record);
   if (typeof window.confetti === "function") {

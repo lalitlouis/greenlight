@@ -44,6 +44,17 @@
       <p class="run-status" id="run-status">Connecting to the analysis…</p>
     </div>
 
+    <div class="card pipe-strip feeds-strip">
+      <div class="pipe-head studio-head feeds-head" id="feeds-head" role="button" tabindex="0">
+        <span class="feeds-title"><b>Full desk feeds</b> — every tool call from all four desks</span>
+        <button class="studio-toggle" id="feeds-toggle" type="button">Show</button>
+        <span class="feeds-chips" id="feeds-chips"></span>
+      </div>
+      <div id="feeds-body" class="hidden">
+        <div class="panel" id="panel"></div>
+      </div>
+    </div>
+
     <div class="card firstlook" id="firstlook" hidden>
       <div class="fl-head">
         <div>
@@ -62,17 +73,6 @@
         released films land here in about a minute…</span>
       </div>
       <div class="fl-impressions" id="fl-impressions" hidden></div>
-    </div>
-
-    <div class="card pipe-strip feeds-strip">
-      <div class="pipe-head studio-head feeds-head" id="feeds-head" role="button" tabindex="0">
-        <span class="feeds-title"><b>Full desk feeds</b> — every tool call from all four desks</span>
-        <button class="studio-toggle" id="feeds-toggle" type="button">Show</button>
-        <span class="feeds-chips" id="feeds-chips"></span>
-      </div>
-      <div id="feeds-body" class="hidden">
-        <div class="panel" id="panel"></div>
-      </div>
     </div>
 
     <div class="mission">
