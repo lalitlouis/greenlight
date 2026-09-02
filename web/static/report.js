@@ -703,7 +703,7 @@ function renderPrediction(root, pred) {
     );
     if (interactive) {
       cuts.appendChild(
-        el("p", "cuts-hint", `Check cuts to re-run the comparables search on your revised content profile — live against all ${corpusN()} films. Cuts are levers, not guarantees: the simulator measures how far each one actually moves the rating.`)
+        el("p", "cuts-hint", "Check cuts to test your revised content profile — live against the measured CARA boundary and the corpus of official rating rationales. Cuts are levers, not guarantees: the simulator measures how far each one actually moves the rating.")
       );
     }
     const ol = el("ol", "cuts-list");
@@ -768,7 +768,7 @@ function initWhatIf(cutsRoot, pred) {
       const s = (Date.now() - t0) / 1000;
       // paced against the typical ~8s round trip; holds at 92% until the result lands
       fill.style.width = Math.min(92, s * 12) + "%";
-      if (s > 3) stage.textContent = `Searching ${corpusN()} released films for the new nearest comparables…`;
+      if (s > 3) stage.textContent = "Measuring the revised profile against the CARA boundary and official rationales…";
       if (s > 8) stage.textContent = "Almost there — ranking comparables…";
     }, 200);
     try {
@@ -906,15 +906,16 @@ function renderWhatIf(out, d, pred, baseTarget, total, nCuts) {
   // when the revised profile is a few words, say why they can mislead.
   if (d.basis === "boundary") {
     const lbl =
-      d.neighbors_sparse && d.neighbors_vote && d.neighbors_vote !== d.projected
-        ? `Nearest released-film rationales (caution: a profile this brief textually neighbors films rated ${d.neighbors_vote} for language alone — the boundary above is the instrument here):`
-        : "Nearest released-film rationales:";
+      d.neighbors_vote && d.neighbors_vote !== d.projected
+        ? `Films with the nearest official rationales (their plurality reads ${d.neighbors_vote}; the measured boundary above weighs the full corpus statistics):`
+        : "Films with the nearest official rationales:";
     row.appendChild(el("i", "wi-comps-label", lbl));
   }
   for (const c of (d.comparables || []).slice(0, 5)) {
     const chipEl = el("span", "wi-comp r-line-" + c.rating);
     chipEl.appendChild(el("b", "wi-r r-" + c.rating, c.rating));
     chipEl.appendChild(document.createTextNode(`${c.title}${c.year ? " (" + c.year + ")" : ""}`));
+    if (c.rationale) chipEl.title = c.rationale;
     row.appendChild(chipEl);
   }
   out.appendChild(row);

@@ -118,7 +118,7 @@ def project(
         return {"error": "No cuts selected."}
 
     mask = ",".join(str(i) for i in sorted(set(cut_indices))) + "|" + "|".join(extras)
-    key = "whatif:v2:" + hashlib.sha256(f"{run_id}|{mask}|{rationale}".encode()).hexdigest()[:24]
+    key = "whatif:v3:" + hashlib.sha256(f"{run_id}|{mask}|{rationale}".encode()).hexdigest()[:24]
     if (cached := storage.load_research(key)) is not None:
         return cached
 
@@ -148,16 +148,20 @@ def project(
         boundary = {}
     neighbors_sparse = len(phrases) <= 1 or len(revised) < _SPARSE_RATIONALE_CHARS
 
+    # v3: neighbors come from cara_rationales — OFFICIAL filmratings.com
+    # rationale strings embedded in rationale-space (scripts/ingest_cara_corpus).
+    # The content-profile table matched plots ("films ABOUT swearing"), which
+    # is what put Swearnet atop a one-F-word profile.
     vec = _embed_cached(revised)
     rows = (
         toolbelt._clickhouse_client()
         .query(
             """
-        SELECT title, year, rating, source_url,
+        SELECT title, year, rating, source_url, rationale,
                cosineDistance(embedding, %(vec)s) AS distance
-        FROM rating_rationales
+        FROM cara_rationales
         WHERE lower(title) != lower(%(skip_title)s)
-        ORDER BY distance ASC
+        ORDER BY distance ASC, year DESC
         LIMIT 8
         """,
             parameters={
@@ -176,7 +180,9 @@ def project(
             "year": r[1],
             "rating": r[2],
             "source_url": r[3],
-            "distance": round(float(r[4]), 4),
+            # the film's own official rationale — the chip can show WHY it voted
+            "rationale": r[4],
+            "distance": round(float(r[5]), 4),
         }
         for r in rows
     ]
