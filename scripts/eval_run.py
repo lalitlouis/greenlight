@@ -14,6 +14,7 @@ from __future__ import annotations
 import glob
 import json
 import os
+import re
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -176,6 +177,21 @@ def main() -> int:
         "safety: THE CLIMAX IS FLAGGED (S009-S011)",
         bool(climax),
         "burn+water+night+minor+animal — the worst scene cannot be the missed one",
+    )
+    # the seeded BLOCKER by name: roll 2 (2026-09-01) lost the stunt_pyro finding to a
+    # definition-line citation while this climax check passed via the water stunt
+    pyro = [
+        f
+        for f in flags_matching(
+            flags, desk="safety_underwriter", scenes_any=["S008", "S010", "S011"]
+        )
+        if re.search(r"pyro|flame|burn|fire(?!arm)", f["category"], re.IGNORECASE)
+    ]
+    check(
+        "safety: the vessel burn is flagged as a pyro/fire hazard (S008/S010/S011)",
+        bool(pyro),
+        "diesel + mortar fireworks + flare gun on open water — the report's top finding "
+        "cannot depend on which citation the desk kept",
     )
     check(
         "safety: firearms/salute flagged",

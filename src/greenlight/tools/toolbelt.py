@@ -2252,9 +2252,11 @@ def _uncited_statute_problem(
         f"REJECTED, not filed: the figure(s) {missing} (statute section or statutory "
         "limit) appear in NO quotable source text retrieved this run — a precise number "
         "typed from memory, or seen only in a page title, reads as authoritative and "
-        "cannot be verified. research() the actual provision (restrict_to_domains "
-        "law.cornell.edu, govinfo.gov, dir.ca.gov, leg.state.nv.us) and QUOTE the text "
-        "that states it, or state the obligation without the number."
+        "cannot be verified. KEEP every citation already on this flag and ADD one that "
+        "quotes the provision: research() it (restrict_to_domains law.cornell.edu, "
+        "govinfo.gov, dir.ca.gov, leg.state.nv.us) and QUOTE the text that states it, or "
+        "state the obligation without the number. Never swap out your substantive "
+        "citations to satisfy this check — a bare definition line is not support."
     )
 
 
@@ -2355,8 +2357,101 @@ def _uncited_licensor_problem(
         "fabrication class wearing a suit — research() the repertory, label, or licensing "
         "listing (ASCAP/BMI Songview, the label's licensing page, the museum or ARS "
         "record) and QUOTE the line that names the holder, or state the licence "
-        "obligation without naming the owner."
+        "obligation without naming the owner. KEEP every citation already on this flag "
+        "and ADD the naming line — never replace your substantive citations."
     )
+
+
+# CSATF bulletin numbers named in prose: "Bulletin #16", "Safety Bulletins #4 and #17"
+_BULLETIN_WORD_RE = re.compile(r"\bBulletins?\b", re.IGNORECASE)
+_BULLETIN_NUM_RE = re.compile(r"#\s*(\d{1,2})\b")
+
+
+def _bulletin_numbers(text: str) -> set[str]:
+    """Bulletin numbers a finding names — the leading bare number right after the
+    word and every '#N' in the 60 chars that follow ('#4 and #17')."""
+    out: set[str] = set()
+    for m in _BULLETIN_WORD_RE.finditer(text or ""):
+        window = text[m.end() : m.end() + 60]
+        lead = re.match(r"\s*#?\s*(\d{1,2})\b", window)
+        if lead:
+            out.add(str(int(lead.group(1))))
+        out.update(str(int(n)) for n in _BULLETIN_NUM_RE.findall(window))
+    return out
+
+
+def _bulletin_in_citation(n: str, c: dict[str, Any]) -> bool:
+    """A citation carries bulletin n when its csatf.org URL names the number
+    ('/16PYROTECHNIC.pdf', '/04_safety_bltn_stunts/'), its excerpt says
+    'Bulletin #n', or its excerpt is the bulletin's official title line."""
+    url = str(c.get("url") or "")
+    excerpt = str(c.get("excerpt") or "")
+    if "csatf" in url.lower() and re.search(rf"/0?{n}(?=[_A-Za-z.])", url):
+        return True
+    if re.search(rf"\bBulletin\s*#?\s*0?{n}\b", excerpt, re.IGNORECASE):
+        return True
+    title = _csatf_index().get(n, "")
+    return bool(title) and title.lower() in excerpt.lower()
+
+
+def _uncited_bulletin_problem(
+    tool_context: ToolContext,
+    finding: str,
+    remedy_detail: str,
+    cits: list[dict[str, Any]] | None = None,
+) -> str | None:
+    """A CSATF bulletin number named in the finding must be carried by one of its
+    own citations — the statute-section rule applied to bulletins. Gate roll 2
+    (2026-09-01) rejected the seeded stunt_pyro BLOCKER because the desk had
+    REPLACED its Bulletin #16/#19 excerpts with a CFR definition line after a
+    statute rejection; nothing at filing noticed the bulletin it still named had
+    no citation. A number the desk verified with csatf_bulletin() (its title is in
+    the local registry) is auto-attached as an index citation; a number in no
+    retrieved text rejects."""
+    body = f"{finding} {remedy_detail}"
+    nums = _bulletin_numbers(body)
+    if not nums:
+        return None
+    idx = _csatf_index()
+    local = _local_bucket(tool_context)
+    missing: list[str] = []
+    for n in sorted(nums, key=int):
+        if any(_bulletin_in_citation(n, c) for c in (cits or [])):
+            continue
+        title = idx.get(n, "")
+        if cits is not None and title and any(_norm_for_match(title) in t for t in local):
+            cits.append(
+                {
+                    "source_type": "safety_bulletin",
+                    "title": "CSATF bulletin index (auto-attached: number verification only)",
+                    "url": None,
+                    "excerpt": title,
+                    "retrieved_at": None,
+                    "via": "local",
+                    "repaired": True,
+                }
+            )
+            _manifest_note(
+                tool_context,
+                {"guard": "bulletin_cite_attached", "stage": "filing", "matched": n},
+            )
+            continue
+        missing.append(n)
+    if not missing:
+        return None
+    unknown = [n for n in missing if n not in idx]
+    tail = (
+        f" Bulletin(s) {unknown} do not exist in the official index — a number from memory."
+        if unknown
+        else ""
+    )
+    return (
+        f"REJECTED, not filed: the finding names CSATF Safety Bulletin(s) {missing} but no "
+        "citation on the flag carries them.{tail} Verify the number with csatf_bulletin(topic) "
+        "and research() the bulletin's own text (csatf.org) so an excerpt from it sits beside "
+        "the claim. KEEP every citation already on this flag and ADD the bulletin excerpt — "
+        "never replace your substantive citations to satisfy another check."
+    ).replace("{tail}", tail)
 
 
 def _provision_span(n: str, prov_pairs: list[tuple[str, str]]) -> str | None:
@@ -2575,6 +2670,19 @@ def file_flag(  # noqa: PLR0912, PLR0915 - a deliberate sequence of filing gates
             },
         )
         return _reject_or_stop(tool_context, entity_id, category, licensor_problem)
+
+    if bulletin_problem := _uncited_bulletin_problem(tool_context, finding, remedy_detail, cits):
+        _manifest_note(
+            tool_context,
+            {
+                "guard": "uncited_bulletin",
+                "stage": "filing",
+                "category": category,
+                "entity": entity_id,
+                "matched": bulletin_problem[:120],
+            },
+        )
+        return _reject_or_stop(tool_context, entity_id, category, bulletin_problem)
 
     if src_problem := _background_only_problem(severity, cits, tool_context):
         return _reject_or_stop(tool_context, entity_id, category, src_problem)

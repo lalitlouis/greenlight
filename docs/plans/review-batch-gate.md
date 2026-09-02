@@ -110,3 +110,30 @@ instead of adding to them. The climax seed passed via the water stunt, so the gr
 see the pyro finding go. Next class fixes (not yet built): a bulletin-number gate mirroring
 the statute/licensor rule; rejection messages that say ADD, never replace; a climax seed that
 names the pyro burn.
+
+## Batch 3 (built after deploy 00211, before roll 3) — the pyro fragility at its class
+
+- `_uncited_bulletin_problem` (toolbelt): every CSATF bulletin number a finding names must be
+  carried by one of the flag's own citations (csatf.org URL naming the number, "Bulletin #N"
+  in an excerpt, or the bulletin's official title line); a number the desk verified with
+  csatf_bulletin() auto-attaches its index line as a `via: local` citation; a number in no
+  retrieved text — or not in the official index — rejects.
+- Statute, licensor, and bulletin rejections now say KEEP every citation and ADD one; roll 2's
+  desk had swapped its bulletin excerpts for a CFR definition line to satisfy the statute gate.
+- New fixture seed: the vessel burn must be flagged as a pyro/fire hazard on S008/S010/S011
+  (firearms excluded). Re-graded: old record 44/47, roll 1 45/47, roll 2 46/47 — the seed
+  bites on exactly the run that lost the BLOCKER. 385 tests.
+
+## Roll 3 predictions
+
+- Q1 exit 0; 47/47.
+- Q2 A stunt_pyro (or fire) finding on the vessel burn renders, with a csatf.org excerpt or
+  the #16 index line beside any bulletin number it names; `uncited_bulletin` may fire at
+  filing with no refile loop.
+- Q3 The BLOCKER/HIGH tier holds: pyro, water stunt, minor, firearms, sync, master, CN
+  supernatural, UAE drug, language. Score back in the 25–35 band; cost back near $150k–450k.
+- Q4 Scene structure identical; zero overturns of sourcing rejections; tattoo and Nighthawks
+  render as two findings; every licence finding traces its owners.
+- Q5 Soft spot (information, not regression): the conformal set may again read {PG-13} or
+  {PG, PG-13} against a predicted R when the desk includes "thematic elements"; the
+  divergence reason must be present (asserted).
