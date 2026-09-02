@@ -260,3 +260,14 @@ scale-gate grade on record is 20/23 (2026-08-29) before eval_scale gained the sh
   seed (has failed most runs).
 - U5 Soft spots that are information, not regression: rightsholder traceability on a
   brand-dense script (many licence findings); kept-findings floor (>=10).
+
+## Scale gate attempt 1 (00:49–03:43 PDT) — ABORTED on infrastructure, not evidence
+
+`RUN ABORTED — ClientConnectorDNSError: cannot connect to aiplatform.googleapis.com`
+(the Mac lost its network overnight; caffeinate keeps the CPU awake, not the Wi-Fi).
+Elapsed 10,448 s, $1.96, salvaged with 15 kept / 1 rejected, clearance at 82 of 112 work
+items, 30 unexamined — the salvage grade (39/49) is struck as evidence per the standing
+rule; every seed miss is an item clearance had not reached. Ops follow-up (logged, not
+fixed): the run breathed for ~2.5 h on a dead network before the DNS error surfaced —
+the 900 s inactivity watchdog should bound a network-unreachable stall the same way it
+bounds a silent one. Re-launched at the time stamp below with the same predictions U1–U5.
