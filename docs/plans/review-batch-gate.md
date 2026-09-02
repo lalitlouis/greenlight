@@ -137,3 +137,26 @@ names the pyro burn.
 - Q5 Soft spot (information, not regression): the conformal set may again read {PG-13} or
   {PG, PG-13} against a predicted R when the desk includes "thematic elements"; the
   divergence reason must be present (asserted).
+
+## Roll 3 read-off (23:01–23:15 PDT, RUN_EXIT=1, ~$2) — RED, my defect
+
+The run reached build_report and died on a report contract violation:
+`flags/0/citations/3/source_type: 'safety_bulletin' is not one of [web, precedent, statute,
+rules_table]`. The bulletin gate's auto-attached index citation used a `source_type` outside
+the frozen enum; file_flag had already validated the flag BEFORE the gates appended it, so
+nothing caught it until the deterministic report build — a paid run with no record. Before
+the crash the log showed the gate doing its job (24 flags verified, 10 supported, 11 partial,
+3 rejected and re-sourced; the tattoo and Nighthawks filed separately; the pyro finding was in
+flight). Fix at the class (b89d5d9 → this commit): every auto-attach goes through
+`_attach_citation`, which validates the citation against the schema's citation shape and
+refuses (logged, manifest-noted, treated as not attached) instead of appending; the bulletin
+line is `rules_table`; and file_flag re-validates the assembled flag after all gates, so a
+deterministic slip surfaces as a refile at filing. Test pins every auto-attach path against
+`validate("flag", …)`. 387 tests.
+
+## Roll 4 predictions
+
+- Q1–Q5 as registered for roll 3.
+- Q6 No `contract_after_gates` or `refused: citation shape` entry in the guard manifest; the
+  bulletin gate attaches `rules_table` index lines or rejects, and the run completes with a
+  record.

@@ -2183,6 +2183,46 @@ def _statute_sections(text: str) -> set[str]:
 _CITE_WINDOW = 170  # chars either side of the section number in the source
 
 
+_CITATION_SCHEMA: dict[str, Any] = {}  # lazy: the flag schema's citation item shape
+
+
+def _attach_citation(
+    tool_context: ToolContext, cits: list[dict[str, Any]], cit: dict[str, Any], guard: str
+) -> bool:
+    """Append an auto-attached citation ONLY if it validates against the flag
+    schema's citation shape. Gate roll 3 (2026-09-01) died at build_report on a
+    `source_type: "safety_bulletin"` the bulletin gate had attached after the
+    flag's own validation had already passed — a deterministic-layer bug that
+    surfaced as a lost paid run instead of a refile. A malformed attach is now
+    refused here, logged, and noted; the calling gate treats it as not attached."""
+    import jsonschema as _js
+
+    from greenlight.contracts import load_schema
+
+    if "items" not in _CITATION_SCHEMA:
+        _CITATION_SCHEMA["items"] = load_schema("flag")["properties"]["citations"]["items"]
+    errors = sorted(_js.Draft202012Validator(_CITATION_SCHEMA["items"]).iter_errors(cit), key=str)
+    if errors:
+        _LOG.warning(
+            "auto_attach_refused guard=%s errors=%d first=%s",
+            guard,
+            len(errors),
+            errors[0].message[:80],
+        )
+        _manifest_note(
+            tool_context,
+            {
+                "guard": guard,
+                "stage": "filing",
+                "refused": "citation shape",
+                "n_errors": len(errors),
+            },
+        )
+        return False
+    cits.append(cit)
+    return True
+
+
 def _uncited_statute_problem(
     tool_context: ToolContext,
     category: str,
@@ -2231,7 +2271,9 @@ def _uncited_statute_problem(
             # verify the number from it, so it does not attach
             missing.append(n)
             continue
-        cits.append(
+        attached = _attach_citation(
+            tool_context,
+            cits,
             {
                 "source_type": "statute",
                 "title": "cited provision (auto-attached for traceability)",
@@ -2240,8 +2282,12 @@ def _uncited_statute_problem(
                 "retrieved_at": None,
                 "via": "local",
                 "repaired": True,
-            }
+            },
+            guard="statute_cite_attached",
         )
+        if not attached:
+            missing.append(n)
+            continue
         _manifest_note(
             tool_context,
             {"guard": "statute_cite_attached", "stage": "filing", "matched": n},
@@ -2335,7 +2381,9 @@ def _uncited_licensor_problem(
             still_missing.append(name)
             continue
         span, norm_text = hit
-        cits.append(
+        attached = _attach_citation(
+            tool_context,
+            cits,
             {
                 "source_type": "web",
                 "title": "licensor named in retrieved source (auto-attached for traceability)",
@@ -2343,8 +2391,12 @@ def _uncited_licensor_problem(
                 "excerpt": span,
                 "retrieved_at": None,
                 "repaired": True,
-            }
+            },
+            guard="licensor_cite_attached",
         )
+        if not attached:
+            still_missing.append(name)
+            continue
         _manifest_note(
             tool_context,
             {"guard": "licensor_cite_attached", "stage": "filing", "matched": name[:60]},
@@ -2419,18 +2471,25 @@ def _uncited_bulletin_problem(
         if any(_bulletin_in_citation(n, c) for c in (cits or [])):
             continue
         title = idx.get(n, "")
-        if cits is not None and title and any(_norm_for_match(title) in t for t in local):
-            cits.append(
+        if (
+            cits is not None
+            and title
+            and any(_norm_for_match(title) in t for t in local)
+            and _attach_citation(
+                tool_context,
+                cits,
                 {
-                    "source_type": "safety_bulletin",
+                    "source_type": "rules_table",
                     "title": "CSATF bulletin index (auto-attached: number verification only)",
                     "url": None,
                     "excerpt": title,
                     "retrieved_at": None,
                     "via": "local",
                     "repaired": True,
-                }
+                },
+                guard="bulletin_cite_attached",
             )
+        ):
             _manifest_note(
                 tool_context,
                 {"guard": "bulletin_cite_attached", "stage": "filing", "matched": n},
@@ -2785,6 +2844,25 @@ def file_flag(  # noqa: PLR0912, PLR0915 - a deliberate sequence of filing gates
             f"REJECTED, not filed: the finding text names scene id(s) {stray} that do not "
             "exist in this script. Name only scenes from your worklist — refile with the "
             "correct id.",
+        )
+
+    # the gates above may have repaired or attached citations AFTER the flag's own
+    # validation passed — re-check the assembled flag so a deterministic-layer
+    # slip surfaces as a refile at filing, never as a crash at build_report
+    try:
+        validate("flag", flag)
+    except ContractViolation as e:
+        _LOG.warning("flag_contract_after_gates errors=%d", len(e.errors))
+        _manifest_note(
+            tool_context,
+            {"guard": "contract_after_gates", "stage": "filing", "matched": e.errors[0][:120]},
+        )
+        return _reject_or_stop(
+            tool_context,
+            entity_id,
+            category,
+            "REJECTED, not filed: the assembled flag failed the contract after citation "
+            "repair — " + "; ".join(e.errors)[:300] + ". Refile once with the same content.",
         )
 
     _state_append(tool_context, f"flags:{_agent_key(tool_context)}", flag)
