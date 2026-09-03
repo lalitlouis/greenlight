@@ -2617,6 +2617,55 @@ def _claim_class_support_problem(category: str, cits: list[dict[str, Any]]) -> s
     )
 
 
+_RATINGS_VOCAB = frozenset(
+    {
+        "rating_language",
+        "rating_violence",
+        "rating_drug_use",
+        "rating_alcohol",
+        "rating_sexuality",
+        "rating_thematic_elements",
+    }
+)
+
+
+def _category_vocabulary_problem(agent: str, category: str) -> str | None:
+    """The category slug IS the finding type every gate keys on: roll 8 filed the
+    Nighthawks claim as 'artwork_display' (and a tattoo as 'tattoo_artwork', a prop
+    as 'trademark_prop'), so the licence gates never saw it and the verifier took
+    it down on the merits. The prompt said "use EXACTLY these slugs"; the tool now
+    enforces it, naming the closest admissible slug (2026-09-02)."""
+    import difflib
+
+    from greenlight.agents.adjudicator import _DESK_VOCAB, _desk_of, category_admissible
+
+    desk = _desk_of({"agent": agent})
+    if desk not in _DESK_VOCAB and desk not in ("ratings_board", "territory_censor"):
+        return None  # unknown agent family: nothing to enforce
+    if desk == "ratings_board":
+        # the six slugs the prompt names, plus rating_<family> for any CARA
+        # descriptor family in the boundary vocabulary (nudity, gore, smoking…) —
+        # a driver outside the six must still be able to carry its marginal (B2);
+        # anything else ('rating_profanity') is drift
+        families = set(((_boundary_data().get("vocabulary") or {}).get("categories") or {}).keys())
+        admissible = category in _RATINGS_VOCAB or category.removeprefix("rating_") in families
+    else:
+        admissible = category_admissible(desk, category)
+    if admissible:
+        return None
+    vocab = sorted(
+        _RATINGS_VOCAB if desk == "ratings_board" else _DESK_VOCAB.get(desk, frozenset())
+    )
+    close = difflib.get_close_matches(category, vocab, n=1, cutoff=0.4) if vocab else []
+    hint = f" Closest admissible slug: '{close[0]}'." if close else ""
+    listing = ", ".join(vocab) if vocab else "the desk's documented slug pattern"
+    return (
+        f"REJECTED, not filed: category '{category}' is not in your vocabulary — every gate and "
+        f"every reader keys on the slug, so a variant is a different finding type.{hint} Use "
+        f"exactly one of: {listing}. Refile with the same content and the admissible slug."
+    )
+
+
 _SCENE_COUNT_RE = re.compile(r"\b(\d{1,3})\s+scenes\b", re.IGNORECASE)
 
 
@@ -2827,6 +2876,19 @@ def file_flag(  # noqa: PLR0912, PLR0915 - a deliberate sequence of filing gates
             },
         )
         return _reject_or_stop(tool_context, entity_id, category, licensor_problem)
+
+    if vocab_problem := _category_vocabulary_problem(flag.get("agent") or "", category):
+        _manifest_note(
+            tool_context,
+            {
+                "guard": "category_vocabulary",
+                "stage": "filing",
+                "category": category,
+                "entity": entity_id,
+                "matched": vocab_problem[:100],
+            },
+        )
+        return _reject_or_stop(tool_context, entity_id, category, vocab_problem)
 
     if support_problem := _claim_class_support_problem(category, cits):
         _manifest_note(

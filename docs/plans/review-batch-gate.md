@@ -367,3 +367,21 @@ the CSATF "index verifies the number, substance comes from the bulletin text" ru
 to licences. W2 ✓ (language HIGH, drugs MEDIUM, violence LOW; no thematic driver filed).
 W3 ✓ (no internal id in any reader text). W4 ✓ (scene structure; pyro BLOCKER; tattoo separate;
 max 4 cites; 0 overturns; set {PG-13} vs R with divergence — the residual). Roll 8 follows.
+
+## Roll 8 read-off (run_20260902_180714, 17:49–18:07 PDT, exit 0, $3.16) — 50/51
+
+Same seed missing, different failure: the desk filed Nighthawks as `artwork_display` (also
+`tattoo_artwork`, `trademark_prop` this run) — slugs outside the vocabulary the prompt says to
+use "EXACTLY" — so the licence gates keyed on `license|clearance` never saw it, and the
+verifier rejected a product-credit-line citation on the merits. Fix at the class: the desk
+category vocabulary is enforced at filing with the closest admissible slug named
+(`category_vocabulary`); ratings admits its six slugs plus rating_<family> for any CARA
+descriptor family. Everything else held (no internal ids; severity bound; pyro BLOCKER;
+scene structure; 0 overturns). Re-source recovered 2 of 5 this run.
+
+## Roll 9 predictions
+
+- X1 exit 0; 51/51 — Nighthawks files as artwork_license with a licensing-class excerpt.
+- X2 `category_vocabulary` may fire at filing with no refile loop; no drifted slug in the
+  kept or rejected set.
+- X3 Everything roll 8 held holds again.

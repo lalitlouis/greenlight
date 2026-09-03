@@ -253,7 +253,7 @@ def test_open_question():
 def test_flag_ids_are_partitioned_per_desk():
     """Two desks filing concurrently must never mint the same flag id."""
     c1 = file_good_flag(make_ctx("clearance_counsel"))
-    t1 = file_good_flag(make_ctx("territory_censor"))
+    t1 = file_good_flag(make_ctx("territory_censor"), category="territory_cn_supernatural")
     assert c1.startswith("Filed F1001") and t1.startswith("Filed F4001")
 
 

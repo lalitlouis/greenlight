@@ -170,3 +170,17 @@ def test_licence_findings_need_a_licensing_class_excerpt():
     ]
     assert _claim_class_support_problem("artwork_license", with_notice) is None
     assert _claim_class_support_problem("stunt_pyro", date_only) is None  # not a licence claim
+
+
+def test_category_vocabulary_enforced_at_filing():
+    from greenlight.tools.toolbelt import _category_vocabulary_problem as prob
+
+    p = prob("clearance_counsel__b2", "artwork_display")
+    assert p and "artwork_license" in p and "not in your vocabulary" in p
+    assert prob("clearance_counsel", "artwork_license") is None
+    assert prob("clearance_counsel__sweep", "tattoo_artwork") and "artwork_license" in prob(
+        "clearance_counsel__sweep", "tattoo_artwork"
+    )
+    assert prob("territory_censor", "territory_cn_supernatural") is None
+    assert prob("ratings_board", "rating_language") is None
+    assert prob("ratings_board", "rating_profanity") is not None
