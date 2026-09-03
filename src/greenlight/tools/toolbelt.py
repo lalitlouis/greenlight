@@ -1399,6 +1399,45 @@ def _attach_marginal(
     return dict(last[best])
 
 
+_SEVERITY_BOUND_MASS = 0.5
+
+
+def _bound_rating_severity(
+    tool_context: ToolContext, flag: dict[str, Any], marginal: dict[str, Any]
+) -> None:
+    """A rating driver whose own marginal puts under half its films ABOVE the
+    production target is not a MEDIUM+ risk against that target — a live report
+    filed 'thematic elements' (PG-13 58%, PG 41%) at MEDIUM under a PG-13 target
+    (2026-09-02). Deterministic: severity capped at LOW, manifest-noted."""
+    target = tool_context.state.get("target_rating")
+    if not target or target not in _RATING_ORDER_LIST:
+        return
+    dist = marginal.get("distribution") or {}
+    above = 0.0
+    for rating, share in dist.items():
+        try:
+            pct = float(str(share).rstrip("%"))
+        except ValueError:
+            continue
+        if rating in _RATING_ORDER_LIST and rating_rank(rating) > rating_rank(target):
+            above += pct / 100.0
+    if above < _SEVERITY_BOUND_MASS and flag.get("severity") in ("BLOCKER", "HIGH", "MEDIUM"):
+        _manifest_note(
+            tool_context,
+            {
+                "guard": "rating_severity_bounded",
+                "stage": "filing",
+                "flag_id": flag.get("flag_id"),
+                "descriptor": marginal.get("descriptor"),
+                "mass_above_target": round(above, 3),
+                "from": flag.get("severity"),
+                "to": "LOW",
+            },
+        )
+        flag["severity"] = "LOW"
+        flag["_severity_bounded"] = True
+
+
 def _rating_marginal_gate(
     tool_context: ToolContext, category: str, finding: str, flag: dict[str, Any]
 ) -> str | None:
@@ -1410,6 +1449,7 @@ def _rating_marginal_gate(
     marginal = _attach_marginal(tool_context, category, finding)
     if marginal:
         flag["marginal"] = marginal
+        _bound_rating_severity(tool_context, flag, marginal)
         return None
     if _MARGINAL_HEDGE_RE.search(finding):
         return (
@@ -2927,7 +2967,12 @@ def file_flag(  # noqa: PLR0912, PLR0915 - a deliberate sequence of filing gates
         if repaired
         else ""
     )
-    return f"Filed {flag['flag_id']} ({severity} {category}).{note}"
+    if flag.pop("_severity_bounded", False):
+        note += (
+            f" Severity bounded to LOW: the '{(flag.get('marginal') or {}).get('descriptor')}' "
+            "marginal puts under half its films above the target rating."
+        )
+    return f"Filed {flag['flag_id']} ({flag.get('severity', severity)} {category}).{note}"
 
 
 # --- query_precedent --------------------------------------------------------

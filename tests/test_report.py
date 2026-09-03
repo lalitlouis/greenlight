@@ -661,3 +661,21 @@ def test_cost_paths_excluded_built_from_scored_and_days_split():
     ] == [lo, hi]
     assert paths["as_written_days"] == 9 and paths["target_rating_days"] == 3
     assert _added_days([kept, moot, failopen]) == 9
+
+
+def test_internal_ids_are_stripped_from_reader_facing_text():
+    from greenlight.pipeline import _strip_internal_ids as strip
+
+    assert strip("For E030 (CC-W030, Limp Bizkit cue in S032), the script specifies no title.") == (
+        "Limp Bizkit cue in S032: the script specifies no title."
+    )
+    assert strip("E050 (Mozart in S084): While the compositions are public domain.") == (
+        "Mozart in S084: While the compositions are public domain."
+    )
+    assert strip("For SU-W008 (mechanical bull sequence in S055), it remains open.") == (
+        "Mechanical bull sequence in S055: it remains open."
+    )
+    assert strip("Sweep credited SW-RB-E014 for the hymn in S004 under F2001.") == (
+        "Sweep credited for the hymn in S004 under F2001."
+    )
+    assert strip("Nothing internal here (S003, F1001).") == "Nothing internal here (S003, F1001)."

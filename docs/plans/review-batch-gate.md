@@ -333,3 +333,24 @@ No untraced owners across seven licence/clearance findings (`uncited_licensor` �
 2 rejected (Bo Dietl publicity and a UK language flag, both on citation grounds), score 21.
 All six case records are now clean on every shared invariant; publish = safe_deploy (the
 records ship in the image). Case regen total: $23.89 for seven runs.
+
+## Batch 6 (from the published Hangover case read-off, 2026-09-02) — before roll 7
+
+- Internal ids (E###, P###, XX-W###, axis/census/sweep ids) stripped from every reader-facing
+  text at assembly, punctuation repaired ("For E030 (CC-W030, Limp Bizkit cue in S032), …" →
+  "Limp Bizkit cue in S032: …").
+- A rating finding's severity is bounded by its own marginal: under half its films ABOVE the
+  production target → capped at LOW at filing (manifest `rating_severity_bounded`); eval
+  invariant added (51 checks). CONSEQUENCE, stated: under an R target every R-band driver is
+  at-target and files LOW — rating findings on R-target scripts (five of the six cases) will
+  read as informational when those cases are next regenerated; the composite score on those
+  pages will rise accordingly. The published cases are unchanged until regenerated.
+- Ratings prompt: slurs and offensive jokes are LANGUAGE, never thematic elements.
+
+## Roll 7 predictions
+
+- W1 exit 0; 51/51.
+- W2 Fixture (target PG-13): language HIGH stays (R ~80% above target); 'brief drugs' stays
+  (R 76%); 'some violence' stays (R 65%); a 'thematic' driver, if filed, is LOW.
+- W3 No E###/P###/work-item id in any open question, follow-up, cleared row, or finding.
+- W4 Everything roll 6 held holds again.

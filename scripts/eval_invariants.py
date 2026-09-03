@@ -265,6 +265,27 @@ def shared_invariants(  # noqa: PLR0912, PLR0915 - a flat checklist, deliberatel
         f"rule-shaped rating claims: {rule_shaped[:4]}",
     )
     no_marginal = [f["flag_id"] for f in rating if not f.get("marginal")]
+    _target = ((r.get("report") or {}).get("rating_prediction") or {}).get("target")
+    _order = ["G", "PG", "PG-13", "R", "NC-17"]
+    over_bound = []
+    if _target in _order:
+        for f in rating:
+            dist = (f.get("marginal") or {}).get("distribution") or {}
+            above = 0.0
+            for rt, share in dist.items():
+                try:
+                    pct = float(str(share).rstrip("%"))
+                except ValueError:
+                    continue
+                if rt in _order and _order.index(rt) > _order.index(_target):
+                    above += pct / 100.0
+            if dist and above < 0.5 and f.get("severity") in ("BLOCKER", "HIGH", "MEDIUM"):
+                over_bound.append((f["flag_id"], round(above, 2)))
+    check(
+        "invariant: a rating finding at/under the target by its own marginal is never MEDIUM+",
+        not over_bound,
+        f"severity above the marginal's evidence: {over_bound[:3]}",
+    )
     check(
         "invariant: every rendered rating finding carries its measured marginal",
         not no_marginal,

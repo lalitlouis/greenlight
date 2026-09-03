@@ -385,6 +385,29 @@ def _desk_coverage(state: dict[str, Any]) -> dict[str, dict[str, int]]:
 
 
 _FLAG_ID_RE = re.compile(r"\bF\d{3,4}\b")
+# entity / work-item / sweep ids are ours, not the producer's: "For E030 (CC-W030,
+# Limp Bizkit cue in S032)" and "For SU-W008 (mechanical bull…)" reached a live
+# report's open questions (2026-09-02). Scene ids (S###) and finding ids (F####) stay.
+_INTERNAL_ID_RE = re.compile(
+    r"\b(?:[EP]\d{3}|[A-Z]{2}-W\d{3}|[A-Z]{2}-AX-[A-Z0-9-]+|[A-Z]{2}-CENSUS-[A-Z]+"
+    r"|SW-[A-Z]{2}-[EP]\d{3})\b"
+)
+
+
+def _strip_internal_ids(text: str) -> str:
+    """Remove internal ids from prose and repair the punctuation they leave behind."""
+    if not _INTERNAL_ID_RE.search(text):
+        return text
+    t = _INTERNAL_ID_RE.sub("", text)
+    t = re.sub(r"\(\s*[,;:]?\s*", "(", t)
+    t = re.sub(r"\s*[,;:]?\s*\)", ")", t)
+    t = re.sub(r"\(\s*\)", "", t)
+    t = re.sub(r"^\s*(?:For\s+)?\(([^)]*)\)\s*[:,]?\s*", lambda m: m.group(1) + ": ", t)
+    t = re.sub(r"\s{2,}", " ", t).strip()
+    t = re.sub(r"\s+([,.;:])", r"\1", t)
+    return t[:1].upper() + t[1:] if t else t
+
+
 # an id not yet carrying its "(later rejected …)" / "(withdrawn …)" annotation
 _UNANNOTATED_ID_RE = re.compile(r"\b(F\d{3,4})\b(?! \((?:later rejected|withdrawn))")
 _UNRESOLVED_TEMPLATE = "Unresolved —"
@@ -501,17 +524,17 @@ def finalize_record_after_verification(record: dict[str, Any]) -> list[dict[str,
     for _desk, items in (record.get("cleared") or {}).items():
         for c in items or []:
             if isinstance(c, dict) and c.get("reasoning"):
-                c["reasoning"] = _annotate(_rewrite(str(c["reasoning"])))
+                c["reasoning"] = _strip_internal_ids(_annotate(_rewrite(str(c["reasoning"]))))
     seen_flag_objs: set[int] = set()
     for f in [*flags, *rep_flags]:
         if id(f) in seen_flag_objs:
             continue
         seen_flag_objs.add(id(f))
         if f.get("finding"):
-            f["finding"] = _annotate(_rewrite(str(f["finding"])))
+            f["finding"] = _strip_internal_ids(_annotate(_rewrite(str(f["finding"]))))
         rem = f.get("remedy") or {}
         if rem.get("detail"):
-            rem["detail"] = _annotate(_rewrite(str(rem["detail"])))
+            rem["detail"] = _strip_internal_ids(_annotate(_rewrite(str(rem["detail"]))))
     # 3: adjudication notes — rewrite absorbed ids, then drop anything dangling
     notes = [_rewrite(str(n)) for n in record.get("adjudication_notes") or []]
     record["adjudication_notes"] = [n for n in notes if set(_FLAG_ID_RE.findall(n)) <= kept_ids]
@@ -538,7 +561,9 @@ def finalize_record_after_verification(record: dict[str, Any]) -> list[dict[str,
     }
     fold = (record.get("entity_accounting") or {}).get("fold") or {}
     followups: dict[str, list[str]] = {
-        k: list(v) for k, v in (record.get("oq_followups") or {}).items() if k in kept_ids
+        k: [_strip_internal_ids(str(x)) for x in v]
+        for k, v in (record.get("oq_followups") or {}).items()
+        if k in kept_ids
     }
     new_oq: dict[str, list[Any]] = {}
     for desk, qs in (record.get("open_questions") or {}).items():
@@ -546,7 +571,7 @@ def finalize_record_after_verification(record: dict[str, Any]) -> list[dict[str,
         desk_ids = [f["flag_id"] for f in desk_flags]
         keep: list[Any] = []
         for q in qs or []:
-            text = _annotate(_rewrite(str(q)))
+            text = _strip_internal_ids(_annotate(_rewrite(str(q))))
             if text.startswith(_UNRESOLVED_TEMPLATE):
                 keep.append(text)  # names a rejected/withdrawn id by design
                 continue

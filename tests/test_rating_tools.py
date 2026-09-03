@@ -537,3 +537,25 @@ def test_scene_count_claim_must_match_coordinates():
     assert problem and "15 scenes" in problem and "3 scene id" in problem
     assert _scene_count_problem("Appears in 3 scenes (S007, S008, S012).", "", ids) is None
     assert _scene_count_problem("A recurring location across the script.", "", ids) is None
+
+
+def test_rating_severity_bounded_by_marginal_mass_above_target():
+    from types import SimpleNamespace
+
+    from greenlight.tools.toolbelt import _bound_rating_severity
+
+    ctx = SimpleNamespace(agent_name="ratings_board", state={"target_rating": "PG-13"})
+    soft = {"descriptor": "unmodified thematic", "distribution": {"PG-13": "58.2%", "PG": "41.4%"}}
+    flag = {"flag_id": "F2003", "severity": "MEDIUM"}
+    _bound_rating_severity(ctx, flag, soft)
+    assert flag["severity"] == "LOW" and flag["_severity_bounded"] is True
+    hard = {"descriptor": "some violence", "distribution": {"R": "65.3%", "PG-13": "27.0%"}}
+    flag2 = {"flag_id": "F2005", "severity": "MEDIUM"}
+    _bound_rating_severity(ctx, flag2, hard)
+    assert flag2["severity"] == "MEDIUM"
+    ctx.state["target_rating"] = "R"
+    flag3 = {"flag_id": "F2001", "severity": "HIGH"}
+    _bound_rating_severity(
+        ctx, flag3, {"descriptor": "pervasive language", "distribution": {"R": "99.5%"}}
+    )
+    assert flag3["severity"] == "LOW"  # R content against an R target is not a risk above target
