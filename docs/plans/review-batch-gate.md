@@ -406,3 +406,13 @@ F-word-count residual, now visible at the headline. Owner decision logged below.
 - Y2 The rating call is the desk's: R or PG-13 depending on the language descriptor it
   chooses; whichever it is, set ∋ prediction or a divergence reason is present.
 - Y3 Everything roll 9 held holds again.
+
+## Roll 10 read-off (run_20260902_182645, 18:18–18:26 PDT, exit 0, $1.91) — 52/52, GREEN
+
+Y1 ✓ (`contract_after_gates` absent; `claim_class_support` fired once at filing; licensor
+attach ×4) · Y2 R vs target PG-13, set {PG, PG-13}, divergence present (residual) · Y3 ✓
+(scene_meta identical; Nighthawks MEDIUM + Krane tattoo LOW as two artwork_license findings;
+pyro BLOCKER; max 3 citations; 0 overturns; 0 unexamined; no drifted slug; no internal id).
+22 kept / 1 rejected (a second pyro filing on citation grounds; re-source recovered 2 of 3).
+Deploy follows: batches 6–7 (id strip, severity bound, claim-class support, vocabulary
+enforcement, contract-fire assertion) on top of 00214.
