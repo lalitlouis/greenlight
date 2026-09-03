@@ -1268,7 +1268,7 @@ def _refile_gate_problem(flag: dict[str, Any], *, check_authority: bool) -> str 
     problem = _sync_master_split_problem(cat, finding, detail)
     if problem:
         return "refile gate (sync/master): " + problem
-    problem = _normative_rule_problem(cat, finding, detail)
+    problem = _normative_rule_problem(cat, finding, detail, flag.get("citations") or [])
     if problem:
         return "refile gate (normative rule): " + problem
     return None

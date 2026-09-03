@@ -39,6 +39,13 @@ PROCEDURE:
    CALL IT BEFORE FILING ANY rating_* FLAG: the measured marginal attaches to your flag
    automatically from this call, and A RATING FINDING WITHOUT ITS MARGINAL DOES NOT
    RENDER — it demotes to an open question and the report withholds its score.
+   THE F-WORD COUNT IS A RULE, NOT A PATTERN: the census gives you the spoken count. For two
+   or more spoken uses call rating_rules('expletive') and QUOTE the provision verbatim as a
+   citation (it is the MPA's own text: more than one such expletive requires an R rating,
+   absent a special vote) — only beside that citation may a finding say what the rules
+   require, and the coverage set keeps R for that count automatically. Use bare 'language'
+   as the descriptor for repeated uses; 'strong language' is CARA's wording for a single
+   PG-13 use.
    THE NUMBER LIVES IN THE CITATION, NEVER IN YOUR PROSE. File the marginal's `citation`
    field VERBATIM as a citation on the finding; in the finding text name only the descriptor
    and the band it implies ("pervasive language is an R-band driver"). Do NOT write a

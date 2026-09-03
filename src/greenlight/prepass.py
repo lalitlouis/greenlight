@@ -135,6 +135,21 @@ def language_census(scenes: list[dict[str, Any]]) -> dict[str, list[tuple[str, s
     return out
 
 
+_SPOKEN_F_RE = re.compile(r"\b(?:mother)?fuck\w*", re.IGNORECASE)
+
+
+def spoken_f_words(scenes: list[dict[str, Any]]) -> int:
+    """How many times the harsher sexually-derived expletive is SPOKEN — dialogue
+    lines only, never action text. The MPA rules key a rating outcome on this
+    count (one use → at least PG-13; more than one → R absent a special vote), and
+    a count is a script fact the regex never forgets."""
+    n = 0
+    for sc in scenes:
+        for d in sc.get("dialogue") or []:
+            n += len(_SPOKEN_F_RE.findall(str(d.get("line") or "")))
+    return n
+
+
 def census_work_items(census: dict[str, list[tuple[str, str]]]) -> dict[str, list[dict[str, Any]]]:
     """Worklist items carrying the census: ratings always gets the language
     inventory; territory additionally gets slurs (UAE/CN exposure)."""
@@ -469,7 +484,14 @@ def build_agent():
                 ax for ax in territory_axis_items() if ax["work_item_id"] not in existing_tc
             ]
             new_tri["territory_censor"] = list(tri.get("territory_censor") or []) + new_axis
-            census_items = census_work_items(language_census(scenes))
+            census = language_census(scenes)
+            spoken_f = spoken_f_words(scenes)
+            census_items = census_work_items(census)
+            for it in census_items.get("ratings_board") or []:
+                it["note"] += (
+                    f" Spoken F-word count (dialogue only, deterministic): {spoken_f}. "
+                    "The MPA rules on that count are citable via rating_rules('expletive')."
+                )
             for desk_name, extra in census_items.items():
                 have = {
                     (it or {}).get("work_item_id")
@@ -504,7 +526,17 @@ def build_agent():
             yield Event(
                 invocation_id=ctx.invocation_id,
                 author=self.name,
-                actions=EventActions(state_delta={"triage": new_tri, "prepass_added": len(items)}),
+                actions=EventActions(
+                    state_delta={
+                        "language_census": {
+                            "profanity": census["profanity"],
+                            "slurs": census["slurs"],
+                            "spoken_f_words": spoken_f,
+                        },
+                        "triage": new_tri,
+                        "prepass_added": len(items),
+                    }
+                ),
                 content=types.Content(role="model", parts=[types.Part(text=summary)]),
             )
 

@@ -6,6 +6,29 @@ them. Append-only; newest entries at the top. Bigger architecture decisions live
 
 ---
 
+## 2026-09-02 — The F-word count is a rule, not a pattern: the MPA rules become a local tool
+
+Ten gate rolls of one unchanged fixture predicted R nine times and PG-13 once. The cause
+was structural: the descriptor vocabulary cannot encode a COUNT, so bare "language" reads
+PG-13 and R alike, and the prediction followed whichever intensity word the desk chose.
+The corpus measures what CARA did; the MPA's own Classification and Rating Rules say what
+it requires — "More than one such expletive requires an R rating," absent a special
+two-thirds vote. The product forbade rule-shaped claims because the desks typed rules
+from memory; the fix is to make the rule retrievable, on the pattern of the CSATF index.
+
+Shipped: `scripts/harvest_mpa_rules.py` pulls the official PDF (filmratings.com, effective
+July 24, 2020, SHA-256 on the asset) into `data/mpa_rating_rules.json` — the five rating
+provisions plus the expletive sentences, verbatim. `rating_rules(topic)` serves them as a
+free local tool whose output is registered provenance (`rules_table` / `local`). The
+normative gate and the eval now ADMIT a rule-shaped rating claim only when a citation
+quoting the rules' own text sits on the flag. The prepass census gains a spoken F-word
+count (dialogue only), carried in state, and `rating_boundary` floors R into the coverage
+set at two or more uses with a note citing the rule — a deterministic floor on a script
+fact, alongside the dominant-descriptor floor. What-If's boundary is untouched (it
+evaluates the revised profile, not a count). Owner-approved 2026-09-02.
+
+---
+
 ## 2026-09-01 — Full-codebase review implemented: 44 defects, one batch, 89 new tests
 
 The six-area review (docs/REVIEW-2026-09-01.md) found every documented learning present in

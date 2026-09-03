@@ -2136,7 +2136,9 @@ _NORMATIVE_RULE_RE = re.compile(
 )
 
 
-def _normative_rule_problem(category: str, finding: str, remedy_detail: str) -> str | None:
+def _normative_rule_problem(
+    category: str, finding: str, remedy_detail: str, cits: list[dict[str, Any]] | None = None
+) -> str | None:
     """A rating finding may not assert a normative CARA rule — the corpus measures
     what CARA DID, not what it requires, so a rule claim is unverifiable by
     construction and poisons the marginal cited beside it."""
@@ -2145,13 +2147,16 @@ def _normative_rule_problem(category: str, finding: str, remedy_detail: str) -> 
     hit = _NORMATIVE_RULE_RE.search(finding or "") or _NORMATIVE_RULE_RE.search(remedy_detail or "")
     if not hit:
         return None
+    if _rules_cited(cits):
+        return None  # the rule is stated beside the MPA's own text — a sourced claim
     return (
         f'REJECTED, not filed: the text asserts a normative CARA rule ("{hit.group(0)}"). '
         "No descriptor table contains a rule — a distribution says what CARA did, not what "
-        "it requires — so the verifier cannot support this claim shape. Restate as the "
-        "OBSERVATION: the counted content matches CARA descriptor 'X', which patterns "
-        "toward <band> in the descriptor corpus (cite the rating_boundary marginal), and "
-        "frame the band as measured boundary risk, never an automatic outcome."
+        "it requires — so the verifier cannot support this claim shape. EITHER restate as the "
+        "OBSERVATION (the counted content matches CARA descriptor 'X', which patterns toward "
+        "<band> in the descriptor corpus — cite the rating_boundary marginal), OR cite the "
+        "rule itself: call rating_rules('expletive') and quote the provision verbatim as a "
+        "citation — only beside that text may a finding say what the rules require."
     )
 
 
@@ -2830,7 +2835,7 @@ def file_flag(  # noqa: PLR0912, PLR0915 - a deliberate sequence of filing gates
         )
         return _reject_or_stop(tool_context, entity_id, category, split_problem)
 
-    if rule_problem := _normative_rule_problem(category, finding, remedy_detail):
+    if rule_problem := _normative_rule_problem(category, finding, remedy_detail, cits):
         _manifest_note(
             tool_context,
             {
@@ -3673,6 +3678,36 @@ def _dominant_floor(
     return out, floors
 
 
+_EXPLETIVE_RULE_MIN = 2
+
+
+def _expletive_rule_floor(
+    tool_context: ToolContext, pred_set: list[str], floors: list[str]
+) -> tuple[list[str], list[str]]:
+    """The MPA rules key a rating outcome on a COUNT the census already holds:
+    more than one spoken harsher expletive requires an R rating absent a
+    special vote. The vocabulary cannot encode the count (bare 'language' reads
+    PG-13 and R alike), which let the same script predict R nine times and
+    PG-13 once (2026-09-02). With two or more spoken uses, R stays in the set
+    and the floor note cites the rule's own section."""
+    census = tool_context.state.get("language_census") or {}
+    n = int(census.get("spoken_f_words") or 0)
+    if n < _EXPLETIVE_RULE_MIN:
+        return pred_set, floors
+    out = list(pred_set)
+    if "R" not in out:
+        out.append("R")
+        out.sort(key=lambda r: _RATING_ORDER_LIST.index(r) if r in _RATING_ORDER_LIST else 99)
+    d = _mpa_rules()
+    floors = [
+        *floors,
+        f"MPA Classification and Rating Rules (effective {d.get('effective')}), PG-13 "
+        f"expletive rule: more than one such expletive requires an R rating absent a special "
+        f"vote — {n} spoken uses counted by the census (rating_rules('expletive') quotes it)",
+    ]
+    return out, floors
+
+
 def boundary_eval(descriptors: list[str]) -> dict[str, Any]:
     """Pure boundary evaluation for a set of CARA-style descriptor phrases —
     the same marginals + conformal math as rating_boundary, with no session
@@ -3802,6 +3837,7 @@ def rating_boundary(descriptors: list[str], tool_context: ToolContext) -> dict[s
     tool_context.state[mkey] = merged
     probs, pred_set = _predict_set(d, _featurize(canonical, idx, len(feats)))
     pred_set, floors = _dominant_floor(d, canonical, pred_set)
+    pred_set, floors = _expletive_rule_floor(tool_context, pred_set, floors)
     # The set hard-gates file_rating_prediction ONLY when every descriptor
     # matched: a set built from silently-dropped inputs once rejected a desk's
     # correct R prediction as "outside the evidence". Partial input = advisory.
@@ -3885,6 +3921,68 @@ def bbfc_cut_precedent(content: str, tool_context: ToolContext) -> dict[str, Any
         "matches": hits[:_BBFC_HITS],
         "total_records": len(_BBFC_CACHE["r"]),
         "source": "BBFC published cuts records, bbfc.co.uk",
+    }
+    _register_tool_output(tool_context, out)
+    return out
+
+
+_MPA_RULES_CACHE: dict[str, Any] = {}
+
+
+def _mpa_rules() -> dict[str, Any]:
+    if "d" not in _MPA_RULES_CACHE:
+        import json as _json
+        from pathlib import Path as _Path
+
+        _MPA_RULES_CACHE["d"] = _json.loads(
+            (_Path(__file__).resolve().parents[1] / "data" / "mpa_rating_rules.json").read_text()
+        )
+    return _MPA_RULES_CACHE["d"]
+
+
+def _rules_cited(cits: list[dict[str, Any]] | None) -> bool:
+    """Does any citation quote the MPA Classification and Rating Rules verbatim?
+    A rule-shaped rating claim is admissible ONLY beside the rule's own text."""
+    texts = [_norm_for_match(sec["text"]) for sec in _mpa_rules().get("sections") or []]
+    for c in cits or []:
+        needle = _norm_for_match(str(c.get("excerpt") or "")).strip(" \"'.…-")
+        if len(needle) >= _MIN_PROVENANCE_CHARS and any(needle in t for t in texts):
+            return True
+    return False
+
+
+def rating_rules(topic: str, tool_context: ToolContext) -> dict[str, Any]:
+    """The MPA's own Classification and Rating Rules — the official text of what
+    each rating category admits and, in particular, the expletive rule: one use
+    of the harsher sexually-derived word as an expletive → at least PG-13; more
+    than one → R, absent a special two-thirds vote of the Rating Board. Free.
+
+    topic: keywords, e.g. "expletive", "PG-13", "nudity", "drug", "violence", "R".
+    Returns matching provisions VERBATIM with their section id. This is the ONLY
+    source from which you may state a rating RULE: quote the provision as a
+    citation (source_type "rules_table", via "local") and the finding may then
+    say what the rules require. A rule stated without this citation is rejected
+    at filing. The corpus marginals remain the evidence for what CARA DID; the
+    rules say what it REQUIRES — cite both when both apply.
+    """
+    d = _mpa_rules()
+    words = [w for w in re.sub(r"[^a-z0-9 -]", " ", topic.lower()).split() if len(w) > 1]
+    hits = []
+    for sec in d.get("sections") or []:
+        hay = (sec["id"] + " " + sec["title"] + " " + sec["text"]).lower()
+        if any(w in hay for w in words):
+            hits.append({"id": sec["id"], "title": sec["title"], "text": sec["text"]})
+    if not hits:
+        return {
+            "matches": [],
+            "guidance": "No provision matches. Try 'expletive', a rating name, or 'nudity'.",
+        }
+    out = {
+        "matches": hits,
+        "source": d.get("source"),
+        "document": d.get("document"),
+        "effective": d.get("effective"),
+        "cite_as": "rules_table / local — quote the provision text verbatim",
     }
     _register_tool_output(tool_context, out)
     return out
@@ -4165,6 +4263,7 @@ DESK_TOOLS = [
     research,
     record_clearance,
     csatf_bulletin,
+    rating_rules,
     verify_trademark,
     rating_boundary,
     bbfc_cut_precedent,

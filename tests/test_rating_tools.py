@@ -577,3 +577,69 @@ def test_severity_bound_leaves_a_schema_valid_flag():
     _bound_rating_severity(ctx, flag, flag["marginal"])
     assert flag["severity"] == "LOW"
     validate("flag", flag)
+
+
+def _rules_ctx(**state):
+    from types import SimpleNamespace
+
+    return SimpleNamespace(
+        agent_name="ratings_board",
+        state=dict(state),
+        actions=SimpleNamespace(escalate=False),
+        invocation_id="test-rules-1",
+    )
+
+
+def test_rating_rules_serves_the_expletive_provision_verbatim_and_citable():
+    from greenlight.tools.toolbelt import _is_local_tool_cite, rating_rules
+
+    ctx = _rules_ctx()
+    out = rating_rules("expletive", ctx)
+    ids = [m["id"] for m in out["matches"]]
+    assert "pg13_expletive_rule" in ids and out["effective"] == "July 24, 2020"
+    text = next(m["text"] for m in out["matches"] if m["id"] == "pg13_expletive_rule")
+    assert "More than one such expletive requires an R rating" in text
+    cite = {"source_type": "rules_table", "via": "local", "excerpt": text, "url": None}
+    assert _is_local_tool_cite(cite, ctx)
+    assert rating_rules("zzz-nothing", ctx)["matches"] == []
+
+
+def test_normative_rule_admissible_only_beside_the_rules_text():
+    from greenlight.tools.toolbelt import _mpa_rules, _normative_rule_problem
+
+    claim = "With three spoken uses, more than one such expletive requires an R rating."
+    assert _normative_rule_problem("rating_language", claim, "", []) is not None
+    rule = next(s for s in _mpa_rules()["sections"] if s["id"] == "pg13_expletive_rule")
+    cited = [{"source_type": "rules_table", "via": "local", "excerpt": rule["text"]}]
+    assert _normative_rule_problem("rating_language", claim, "", cited) is None
+    # a marginal sentence is not the rules' text
+    marg = [{"excerpt": "'language': R 79.8% across 2164 official CARA rationales"}]
+    assert _normative_rule_problem("rating_language", claim, "", marg) is not None
+
+
+def test_expletive_count_floors_r_into_the_set():
+    from greenlight.tools.toolbelt import _expletive_rule_floor
+
+    ctx = _rules_ctx(language_census={"spoken_f_words": 3})
+    out, floors = _expletive_rule_floor(ctx, ["PG-13"], [])
+    assert out == ["PG-13", "R"] and "3 spoken uses" in floors[0] and "July 24, 2020" in floors[0]
+    ctx1 = _rules_ctx(language_census={"spoken_f_words": 1})
+    assert _expletive_rule_floor(ctx1, ["PG-13"], []) == (["PG-13"], [])
+
+
+def test_spoken_f_words_counts_dialogue_only():
+    from greenlight.prepass import spoken_f_words
+
+    scenes = [
+        {
+            "scene_id": "S001",
+            "action": "A fucking mess of nets.",
+            "dialogue": [{"line": "Fucking impossible man."}],
+        },
+        {
+            "scene_id": "S002",
+            "action": "",
+            "dialogue": [{"line": "That was fucking beautiful."}, {"line": "Motherfucker."}],
+        },
+    ]
+    assert spoken_f_words(scenes) == 3

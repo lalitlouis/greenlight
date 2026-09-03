@@ -10,6 +10,7 @@ from greenlight.tools.toolbelt import (
     find_in_script,
     note_open_question,
     query_precedent,
+    rating_rules,
     read_scene,
     research,
 )
@@ -24,6 +25,7 @@ __all__ = [
     "find_in_script",
     "note_open_question",
     "query_precedent",
+    "rating_rules",
     "read_scene",
     "research",
 ]

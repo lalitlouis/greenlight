@@ -250,10 +250,12 @@ def shared_invariants(  # noqa: PLR0912, PLR0915 - a flat checklist, deliberatel
         not stat_in_prose,
         f"rating findings with a statistic loose in prose: {stat_in_prose[:6]}",
     )
+    from greenlight.tools.toolbelt import _rules_cited
+
     rule_shaped = []
     for f in rating:
         m = _NORMATIVE_RULE_RE.search(_body(f))
-        if m:
+        if m and not _rules_cited(f.get("citations") or []):
             rule_shaped.append((f["flag_id"], m.group(0)[:40]))
     for n in r.get("adjudication_notes") or []:
         m = _NORMATIVE_RULE_RE.search(n)

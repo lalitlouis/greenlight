@@ -416,3 +416,21 @@ pyro BLOCKER; max 3 citations; 0 overturns; 0 unexamined; no drifted slug; no in
 22 kept / 1 rejected (a second pyro filing on citation grounds; re-source recovered 2 of 3).
 Deploy follows: batches 6–7 (id strip, severity bound, claim-class support, vocabulary
 enforcement, contract-fire assertion) on top of 00214.
+
+## Batch 8 — MPA rating-rules tool (owner go 2026-09-02 ~18:45) — before roll 11
+
+`rating_rules('expletive')` serves the official provision verbatim (asset harvested from the
+filmratings.com PDF, effective July 24, 2020, sha256 b73004023110…); rule-shaped rating
+claims are admissible only beside that citation (filing, refile, eval); the census carries a
+spoken F-word count and `rating_boundary` floors R into the set at >=2 uses with the rule
+cited. Ratings prompt: bare 'language' for repeated uses.
+
+## Roll 11 predictions
+
+- Z1 exit 0; 52/52.
+- Z2 The coverage set CONTAINS R (the fixture has three spoken uses; `set_floor` carries the
+  MPA rule note with "3 spoken uses"); the language finding may now state the rule beside a
+  `rules_table` citation, or keep the observation shape — either passes.
+- Z3 Predicted R (the desk's call; PG-13 would need a divergence reason against an R-majority
+  and an R-containing set).
+- Z4 Everything roll 10 held holds again.
