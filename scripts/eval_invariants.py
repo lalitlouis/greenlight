@@ -422,6 +422,11 @@ def shared_invariants(  # noqa: PLR0912, PLR0915 - a flat checklist, deliberatel
     if descriptors and conf_set:
         try:
             reproduced = set(boundary_eval(list(descriptors)).get("prediction_set") or [])
+            if any(
+                str(x).startswith("MPA Classification and Rating Rules")
+                for x in pred.get("set_floor") or []
+            ):
+                reproduced = reproduced | {"R"}  # the expletive-count floor (a script fact)
             ok = reproduced == set(conf_set)
             detail = f"descriptors {descriptors} -> {sorted(reproduced)} vs record {conf_set}"
         except Exception as e:  # the asset is local; a failure here is a code bug

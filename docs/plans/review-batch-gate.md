@@ -434,3 +434,24 @@ cited. Ratings prompt: bare 'language' for repeated uses.
 - Z3 Predicted R (the desk's call; PG-13 would need a divergence reason against an R-majority
   and an R-containing set).
 - Z4 Everything roll 10 held holds again.
+
+## Roll 11 read-off (run_20260902_214110, 21:26–21:41 PDT, exit 0, $1.93) — 50/52, the tool works
+
+Z2 ✓ set {PG-13, R}; `set_floor` = the MPA rule with "3 spoken uses counted"; the language
+finding quotes the provision verbatim (rules_table / local, filmratings.com URL) beside its
+marginal and states the rule legitimately. Z3 ✓ predicted R, inside the set, no divergence.
+Z4 ✓ scene structure, pyro BLOCKER, 0 overturns, no drift, no leaked id.
+Two misses, both fixed at class before roll 12: (a) the eval's "set reproduces from the
+persisted descriptors" check re-ran boundary_eval without the count floor — it now adds R
+when the floor note is on record, and `spoken_f_words` is persisted on the prediction (schema
+additive) so the What-If baseline applies the same floor (lifted only by a cut that targets
+the expletive); (b) Nighthawks rejected again — filed with a PROVENANCE line as its only
+surviving citation because the claim-class support gate ran before repair/pruning removed
+the licensing excerpt; the support check now re-runs after pruning, like the licensor one.
+
+## Roll 12 predictions
+
+- AA1 exit 0; 52/52 with the reproduction check honouring the floor.
+- AA2 Set ∋ R via the MPA floor; predicted R; language finding cites the rule.
+- AA3 Nighthawks files with a licensing-class excerpt that survives pruning, or the desk is
+  told so at filing (no provenance-only artwork claim reaches the verifier).

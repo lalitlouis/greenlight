@@ -184,3 +184,12 @@ def test_category_vocabulary_enforced_at_filing():
     assert prob("territory_censor", "territory_cn_supernatural") is None
     assert prob("ratings_board", "rating_language") is None
     assert prob("ratings_board", "rating_profanity") is not None
+
+
+def test_claim_class_support_rechecked_after_pruning():
+    from greenlight.tools.toolbelt import _claim_class_support_problem
+
+    provenance_only = [
+        {"excerpt": "The artist; consigned to Frank Rehn Galleries, 1942; sold to the museum."}
+    ]
+    assert _claim_class_support_problem("artwork_license", provenance_only) is not None

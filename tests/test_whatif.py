@@ -166,3 +166,33 @@ def test_driver_marginal_prefers_the_descriptor_that_draws_the_projection():
     ]
     assert _driver_marginal(margs, "R")["descriptor"] == "pervasive language"
     assert _driver_marginal(margs, "PG-13")["descriptor"] == "some violence"
+
+
+def test_whatif_keeps_the_expletive_floor_unless_a_cut_targets_it(monkeypatch):
+    from greenlight import whatif
+
+    monkeypatch.setattr(
+        whatif, "_revise_rationale", lambda *a, **k: "for language and brief drug use"
+    )
+    monkeypatch.setattr(whatif, "_neighbors", lambda *a, **k: ([], ""))
+    monkeypatch.setattr(whatif, "_cache_get", lambda *a, **k: None, raising=False)
+    monkeypatch.setattr(whatif, "_cache_put", lambda *a, **k: None, raising=False)
+    record = {
+        "report": {
+            "rating_prediction": {
+                "predicted": "R",
+                "target": "PG-13",
+                "rationale": "for language, brief drug use, and some violence",
+                "beats_to_cut": ["Cut 'fucking' in S003 and S006", "Trim the joint in S003"],
+                "spoken_f_words": 3,
+                "comparables": [],
+            }
+        }
+    }
+    kept = whatif.project(record, "run-x", [1])  # the drug cut leaves the count
+    assert "R" in (kept.get("boundary") or {}).get("prediction_set", [])
+    assert any("MPA expletive rule" in x for x in (kept.get("boundary") or {}).get("set_floor", []))
+    cut = whatif.project(record, "run-x", [0])  # the language cut lifts it
+    assert not any(
+        "MPA expletive rule" in x for x in (cut.get("boundary") or {}).get("set_floor", [])
+    )

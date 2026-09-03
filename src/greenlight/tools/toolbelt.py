@@ -2981,7 +2981,11 @@ def file_flag(  # noqa: PLR0912, PLR0915 - a deliberate sequence of filing gates
     flag["citations"] = cits
     # the traceability gates ran BEFORE repair and pruning — re-check the names
     # against the citations that will actually render (roll 5: an attached span
-    # that had lost its name shipped as "traceable")
+    # that had lost its name shipped as "traceable"); same for claim-class support
+    # (roll 11: Nighthawks filed with only a provenance line once repair had dropped
+    # the licensing excerpt)
+    if support_left := _claim_class_support_problem(category, cits):
+        return _reject_or_stop(tool_context, entity_id, category, support_left)
     if _LICENSOR_CATEGORY_RE.search(category or ""):
         from greenlight.names import untraceable_rightsholders as _untraced
 
@@ -3439,6 +3443,9 @@ def file_rating_prediction(
         "comps_majority": majority,
         "conformal_set": list(boundary_set),
         "set_floor": list(_own_or_family(tool_context, "boundary_floor") or []),
+        "spoken_f_words": int(
+            (tool_context.state.get("language_census") or {}).get("spoken_f_words") or 0
+        ),
         "divergence_reason": divergence_reason.strip(),
         "nearest_conflict": (
             {

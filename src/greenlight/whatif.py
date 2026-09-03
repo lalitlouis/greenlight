@@ -11,6 +11,7 @@ evidence — never a model asserting "that would probably be PG-13."
 from __future__ import annotations
 
 import hashlib
+import re
 from typing import Any
 
 from greenlight import storage
@@ -125,6 +126,34 @@ def _revise_rationale(rationale: str, cuts: list[str]) -> str:
     return (res.text or "").strip() or rationale
 
 
+_EXPLETIVE_RULE_MIN = 2
+
+
+def _apply_expletive_floor(pred: dict[str, Any], cuts: list[str], boundary: dict[str, Any]) -> None:
+    """The report's set carries the MPA expletive-rule floor on the census count;
+    the simulator must not disagree with the panel it sits under. A cut that
+    targets the expletive is assumed to bring spoken uses under two (the desk
+    writes beats to reach the target); any other cut leaves the count — and the
+    floor — in place."""
+    spoken = int(pred.get("spoken_f_words") or 0)
+    if spoken < _EXPLETIVE_RULE_MIN or boundary.get("prediction_set") is None:
+        return
+    if any(_EXPLETIVE_CUT_RE.search(str(c)) for c in cuts):
+        return
+    if "R" not in boundary["prediction_set"]:
+        boundary["prediction_set"] = [*boundary["prediction_set"], "R"]
+    boundary["set_floor"] = [
+        *(boundary.get("set_floor") or []),
+        f"MPA expletive rule: {spoken} spoken uses on the record and no cut targets them — "
+        "R stays in the set",
+    ]
+
+
+_EXPLETIVE_CUT_RE = re.compile(
+    r"fuck|f-word|f word|expletive|profanit|strong language", re.IGNORECASE
+)
+
+
 def project(
     record: dict[str, Any],
     run_id: str,
@@ -192,6 +221,7 @@ def project(
     # ONE voting rule, shared with the live prediction — plain plurality here
     # once let the same neighbours answer differently in two report panels
     neighbors_vote = toolbelt.comps_weighted_majority(comparables) or "?"
+    _apply_expletive_floor(pred, cuts, boundary)
     b_set = boundary.get("prediction_set") or []
     boundary_answers = bool(
         b_set and len(b_set) == 1 and boundary.get("matched") and not boundary.get("unmatched")
