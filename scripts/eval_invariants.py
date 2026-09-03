@@ -281,6 +281,14 @@ def shared_invariants(  # noqa: PLR0912, PLR0915 - a flat checklist, deliberatel
                     above += pct / 100.0
             if dist and above < 0.5 and f.get("severity") in ("BLOCKER", "HIGH", "MEDIUM"):
                 over_bound.append((f["flag_id"], round(above, 2)))
+    contract_fires = [
+        g for g in (r.get("guard_manifest") or []) if g.get("guard") == "contract_after_gates"
+    ]
+    check(
+        "invariant: no assembled flag failed the contract after the gates (deterministic-layer bug)",
+        not contract_fires,
+        f"contract_after_gates fired {len(contract_fires)}x: {contract_fires[:1]}",
+    )
     check(
         "invariant: a rating finding at/under the target by its own marginal is never MEDIUM+",
         not over_bound,

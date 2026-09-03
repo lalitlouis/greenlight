@@ -385,3 +385,24 @@ scene structure; 0 overturns). Re-source recovered 2 of 5 this run.
 - X2 `category_vocabulary` may fire at filing with no refile loop; no drifted slug in the
   kept or rejected set.
 - X3 Everything roll 8 held holds again.
+
+## Roll 9 read-off (run_20260902_181556, 18:10–18:16 PDT, exit 0, $1.53) — 51/51 as graded, but not clean
+
+X1 ✓ Nighthawks filed as artwork_license with an art-law licensing excerpt (the licensor
+gate had first refused an uncited 'Artists Rights Society'). X2 ✓ no drifted slug anywhere.
+X3 ✓. TWO things the checks did not name: (a) my severity bound left a private
+`_severity_bounded` key on the flag and the contract re-check rejected the language finding
+TWICE (`contract_after_gates` ×2) before the desk refiled at LOW on its own — fixed (no marker;
+the note derives from the severity delta) and the eval now asserts `contract_after_gates`
+never fires; (b) the rating prediction read PG-13 for the first time in nine runs of this
+script: the desk wrote 'strong language' (PG-13 89%) for the three F-words instead of bare
+'language' (R 80%), the set became {PG-13}, and the prediction followed with a reasoned
+divergence from its R-majority neighbours. Same script, nine runs: R ×8, PG-13 ×1 — the
+F-word-count residual, now visible at the headline. Owner decision logged below.
+
+## Roll 10 predictions
+
+- Y1 exit 0; 52/52; `contract_after_gates` absent from the manifest.
+- Y2 The rating call is the desk's: R or PG-13 depending on the language descriptor it
+  chooses; whichever it is, set ∋ prediction or a divergence reason is present.
+- Y3 Everything roll 9 held holds again.

@@ -1435,7 +1435,6 @@ def _bound_rating_severity(
             },
         )
         flag["severity"] = "LOW"
-        flag["_severity_bounded"] = True
 
 
 def _rating_marginal_gate(
@@ -3067,7 +3066,9 @@ def file_flag(  # noqa: PLR0912, PLR0915 - a deliberate sequence of filing gates
         if repaired
         else ""
     )
-    if flag.pop("_severity_bounded", False):
+    if category.startswith("rating_") and flag.get("severity") != severity:
+        # the bound rewrote the desk's severity (never a private marker on the flag:
+        # roll 9's '_severity_bounded' key failed the contract re-check twice)
         note += (
             f" Severity bounded to LOW: the '{(flag.get('marginal') or {}).get('descriptor')}' "
             "marginal puts under half its films above the target rating."

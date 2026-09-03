@@ -559,3 +559,21 @@ def test_rating_severity_bounded_by_marginal_mass_above_target():
         ctx, flag3, {"descriptor": "pervasive language", "distribution": {"R": "99.5%"}}
     )
     assert flag3["severity"] == "LOW"  # R content against an R target is not a risk above target
+
+
+def test_severity_bound_leaves_a_schema_valid_flag():
+    """Roll 9: the bound's private marker key failed the contract re-check twice."""
+    import json
+    from pathlib import Path
+    from types import SimpleNamespace
+
+    from greenlight.contracts import validate
+    from greenlight.tools.toolbelt import _bound_rating_severity
+
+    r = json.loads(Path("runs/run_20260902_181556.json").read_text())
+    flag = next(f for f in r["flags"] if f["category"] == "rating_language")
+    flag["severity"] = "MEDIUM"
+    ctx = SimpleNamespace(agent_name="ratings_board", state={"target_rating": "PG-13"})
+    _bound_rating_severity(ctx, flag, flag["marginal"])
+    assert flag["severity"] == "LOW"
+    validate("flag", flag)
