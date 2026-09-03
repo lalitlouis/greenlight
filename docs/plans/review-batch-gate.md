@@ -455,3 +455,13 @@ the licensing excerpt; the support check now re-runs after pruning, like the lic
 - AA2 Set ∋ R via the MPA floor; predicted R; language finding cites the rule.
 - AA3 Nighthawks files with a licensing-class excerpt that survives pruning, or the desk is
   told so at filing (no provenance-only artwork claim reaches the verifier).
+
+## Roll 12 read-off (run_20260902_221612, 21:44–22:16 PDT, exit 0, $4.94) — 52/52, GREEN
+
+AA1 ✓ · AA2 ✓ (set {PG-13, R} on the MPA floor, `spoken_f_words` 3 on the record, predicted
+R inside the set, language finding cites the provision beside its marginal) · AA3 ✓
+(Nighthawks LOW with the artic copyright page + a licensing excerpt; tattoo separate).
+Scene structure identical; pyro BLOCKER; max 3 citations; 0 overturns; no drift; no leaked
+id. The run took 32 min / $4.94 (double the norm): seven filing rejections vs six on roll
+11 (no loop), plus one completeness-gate round that retried a desk with zero own
+dispositions — the known collapse-and-retry class, not the new gates. Deploy follows.
