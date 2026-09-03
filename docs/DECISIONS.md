@@ -6,6 +6,20 @@ them. Append-only; newest entries at the top. Bigger architecture decisions live
 
 ---
 
+## 2026-09-02 — Case studies are refreshed weekly, on Sunday
+
+Owner decision: the six published case studies are regenerated and republished once a week,
+on Sunday, rather than after every gated batch. A full regen is about seven runs, $20–24,
+and 1.5–2 hours; the cases are showcase content and should track the code weekly, not
+chase each deploy. Between Sundays the live cases may lag the deployed code — today they
+predate the rating severity bound and the MPA rules tool. Procedure: run
+`scripts/regen_case_studies.py` under caffeinate with all six cases enabled, read the six
+summary lines against the prior records (score, HIGH tier, untraced licensors, citation
+counts), then `make deploy`. Automation, if wanted later: Cloud Scheduler → the same
+Cloud Run Job image (the 2026-08-28 "Cloud execution" pattern).
+
+---
+
 ## 2026-09-02 — The F-word count is a rule, not a pattern: the MPA rules become a local tool
 
 Ten gate rolls of one unchanged fixture predicted R nine times and PG-13 once. The cause
