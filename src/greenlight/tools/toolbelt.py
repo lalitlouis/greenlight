@@ -2592,6 +2592,31 @@ def _provision_span(n: str, prov_pairs: list[tuple[str, str]]) -> str | None:
     return None
 
 
+# substantive support by CLAIM CLASS: a licence/clearance finding must carry at
+# least one excerpt that speaks to licensing, copyright, permission, or rights —
+# roll 7 filed the Nighthawks artwork claim on an exhibition-date line alone and the
+# verifier (correctly) took it down; re-source recovered nothing (2026-09-02)
+_LICENSE_SUPPORT_RE = re.compile(
+    r"licen[cs]|permission|copyright|©|\brights\b|rights[- ]holder|reproduc|clearance|royalt"
+    r"|sync(?:hroni[sz]ation)?\b|master use|public domain|trademark|release form|permit",
+    re.IGNORECASE,
+)
+
+
+def _claim_class_support_problem(category: str, cits: list[dict[str, Any]]) -> str | None:
+    if not _LICENSOR_CATEGORY_RE.search(category or ""):
+        return None
+    if any(_LICENSE_SUPPORT_RE.search(str(c.get("excerpt") or "")) for c in cits or []):
+        return None
+    return (
+        "REJECTED, not filed: none of this finding's excerpts speaks to licensing, copyright, "
+        "permission, or rights — a date, a title, or an exhibition record verifies the WORK, "
+        "not the licence obligation, and the verifier will reject the premise. KEEP every "
+        "citation already on this flag and ADD an excerpt that states the requirement "
+        "(the rights-holder's licensing page, a copyright notice, a licensing FAQ)."
+    )
+
+
 _SCENE_COUNT_RE = re.compile(r"\b(\d{1,3})\s+scenes\b", re.IGNORECASE)
 
 
@@ -2802,6 +2827,19 @@ def file_flag(  # noqa: PLR0912, PLR0915 - a deliberate sequence of filing gates
             },
         )
         return _reject_or_stop(tool_context, entity_id, category, licensor_problem)
+
+    if support_problem := _claim_class_support_problem(category, cits):
+        _manifest_note(
+            tool_context,
+            {
+                "guard": "claim_class_support",
+                "stage": "filing",
+                "category": category,
+                "entity": entity_id,
+                "matched": support_problem[:100],
+            },
+        )
+        return _reject_or_stop(tool_context, entity_id, category, support_problem)
 
     if bulletin_problem := _uncited_bulletin_problem(tool_context, finding, remedy_detail, cits):
         _manifest_note(

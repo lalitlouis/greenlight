@@ -154,3 +154,19 @@ def test_refile_gate_requires_licensor_traceability_after_resource():
         {"url": "https://www.nbcuniversal.com/x", "excerpt": "Universal Studios licenses clips."}
     )
     assert _refile_gate_problem(flag, check_authority=False) is None
+
+
+def test_licence_findings_need_a_licensing_class_excerpt():
+    from greenlight.tools.toolbelt import _claim_class_support_problem
+
+    date_only = [
+        {"excerpt": "Edward Hopper, Nighthawks, 1942. From: The Art Institute of Chicago."}
+    ]
+    problem = _claim_class_support_problem("artwork_license", date_only)
+    assert problem and "KEEP every citation" in problem
+    with_notice = [
+        *date_only,
+        {"excerpt": "© Heirs of Josephine N. Hopper/Licensed by ARS, New York"},
+    ]
+    assert _claim_class_support_problem("artwork_license", with_notice) is None
+    assert _claim_class_support_problem("stunt_pyro", date_only) is None  # not a licence claim

@@ -354,3 +354,16 @@ records ship in the image). Case regen total: $23.89 for seven runs.
   (R 76%); 'some violence' stays (R 65%); a 'thematic' driver, if filed, is LOW.
 - W3 No E###/P###/work-item id in any open question, follow-up, cleared row, or finding.
 - W4 Everything roll 6 held holds again.
+
+## Roll 7 read-off (run_20260902_174803, 17:38–17:48 PDT, exit 0, $1.74) — 50/51
+
+W1 ✗ by one: Nighthawks not flagged — the desk filed the artwork claim on ONE citation, an
+exhibition-date line ("Edward Hopper, Nighthawks, 1942…"), the verifier rejected the premise
+(correctly), re-source attempted 3 / recovered 0, and no gate on this batch was involved
+(no `resource_gate` entry). Rolls 4–6 had cited the Whitney "© … Licensed by ARS" line. Fix at
+the class: a licence/clearance finding must carry at least one excerpt that speaks to
+licensing, copyright, permission, or rights (`claim_class_support`, filing + re-source gate) —
+the CSATF "index verifies the number, substance comes from the bulletin text" rule applied
+to licences. W2 ✓ (language HIGH, drugs MEDIUM, violence LOW; no thematic driver filed).
+W3 ✓ (no internal id in any reader text). W4 ✓ (scene structure; pyro BLOCKER; tattoo separate;
+max 4 cites; 0 overturns; set {PG-13} vs R with divergence — the residual). Roll 8 follows.

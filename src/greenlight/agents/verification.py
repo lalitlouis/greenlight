@@ -1228,6 +1228,13 @@ def _refile_gate_problem(flag: dict[str, Any], *, check_authority: bool) -> str 
     cat0 = str(flag.get("category") or "")
     if _re.search(r"licen[cs]e|clearance", cat0, _re.IGNORECASE):
         from greenlight.names import untraceable_rightsholders
+        from greenlight.tools.toolbelt import _claim_class_support_problem
+
+        if _claim_class_support_problem(cat0, flag.get("citations") or []):
+            return (
+                "re-source gate (claim-class support): no re-sourced excerpt speaks to "
+                "licensing, copyright, permission, or rights"
+            )
 
         body0 = f"{flag.get('finding') or ''} {(flag.get('remedy') or {}).get('detail') or ''}"
         excerpts0 = " ".join(str(c.get("excerpt") or "") for c in flag.get("citations") or [])
