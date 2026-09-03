@@ -548,7 +548,7 @@ def test_rating_severity_bounded_by_marginal_mass_above_target():
     soft = {"descriptor": "unmodified thematic", "distribution": {"PG-13": "58.2%", "PG": "41.4%"}}
     flag = {"flag_id": "F2003", "severity": "MEDIUM"}
     _bound_rating_severity(ctx, flag, soft)
-    assert flag["severity"] == "LOW" and flag["_severity_bounded"] is True
+    assert flag["severity"] == "LOW" and "_severity_bounded" not in flag
     hard = {"descriptor": "some violence", "distribution": {"R": "65.3%", "PG-13": "27.0%"}}
     flag2 = {"flag_id": "F2005", "severity": "MEDIUM"}
     _bound_rating_severity(ctx, flag2, hard)

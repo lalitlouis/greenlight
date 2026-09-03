@@ -285,7 +285,7 @@ def shared_invariants(  # noqa: PLR0912, PLR0915 - a flat checklist, deliberatel
         g for g in (r.get("guard_manifest") or []) if g.get("guard") == "contract_after_gates"
     ]
     check(
-        "invariant: no assembled flag failed the contract after the gates (deterministic-layer bug)",
+        "invariant: no assembled flag failed the contract after the gates (a code bug)",
         not contract_fires,
         f"contract_after_gates fired {len(contract_fires)}x: {contract_fires[:1]}",
     )
