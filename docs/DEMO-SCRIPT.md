@@ -2,10 +2,10 @@
 
 Team **Four Desks** — Lalit Somavarapha and Shruthi Kashyap. Deck: `ScriptRisk-demo-deck.pptx`
 (8 slides: seven up front, ~1:08, and slide 8 as the end card). Product: https://scriptrisk.com
-(~1:45). About 480 spoken words, plus three **optional lines in ⟨brackets⟩** (~30 words). The
+(~1:45). About 490 spoken words, plus three **optional lines in ⟨brackets⟩** (~30 words). The
 narration is continuous — every scroll and tab change has a line that covers it, so there is no
-dead air and no filler. Rehearse once against a timer: with the bracketed lines you land near
-3:00 at a relaxed pace; without them, near 2:50. Devpost evaluates only the first 3:00.
+dead air and no filler. At a normal presenting pace (165–175 words a minute) the core lines run
+2:50–3:00 and the bracketed lines add ~10 s. Rehearse once against a timer and decide. Devpost evaluates only the first 3:00.
 
 Every claim below was checked against the deployed record (`run_20260902_demo`, live on
 scriptrisk.com) and the Official Rules on 2026-09-07.
