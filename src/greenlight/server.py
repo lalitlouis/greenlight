@@ -1852,8 +1852,9 @@ def _summarize(record: dict[str, Any], run_id: str, kind: str) -> dict[str, Any]
     }
 
 
-# The records the home page shows. Update when the demo record is refreshed.
-HOME_RECORDS = {"run_20260826_demo"}
+# The records the home page shows: whatever demo record ships in the image (the only
+# run files .dockerignore keeps), so a refreshed demo record never needs a code edit.
+HOME_RECORDS = {p.stem for p in RUNS_DIR.glob("run_*_demo.json")}
 
 
 @app.get("/api/runs")

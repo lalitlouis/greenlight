@@ -385,11 +385,11 @@ def test_paid_endpoints_require_signin(monkeypatch):
 
     monkeypatch.setattr(server, "_current_user", lambda req: None)
     monkeypatch.setattr(auth_mod, "configured", lambda: True)
-    body = {"run_id": "run_20260826_demo", "cuts": [], "extra": []}
+    body = {"run_id": "run_20260902_demo", "cuts": [], "extra": []}
     assert client.post("/api/whatif", json=body).status_code == 401
     assert client.post("/api/whatif/suggest", json=body).status_code == 401
     assert (
-        client.post("/api/fix", json={"run_id": "run_20260826_demo", "flag_id": "F101"}).status_code
+        client.post("/api/fix", json={"run_id": "run_20260902_demo", "flag_id": "F101"}).status_code
         == 401
     )
 
