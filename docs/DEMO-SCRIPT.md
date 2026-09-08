@@ -39,7 +39,7 @@ scriptrisk.com) and the Official Rules on 2026-09-07.
 
 ### 0:00 · Slide 1 — Team
 > Hi, I'm Lalit Somavarapha. With Shruthi Kashyap, we're Team Four Desks, and this is ScriptRisk,
-> our entry for the Parallel track.
+> for the Parallel track.
 
 ### 0:08 · Slide 2 — Title
 > Every screenplay hides a six-figure surprise. A song that costs seventy-five thousand dollars to
@@ -53,13 +53,13 @@ scriptrisk.com) and the Official Rules on 2026-09-07.
 ### 0:31 · Slide 4 — What it produces (desks, report, artifacts)
 > So we built the clearance department as an agent system. Four desks read your script at once and
 > return a report where every finding is cited, verified independently, and priced. Plus the
-> binder, the one-sheet, and fixes that go straight back into the script.
+> binder, the one-sheet, and fixes that go back into the script.
 
 ### 0:46 · Slide 5 — Architecture (point left to right)
 > It's agents, not a pipeline. Four Google ADK loop agents on Vertex Gemini run in parallel with a
 > shared toolbelt. Parallel Search is where every citation comes from. ClickHouse holds
-> forty-seven hundred official rating rationales. Then a blinded verifier can throw any finding
-> out, and a Gemini Pro adjudicator reconciles the desks.
+> forty-seven hundred official rating rationales. A blinded verifier can throw any finding out; a
+> Gemini Pro adjudicator reconciles the desks.
 
 ### 1:03 · Slide 6 — Enforced in tools (don't read the cards)
 > The rules live in the tools, not the prompts. No citation, no finding. Two evaluation gates,
@@ -77,8 +77,8 @@ scriptrisk.com) and the Official Rules on 2026-09-07.
 **Show:** the four desk columns filling. Click **Show** on the feeds if they're collapsed. After
 the first sentence, scroll once so the scene strip and the agent network are in frame.
 > This is a recorded analysis of our own short film, Slack Tide. Four desks working at once: read
-> a scene, search, file, move on. Every search runs through Parallel and every result is
-> registered, so a citation has to exist word for word in something the run actually retrieved.
+> a scene, search, file, move on. Every search runs through Parallel, and a citation has
+> to exist word for word in something the run actually retrieved.
 
 ### 1:35 · Tab 2 — Report, top
 **Show:** the hero — score ring, "Not cleared — 1 blocker", the counts, the cost.
@@ -100,7 +100,7 @@ and Final Draft.
 > The music. Composition and master: two rights, two owners, two findings. The desk couldn't file
 > either until it had quoted the publisher's name from a source. We asked it to propose a fix. It
 > swapped the track for a fictional song, across both scenes. Accept it, and the revised script
-> exports to Fountain or Final Draft with revision marks.
+> exports to Fountain or Final Draft.
 
 ### 2:20 · The rating
 **Show:** click **Rating + simulator** in the nav. Stop there: coverage set PG-13/R, the desk's
