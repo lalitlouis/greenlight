@@ -1,122 +1,166 @@
-# Demo script — word for word, with what is on screen (3:00)
+# Demo script — 3:00, spoken by Lalit, with what is on screen for every line
 
-Deck first (about 1:00), then the product (about 2:00). Speak at a natural pace; the
-words below run ~2:45 read aloud, which leaves room for clicks and pauses. Record in one
-take if you can; the deck is `ScriptRisk-demo-deck.pptx`, the product is
-https://scriptrisk.com.
+Team **Four Desks** — Lalit Somavarapha and Shruthi Kashyap. Deck: `ScriptRisk-demo-deck.pptx`
+(7 slides, ~1:15). Product: https://scriptrisk.com (~1:45). Read at a natural pace; the words
+run about 2:50 aloud, which leaves room for clicks. It is written to sound like you talking,
+not a voiceover — contractions, short sentences, one idea at a time.
 
 ## Before you press record
 
-1. Deploy is done and the live replay serves the roll-12 record (`/run?replay=1` shows
-   "SLACK TIDE · Replay · recorded run").
-2. Runs are unpaused, and you are signed in as admin (Propose a fix and What-If are
-   sign-in gated).
-3. Browser at 1280×720 or 1440×900, dark theme, 100% zoom, bookmarks bar hidden. Tabs open
-   in this order: `scriptrisk.com/run?replay=1&pace=6`, `scriptrisk.com/report?run=latest`,
-   `scriptrisk.com/script?run=latest`.
-4. Keep OFF camera: the language finding's body text and the first cut-list beat (they
-   quote the three F-word lines), and the brand findings (Coors Light, JAWS, the newspaper
-   masthead, the Springsteen photo) — they sit in the Informational fold; do not expand it.
-   Rights-holder names in the music findings are fine.
-5. No third-party logos anywhere on screen. The site has none; check your dock and menu bar
-   are out of frame.
+- Signed in to scriptrisk.com as admin (Propose a fix and What-If are sign-in gated; the pause
+  switch does not affect them).
+- Three tabs open, in order: `scriptrisk.com/run?replay=1&pace=6` · `scriptrisk.com/report?run=latest`
+  · `scriptrisk.com/script?run=latest`. Dark theme, 100% zoom, bookmarks bar hidden, dock out of frame.
+- Keep OFF camera: the body of the "Rating Language" finding and the first cut-list beat (both
+  quote the three F-word lines), and the Informational fold (Coors Light, JAWS, the newspaper,
+  the Springsteen photo). Music findings naming Sony or Columbia are fine.
+- Deck in presenter view or full screen; switch to the browser on the cue.
 
-## PART 1 — the deck (0:00–1:00)
+---
 
-**[Slide 1 — title] (0:00)**
-> Every screenplay hides a six-figure surprise. This is ScriptRisk: four AI clearance desks
-> that read a script the way a studio does, and return a report where every finding is
-> cited, independently verified, and priced.
+## 0:00 — Slide 1 · Team
 
-**[Slide 2 — the bottleneck] (0:12)**
-> Before a frame is shot, a studio pays four desks — rights, ratings, safety, territory — to
-> read the whole script. It's mandatory for insurance, it costs thousands, it takes a week,
-> and it lands as a memo after the budget locks. Independent producers mostly skip it and
-> absorb the risk.
+**Show:** the team slide.
 
-**[Slide 3 — what it produces] (0:26)**
-> ScriptRisk runs those four desks concurrently as agents and hands back a Production Risk
-> Report: severity-ranked findings, each with a verbatim citation, a remedy, and a cost; a
-> rating prediction built from evidence; a clearance binder, a one-sheet, and fixes exported
-> straight back into the screenplay.
+> Hi, I'm Lalit Somavarapha. With Shruthi Kashyap, we're Team Four Desks, and we built
+> ScriptRisk for the Parallel track.
 
-**[Slide 4 — architecture] (0:38)**
+## 0:09 — Slide 2 · Title
+
+**Show:** "Every screenplay hides a six-figure surprise."
+
+> Here's the problem we went after. Every screenplay hides a six-figure surprise — a song that
+> costs seventy-five thousand dollars to clear, a scene China won't screen, a stunt no insurer
+> will touch.
+
+## 0:21 — Slide 3 · The bottleneck
+
+**Show:** the four stat cards.
+
+> Before a frame is shot, a studio pays four desks to read the whole script — rights, ratings,
+> safety, territory. It's mandatory for insurance, it takes about a week, and the memo lands
+> after the budget is locked. Independent producers mostly just skip it.
+
+## 0:35 — Slide 4 · What it produces
+
+**Show:** the four desks, the report card, the five artifacts.
+
+> So we asked what a clearance department looks like as an agent system. ScriptRisk runs those
+> four desks at the same time and hands back a report where every finding is cited, checked by
+> an independent verifier, and priced — plus the clearance binder, a one-sheet, and fixes you
+> can push straight back into the script.
+
+## 0:50 — Slide 5 · Architecture
+
+**Show:** the agent graph; point left to right as you speak.
+
 > Under the hood it's an agent system, not a pipeline. A deterministic parser anchors every
-> scene. Triage hands entities to four Google ADK loop agents on Vertex Gemini, running in
-> parallel with a shared toolbelt. Parallel's Search API is the source of every citation.
-> ClickHouse holds four thousand seven hundred official CARA rating rationales. A
-> completeness gate refuses to advance while any entity is undispositioned. Then a blinded
-> verifier re-reads every citation and can reject a finding, and a Pro-tier adjudicator
-> reconciles the desks.
+> scene. Four Google ADK loop agents on Vertex Gemini run in parallel with a shared toolbelt.
+> Parallel's Search API is where every citation comes from. ClickHouse holds forty-seven
+> hundred official CARA rating rationales. A completeness gate won't let the run move on until
+> every entity has an answer. Then a blinded verifier re-reads every citation and can throw a
+> finding out, and a Pro-tier adjudicator reconciles the desks.
 
-**[Slide 5 — enforced honesty] (0:52)**
-> The rules live in the tools, not the prompts: a finding without a citation cannot be
-> filed, an excerpt must exist word for word in what was retrieved, and two evaluation gates
-> — fifty-two checks and forty-nine checks — are green on the deployed code.
+## 1:08 — Slide 6 · Enforced in tools
 
-**[Slide 6 — requirements] (1:00, hold two seconds while you switch to the browser)**
-> Google Cloud and Gemini through ADK at runtime, Parallel Search on every run, a public MIT
-> repository, and a live web app. Let me show you.
+**Show:** the five cards; don't read them.
 
-## PART 2 — the product (1:00–3:00)
+> The important part: the rules live in the tools, not the prompts. No citation, no finding.
+> And two evaluation gates keep it honest — both green on what's deployed today.
 
-**[Tab 1: the run page, replay already streaming] (1:04)**
-Click **Show** on the desk feeds if they are hidden. Let the columns scroll for a moment.
-> This is a recorded analysis of our own short screenplay, Slack Tide. Four desks are
-> investigating at once — each one reads scenes, searches the live web through Parallel,
-> and files findings through a tool that will refuse anything uncited. Watch the clearance
-> column: it's working a song — who owns the composition, then who owns the master, then
-> what a licence requires. And look at the network on the right: Parallel and ClickHouse are
-> nodes in the graph, not footnotes.
+## 1:16 — Slide 7 · Requirements
 
-Scroll down once to show the scene strip filling with pinned findings and the live agent
-network, then switch tabs.
+**Show:** the requirements table for two seconds, then switch to the browser.
 
-**[Tab 2: the report — top of page] (1:34)**
-> The report. A risk index, the clearance cost by remedy path, and the counts by severity.
-> Twenty-three findings, two rejected in verification, thirty-five entities researched —
-> every number here reconciles with the findings below.
+> Google Cloud and Gemini at runtime, Parallel on every run, a public MIT repo, a live web app.
+> Let me show you.
 
-**[Scroll to the BLOCKER card; click Read more] (1:46)**
-> The blocker: an unpermitted vessel burn with fireworks on open water. The safety desk
-> quotes the industry's own safety bulletin, verbatim, and prices the coordinator, the
-> permits, and the effects work.
+---
 
-**[Scroll to the Sync License card] (1:58)**
-> The music. Composition and master are two rights, two owners, two findings — and the desk
-> had to quote the publisher's name from a source before it could file either.
+## 1:22 — Tab 1 · The run page (recorded replay)
 
-**[Click "Rating + simulator" in the nav; stop with the Floor line on screen] (2:08)**
-> The rating, as evidence. This script's descriptor profile against the official rationale
-> corpus; a measured boundary with a ninety-percent coverage set. And a rule you can check:
-> three spoken uses of one word, counted by a regex, and the MPA's own Classification and
-> Rating Rules quoted — more than one such expletive requires an R. The set keeps R.
+**Show:** the replay streaming. Click **Show** on the desk feeds if they're hidden. Let it run.
 
-**[Tick one cut in the What-If list — pick the drug-use cut, not the language one] (2:24)**
-> Cuts are levers, not promises — tick one and the boundary re-measures.
+> This is a recorded analysis of our own short film, Slack Tide. Four desks are working at
+> once. Watch the clearance column — it's chasing a song: who owns the composition, then who
+> owns the master, then what a licence actually requires. Every one of those searches goes
+> through Parallel, and every result gets registered — so a citation has to exist word for word
+> in something the run really retrieved. If a desk names an owner it can't quote, the tool
+> refuses it.
 
-**[Click "Rejected" in the nav; open "Show the 2 rejected draft findings"] (2:32)**
-> And the part nobody else shows you: an independent verifier read every citation blind and
-> threw out two findings whose sources didn't hold. They stay on the report, struck
-> through, with the reason.
+**Show:** scroll down once to the scene strip and the live agent network.
 
-**[Scroll back up to any HIGH finding; click Propose a fix] (2:42)**
-> Every finding can propose its own fix — a revised line you can accept and export back into
-> the screenplay as Fountain or Final Draft.
+> And there's the network. Parallel and ClickHouse are nodes in the graph, not footnotes.
 
-**[Tab 3: the marked-up script, briefly] (2:52)**
-> Every finding anchored to its scene, both ways. Cited, verified, priced — before the
-> budget locks. ScriptRisk.
+## 1:50 — Tab 2 · The report, top
 
-## Timing guide
+**Show:** the hero: score ring, "Not cleared — 1 blocker", counts, cost.
 
-| Segment | Target | Words |
+> The report. A risk index, the clearance cost by remedy path, and the counts. Twenty-three
+> findings, two rejected in verification — and every number up here reconciles with the
+> findings below.
+
+## 2:00 — The blocker
+
+**Show:** scroll to the first card, Stunt Pyro; click **Read more**; the CSATF citation.
+
+> The blocker: an unpermitted boat burn with fireworks on open water. The safety desk quotes
+> the industry's own safety bulletin, verbatim, and prices the coordinator, the permits, and
+> the effects work.
+
+## 2:10 — The music
+
+**Show:** scroll to the Sync License card.
+
+> The music. Composition and master are two rights, two owners, two findings. And the desk
+> couldn't file either one until it had quoted the publisher's name from a source.
+
+## 2:19 — The rating
+
+**Show:** click **Rating + simulator** in the nav; stop with the coverage set and the Floor line on screen.
+
+> The rating, as evidence. This script's profile against the official rationale corpus, a
+> measured boundary, a ninety-percent coverage set. And a rule you can check: three spoken
+> F-words, counted by a regex, and the MPA's own rule quoted — more than one requires an R.
+> So the set keeps R.
+
+**Show:** tick the drug-use cut in the What-If list (not the language one).
+
+> Cuts are levers, not promises — tick one and it re-measures.
+
+## 2:38 — The rejections
+
+**Show:** click **Rejected** in the nav; open "Show the 2 rejected draft findings".
+
+> And here's the part nobody else shows you. The verifier threw out two findings whose sources
+> didn't hold. They stay on the report, struck through, with the reason.
+
+## 2:47 — Propose a fix
+
+**Show:** scroll up to any HIGH finding; click **Propose a fix**; let the draft appear.
+
+> Any finding can propose its own fix — a revised line you accept and export back into the
+> screenplay as Fountain or Final Draft.
+
+## 2:54 — Tab 3 · The marked-up script, then close
+
+**Show:** the script page with findings in the gutter.
+
+> Cited, verified, priced — before the budget locks. Thanks — I'm Lalit, this is ScriptRisk.
+
+---
+
+## If you run long
+
+Drop the What-If line first (saves 5 s), then the network line on the run page (5 s), then the
+marked-up script beat (6 s). Never drop the rating card or the rejections.
+
+## Timing
+
+| Block | Window | Words |
 |---|---|---|
-| Deck (6 slides) | 0:00–1:02 | ~230 |
-| Run page replay | 1:04–1:34 | ~90 |
-| Report: hero, blocker, music | 1:34–2:08 | ~95 |
-| Rating card + What-If | 2:08–2:32 | ~75 |
-| Rejected + Propose a fix + script | 2:32–3:00 | ~70 |
-
-If you run long, drop the What-If beat first, then the marked-up script beat. Never drop the
-rating card or the rejected findings.
+| Team + title + bottleneck | 0:00–0:35 | ~80 |
+| Product, architecture, tools, requirements | 0:35–1:22 | ~150 |
+| Run page | 1:22–1:50 | ~85 |
+| Report: hero, blocker, music, rating, What-If | 1:50–2:38 | ~135 |
+| Rejections, fix, close | 2:38–3:00 | ~55 |
