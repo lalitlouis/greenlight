@@ -2,10 +2,10 @@
 
 Team **Four Desks** — Lalit Somavarapha and Shruthi Kashyap. Deck: `ScriptRisk-demo-deck.pptx`
 (8 slides: seven up front, ~1:08, and slide 8 as the end card). Product: https://scriptrisk.com
-(~1:45). About 557 spoken words, written the way you'd say them out loud — full sentences,
+(~1:45). About 556 spoken words, written the way you'd say them out loud — full sentences,
 contractions, no taglines. The narration is continuous: every scroll and tab change has a line that
 covers it, so there is no dead air and no filler. At a normal presenting pace (165–175 words a
-minute) it runs 2:50–3:00. Rehearse once against a timer; if you're over, the cuts are at the end. Devpost evaluates only the first 3:00.
+minute) it runs 2:55–3:05, so rehearse and use the cut list if you need it. Rehearse once against a timer; if you're over, the cuts are at the end. Devpost evaluates only the first 3:00.
 
 Every claim below was checked against the deployed record (`run_20260902_demo`, live on
 scriptrisk.com) and the Official Rules on 2026-09-07.
@@ -61,16 +61,15 @@ scriptrisk.com) and the Official Rules on 2026-09-07.
 ### 0:43 · Slide 5 — Architecture (point left to right)
 > Under the hood, it's agents, not a pipeline. Four Google ADK loop agents run in parallel on
 > Vertex Gemini. Every citation comes from Parallel's Search API, and ClickHouse holds forty-seven
-> hundred official rating rationales. Then a blinded verifier can throw any finding out, and a
-> Gemini Pro adjudicator reconciles them.
+> hundred official rating rationales for the ratings desk.
 
 ### 1:01 · Slide 6 — Enforced in tools (don't read the cards)
-> The thing I'd underline: the rules live in the tools, not the prompts. If a desk can't cite it,
-> it can't file it.
+> The rules live in the tools, not the prompts: if a desk can't cite it, it can't file it.
 
 ### 1:08 · Slide 7 — Requirements (two seconds, then switch to Tab 1)
-> So: Google Cloud and Gemini at runtime, Parallel on every run, public repo, live site. Let me
-> show you.
+> This is a recorded run of our own short film, Slack Tide. Each column is a desk, all working at
+> once: read a scene, search, file a finding, move on. Every search goes through Parallel, and a
+> citation only counts if it exists word for word in what the run pulled back.
 
 ---
 
@@ -81,42 +80,39 @@ scriptrisk.com) and the Official Rules on 2026-09-07.
 once, slowly, during the last sentence so the scene strip and the agent network pass through frame.
 > This is a recorded run of our own short film, Slack Tide. Each column is a desk, all working at
 > once: read a scene, search, file a finding, move on. Every search goes through Parallel, and a
-> citation only counts if it exists word for word in something the run actually pulled back.
+> citation only counts if it exists word for word in what the run pulled back.
 
 ### 1:35 · Tab 2 — Report, top
 **Show:** switch tabs on "Every run ends up in this report." The hero: score ring, "Not cleared —
 1 blocker", the counts, the cost. Point at the section nav under the hero on "one long page".
 > Every run ends up in this report. It's one long page: the verdict up top, then the cost, the
-> rating, the findings by severity, whatever the verifier rejected, and what got cleared. This
-> one's not cleared, there's a blocker. Twenty-three findings, two rejected, and a six-figure
-> clearance cost.
+> rating, the findings by severity, the rejections, and what got cleared. This one's not cleared,
+> there's a blocker. Twenty-three findings, two rejected, and a six-figure clearance cost.
 
 ### 1:52 · The blocker
 **Show:** scroll to the first card, *Stunt Pyro*, while saying "Every finding reads the same
 way". The PARTIAL badge and the CSATF bulletin citation are visible without expanding.
 > Every finding reads the same way: scene, severity, desk, the claim, the citations, and a remedy
-> with a price. The blocker here is an unpermitted boat burn with fireworks on open water. The
-> safety desk quotes the industry's own safety bulletin, word for word, and prices the fix.
+> with a price. The blocker is an unpermitted boat burn with fireworks on open water; the safety
+> desk quotes the industry's own safety bulletin, word for word, and prices the fix.
 
 ### 2:07 · The music, and the fix
 **Show:** scroll to *Sync License* and *Master Use License* (cards two and three) on "Next is the
 music." The pre-drafted diff is open on the Master Use card. On "I'll accept it", click **Accept
 this fix** — the export bar appears at the bottom: "1 fix accepted — revised script with revision
 marks", Fountain and Final Draft.
-> Next is the music. There's a composition and a master recording, two rights and two owners, so
-> it's two findings, and the desk couldn't file either one until it had quoted the publisher's
-> name from a source. Any finding can propose its own fix. This one swapped the track for a
-> fictional song across both scenes. I'll accept it, and the revised script exports to Fountain or
-> Final Draft.
+> Next is the music. A composition and a master recording, two owners, so two findings, and the
+> desk couldn't file either until it had quoted the publisher's name from a source. Any finding
+> can propose its own fix. This one swapped the track for a fictional song in both scenes. I'll
+> accept it, and the revised script exports to Fountain or Final Draft.
 
 ### 2:27 · The rating
 **Show:** click **Rating + simulator** in the nav on "Now the rating". Stop there: coverage set
 PG-13/R, the desk's call, the target, the rationale line, the descriptors, the Floor line, the
 top of the comparables. Do not scroll past the comparables.
 > Now the rating, and we treat this as evidence, not opinion. A measured boundary, a
-> ninety-percent coverage set, and the nearest films with their official rationales. And a rule
-> you can check yourself: three spoken F-words, counted by a regex, and the MPA's own rule quoted.
-> More than one means R.
+> ninety-percent coverage set, and a rule you can check yourself: three spoken F-words, counted by
+> a regex, and the MPA's own rule quoted. More than one means R.
 
 ### 2:42 · The rejections
 **Show:** click **Rejected** in the nav on "And this is the part", scroll down one notch, click
@@ -140,8 +136,7 @@ Hold it through the last word so a judge can pause on the links.
 1. Slide 6's line (5 s) — let the slide sit for two seconds instead.
 2. "And the desk wasn't allowed to file either one until it had quoted the publisher's name from
    a source." (5 s)
-3. "and the nearest films with their official rationales" in the rating beat (3 s)
-4. "It's one long page: the verdict up top, then the cost, the rating, the findings ranked by
+3. "It's one long page: the verdict up top, then the cost, the rating, the findings ranked by
    severity, whatever the verifier rejected, and what got cleared." (8 s) — only if desperate;
    it's the line that makes the page make sense.
 
