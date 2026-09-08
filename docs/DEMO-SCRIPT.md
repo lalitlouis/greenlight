@@ -2,9 +2,10 @@
 
 Team **Four Desks** — Lalit Somavarapha and Shruthi Kashyap. Deck: `ScriptRisk-demo-deck.pptx`
 (8 slides: seven up front, ~1:08, and slide 8 as the end card). Product: https://scriptrisk.com
-(~1:40). About 490 spoken words. The narration is continuous — every scroll and tab change has a
-line that covers it, so there is no dead air and no filler. Rehearse once against a timer; if you
-run long, cut the lines listed at the end, in order. Devpost evaluates only the first 3:00.
+(~1:45). About 480 spoken words, plus three **optional lines in ⟨brackets⟩** (~30 words). The
+narration is continuous — every scroll and tab change has a line that covers it, so there is no
+dead air and no filler. Rehearse once against a timer: with the bracketed lines you land near
+3:00 at a relaxed pace; without them, near 2:50. Devpost evaluates only the first 3:00.
 
 Every claim below was checked against the deployed record (`run_20260902_demo`, live on
 scriptrisk.com) and the Official Rules on 2026-09-07.
@@ -53,8 +54,8 @@ scriptrisk.com) and the Official Rules on 2026-09-07.
 
 ### 0:28 · Slide 4 — What it produces (desks, report, artifacts)
 > So we built the clearance department as an agent system. Four desks read your script at once and
-> return a report where every finding is cited, verified independently, and priced. Plus the
-> binder, the one-sheet, and fixes that go back into the script.
+> return a report where every finding is cited, verified independently, and priced — plus the
+> fixes, which go back into the script.
 
 ### 0:42 · Slide 5 — Architecture (point left to right)
 > It's agents, not a pipeline. Four Google ADK loop agents on Vertex Gemini run in parallel.
@@ -62,8 +63,8 @@ scriptrisk.com) and the Official Rules on 2026-09-07.
 > official rating rationales. A blinded verifier can throw any finding out; a Gemini Pro
 > adjudicator reconciles the desks.
 
-### 0:59 · Slide 6 — Enforced in tools (don't read the cards)
-> The rules live in the tools, not the prompts. No citation, no finding.
+### 0:59 · Slide 6 — Enforced in tools (don't read the cards; optional line, or just let it sit for two seconds)
+> ⟨The rules live in the tools, not the prompts. No citation, no finding.⟩
 
 ### 1:04 · Slide 7 — Requirements (two seconds, then switch to Tab 1)
 > Google Cloud and Gemini at runtime, Parallel on every run. Let me show you.
@@ -77,24 +78,23 @@ scriptrisk.com) and the Official Rules on 2026-09-07.
 "Below the feeds", scroll once so the scene strip and the agent network are in frame.
 > A recorded run of our own short film, Slack Tide. Each column is a desk, and they work at the
 > same time: read a scene, search, file a finding, move on. Every search runs through Parallel,
-> and a citation has to exist word for word in something the run actually retrieved. Below the
-> feeds, the scene strip and the agent graph show who is touching what.
+> and a citation has to exist word for word in something the run actually retrieved. ⟨Below, the
+> scene strip and the agent graph.⟩
 
 ### 1:30 · Tab 2 — Report, top
 **Show:** switch tabs on "Every run ends in this report." The hero: score ring, "Not cleared —
 1 blocker", the counts, the cost. Point at the section nav under the hero on "one long page".
-> Every run ends in this report. It's one long page: the verdict up top, then the cost, the
-> rating, the findings ranked by severity, the ones the verifier rejected, and what was cleared.
-> This one is not cleared, one blocker. Twenty-three findings, two rejected, and a six-figure
+> Every run ends in this report, one long page: the verdict, the cost, the rating, the findings
+> by severity, the rejections, and what was cleared. This one is not cleared, one blocker. Twenty-three findings, two rejected, and a six-figure
 > clearance cost, ranked by driver.
 
 ### 1:47 · The blocker
 **Show:** scroll to the first card, *Stunt Pyro*, while saying "Findings read the same way…".
 The PARTIAL badge and the CSATF bulletin citation are visible without expanding.
-> Findings read the same way every time: the scene, the severity, the desk, the claim, the
-> citations, and a remedy with a cost. The blocker is an unpermitted boat burn with fireworks on
+> Every finding reads the same way: scene, severity, desk, claim, citations, and a remedy with a
+> cost. The blocker is an unpermitted boat burn with fireworks on
 > open water. The safety desk quotes the industry's own safety bulletin, verbatim, and prices the
-> fix. Even the verifier's caveat stays on the card.
+> fix. ⟨Even the verifier's caveat stays on the card.⟩
 
 ### 2:02 · The music, and the fix
 **Show:** scroll to *Sync License* and *Master Use License* (cards two and three) on "Next, the
@@ -102,15 +102,15 @@ music." The pre-drafted diff is open on the Master Use card. On "Accept it", cli
 fix** — the export bar appears at the bottom: "1 fix accepted — revised script with revision
 marks", Fountain and Final Draft.
 > Next, the music. Composition and master: two rights, two owners, two findings. The desk
-> couldn't file either until it had quoted the publisher's name from a source. And any finding
-> can propose its own fix. Here it swapped the track for a fictional song, across both scenes.
+> couldn't file either until it had quoted the publisher's name from a source. Any finding can
+> propose its own fix; this one swapped the track for a fictional song, across both scenes.
 > Accept it, and the revised script exports to Fountain or Final Draft.
 
 ### 2:22 · The rating
 **Show:** click **Rating + simulator** in the nav on "Now the rating". Stop there: coverage set
 PG-13/R, the desk's call, the target, the rationale line, the descriptors, the Floor line, the
 top of the comparables. Do not scroll past the comparables.
-> Now the rating, which we treat as evidence, not opinion. A measured boundary, a ninety-percent
+> Now the rating, as evidence, not opinion. A measured boundary, a ninety-percent
 > coverage set, and the nearest films with their official rationales. And a rule you can check:
 > three spoken F-words, counted by a regex, and the MPA's own rule quoted. More than one means R.
 
@@ -131,13 +131,13 @@ Hold it through the last word so a judge can pause on the links.
 
 ---
 
-## If you run long, cut in this order
+## If you run long
 
-1. Slide 6 entirely (5 s) — slide 5 already made the point.
-2. "Below the feeds, the scene strip and the agent graph show who is touching what." (5 s) —
-   skip the scroll too.
-3. "Even the verifier's caveat stays on the card." (3 s)
-4. "The desk couldn't file either until it had quoted the publisher's name from a source." (5 s)
+First drop the three ⟨bracketed⟩ lines: slide 6, the scene-strip line on the run page (skip that
+scroll too), and the caveat line on the blocker. Then, if still over:
+
+1. "The desk couldn't file either until it had quoted the publisher's name from a source." (5 s)
+2. "and the nearest films with their official rationales" in the rating beat (3 s)
 
 Never cut the rating beat or the rejections: they are the two things no other entry will show.
 
@@ -146,8 +146,8 @@ Never cut the rating beat or the rejections: they are the two things no other en
 | Block | Window | Words |
 |---|---|---|
 | Slides 1–3 | 0:00–0:28 | ~75 |
-| Slides 4–7 | 0:28–1:08 | ~110 |
-| Run page | 1:08–1:30 | ~60 |
-| Report: layout, hero, blocker | 1:30–2:02 | ~95 |
-| Music + fix, rating | 2:02–2:38 | ~110 |
+| Slides 4–7 | 0:28–1:08 | ~90 (+12) |
+| Run page | 1:08–1:30 | ~55 (+8) |
+| Report: layout, hero, blocker | 1:30–2:02 | ~85 (+8) |
+| Music + fix, rating | 2:02–2:38 | ~105 |
 | Rejections, slide 8 close | 2:38–3:00 | ~70 |
