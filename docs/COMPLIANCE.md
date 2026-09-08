@@ -1,5 +1,8 @@
 # Contest compliance
 
+> Superseded for the 2026-09-07 audit by **`docs/RULES-CHECKLIST.md`** — one row per rule with
+> evidence and the open actions. This file keeps the enforcement notes below.
+
 Every rule from the Official Rules that we can fail, and its current status.
 **Deadline: 2026-09-09, 2:00 PM PT.** Treat Sept 8 as the real one.
 
