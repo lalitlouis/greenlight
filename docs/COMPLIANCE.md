@@ -9,20 +9,21 @@ Legend: `DONE` verified · `PENDING` not yet built · `ONGOING` enforced continu
 
 | # | Requirement | Status | Evidence |
 |---|---|---|---|
-| 1 | Public code repository | DONE | github.com/lalitlouis/greenlight |
+| 1 | Public code repository | **ACTION NEEDED** | github.com/lalitlouis/greenlight is PRIVATE since 2026-08-28 — flip public before submitting |
 | 2 | OSS license detectable in the About panel | DONE | `gh repo view --json licenseInfo` -> MIT |
 | 3 | Google Cloud imported **and called** at runtime | DONE | `google-adk`, `google-genai`; live Gemini call in `greenlight.checks` |
 | 4 | Partner product called at runtime | DONE | `parallel-web`, `client.search(...)`; live call returning 10 sourced results |
 | 5 | Only Google Cloud AI tooling; no other AI vendor | ONGOING | `scripts/check_forbidden_deps.sh`, wired as a PostToolUse hook |
 | 6 | Partner track selected | DONE | **Parallel** |
-| 7 | Project runs on web / Android / iOS | PENDING | Cloud Run web app |
-| 8 | Hosted project URL | PENDING | after deploy |
-| 9 | Demo video ≤3 min, public on YouTube/Vimeo, English | PENDING | |
+| 7 | Project runs on web / Android / iOS | DONE | Cloud Run web app at scriptrisk.com |
+| 8 | Hosted project URL, publicly accessible and functional | **ACTION NEEDED** | https://scriptrisk.com is live, but new analyses are PAUSED by the operator kill switch (set 2026-09-01) — unpause before judging; sign-in required to run is fine, the invite gate is off in production |
+| 9 | Demo video ≤3 min, public on YouTube/Vimeo, English | PENDING | not recorded; plan in docs/DEMO.md; no brands/logos/profanity on screen |
 | 10 | Devpost submission form complete | PENDING | |
-| 11 | Text description: features, tech, data sources, learnings | PENDING | draft from `docs/PRD.md` + `docs/STACK.md` |
+| 11 | Text description: features, tech, data sources, learnings | DRAFTED | `docs/SUBMISSION.md` (updated 2026-09-07, includes the data-source disclosure) |
 | 12 | Repo contains all source, assets, and run instructions | ONGOING | `README.md` + `docs/SETUP.md` |
 | 13 | New project, created within the contest period | DONE | repo initialized 2026-08-23; contest opened 2026-07-27 |
 | 14 | Team ≤ 4, all members added on Devpost | ACTION NEEDED | 2 people — **add teammate to the Devpost project** |
+| 15 | Authorized to use third-party data; sources described | DISCLOSED | `docs/DATA_SOURCES.md` (corrected 2026-09-07): the CARA rationale corpus was collected from filmratings.com, whose terms restrict automated access — a contract exposure we disclose; facts/short phrases outside copyright; nominative trademark use; MPA rules PDF quoted for reference |
 
 ## The rule most likely to disqualify us
 

@@ -26,13 +26,16 @@ opinions, but desks that research, cite, and get checked?
   structurally rejects any flag without a citation.
 - An independent, blinded verifier re-reads every citation and rejects unsupported claims —
   rejections appear in the report with reasons.
-- The Ratings Board predicts the MPA rating from evidence: kNN over 6,302 released films'
-  content profiles in ClickHouse ("7 of 8 nearest comparables are R"), with the exact cut list
-  to hit a target rating.
+- The Ratings Board predicts the MPA rating from evidence, not opinion: your script's
+  CARA-style descriptor profile against 4,733 released films' official rating rationales in
+  ClickHouse ("7 of 8 nearest comparables are R"), a measured per-descriptor boundary (what
+  CARA actually did with "pervasive language", "brief drugs"…) with a conformal coverage set
+  at 90% per rating group, the MPA's own rating rules quoted where a rule applies (more than
+  one spoken F-word), and the exact cut list to reach a target rating.
 - A Pro-tier adjudicator merges duplicates and resolves conflicting remedies deterministically.
-- **The What-If simulator**: the cut list is interactive — checking cuts re-runs the real
-  evidence pipeline (rationale rewritten, re-embedded, re-searched against all 6,302 films),
-  and it will honestly disagree with its own cut list ("closer, not clear: 1 → 3 of 8").
+- **The What-If simulator**: the cut list is interactive — checking cuts re-evaluates the
+  revised profile against the measured boundary first and the rationale corpus second, and it
+  will honestly disagree with its own cut list when a cut does not move the rating.
 - **Production artifacts**: a downloadable Clearance Binder (the standard studio clearance
   log as PDF/CSV), a one-sheet PDF poster, and accepted fixes exported as a revised
   .fountain or Final Draft .fdx with revision marks.
@@ -43,9 +46,11 @@ opinions, but desks that research, cite, and get checked?
 
 ## How we built it
 
-Google ADK on Vertex AI Gemini (Flash for desks, Pro for adjudication/coverage);
-`parallel-web` for every web citation; ClickHouse Cloud for the comparables corpus (Wikidata
-CC0 ratings + Wikipedia content profiles via official APIs, embedded with text-embedding-005);
+Google ADK on Vertex AI Gemini (Flash for desks and verifiers, Pro for adjudication and
+coverage); `parallel-web` for every web citation (Search, Extract, Task); ClickHouse Cloud for
+the ratings evidence (official CARA rating rationales embedded with text-embedding-005, plus a
+Wikidata/Wikipedia content-profile corpus for pitch comparables); local reference assets for
+the MPA rating rules, the CSATF bulletin index, and BBFC cuts records;
 FastAPI + SSE on Cloud Run — analyses execute as **Cloud Run Jobs** (deploy-immune workers)
 journaling every event to Firestore, so runs survive deploys, restarts, and closed laptops,
 and any instance can relay any run's live stream. The demo screenplay is an original short
@@ -62,9 +67,28 @@ lesson is a commit.
 
 ## Accomplishments
 
-An eval harness (`make eval`) that scores runs against the fixture's seeded ground truth —
-18/18 on the shipped demo record, including both traps correctly declined and real rejections
-on camera. Deployed day 3 of 16.
+Two eval gates that score every run against seeded ground truth AND a shared set of report
+invariants (a finding may not cite a scene it does not cover, a cleared row may not cite a
+rejected finding, a rating claim may not state a rule the MPA text does not, counts and costs
+must reconcile…): 52 checks on the demo screenplay, 49 on a 100-scene stress fixture, both
+green on the deployed code; 405 unit tests. Deployed on day 3 of 16 and continuously since.
+A full-codebase review on 2026-09-01 found 44 accuracy and consistency defects; all were fixed
+at their class, each pinned by a test and a gate roll, across twelve gate rolls in two days —
+the decision log records every one, including the two rolls that went red on our own bugs.
+
+## Third-party data sources (disclosure)
+
+- **Official CARA rating rationales** (4,733 films) from the MPA's filmratings.com listings,
+  collected once at a polite rate with a source URL per row; the descriptor boundary and the
+  coverage set are our own statistics over them. Rating reasons are facts and short phrases;
+  MPA and CARA are trademarks of the Motion Picture Association, used nominatively — no
+  affiliation or endorsement.
+- **MPA Classification and Rating Rules** (published PDF, effective July 24, 2020): the five
+  rating provisions quoted verbatim so the desks can cite a rule from the official text.
+- **Wikidata (CC0) + Wikipedia (official API)** content profiles for 6,302 released films,
+  used for pitch comparables.
+- **CSATF safety-bulletin index** (csatf.org), **BBFC classification records** (bbfc.co.uk),
+  **USPTO TSDR** (live). Full provenance and legal basis: `docs/DATA_SOURCES.md`.
 
 ## External review (adversarial testing)
 
@@ -101,7 +125,9 @@ integrations for real underwriting quotes.
 ## Checklist before submitting
 
 - [ ] Team members added on Devpost
-- [ ] Video uploaded (max 3 min, public, English) — see docs/DEMO.md
-- [ ] Repo public, LICENSE at root (done)
+- [ ] Video uploaded (max 3 min, public, English) — see docs/DEMO.md; no brands, logos, or
+      profanity on screen (the fixture's language finding quotes the lines — keep it off camera)
+- [ ] **Repo flipped PUBLIC** (private since 2026-08-28), LICENSE at root (MIT, detected)
+- [ ] **Runs UNPAUSED** (`/api/admin/pause`) so a signed-in judge can analyze a screenplay
 - [ ] Hosted URL in the form: https://scriptrisk.com
-- [ ] No third-party logos/trademarks on screen in the video
+- [ ] Track set to Parallel; text description pasted from this file

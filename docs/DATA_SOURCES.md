@@ -1,20 +1,48 @@
-# Data sources — provenance check
+# Data sources — provenance and status
 
-Status: **approved 2026-08-24 (content-profile pivot).** A 250-film pilot
-(`scripts/ingest_ratings.py pilot`) measured a 1% extraction rate for CARA rationale strings in
-English Wikipedia prose — articles rarely quote them (8 of 94 top articles even mention the
-MPAA). The rationale-string plan is dead; the corpus pivots to **content profiles**:
+Status: **current as of 2026-09-07.** Every corpus and reference asset the runtime reads, where
+it came from, how it was collected, and the legal basis we rely on. The 2026-08-24 analysis that
+approved the content-profile corpus is kept below for the record; the 2026-08-28 harvest of
+official rating reasons **superseded its "no filmratings.com scraping" recommendation**, and
+this file said the opposite of what shipped until this revision. That contradiction is fixed
+here, not hidden.
 
-- **Ratings** from Wikidata P1657 (validated by the pilot: clean, structured, CC0, scales).
-- **Embedding text** from each film's Wikipedia article lead + plot section via the official
-  MediaWiki API — a richer content signal than a one-line rationale in any case.
-- **Display line** per comparable: a short attributed quote from the article lead, with the
-  source URL. Every comparable shown in the report is itself citable.
-- The demo beat is unchanged in substance: "your screenplay's content profile sits nearest
-  these released films — seven of eight are rated R." The evidence is the neighbors' rating
-  distribution, not CARA's phrasing.
+## What the runtime reads
 
-Original analysis below, kept for the record.
+| Asset | Used for | Source and collection | Basis |
+|---|---|---|---|
+| `cara_rationales` (ClickHouse, 4,733 rows) | Report comparables and base rates (run 17, 2026-09-01) | Official CARA rating reasons as listed on the MPA's filmratings.com search results; collected once by `scripts/harvest_rationales.py` (one request per film, 0.7 s spacing, backoff, identified user agent); robots.txt permits crawling; source URL per row | Facts about films plus short formulaic phrases — outside copyright (*Feist*; 37 CFR 202.1). The site's terms of use prohibit automated access and license content for internal non-commercial use; we treat this as a contract exposure, disclosed here, and the production path is a licensed feed from the MPA |
+| `rating_boundary.json` (4,544 parsed rationales) | Per-descriptor marginals, the multinomial model, the conformal coverage set | Derived from the same harvest by `scripts/build_boundary_asset.py`; our own aggregate, cited by name in the report | Same as above; the derived statistics are ours |
+| `rating_rationales` (ClickHouse, 6,302 rows) | First Look pitch comparables (topical similarity) | Wikidata P1657 ratings (CC0) + Wikipedia lead/plot via the official MediaWiki API; embedded with `text-embedding-005`; source URL per row | Facts from CC0 data; Wikipedia prose is CC BY-SA and we store embeddings and a short attributed display line with its URL |
+| `mpa_rating_rules.json` | `rating_rules()` — the desks may state a rating RULE only beside this text | One download of the MPA's published *Classification and Rating Rules* PDF (effective July 24, 2020; SHA-256 on the asset) by `scripts/harvest_mpa_rules.py`; the five rating provisions and the expletive sentences, verbatim | Quotation of a published rule for reference and criticism, attributed; the MPA is not affiliated with and does not endorse this product |
+| `csatf_bulletins.json` | `csatf_bulletin()` — bulletin numbers and titles | One-time harvest of the official CSATF safety-bulletin index (csatf.org) | Titles and numbers of public industry safety bulletins; substantive text is retrieved live and cited |
+| BBFC cuts records | `bbfc_cut_precedent()` — UK cuts precedents | Harvested from the BBFC's public classification records (`scripts/harvest_bbfc.py`), 436 records | Regulator's public decisions; facts |
+| USPTO TSDR | `verify_trademark()` — live status/owner of a registration | Live official API at runtime | Official public register |
+| Parallel Search / Extract / Task | Every web citation | Live at runtime via the `parallel-web` SDK | Partner API under its terms |
+
+## Trademark and attribution
+
+"MPA", "CARA", "BBFC", and the rating marks are certification marks; reporting that a film was
+rated R is nominative use. The product states the prediction is ours and that we are not
+affiliated with or endorsed by the MPA (cases page; report footer copy in `web/static`).
+No third-party logo is displayed in the product or the demo video.
+
+## What changed, and when
+
+- 2026-08-24 — content-profile corpus approved (Wikidata + Wikipedia); "no filmratings.com
+  scraping" recommended because the rationale strings could not be found in Wikipedia prose.
+- 2026-08-28 — Track B: the official rating reasons were harvested from filmratings.com
+  (4,755 rows; DECISIONS.md "Track B delivers") because they are the only authority for CARA's
+  own wording; the descriptor boundary and conformal model were built on them.
+- 2026-09-01 — run 17 moved the report's comparables from the content-profile corpus to the
+  rationale corpus after the What-If Swearnet diagnosis (docs/plans/run17-rationale-space.md).
+- 2026-09-02 — the MPA rules PDF became a local tool so the expletive-count rule can be cited
+  from the official text (DECISIONS.md 2026-09-02).
+- 2026-09-07 — this file corrected to describe the above; it had still claimed no harvest.
+
+---
+
+## Original analysis (2026-08-24), kept for the record — superseded where noted above
 
 ## What the Ratings Board corpus is
 
