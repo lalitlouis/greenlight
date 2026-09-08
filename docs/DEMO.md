@@ -43,24 +43,39 @@ evidence, not opinion.
 it. This turns "every claim is checked" from a promise into something the judge watched happen.
 Nobody else will do this, and it reads as real engineering judgment.
 
-## Runbook against the shipped product (2026-08-24)
+## Runbook against the shipped product (2026-09-07)
 
-Everything below is recordable today from https://scriptrisk.com (or `make serve` locally —
-same bits). Record from **replay**, never live: /run?replay=1 streams the committed 18/18 demo
-record with realistic pacing. `?pace=` scales speed if a beat needs tightening.
+Record from **replay**, never live: `/run?replay=1` streams the committed demo record
+`runs/run_20260902_demo.json` (gate roll 12, 52/52 on the fixture eval, 23 findings, 2
+rejections) with realistic pacing; `?pace=` scales speed. `/report?run=latest`, `/script`,
+`/binder`, and `/onesheet` render the same record. The record must be **deployed** before
+recording — the replay serves what is in the image.
 
-- 0:00 open on the LANDING (black, "Every screenplay hides a six-figure surprise") — 3 seconds,
-  then Enter. It states the problem faster than narration can.
+- 0:00 open on the LANDING — 3 seconds, then Enter. It states the problem faster than narration.
 - The money-on-a-page beat: /script?run=latest — the funeral scene with the sync-license flag
-  in the gutter. Then /report?run=latest, open F101: verbatim citation, remedy, $10–50k.
+  in the gutter. Then /report?run=latest: open the stunt_pyro **BLOCKER** (the unpermitted
+  vessel burn — CSATF #16 quoted) and the sync-license HIGH: verbatim citation, remedy, cost.
 - The ownership chase: during replay, the Clearance column's research() calls stream by —
-  composition owner, then master, then the license requirement.
-- The comparables beat: the Rating prediction card — R vs PG-13 target, 7 of 8 comparables R,
-  the cut list naming exact scenes ("keep Danny's in S011").
-- The rejected flag: report's "Rejected in verification" section — struck through, with the
-  verifier's reason. Also visible live in the replay's pipeline log.
-- Bonus if time allows (it likely won't — protect the four moments): 5 seconds of the Writer's
-  Room example (/writer?run=latest) to show breadth: coverage verdict + retrieved comps.
+  composition (Sony Music Publishing), then the Columbia master, then the licence requirement —
+  and the licensor gate on camera: the desk is refused until the owner's name is in an excerpt.
+- The rating beat (replaces "7 of 8"): the Rating prediction card — desk R vs PG-13 target;
+  coverage set {PG-13, R}; the **Floor** line: the MPA's own Classification and Rating Rules,
+  "more than one such expletive requires an R rating", three spoken uses counted by the census;
+  the language finding cites the provision verbatim beside its measured marginal. Evidence AND
+  the rule, both quoted, neither an opinion.
+- The rejected flag: "Rejected in verification — 2" — government_insignia and stunt_water, each
+  with the verifier's reason; the withdrawn notices sit apart from the honest unknowns.
+- Bonus if time allows: the What-If — tick a cut, watch the boundary re-evaluate.
+
+## Frames that must stay OFF camera (Official Rules: no profanity, no third-party trademarks)
+
+- The language finding F2001's text and the first cut-list beat quote the three F-word lines.
+  Show the rating card and the Floor line; do not scroll into F2001's body or the cut list's
+  first beat. The census row in Reviewed & cleared also names the word.
+- Brand findings: Coors Light (trademark_disparagement), JAWS (film_clip_license), the
+  Gloucester Daily Times masthead, the Springsteen photo. Keep them below the fold.
+- Rights-holder names in music findings (Sony, Columbia) are informational text in a clearance
+  report, not advertising — acceptable, but do not linger on them.
 
 ## Beat sheet
 
@@ -70,12 +85,12 @@ record with realistic pacing. `?pace=` scales speed if a beat needs tightening.
 | 0:20–0:35 | Drop the screenplay in |
 | 0:35–1:20 | The four desks run concurrently. Tool calls streaming. **The ownership chase** |
 | 1:20–2:10 | The report. Greenlight Score, open a BLOCKER, click through to the real citation, show the remedy and cost. **The rejected flag** |
-| 2:10–2:35 | **The comparables.** Rating prediction with evidence and the beats to cut |
+| 2:10–2:35 | **The rating.** Coverage set with the MPA rule quoted, the measured marginal, the beats to cut |
 | 2:35–3:00 | Architecture — ADK loop agents, Parallel, ClickHouse — then close |
 
 ## Production notes
 
-- Always have a **pre-computed run in `runs/`**. Never demo live against the network.
+- Always have a **pre-computed run in `runs/`** shipped as `run_*_demo.json` (the only run files the image keeps). Never demo live against the network.
 - Show the desks finishing at **different times after different numbers of turns**. That asymmetry
   is the visual proof of autonomy; a progress bar proves nothing.
 - Both of the above require a **replay harness**: the UI must replay a recorded run with realistic
