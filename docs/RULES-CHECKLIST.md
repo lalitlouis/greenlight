@@ -47,12 +47,12 @@ submitting · `PENDING` work not yet produced · `OWNER` only the entrant can do
 
 | # | Rule | Status | Evidence / action |
 |---|---|---|---|
-| E1 | Code repository URL (GitHub/GitLab/Bitbucket), **public and open source** | **ACTION** | https://github.com/lalitlouis/greenlight — PRIVATE since 2026-08-28 (`gh repo view`); flip to public before submitting. Hygiene verified 09-07: no tracked secrets (`git ls-files` shows only `.env.example`), no third-party screenplay tracked, `.cache/` and `runs/*` ignored, case records ship stripped of script text |
+| E1 | Code repository URL (GitHub/GitLab/Bitbucket), **public and open source** | DONE | https://github.com/lalitlouis/greenlight — PUBLIC (verified `gh repo view` 2026-09-07 evening). Hygiene verified 09-07: no tracked secrets (`git ls-files` shows only `.env.example`), no third-party screenplay tracked, `.cache/` and `runs/*` ignored, case records ship stripped of script text |
 | E2 | Open-source license file detectable at the top of the repository page | DONE | `LICENSE` (MIT) at root; `gh repo view --json licenseInfo` → MIT |
 | E3 | Repo includes all source, assets, and running instructions | DONE | `src/`, `web/static`, `schemas/`, `src/greenlight/data/*.json` (boundary, MPA rules, CSATF index, BBFC cuts), `fixtures/` (original screenplays), `Dockerfile`, `Makefile`, `.env.example`, `README.md` "Run it", `docs/SETUP.md` |
 | E4 | Hosted project URL, publicly accessible and functional for judging and testing | **ACTION** | https://scriptrisk.com is up (200 on every page). Replays, case studies, and reports need no sign-in. Running an analysis requires Google sign-in (permitted — judges have Google accounts) but **new analyses are PAUSED by the operator kill switch set 2026-09-01** (`/api/admin/pause`, stored flag `admin:runs_paused`) → a judge's upload returns 503. Unpause before submitting. The invite gate (`REQUIRE_INVITE`) is off in production |
 | E5 | Text description: features and functionality, technologies, third-party data sources, findings and learnings | DONE (draft) | `docs/SUBMISSION.md` rewritten 2026-09-07 — includes the third-party data disclosure; paste into the form |
-| E6 | Demo video ≤ 3 minutes, on YouTube or Vimeo, public, English or English subtitles, shows the project functioning | PENDING | not recorded; plan in `docs/DEMO.md` |
+| E6 | Demo video ≤ 3 minutes ("only the first 3 minutes will be evaluated"), on YouTube or Vimeo, public, English or English subtitles, shows the project functioning | PENDING | script and deck finalized 2026-09-07 (`docs/DEMO-SCRIPT.md`, ~430 spoken words ≈ 2:50); owner records |
 | E7 | Video content: no derogatory/profane/sexual content; no third-party advertising, logos, trademarks, or sponsorships; original and unpublished; no third-party IP | PENDING (constraint) | the fixture report quotes the three F-word lines (language finding, cut list) and names Coors Light, Jaws, Springsteen, Nighthawks — keep those frames off camera; lead with music and likeness (`docs/DEMO.md`) |
 | E8 | Partner track selected on the form | OWNER | Parallel |
 | E9 | Form completed before 2:00 PM PT September 9; late = disqualified | OWNER | plan to submit by the morning of the 9th |
@@ -87,13 +87,14 @@ git ls-files | grep -i env                  # only .env.example
 curl -s https://scriptrisk.com/api/metrics-lite
 ```
 
-Then by hand: unpause runs and confirm a signed-in upload starts; the hosted URL loads for a
+Then by hand: confirm the Google OAuth consent screen is **In production** (not Testing — a
+Testing app lets only listed test users sign in, so judges could not run an analysis); unpause runs and confirm a signed-in upload starts; the hosted URL loads for a
 logged-out visitor; the video is public and under 3:00; every Devpost field filled; teammate
 added; track set to Parallel.
 
 ## Open actions, in order
 
-1. Flip the repository public (`gh repo edit --visibility public`).
+1. ~~Flip the repository public~~ — done 2026-09-07.
 2. Unpause new analyses (`POST /api/admin/pause {"paused": false}` as the admin) and test one
    signed-in upload end to end.
 3. Record and publish the 3-minute video per `docs/DEMO.md`, keeping profanity and brand names off

@@ -1,5 +1,10 @@
 # Demo plan
 
+> **Recording script (final, 2026-09-07): `docs/DEMO-SCRIPT.md`** — word-for-word lines with the
+> on-screen cue for each, the pre-record setup, and the frames to keep off camera. This file is
+> the older runbook and stays for the moment-by-moment rationale.
+
+
 The 3-minute video is not a judging criterion. It is the **medium through which all four criteria
 get judged**, so it carries more weight than its absence from the rubric suggests. Budget two full
 days.

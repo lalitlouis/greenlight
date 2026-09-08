@@ -168,6 +168,11 @@ agent against the stable `pipeline.run(on_event=...)` interface.
 - [ ] `docs/DATA_SOURCES.md` — provenance check on MPA/CARA rating rationales before ingesting.
       **Do this week, not with Phase 2 ingest** — demo moment #3 (the comparables beat, the
       "most defensible thirty seconds") dies with no replacement time if this check fails late.
+- [ ] **Search Console, after the submission (deferred 2026-09-07):** request indexing for the 8
+      "Discovered – currently not indexed" pages (`/cases`, `/methodology`, `/security`, `/privacy`,
+      `/contact`, three case pages) via URL Inspection; optionally 301 `www.` → apex in `server.py`
+      so the www duplicates stop being crawled (canonical tags already resolve them). The "Page with
+      redirect" and "Alternate page with proper canonical tag" notices are intentional — no action.
 - [x] Decide screenplay fixture style — **decided 2026-08-24: genuine short film.** *Slack Tide*,
       ~13 pp, written; seed map in `fixtures/SEEDS.md`
 
