@@ -123,6 +123,8 @@ input question; it must not disguise a content edit or mandatory production work
 
 def _support_problem(check: ClaimCheck, flag: dict[str, Any], script_context: str) -> str | None:
     """Validate provenance, never pretend substring matching proves entailment."""
+    if check.field == "severity":
+        return None  # field, not a model-chosen basis, defines this judgement
     if check.basis == "inquiry" and check.field != "remedy":
         return "An inquiry must be a remedy question, not an asserted finding"
     if (
@@ -157,7 +159,7 @@ def _support_problem(check: ClaimCheck, flag: dict[str, Any], script_context: st
     return None
 
 
-def _cover_additive_joins(body: str, covered: list[bool]) -> None:
+def _cover_clause_joins(body: str, covered: list[bool]) -> None:
     """Allow conjunctions between audited clauses, never omitted substantive text."""
     coverage = "".join("1" if hit else "0" for hit in covered)
     for gap in re.finditer("0+", coverage):
@@ -165,7 +167,7 @@ def _cover_additive_joins(body: str, covered: list[bool]) -> None:
         if (
             start > 0
             and end < len(body)
-            and re.fullmatch(r"[\W_]*and(?:\s+that)?[\W_]*", body[start:end])
+            and re.fullmatch(r"[\W_]*(?:and(?:\s+that)?|or|and/or)[\W_]*", body[start:end])
         ):
             covered[start:end] = [True] * (end - start)
 
@@ -204,9 +206,9 @@ def checked_verdict(
                 covered[start : start + len(check.quote)] = [True] * len(check.quote)
                 start = body.find(check.quote, start + len(check.quote))
         # Atomic checks commonly omit a conjunction between two audited clauses.
-        # Accept only internal additive joins; never swallow an unaudited clause,
-        # a leading/trailing fragment, alternatives, exceptions or negation.
-        _cover_additive_joins(body, covered)
+        # Internal joins are reviewed in the complete claim context downstream;
+        # never swallow an unaudited clause, exception, condition or negation.
+        _cover_clause_joins(body, covered)
         gaps = [i for i, char in enumerate(body) if char.isalnum() and not covered[i]]
         if gaps:
             checks.append(
@@ -339,6 +341,9 @@ async def check_entailment(client, flag, verdict):
             {
                 "check_index": index,
                 "claim": check["quote"],
+                "claim_context": flag["remedy"]["detail"]
+                if check["field"] == "remedy"
+                else flag["finding"],
                 "basis": check["basis"],
                 **(
                     {"remedy_action": flag["remedy"].get("action")}
@@ -379,6 +384,11 @@ async def check_entailment(client, flag, verdict):
         "Do not infer publisher endorsement from a name mentioned only in a title; "
         "consider the URL as well, and do not follow links or use remembered page text. "
         "For basis=source/planning, the excerpts must establish the external assertions. "
+        "claim_context is the original full field, supplied only to preserve operators, "
+        "conditions and alternatives between atomic quotes. It is NOT additional evidence. "
+        "Assess the quoted clause as used in that full sentence, not in isolation. Do not "
+        "strengthen an optional alternative into a required action or let one supported "
+        "option hide an unsupported one. Preserve each option's applicability conditions. "
         "For basis=application, combine the exact script_evidence with the sourced rule. "
         "Script evidence establishes only fictional content, not permits, real casting, "
         "shooting jurisdiction, practical method, ownership or permission. Sources need "
@@ -389,6 +399,7 @@ async def check_entailment(client, flag, verdict):
         "guaranteed clearance, permission, safety or rating outcomes; an edit addressing "
         "one issue does not establish resolution of all issues. Do not accept new "
         "equipment, specialist, permit, labor or ownership assertions as script edits. "
+        "Replacement labels alone do not establish permission to use replacement assets. "
         "For basis=inquiry, check that it only requests relevant missing input or a "
         "user decision for the supplied desk/finding. Reject irrelevant generic casting "
         "questions on rating/clearance/territory findings, concealed prescriptions or "

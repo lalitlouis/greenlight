@@ -1,0 +1,350 @@
+{
+  "source_run": "runs/run_20260911_015915.json",
+  "source_run_sha256": "10f75f0e509a7049ce45c4be1f87cb954588fdbe9ee76375a50a76bf5a3b7ef2",
+  "source_build": "local:51d7e826eb4a0926ba3b7cdefe32546e9d58d706",
+  "evaluated_build": "badbd34ac9199b7c8dd2e4a04607f1e6bd08b836",
+  "model": "gemini-3.7-flash",
+  "elapsed_s": 67.4,
+  "calls": 6,
+  "responses_with_usage": 6,
+  "calls_without_returned_usage": 0,
+  "resumed_from": null,
+  "rechecked_correction_from": null,
+  "entailment_cases": "fixtures/accuracy/evidence_edits_inquiries_20260911.json",
+  "entailment_cases_sha256": "388cfea8ea57c955bc279c33534add7163fd297d64a32a55623b1b0fb10e4ab6",
+  "attempts": [
+    {
+      "flag_id": "clip_removal",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 4028,
+      "input_sha256": "de5b444360686b800973b650a04ba4a0995536e0847f36cc39f71fee9bd7c8bc",
+      "usage_available": true,
+      "elapsed_s": 6.17
+    },
+    {
+      "flag_id": "specialist_disguised_as_edit",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 4393,
+      "input_sha256": "8c50076cae85a458d2660c70f80395b6c1123b115f2c34fe32d683b45a49d748",
+      "usage_available": true,
+      "elapsed_s": 7.52
+    },
+    {
+      "flag_id": "inquiry_irrelevant",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 3863,
+      "input_sha256": "7cb0c36561d77c1c724f61eca8b09e96b31f09253f45f21083494b9dcddcc610",
+      "usage_available": true,
+      "elapsed_s": 23.04
+    },
+    {
+      "flag_id": "inquiry_conceals_duty",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 3596,
+      "input_sha256": "16374639451ebf395de2d0675f194c41a7e442f36532f19d83522968f1adbe93",
+      "usage_available": true,
+      "elapsed_s": 6.35
+    },
+    {
+      "flag_id": "territory_conditional_edit",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 4743,
+      "input_sha256": "9bc446758f966bf66d692b94b0b272119e60a8108baf0b472a604961455499c6",
+      "usage_available": true,
+      "elapsed_s": 17.61
+    },
+    {
+      "flag_id": "firearms_conditional",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 4256,
+      "input_sha256": "c62753b385e94a55856866f79d1669de2cd13a58c6d617ef2f49f1977b350af7",
+      "usage_available": true,
+      "elapsed_s": 6.65
+    }
+  ],
+  "gemini_usage": {
+    "flash": {
+      "prompt": 5929,
+      "cached": 0,
+      "output": 2614
+    }
+  },
+  "estimated_cost_usd": 0.0142,
+  "manual_review": {
+    "status": "6/6 matched pre-registered expectations",
+    "scope": "Developer review of supplied source/script entailment only. Labels were withheld from model inputs. This is not legal validation, an expert benchmark, or proof of overall screenplay accuracy.",
+    "observations": "Clip removal and conditional territory edit accepted without broad clearance promises; unsupported production duties disguised as edits and irrelevant/concealed-duty inquiries rejected. Conditional firearms rule retained.",
+    "accounting": "All six calls returned usage. Per-stage client timings include SDK behavior; captured-token estimates are not invoice reconciliation."
+  },
+  "results": [
+    {
+      "flag_id": "clip_removal",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "claim_checks": [
+          {
+            "field": "remedy",
+            "quote": "Remove the JAWS footage from the television shot to avoid using that feature-film excerpt; this does not establish clearance of the remaining film.",
+            "basis": "script_edit",
+            "status": "SUPPORTED",
+            "reason": "Probe to be independently assessed",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "Any excerpt from a feature film must be licensed from the copyright holder and an agreement negotiated for payment for use of the clips. Most studios charge a fee on the basis of a minute or fraction thereof."
+              }
+            ],
+            "script_spans": [
+              "On the corner TV, muted, an old VHS of JAWS is playing. The shark is winning."
+            ]
+          }
+        ],
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The script evidence shows feature film footage (JAWS) playing on a TV, which triggers the source requirement to license feature-film excerpts. Removing the footage directly addresses the trigger without guaranteeing clearance of the overall film."
+            }
+          ]
+        }
+      },
+      "expected_entailed": true,
+      "actual_entailed": true,
+      "passed": true,
+      "elapsed_s": 6.19
+    },
+    {
+      "flag_id": "specialist_disguised_as_edit",
+      "verdict": {
+        "verdict": "PARTIAL",
+        "claim_checks": [
+          {
+            "field": "remedy",
+            "quote": "Revise the scene to require a licensed pyrotechnician and a local fire-marshal permit for the vessel burn.",
+            "basis": "script_edit",
+            "status": "UNSUPPORTED",
+            "reason": "Independent span review: Specialist and permit assertions are not valid script edits, and the cited excerpt does not establish requirements for a licensed pyrotechnician or a local fire-marshal permit.",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "INDUSTRY WIDE LABOR-MANAGEMENT SAFETY COMMITTEE **SAFETY BULLETIN #16 RECOMMENDED GUIDELINES FOR SAFETY WITH PYROTECHNIC SPECIAL EFFECTS This Safety Bulletin applies to pyrotechnic materials such as explosives and flammable or combustible liquids, gases and solids when used to create pyrotechnic special effects.**"
+              }
+            ],
+            "script_spans": [
+              "WHUMP. A line of blue-orange flame walks the deck like it knows the boat. Then the diesel catches and the MARGARET ROSE goes up -- a column of fire standing on the black water, doubled in the swell, huge."
+            ]
+          }
+        ],
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": false,
+              "reason": "Specialist and permit assertions are not valid script edits, and the cited excerpt does not establish requirements for a licensed pyrotechnician or a local fire-marshal permit."
+            }
+          ]
+        },
+        "reason": "Independent span review: Specialist and permit assertions are not valid script edits, and the cited excerpt does not establish requirements for a licensed pyrotechnician or a local fire-marshal permit."
+      },
+      "expected_entailed": false,
+      "actual_entailed": false,
+      "passed": true,
+      "elapsed_s": 7.53
+    },
+    {
+      "flag_id": "inquiry_irrelevant",
+      "verdict": {
+        "verdict": "PARTIAL",
+        "claim_checks": [
+          {
+            "field": "remedy",
+            "quote": "Confirm the cast's ages and filming location to solve this language-rating finding.",
+            "basis": "inquiry",
+            "status": "UNSUPPORTED",
+            "reason": "Independent span review: The inquiry requests irrelevant cast age and filming location details for a language rating finding, which violates the requirement to reject irrelevant generic casting/location questions on rating findings.",
+            "citation_numbers": [],
+            "support_spans": [],
+            "script_spans": []
+          }
+        ],
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": false,
+              "reason": "The inquiry requests irrelevant cast age and filming location details for a language rating finding, which violates the requirement to reject irrelevant generic casting/location questions on rating findings."
+            }
+          ]
+        },
+        "reason": "Independent span review: The inquiry requests irrelevant cast age and filming location details for a language rating finding, which violates the requirement to reject irrelevant generic casting/location questions on rating findings."
+      },
+      "expected_entailed": false,
+      "actual_entailed": false,
+      "passed": true,
+      "elapsed_s": 23.05
+    },
+    {
+      "flag_id": "inquiry_conceals_duty",
+      "verdict": {
+        "verdict": "PARTIAL",
+        "claim_checks": [
+          {
+            "field": "remedy",
+            "quote": "Which licensed pyrotechnician will you hire as required for every shoot?",
+            "basis": "inquiry",
+            "status": "UNSUPPORTED",
+            "reason": "Independent span review: The inquiry contains an unsupported and unconfirmed factual premise that a licensed pyrotechnician is 'required for every shoot'.",
+            "citation_numbers": [],
+            "support_spans": [],
+            "script_spans": []
+          }
+        ],
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": false,
+              "reason": "The inquiry contains an unsupported and unconfirmed factual premise that a licensed pyrotechnician is 'required for every shoot'."
+            }
+          ]
+        },
+        "reason": "Independent span review: The inquiry contains an unsupported and unconfirmed factual premise that a licensed pyrotechnician is 'required for every shoot'."
+      },
+      "expected_entailed": false,
+      "actual_entailed": false,
+      "passed": true,
+      "elapsed_s": 6.35
+    },
+    {
+      "flag_id": "territory_conditional_edit",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "claim_checks": [
+          {
+            "field": "remedy",
+            "quote": "If Mara's encounter with Eli is intended as literal supernatural content in a China distribution version, consider presenting it as a dream to address the cited restriction; regulator acceptance remains uncertain.",
+            "basis": "script_edit",
+            "status": "SUPPORTED",
+            "reason": "Probe to be independently assessed",
+            "citation_numbers": [
+              2
+            ],
+            "support_spans": [
+              {
+                "citation_number": 2,
+                "quote": "Under China's censorship laws any films suggesting the existence of the supernatural can be banned from distribution. Exceptions are made for ghost stories based on Chinese mythology or films in which the supernatural is explained by a realistic rationale (eg drug use or dream sequence)."
+              }
+            ],
+            "script_spans": [
+              "ELI VOSS (70) is sitting in front of the far glass. Work jacket. Salt-white stubble. He was not there a moment ago, and the room does not find this strange.\n\nELI\nYou put the Hopper crooked.\n\nMara does not turn around. Her hands go still on the register.\n\nELI (CONT'D)\nIt's been crooked eleven years. But you looked at it tonight, so now it's your fault.\n\nMARA\n(not turning)\nYou're not here.\n\nELI\nI'm not anywhere. It's very freeing. No tide chart. No Coors Light.\n\n"
+            ]
+          }
+        ],
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The script edit conditionally suggests framing the apparent supernatural encounter as a dream to align with the sourced Chinese censorship exception (explaining supernatural content via realistic rationale such as a dream sequence) without guaranteeing regulatory clearance."
+            }
+          ]
+        }
+      },
+      "expected_entailed": true,
+      "actual_entailed": true,
+      "passed": true,
+      "elapsed_s": 17.61
+    },
+    {
+      "flag_id": "firearms_conditional",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "If functional firearms are used for the depicted rifle salute, conduct a safety meeting including an on-site walk-through and/or dry run before use.",
+            "basis": "application",
+            "status": "SUPPORTED",
+            "reason": "Probe to be independently assessed",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues. This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d with the Property Master, designated Production"
+              }
+            ],
+            "script_spans": [
+              "VOLLEY. Gulls explode off the church roof. Sam clamps his hands over his ears. Barnacle, tied to the fence, points his muzzle at the sky and HOWLS."
+            ]
+          }
+        ],
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The script evidence depicts a volley/salute, and the source establishes that before any firearm is used, production must conduct a safety meeting including an on-site walk-through and/or dry run."
+            }
+          ]
+        }
+      },
+      "expected_entailed": true,
+      "actual_entailed": true,
+      "passed": true,
+      "elapsed_s": 6.65
+    }
+  ],
+  "responses": [
+    {
+      "flag_id": "clip_removal",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The script evidence shows feature film footage (JAWS) playing on a TV, which triggers the source requirement to license feature-film excerpts. Removing the footage directly addresses the trigger without guaranteeing clearance of the overall film.\"\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "specialist_disguised_as_edit",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": false,\n      \"reason\": \"Specialist and permit assertions are not valid script edits, and the cited excerpt does not establish requirements for a licensed pyrotechnician or a local fire-marshal permit.\"\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "inquiry_irrelevant",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": false,\n      \"reason\": \"The inquiry requests irrelevant cast age and filming location details for a language rating finding, which violates the requirement to reject irrelevant generic casting/location questions on rating findings.\"\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "inquiry_conceals_duty",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": false,\n      \"reason\": \"The inquiry contains an unsupported and unconfirmed factual premise that a licensed pyrotechnician is 'required for every shoot'.\"\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "territory_conditional_edit",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The script edit conditionally suggests framing the apparent supernatural encounter as a dream to align with the sourced Chinese censorship exception (explaining supernatural content via realistic rationale such as a dream sequence) without guaranteeing regulatory clearance.\"\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "firearms_conditional",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The script evidence depicts a volley/salute, and the source establishes that before any firearm is used, production must conduct a safety meeting including an on-site walk-through and/or dry run.\"\n    }\n  ]\n}",
+      "usage_available": true
+    }
+  ]
+}

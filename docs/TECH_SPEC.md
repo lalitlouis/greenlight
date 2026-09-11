@@ -109,9 +109,11 @@ scene context. An edit may address a cited trigger without the source literally 
 the screenplay or prescribing that edit, but cannot promise a final rating/clearance
 or invent a specialist, permit or ownership assertion. Missing/non-verbatim receipts and
 unreviewed material text trigger correction.
-Coverage permits only an internal `and` or `and that` join between audited clauses;
+Coverage permits only internal `and`, `and that`, `or` or `and/or` joins between audited clauses;
 omitted conditions, negation and prescriptions still fail. This keeps atomic claim
-quoting from rejecting a finding over a connective alone.
+quoting from rejecting a finding over a connective alone. The second reviewer receives
+the complete field as claim context to judge those operators and each alternative's
+conditions. Claim context is not source evidence or verified script evidence.
 
 Receipts prove provenance, not entailment. A separate blinded batch checks each claim
 against its spans and excerpt context. Only applications/edits carry the exact relevant
@@ -122,7 +124,7 @@ each excerpt solely for source attribution; metadata cannot supply an operative 
 or establish applicability. This avoids rejecting a correctly attributed quotation
 merely because its body does not repeat the publisher's name. It must return every claim
 exactly once; an incomplete secondary review withholds the score. Severity judgement
-stays in the script-aware audit even if the auditor supplies optional severity receipts;
+stays in the script-aware audit regardless of the model-chosen basis or optional receipts;
 severity never enters the source-only batch. A supported first
 pass costs two logical calls; a repair is bounded at five total. No new searches are
 introduced. Desk-relevant inquiries may omit external support but receive independent

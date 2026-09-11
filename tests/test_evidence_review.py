@@ -494,9 +494,16 @@ def test_saved_minor_correction_supplies_attribution_without_prior_reasoning():
     assert receipt["source_attribution"] == {k: source[k] for k in ("title", "url")}
     assert receipt["excerpt_context"] == source["excerpt"]
     assert receipt["quote"] in source["excerpt"]
-    assert set(claims[0]) == {"check_index", "claim", "support", "basis", "script_evidence"}
+    assert set(claims[0]) == {
+        "check_index",
+        "claim",
+        "claim_context",
+        "support",
+        "basis",
+        "script_evidence",
+    }
     assert claims[0]["script_evidence"] == []
-    assert "Sam" not in json.dumps(claims)  # no screenplay facts or earlier reasoning
+    assert claims[0]["claim_context"] == candidate["finding"]  # context, not evidence
 
 
 def test_source_metadata_cannot_replace_an_operative_excerpt_receipt():
@@ -523,12 +530,13 @@ def test_saved_firearms_audit_can_leave_an_additive_join_between_atomic_checks()
     assert sum(bool(c["support_spans"]) for c in result["claim_checks"]) == 2
 
 
-def test_optional_severity_receipt_does_not_request_literal_source_support_for_high():
+@pytest.mark.parametrize("basis", ["source", "application", "script_edit", "inquiry"])
+def test_optional_severity_receipt_does_not_request_literal_source_support_for_high(basis):
     flag = saved_flag()
     verdict = audit(flag)
     severity = verdict["claim_checks"][2]
     severity.update(
-        basis="source",
+        basis=basis,
         citation_numbers=[1],
         support_spans=[{"citation_number": 1, "quote": flag["citations"][0]["excerpt"]}],
     )
@@ -547,13 +555,14 @@ def test_optional_severity_receipt_does_not_request_literal_source_support_for_h
         "and",
         "and that",
         "or",
+        "and/or",
         "unless",
         "and not",
         "and only if cast with minors",
         "and hire a studio teacher and",
     ],
 )
-def test_coverage_only_allows_internal_additive_joins(gap):
+def test_coverage_allows_internal_joins_but_not_missing_conditions_or_prescriptions(gap):
     flag = saved_flag()
     flag["finding"] = f"First clause {gap} second clause"
     verdict = audit(flag)
@@ -561,7 +570,7 @@ def test_coverage_only_allows_internal_additive_joins(gap):
     check["quote"] = "First clause"
     verdict["claim_checks"].append({**deepcopy(check), "quote": "second clause"})
     checked = checked_verdict(verdict, flag)
-    assert (checked["verdict"] == "SUPPORTED") == (gap in {"and", "and that"})
+    assert (checked["verdict"] == "SUPPORTED") == (gap in {"and", "and that", "or", "and/or"})
     # The same words at either end are not a join between audited clauses.
     for text in (f"{gap} First clause", f"First clause {gap}"):
         flag["finding"] = text
@@ -585,6 +594,35 @@ def test_secondary_failure_cannot_reenter_an_unbounded_repair_loop():
     assert result["evidence_review_unresolved"] and len(client.calls) == 5
     kept, dropped = apply_verdicts([flag], {flag["flag_id"]: result})
     assert not kept and not dropped[0]["recoverable"]
+
+
+def test_clause_context_does_not_override_rejection_of_an_unsupported_alternative():
+    flag = saved_flag()
+    flag["remedy"]["detail"] = "Obtain permission or use royalty-free footage."
+    verdict = audit(flag)
+    check = verdict["claim_checks"][1]
+    check["quote"] = "Obtain permission"
+    verdict["claim_checks"].append({**deepcopy(check), "quote": "use royalty-free footage."})
+    before = checked_verdict(verdict, flag)
+    assert before["verdict"] == "SUPPORTED"
+    response = entailment(before)
+    response["checks"][-1].update(
+        entailed=False, reason="Replacement permission is not established"
+    )
+    client = Client(response)
+    after = asyncio.run(check_entailment(client, flag, before))
+    assert after["verdict"] == "PARTIAL"
+    payload = json.loads(client.calls[0]["contents"].split("\n\n", 1)[1])
+    remedies = [c for c in payload if "remedy_action" in c]
+    assert all(c["claim_context"] == flag["remedy"]["detail"] for c in remedies)
+    assert len(remedies) == 2
+
+
+def test_field_based_severity_handling_does_not_override_a_negative_judgement():
+    flag = saved_flag()
+    verdict = audit(flag)
+    verdict["claim_checks"][2].update(basis="application", status="UNKNOWN")
+    assert checked_verdict(verdict, flag)["verdict"] == "PARTIAL"
 
 
 def test_resume_reuses_only_a_timed_out_audit_with_matching_source():

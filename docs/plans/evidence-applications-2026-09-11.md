@@ -64,3 +64,44 @@ does not pass merely because the model was unavailable.
 
 No deployment. The previous full gate remains a failure until a subsequent full
 validation preserves supported findings and produces relevant remedies.
+
+## Results
+
+Build `badbd34`: 500 offline tests passed; lint/dependency checks and JavaScript syntax
+checks passed. The two probe sets matched **12/12** pre-registered expectations, with
+all twelve calls returning usage. Manual review agreed with each supplied-evidence
+label. Captured-token estimates sum to $0.0271. This verifies these selected examples,
+not the entire verifier or desk accuracy. Artifacts:
+
+- `fixtures/cassettes/evidence_applications_20260911.json`
+- `fixtures/cassettes/evidence_edits_inquiries_20260911.json`
+
+Proceed to the two planned whole-finding repair checks at the same build and with
+the same saved sources. The preceding failed full gate remains the full-run baseline.
+
+The two whole-finding attempts returned in 101.76 seconds (F1001) and 52.52 seconds
+(F2001), six calls and $0.0617 estimated returned-token usage. Neither completed the
+secondary stage:
+
+- F1001's corrected remedy had two alternatives separated by an unaudited `or`.
+  The coverage check treated the operator as omitted material. The correction also
+  still names Universal as the JAWS licensor and offers royalty-free replacement
+  footage; those assertions have **not** been accepted and need semantic scrutiny.
+- F2001's correction proposes cutting/replacing two of the three expletives, conditional
+  on pursuing PG-13 without a special vote. Its auditor labelled severity `application`,
+  triggering the new script-receipt requirement on HIGH. Severity is a judgement
+  regardless of the chosen basis; that requirement was a deterministic routing bug.
+
+Fix those stops offline: all severity bases bypass receipt requirements while negative
+severity judgements still block approval. Internal `or`/`and/or` joins now proceed only
+with the complete field supplied as **claim context**, not evidence, to the secondary
+reviewer. The reviewer must judge the operator and each alternative's conditions;
+one supported option cannot conceal an unsupported option. Missing prescriptions,
+conditions and negation still fail coverage. A scripted negative regression checks
+that an unsupported alternative still rejects the compound remedy.
+
+Use two of the remaining four reserved calls to complete only the skipped secondary
+reviews of the unchanged saved candidates. Source/script hashes, exact receipts and
+the absence of a completed prior secondary review are checked first. This is a
+continuation after deterministic fixes, not a second correction or a retry of a
+negative semantic judgement. Do not reword a candidate to make the test pass.

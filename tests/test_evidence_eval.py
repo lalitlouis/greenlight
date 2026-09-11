@@ -108,6 +108,26 @@ def test_application_cases_use_real_script_receipts_and_never_send_expected_labe
         evaluator.entailment_inputs(cases, source, script + "altered")
 
 
+@pytest.mark.parametrize("fid", ["F1001", "F2001"])
+def test_skipped_application_review_reuses_unchanged_saved_candidate_and_audit(fid):
+    artifact = json.loads(
+        (ROOT / "fixtures/cassettes/evidence_application_repairs_20260911.json").read_text()
+    )
+    source = (ROOT / "runs/run_20260911_015915.json").read_bytes()
+    record = json.loads(source)
+    flag = next(f for f in record["flags"] + record["rejected_flags"] if f["flag_id"] == fid)
+    script = (ROOT / "fixtures/slack_tide.fountain").read_text()
+    candidate, verdict = evaluator.recheck_candidate(artifact, source, flag, script)
+    assert verdict["verdict"] == "SUPPORTED"
+    assert candidate["citations"] == flag["citations"]
+    correction = next(r for r in artifact["results"] if r["flag_id"] == fid)["verdict"][
+        "evidence_review"
+    ]["correction"]
+    assert candidate["remedy"]["detail"] == correction["remedy_detail"]
+    assert candidate["remedy"]["est_cost_usd"] is None
+    assert any(c["basis"] in {"application", "script_edit"} for c in verdict["claim_checks"])
+
+
 @pytest.mark.parametrize("outcome", ["returned", "error", "cancelled"])
 def test_call_recorder_persists_stage_status_and_enforces_budget(tmp_path, outcome):
     checkpoint = tmp_path / "calls.json"

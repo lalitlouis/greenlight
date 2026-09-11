@@ -1,0 +1,56 @@
+[
+  {
+    "flag_id": "ratings_cut",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 5250,
+    "input_sha256": "fe68f2dc4d43c1d14b052b6ea5a8f69a6186b55e6cb1ecd7c25289591e2c2f18",
+    "usage_available": true,
+    "elapsed_s": 57.04
+  },
+  {
+    "flag_id": "ratings_guarantee",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 5112,
+    "input_sha256": "32170299c9bb12d78ef9f7ea7195ee11576e15a37df0e0444ac46682149f9dca",
+    "usage_available": true,
+    "elapsed_s": 3.48
+  },
+  {
+    "flag_id": "clip_application",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 4035,
+    "input_sha256": "ae22e41da3e18efa7008619e726b581e3d8c024d71c1faf005601b6371d75d6d",
+    "usage_available": true,
+    "elapsed_s": 11.93
+  },
+  {
+    "flag_id": "recording_owner",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 3770,
+    "input_sha256": "e6b50e250b532b683ed5be635f66739f672eda5998d44114f7a0c520e94cfec2",
+    "usage_available": true,
+    "elapsed_s": 12.62
+  },
+  {
+    "flag_id": "performer_from_character",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 4161,
+    "input_sha256": "75206e0703428c0af2a74a83a74330c628d5299fe800a2aa35b5ea2fd8837c51",
+    "usage_available": true,
+    "elapsed_s": 33.89
+  },
+  {
+    "flag_id": "inquiry_clearance",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 3864,
+    "input_sha256": "8e8b411ea18d40e4b2b5d47302c7eaa7e8243ed47c68071874a64d159a12dbdc",
+    "usage_available": true,
+    "elapsed_s": 22.28
+  }
+]

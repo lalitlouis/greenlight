@@ -1,0 +1,704 @@
+{
+  "source_run": "runs/run_20260911_015915.json",
+  "source_run_sha256": "10f75f0e509a7049ce45c4be1f87cb954588fdbe9ee76375a50a76bf5a3b7ef2",
+  "source_build": "local:51d7e826eb4a0926ba3b7cdefe32546e9d58d706",
+  "evaluated_build": "badbd34ac9199b7c8dd2e4a04607f1e6bd08b836",
+  "model": "gemini-3.7-flash",
+  "elapsed_s": 154.3,
+  "calls": 6,
+  "responses_with_usage": 6,
+  "calls_without_returned_usage": 0,
+  "resumed_from": null,
+  "rechecked_correction_from": null,
+  "entailment_cases": null,
+  "entailment_cases_sha256": null,
+  "attempts": [
+    {
+      "flag_id": "F1001",
+      "schema": "EvidenceVerdict",
+      "status": "returned",
+      "input_chars": 19808,
+      "input_sha256": "5eac6bc8f3aad88384d41fac69005e8fe2acc05385e28ff3d7250dbdac42bedd",
+      "usage_available": true,
+      "elapsed_s": 39.57
+    },
+    {
+      "flag_id": "F1001",
+      "schema": "CorrectedClaim",
+      "status": "returned",
+      "input_chars": 15611,
+      "input_sha256": "d4c953376b7e3fee8bc5ef444b0e6d115c21fb6edf5c9c838949952a8a17ed33",
+      "usage_available": true,
+      "elapsed_s": 7.1
+    },
+    {
+      "flag_id": "F1001",
+      "schema": "EvidenceVerdict",
+      "status": "returned",
+      "input_chars": 19534,
+      "input_sha256": "0c417e912d7f1f084c928770233b64eaa2405eeddd976a58806085e1d03d406d",
+      "usage_available": true,
+      "elapsed_s": 55.07
+    },
+    {
+      "flag_id": "F2001",
+      "schema": "EvidenceVerdict",
+      "status": "returned",
+      "input_chars": 23019,
+      "input_sha256": "99004d0cc8d5691ee724c673230376c420bcc870f1d2b8310cfd509b44d86569",
+      "usage_available": true,
+      "elapsed_s": 31.28
+    },
+    {
+      "flag_id": "F2001",
+      "schema": "CorrectedClaim",
+      "status": "returned",
+      "input_chars": 17553,
+      "input_sha256": "2b6cdc0f9df355c54dd3b1cfce46aecd490bd4edbdc551d6167abb22812181d5",
+      "usage_available": true,
+      "elapsed_s": 11.72
+    },
+    {
+      "flag_id": "F2001",
+      "schema": "EvidenceVerdict",
+      "status": "returned",
+      "input_chars": 23171,
+      "input_sha256": "9f4634289b9de0a1a2c77e47a4ba43518e0ab1fd4a9dea088f3e9d5215f50245",
+      "usage_available": true,
+      "elapsed_s": 9.51
+    }
+  ],
+  "gemini_usage": {
+    "flash": {
+      "prompt": 30125,
+      "cached": 0,
+      "output": 10431
+    }
+  },
+  "estimated_cost_usd": 0.0617,
+  "manual_review": {
+    "status": "Both stopped before independent semantic review; not a completed gate",
+    "F1001": "Correction still asserts a specific JAWS licensor and offers royalty-free footage. First auditor accepted these but omitted or between alternatives; deterministic coverage blocked the secondary stage. Neither assertion should be treated as independently supported.",
+    "F2001": "Correction replaces the irrelevant production question with a conditional cut/replace remedy addressing the expletive count. A severity basis label of application incorrectly required script receipts for HIGH; semantic review was skipped.",
+    "next": "Fix severity routing and pass full clause context for internal operators. Complete only skipped secondary reviews from exact saved candidates, within the original 22-call budget. No candidate regeneration or full run."
+  },
+  "results": [
+    {
+      "flag_id": "F1001",
+      "verdict": {
+        "verdict": "UNSUPPORTED",
+        "failure_mode": "premise_unsupported",
+        "reason": "Evidence correction unresolved: corrected claim did not pass independent verification",
+        "evidence_review_unresolved": true,
+        "evidence_review": {
+          "before": {
+            "verdict": "PARTIAL",
+            "reason": "The scene depicts an old VHS of Jaws playing on a corner TV, and the cited excerpts confirm that feature film excerpts require a clip license from the copyright holder and that Universal Studios Media Licensing handles clips from Universal Pictures libraries. However, specific fee estimates ($5,000 - $15,000) and guild/talent reuse considerations are not established in the provided excerpts.",
+            "failure_mode": "none",
+            "claim_checks": [
+              {
+                "field": "finding",
+                "quote": "In S002, an old VHS of Steven Spielberg's 1975 film 'JAWS' is shown playing on the corner TV in The Wheelhouse.",
+                "basis": "script",
+                "status": "SUPPORTED",
+                "reason": "Scene S002 explicitly describes an old VHS of JAWS playing on the corner TV.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "On the corner TV, muted, an old VHS of JAWS is playing. The shark is winning."
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "Including copyrighted feature film footage on an on-screen display requires a clip license from the copyright holder",
+                "basis": "source",
+                "status": "SUPPORTED",
+                "reason": "Citation 1 states that any excerpt from a feature film must be licensed from the copyright holder.",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "Any excerpt from a feature film must be licensed from the copyright holder and an agreement negotiated for payment for use of the clips."
+                  }
+                ],
+                "script_spans": []
+              },
+              {
+                "field": "finding",
+                "quote": "(Universal Pictures / Amblin via Universal Studios Media Licensing)",
+                "basis": "application",
+                "status": "SUPPORTED",
+                "reason": "Citation 2 identifies Universal Studios Media Licensing as the portal offering clip licenses for works from the Universal Pictures library.",
+                "citation_numbers": [
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 2,
+                    "quote": "This site offers clip and still licenses for works from the Universal Pictures, Focus Features, DreamWorks Animation, and MCA Television libraries."
+                  }
+                ],
+                "script_spans": [
+                  "On the corner TV, muted, an old VHS of JAWS is playing."
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "along with potential guild/talent reuse considerations.",
+                "basis": "planning",
+                "status": "UNKNOWN",
+                "reason": "The cited excerpts do not mention talent or guild reuse requirements.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              },
+              {
+                "field": "finding",
+                "quote": "If an expensive third-party clip license is not desired, the video on the TV screen should be replaced with public domain, production-owned, or royalty-free stock footage.",
+                "basis": "script_edit",
+                "status": "UNKNOWN",
+                "reason": "A proposed script edit belongs in the remedy. Original assessment: Replacing third-party copyrighted footage with public domain or production-owned material is a standard script edit to avoid licensing requirements.",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "Any excerpt from a feature film must be licensed from the copyright holder and an agreement negotiated for payment for use of the clips."
+                  }
+                ],
+                "script_spans": [
+                  "On the corner TV, muted, an old VHS of JAWS is playing."
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "Obtain a clip license from Universal Studios Media Licensing for the excerpt from 'Jaws'",
+                "basis": "application",
+                "status": "SUPPORTED",
+                "reason": "Supported by the rule that feature film excerpts require licensing from the copyright holder/licensing agency.",
+                "citation_numbers": [
+                  1,
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "Any excerpt from a feature film must be licensed from the copyright holder and an agreement negotiated for payment for use of the clips."
+                  },
+                  {
+                    "citation_number": 2,
+                    "quote": "This site offers clip and still licenses for works from the Universal Pictures, Focus Features, DreamWorks Animation, and MCA Television libraries."
+                  }
+                ],
+                "script_spans": [
+                  "On the corner TV, muted, an old VHS of JAWS is playing."
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "(estimated licensing fee $5,000 - $15,000)",
+                "basis": "planning",
+                "status": "UNKNOWN",
+                "reason": "The specific dollar fee range is not provided or substantiated in the cited text.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              },
+              {
+                "field": "remedy",
+                "quote": "or replace the playback footage on the TV monitor with public domain or royalty-free stock video.",
+                "basis": "script_edit",
+                "status": "SUPPORTED",
+                "reason": "Supported as an alternative creative edit to remove the licensed asset.",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "Any excerpt from a feature film must be licensed from the copyright holder and an agreement negotiated for payment for use of the clips."
+                  }
+                ],
+                "script_spans": [
+                  "On the corner TV, muted, an old VHS of JAWS is playing."
+                ]
+              },
+              {
+                "field": "severity",
+                "quote": "HIGH",
+                "basis": "source",
+                "status": "SUPPORTED",
+                "reason": "Depicting an unlicensed feature film clip in a production creates a direct copyright clearance issue.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              }
+            ],
+            "support_span_version": 2
+          },
+          "correction": {
+            "finding": "In S002, an old VHS of the feature film 'JAWS' is depicted playing on the corner TV in The Wheelhouse. Using an excerpt from a feature film requires a clip license negotiated with the copyright holder (such as Universal Studios Media Licensing for Universal Pictures catalog titles).",
+            "remedy_detail": "Obtain a clip license from Universal Studios Media Licensing for the excerpt from 'JAWS', or replace the video playing on the TV screen with public domain, production-owned, or royalty-free footage.",
+            "remedy_action": "OBTAIN_LICENSE",
+            "severity": "HIGH"
+          },
+          "after": {
+            "verdict": "PARTIAL",
+            "reason": "Claim audit requires correction: Material text was omitted from the claim audit",
+            "failure_mode": "none",
+            "claim_checks": [
+              {
+                "field": "finding",
+                "quote": "In S002, an old VHS of the feature film 'JAWS' is depicted playing on the corner TV in The Wheelhouse.",
+                "basis": "script",
+                "status": "SUPPORTED",
+                "reason": "S002 explicitly describes an old VHS of JAWS playing on the corner TV in The Wheelhouse.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "On the corner TV, muted, an old VHS of JAWS is playing."
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "Using an excerpt from a feature film requires a clip license negotiated with the copyright holder",
+                "basis": "source",
+                "status": "SUPPORTED",
+                "reason": "Excerpt 1 directly states that any excerpt from a feature film must be licensed from the copyright holder with an agreement negotiated for clip use.",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "Any excerpt from a feature film must be licensed from the copyright holder and an agreement negotiated for payment for use of the clips."
+                  }
+                ],
+                "script_spans": []
+              },
+              {
+                "field": "finding",
+                "quote": "(such as Universal Studios Media Licensing for Universal Pictures catalog titles)",
+                "basis": "source",
+                "status": "SUPPORTED",
+                "reason": "Excerpt 2 confirms that Universal Studios Media Licensing offers clip and still licenses for works from the Universal Pictures library.",
+                "citation_numbers": [
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 2,
+                    "quote": "This site offers clip and still licenses for works from the Universal Pictures, Focus Features, DreamWorks Animation, and MCA Television libraries."
+                  }
+                ],
+                "script_spans": []
+              },
+              {
+                "field": "remedy",
+                "quote": "Obtain a clip license from Universal Studios Media Licensing for the excerpt from 'JAWS'",
+                "basis": "application",
+                "status": "SUPPORTED",
+                "reason": "Applying the requirement to license feature film excerpts from the copyright licensor to the depicted JAWS playback in S002.",
+                "citation_numbers": [
+                  1,
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "Any excerpt from a feature film must be licensed from the copyright holder and an agreement negotiated for payment for use of the clips."
+                  },
+                  {
+                    "citation_number": 2,
+                    "quote": "This site offers clip and still licenses for works from the Universal Pictures, Focus Features, DreamWorks Animation, and MCA Television libraries."
+                  }
+                ],
+                "script_spans": [
+                  "On the corner TV, muted, an old VHS of JAWS is playing."
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "replace the video playing on the TV screen with public domain, production-owned, or royalty-free footage.",
+                "basis": "script_edit",
+                "status": "SUPPORTED",
+                "reason": "Replacing the copyrighted feature film footage removes the need to negotiate a clip license.",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "Any excerpt from a feature film must be licensed from the copyright holder and an agreement negotiated for payment for use of the clips."
+                  }
+                ],
+                "script_spans": [
+                  "On the corner TV, muted, an old VHS of JAWS is playing."
+                ]
+              },
+              {
+                "field": "severity",
+                "quote": "HIGH",
+                "basis": "planning",
+                "status": "SUPPORTED",
+                "reason": "Unlicensed display of a major commercial feature film clip presents a high clearance and copyright risk.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              },
+              {
+                "field": "remedy",
+                "quote": "or",
+                "basis": "source",
+                "status": "UNKNOWN",
+                "reason": "Material text was omitted from the claim audit",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              }
+            ],
+            "support_span_version": 2
+          }
+        }
+      },
+      "kept": [],
+      "dropped": [
+        {
+          "flag_id": "F1001",
+          "agent": "clearance_counsel",
+          "scene_ids": [
+            "S002"
+          ],
+          "entity_id": "E004",
+          "severity": "HIGH",
+          "category": "film_clip_license",
+          "finding": "In S002, an old VHS of Steven Spielberg's 1975 film 'JAWS' is shown playing on the corner TV in The Wheelhouse. Including copyrighted feature film footage on an on-screen display requires a clip license from the copyright holder (Universal Pictures / Amblin via Universal Studios Media Licensing), along with potential guild/talent reuse considerations. If an expensive third-party clip license is not desired, the video on the TV screen should be replaced with public domain, production-owned, or royalty-free stock footage.",
+          "citations": [
+            {
+              "source_type": "web",
+              "title": "PRODUCER'S GUIDELINES | clearanceunlimited",
+              "url": "https://www.clearanceunlimited.net/producer-s-guidelines",
+              "excerpt": "Any excerpt from a feature film must be licensed from the copyright holder and an agreement negotiated for payment for use of the clips. Most studios charge a fee on the basis of a minute or fraction thereof.",
+              "retrieved_at": null,
+              "via": "parallel_search"
+            },
+            {
+              "source_type": "web",
+              "title": "licensor named in retrieved source (auto-attached for traceability)",
+              "url": "https://guides.lib.umich.edu/permissions/films",
+              "excerpt": "Studios.\n* [Universal Studios Media Licensing This link opens in a new window](http://universalclips.com)\nThis site offers clip and still licenses for works from the Universal Pictures, Focus Features, DreamWorks Animation, and MCA Television libraries.\n* [Walt Disney Studios Licensing Website](http://www.disneystudiolicensing.com)\n\n...\n\n## Book on",
+              "retrieved_at": null,
+              "repaired": true
+            }
+          ],
+          "remedy": {
+            "action": "OBTAIN_LICENSE",
+            "detail": "Obtain a clip license from Universal Studios Media Licensing for the excerpt from 'Jaws' (estimated licensing fee $5,000 - $15,000), or replace the playback footage on the TV monitor with public domain or royalty-free stock video.",
+            "est_cost_usd": [
+              5000,
+              15000
+            ],
+            "est_added_days": 0
+          },
+          "confidence": 0.95,
+          "rejection_reason": "Evidence correction unresolved: corrected claim did not pass independent verification",
+          "failure_mode": "premise_unsupported",
+          "recoverable": false
+        }
+      ],
+      "verification_incomplete": true,
+      "elapsed_s": 101.76
+    },
+    {
+      "flag_id": "F2001",
+      "verdict": {
+        "verdict": "UNSUPPORTED",
+        "failure_mode": "premise_unsupported",
+        "reason": "Evidence correction unresolved: corrected claim did not pass independent verification",
+        "evidence_review_unresolved": true,
+        "evidence_review": {
+          "before": {
+            "verdict": "PARTIAL",
+            "reason": "The script facts and the Motion Picture Association rating rule cited in the finding are fully supported by the scene text and citation [2]. However, the asserted remedy is an irrelevant safety/production casting inquiry that does not address or repair the ratings language finding.",
+            "failure_mode": "none",
+            "claim_checks": [
+              {
+                "field": "finding",
+                "quote": "Mara in S003 ('selfish, glorious, fucking impossible man')",
+                "basis": "script",
+                "status": "SUPPORTED",
+                "reason": "Accurately matches Mara's dialogue in S003.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "He was a selfish, glorious, fucking impossible man, and I moved four hundred miles away to stop auditioning for him, and it didn't work."
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "Teddy in S006 ('drunk with a fucking boat')",
+                "basis": "script",
+                "status": "SUPPORTED",
+                "reason": "Accurately matches Teddy's dialogue in S006.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "He was a drunk with a fucking boat, and you're all acting like it's the crown jewels."
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "Danny in S011 ('that was fucking beautiful')",
+                "basis": "script",
+                "status": "SUPPORTED",
+                "reason": "Accurately matches Danny's dialogue in S011.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "-- that was fucking beautiful."
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "Under the Motion Picture Association Classification and Rating Rules, a single use of one of the harsher sexually-derived words as an expletive initially requires at least a PG-13 rating, while more than one such expletive requires an R rating, absent a special two-thirds majority vote of the Rating Board.",
+                "basis": "source",
+                "status": "SUPPORTED",
+                "reason": "Verbatim quote and core rule from the MPA Classification and Rating Rules excerpt [2].",
+                "citation_numbers": [
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 2,
+                    "quote": "A motion picture's single use of one of the harsher sexually-derived words, though only as an expletive, initially requires at least a PG-13 rating. More than one such expletive requires an R rating, as must even one of those words used in a sexual context. The Rating Board nevertheless may rate such a motion picture PG-13 if, based on a special vote by a two-thirds majority, the Raters feel that most American parents would believe that a PG-13 rating is appropriate because of the context or manner in which the words are used or because the use of those words in the motion picture is inconspicuous."
+                  }
+                ],
+                "script_spans": []
+              },
+              {
+                "field": "remedy",
+                "quote": "Confirm casting, filming jurisdiction and staging method before specifying production requirements.",
+                "basis": "inquiry",
+                "status": "UNSUPPORTED",
+                "reason": "Production casting, jurisdiction, and staging questions are irrelevant to a ratings language finding and cannot repair a rating determination.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              },
+              {
+                "field": "severity",
+                "quote": "HIGH",
+                "basis": "application",
+                "status": "UNKNOWN",
+                "reason": "An application or edit needs exact screenplay evidence. Original assessment: Three instances of 'fucking' trigger a baseline R rating under MPA rules, representing a significant rating impact.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              },
+              {
+                "field": "finding",
+                "quote": "The screenplay contains three spoken dialogue occurrences of the expletive 'fucking",
+                "basis": "source",
+                "status": "UNKNOWN",
+                "reason": "Material text was omitted from the claim audit",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              }
+            ],
+            "support_span_version": 2
+          },
+          "correction": {
+            "finding": "The screenplay contains three spoken dialogue occurrences of the expletive 'fucking': Mara in S003 ('selfish, glorious, fucking impossible man'), Teddy in S006 ('drunk with a fucking boat'), and Danny in S011 ('that was fucking beautiful'). Under the Motion Picture Association Classification and Rating Rules, more than one use of a harsher sexually-derived word as an expletive initially requires an R rating, absent a special two-thirds majority vote of the Rating Board allowing a PG-13 rating.",
+            "remedy_detail": "If targeting a PG-13 rating without relying on a special two-thirds majority vote of the Rating Board, replace or cut at least two of the three occurrences of 'fucking' in S003, S006, or S011 with milder, non-sexually-derived language so that no more than one harsher sexually-derived expletive remains.",
+            "remedy_action": "REPLACE",
+            "severity": "HIGH"
+          },
+          "after": {
+            "verdict": "PARTIAL",
+            "reason": "Claim audit requires correction: An application or edit needs exact screenplay evidence. Original assessment: High severity is warranted given that multiple harsher expletives trigger an initial R rating classification under MPA rules.",
+            "failure_mode": "none",
+            "claim_checks": [
+              {
+                "field": "finding",
+                "quote": "The screenplay contains three spoken dialogue occurrences of the expletive 'fucking': Mara in S003 ('selfish, glorious, fucking impossible man'), Teddy in S006 ('drunk with a fucking boat'), and Danny in S011 ('that was fucking beautiful').",
+                "basis": "script",
+                "status": "SUPPORTED",
+                "reason": "The scene text and whole-script search confirm these three exact lines of spoken dialogue in S003, S006, and S011.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "He was a selfish, glorious, fucking impossible man",
+                  "He was a drunk with a fucking boat",
+                  "that was fucking beautiful"
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "Under the Motion Picture Association Classification and Rating Rules, more than one use of a harsher sexually-derived word as an expletive initially requires an R rating, absent a special two-thirds majority vote of the Rating Board allowing a PG-13 rating.",
+                "basis": "source",
+                "status": "SUPPORTED",
+                "reason": "Citation [2] explicitly establishes this rule and exception verbatim.",
+                "citation_numbers": [
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 2,
+                    "quote": "More than one such expletive requires an R rating, as must even one of those words used in a sexual context. The Rating Board nevertheless may rate such a motion picture PG-13 if, based on a special vote by a two-thirds majority, the Raters feel that most American parents would believe that a PG-13 rating is appropriate"
+                  }
+                ],
+                "script_spans": []
+              },
+              {
+                "field": "remedy",
+                "quote": "If targeting a PG-13 rating without relying on a special two-thirds majority vote of the Rating Board, replace or cut at least two of the three occurrences of 'fucking' in S003, S006, or S011 with milder, non-sexually-derived language so that no more than one harsher sexually-derived expletive remains.",
+                "basis": "script_edit",
+                "status": "SUPPORTED",
+                "reason": "The remedy provides conditional editing advice directly addressing the cited MPA threshold without promising an automatic rating.",
+                "citation_numbers": [
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 2,
+                    "quote": "A motion picture's single use of one of the harsher sexually-derived words, though only as an expletive, initially requires at least a PG-13 rating. More than one such expletive requires an R rating"
+                  }
+                ],
+                "script_spans": [
+                  "He was a selfish, glorious, fucking impossible man",
+                  "He was a drunk with a fucking boat",
+                  "that was fucking beautiful"
+                ]
+              },
+              {
+                "field": "severity",
+                "quote": "HIGH",
+                "basis": "application",
+                "status": "UNKNOWN",
+                "reason": "An application or edit needs exact screenplay evidence. Original assessment: High severity is warranted given that multiple harsher expletives trigger an initial R rating classification under MPA rules.",
+                "citation_numbers": [
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 2,
+                    "quote": "More than one such expletive requires an R rating"
+                  }
+                ],
+                "script_spans": []
+              }
+            ],
+            "support_span_version": 2
+          }
+        }
+      },
+      "kept": [],
+      "dropped": [
+        {
+          "flag_id": "F2001",
+          "agent": "ratings_board",
+          "scene_ids": [
+            "S003",
+            "S006",
+            "S011"
+          ],
+          "entity_id": null,
+          "severity": "HIGH",
+          "category": "rating_language",
+          "finding": "The screenplay contains three spoken dialogue occurrences of the expletive 'fucking': Mara in S003 ('selfish, glorious, fucking impossible man'), Teddy in S006 ('drunk with a fucking boat'), and Danny in S011 ('that was fucking beautiful'). Under the Motion Picture Association Classification and Rating Rules, a single use of one of the harsher sexually-derived words as an expletive initially requires at least a PG-13 rating, while more than one such expletive requires an R rating, absent a special two-thirds majority vote of the Rating Board.",
+          "citations": [
+            {
+              "source_type": "rules_table",
+              "title": "ScriptRisk CARA descriptor corpus (4,544 official rationales)",
+              "url": null,
+              "excerpt": "'language': R 66.2%, PG-13 24.6%, PG 9.1%, G 0.1%, NC-17 0.0% across 3277 official CARA rationales (ScriptRisk CARA descriptor corpus: 4,544 official CARA rationales, filmratings.com)",
+              "retrieved_at": null,
+              "via": "local"
+            },
+            {
+              "source_type": "rules_table",
+              "title": "Classification and Rating Rules (Motion Picture Association / NATO)",
+              "url": "https://www.filmratings.com/wp-content/uploads/2025/08/rating_rules.pdf",
+              "excerpt": "A motion picture's single use of one of the harsher sexually-derived words, though only as an expletive, initially requires at least a PG-13 rating. More than one such expletive requires an R rating, as must even one of those words used in a sexual context. The Rating Board nevertheless may rate such a motion picture PG-13 if, based on a special vote by a two-thirds majority, the Raters feel that most American parents would believe that a PG-13 rating is appropriate because of the context or manner in which the words are used or because the use of those words in the motion picture is inconspicuous.",
+              "retrieved_at": null,
+              "via": "local"
+            }
+          ],
+          "remedy": {
+            "action": "NO_ACTION",
+            "detail": "Confirm casting, filming jurisdiction and staging method before specifying production requirements.",
+            "est_cost_usd": null,
+            "est_added_days": null
+          },
+          "confidence": 0.95,
+          "marginal": {
+            "descriptor": "unmodified language",
+            "n": 2164,
+            "distribution": {
+              "R": "79.8%",
+              "PG-13": "14.5%",
+              "PG": "5.6%",
+              "G": "0.0%"
+            },
+            "base_rate": {
+              "R": "55.9%",
+              "PG-13": "28.5%",
+              "PG": "14.8%",
+              "NC-17": "0.6%",
+              "G": "0.2%"
+            },
+            "corpus_n": 4544,
+            "source": "ScriptRisk CARA descriptor corpus (4,544 official rationales)"
+          },
+          "rejection_reason": "Evidence correction unresolved: corrected claim did not pass independent verification",
+          "failure_mode": "premise_unsupported",
+          "recoverable": false
+        }
+      ],
+      "verification_incomplete": true,
+      "elapsed_s": 52.52
+    }
+  ],
+  "responses": [
+    {
+      "flag_id": "F1001",
+      "schema": "EvidenceVerdict",
+      "text": "{\n  \"verdict\": \"PARTIAL\",\n  \"reason\": \"The scene depicts an old VHS of Jaws playing on a corner TV, and the cited excerpts confirm that feature film excerpts require a clip license from the copyright holder and that Universal Studios Media Licensing handles clips from Universal Pictures libraries. However, specific fee estimates ($5,000 - $15,000) and guild/talent reuse considerations are not established in the provided excerpts.\",\n  \"failure_mode\": \"none\",\n  \"claim_checks\": [\n    {\n      \"field\": \"finding\",\n      \"quote\": \"In S002, an old VHS of Steven Spielberg's 1975 film 'JAWS' is shown playing on the corner TV in The Wheelhouse.\",\n      \"basis\": \"script\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Scene S002 explicitly describes an old VHS of JAWS playing on the corner TV.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": [\n        \"On the corner TV, muted, an old VHS of JAWS is playing. The shark is winning.\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Including copyrighted feature film footage on an on-screen display requires a clip license from the copyright holder\",\n      \"basis\": \"source\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Citation 1 states that any excerpt from a feature film must be licensed from the copyright holder.\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"Any excerpt from a feature film must be licensed from the copyright holder and an agreement negotiated for payment for use of the clips.\"\n        }\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"(Universal Pictures / Amblin via Universal Studios Media Licensing)\",\n      \"basis\": \"application\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Citation 2 identifies Universal Studios Media Licensing as the portal offering clip licenses for works from the Universal Pictures library.\",\n      \"citation_numbers\": [2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 2,\n          \"quote\": \"This site offers clip and still licenses for works from the Universal Pictures, Focus Features, DreamWorks Animation, and MCA Television libraries.\"\n        }\n      ],\n      \"script_spans\": [\n        \"On the corner TV, muted, an old VHS of JAWS is playing.\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"along with potential guild/talent reuse considerations.\",\n      \"basis\": \"planning\",\n      \"status\": \"UNKNOWN\",\n      \"reason\": \"The cited excerpts do not mention talent or guild reuse requirements.\",\n      \"citation_numbers\": [],\n      \"support_spans\": []\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"If an expensive third-party clip license is not desired, the video on the TV screen should be replaced with public domain, production-owned, or royalty-free stock footage.\",\n      \"basis\": \"script_edit\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Replacing third-party copyrighted footage with public domain or production-owned material is a standard script edit to avoid licensing requirements.\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"Any excerpt from a feature film must be licensed from the copyright holder and an agreement negotiated for payment for use of the clips.\"\n        }\n      ],\n      \"script_spans\": [\n        \"On the corner TV, muted, an old VHS of JAWS is playing.\"\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"Obtain a clip license from Universal Studios Media Licensing for the excerpt from 'Jaws'\",\n      \"basis\": \"application\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Supported by the rule that feature film excerpts require licensing from the copyright holder/licensing agency.\",\n      \"citation_numbers\": [1, 2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"Any excerpt from a feature film must be licensed from the copyright holder and an agreement negotiated for payment for use of the clips.\"\n        },\n        {\n          \"citation_number\": 2,\n          \"quote\": \"This site offers clip and still licenses for works from the Universal Pictures, Focus Features, DreamWorks Animation, and MCA Television libraries.\"\n        }\n      ],\n      \"script_spans\": [\n        \"On the corner TV, muted, an old VHS of JAWS is playing.\"\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"(estimated licensing fee $5,000 - $15,000)\",\n      \"basis\": \"planning\",\n      \"status\": \"UNKNOWN\",\n      \"reason\": \"The specific dollar fee range is not provided or substantiated in the cited text.\",\n      \"citation_numbers\": [],\n      \"support_spans\": []\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"or replace the playback footage on the TV monitor with public domain or royalty-free stock video.\",\n      \"basis\": \"script_edit\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Supported as an alternative creative edit to remove the licensed asset.\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"Any excerpt from a feature film must be licensed from the copyright holder and an agreement negotiated for payment for use of the clips.\"\n        }\n      ],\n      \"script_spans\": [\n        \"On the corner TV, muted, an old VHS of JAWS is playing.\"\n      ]\n    },\n    {\n      \"field\": \"severity\",\n      \"quote\": \"HIGH\",\n      \"basis\": \"source\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Depicting an unlicensed feature film clip in a production creates a direct copyright clearance issue.\",\n      \"citation_numbers\": [],\n      \"support_spans\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F1001",
+      "schema": "CorrectedClaim",
+      "text": "{\n  \"finding\": \"In S002, an old VHS of the feature film 'JAWS' is depicted playing on the corner TV in The Wheelhouse. Using an excerpt from a feature film requires a clip license negotiated with the copyright holder (such as Universal Studios Media Licensing for Universal Pictures catalog titles).\",\n  \"remedy_detail\": \"Obtain a clip license from Universal Studios Media Licensing for the excerpt from 'JAWS', or replace the video playing on the TV screen with public domain, production-owned, or royalty-free footage.\",\n  \"remedy_action\": \"OBTAIN_LICENSE\",\n  \"severity\": \"HIGH\"\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F1001",
+      "schema": "EvidenceVerdict",
+      "text": "{\n  \"verdict\": \"SUPPORTED\",\n  \"reason\": \"The scene explicitly depicts a VHS of 'JAWS' playing on a TV, and the cited sources substantiate that film excerpts require licensing from the copyright holder, noting Universal Studios Media Licensing handles licensing for Universal Pictures catalog titles.\",\n  \"failure_mode\": \"none\",\n  \"claim_checks\": [\n    {\n      \"field\": \"finding\",\n      \"quote\": \"In S002, an old VHS of the feature film 'JAWS' is depicted playing on the corner TV in The Wheelhouse.\",\n      \"basis\": \"script\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"S002 explicitly describes an old VHS of JAWS playing on the corner TV in The Wheelhouse.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": [\n        \"On the corner TV, muted, an old VHS of JAWS is playing.\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Using an excerpt from a feature film requires a clip license negotiated with the copyright holder\",\n      \"basis\": \"source\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Excerpt 1 directly states that any excerpt from a feature film must be licensed from the copyright holder with an agreement negotiated for clip use.\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"Any excerpt from a feature film must be licensed from the copyright holder and an agreement negotiated for payment for use of the clips.\"\n        }\n      ],\n      \"script_spans\": []\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"(such as Universal Studios Media Licensing for Universal Pictures catalog titles)\",\n      \"basis\": \"source\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Excerpt 2 confirms that Universal Studios Media Licensing offers clip and still licenses for works from the Universal Pictures library.\",\n      \"citation_numbers\": [2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 2,\n          \"quote\": \"This site offers clip and still licenses for works from the Universal Pictures, Focus Features, DreamWorks Animation, and MCA Television libraries.\"\n        }\n      ],\n      \"script_spans\": []\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"Obtain a clip license from Universal Studios Media Licensing for the excerpt from 'JAWS'\",\n      \"basis\": \"application\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Applying the requirement to license feature film excerpts from the copyright licensor to the depicted JAWS playback in S002.\",\n      \"citation_numbers\": [1, 2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"Any excerpt from a feature film must be licensed from the copyright holder and an agreement negotiated for payment for use of the clips.\"\n        },\n        {\n          \"citation_number\": 2,\n          \"quote\": \"This site offers clip and still licenses for works from the Universal Pictures, Focus Features, DreamWorks Animation, and MCA Television libraries.\"\n        }\n      ],\n      \"script_spans\": [\n        \"On the corner TV, muted, an old VHS of JAWS is playing.\"\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"replace the video playing on the TV screen with public domain, production-owned, or royalty-free footage.\",\n      \"basis\": \"script_edit\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Replacing the copyrighted feature film footage removes the need to negotiate a clip license.\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"Any excerpt from a feature film must be licensed from the copyright holder and an agreement negotiated for payment for use of the clips.\"\n        }\n      ],\n      \"script_spans\": [\n        \"On the corner TV, muted, an old VHS of JAWS is playing.\"\n      ]\n    },\n    {\n      \"field\": \"severity\",\n      \"quote\": \"HIGH\",\n      \"basis\": \"planning\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Unlicensed display of a major commercial feature film clip presents a high clearance and copyright risk.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F2001",
+      "schema": "EvidenceVerdict",
+      "text": "{\n  \"verdict\": \"PARTIAL\",\n  \"reason\": \"The script facts and the Motion Picture Association rating rule cited in the finding are fully supported by the scene text and citation [2]. However, the asserted remedy is an irrelevant safety/production casting inquiry that does not address or repair the ratings language finding.\",\n  \"failure_mode\": \"none\",\n  \"claim_checks\": [\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Mara in S003 ('selfish, glorious, fucking impossible man')\",\n      \"basis\": \"script\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Accurately matches Mara's dialogue in S003.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": [\n        \"He was a selfish, glorious, fucking impossible man, and I moved four hundred miles away to stop auditioning for him, and it didn't work.\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Teddy in S006 ('drunk with a fucking boat')\",\n      \"basis\": \"script\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Accurately matches Teddy's dialogue in S006.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": [\n        \"He was a drunk with a fucking boat, and you're all acting like it's the crown jewels.\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Danny in S011 ('that was fucking beautiful')\",\n      \"basis\": \"script\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Accurately matches Danny's dialogue in S011.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": [\n        \"-- that was fucking beautiful.\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Under the Motion Picture Association Classification and Rating Rules, a single use of one of the harsher sexually-derived words as an expletive initially requires at least a PG-13 rating, while more than one such expletive requires an R rating, absent a special two-thirds majority vote of the Rating Board.\",\n      \"basis\": \"source\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Verbatim quote and core rule from the MPA Classification and Rating Rules excerpt [2].\",\n      \"citation_numbers\": [2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 2,\n          \"quote\": \"A motion picture's single use of one of the harsher sexually-derived words, though only as an expletive, initially requires at least a PG-13 rating. More than one such expletive requires an R rating, as must even one of those words used in a sexual context. The Rating Board nevertheless may rate such a motion picture PG-13 if, based on a special vote by a two-thirds majority, the Raters feel that most American parents would believe that a PG-13 rating is appropriate because of the context or manner in which the words are used or because the use of those words in the motion picture is inconspicuous.\"\n        }\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"Confirm casting, filming jurisdiction and staging method before specifying production requirements.\",\n      \"basis\": \"inquiry\",\n      \"status\": \"UNSUPPORTED\",\n      \"reason\": \"Production casting, jurisdiction, and staging questions are irrelevant to a ratings language finding and cannot repair a rating determination.\",\n      \"citation_numbers\": [],\n      \"support_spans\": []\n    },\n    {\n      \"field\": \"severity\",\n      \"quote\": \"HIGH\",\n      \"basis\": \"application\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Three instances of 'fucking' trigger a baseline R rating under MPA rules, representing a significant rating impact.\",\n      \"citation_numbers\": [],\n      \"support_spans\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F2001",
+      "schema": "CorrectedClaim",
+      "text": "{\n  \"finding\": \"The screenplay contains three spoken dialogue occurrences of the expletive 'fucking': Mara in S003 ('selfish, glorious, fucking impossible man'), Teddy in S006 ('drunk with a fucking boat'), and Danny in S011 ('that was fucking beautiful'). Under the Motion Picture Association Classification and Rating Rules, more than one use of a harsher sexually-derived word as an expletive initially requires an R rating, absent a special two-thirds majority vote of the Rating Board allowing a PG-13 rating.\",\n  \"remedy_detail\": \"If targeting a PG-13 rating without relying on a special two-thirds majority vote of the Rating Board, replace or cut at least two of the three occurrences of 'fucking' in S003, S006, or S011 with milder, non-sexually-derived language so that no more than one harsher sexually-derived expletive remains.\",\n  \"remedy_action\": \"REPLACE\",\n  \"severity\": \"HIGH\"\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F2001",
+      "schema": "EvidenceVerdict",
+      "text": "{\n  \"verdict\": \"SUPPORTED\",\n  \"reason\": \"The script text confirms all three spoken occurrences of 'fucking' in dialogue across scenes S003, S006, and S011. The MPA Classification and Rating Rules excerpt directly entails that more than one use of a harsher sexually-derived word as an expletive requires an R rating unless a special two-thirds majority vote allows PG-13. The conditional remedy accurately prescribes reducing the count to no more than one.\",\n  \"failure_mode\": \"none\",\n  \"claim_checks\": [\n    {\n      \"field\": \"finding\",\n      \"quote\": \"The screenplay contains three spoken dialogue occurrences of the expletive 'fucking': Mara in S003 ('selfish, glorious, fucking impossible man'), Teddy in S006 ('drunk with a fucking boat'), and Danny in S011 ('that was fucking beautiful').\",\n      \"basis\": \"script\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"The scene text and whole-script search confirm these three exact lines of spoken dialogue in S003, S006, and S011.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": [\n        \"He was a selfish, glorious, fucking impossible man\",\n        \"He was a drunk with a fucking boat\",\n        \"that was fucking beautiful\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Under the Motion Picture Association Classification and Rating Rules, more than one use of a harsher sexually-derived word as an expletive initially requires an R rating, absent a special two-thirds majority vote of the Rating Board allowing a PG-13 rating.\",\n      \"basis\": \"source\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Citation [2] explicitly establishes this rule and exception verbatim.\",\n      \"citation_numbers\": [2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 2,\n          \"quote\": \"More than one such expletive requires an R rating, as must even one of those words used in a sexual context. The Rating Board nevertheless may rate such a motion picture PG-13 if, based on a special vote by a two-thirds majority, the Raters feel that most American parents would believe that a PG-13 rating is appropriate\"\n        }\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"If targeting a PG-13 rating without relying on a special two-thirds majority vote of the Rating Board, replace or cut at least two of the three occurrences of 'fucking' in S003, S006, or S011 with milder, non-sexually-derived language so that no more than one harsher sexually-derived expletive remains.\",\n      \"basis\": \"script_edit\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"The remedy provides conditional editing advice directly addressing the cited MPA threshold without promising an automatic rating.\",\n      \"citation_numbers\": [2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 2,\n          \"quote\": \"A motion picture's single use of one of the harsher sexually-derived words, though only as an expletive, initially requires at least a PG-13 rating. More than one such expletive requires an R rating\"\n        }\n      ],\n      \"script_spans\": [\n        \"He was a selfish, glorious, fucking impossible man\",\n        \"He was a drunk with a fucking boat\",\n        \"that was fucking beautiful\"\n      ]\n    },\n    {\n      \"field\": \"severity\",\n      \"quote\": \"HIGH\",\n      \"basis\": \"application\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"High severity is warranted given that multiple harsher expletives trigger an initial R rating classification under MPA rules.\",\n      \"citation_numbers\": [2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 2,\n          \"quote\": \"More than one such expletive requires an R rating\"\n        }\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    }
+  ]
+}
