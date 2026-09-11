@@ -27,6 +27,7 @@ from greenlight.agents.evidence_review import (
     PRODUCTION_INQUIRY,
     check_entailment,
     checked_verdict,
+    corrected_flag,
     repair_partial,
     review_incomplete,
 )
@@ -183,6 +184,30 @@ def resumable_audit(artifact, source_bytes, flag):
     return None  # the first audit never returned; restart this case only
 
 
+def recheck_candidate(artifact, source_bytes, flag):
+    """Complete only the skipped entailment stage after a deterministic audit fix."""
+    if artifact["source_run_sha256"] != hashlib.sha256(source_bytes).hexdigest():
+        raise ValueError("correction artifact is for a different source record")
+    result = next(r for r in artifact["results"] if r["flag_id"] == flag["flag_id"])
+    if not result["verdict"].get("evidence_review_unresolved"):
+        raise ValueError("only unresolved corrections can be rechecked")
+    trail = result["verdict"]["evidence_review"]
+    if trail["after"].get("entailment_review"):
+        raise ValueError("entailment already completed; do not replay a rejected judgement")
+    candidate = corrected_flag(flag, trail["correction"])
+    raw = next(
+        r
+        for r in reversed(artifact["responses"])
+        if r["flag_id"] == flag["flag_id"] and r["schema"] == "EvidenceVerdict"
+    )
+    verdict = checked_verdict(
+        EvidenceVerdict.model_validate_json(raw["text"]).model_dump(), candidate
+    )
+    if verdict["verdict"] != "SUPPORTED":
+        raise ValueError("corrected candidate still fails its claim audit")
+    return candidate, verdict
+
+
 async def evaluate(args):  # noqa: PLR0915 - linear, bounded evaluation with resume/accounting
     from google import genai
 
@@ -195,6 +220,14 @@ async def evaluate(args):  # noqa: PLR0915 - linear, bounded evaluation with res
     case_bytes = args.entailment_cases.read_bytes() if args.entailment_cases else None
     probes = entailment_inputs(json.loads(case_bytes), source_bytes) if case_bytes else []
     flags = [p[0] for p in probes] if probes else [flags_by_id[fid] for fid in args.flags]
+    recheck = (
+        json.loads(args.recheck_correction_from.read_text())
+        if args.recheck_correction_from
+        else None
+    )
+    rechecks = [recheck_candidate(recheck, source_bytes, f) for f in flags] if recheck else []
+    if rechecks:
+        flags = [r[0] for r in rechecks]
     resume = json.loads(args.resume_from.read_text()) if args.resume_from else None
     resumed = (
         {f["flag_id"]: resumable_audit(resume, source_bytes, f) for f in flags} if resume else {}
@@ -213,7 +246,9 @@ async def evaluate(args):  # noqa: PLR0915 - linear, bounded evaluation with res
     tracked = CallRecorder(
         client,
         args.output.with_suffix(".progress.json"),
-        len(flags) if probes else sum(3 if resumed.get(f["flag_id"]) else 5 for f in flags),
+        len(flags)
+        if probes or rechecks
+        else sum(3 if resumed.get(f["flag_id"]) else 5 for f in flags),
     )
     results = []
     started = time.monotonic()
@@ -225,6 +260,8 @@ async def evaluate(args):  # noqa: PLR0915 - linear, bounded evaluation with res
                 context, search = _scene_context(flag, state), _search_context(flag, state)
                 if probes:
                     operation = check_entailment(tracked, flag, probes[index][1])
+                elif rechecks:
+                    operation = check_entailment(tracked, flag, rechecks[index][1])
                 elif initial := resumed.get(flag["flag_id"]):
                     operation = repair_partial(
                         tracked, flag, context, search, initial, _call_verifier_once
@@ -279,6 +316,7 @@ async def evaluate(args):  # noqa: PLR0915 - linear, bounded evaluation with res
         "responses_with_usage": sum(r["usage_available"] for r in responses),
         "calls_without_returned_usage": calls - sum(r["usage_available"] for r in responses),
         "resumed_from": str(args.resume_from) if args.resume_from else None,
+        "rechecked_correction_from": str(args.recheck_correction_from) if rechecks else None,
         "entailment_cases": str(args.entailment_cases) if case_bytes else None,
         "entailment_cases_sha256": hashlib.sha256(case_bytes).hexdigest() if case_bytes else None,
         "attempts": tracked.attempts,
@@ -312,6 +350,11 @@ def main():
         "--entailment-cases",
         type=Path,
         help="one narrow review per hash-bound case; no repair or new report",
+    )
+    mode.add_argument(
+        "--recheck-correction-from",
+        type=Path,
+        help="complete a skipped entailment stage after a deterministic audit fix",
     )
     p.add_argument(
         "--live", action="store_true", help="spends money on up to 5 logical model calls per flag"

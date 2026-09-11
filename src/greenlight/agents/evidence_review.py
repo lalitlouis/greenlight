@@ -118,6 +118,19 @@ def _support_problem(check: ClaimCheck, citations: list[dict[str, Any]]) -> str 
     return None
 
 
+def _cover_additive_joins(body: str, covered: list[bool]) -> None:
+    """Allow conjunctions between audited clauses, never omitted substantive text."""
+    coverage = "".join("1" if hit else "0" for hit in covered)
+    for gap in re.finditer("0+", coverage):
+        start, end = gap.span()
+        if (
+            start > 0
+            and end < len(body)
+            and re.fullmatch(r"[\W_]*and(?:\s+that)?[\W_]*", body[start:end])
+        ):
+            covered[start:end] = [True] * (end - start)
+
+
 def checked_verdict(verdict: dict[str, Any], flag: dict[str, Any]) -> dict[str, Any]:
     """Validate the audit's anchors; a positive label cannot override failed clauses."""
     checks = [ClaimCheck.model_validate(c) for c in verdict["claim_checks"]]
@@ -149,6 +162,10 @@ def checked_verdict(verdict: dict[str, Any], flag: dict[str, Any]) -> dict[str, 
             while start != -1:
                 covered[start : start + len(check.quote)] = [True] * len(check.quote)
                 start = body.find(check.quote, start + len(check.quote))
+        # Atomic checks commonly omit a conjunction between two audited clauses.
+        # Accept only internal additive joins; never swallow an unaudited clause,
+        # a leading/trailing fragment, alternatives, exceptions or negation.
+        _cover_additive_joins(body, covered)
         gaps = [i for i, char in enumerate(body) if char.isalnum() and not covered[i]]
         if gaps:
             checks.append(

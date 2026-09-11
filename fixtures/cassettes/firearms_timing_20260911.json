@@ -1,0 +1,334 @@
+{
+  "source_run": "runs/run_20260911_demo.json",
+  "source_run_sha256": "23039b4a86b11fd353921fe20b03f9dbb2b8c7cb2903844a9abb541e675f8c5f",
+  "source_build": "local:6438de520c929a576aac0824dd7d730788c1819e",
+  "evaluated_build": "b52fb6354175b8394fb0b6c7360adc8289a90942",
+  "model": "gemini-3.7-flash",
+  "elapsed_s": 62.74,
+  "calls": 2,
+  "responses_with_usage": 2,
+  "calls_without_returned_usage": 0,
+  "resumed_from": "fixtures/cassettes/support_spans_resume_20260911.json",
+  "entailment_cases": null,
+  "entailment_cases_sha256": null,
+  "attempts": [
+    {
+      "flag_id": "F3008",
+      "schema": "CorrectedClaim",
+      "status": "returned",
+      "input_chars": 16397,
+      "input_sha256": "64b907d1d5c82f09cf3ca33d845e8bd8b5a20ddbb47171e730c36b2412a95354",
+      "usage_available": true,
+      "elapsed_s": 53.69
+    },
+    {
+      "flag_id": "F3008",
+      "schema": "EvidenceVerdict",
+      "status": "returned",
+      "input_chars": 18804,
+      "input_sha256": "c237bae3dd428925d571e00911dbfd4736bf7639cc318a320ab728900c09003a",
+      "usage_available": true,
+      "elapsed_s": 9.01
+    }
+  ],
+  "gemini_usage": {
+    "flash": {
+      "prompt": 8921,
+      "cached": 0,
+      "output": 4271
+    }
+  },
+  "estimated_cost_usd": 0.0227,
+  "manual_review": {
+    "status": "Correction returned; independent audit hit a deterministic false rejection before entailment",
+    "correction": "Removed exclusive custody, license/firearm substitution, unsupported buffer and staging alternatives. Preserved conditional production use and the cited safety meeting/PPE rules. No new citations or cost estimate.",
+    "failure": "All audit clauses were SUPPORTED, but coverage logic marked the connective and that as an omitted claim. Secondary entailment did not run. The resulting rejection and withheld score are the recorded build behavior, not a semantic judgement against the candidate.",
+    "timing": "Correction returned in 53.69 seconds; audit in 9.01 seconds. No timeout this time, with unchanged model/retry/deadline settings. These client-observed times do not establish why earlier calls timed out.",
+    "next": "Fix internal additive-join coverage, run offline guards for real omissions, and complete only the skipped secondary review with the eighth reserved call."
+  },
+  "results": [
+    {
+      "flag_id": "F3008",
+      "verdict": {
+        "verdict": "UNSUPPORTED",
+        "failure_mode": "premise_unsupported",
+        "reason": "Evidence correction unresolved: corrected claim did not pass independent verification",
+        "evidence_review_unresolved": true,
+        "evidence_review": {
+          "before": {
+            "verdict": "PARTIAL",
+            "reason": "The script facts for scenes S002 and S005 are accurately represented. The safety meeting, dry run, and mandatory PPE requirements are directly supported by CSATF Safety Bulletin #1 excerpts [1] and [2]. However, the cited excerpt regarding Property Master licensing does not establish exclusive custody/control of firearms, nor do the excerpts substantiate acoustic safety buffer zones.",
+            "failure_mode": "none",
+            "claim_checks": [
+              {
+                "field": "finding",
+                "quote": "Scene S005 depicts a military honor guard of three veterans firing a three-volley blank rifle salute in close proximity to attendees, including a 10-year-old child (Sam) who clamps his hands over his ears and a dog (Barnacle) tied to a fence.",
+                "basis": "script",
+                "status": "SUPPORTED",
+                "reason": "Accurately reflects the action and characters depicted in S002 and S005.",
+                "citation_numbers": [],
+                "support_spans": []
+              },
+              {
+                "field": "finding",
+                "quote": "Under CSATF Safety Bulletin #1, all firearms capable of discharging blanks must be maintained and controlled exclusively by a licensed Property Master or certified Armorer.",
+                "basis": "source",
+                "status": "UNSUPPORTED",
+                "reason": "Excerpt [3] mentions maintaining firearms-related licenses and permits, but does not state or establish that firearms must be maintained and controlled exclusively by a licensed Property Master or Armorer.",
+                "citation_numbers": [
+                  3
+                ],
+                "support_spans": []
+              },
+              {
+                "field": "finding",
+                "quote": "Production must hold a mandatory on-site safety meeting and walk-through prior to firing.",
+                "basis": "source",
+                "status": "SUPPORTED",
+                "reason": "Directly supported by CSATF Safety Bulletin #1 in excerpt [1].",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues. This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d with the Property Master, designated Production"
+                  }
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "Mandatory hearing protection (PPE) and acoustic safety buffer zones must be established for cast and crew in the line of fire, particularly to safeguard the minor performer and animal from concussive sound and muzzle discharge hazards.",
+                "basis": "source",
+                "status": "UNSUPPORTED",
+                "reason": "While PPE and hearing protection for personnel in close proximity or line of fire is supported by excerpt [2], acoustic safety buffer zones and specific rules regarding minor performers and animals are not established in the excerpts.",
+                "citation_numbers": [
+                  2
+                ],
+                "support_spans": []
+              },
+              {
+                "field": "finding",
+                "quote": "Staging may alternately utilize quarter-load blanks, electronic non-firing replicas, or post-production sound/VFX enhancement.",
+                "basis": "planning",
+                "status": "UNSUPPORTED",
+                "reason": "The cited excerpts do not mention quarter-load blanks, electronic non-firing replicas, or VFX alternatives.",
+                "citation_numbers": [],
+                "support_spans": []
+              },
+              {
+                "field": "finding",
+                "quote": "Costs vary by armorer daily rate, prop rentals, and location logistics.",
+                "basis": "planning",
+                "status": "UNSUPPORTED",
+                "reason": "Cost variance factors are planning commentary not supported by the cited excerpts.",
+                "citation_numbers": [],
+                "support_spans": []
+              },
+              {
+                "field": "remedy",
+                "quote": "Engage a qualified, licensed Property Master / Armorer to manage, inspect, and supervise all firearms and blank ammunition on set.",
+                "basis": "source",
+                "status": "UNSUPPORTED",
+                "reason": "The cited text in excerpt [3] mentions licensing but does not contain the operative requirement to engage or supervise in these terms.",
+                "citation_numbers": [
+                  3
+                ],
+                "support_spans": []
+              },
+              {
+                "field": "remedy",
+                "quote": "Conduct a mandatory safety meeting and dry-run with all cast and crew before discharge.",
+                "basis": "source",
+                "status": "SUPPORTED",
+                "reason": "Supported by the safety meeting and dry run provisions in excerpt [1].",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues. This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d with the Property Master, designated Production"
+                  }
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "Provide hearing protection (PPE) and maintain safe perimeter distances, or use non-firing replica rifles with visual and acoustic effects added in post-production.",
+                "basis": "source",
+                "status": "UNSUPPORTED",
+                "reason": "While hearing protection is supported by excerpt [2], perimeter distances and non-firing replica alternatives are not in the excerpts.",
+                "citation_numbers": [
+                  2
+                ],
+                "support_spans": []
+              },
+              {
+                "field": "severity",
+                "quote": "MEDIUM",
+                "basis": "planning",
+                "status": "SUPPORTED",
+                "reason": "Blank gunfire with cast and animals present represents a legitimate medium-severity production safety consideration.",
+                "citation_numbers": [],
+                "support_spans": []
+              }
+            ],
+            "support_span_version": 1
+          },
+          "correction": {
+            "finding": "Scene S005 depicts an honor guard firing a three-volley rifle salute in close proximity to attendees. If practical firearms or blanks are utilized on set, CSATF Safety Bulletin #1 specifies that production must conduct a safety meeting with all involved personnel including an on-site walk-through or dry run before any firearm is used, and that protective shields, eye and hearing protection, or other appropriate personal protective equipment shall be issued and utilized by all personnel in close proximity or directly in the line of fire.",
+            "remedy_detail": "Confirm casting, filming jurisdiction and staging method before specifying production requirements.",
+            "remedy_action": "NO_ACTION",
+            "severity": "MEDIUM"
+          },
+          "after": {
+            "verdict": "PARTIAL",
+            "reason": "Claim audit requires correction: Material text was omitted from the claim audit",
+            "failure_mode": "none",
+            "claim_checks": [
+              {
+                "field": "finding",
+                "quote": "Scene S005 depicts an honor guard firing a three-volley rifle salute in close proximity to attendees.",
+                "basis": "script",
+                "status": "SUPPORTED",
+                "reason": "In Scene S005, an honor guard stands in front of the mourners and fires three volleys with rifles.",
+                "citation_numbers": [],
+                "support_spans": []
+              },
+              {
+                "field": "finding",
+                "quote": "If practical firearms or blanks are utilized on set, CSATF Safety Bulletin #1 specifies that production must conduct a safety meeting with all involved personnel including an on-site walk-through or dry run before any firearm is used",
+                "basis": "source",
+                "status": "SUPPORTED",
+                "reason": "CSATF Safety Bulletin #1 explicitly mandates a safety meeting with all involved personnel including an on-site walk-through and/or dry run before any firearm is used.",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues. This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d"
+                  }
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "protective shields, eye and hearing protection, or other appropriate personal protective equipment shall be issued and utilized by all personnel in close proximity or directly in the line of fire.",
+                "basis": "source",
+                "status": "SUPPORTED",
+                "reason": "CSATF Safety Bulletin #1 item 11 mandates protective shields, eye and hearing protection, or other PPE for all personnel in close proximity or directly in the line of fire.",
+                "citation_numbers": [
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 2,
+                    "quote": "Protective shields, eye, and hearing protection or other appropriate Personal Protective Equipment (PPE) shall be issued and utilized by all personnel in close proximity and/or directly in the line of fire."
+                  }
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "Confirm casting, filming jurisdiction and staging method before specifying production requirements.",
+                "basis": "inquiry",
+                "status": "SUPPORTED",
+                "reason": "Standardized inquiry text for requesting unconfirmed production parameters before specifying mandates.",
+                "citation_numbers": [],
+                "support_spans": []
+              },
+              {
+                "field": "severity",
+                "quote": "MEDIUM",
+                "basis": "planning",
+                "status": "SUPPORTED",
+                "reason": "Medium severity is standard and justified for conditional safety planning around practical blank fire and firearms safety protocols.",
+                "citation_numbers": [],
+                "support_spans": []
+              },
+              {
+                "field": "finding",
+                "quote": "and that",
+                "basis": "source",
+                "status": "UNKNOWN",
+                "reason": "Material text was omitted from the claim audit",
+                "citation_numbers": [],
+                "support_spans": []
+              }
+            ],
+            "support_span_version": 1
+          }
+        }
+      },
+      "kept": [],
+      "dropped": [
+        {
+          "flag_id": "F3008",
+          "agent": "safety_underwriter",
+          "scene_ids": [
+            "S002",
+            "S005"
+          ],
+          "entity_id": null,
+          "severity": "MEDIUM",
+          "category": "firearms_blanks",
+          "finding": "Scene S005 depicts a military honor guard of three veterans firing a three-volley blank rifle salute in close proximity to attendees, including a 10-year-old child (Sam) who clamps his hands over his ears and a dog (Barnacle) tied to a fence. Under CSATF Safety Bulletin #1, all firearms capable of discharging blanks must be maintained and controlled exclusively by a licensed Property Master or certified Armorer. Production must hold a mandatory on-site safety meeting and walk-through prior to firing. Mandatory hearing protection (PPE) and acoustic safety buffer zones must be established for cast and crew in the line of fire, particularly to safeguard the minor performer and animal from concussive sound and muzzle discharge hazards. Staging may alternately utilize quarter-load blanks, electronic non-firing replicas, or post-production sound/VFX enhancement. Costs vary by armorer daily rate, prop rentals, and location logistics.",
+          "citations": [
+            {
+              "source_type": "web",
+              "title": "CSATF Safety Bulletin #1: Recommendations For The Use Of Firearms, Blanks, And Dummy Rounds",
+              "url": "https://www.csatf.org/01_safety_bltn_firearms",
+              "excerpt": "### Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues. This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d with the Property Master, designated Production",
+              "retrieved_at": null,
+              "via": "parallel_search"
+            },
+            {
+              "source_type": "web",
+              "title": "CSATF Safety Bulletin #1: Recommendations for Safety with Firearms and Use of Blanks",
+              "url": "https://www.csatf.org/wp-content/uploads/2018/05/01FIREARMS.pdf",
+              "excerpt": "11. Protective shields, eye, and hearing protection or other appropriate Personal Protective Equipment (PPE) shall be issued and utilized by all personnel in close proximity and/or directly in the line of fire.",
+              "retrieved_at": null,
+              "via": "parallel_search"
+            },
+            {
+              "source_type": "web",
+              "title": "CSATF Safety Bulletins & Fact Sheets",
+              "url": "https://www.csatf.org/all_safety_bulletins-procedural_guidelines-info_fact_sheets/",
+              "excerpt": "or someone designated by the Property Master (i.e., the Armorer). The Property Master \u00b7 must maintain all necessary, firearms/ammunition/blanks-related licenses, permits, and",
+              "retrieved_at": null,
+              "via": "parallel_search"
+            }
+          ],
+          "remedy": {
+            "action": "ADD_SPECIALIST",
+            "detail": "Engage a qualified, licensed Property Master / Armorer to manage, inspect, and supervise all firearms and blank ammunition on set. Conduct a mandatory safety meeting and dry-run with all cast and crew before discharge. Provide hearing protection (PPE) and maintain safe perimeter distances, or use non-firing replica rifles with visual and acoustic effects added in post-production.",
+            "est_cost_usd": [
+              2500,
+              8000
+            ],
+            "est_added_days": 0
+          },
+          "confidence": 0.95,
+          "rejection_reason": "Evidence correction unresolved: corrected claim did not pass independent verification",
+          "failure_mode": "premise_unsupported",
+          "recoverable": false
+        }
+      ],
+      "verification_incomplete": true,
+      "elapsed_s": 62.72
+    }
+  ],
+  "responses": [
+    {
+      "flag_id": "F3008",
+      "schema": "CorrectedClaim",
+      "text": "{\n  \"finding\": \"Scene S005 depicts an honor guard firing a three-volley rifle salute in close proximity to attendees. If practical firearms or blanks are utilized on set, CSATF Safety Bulletin #1 specifies that production must conduct a safety meeting with all involved personnel including an on-site walk-through or dry run before any firearm is used, and that protective shields, eye and hearing protection, or other appropriate personal protective equipment shall be issued and utilized by all personnel in close proximity or directly in the line of fire.\",\n  \"remedy_detail\": \"Confirm casting, filming jurisdiction and staging method before specifying production requirements.\",\n  \"remedy_action\": \"NO_ACTION\",\n  \"severity\": \"MEDIUM\"\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F3008",
+      "schema": "EvidenceVerdict",
+      "text": "{\n  \"verdict\": \"SUPPORTED\",\n  \"reason\": \"The script accurately depicts an honor guard firing a three-volley rifle salute in close proximity to mourners in Scene S005. The cited CSATF Safety Bulletin #1 excerpts directly establish both the requirement for a safety meeting with an on-site walk-through or dry run prior to firearm use and the requirement for PPE (including eye, hearing protection, or shields) for personnel in close proximity or in the line of fire. The remedy uses the standardized inquiry text.\",\n  \"failure_mode\": \"none\",\n  \"claim_checks\": [\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Scene S005 depicts an honor guard firing a three-volley rifle salute in close proximity to attendees.\",\n      \"basis\": \"script\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"In Scene S005, an honor guard stands in front of the mourners and fires three volleys with rifles.\",\n      \"citation_numbers\": [],\n      \"support_spans\": []\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"If practical firearms or blanks are utilized on set, CSATF Safety Bulletin #1 specifies that production must conduct a safety meeting with all involved personnel including an on-site walk-through or dry run before any firearm is used\",\n      \"basis\": \"source\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"CSATF Safety Bulletin #1 explicitly mandates a safety meeting with all involved personnel including an on-site walk-through and/or dry run before any firearm is used.\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues. This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d\"\n        }\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"protective shields, eye and hearing protection, or other appropriate personal protective equipment shall be issued and utilized by all personnel in close proximity or directly in the line of fire.\",\n      \"basis\": \"source\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"CSATF Safety Bulletin #1 item 11 mandates protective shields, eye and hearing protection, or other PPE for all personnel in close proximity or directly in the line of fire.\",\n      \"citation_numbers\": [2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 2,\n          \"quote\": \"Protective shields, eye, and hearing protection or other appropriate Personal Protective Equipment (PPE) shall be issued and utilized by all personnel in close proximity and/or directly in the line of fire.\"\n        }\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"Confirm casting, filming jurisdiction and staging method before specifying production requirements.\",\n      \"basis\": \"inquiry\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Standardized inquiry text for requesting unconfirmed production parameters before specifying mandates.\",\n      \"citation_numbers\": [],\n      \"support_spans\": []\n    },\n    {\n      \"field\": \"severity\",\n      \"quote\": \"MEDIUM\",\n      \"basis\": \"planning\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Medium severity is standard and justified for conditional safety planning around practical blank fire and firearms safety protocols.\",\n      \"citation_numbers\": [],\n      \"support_spans\": []\n    }\n  ]\n}",
+      "usage_available": true
+    }
+  ]
+}

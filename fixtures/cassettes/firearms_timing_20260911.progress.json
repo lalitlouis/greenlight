@@ -1,0 +1,20 @@
+[
+  {
+    "flag_id": "F3008",
+    "schema": "CorrectedClaim",
+    "status": "returned",
+    "input_chars": 16397,
+    "input_sha256": "64b907d1d5c82f09cf3ca33d845e8bd8b5a20ddbb47171e730c36b2412a95354",
+    "usage_available": true,
+    "elapsed_s": 53.69
+  },
+  {
+    "flag_id": "F3008",
+    "schema": "EvidenceVerdict",
+    "status": "returned",
+    "input_chars": 18804,
+    "input_sha256": "c237bae3dd428925d571e00911dbfd4736bf7639cc318a320ab728900c09003a",
+    "usage_available": true,
+    "elapsed_s": 9.01
+  }
+]

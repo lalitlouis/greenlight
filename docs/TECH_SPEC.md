@@ -105,6 +105,9 @@ facts (casting, jurisdiction, effects method) cannot be inferred from fictional 
 External claims and remedy prescriptions, including planning advice, require exact
 support spans inside their own cited excerpts. Missing/non-verbatim receipts and
 unreviewed material text trigger correction. Receipts prove provenance, not entailment:
+Coverage permits only an internal `and` or `and that` join between audited clauses;
+omitted conditions, negation and prescriptions still fail. This keeps atomic claim
+quoting from rejecting a finding over a connective alone.
 a separate blinded batch checks each claim against its spans and excerpt context,
 without the screenplay, severity or earlier reasoning. Citation title and URL accompany
 each excerpt solely for source attribution; metadata cannot supply an operative rule

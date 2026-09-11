@@ -139,3 +139,37 @@ including response schema/stage, elapsed time, input length/hash and returned/er
 cancelled status. Timings measure client-observed calls including SDK retries, not
 server inference time; do not infer a server root cause from them. Runtime code,
 timeouts and schemas are unchanged. No broader paid run until the results are reviewed.
+
+### Follow-up results and coverage correction
+
+Build `b52fb63` passed 481 offline tests and `make check`. The
+[five entailment cases](../../fixtures/cassettes/entailment_cases_20260911.json) matched
+all pre-registered expectations in 54.42 seconds, five calls, $0.0086 captured-usage
+estimate. The original attribution false rejection was absent; the three unsupported
+prescriptions were rejected. This is a selected diagnostic result, not overall accuracy.
+
+The [instrumented firearms correction](../../fixtures/cassettes/firearms_timing_20260911.json)
+returned in 53.69 seconds; the subsequent audit returned in 9.01 seconds. The candidate
+removed the unsupported requirements. The audit marked its clauses SUPPORTED, but our
+deterministic coverage check rejected the connective **and that** between two quoted
+clauses as omitted material. Secondary entailment never ran. This is another false
+rejection; it is not evidence that the narrowed candidate is unsupported.
+
+Coverage now allows only `and`/`and that` (with punctuation/whitespace) in an otherwise
+empty gap bounded on both sides by audited text. It still rejects leading/trailing
+fragments, missing prescriptions, `or`, exceptions, conditions and negation. Exact
+source receipts and independent semantic review still apply to each audited claim.
+Regression tests include the saved real failure and negative omission variants.
+Frozen schemas and source text are unchanged.
+
+Complete only the previously skipped secondary review of the unchanged saved candidate,
+using the eighth reserved call. The evaluation verifies the source hash and current
+claim audit before spending; it refuses a correction whose secondary review already
+completed. Do not regenerate the correction or repeat its successful audit. Nothing
+here establishes the cause of previous transport latency or justifies larger timeouts.
+
+Upstream follow-up identified during the wait: safety desk instructions demand specific
+staged-gag methods and rule-of-thumb estimates while separately requiring retrieved
+support. Resolve that instruction conflict and use the existing `fetch_page` capability
+when excerpts are only scope headings; measure whether fewer unsupported filings and
+repairs result. This is still proposed work, not part of these verifier changes.

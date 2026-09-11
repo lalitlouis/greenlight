@@ -1,0 +1,391 @@
+{
+  "source_run": "runs/run_20260911_demo.json",
+  "source_run_sha256": "23039b4a86b11fd353921fe20b03f9dbb2b8c7cb2903844a9abb541e675f8c5f",
+  "source_build": "local:6438de520c929a576aac0824dd7d730788c1819e",
+  "evaluated_build": "b52fb6354175b8394fb0b6c7360adc8289a90942",
+  "model": "gemini-3.7-flash",
+  "elapsed_s": 54.42,
+  "calls": 5,
+  "responses_with_usage": 5,
+  "calls_without_returned_usage": 0,
+  "resumed_from": null,
+  "entailment_cases": "fixtures/accuracy/entailment_cases_20260911.json",
+  "entailment_cases_sha256": "b939f5edba778e31652b9025bdc2b19052785f4848a69cbff5266c0f1f999597",
+  "attempts": [
+    {
+      "flag_id": "minor_attribution",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 2467,
+      "input_sha256": "ba21f689766ed3ee854ea8c72377f15b66baa41e56ed9b4834cd6fc25b5c8b32",
+      "usage_available": true,
+      "elapsed_s": 4.6
+    },
+    {
+      "flag_id": "licenses_not_firearms",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 2465,
+      "input_sha256": "4f3597322b6e805f71df00ef9eb2043e1773a4441efa5ee0b036537f0a920f69",
+      "usage_available": true,
+      "elapsed_s": 26.49
+    },
+    {
+      "flag_id": "dry_run_required",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 2590,
+      "input_sha256": "947cc9a33891989c6c552b8131d9e87fb7d29b93f5f2aa8ffbb195cb2e64219c",
+      "usage_available": true,
+      "elapsed_s": 3.39
+    },
+    {
+      "flag_id": "walkthrough_or_dry_run",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 2677,
+      "input_sha256": "bc33f2464a28a4442c464fdb139c3f108ed0a32e15c33c21388785d0f61d3ba8",
+      "usage_available": true,
+      "elapsed_s": 3.55
+    },
+    {
+      "flag_id": "scope_not_permit",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 2792,
+      "input_sha256": "2f3281e01a89767d272af94c79b6679c77b63bb35b6079b214a516bdcf011314",
+      "usage_available": true,
+      "elapsed_s": 16.34
+    }
+  ],
+  "gemini_usage": {
+    "flash": {
+      "prompt": 3492,
+      "cached": 0,
+      "output": 1604
+    }
+  },
+  "estimated_cost_usd": 0.0086,
+  "manual_review": {
+    "status": "5/5 matched the pre-registered excerpt entailment expectations",
+    "scope": "Two supported claims accepted and three unsupported claims rejected. Source attribution is supplied without treating metadata as operative evidence. This selected, developer-authored set is not a representative expert accuracy benchmark or a repeatability measurement.",
+    "timing": "54.42 seconds; five returned calls, 3.39 to 26.49 seconds each; estimated returned-usage cost $0.0086."
+  },
+  "results": [
+    {
+      "flag_id": "minor_attribution",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "If a minor performer is cast and asked to perform hazardous or questionable activities, SAG-AFTRA safety guidance entitles the minor to have the activity performed by a qualified stunt person.",
+            "basis": "source",
+            "status": "SUPPORTED",
+            "reason": "Probe to be independently assessed",
+            "citation_numbers": [
+              2
+            ],
+            "support_spans": [
+              {
+                "citation_number": 2,
+                "quote": "If a minor is asked to perform any activity that seems hazardous or questionable, the minor is entitled to have the activity performed by a qualified stunt person."
+              }
+            ]
+          },
+          {
+            "field": "remedy",
+            "quote": "Confirm casting, filming jurisdiction and staging method before specifying production requirements.",
+            "basis": "inquiry",
+            "status": "SUPPORTED",
+            "reason": "Probe scaffold",
+            "citation_numbers": [],
+            "support_spans": []
+          },
+          {
+            "field": "severity",
+            "quote": "HIGH",
+            "basis": "planning",
+            "status": "SUPPORTED",
+            "reason": "Probe scaffold",
+            "citation_numbers": [],
+            "support_spans": []
+          }
+        ],
+        "support_span_version": 1,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The quote directly confirms that if a minor is asked to perform an activity that seems hazardous or questionable, they are entitled to have it performed by a qualified stunt person, and the source attribution confirms it is SAG-AFTRA safety guidance."
+            }
+          ]
+        }
+      },
+      "expected_entailed": true,
+      "actual_entailed": true,
+      "passed": true,
+      "elapsed_s": 4.61
+    },
+    {
+      "flag_id": "licenses_not_firearms",
+      "verdict": {
+        "verdict": "PARTIAL",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "Under CSATF guidance, all firearms capable of discharging blanks must be maintained and controlled exclusively by a licensed Property Master or certified Armorer.",
+            "basis": "source",
+            "status": "UNSUPPORTED",
+            "reason": "Independent span review: The quote only addresses maintaining licenses and permits rather than requiring that all blank-firing firearms be maintained and controlled exclusively by a licensed Property Master or certified Armorer.",
+            "citation_numbers": [
+              3
+            ],
+            "support_spans": [
+              {
+                "citation_number": 3,
+                "quote": "or someone designated by the Property Master (i.e., the Armorer). The Property Master \u00b7 must maintain all necessary, firearms/ammunition/blanks-related licenses, permits, and"
+              }
+            ]
+          },
+          {
+            "field": "remedy",
+            "quote": "Confirm casting, filming jurisdiction and staging method before specifying production requirements.",
+            "basis": "inquiry",
+            "status": "SUPPORTED",
+            "reason": "Probe scaffold",
+            "citation_numbers": [],
+            "support_spans": []
+          },
+          {
+            "field": "severity",
+            "quote": "MEDIUM",
+            "basis": "planning",
+            "status": "SUPPORTED",
+            "reason": "Probe scaffold",
+            "citation_numbers": [],
+            "support_spans": []
+          }
+        ],
+        "support_span_version": 1,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": false,
+              "reason": "The quote only addresses maintaining licenses and permits rather than requiring that all blank-firing firearms be maintained and controlled exclusively by a licensed Property Master or certified Armorer."
+            }
+          ]
+        },
+        "reason": "Independent span review: The quote only addresses maintaining licenses and permits rather than requiring that all blank-firing firearms be maintained and controlled exclusively by a licensed Property Master or certified Armorer."
+      },
+      "expected_entailed": false,
+      "actual_entailed": false,
+      "passed": true,
+      "elapsed_s": 26.49
+    },
+    {
+      "flag_id": "dry_run_required",
+      "verdict": {
+        "verdict": "PARTIAL",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "CSATF guidance requires a dry run before any firearm is used.",
+            "basis": "source",
+            "status": "UNSUPPORTED",
+            "reason": "Independent span review: The guidance states the safety meeting shall include an 'on-site walk-through' and/or 'dry run', meaning a dry run specifically is not strictly required if an on-site walk-through is conducted instead.",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "### Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues. This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d with the Property Master, designated Production"
+              }
+            ]
+          },
+          {
+            "field": "remedy",
+            "quote": "Confirm casting, filming jurisdiction and staging method before specifying production requirements.",
+            "basis": "inquiry",
+            "status": "SUPPORTED",
+            "reason": "Probe scaffold",
+            "citation_numbers": [],
+            "support_spans": []
+          },
+          {
+            "field": "severity",
+            "quote": "MEDIUM",
+            "basis": "planning",
+            "status": "SUPPORTED",
+            "reason": "Probe scaffold",
+            "citation_numbers": [],
+            "support_spans": []
+          }
+        ],
+        "support_span_version": 1,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": false,
+              "reason": "The guidance states the safety meeting shall include an 'on-site walk-through' and/or 'dry run', meaning a dry run specifically is not strictly required if an on-site walk-through is conducted instead."
+            }
+          ]
+        },
+        "reason": "Independent span review: The guidance states the safety meeting shall include an 'on-site walk-through' and/or 'dry run', meaning a dry run specifically is not strictly required if an on-site walk-through is conducted instead."
+      },
+      "expected_entailed": false,
+      "actual_entailed": false,
+      "passed": true,
+      "elapsed_s": 3.39
+    },
+    {
+      "flag_id": "walkthrough_or_dry_run",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "Before any firearm is used, CSATF guidance calls for a safety meeting with all involved personnel, including an on-site walk-through and/or dry run.",
+            "basis": "source",
+            "status": "SUPPORTED",
+            "reason": "Probe to be independently assessed",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "### Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues. This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d with the Property Master, designated Production"
+              }
+            ]
+          },
+          {
+            "field": "remedy",
+            "quote": "Confirm casting, filming jurisdiction and staging method before specifying production requirements.",
+            "basis": "inquiry",
+            "status": "SUPPORTED",
+            "reason": "Probe scaffold",
+            "citation_numbers": [],
+            "support_spans": []
+          },
+          {
+            "field": "severity",
+            "quote": "MEDIUM",
+            "basis": "planning",
+            "status": "SUPPORTED",
+            "reason": "Probe scaffold",
+            "citation_numbers": [],
+            "support_spans": []
+          }
+        ],
+        "support_span_version": 1,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The quote directly confirms that before any firearm is used, a safety meeting with all involved personnel must be conducted and include an on-site walk-through and/or dry run, attributed to CSATF guidance via source attribution."
+            }
+          ]
+        }
+      },
+      "expected_entailed": true,
+      "actual_entailed": true,
+      "passed": true,
+      "elapsed_s": 3.55
+    },
+    {
+      "flag_id": "scope_not_permit",
+      "verdict": {
+        "verdict": "PARTIAL",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "CSATF guidance requires a local fire marshal permit and a licensed pyrotechnician for pyrotechnic special effects.",
+            "basis": "source",
+            "status": "UNSUPPORTED",
+            "reason": "Independent span review: The provided quote only introduces the safety bulletin and its general scope; it does not mention the requirement for a local fire marshal permit or a licensed pyrotechnician.",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "INDUSTRY WIDE LABOR-MANAGEMENT SAFETY COMMITTEE **SAFETY BULLETIN #16 RECOMMENDED GUIDELINES FOR SAFETY WITH PYROTECHNIC SPECIAL EFFECTS This Safety Bulletin applies to pyrotechnic materials such as explosives and flammable or combustible liquids, gases and solids when used to create pyrotechnic special effects.** ALL USE, HANDLING, STORAGE AND"
+              }
+            ]
+          },
+          {
+            "field": "remedy",
+            "quote": "Confirm casting, filming jurisdiction and staging method before specifying production requirements.",
+            "basis": "inquiry",
+            "status": "SUPPORTED",
+            "reason": "Probe scaffold",
+            "citation_numbers": [],
+            "support_spans": []
+          },
+          {
+            "field": "severity",
+            "quote": "HIGH",
+            "basis": "planning",
+            "status": "SUPPORTED",
+            "reason": "Probe scaffold",
+            "citation_numbers": [],
+            "support_spans": []
+          }
+        ],
+        "support_span_version": 1,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": false,
+              "reason": "The provided quote only introduces the safety bulletin and its general scope; it does not mention the requirement for a local fire marshal permit or a licensed pyrotechnician."
+            }
+          ]
+        },
+        "reason": "Independent span review: The provided quote only introduces the safety bulletin and its general scope; it does not mention the requirement for a local fire marshal permit or a licensed pyrotechnician."
+      },
+      "expected_entailed": false,
+      "actual_entailed": false,
+      "passed": true,
+      "elapsed_s": 16.35
+    }
+  ],
+  "responses": [
+    {
+      "flag_id": "minor_attribution",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The quote directly confirms that if a minor is asked to perform an activity that seems hazardous or questionable, they are entitled to have it performed by a qualified stunt person, and the source attribution confirms it is SAG-AFTRA safety guidance.\"\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "licenses_not_firearms",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": false,\n      \"reason\": \"The quote only addresses maintaining licenses and permits rather than requiring that all blank-firing firearms be maintained and controlled exclusively by a licensed Property Master or certified Armorer.\"\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "dry_run_required",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": false,\n      \"reason\": \"The guidance states the safety meeting shall include an 'on-site walk-through' and/or 'dry run', meaning a dry run specifically is not strictly required if an on-site walk-through is conducted instead.\"\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "walkthrough_or_dry_run",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The quote directly confirms that before any firearm is used, a safety meeting with all involved personnel must be conducted and include an on-site walk-through and/or dry run, attributed to CSATF guidance via source attribution.\"\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "scope_not_permit",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": false,\n      \"reason\": \"The provided quote only introduces the safety bulletin and its general scope; it does not mention the requirement for a local fire marshal permit or a licensed pyrotechnician.\"\n    }\n  ]\n}",
+      "usage_available": true
+    }
+  ]
+}

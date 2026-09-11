@@ -52,6 +52,23 @@ def test_probes_bind_original_excerpts_and_hide_expected_labels():
         evaluator.entailment_inputs(forged, source)
 
 
+def test_recheck_requires_matching_source_and_a_previously_skipped_stage():
+    artifact = json.loads((ROOT / "fixtures/cassettes/firearms_timing_20260911.json").read_text())
+    source = (ROOT / "runs/run_20260911_demo.json").read_bytes()
+    flag = next(f for f in json.loads(source)["flags"] if f["flag_id"] == "F3008")
+    candidate, verdict = evaluator.recheck_candidate(artifact, source, flag)
+    assert verdict["verdict"] == "SUPPORTED"
+    assert candidate["citations"] == flag["citations"]
+    assert candidate["remedy"]["est_cost_usd"] is None
+    with pytest.raises(ValueError, match="different source"):
+        evaluator.recheck_candidate(artifact, b"changed", flag)
+    artifact["results"][0]["verdict"]["evidence_review"]["after"]["entailment_review"] = {
+        "checks": [{"entailed": False}]
+    }
+    with pytest.raises(ValueError, match="already completed"):
+        evaluator.recheck_candidate(artifact, source, flag)
+
+
 @pytest.mark.parametrize("outcome", ["returned", "error", "cancelled"])
 def test_call_recorder_persists_stage_status_and_enforces_budget(tmp_path, outcome):
     checkpoint = tmp_path / "calls.json"

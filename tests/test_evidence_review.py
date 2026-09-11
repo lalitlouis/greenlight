@@ -463,6 +463,47 @@ def test_source_metadata_cannot_replace_an_operative_excerpt_receipt():
         assert checked["claim_checks"][1]["status"] == "UNKNOWN"
 
 
+def test_saved_firearms_audit_can_leave_an_additive_join_between_atomic_checks():
+    artifact = json.loads((ROOT / "fixtures/cassettes/firearms_timing_20260911.json").read_text())
+    patch = artifact["results"][0]["verdict"]["evidence_review"]["correction"]
+    candidate = corrected_flag(saved_flag("F3008"), patch)
+    raw = next(r for r in artifact["responses"] if r["schema"] == "EvidenceVerdict")
+    result = checked_verdict(json.loads(raw["text"]), candidate)
+    assert result["verdict"] == "SUPPORTED"
+    assert not any("omitted" in c["reason"] for c in result["claim_checks"])
+    # Semantic review still has to approve both source clauses independently.
+    assert sum(bool(c["support_spans"]) for c in result["claim_checks"]) == 2
+
+
+@pytest.mark.parametrize(
+    "gap",
+    [
+        "and",
+        "and that",
+        "or",
+        "unless",
+        "and not",
+        "and only if cast with minors",
+        "and hire a studio teacher and",
+    ],
+)
+def test_coverage_only_allows_internal_additive_joins(gap):
+    flag = saved_flag()
+    flag["finding"] = f"First clause {gap} second clause"
+    verdict = audit(flag)
+    check = verdict["claim_checks"][0]
+    check["quote"] = "First clause"
+    verdict["claim_checks"].append({**deepcopy(check), "quote": "second clause"})
+    checked = checked_verdict(verdict, flag)
+    assert (checked["verdict"] == "SUPPORTED") == (gap in {"and", "and that"})
+    # The same words at either end are not a join between audited clauses.
+    for text in (f"{gap} First clause", f"First clause {gap}"):
+        flag["finding"] = text
+        trimmed = audit(flag)
+        trimmed["claim_checks"][0]["quote"] = "First clause"
+        assert checked_verdict(trimmed, flag)["verdict"] == "PARTIAL"
+
+
 def test_secondary_failure_cannot_reenter_an_unbounded_repair_loop():
     flag = saved_flag()
     before = audit(flag)
