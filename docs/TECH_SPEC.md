@@ -102,16 +102,22 @@ are unchanged. The same bounded check/repair/check path serves live fan-out, sal
 targeted verification retry. Failed repairs do not enter another recovery loop. Production
 facts (casting, jurisdiction, effects method) cannot be inferred from fictional events.
 
-External claims and remedy prescriptions, including planning advice, require exact
-support spans inside their own cited excerpts. Missing/non-verbatim receipts and
+External rules and production prescriptions, including planning advice, require exact
+support spans inside their own cited excerpts. Rule applications and proposed content
+edits additionally carry exact screenplay receipts from the first auditor's supplied
+scene context. An edit may address a cited trigger without the source literally naming
+the screenplay or prescribing that edit, but cannot promise a final rating/clearance
+or invent a specialist, permit or ownership assertion. Missing/non-verbatim receipts and
 unreviewed material text trigger correction.
 Coverage permits only an internal `and` or `and that` join between audited clauses;
 omitted conditions, negation and prescriptions still fail. This keeps atomic claim
 quoting from rejecting a finding over a connective alone.
 
 Receipts prove provenance, not entailment. A separate blinded batch checks each claim
-against its spans and excerpt context,
-without the screenplay, severity or earlier reasoning. Citation title and URL accompany
+against its spans and excerpt context. Only applications/edits carry the exact relevant
+script receipts; the batch never receives the earlier auditor's reasoning or severity.
+Script receipts establish fictional content, not actual production facts or ownership.
+Citation title and URL accompany
 each excerpt solely for source attribution; metadata cannot supply an operative rule
 or establish applicability. This avoids rejecting a correctly attributed quotation
 merely because its body does not repeat the publisher's name. It must return every claim
@@ -119,8 +125,12 @@ exactly once; an incomplete secondary review withholds the score. Severity judge
 stays in the script-aware audit even if the auditor supplies optional severity receipts;
 severity never enters the source-only batch. A supported first
 pass costs two logical calls; a repair is bounded at five total. No new searches are
-introduced. Only the fixed production-input inquiry may omit external support in a
-remedy. Quote/receipt metadata is session/record-internal; frozen schemas are unchanged.
+introduced. Desk-relevant inquiries may omit external support but receive independent
+review for relevance, concealed requirements and unsupported premises. The fixed
+production-input inquiry is permitted only for the safety desk. Remedy actions must
+agree with their detail; NO_ACTION is not proof that no follow-up is needed.
+Quote/receipt metadata is session/record-internal (`support_span_version=2`);
+frozen public schemas are unchanged.
 
 Withholding the desk's reasoning is deliberate: a verifier shown the argument tends to ratify it.
 

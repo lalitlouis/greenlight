@@ -136,7 +136,9 @@ async def _call_verifier_once(
             "content_filtered": True,
         }
     v = EvidenceVerdict.model_validate_json(res.text)
-    return await check_entailment(client, flag, checked_verdict(v.model_dump(), flag))
+    return await check_entailment(
+        client, flag, checked_verdict(v.model_dump(), flag, script_context)
+    )
 
 
 async def call_verifier(

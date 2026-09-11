@@ -1,0 +1,106 @@
+{
+  "source_run_sha256": "10f75f0e509a7049ce45c4be1f87cb954588fdbe9ee76375a50a76bf5a3b7ef2",
+  "label_scope": "Pre-registered developer-authored evidence/application checks, not expert legal labels or a representative product accuracy benchmark.",
+  "cases": [
+    {
+      "case_id": "clip_removal",
+      "source_flag_id": "F1001",
+      "field": "remedy",
+      "basis": "script_edit",
+      "action": "CUT",
+      "claim": "Remove the JAWS footage from the television shot to avoid using that feature-film excerpt; this does not establish clearance of the remaining film.",
+      "support_spans": [
+        {
+          "citation_number": 1,
+          "quote": "Any excerpt from a feature film must be licensed from the copyright holder and an agreement negotiated for payment for use of the clips. Most studios charge a fee on the basis of a minute or fraction thereof."
+        }
+      ],
+      "script_spans": [
+        "On the corner TV, muted, an old VHS of JAWS is playing. The shark is winning."
+      ],
+      "expected_entailed": true,
+      "label_reason": "The edit removes the depicted use that triggers the cited clip rule, without a broad clearance promise."
+    },
+    {
+      "case_id": "specialist_disguised_as_edit",
+      "source_flag_id": "F3001",
+      "field": "remedy",
+      "basis": "script_edit",
+      "action": "REPLACE",
+      "claim": "Revise the scene to require a licensed pyrotechnician and a local fire-marshal permit for the vessel burn.",
+      "support_spans": [
+        {
+          "citation_number": 1,
+          "quote": "INDUSTRY WIDE LABOR-MANAGEMENT SAFETY COMMITTEE **SAFETY BULLETIN #16 RECOMMENDED GUIDELINES FOR SAFETY WITH PYROTECHNIC SPECIAL EFFECTS This Safety Bulletin applies to pyrotechnic materials such as explosives and flammable or combustible liquids, gases and solids when used to create pyrotechnic special effects.**"
+        }
+      ],
+      "script_spans": [
+        "WHUMP. A line of blue-orange flame walks the deck like it knows the boat. Then the diesel catches and the MARGARET ROSE goes up -- a column of fire standing on the black water, doubled in the swell, huge."
+      ],
+      "expected_entailed": false,
+      "label_reason": "Calling production duties an edit cannot supply absent operative support from a scope heading."
+    },
+    {
+      "case_id": "inquiry_irrelevant",
+      "source_flag_id": "F2001",
+      "field": "remedy",
+      "basis": "inquiry",
+      "action": "NO_ACTION",
+      "claim": "Confirm the cast's ages and filming location to solve this language-rating finding.",
+      "support_spans": [],
+      "script_spans": [],
+      "expected_entailed": false,
+      "label_reason": "Production details do not address the language content or target-rating decision."
+    },
+    {
+      "case_id": "inquiry_conceals_duty",
+      "source_flag_id": "F3001",
+      "field": "remedy",
+      "basis": "inquiry",
+      "action": "NO_ACTION",
+      "claim": "Which licensed pyrotechnician will you hire as required for every shoot?",
+      "support_spans": [],
+      "script_spans": [],
+      "expected_entailed": false,
+      "label_reason": "Smuggles an unsupported universal hiring requirement into a question."
+    },
+    {
+      "case_id": "territory_conditional_edit",
+      "source_flag_id": "F4001",
+      "field": "remedy",
+      "basis": "script_edit",
+      "action": "REPLACE",
+      "claim": "If Mara's encounter with Eli is intended as literal supernatural content in a China distribution version, consider presenting it as a dream to address the cited restriction; regulator acceptance remains uncertain.",
+      "support_spans": [
+        {
+          "citation_number": 2,
+          "quote": "Under China's censorship laws any films suggesting the existence of the supernatural can be banned from distribution. Exceptions are made for ghost stories based on Chinese mythology or films in which the supernatural is explained by a realistic rationale (eg drug use or dream sequence)."
+        }
+      ],
+      "script_spans": [
+        "ELI VOSS (70) is sitting in front of the far glass. Work jacket. Salt-white stubble. He was not there a moment ago, and the room does not find this strange.\n\nELI\nYou put the Hopper crooked.\n\nMara does not turn around. Her hands go still on the register.\n\nELI (CONT'D)\nIt's been crooked eleven years. But you looked at it tonight, so now it's your fault.\n\nMARA\n(not turning)\nYou're not here.\n\nELI\nI'm not anywhere. It's very freeing. No tide chart. No Coors Light.\n\n"
+      ],
+      "expected_entailed": true,
+      "label_reason": "A conditional content proposal addresses the cited exception without promising approval."
+    },
+    {
+      "case_id": "firearms_conditional",
+      "source_flag_id": "F3004",
+      "field": "finding",
+      "basis": "application",
+      "action": "NO_ACTION",
+      "claim": "If functional firearms are used for the depicted rifle salute, conduct a safety meeting including an on-site walk-through and/or dry run before use.",
+      "support_spans": [
+        {
+          "citation_number": 1,
+          "quote": "Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues. This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d with the Property Master, designated Production"
+        }
+      ],
+      "script_spans": [
+        "VOLLEY. Gulls explode off the church roof. Sam clamps his hands over his ears. Barnacle, tied to the fence, points his muzzle at the sky and HOWLS."
+      ],
+      "expected_entailed": true,
+      "label_reason": "Preserves conditional production method and source alternatives."
+    }
+  ]
+}

@@ -69,6 +69,45 @@ def test_recheck_requires_matching_source_and_a_previously_skipped_stage():
         evaluator.recheck_candidate(artifact, source, flag)
 
 
+@pytest.mark.parametrize("name", ["applications", "edits_inquiries"])
+def test_application_cases_use_real_script_receipts_and_never_send_expected_labels(name):
+    cases = json.loads((ROOT / f"fixtures/accuracy/evidence_{name}_20260911.json").read_text())
+    source = (ROOT / "runs/run_20260911_015915.json").read_bytes()
+    script = (ROOT / "fixtures/slack_tide.fountain").read_text()
+    inputs = evaluator.entailment_inputs(cases, source, script)
+    prompts = []
+
+    async def generate_content(**kwargs):
+        prompts.append(kwargs["contents"])
+        return SimpleNamespace(
+            text=json.dumps(
+                {
+                    "checks": [
+                        {"check_index": 0, "entailed": True, "reason": "Scripted wiring check"}
+                    ]
+                }
+            )
+        )
+
+    client = SimpleNamespace(
+        aio=SimpleNamespace(models=SimpleNamespace(generate_content=generate_content))
+    )
+    for flag, verdict, _ in inputs:
+        asyncio.run(check_entailment(client, flag, verdict))
+    assert len(prompts) == len(cases["cases"])
+    for prompt, row in zip(prompts, cases["cases"], strict=True):
+        payload = json.loads(prompt.split("\n\n", 1)[1])
+        assert payload[0]["script_evidence"] == row["script_spans"]
+        assert "expected_entailed" not in prompt and row["label_reason"] not in prompt
+        assert all(s in script for s in payload[0]["script_evidence"])
+    forged = deepcopy(cases)
+    forged["cases"][0]["script_spans"] = ["A permit has already been obtained for this shoot."]
+    with pytest.raises(ValueError, match="valid excerpt receipt"):
+        evaluator.entailment_inputs(forged, source, script)
+    with pytest.raises(ValueError, match="screenplay hash"):
+        evaluator.entailment_inputs(cases, source, script + "altered")
+
+
 @pytest.mark.parametrize("outcome", ["returned", "error", "cancelled"])
 def test_call_recorder_persists_stage_status_and_enforces_budget(tmp_path, outcome):
     checkpoint = tmp_path / "calls.json"

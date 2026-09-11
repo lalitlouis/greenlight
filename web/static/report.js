@@ -592,7 +592,10 @@ function flagRow(f, opts) {
     costBox.appendChild(el("b", null, cost));
     costBox.appendChild(document.createTextNode("estimate"));
   } else {
-    costBox.appendChild(glossTip(el("b", null, prettyCat(f.remedy?.action)), f.remedy?.action));
+    // NO_ACTION also carries unresolved input questions. Its enum cannot prove
+    // that the detail requires no follow-up, especially on historical reports.
+    const label = action === "NO_ACTION" ? "See recommendation" : prettyCat(action);
+    costBox.appendChild(glossTip(el("b", null, label), action));
   }
   row.appendChild(costBox);
   return row;
@@ -1201,7 +1204,7 @@ const GLOSSARY = {
   ADD_DISCLAIMER: "Add the standard on-screen disclaimer — an adjunct, rarely sufficient alone.",
   ADD_SPECIALIST: "Hire the named specialist (stunt coordinator, armorer, animal handler) and budget their prep.",
   CUT: "Remove the element or scene from the script — the zero-cost remedy when the beat isn't load-bearing.",
-  NO_ACTION: "No step needed — recorded so the clearance log shows it was considered, not missed.",
+  NO_ACTION: "Read the recommendation for any unresolved inputs or follow-up; this action code alone does not establish that the finding is resolved.",
   // severities
   BLOCKER: "Will stop production, distribution, or insurance until resolved.",
   HIGH: "Significant legal or budget exposure — resolve before principal photography.",

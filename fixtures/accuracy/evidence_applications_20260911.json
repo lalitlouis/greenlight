@@ -1,0 +1,117 @@
+{
+  "source_run_sha256": "10f75f0e509a7049ce45c4be1f87cb954588fdbe9ee76375a50a76bf5a3b7ef2",
+  "label_scope": "Pre-registered developer-authored evidence/application checks, not expert legal labels or a representative product accuracy benchmark.",
+  "cases": [
+    {
+      "case_id": "ratings_cut",
+      "source_flag_id": "F2001",
+      "field": "remedy",
+      "basis": "script_edit",
+      "action": "CUT",
+      "claim": "To address the cited expletive-count trigger, cut 'fucking' from Mara's 'selfish, glorious' line and Teddy's 'drunk with a boat' line, leaving Danny's single expletive. This does not guarantee PG-13 for the film.",
+      "support_spans": [
+        {
+          "citation_number": 2,
+          "quote": "A motion picture's single use of one of the harsher sexually-derived words, though only as an expletive, initially requires at least a PG-13 rating. More than one such expletive requires an R rating, as must even one of those words used in a sexual context. The Rating Board nevertheless may rate such a motion picture PG-13 if, based on a special vote by a two-thirds majority, the Raters feel that most American parents would believe that a PG-13 rating is appropriate because of the context or manner in which the words are used or because the use of those words in the motion picture is inconspicuous."
+        }
+      ],
+      "script_spans": [
+        "MARA\nHe was a selfish, glorious, fucking impossible man, and I moved four hundred miles away to stop auditioning for him, and it didn't work. It never worked.",
+        "TEDDY\nIt's a boat, Danny. He was a drunk with a fucking boat, and you're all acting like it's the crown jewels.",
+        "DANNY (CONT'D)\nYou're insane. You know that. That was --\n(laughing, despite everything)\n-- that was fucking beautiful."
+      ],
+      "expected_entailed": true,
+      "label_reason": "Edit removes two of the three quoted expletives and makes no final-rating guarantee."
+    },
+    {
+      "case_id": "ratings_guarantee",
+      "source_flag_id": "F2001",
+      "field": "remedy",
+      "basis": "script_edit",
+      "action": "CUT",
+      "claim": "Cut those two uses of 'fucking' and the film is guaranteed a PG-13 rating.",
+      "support_spans": [
+        {
+          "citation_number": 2,
+          "quote": "A motion picture's single use of one of the harsher sexually-derived words, though only as an expletive, initially requires at least a PG-13 rating. More than one such expletive requires an R rating, as must even one of those words used in a sexual context. The Rating Board nevertheless may rate such a motion picture PG-13 if, based on a special vote by a two-thirds majority, the Raters feel that most American parents would believe that a PG-13 rating is appropriate because of the context or manner in which the words are used or because the use of those words in the motion picture is inconspicuous."
+        }
+      ],
+      "script_spans": [
+        "MARA\nHe was a selfish, glorious, fucking impossible man, and I moved four hundred miles away to stop auditioning for him, and it didn't work. It never worked.",
+        "TEDDY\nIt's a boat, Danny. He was a drunk with a fucking boat, and you're all acting like it's the crown jewels.",
+        "DANNY (CONT'D)\nYou're insane. You know that. That was --\n(laughing, despite everything)\n-- that was fucking beautiful."
+      ],
+      "expected_entailed": false,
+      "label_reason": "Reducing one trigger does not guarantee the final rating."
+    },
+    {
+      "case_id": "clip_application",
+      "source_flag_id": "F1001",
+      "field": "finding",
+      "basis": "application",
+      "action": "NO_ACTION",
+      "claim": "The screenplay shows JAWS playing on the television. If a feature-film excerpt is used in the finished film, the cited guidance requires a clip license from its copyright holder.",
+      "support_spans": [
+        {
+          "citation_number": 1,
+          "quote": "Any excerpt from a feature film must be licensed from the copyright holder and an agreement negotiated for payment for use of the clips. Most studios charge a fee on the basis of a minute or fraction thereof."
+        }
+      ],
+      "script_spans": [
+        "On the corner TV, muted, an old VHS of JAWS is playing. The shark is winning."
+      ],
+      "expected_entailed": true,
+      "label_reason": "Script identifies the use; the source supplies the general rule. No specific owner is asserted."
+    },
+    {
+      "case_id": "recording_owner",
+      "source_flag_id": "F1010",
+      "field": "finding",
+      "basis": "application",
+      "action": "NO_ACTION",
+      "claim": "Columbia Records / Sony Music Entertainment owns the exact Jeff Buckley recording of Hallelujah selected by this screenplay.",
+      "support_spans": [
+        {
+          "citation_number": 2,
+          "quote": "Columbia Records, a division of Sony Music Entertainment"
+        }
+      ],
+      "script_spans": [
+        "\"Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.\""
+      ],
+      "expected_entailed": false,
+      "label_reason": "Script identifies the selected recording but is not ownership evidence; the source establishes only a corporate relationship."
+    },
+    {
+      "case_id": "performer_from_character",
+      "source_flag_id": "F3006",
+      "field": "finding",
+      "basis": "application",
+      "action": "NO_ACTION",
+      "claim": "Sam is 10 in the screenplay, so production has a ten-year-old performer and must follow the cited minor work-hour restrictions.",
+      "support_spans": [
+        {
+          "citation_number": 1,
+          "quote": "Minors who have reached the age of nine (9) years but who have not attained the age of sixteen (16) years may be permitted at the place of employment for nine (9) hours (excluding meal periods, but including school time)."
+        }
+      ],
+      "script_spans": [
+        "DANNY VOSS (34) stands behind the bar, not because he works there but because standing anywhere else feels wrong today. SAM (10) sits at the end of the bar doing serious damage to a cocoa, poured from a dented Thermos."
+      ],
+      "expected_entailed": false,
+      "label_reason": "Character age does not establish performer age or applicable shooting jurisdiction."
+    },
+    {
+      "case_id": "inquiry_clearance",
+      "source_flag_id": "F1001",
+      "field": "remedy",
+      "basis": "inquiry",
+      "action": "NO_ACTION",
+      "claim": "Is the JAWS clip intended for the finished film, and has permission for that use already been obtained?",
+      "support_spans": [],
+      "script_spans": [],
+      "expected_entailed": true,
+      "label_reason": "Asks for relevant use/permission facts without asserting an owner or a legal outcome."
+    }
+  ]
+}

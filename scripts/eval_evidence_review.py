@@ -24,7 +24,8 @@ if __name__ == "__main__":
 
 from greenlight import parser
 from greenlight.agents.evidence_review import (
-    PRODUCTION_INQUIRY,
+    ClaimCheck,
+    _support_problem,
     check_entailment,
     checked_verdict,
     corrected_flag,
@@ -106,7 +107,7 @@ class CallRecorder:
             )
 
 
-def entailment_inputs(cases, source_bytes):
+def entailment_inputs(cases, source_bytes, script_context=""):
     """Build isolated claim probes from unchanged, hash-bound cached citations.
 
     Expected labels/reasons are evaluation-only and never passed to the reviewer.
@@ -114,53 +115,54 @@ def entailment_inputs(cases, source_bytes):
     """
     if cases["source_run_sha256"] != hashlib.sha256(source_bytes).hexdigest():
         raise ValueError("case source hash does not match the saved run")
-    flags = {f["flag_id"]: f for f in json.loads(source_bytes)["flags"]}
+    record = json.loads(source_bytes)
+    if (
+        script_context
+        and hashlib.sha256(script_context.encode()).hexdigest() != record["draft"]["sha256"]
+    ):
+        raise ValueError("probe screenplay hash does not match the saved run")
+    flags = {f["flag_id"]: f for f in record["flags"] + record.get("rejected_flags", [])}
     rows = cases["cases"]
     if not 1 <= len(rows) <= 6 or len({r["case_id"] for r in rows}) != len(rows):
         raise ValueError("select one to six distinct entailment cases")
     inputs = []
     for row in rows:
+        field = row.get("field", "finding")
         flag = {
             **flags[row["source_flag_id"]],
             "flag_id": row["case_id"],
-            "finding": row["claim"],
-            "remedy": {"detail": PRODUCTION_INQUIRY},
         }
+        if field == "finding":
+            flag["finding"] = row["claim"]
+        elif field == "remedy":
+            flag["remedy"] = {"detail": row["claim"], "action": row.get("action", "NO_ACTION")}
+        else:
+            raise ValueError("probe field must be finding or remedy")
+        spans = row.get("support_spans")
+        if spans is None:
+            spans = [{"citation_number": row["citation_number"], "quote": row["quote"]}]
         check = {
-            "field": "finding",
+            "field": field,
             "quote": row["claim"],
-            "basis": "source",
+            "basis": row.get("basis", "source"),
             "status": "SUPPORTED",
             "reason": "Probe to be independently assessed",
-            "citation_numbers": [row["citation_number"]],
-            "support_spans": [{"citation_number": row["citation_number"], "quote": row["quote"]}],
+            "citation_numbers": sorted({s["citation_number"] for s in spans}),
+            "support_spans": spans,
+            "script_spans": row.get("script_spans", []),
         }
-        checks = [check]
-        for field, quote, basis in (
-            ("remedy", PRODUCTION_INQUIRY, "inquiry"),
-            ("severity", flag["severity"], "planning"),
-        ):
-            checks.append(
-                {
-                    "field": field,
-                    "quote": quote,
-                    "basis": basis,
-                    "status": "SUPPORTED",
-                    "reason": "Probe scaffold",
-                    "citation_numbers": [],
-                    "support_spans": [],
-                }
-            )
-        verdict = checked_verdict({"verdict": "SUPPORTED", "claim_checks": checks}, flag)
-        if verdict["verdict"] != "SUPPORTED":
+        # This is an isolated secondary-stage probe, not approval of other fields.
+        validated = ClaimCheck.model_validate(check)
+        if _support_problem(validated, flag, script_context):
             raise ValueError("probe does not carry a valid excerpt receipt")
+        verdict = {"verdict": "SUPPORTED", "claim_checks": [validated.model_dump()]}
         if not isinstance(row["expected_entailed"], bool):
             raise ValueError("expected entailment must be boolean")
         inputs.append((flag, verdict, row["expected_entailed"]))
     return inputs
 
 
-def resumable_audit(artifact, source_bytes, flag):
+def resumable_audit(artifact, source_bytes, flag, script_context=""):
     """Reuse only a completed initial PARTIAL audit from an interrupted same-source case."""
     if artifact["source_run_sha256"] != hashlib.sha256(source_bytes).hexdigest():
         raise ValueError("resume artifact is for a different source record")
@@ -177,14 +179,14 @@ def resumable_audit(artifact, source_bytes, flag):
     )
     if first:
         verdict = checked_verdict(
-            EvidenceVerdict.model_validate_json(first["text"]).model_dump(), flag
+            EvidenceVerdict.model_validate_json(first["text"]).model_dump(), flag, script_context
         )
         if verdict["verdict"] == "PARTIAL":
             return verdict
     return None  # the first audit never returned; restart this case only
 
 
-def recheck_candidate(artifact, source_bytes, flag):
+def recheck_candidate(artifact, source_bytes, flag, script_context=""):
     """Complete only the skipped entailment stage after a deterministic audit fix."""
     if artifact["source_run_sha256"] != hashlib.sha256(source_bytes).hexdigest():
         raise ValueError("correction artifact is for a different source record")
@@ -201,7 +203,7 @@ def recheck_candidate(artifact, source_bytes, flag):
         if r["flag_id"] == flag["flag_id"] and r["schema"] == "EvidenceVerdict"
     )
     verdict = checked_verdict(
-        EvidenceVerdict.model_validate_json(raw["text"]).model_dump(), candidate
+        EvidenceVerdict.model_validate_json(raw["text"]).model_dump(), candidate, script_context
     )
     if verdict["verdict"] != "SUPPORTED":
         raise ValueError("corrected candidate still fails its claim audit")
@@ -216,21 +218,25 @@ async def evaluate(args):  # noqa: PLR0915 - linear, bounded evaluation with res
     script = args.script.read_text()
     if hashlib.sha256(script.encode()).hexdigest() != record["draft"]["sha256"]:
         raise ValueError("screenplay hash does not match the saved run")
-    flags_by_id = {f["flag_id"]: f for f in record["flags"]}
+    flags_by_id = {f["flag_id"]: f for f in record["flags"] + record.get("rejected_flags", [])}
     case_bytes = args.entailment_cases.read_bytes() if args.entailment_cases else None
-    probes = entailment_inputs(json.loads(case_bytes), source_bytes) if case_bytes else []
+    probes = entailment_inputs(json.loads(case_bytes), source_bytes, script) if case_bytes else []
     flags = [p[0] for p in probes] if probes else [flags_by_id[fid] for fid in args.flags]
     recheck = (
         json.loads(args.recheck_correction_from.read_text())
         if args.recheck_correction_from
         else None
     )
-    rechecks = [recheck_candidate(recheck, source_bytes, f) for f in flags] if recheck else []
+    rechecks = (
+        [recheck_candidate(recheck, source_bytes, f, script) for f in flags] if recheck else []
+    )
     if rechecks:
         flags = [r[0] for r in rechecks]
     resume = json.loads(args.resume_from.read_text()) if args.resume_from else None
     resumed = (
-        {f["flag_id"]: resumable_audit(resume, source_bytes, f) for f in flags} if resume else {}
+        {f["flag_id"]: resumable_audit(resume, source_bytes, f, script) for f in flags}
+        if resume
+        else {}
     )
     if len(flags) > 6 or (not probes and len(set(args.flags)) != len(flags)):
         raise ValueError("select at most six distinct findings")

@@ -40,21 +40,21 @@ PROCEDURE, per worklist item:
    coordinator / animal handler, permits (fire marshal, marine event), minor work rules
    (work-hour limits, guardian, studio teacher), OSHA or jurisdiction rules, and what insurers
    demand. Cite what you find verbatim.
-4. file_flag with a concrete remedy: ADD_SPECIALIST (name the specialist), RESHOOT (e.g. shoot
-   day-for-night, VFX the fire), or CUT. Include a rule-of-thumb cost range for the specialists
-   and permits, and est_added_days where prep or restricted hours add schedule.
+4. file_flag with a concrete, supported remedy. Name a specialist or production method
+   only when retrieved operative guidance supports it and its applicability is explicit.
+   Use fetch_page on the exact source URL when search excerpts are only titles, scope
+   headings or truncated clauses. Preserve source conditions and alternatives. Cost/day
+   estimates need a stated basis; leave them unknown when evidence is insufficient.
 5. State which production decisions remain unknown. A fictional compliance claim is a
    research hint, never confirmation of the crew's permit or insurance status.
 
 STAGED-GAG REMEDY CRAFT: when the script depicts a human being thrown, struck, or
 dropped as a COMEDIC GAG (a person tossed at a dartboard), the finding is real but the
-remedy is a shooting plan, not a prohibition. Productions never perform the literal
-event: write the standard method — stunt performer for the setup, dummy/rig or VFX
-takeover for the impact, insert shots for the reaction — under ADD_SPECIALIST with the
-coordinator named, and cost it as such. Where the gag involves a performer from a
-protected or historically exploited group (little people, minors), add the casting and
-consultation note in the SAME remedy: dignity review is production work, not a lawyer
-letter.
+remedy needs a researched shooting plan. Do not assert a universal 'standard method'
+from memory or assume practical execution. Retrieve applicable staging guidance before
+prescribing a performer, dummy, rig, effects method or coordinator. If the method and
+casting remain unknown, ask for those decisions without inventing required personnel,
+consultations or fees. Keep the depicted hazard visible even when its staging is unresolved.
 
 
 SEVERITY: BLOCKER requires confirmed production facts and applicable authority establishing

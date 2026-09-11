@@ -352,7 +352,9 @@ def test_panel_and_salvage_share_repair_semantics(monkeypatch, route, repair_ok)
     assert len(client.calls) == (4 if repair_ok else 3)  # bounded; no research loop
 
 
-@pytest.mark.parametrize("basis", ["source", "planning", "script", "production", "inquiry"])
+@pytest.mark.parametrize(
+    "basis", ["source", "planning", "script", "production", "application", "script_edit"]
+)
 def test_relabelling_a_prescription_does_not_bypass_support(basis):
     flag = saved_flag()
     verdict = audit(flag)
@@ -391,6 +393,51 @@ def test_fixed_inquiry_is_allowed_but_an_unaudited_requirement_is_not():
     checked = checked_verdict(verdict, flag)
     assert checked["verdict"] == "PARTIAL"
     assert any("omitted" in check["reason"] for check in checked["claim_checks"])
+
+
+@pytest.mark.parametrize("desk", ["ratings_board", "clearance_counsel", "territory_censor"])
+def test_production_inquiry_cannot_repair_another_desks_finding(desk):
+    flag = saved_flag()
+    flag["agent"] = desk
+    flag["remedy"]["detail"] = PRODUCTION_INQUIRY
+    verdict = audit(flag)
+    verdict["claim_checks"][1].update(basis="inquiry", citation_numbers=[], support_spans=[])
+    result = checked_verdict(verdict, flag)
+    assert result["verdict"] == "PARTIAL"
+    assert "irrelevant" in result["claim_checks"][1]["reason"]
+
+
+def test_inquiry_label_still_gets_independent_review_without_citations():
+    flag = saved_flag()
+    flag["remedy"]["detail"] = "Which mandatory studio teacher will you hire?"
+    verdict = audit(flag)
+    verdict["claim_checks"][1].update(basis="inquiry", citation_numbers=[], support_spans=[])
+    result = checked_verdict(verdict, flag)
+    response = {
+        "checks": [
+            {"check_index": 0, "entailed": True, "reason": "Scripted"},
+            {"check_index": 1, "entailed": False, "reason": "Concealed hiring requirement"},
+        ]
+    }
+    client = Client(response)
+    checked = asyncio.run(check_entailment(client, flag, result))
+    assert checked["verdict"] == "PARTIAL"
+    payload = json.loads(client.calls[0]["contents"].split("\n\n", 1)[1])
+    assert payload[1]["basis"] == "inquiry" and payload[1]["support"] == []
+    assert payload[1]["desk"] == "safety_underwriter"
+
+
+@pytest.mark.parametrize("basis", ["application", "script_edit"])
+def test_applications_need_both_source_and_exact_script_receipts(basis):
+    flag = saved_flag()
+    verdict = audit(flag)
+    check = verdict["claim_checks"][1]
+    check.update(basis=basis, script_spans=["Sam is 10."])
+    assert checked_verdict(verdict, flag)["verdict"] == "PARTIAL"
+    assert checked_verdict(verdict, flag, "Sam is 10.")["verdict"] == "SUPPORTED"
+    check["support_spans"] = []
+    check["citation_numbers"] = []
+    assert checked_verdict(verdict, flag, "Sam is 10.")["verdict"] == "PARTIAL"
 
 
 @pytest.mark.parametrize("bad_result", ["missing", "duplicate", "unknown", "transport"])
@@ -447,7 +494,8 @@ def test_saved_minor_correction_supplies_attribution_without_prior_reasoning():
     assert receipt["source_attribution"] == {k: source[k] for k in ("title", "url")}
     assert receipt["excerpt_context"] == source["excerpt"]
     assert receipt["quote"] in source["excerpt"]
-    assert set(claims[0]) == {"check_index", "claim", "support"}
+    assert set(claims[0]) == {"check_index", "claim", "support", "basis", "script_evidence"}
+    assert claims[0]["script_evidence"] == []
     assert "Sam" not in json.dumps(claims)  # no screenplay facts or earlier reasoning
 
 
@@ -548,7 +596,7 @@ def test_resume_reuses_only_a_timed_out_audit_with_matching_source():
     artifact = json.loads((ROOT / "fixtures/cassettes/support_spans_20260911.json").read_text())
     source = (ROOT / "runs/run_20260911_demo.json").read_bytes()
     partial = evaluator.resumable_audit(artifact, source, saved_flag("F3006"))
-    assert partial["verdict"] == "PARTIAL" and partial["support_span_version"] == 1
+    assert partial["verdict"] == "PARTIAL" and partial["support_span_version"] == 2
     assert evaluator.resumable_audit(artifact, source, saved_flag("F3008")) is None
     with pytest.raises(ValueError, match="different source"):
         evaluator.resumable_audit(artifact, b"changed source", saved_flag("F3006"))
