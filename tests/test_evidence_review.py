@@ -10,6 +10,8 @@ from types import SimpleNamespace
 import pytest
 
 from greenlight.agents.evidence_review import (
+    PRODUCTION_INQUIRY,
+    check_entailment,
     checked_verdict,
     corrected_flag,
     flag_fingerprint,
@@ -40,7 +42,10 @@ def audit(flag, *, issue=None, verdict="SUPPORTED"):
             "basis": "planning",
             "status": "SUPPORTED",
             "reason": "Supported by supplied evidence.",
-            "citation_numbers": [],
+            "citation_numbers": [1] if field != "severity" else [],
+            "support_spans": [{"citation_number": 1, "quote": flag["citations"][0]["excerpt"]}]
+            if field != "severity"
+            else [],
         }
         for field, quote in (
             ("finding", flag["finding"]),
@@ -57,6 +62,7 @@ def audit(flag, *, issue=None, verdict="SUPPORTED"):
                 "status": "UNKNOWN",
                 "reason": "Casting is unconfirmed; the remedy must retain its condition.",
                 "citation_numbers": [],
+                "support_spans": [],
             }
         )
     return {
@@ -64,6 +70,17 @@ def audit(flag, *, issue=None, verdict="SUPPORTED"):
         "reason": "Overall review",
         "failure_mode": "none",
         "claim_checks": checks,
+    }
+
+
+def entailment(verdict):
+    """Scripted positive secondary review; tests here establish mechanics only."""
+    return {
+        "checks": [
+            {"check_index": i, "entailed": True, "reason": "Scripted positive review."}
+            for i, check in enumerate(verdict["claim_checks"])
+            if check["support_spans"]
+        ]
     }
 
 
@@ -113,8 +130,12 @@ def test_audit_requires_real_field_and_citation_anchors(problem):
         check["citation_numbers"] = [99]
     else:
         check["basis"] = "source"
-    with pytest.raises(ValueError):
-        checked_verdict(verdict, flag)
+        check["support_spans"] = []
+    if problem in {"missing_field", "invented_quote"}:
+        with pytest.raises(ValueError):
+            checked_verdict(verdict, flag)
+    else:
+        assert checked_verdict(verdict, flag)["verdict"] == "PARTIAL"
 
 
 def test_corrected_remedy_is_reverified_without_original_review_and_stale_estimates():
@@ -122,9 +143,14 @@ def test_corrected_remedy_is_reverified_without_original_review_and_stale_estima
     before = deepcopy(flag)
     patch = correction()
     candidate = corrected_flag(flag, patch)
-    client = Client(audit(flag, issue="Employ a certified Studio Teacher"), patch, audit(candidate))
+    client = Client(
+        audit(flag, issue="Employ a certified Studio Teacher"),
+        patch,
+        audit(candidate),
+        entailment(audit(candidate)),
+    )
     verdict = asyncio.run(call_verifier(client, flag, "scene evidence", "search evidence"))
-    assert len(client.calls) == 3
+    assert len(client.calls) == 4
     assert (
         "Casting is unconfirmed; the remedy must retain its condition."
         not in (client.calls[-1]["contents"])
@@ -176,12 +202,12 @@ def test_repair_failure_is_unresolved_not_a_scored_partial_or_silent_clearance(f
     assert verdicts[flag["flag_id"]]["evidence_review_unresolved"]
 
 
-def test_already_supported_claim_uses_one_call_and_is_unchanged():
+def test_already_supported_claim_uses_one_narrow_span_review_and_is_unchanged():
     flag = saved_flag()
-    client = Client(audit(flag))
+    client = Client(audit(flag), entailment(audit(flag)))
     verdict = asyncio.run(call_verifier(client, flag, "scene", "search"))
     kept, _ = apply_verdicts([flag], {flag["flag_id"]: verdict})
-    assert kept == [flag] and len(client.calls) == 1
+    assert kept == [flag] and len(client.calls) == 2
 
 
 def test_repair_cannot_change_coordinates_or_be_reused_on_different_text():
@@ -204,7 +230,10 @@ def test_reverify_uses_repaired_text_and_retains_prior_unresolved_score_withhold
     flag = {**saved_flag(), "verification_unavailable": True}
     candidate = corrected_flag(flag, correction())
     client = Client(
-        audit(flag, issue="Employ a certified Studio Teacher"), correction(), audit(candidate)
+        audit(flag, issue="Employ a certified Studio Teacher"),
+        correction(),
+        audit(candidate),
+        entailment(audit(candidate)),
     )
 
     async def verify(f):
@@ -294,6 +323,7 @@ def test_panel_and_salvage_share_repair_semantics(monkeypatch, route, repair_ok)
         audit(flag, issue="Employ a certified Studio Teacher"),
         patch,
         audit(candidate, verdict="SUPPORTED" if repair_ok else "PARTIAL"),
+        *([entailment(audit(candidate))] if repair_ok else []),
     )
     monkeypatch.setattr(genai, "Client", lambda **kw: client)
     monkeypatch.setenv("GOOGLE_CLOUD_PROJECT", "offline-test")
@@ -317,4 +347,96 @@ def test_panel_and_salvage_share_repair_semantics(monkeypatch, route, repair_ok)
         assert kept[0]["finding"] == patch["finding"] and not dropped
     else:
         assert not kept and dropped and review_incomplete(verdicts)
-    assert len(client.calls) == 3  # no hidden extra repair/research loop
+    assert len(client.calls) == (4 if repair_ok else 3)  # bounded; no research loop
+
+
+@pytest.mark.parametrize("basis", ["source", "planning", "script", "production", "inquiry"])
+def test_relabelling_a_prescription_does_not_bypass_support(basis):
+    flag = saved_flag()
+    verdict = audit(flag)
+    remedy = verdict["claim_checks"][1]
+    remedy.update(basis=basis, citation_numbers=[], support_spans=[])
+    checked = checked_verdict(verdict, flag)
+    assert checked["verdict"] == "PARTIAL"
+    assert checked["claim_checks"][1]["status"] == "UNKNOWN"
+
+
+@pytest.mark.parametrize("problem", ["invented", "paraphrase", "wrong_source", "wrong_index"])
+def test_receipts_must_be_verbatim_in_their_own_source(problem):
+    flag = saved_flag()
+    verdict = audit(flag)
+    check = verdict["claim_checks"][1]
+    if problem == "invented":
+        check["support_spans"][0]["quote"] = "All productions require a studio teacher."
+    elif problem == "paraphrase":
+        check["support_spans"][0]["quote"] = flag["citations"][0]["excerpt"].upper()
+    elif problem == "wrong_source":
+        check["support_spans"][0]["quote"] = flag["citations"][1]["excerpt"]
+    else:
+        check["support_spans"][0]["citation_number"] = 99
+        check["citation_numbers"] = [99]
+    checked = checked_verdict(verdict, flag)
+    assert checked["verdict"] == "PARTIAL"  # correction, not a fake transport outage
+
+
+def test_fixed_inquiry_is_allowed_but_an_unaudited_requirement_is_not():
+    flag = saved_flag()
+    flag["remedy"]["detail"] = PRODUCTION_INQUIRY
+    verdict = audit(flag)
+    verdict["claim_checks"][1].update(basis="inquiry", citation_numbers=[], support_spans=[])
+    assert checked_verdict(verdict, flag)["verdict"] == "SUPPORTED"
+    flag["remedy"]["detail"] += " Hire a certified studio teacher for every shoot."
+    checked = checked_verdict(verdict, flag)
+    assert checked["verdict"] == "PARTIAL"
+    assert any("omitted" in check["reason"] for check in checked["claim_checks"])
+
+
+@pytest.mark.parametrize("bad_result", ["missing", "duplicate", "unknown", "transport"])
+def test_incomplete_entailment_review_withholds_score(bad_result):
+    flag = saved_flag()
+    verdict = checked_verdict(audit(flag), flag)
+    response = entailment(verdict)
+    if bad_result == "missing":
+        response["checks"].pop()
+    elif bad_result == "duplicate":
+        response["checks"].append(response["checks"][0])
+    elif bad_result == "unknown":
+        response["checks"][0]["check_index"] = 999
+    else:
+        response = RuntimeError("service unavailable")
+    client = Client(response)
+    result = asyncio.run(check_entailment(client, flag, verdict))
+    assert result["evidence_review_unresolved"]
+    assert result["verdict"] == "UNSUPPORTED"
+
+
+def test_exact_receipt_does_not_override_an_independent_entailment_rejection():
+    flag = saved_flag("F3008")
+    verdict = checked_verdict(audit(flag), flag)
+    response = entailment(verdict)
+    response["checks"][1].update(entailed=False, reason="Licenses are not firearms.")
+    client = Client(response)
+    result = asyncio.run(check_entailment(client, flag, verdict))
+    assert result["verdict"] == "PARTIAL"
+    assert result["claim_checks"][1]["status"] == "UNSUPPORTED"
+    assert "Licenses are not firearms" in result["reason"]
+    prompt = client.calls[0]["contents"]
+    assert "excerpt_context" in prompt
+    assert "Overall review" not in prompt and "Scripted positive review" not in prompt
+
+
+def test_secondary_failure_cannot_reenter_an_unbounded_repair_loop():
+    flag = saved_flag()
+    before = audit(flag)
+    failed = entailment(before)
+    failed["checks"][1].update(entailed=False, reason="Prescription exceeds supplied text.")
+    patch = correction()
+    candidate = corrected_flag(flag, patch)
+    after = audit(candidate)
+    still_bad = entailment(after)
+    still_bad["checks"][1].update(entailed=False, reason="Still unsupported.")
+    client = Client(before, failed, patch, after, still_bad)
+    result = asyncio.run(call_verifier(client, flag, "scene context", "script search"))
+    assert result["evidence_review_unresolved"] and len(client.calls) == 5
+    kept, dropped = apply_verdicts([flag], {flag["flag_id"]: result})
+    assert not kept and not dropped[0]["recoverable"]

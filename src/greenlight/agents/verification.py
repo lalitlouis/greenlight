@@ -31,6 +31,7 @@ from greenlight.agents.evidence import PRODUCTION_EVIDENCE, RATINGS_EVIDENCE
 from greenlight.agents.evidence_review import (
     CLAIM_CHECK_INSTRUCTIONS,
     ClaimCheck,
+    check_entailment,
     checked_verdict,
     corrected_flag,
     flag_fingerprint,
@@ -135,7 +136,7 @@ async def _call_verifier_once(
             "content_filtered": True,
         }
     v = EvidenceVerdict.model_validate_json(res.text)
-    return checked_verdict(v.model_dump(), flag)
+    return await check_entailment(client, flag, checked_verdict(v.model_dump(), flag))
 
 
 async def call_verifier(

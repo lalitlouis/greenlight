@@ -50,6 +50,8 @@ async def evaluate(args):
     state = {"script_text": script, "scenes": scenes}
     usage = {}
     calls = 0
+    responses = []
+    current_flag_id = ""
     client = genai.Client(
         vertexai=True,
         project=os.environ["GOOGLE_CLOUD_PROJECT"],
@@ -62,6 +64,13 @@ async def evaluate(args):
         calls += 1
         response = await client.aio.models.generate_content(**kwargs)
         accumulate_usage(usage, response)
+        responses.append(
+            {
+                "flag_id": current_flag_id,
+                "schema": kwargs["config"].response_schema.__name__,
+                "text": response.text,
+            }
+        )
         return response
 
     tracked = SimpleNamespace(
@@ -71,6 +80,7 @@ async def evaluate(args):
     started = time.monotonic()
     try:
         for flag in flags:
+            current_flag_id = flag["flag_id"]
             began = time.monotonic()
             try:
                 verdict = await asyncio.wait_for(
@@ -112,6 +122,7 @@ async def evaluate(args):
         "estimated_cost_usd": usage_cost_usd(usage, 0),
         "manual_review": "pending; model approval is not an accuracy label",
         "results": results,
+        "responses": responses,
     }
     args.output.write_text(json.dumps(artifact, indent=2) + "\n")
     print(f"Saved {args.output}; {calls} model calls, estimated ${artifact['estimated_cost_usd']}")
@@ -125,7 +136,7 @@ def main():
     p.add_argument("--flags", nargs="+", default=["F3002", "F3006", "F3008"])
     p.add_argument("--output", type=Path, required=True)
     p.add_argument(
-        "--live", action="store_true", help="spends money on up to 3 model calls per flag"
+        "--live", action="store_true", help="spends money on up to 5 logical model calls per flag"
     )
     args = p.parse_args()
     if not args.live:
