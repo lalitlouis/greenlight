@@ -1,0 +1,339 @@
+{
+  "source_run": "runs/run_20260911_demo.json",
+  "source_run_sha256": "23039b4a86b11fd353921fe20b03f9dbb2b8c7cb2903844a9abb541e675f8c5f",
+  "source_build": "local:6438de520c929a576aac0824dd7d730788c1819e",
+  "evaluated_build": "a8267d41abfacf80b2e41d16f39bec8dac5b1376",
+  "model": "gemini-3.7-flash",
+  "elapsed_s": 265.81,
+  "calls": 5,
+  "responses_with_usage": 4,
+  "calls_without_returned_usage": 1,
+  "resumed_from": "fixtures/cassettes/support_spans_20260911.json",
+  "gemini_usage": {
+    "flash": {
+      "prompt": 16920,
+      "cached": 0,
+      "output": 5527
+    }
+  },
+  "estimated_cost_usd": 0.0334,
+  "manual_review": {
+    "status": "incomplete; not an accuracy pass",
+    "F3006": "Correction removed unsupported teacher, guardian, permit, equipment and work-hour duties. The remaining conditional stunt-person entitlement matches the SAG-AFTRA excerpt. Secondary rejection cites only missing SAG-AFTRA attribution: the reviewer was not given the stored title/URL. This is a false rejection caused by missing input context, not evidence of an overbroad corrected prescription. Runtime safely withheld the finding and score, but lost a supported narrower claim.",
+    "F3008": "Initial audit correctly distinguished maintaining firearms-related licenses from maintaining firearms, and rejected uncited buffer distances and staging alternatives. Its positive checks still strengthen walk-through and/or dry run into a required dry run; those have not passed the secondary reviewer. Correction timed out. No completed verdict.",
+    "accounting": "Five logical calls; four returned usage. Estimate excludes any charges for the timed-out call. Together with the preceding attempt: nine calls, six returned responses, three interrupted calls; captured-usage estimate $0.0581, not total billed spend.",
+    "next": "Supply title/URL solely for source attribution, retain excerpt-only operative support. Pin the missing-context regression offline; no full fixture or deployment while the live gate remains incomplete."
+  },
+  "results": [
+    {
+      "flag_id": "F3006",
+      "verdict": {
+        "verdict": "UNSUPPORTED",
+        "failure_mode": "premise_unsupported",
+        "reason": "Evidence correction unresolved: corrected claim did not pass independent verification",
+        "evidence_review_unresolved": true,
+        "evidence_review": {
+          "before": {
+            "verdict": "PARTIAL",
+            "reason": "The script facts regarding Sam (a 10-year-old character depicted in scenes with rifle volleys, night watercraft travel, a burning boat, fireworks, and a stone jetty) are accurate. The premise regarding minor entitlement to a qualified stunt double for hazardous activities is supported by SAG-AFTRA Young Performers Safety Tips. However, requirements for studio teachers, child welfare workers, mandatory parent/guardian presence, acoustic buffering, safety buffer distances, work permits, and the operative terms of CSATF Guideline #1 are unsupported because Excerpt 1 is merely an index table row and Excerpt 2 does not address these topics.",
+            "failure_mode": "none",
+            "claim_checks": [
+              {
+                "field": "finding",
+                "quote": "The screenplay features Sam, a 10-year-old child character, across multiple scenes involving hazardous physical environments, including proximity to 3-volley honor guard rifle fire (S005), night open-water skiff travel (S009), standing in an open skiff adjacent to a burning vessel and aerial pyrotechnic mortar detonations (S011), and exterior dawn rocky jetty terrain (S012).",
+                "basis": "script",
+                "status": "SUPPORTED",
+                "reason": "Accurately reflects Sam's age and depicted actions across scenes S002, S005, S009, S011, and S012.",
+                "citation_numbers": [],
+                "support_spans": []
+              },
+              {
+                "field": "finding",
+                "quote": "If cast with a minor performer, production must strictly comply with CSATF Procedural Guideline #1 ('Special Procedures For Minors Performing Physical Activities') and SAG-AFTRA Young Performer regulations.",
+                "basis": "source",
+                "status": "UNSUPPORTED",
+                "reason": "Excerpt 1 provides only a table row title without operative safety procedures, which is insufficient under the contract to establish mandatory procedural requirements.",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": []
+              },
+              {
+                "field": "finding",
+                "quote": "A certified Studio Teacher / Child Welfare Worker and a parent/guardian must be present on set at all times.",
+                "basis": "source",
+                "status": "UNSUPPORTED",
+                "reason": "Neither cited excerpt mentions studio teachers, child welfare workers, or mandatory parent/guardian presence on set.",
+                "citation_numbers": [],
+                "support_spans": []
+              },
+              {
+                "field": "finding",
+                "quote": "The minor must be provided hearing protection/acoustic buffering during gunfire and pyrotechnics",
+                "basis": "source",
+                "status": "UNSUPPORTED",
+                "reason": "Hearing protection and acoustic buffering are not mentioned in the cited excerpts.",
+                "citation_numbers": [],
+                "support_spans": []
+              },
+              {
+                "field": "finding",
+                "quote": "a qualified minor stunt double or matched adult double must be engaged for all night watercraft and open flame sequences.",
+                "basis": "source",
+                "status": "SUPPORTED",
+                "reason": "Excerpt 2 establishes that if a minor is asked to perform hazardous or questionable activities, they are entitled to a qualified stunt person.",
+                "citation_numbers": [
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 2,
+                    "quote": "If a minor is asked to perform any activity that seems hazardous or questionable, the minor is entitled to have the activity performed by a qualified stunt person."
+                  }
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "Costs vary depending on filming jurisdiction, tutor rates, and stunt double hiring.",
+                "basis": "planning",
+                "status": "UNSUPPORTED",
+                "reason": "Cost variance factors are planning commentary not substantiated in the cited excerpts.",
+                "citation_numbers": [],
+                "support_spans": []
+              },
+              {
+                "field": "remedy",
+                "quote": "Employ a certified Studio Teacher / Child Welfare Worker to oversee welfare, work-hour limits, and educational compliance.",
+                "basis": "source",
+                "status": "UNSUPPORTED",
+                "reason": "Requirements for studio teachers, child welfare workers, work-hour limits, and educational compliance are not found in the cited excerpts.",
+                "citation_numbers": [],
+                "support_spans": []
+              },
+              {
+                "field": "remedy",
+                "quote": "Ensure parent or legal guardian is physically present at all times.",
+                "basis": "source",
+                "status": "UNSUPPORTED",
+                "reason": "Parental/guardian continuous physical presence is not stated in the cited sources.",
+                "citation_numbers": [],
+                "support_spans": []
+              },
+              {
+                "field": "remedy",
+                "quote": "Utilize a qualified stunt double for night watercraft and hazardous fire sequences",
+                "basis": "source",
+                "status": "SUPPORTED",
+                "reason": "Supported by the SAG-AFTRA rule entitling minors to qualified stunt performers for hazardous activities.",
+                "citation_numbers": [
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 2,
+                    "quote": "If a minor is asked to perform any activity that seems hazardous or questionable, the minor is entitled to have the activity performed by a qualified stunt person."
+                  }
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "maintain strict safety buffer distances during blank gunfire and fireworks",
+                "basis": "source",
+                "status": "UNSUPPORTED",
+                "reason": "Safety buffer distance requirements for blank gunfire and fireworks are not contained in the provided excerpts.",
+                "citation_numbers": [],
+                "support_spans": []
+              },
+              {
+                "field": "remedy",
+                "quote": "obtain necessary minor work permits from state/local labor authorities.",
+                "basis": "source",
+                "status": "UNSUPPORTED",
+                "reason": "State and local labor permit requirements are not established by the cited excerpts.",
+                "citation_numbers": [],
+                "support_spans": []
+              },
+              {
+                "field": "severity",
+                "quote": "HIGH",
+                "basis": "planning",
+                "status": "SUPPORTED",
+                "reason": "High severity is appropriate given the presence of a child character in multiple hazardous physical scenes involving gunfire, open water at night, active fire, and pyrotechnics.",
+                "citation_numbers": [],
+                "support_spans": []
+              },
+              {
+                "field": "finding",
+                "quote": "and",
+                "basis": "source",
+                "status": "UNKNOWN",
+                "reason": "Material text was omitted from the claim audit",
+                "citation_numbers": [],
+                "support_spans": []
+              },
+              {
+                "field": "remedy",
+                "quote": "and",
+                "basis": "source",
+                "status": "UNKNOWN",
+                "reason": "Material text was omitted from the claim audit",
+                "citation_numbers": [],
+                "support_spans": []
+              }
+            ],
+            "support_span_version": 1
+          },
+          "correction": {
+            "finding": "The screenplay features Sam, a 10-year-old child character, across multiple scenes involving hazardous physical environments, including proximity to 3-volley honor guard rifle fire (S005), night open-water skiff travel (S009), standing in an open skiff adjacent to a burning vessel and aerial pyrotechnic mortar detonations (S011), and exterior dawn rocky jetty terrain (S012). If a minor performer is cast and asked to perform hazardous or questionable activities, SAG-AFTRA safety guidance entitles the minor to have the activity performed by a qualified stunt person.",
+            "remedy_detail": "Confirm casting, filming jurisdiction and staging method before specifying production requirements.",
+            "remedy_action": "NO_ACTION",
+            "severity": "HIGH"
+          },
+          "after": {
+            "verdict": "PARTIAL",
+            "reason": "Independent span review: The provided source text does not mention SAG-AFTRA or SAG-AFTRA safety guidance.",
+            "failure_mode": "none",
+            "claim_checks": [
+              {
+                "field": "finding",
+                "quote": "The screenplay features Sam, a 10-year-old child character, across multiple scenes involving hazardous physical environments, including proximity to 3-volley honor guard rifle fire (S005), night open-water skiff travel (S009), standing in an open skiff adjacent to a burning vessel and aerial pyrotechnic mortar detonations (S011), and exterior dawn rocky jetty terrain (S012).",
+                "basis": "script",
+                "status": "SUPPORTED",
+                "reason": "Sam is introduced as 10 years old in S002 and is depicted in S005 (honor guard 3-volley rifle fire), S009 (night skiff travel), S011 (standing in skiff next to a burning boat and mortar fire), and S012 (stone jetty tideline).",
+                "citation_numbers": [],
+                "support_spans": []
+              },
+              {
+                "field": "finding",
+                "quote": "If a minor performer is cast and asked to perform hazardous or questionable activities, SAG-AFTRA safety guidance entitles the minor to have the activity performed by a qualified stunt person.",
+                "basis": "source",
+                "status": "UNSUPPORTED",
+                "reason": "Independent span review: The provided source text does not mention SAG-AFTRA or SAG-AFTRA safety guidance.",
+                "citation_numbers": [
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 2,
+                    "quote": "If a minor is asked to perform any activity that seems hazardous or questionable, the minor is entitled to have the activity performed by a qualified stunt person."
+                  }
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "Confirm casting, filming jurisdiction and staging method before specifying production requirements.",
+                "basis": "inquiry",
+                "status": "SUPPORTED",
+                "reason": "Matches the exact inquiry standard exception for unconfirmed casting, jurisdiction, and staging.",
+                "citation_numbers": [],
+                "support_spans": []
+              },
+              {
+                "field": "severity",
+                "quote": "HIGH",
+                "basis": "planning",
+                "status": "SUPPORTED",
+                "reason": "High severity is appropriate for potential minor performer safety concerns involving water, pyrotechnics, and live fire depiction.",
+                "citation_numbers": [],
+                "support_spans": []
+              }
+            ],
+            "support_span_version": 1,
+            "entailment_review": {
+              "checks": [
+                {
+                  "check_index": 1,
+                  "entailed": false,
+                  "reason": "The provided source text does not mention SAG-AFTRA or SAG-AFTRA safety guidance."
+                }
+              ]
+            }
+          }
+        }
+      },
+      "kept": [],
+      "dropped": [
+        {
+          "flag_id": "F3006",
+          "agent": "safety_underwriter",
+          "scene_ids": [
+            "S002",
+            "S004",
+            "S005",
+            "S009",
+            "S011",
+            "S012"
+          ],
+          "entity_id": null,
+          "severity": "HIGH",
+          "category": "minor_safety",
+          "finding": "[partially supported] The screenplay features Sam, a 10-year-old child character, across multiple scenes involving hazardous physical environments, including proximity to 3-volley honor guard rifle fire (S005), night open-water skiff travel (S009), standing in an open skiff adjacent to a burning vessel and aerial pyrotechnic mortar detonations (S011), and exterior dawn rocky jetty terrain (S012). If cast with a minor performer, production must strictly comply with CSATF Procedural Guideline #1 ('Special Procedures For Minors Performing Physical Activities') and SAG-AFTRA Young Performer regulations. A certified Studio Teacher / Child Welfare Worker and a parent/guardian must be present on set at all times. The minor must be provided hearing protection/acoustic buffering during gunfire and pyrotechnics, and a qualified minor stunt double or matched adult double must be engaged for all night watercraft and open flame sequences. Costs vary depending on filming jurisdiction, tutor rates, and stunt double hiring.",
+          "citations": [
+            {
+              "source_type": "web",
+              "title": "CSATF Procedural Guideline #1: Special Procedures For Minors Performing Physical Activities",
+              "url": "https://www.csatf.org/production-affairs-safety/safety-bulletins",
+              "excerpt": "### PROCEDURAL GUIDELINES\n| Bulletin No. | Description | Date Released |\n| 1 | [Special Procedures For Minors Performing Physical Activities](https://www.csatf.org/wp-content/uploads/2018/05/Guideline001.MINORS.pdf) | Issued 05/17/06 |",
+              "retrieved_at": null,
+              "via": "parallel_search"
+            },
+            {
+              "source_type": "web",
+              "title": "SAG-AFTRA Young Performers Safety Tips",
+              "url": "https://www.sagaftra.org/membership-benefits/young-performers/parents/safety-tips",
+              "excerpt": "1. If a minor is asked to perform any activity that seems hazardous or questionable, the minor is entitled to have the activity performed by a qualified stunt person.",
+              "retrieved_at": null,
+              "via": "parallel_search"
+            }
+          ],
+          "remedy": {
+            "action": "ADD_SPECIALIST",
+            "detail": "Employ a certified Studio Teacher / Child Welfare Worker to oversee welfare, work-hour limits, and educational compliance. Ensure parent or legal guardian is physically present at all times. Utilize a qualified stunt double for night watercraft and hazardous fire sequences, maintain strict safety buffer distances during blank gunfire and fireworks, and obtain necessary minor work permits from state/local labor authorities.",
+            "est_cost_usd": [
+              5000,
+              20000
+            ],
+            "est_added_days": 1
+          },
+          "confidence": 0.95,
+          "rejection_reason": "Evidence correction unresolved: corrected claim did not pass independent verification",
+          "failure_mode": "premise_unsupported",
+          "recoverable": false
+        }
+      ],
+      "verification_incomplete": true,
+      "elapsed_s": 25.78
+    },
+    {
+      "flag_id": "F3008",
+      "error": "TimeoutError",
+      "elapsed_s": 240.01
+    }
+  ],
+  "responses": [
+    {
+      "flag_id": "F3006",
+      "schema": "CorrectedClaim",
+      "text": "{\n  \"finding\": \"The screenplay features Sam, a 10-year-old child character, across multiple scenes involving hazardous physical environments, including proximity to 3-volley honor guard rifle fire (S005), night open-water skiff travel (S009), standing in an open skiff adjacent to a burning vessel and aerial pyrotechnic mortar detonations (S011), and exterior dawn rocky jetty terrain (S012). If a minor performer is cast and asked to perform hazardous or questionable activities, SAG-AFTRA safety guidance entitles the minor to have the activity performed by a qualified stunt person.\",\n  \"remedy_detail\": \"Confirm casting, filming jurisdiction and staging method before specifying production requirements.\",\n  \"remedy_action\": \"NO_ACTION\",\n  \"severity\": \"HIGH\"\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F3006",
+      "schema": "EvidenceVerdict",
+      "text": "{\n  \"verdict\": \"SUPPORTED\",\n  \"reason\": \"The script confirms Sam is introduced as a 10-year-old character and appears in scenes featuring a 3-volley honor guard rifle salute (S005), night skiff travel (S009), standing in a skiff adjacent to a burning vessel and fireworks/mortar detonations (S011), and walking the rocky jetty shoreline at dawn (S012). The cited SAG-AFTRA excerpt directly supports the conditional rule that a minor performer asked to engage in hazardous or questionable activities is entitled to a qualified stunt person.\",\n  \"failure_mode\": \"none\",\n  \"claim_checks\": [\n    {\n      \"field\": \"finding\",\n      \"quote\": \"The screenplay features Sam, a 10-year-old child character, across multiple scenes involving hazardous physical environments, including proximity to 3-volley honor guard rifle fire (S005), night open-water skiff travel (S009), standing in an open skiff adjacent to a burning vessel and aerial pyrotechnic mortar detonations (S011), and exterior dawn rocky jetty terrain (S012).\",\n      \"basis\": \"script\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Sam is introduced as 10 years old in S002 and is depicted in S005 (honor guard 3-volley rifle fire), S009 (night skiff travel), S011 (standing in skiff next to a burning boat and mortar fire), and S012 (stone jetty tideline).\",\n      \"citation_numbers\": [],\n      \"support_spans\": []\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"If a minor performer is cast and asked to perform hazardous or questionable activities, SAG-AFTRA safety guidance entitles the minor to have the activity performed by a qualified stunt person.\",\n      \"basis\": \"source\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Directly verbatim-supported by SAG-AFTRA Young Performers Safety Tips excerpt [2].\",\n      \"citation_numbers\": [2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 2,\n          \"quote\": \"If a minor is asked to perform any activity that seems hazardous or questionable, the minor is entitled to have the activity performed by a qualified stunt person.\"\n        }\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"Confirm casting, filming jurisdiction and staging method before specifying production requirements.\",\n      \"basis\": \"inquiry\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Matches the exact inquiry standard exception for unconfirmed casting, jurisdiction, and staging.\",\n      \"citation_numbers\": [],\n      \"support_spans\": []\n    },\n    {\n      \"field\": \"severity\",\n      \"quote\": \"HIGH\",\n      \"basis\": \"planning\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"High severity is appropriate for potential minor performer safety concerns involving water, pyrotechnics, and live fire depiction.\",\n      \"citation_numbers\": [],\n      \"support_spans\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F3006",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 1,\n      \"entailed\": false,\n      \"reason\": \"The provided source text does not mention SAG-AFTRA or SAG-AFTRA safety guidance.\"\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F3008",
+      "schema": "EvidenceVerdict",
+      "text": "{\n  \"verdict\": \"PARTIAL\",\n  \"reason\": \"The script facts for scenes S002 and S005 are accurately represented. The safety meeting, dry run, and mandatory PPE requirements are directly supported by CSATF Safety Bulletin #1 excerpts [1] and [2]. However, the cited excerpt regarding Property Master licensing does not establish exclusive custody/control of firearms, nor do the excerpts substantiate acoustic safety buffer zones.\",\n  \"failure_mode\": \"none\",\n  \"claim_checks\": [\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Scene S005 depicts a military honor guard of three veterans firing a three-volley blank rifle salute in close proximity to attendees, including a 10-year-old child (Sam) who clamps his hands over his ears and a dog (Barnacle) tied to a fence.\",\n      \"basis\": \"script\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Accurately reflects the action and characters depicted in S002 and S005.\",\n      \"citation_numbers\": [],\n      \"support_spans\": []\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Under CSATF Safety Bulletin #1, all firearms capable of discharging blanks must be maintained and controlled exclusively by a licensed Property Master or certified Armorer.\",\n      \"basis\": \"source\",\n      \"status\": \"UNSUPPORTED\",\n      \"reason\": \"Excerpt [3] mentions maintaining firearms-related licenses and permits, but does not state or establish that firearms must be maintained and controlled exclusively by a licensed Property Master or Armorer.\",\n      \"citation_numbers\": [3],\n      \"support_spans\": []\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Production must hold a mandatory on-site safety meeting and walk-through prior to firing.\",\n      \"basis\": \"source\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Directly supported by CSATF Safety Bulletin #1 in excerpt [1].\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues. This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d with the Property Master, designated Production\"\n        }\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Mandatory hearing protection (PPE) and acoustic safety buffer zones must be established for cast and crew in the line of fire, particularly to safeguard the minor performer and animal from concussive sound and muzzle discharge hazards.\",\n      \"basis\": \"source\",\n      \"status\": \"UNSUPPORTED\",\n      \"reason\": \"While PPE and hearing protection for personnel in close proximity or line of fire is supported by excerpt [2], acoustic safety buffer zones and specific rules regarding minor performers and animals are not established in the excerpts.\",\n      \"citation_numbers\": [2],\n      \"support_spans\": []\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Staging may alternately utilize quarter-load blanks, electronic non-firing replicas, or post-production sound/VFX enhancement.\",\n      \"basis\": \"planning\",\n      \"status\": \"UNSUPPORTED\",\n      \"reason\": \"The cited excerpts do not mention quarter-load blanks, electronic non-firing replicas, or VFX alternatives.\",\n      \"citation_numbers\": [],\n      \"support_spans\": []\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Costs vary by armorer daily rate, prop rentals, and location logistics.\",\n      \"basis\": \"planning\",\n      \"status\": \"UNSUPPORTED\",\n      \"reason\": \"Cost variance factors are planning commentary not supported by the cited excerpts.\",\n      \"citation_numbers\": [],\n      \"support_spans\": []\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"Engage a qualified, licensed Property Master / Armorer to manage, inspect, and supervise all firearms and blank ammunition on set.\",\n      \"basis\": \"source\",\n      \"status\": \"UNSUPPORTED\",\n      \"reason\": \"The cited text in excerpt [3] mentions licensing but does not contain the operative requirement to engage or supervise in these terms.\",\n      \"citation_numbers\": [3],\n      \"support_spans\": []\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"Conduct a mandatory safety meeting and dry-run with all cast and crew before discharge.\",\n      \"basis\": \"source\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Supported by the safety meeting and dry run provisions in excerpt [1].\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues. This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d with the Property Master, designated Production\"\n        }\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"Provide hearing protection (PPE) and maintain safe perimeter distances, or use non-firing replica rifles with visual and acoustic effects added in post-production.\",\n      \"basis\": \"source\",\n      \"status\": \"UNSUPPORTED\",\n      \"reason\": \"While hearing protection is supported by excerpt [2], perimeter distances and non-firing replica alternatives are not in the excerpts.\",\n      \"citation_numbers\": [2],\n      \"support_spans\": []\n    },\n    {\n      \"field\": \"severity\",\n      \"quote\": \"MEDIUM\",\n      \"basis\": \"planning\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Blank gunfire with cast and animals present represents a legitimate medium-severity production safety consideration.\",\n      \"citation_numbers\": [],\n      \"support_spans\": []\n    }\n  ]\n}",
+      "usage_available": true
+    }
+  ]
+}

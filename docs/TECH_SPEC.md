@@ -106,7 +106,10 @@ External claims and remedy prescriptions, including planning advice, require exa
 support spans inside their own cited excerpts. Missing/non-verbatim receipts and
 unreviewed material text trigger correction. Receipts prove provenance, not entailment:
 a separate blinded batch checks each claim against its spans and excerpt context,
-without the screenplay, severity or earlier reasoning. It must return every claim
+without the screenplay, severity or earlier reasoning. Citation title and URL accompany
+each excerpt solely for source attribution; metadata cannot supply an operative rule
+or establish applicability. This avoids rejecting a correctly attributed quotation
+merely because its body does not repeat the publisher's name. It must return every claim
 exactly once; an incomplete secondary review withholds the score. A supported first
 pass costs two logical calls; a repair is bounded at five total. No new searches are
 introduced. Only the fixed production-input inquiry may omit external support in a

@@ -259,6 +259,7 @@ async def check_entailment(client, flag, verdict):
     No screenplay, severity or previous reasoning is shown, so an obvious hazard
     cannot distract the reviewer into approving unrelated mandatory precautions.
     Full excerpt context prevents a receipt from hiding a negation or exception.
+    Source metadata identifies attribution; it cannot supply an operative rule.
     """
     if verdict["verdict"] != "SUPPORTED":
         return verdict  # already goes to correction/rejection; do not spend twice
@@ -276,6 +277,10 @@ async def check_entailment(client, flag, verdict):
                         "excerpt_context": flag["citations"][span["citation_number"] - 1][
                             "excerpt"
                         ],
+                        "source_attribution": {
+                            key: flag["citations"][span["citation_number"] - 1].get(key)
+                            for key in ("title", "url")
+                        },
                     }
                     for span in check["support_spans"]
                 ],
@@ -284,7 +289,13 @@ async def check_entailment(client, flag, verdict):
     if not claims:
         return verdict
     prompt = (
-        "Independently assess textual entailment, using ONLY the supplied source text. "
+        "Independently assess textual entailment, using ONLY the supplied evidence. "
+        "source_attribution contains the cited title and URL solely to identify the "
+        "source. Use it to assess attribution such as 'SAG-AFTRA guidance'; the excerpt "
+        "need not repeat its publisher's name. Metadata cannot establish an operative "
+        "rule, duty, scope of applicability or precaution missing from the excerpt. "
+        "Do not infer publisher endorsement from a name mentioned only in a title; "
+        "consider the URL as well, and do not follow links or use remembered page text. "
         "For each check_index decide whether its exact supporting quote(s), read in "
         "their excerpt context, establish ALL of the claim. Do not use industry knowledge "
         "or the plausibility of precautions. Titles, scope headings and index entries "

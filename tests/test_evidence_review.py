@@ -427,6 +427,42 @@ def test_exact_receipt_does_not_override_an_independent_entailment_rejection():
     assert "Overall review" not in prompt and "Scripted positive review" not in prompt
 
 
+def test_saved_minor_correction_supplies_attribution_without_prior_reasoning():
+    artifact = json.loads(
+        (ROOT / "fixtures/cassettes/support_spans_resume_20260911.json").read_text()
+    )
+    trail = artifact["results"][0]["verdict"]["evidence_review"]
+    flag = saved_flag("F3006")
+    candidate = corrected_flag(flag, trail["correction"])
+    raw = next(r for r in artifact["responses"] if r["schema"] == "EvidenceVerdict")
+    verdict = checked_verdict(json.loads(raw["text"]), candidate)
+    assert verdict["verdict"] == "SUPPORTED"
+    client = Client(entailment(verdict))  # verifies input isolation, not model accuracy
+    asyncio.run(check_entailment(client, candidate, verdict))
+    claims = json.loads(client.calls[0]["contents"].split("\n\n", 1)[1])
+    assert len(claims) == 1
+    receipt = claims[0]["support"][0]
+    source = flag["citations"][1]
+    assert receipt["citation_number"] == 2
+    assert receipt["source_attribution"] == {k: source[k] for k in ("title", "url")}
+    assert receipt["excerpt_context"] == source["excerpt"]
+    assert receipt["quote"] in source["excerpt"]
+    assert set(claims[0]) == {"check_index", "claim", "support"}
+    assert "Sam" not in json.dumps(claims)  # no screenplay facts or earlier reasoning
+
+
+def test_source_metadata_cannot_replace_an_operative_excerpt_receipt():
+    flag = saved_flag("F3006")
+    verdict = audit(flag)
+    # Even a real title/URL cannot be passed off as quoted source requirements.
+    for metadata in ("title", "url"):
+        forged = deepcopy(verdict)
+        forged["claim_checks"][1]["support_spans"][0]["quote"] = flag["citations"][0][metadata]
+        checked = checked_verdict(forged, flag)
+        assert checked["verdict"] == "PARTIAL"
+        assert checked["claim_checks"][1]["status"] == "UNKNOWN"
+
+
 def test_secondary_failure_cannot_reenter_an_unbounded_repair_loop():
     flag = saved_flag()
     before = audit(flag)
