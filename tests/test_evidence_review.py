@@ -151,6 +151,8 @@ def test_corrected_remedy_is_reverified_without_original_review_and_stale_estima
     )
     verdict = asyncio.run(call_verifier(client, flag, "scene evidence", "search evidence"))
     assert len(client.calls) == 4
+    assert "Return claim_checks" not in client.calls[1]["contents"]
+    assert "Return the corrected finding" in client.calls[1]["contents"]
     assert (
         "Casting is unconfirmed; the remedy must retain its condition."
         not in (client.calls[-1]["contents"])
@@ -440,3 +442,20 @@ def test_secondary_failure_cannot_reenter_an_unbounded_repair_loop():
     assert result["evidence_review_unresolved"] and len(client.calls) == 5
     kept, dropped = apply_verdicts([flag], {flag["flag_id"]: result})
     assert not kept and not dropped[0]["recoverable"]
+
+
+def test_resume_reuses_only_a_timed_out_audit_with_matching_source():
+    spec = importlib.util.spec_from_file_location(
+        "eval_evidence_review", ROOT / "scripts/eval_evidence_review.py"
+    )
+    evaluator = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(evaluator)
+    artifact = json.loads((ROOT / "fixtures/cassettes/support_spans_20260911.json").read_text())
+    source = (ROOT / "runs/run_20260911_demo.json").read_bytes()
+    partial = evaluator.resumable_audit(artifact, source, saved_flag("F3006"))
+    assert partial["verdict"] == "PARTIAL" and partial["support_span_version"] == 1
+    assert evaluator.resumable_audit(artifact, source, saved_flag("F3008")) is None
+    with pytest.raises(ValueError, match="different source"):
+        evaluator.resumable_audit(artifact, b"changed source", saved_flag("F3006"))
+    with pytest.raises(ValueError, match="only interrupted"):
+        evaluator.resumable_audit(artifact, source, saved_flag("F3002"))

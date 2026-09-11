@@ -351,13 +351,15 @@ async def repair_partial(client, flag, context, search, original, verify_once):
         PRODUCTION_EVIDENCE
         + "\n"
         + RATINGS_EVIDENCE
-        + "\n"
-        + CLAIM_CHECK_INSTRUCTIONS
+        + "\nWhen only production facts need confirmation, use this exact remedy: "
+        + PRODUCTION_INQUIRY
         + "\nCorrect this partially supported finding AND remedy. Preserve the supported "
         "hazard/exposure; remove unsupported obligations and qualify actual casting, method "
         "and jurisdiction assumptions in BOTH fields. Do not invent sources or requirements. "
         "Every external prescription needs an operative supporting span in the supplied "
         "citations. Removing 'must' or calling it planning advice does not fix absent support. "
+        "A license-maintenance rule does not support firearms maintenance, and entitlement "
+        "to a stunt double does not establish other specialists or equipment. "
         "Remove prescriptions whose action/object/conditions the excerpts do not establish. "
         "If only a depicted hazard and unknown production facts remain, preserve that "
         "supported concern and use the fixed production-facts inquiry as the remedy. "
