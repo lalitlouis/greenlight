@@ -1,6 +1,7 @@
 """Cached SLACK TIDE failures and scripted model responses; no live services."""
 
 import asyncio
+import importlib.util
 import json
 from copy import deepcopy
 from pathlib import Path
@@ -254,6 +255,28 @@ def test_retry_cannot_score_a_repair_bound_to_another_claim():
     asyncio.run(reverify_record(record, "INT. ROOM - DAY\n\nAction.\n", verify=verify))
     assert not record["flags"] and review_incomplete(record["verdicts"])
     assert record["report"]["greenlight_score"] is None
+
+
+def test_eval_rejects_rendered_unresolved_claim_and_inflated_score():
+    spec = importlib.util.spec_from_file_location(
+        "eval_invariants", ROOT / "scripts/eval_invariants.py"
+    )
+    evaluator = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(evaluator)
+    record = json.loads((ROOT / "runs/run_20260911_demo.json").read_text())
+    record["verdicts"]["F3006"]["evidence_review_unresolved"] = True
+
+    def repair_checks():
+        return {
+            name: passed
+            for name, passed, _ in evaluator.shared_invariants(record)
+            if "unresolved evidence repairs" in name
+        }
+
+    assert len(repair_checks()) == 2 and not any(repair_checks().values())
+    record["flags"] = [f for f in record["flags"] if f["flag_id"] != "F3006"]
+    record["report"] = build_report("X", record["flags"], verification_incomplete=True)
+    assert all(repair_checks().values())
 
 
 @pytest.mark.parametrize("route", ["panel", "salvage"])

@@ -1,0 +1,825 @@
+{
+  "source_run": "runs/run_20260911_demo.json",
+  "source_run_sha256": "23039b4a86b11fd353921fe20b03f9dbb2b8c7cb2903844a9abb541e675f8c5f",
+  "source_build": "local:6438de520c929a576aac0824dd7d730788c1819e",
+  "evaluated_build": "320a546975ac0ce183baf6266c871b4db6ad2061",
+  "model": "gemini-3.7-flash",
+  "elapsed_s": 144.69,
+  "calls": 9,
+  "gemini_usage": {
+    "flash": {
+      "prompt": 42116,
+      "cached": 0,
+      "output": 16046
+    }
+  },
+  "estimated_cost_usd": 0.0918,
+  "manual_review": "Engineering review: production-assumption regressions corrected in all three selected cases; citation entailment remains insufficient for release. See docs/plans/evidence-repair-2026-09-11.md. Not independent professional labels.",
+  "results": [
+    {
+      "flag_id": "F3002",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "reason": "The script text accurately depicts a flare gun igniting fuel-soaked blankets aboard a boat with accompanying mortar fireworks and subsequent vessel drift. The premise properly conditions practical execution requirements upon visual effects vs. practical effects choices and is supported by CSATF Safety Bulletins #13, #16, and #19 regarding open flame, flammable fuels, and pyrotechnics.",
+        "failure_mode": "none",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "Scenes S010 and S011 depict a flare gun ignited into fuel-soaked blankets aboard a wooden boat, engulfing the vessel in an open blaze on the water at night, accompanied by mortar fireworks.",
+            "basis": "script",
+            "status": "SUPPORTED",
+            "reason": "Accurately reflects the action described in scenes S010 and S011.",
+            "citation_numbers": []
+          },
+          {
+            "field": "finding",
+            "quote": "Depicted open vessel burns and aerial pyrotechnics involve substantial risks of fire propagation, explosion, smoke inhalation, and uncontrolled vessel drift.",
+            "basis": "planning",
+            "status": "SUPPORTED",
+            "reason": "Accurately identifies the hazards inherent in the depicted open fire on water, burning vessel drift, and mortar firework display.",
+            "citation_numbers": []
+          },
+          {
+            "field": "finding",
+            "quote": "If executed practically rather than through visual effects or simulated rigs, these effects require specialized planning under applicable open flame and pyrotechnic safety guidelines (including CSATF Safety Bulletins #13, #16, and #19), proper suppression equipment, and compliance with applicable local and maritime authorities.",
+            "basis": "source",
+            "status": "SUPPORTED",
+            "reason": "CSATF Bulletins #13, #16, and #19 establish guidelines for flammable fuels, pyrotechnics, and open flame on production, including compliance with applicable laws.",
+            "citation_numbers": [
+              1,
+              2,
+              3
+            ]
+          },
+          {
+            "field": "remedy",
+            "quote": "If practical fire or pyrotechnic effects are used, engage a qualified Special Effects / Pyrotechnics Coordinator to design controlled flame systems and safe mortar ignition setups.",
+            "basis": "planning",
+            "status": "SUPPORTED",
+            "reason": "Engaging a qualified coordinator is appropriate standard planning advice for practical flame and mortar effects.",
+            "citation_numbers": [
+              1,
+              2
+            ]
+          },
+          {
+            "field": "remedy",
+            "quote": "Coordinate with the relevant Authority Having Jurisdiction (AHJ) and maritime authorities for necessary permits, safety buffers, and waterborne fire suppression/rescue standby according to the chosen shooting location.",
+            "basis": "planning",
+            "status": "SUPPORTED",
+            "reason": "Standard conditional planning advice for maritime/waterborne open fire and pyrotechnics operations.",
+            "citation_numbers": [
+              1,
+              2
+            ]
+          },
+          {
+            "field": "severity",
+            "quote": "HIGH",
+            "basis": "planning",
+            "status": "SUPPORTED",
+            "reason": "Depicting an engulfed burning vessel and aerial mortar pyrotechnics on water represents major stunt/pyro hazards justifying a HIGH severity rating if done practically.",
+            "citation_numbers": []
+          }
+        ],
+        "evidence_review": {
+          "before": {
+            "verdict": "PARTIAL",
+            "reason": "The script accurately depicts an open boat burn with flare ignition and aerial mortar fireworks across S010 and S011. While the cited industry safety bulletins confirm that pyrotechnic special effects, open flame, and flammable fuels are governed by industry safety guidelines and applicable laws, the truncated excerpts do not fully establish specific mandates for U.S. Coast Guard marine burn permits, licensed SFX coordinator design specifics, or dedicated marine firefighting craft.",
+            "failure_mode": "none",
+            "claim_checks": [
+              {
+                "field": "severity",
+                "quote": "HIGH",
+                "basis": "planning",
+                "status": "SUPPORTED",
+                "reason": "Large-scale vessel fires and aerial pyrotechnics on water present high-level safety and fire hazards requiring extensive planning and safety oversight.",
+                "citation_numbers": [
+                  1,
+                  2,
+                  3
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "Scenes S010 and S011 depict the firing of a practical marine flare gun into diesel-soaked blankets on a wooden boat, completely engulfing the Margaret Rose in a massive open blaze at night on navigable waters, followed by the ignition of a commercial mortar fireworks array.",
+                "basis": "script",
+                "status": "SUPPORTED",
+                "reason": "Scene S010 shows Mara given the flare gun, and S011 depicts her firing it into the diesel-soaked blankets, engulfing the boat in flames, followed by Crow lighting the mortar stash.",
+                "citation_numbers": []
+              },
+              {
+                "field": "finding",
+                "quote": "Open vessel burns and aerial pyrotechnics carry substantial fire propagation, smoke inhalation, toxic byproduct, and explosion risks.",
+                "basis": "source",
+                "status": "SUPPORTED",
+                "reason": "CSATF Safety Bulletins #16 and #19 recognize the inherent hazards of pyrotechnic special effects, open flame, and fuel ignition.",
+                "citation_numbers": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "The shoot requires an experienced, state/federally licensed Pyrotechnic Special Effects Operator / SFX Coordinator to design controlled burn rigs, propane/gas flame bars, or practical flame effects, rather than uncontrolled liquid accelerants.",
+                "basis": "source",
+                "status": "UNKNOWN",
+                "reason": "The cited excerpts establish that CSATF guidelines apply to pyrotechnics and open flame, but the truncated text does not include the operative language mandating a licensed Pyrotechnic Special Effects Operator.",
+                "citation_numbers": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "Production must secure written marine burn permits from the local Fire Marshal / Authority Having Jurisdiction (AHJ) and the U.S. Coast Guard, and deploy dedicated marine firefighting apparatus, spotter safety boats, and charged fire suppression equipment.",
+                "basis": "source",
+                "status": "UNKNOWN",
+                "reason": "Excerpt 2 establishes that operations must comply with applicable federal, state, and local laws, but does not specifically detail U.S. Coast Guard marine burn permits or marine firefighting apparatus.",
+                "citation_numbers": [
+                  2
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "Engage a licensed Special Effects / Pyrotechnics Coordinator to engineer controlled flame rigs, safe ignition systems, and regulated aerial mortar effects.",
+                "basis": "planning",
+                "status": "SUPPORTED",
+                "reason": "Advising engagement of a special effects coordinator for controlled flame rigs and pyrotechnics is standard planning advice for depicted open fire and fireworks.",
+                "citation_numbers": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "Obtain formal burn permits and marine event authorization from the local Fire Marshal and U.S. Coast Guard.",
+                "basis": "planning",
+                "status": "SUPPORTED",
+                "reason": "Obtaining necessary permits from local authorities and the Coast Guard is sound clearance planning for vessel burns in navigable waters.",
+                "citation_numbers": [
+                  2
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "Position dedicated fire safety craft with water pumps, manned suppression hoses, and safety buffers during all rehearsals and takes.",
+                "basis": "planning",
+                "status": "SUPPORTED",
+                "reason": "Recommending marine fire suppression craft and safety buffers is standard safety planning for waterborne burn sequences.",
+                "citation_numbers": [
+                  1,
+                  2,
+                  3
+                ]
+              }
+            ]
+          },
+          "after": {
+            "verdict": "SUPPORTED",
+            "reason": "The script text accurately depicts a flare gun igniting fuel-soaked blankets aboard a boat with accompanying mortar fireworks and subsequent vessel drift. The premise properly conditions practical execution requirements upon visual effects vs. practical effects choices and is supported by CSATF Safety Bulletins #13, #16, and #19 regarding open flame, flammable fuels, and pyrotechnics.",
+            "failure_mode": "none",
+            "claim_checks": [
+              {
+                "field": "finding",
+                "quote": "Scenes S010 and S011 depict a flare gun ignited into fuel-soaked blankets aboard a wooden boat, engulfing the vessel in an open blaze on the water at night, accompanied by mortar fireworks.",
+                "basis": "script",
+                "status": "SUPPORTED",
+                "reason": "Accurately reflects the action described in scenes S010 and S011.",
+                "citation_numbers": []
+              },
+              {
+                "field": "finding",
+                "quote": "Depicted open vessel burns and aerial pyrotechnics involve substantial risks of fire propagation, explosion, smoke inhalation, and uncontrolled vessel drift.",
+                "basis": "planning",
+                "status": "SUPPORTED",
+                "reason": "Accurately identifies the hazards inherent in the depicted open fire on water, burning vessel drift, and mortar firework display.",
+                "citation_numbers": []
+              },
+              {
+                "field": "finding",
+                "quote": "If executed practically rather than through visual effects or simulated rigs, these effects require specialized planning under applicable open flame and pyrotechnic safety guidelines (including CSATF Safety Bulletins #13, #16, and #19), proper suppression equipment, and compliance with applicable local and maritime authorities.",
+                "basis": "source",
+                "status": "SUPPORTED",
+                "reason": "CSATF Bulletins #13, #16, and #19 establish guidelines for flammable fuels, pyrotechnics, and open flame on production, including compliance with applicable laws.",
+                "citation_numbers": [
+                  1,
+                  2,
+                  3
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "If practical fire or pyrotechnic effects are used, engage a qualified Special Effects / Pyrotechnics Coordinator to design controlled flame systems and safe mortar ignition setups.",
+                "basis": "planning",
+                "status": "SUPPORTED",
+                "reason": "Engaging a qualified coordinator is appropriate standard planning advice for practical flame and mortar effects.",
+                "citation_numbers": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "Coordinate with the relevant Authority Having Jurisdiction (AHJ) and maritime authorities for necessary permits, safety buffers, and waterborne fire suppression/rescue standby according to the chosen shooting location.",
+                "basis": "planning",
+                "status": "SUPPORTED",
+                "reason": "Standard conditional planning advice for maritime/waterborne open fire and pyrotechnics operations.",
+                "citation_numbers": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "field": "severity",
+                "quote": "HIGH",
+                "basis": "planning",
+                "status": "SUPPORTED",
+                "reason": "Depicting an engulfed burning vessel and aerial mortar pyrotechnics on water represents major stunt/pyro hazards justifying a HIGH severity rating if done practically.",
+                "citation_numbers": []
+              }
+            ]
+          }
+        },
+        "correction": {
+          "finding": "Scenes S010 and S011 depict a flare gun ignited into fuel-soaked blankets aboard a wooden boat, engulfing the vessel in an open blaze on the water at night, accompanied by mortar fireworks. Depicted open vessel burns and aerial pyrotechnics involve substantial risks of fire propagation, explosion, smoke inhalation, and uncontrolled vessel drift. If executed practically rather than through visual effects or simulated rigs, these effects require specialized planning under applicable open flame and pyrotechnic safety guidelines (including CSATF Safety Bulletins #13, #16, and #19), proper suppression equipment, and compliance with applicable local and maritime authorities.",
+          "remedy_detail": "If practical fire or pyrotechnic effects are used, engage a qualified Special Effects / Pyrotechnics Coordinator to design controlled flame systems and safe mortar ignition setups. Coordinate with the relevant Authority Having Jurisdiction (AHJ) and maritime authorities for necessary permits, safety buffers, and waterborne fire suppression/rescue standby according to the chosen shooting location.",
+          "remedy_action": "ADD_SPECIALIST",
+          "severity": "HIGH"
+        },
+        "correction_input": "ff71ed6145ba297925878846b38fc1d5efa4a6cc2ebce4f647b23bc788d26e81"
+      },
+      "kept": [
+        {
+          "flag_id": "F3002",
+          "agent": "safety_underwriter",
+          "scene_ids": [
+            "S008",
+            "S010",
+            "S011"
+          ],
+          "entity_id": null,
+          "severity": "HIGH",
+          "category": "stunt_pyro",
+          "finding": "Scenes S010 and S011 depict a flare gun ignited into fuel-soaked blankets aboard a wooden boat, engulfing the vessel in an open blaze on the water at night, accompanied by mortar fireworks. Depicted open vessel burns and aerial pyrotechnics involve substantial risks of fire propagation, explosion, smoke inhalation, and uncontrolled vessel drift. If executed practically rather than through visual effects or simulated rigs, these effects require specialized planning under applicable open flame and pyrotechnic safety guidelines (including CSATF Safety Bulletins #13, #16, and #19), proper suppression equipment, and compliance with applicable local and maritime authorities.",
+          "citations": [
+            {
+              "source_type": "web",
+              "title": "CSATF Safety Bulletin #16: Recommended Guidelines for Safety with Pyrotechnic Special Effects",
+              "url": "https://www.csatf.org/wp-content/uploads/2018/05/16PYROTECHNIC.pdf",
+              "excerpt": "INDUSTRY WIDE LABOR-MANAGEMENT SAFETY COMMITTEE **SAFETY BULLETIN #16 RECOMMENDED GUIDELINES FOR SAFETY WITH PYROTECHNIC SPECIAL EFFECTS This Safety Bulletin applies to pyrotechnic materials such as explosives and flammable or combustible liquids, gases and solids when used to create pyrotechnic special effects.** ALL USE, HANDLING, STORAGE AND",
+              "retrieved_at": null,
+              "via": "parallel_search"
+            },
+            {
+              "source_type": "web",
+              "title": "CSATF Safety Bulletin #19: Recommended Guidelines for the Use of Open Flame on Production",
+              "url": "https://www.csatf.org/wp-content/uploads/2018/05/19FLAMES.pdf",
+              "excerpt": "RECOMMENDED GUIDELINES FOR THE USE OF OPEN FLAME ON PRODUCTION These guidelines are intended to give recommendations on the use of open flame on production. This Safety Bulletin does not apply to full or partial body burns, fire breathing, or other fire performance work (See Safety Bulletin #4 \u201cStunts\u201d). ALL USE, HANDLING, STORAGE AND TRANSPORTATION OF BULK FUEL, COMPRESSED GAS CYLINDERS AND OTHER MATERIALS USED TO CREATE OPEN FLAME SHALL BE IN COMPLIANCE WITH ALL APPLICABLE FEDERAL, STATE, AND LOCAL LA",
+              "retrieved_at": null,
+              "via": "parallel_search",
+              "repaired": true
+            },
+            {
+              "source_type": "web",
+              "title": "CSATF Safety Bulletin #13: Recommended Guidelines When Using Combustible & Flammable Fuels and Associated Equipment",
+              "url": "https://www.csatf.org/sfty_bulletins_13-using_combustible_flammable_fuels/",
+              "excerpt": "SAFETY BULLETIN #13 \u00b7 RECOMMENDED ... flammable fuels (herein referred to as fuels), such as gasoline, diesel, butane, propane, and equipment that may contain fuels, such as generators, heaters, power washers, and saws.",
+              "retrieved_at": null,
+              "via": "parallel_search",
+              "repaired": true
+            }
+          ],
+          "remedy": {
+            "action": "ADD_SPECIALIST",
+            "detail": "If practical fire or pyrotechnic effects are used, engage a qualified Special Effects / Pyrotechnics Coordinator to design controlled flame systems and safe mortar ignition setups. Coordinate with the relevant Authority Having Jurisdiction (AHJ) and maritime authorities for necessary permits, safety buffers, and waterborne fire suppression/rescue standby according to the chosen shooting location.",
+            "est_cost_usd": null,
+            "est_added_days": null
+          },
+          "confidence": 0.95
+        }
+      ],
+      "dropped": [],
+      "verification_incomplete": false,
+      "elapsed_s": 36.82
+    },
+    {
+      "flag_id": "F3006",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "reason": "The script accurately depicts Sam (a 10-year-old character) present during honor guard rifle fire in S005, night skiff travel in S009, and boat fire and pyrotechnic mortar detonations in S011. The finding and remedy properly frame all minor-performer safeguards conditionally upon actual casting, and the cited SAG-AFTRA guideline supports the use of qualified doubles when minors are asked to perform hazardous actions.",
+        "failure_mode": "none",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "The screenplay depicts Sam, a 10-year-old child character, in several sequences involving potential physical hazards, including proximity to honor guard rifle fire (S005), night open-water skiff travel (S009), and exposure to a burning vessel and pyrotechnic mortar detonations from an open skiff (S011).",
+            "basis": "script",
+            "status": "SUPPORTED",
+            "reason": "Sam is introduced as age 10 in S002, and is depicted present during honor guard rifle volleys in S005, traveling in a skiff at night in S009, and observing vessel fire and pyrotechnic mortar bursts from the skiff in S011.",
+            "citation_numbers": []
+          },
+          {
+            "field": "finding",
+            "quote": "If the role is cast with a minor performer, production will need to plan appropriate staging and safeguards for water, fire, and loud noise hazards, including evaluating the use of qualified doubles for hazardous actions.",
+            "basis": "source",
+            "status": "SUPPORTED",
+            "reason": "Excerpt [2] explicitly establishes that minors asked to perform hazardous or questionable activities are entitled to have the action performed by a qualified stunt person, and the claim correctly conditions this on actual minor casting.",
+            "citation_numbers": [
+              2
+            ]
+          },
+          {
+            "field": "remedy",
+            "quote": "If casting a minor performer, engage qualified stunt doubles or water/fire safety specialists for hazardous night watercraft, open flame, and pyrotechnic scenes.",
+            "basis": "source",
+            "status": "SUPPORTED",
+            "reason": "Excerpt [2] supports engaging qualified stunt doubles for hazardous physical activities if a minor performer is cast.",
+            "citation_numbers": [
+              2
+            ]
+          },
+          {
+            "field": "remedy",
+            "quote": "Implement hearing protection and safe standoff distances during practical blank gunfire and fireworks, and adhere to applicable jurisdictional labor rules regarding minor welfare, supervision, and work hours.",
+            "basis": "planning",
+            "status": "SUPPORTED",
+            "reason": "Standard advisory planning recommendations for practical noise/hazard staging and jurisdictional compliance when employing minors.",
+            "citation_numbers": []
+          },
+          {
+            "field": "severity",
+            "quote": "HIGH",
+            "basis": "planning",
+            "status": "SUPPORTED",
+            "reason": "High severity is appropriate given the combination of open water, night shooting, open flame, pyrotechnics, and gunfire around a child character/performer.",
+            "citation_numbers": []
+          }
+        ],
+        "evidence_review": {
+          "before": {
+            "verdict": "PARTIAL",
+            "reason": "The script accurately depicts 10-year-old Sam in environments involving 3-volley rifle gunfire (S005), night skiff travel (S009), burning vessel and pyrotechnic mortars (S011), and a rocky shoreline (S012). However, the cited sources only partially support the extensive regulatory assertions: Citation 1 is an index listing without operative text, and Citation 2 only establishes a young performer's entitlement to a stunt double for hazardous activities, leaving the mandatory studio teacher, acoustic buffering, and specific permit rules unsupported by the provided excerpts.",
+            "failure_mode": "none",
+            "claim_checks": [
+              {
+                "field": "finding",
+                "quote": "The screenplay features Sam, a 10-year-old child character, across multiple scenes involving hazardous physical environments, including proximity to 3-volley honor guard rifle fire (S005), night open-water skiff travel (S009), standing in an open skiff adjacent to a burning vessel and aerial pyrotechnic mortar detonations (S011), and exterior dawn rocky jetty terrain (S012).",
+                "basis": "script",
+                "status": "SUPPORTED",
+                "reason": "Accurately reflects Sam's age and presence across scenes S002, S005, S009, S011, and S012.",
+                "citation_numbers": []
+              },
+              {
+                "field": "finding",
+                "quote": "If cast with a minor performer, production must strictly comply with CSATF Procedural Guideline #1 ('Special Procedures For Minors Performing Physical Activities') and SAG-AFTRA Young Performer regulations.",
+                "basis": "source",
+                "status": "UNSUPPORTED",
+                "reason": "Citation 1 is only an index entry showing the guideline title and date, which does not establish the operative procedural requirements.",
+                "citation_numbers": [
+                  1
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "A certified Studio Teacher / Child Welfare Worker and a parent/guardian must be present on set at all times.",
+                "basis": "source",
+                "status": "UNSUPPORTED",
+                "reason": "Neither cited excerpt mentions studio teachers, child welfare workers, or continuous parental presence requirements.",
+                "citation_numbers": []
+              },
+              {
+                "field": "finding",
+                "quote": "The minor must be provided hearing protection/acoustic buffering during gunfire and pyrotechnics, and a qualified minor stunt double or matched adult double must be engaged for all night watercraft and open flame sequences.",
+                "basis": "source",
+                "status": "SUPPORTED",
+                "reason": "Citation 2 confirms that minors are entitled to have hazardous activities performed by a qualified stunt person, though acoustic buffering specifics are unstated.",
+                "citation_numbers": [
+                  2
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "Costs vary depending on filming jurisdiction, tutor rates, and stunt double hiring.",
+                "basis": "planning",
+                "status": "SUPPORTED",
+                "reason": "Standard budgetary planning observation conditioned on casting and location choices.",
+                "citation_numbers": []
+              },
+              {
+                "field": "remedy",
+                "quote": "Employ a certified Studio Teacher / Child Welfare Worker to oversee welfare, work-hour limits, and educational compliance. Ensure parent or legal guardian is physically present at all times. Utilize a qualified stunt double for night watercraft and hazardous fire sequences, maintain strict safety buffer distances during blank gunfire and fireworks, and obtain necessary minor work permits from state/local labor authorities.",
+                "basis": "planning",
+                "status": "SUPPORTED",
+                "reason": "Valid conditional clearance and planning recommendations for engaging a minor performer around practical water, fire, and pyrotechnic hazards, supported in part by Citation 2.",
+                "citation_numbers": [
+                  2
+                ]
+              },
+              {
+                "field": "severity",
+                "quote": "HIGH",
+                "basis": "planning",
+                "status": "SUPPORTED",
+                "reason": "High severity is standard and justified for child performer welfare and safety around multiple major physical hazards (pyrotechnics, open fire, open water).",
+                "citation_numbers": []
+              }
+            ]
+          },
+          "after": {
+            "verdict": "SUPPORTED",
+            "reason": "The script accurately depicts Sam (a 10-year-old character) present during honor guard rifle fire in S005, night skiff travel in S009, and boat fire and pyrotechnic mortar detonations in S011. The finding and remedy properly frame all minor-performer safeguards conditionally upon actual casting, and the cited SAG-AFTRA guideline supports the use of qualified doubles when minors are asked to perform hazardous actions.",
+            "failure_mode": "none",
+            "claim_checks": [
+              {
+                "field": "finding",
+                "quote": "The screenplay depicts Sam, a 10-year-old child character, in several sequences involving potential physical hazards, including proximity to honor guard rifle fire (S005), night open-water skiff travel (S009), and exposure to a burning vessel and pyrotechnic mortar detonations from an open skiff (S011).",
+                "basis": "script",
+                "status": "SUPPORTED",
+                "reason": "Sam is introduced as age 10 in S002, and is depicted present during honor guard rifle volleys in S005, traveling in a skiff at night in S009, and observing vessel fire and pyrotechnic mortar bursts from the skiff in S011.",
+                "citation_numbers": []
+              },
+              {
+                "field": "finding",
+                "quote": "If the role is cast with a minor performer, production will need to plan appropriate staging and safeguards for water, fire, and loud noise hazards, including evaluating the use of qualified doubles for hazardous actions.",
+                "basis": "source",
+                "status": "SUPPORTED",
+                "reason": "Excerpt [2] explicitly establishes that minors asked to perform hazardous or questionable activities are entitled to have the action performed by a qualified stunt person, and the claim correctly conditions this on actual minor casting.",
+                "citation_numbers": [
+                  2
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "If casting a minor performer, engage qualified stunt doubles or water/fire safety specialists for hazardous night watercraft, open flame, and pyrotechnic scenes.",
+                "basis": "source",
+                "status": "SUPPORTED",
+                "reason": "Excerpt [2] supports engaging qualified stunt doubles for hazardous physical activities if a minor performer is cast.",
+                "citation_numbers": [
+                  2
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "Implement hearing protection and safe standoff distances during practical blank gunfire and fireworks, and adhere to applicable jurisdictional labor rules regarding minor welfare, supervision, and work hours.",
+                "basis": "planning",
+                "status": "SUPPORTED",
+                "reason": "Standard advisory planning recommendations for practical noise/hazard staging and jurisdictional compliance when employing minors.",
+                "citation_numbers": []
+              },
+              {
+                "field": "severity",
+                "quote": "HIGH",
+                "basis": "planning",
+                "status": "SUPPORTED",
+                "reason": "High severity is appropriate given the combination of open water, night shooting, open flame, pyrotechnics, and gunfire around a child character/performer.",
+                "citation_numbers": []
+              }
+            ]
+          }
+        },
+        "correction": {
+          "finding": "The screenplay depicts Sam, a 10-year-old child character, in several sequences involving potential physical hazards, including proximity to honor guard rifle fire (S005), night open-water skiff travel (S009), and exposure to a burning vessel and pyrotechnic mortar detonations from an open skiff (S011). If the role is cast with a minor performer, production will need to plan appropriate staging and safeguards for water, fire, and loud noise hazards, including evaluating the use of qualified doubles for hazardous actions.",
+          "remedy_detail": "If casting a minor performer, engage qualified stunt doubles or water/fire safety specialists for hazardous night watercraft, open flame, and pyrotechnic scenes. Implement hearing protection and safe standoff distances during practical blank gunfire and fireworks, and adhere to applicable jurisdictional labor rules regarding minor welfare, supervision, and work hours.",
+          "remedy_action": "ADD_SPECIALIST",
+          "severity": "HIGH"
+        },
+        "correction_input": "87199593496235ea1fb8cca2ac0501eaf5320d989309779cdf163b4159506a26"
+      },
+      "kept": [
+        {
+          "flag_id": "F3006",
+          "agent": "safety_underwriter",
+          "scene_ids": [
+            "S002",
+            "S004",
+            "S005",
+            "S009",
+            "S011",
+            "S012"
+          ],
+          "entity_id": null,
+          "severity": "HIGH",
+          "category": "minor_safety",
+          "finding": "The screenplay depicts Sam, a 10-year-old child character, in several sequences involving potential physical hazards, including proximity to honor guard rifle fire (S005), night open-water skiff travel (S009), and exposure to a burning vessel and pyrotechnic mortar detonations from an open skiff (S011). If the role is cast with a minor performer, production will need to plan appropriate staging and safeguards for water, fire, and loud noise hazards, including evaluating the use of qualified doubles for hazardous actions.",
+          "citations": [
+            {
+              "source_type": "web",
+              "title": "CSATF Procedural Guideline #1: Special Procedures For Minors Performing Physical Activities",
+              "url": "https://www.csatf.org/production-affairs-safety/safety-bulletins",
+              "excerpt": "### PROCEDURAL GUIDELINES\n| Bulletin No. | Description | Date Released |\n| 1 | [Special Procedures For Minors Performing Physical Activities](https://www.csatf.org/wp-content/uploads/2018/05/Guideline001.MINORS.pdf) | Issued 05/17/06 |",
+              "retrieved_at": null,
+              "via": "parallel_search"
+            },
+            {
+              "source_type": "web",
+              "title": "SAG-AFTRA Young Performers Safety Tips",
+              "url": "https://www.sagaftra.org/membership-benefits/young-performers/parents/safety-tips",
+              "excerpt": "1. If a minor is asked to perform any activity that seems hazardous or questionable, the minor is entitled to have the activity performed by a qualified stunt person.",
+              "retrieved_at": null,
+              "via": "parallel_search"
+            }
+          ],
+          "remedy": {
+            "action": "ADD_SPECIALIST",
+            "detail": "If casting a minor performer, engage qualified stunt doubles or water/fire safety specialists for hazardous night watercraft, open flame, and pyrotechnic scenes. Implement hearing protection and safe standoff distances during practical blank gunfire and fireworks, and adhere to applicable jurisdictional labor rules regarding minor welfare, supervision, and work hours.",
+            "est_cost_usd": null,
+            "est_added_days": null
+          },
+          "confidence": 0.95
+        }
+      ],
+      "dropped": [],
+      "verification_incomplete": false,
+      "elapsed_s": 44.92
+    },
+    {
+      "flag_id": "F3008",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "reason": "The script accurately depicts an honor guard firing a three-volley salute in front of attendees, including 10-year-old Sam and a dog named Barnacle. The cited excerpts from CSATF Safety Bulletin #1 fully support the premise regarding the oversight of practical firearms by a Property Master or Armorer, conducting safety meetings/dry runs, and issuing PPE/hearing protection to personnel in proximity, while appropriately conditioning minor and animal safeguards on practical casting choices.",
+        "failure_mode": "none",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "Scene S005 depicts an honor guard firing a three-volley blank rifle salute in close proximity to attendees, including a 10-year-old child character (Sam) and a dog (Barnacle).",
+            "basis": "script",
+            "status": "SUPPORTED",
+            "reason": "Scene S005 explicitly depicts the honor guard firing three volleys with rifles, with Sam (established as 10 years old in S002) clamping his hands over his ears and Barnacle the dog howling.",
+            "citation_numbers": []
+          },
+          {
+            "field": "finding",
+            "quote": "Under CSATF Safety Bulletin #1, practical firearms capable of discharging blanks must be maintained and controlled by a qualified Property Master or Armorer.",
+            "basis": "source",
+            "status": "SUPPORTED",
+            "reason": "Excerpt [3] establishes the requirement for the Property Master or designated Armorer to maintain and manage firearms and blanks.",
+            "citation_numbers": [
+              3
+            ]
+          },
+          {
+            "field": "finding",
+            "quote": "If practical blank fire is staged, production should conduct an on-site safety meeting and walk-through prior to discharge, and provide appropriate hearing protection (PPE) and buffer distances for cast and crew in proximity, including tailored safeguards if a minor performer or live animal is utilized on set.",
+            "basis": "planning",
+            "status": "SUPPORTED",
+            "reason": "Excerpts [1] and [2] specify conducting an on-site walk-through/dry run safety meeting prior to firearm use and issuing hearing protection/PPE to personnel in close proximity.",
+            "citation_numbers": [
+              1,
+              2
+            ]
+          },
+          {
+            "field": "finding",
+            "quote": "Staging may alternately utilize non-firing replicas or post-production sound and visual effects.",
+            "basis": "planning",
+            "status": "SUPPORTED",
+            "reason": "Recommending non-firing replicas or VFX/SFX is standard conditional risk-mitigation planning advice.",
+            "citation_numbers": []
+          },
+          {
+            "field": "remedy",
+            "quote": "Engage a qualified Property Master or Armorer to manage, inspect, and supervise any practical firearms and blank ammunition on set, or utilize non-firing replica rifles with visual and acoustic effects added in post-production.",
+            "basis": "planning",
+            "status": "SUPPORTED",
+            "reason": "Directly supported by industry safety practice and excerpt [3] regarding Property Master/Armorer supervision.",
+            "citation_numbers": [
+              3
+            ]
+          },
+          {
+            "field": "remedy",
+            "quote": "If blanks are used, conduct a safety meeting and dry-run prior to discharge, enforce safe perimeter distances, issue hearing protection (PPE) to cast and crew in proximity, and apply minor performer and animal handling safeguards if a minor or live animal is cast.",
+            "basis": "planning",
+            "status": "SUPPORTED",
+            "reason": "Directly supported by excerpts [1] and [2] for safety meetings and PPE, properly phrased conditionally for live minor/animal performers.",
+            "citation_numbers": [
+              1,
+              2
+            ]
+          },
+          {
+            "field": "severity",
+            "quote": "MEDIUM",
+            "basis": "planning",
+            "status": "SUPPORTED",
+            "reason": "MEDIUM severity is appropriate for blank gunfire and firearms handling in proximity to cast/extras under standard production safety protocols.",
+            "citation_numbers": []
+          }
+        ],
+        "evidence_review": {
+          "before": {
+            "verdict": "PARTIAL",
+            "reason": "The scene depicts an honor guard firing a three-volley salute near attendees including the child character Sam and a dog, and CSATF Safety Bulletin #1 supports the requirements for armorer supervision, mandatory safety meetings/walk-throughs, and PPE/hearing protection. However, the finding refers unconditionally to a 'minor performer' rather than treating performer casting as conditional on actual production choices.",
+            "failure_mode": "none",
+            "claim_checks": [
+              {
+                "field": "finding",
+                "quote": "Scene S005 depicts a military honor guard of three veterans firing a three-volley blank rifle salute in close proximity to attendees, including a 10-year-old child (Sam) who clamps his hands over his ears and a dog (Barnacle) tied to a fence.",
+                "basis": "script",
+                "status": "SUPPORTED",
+                "reason": "Scene S005 depicts the honor guard firing three volleys, with Sam (established as 10 in S002) clamping his hands over his ears and Barnacle howling while tied to the fence.",
+                "citation_numbers": []
+              },
+              {
+                "field": "finding",
+                "quote": "all firearms capable of discharging blanks must be maintained and controlled exclusively by a licensed Property Master or certified Armorer",
+                "basis": "source",
+                "status": "SUPPORTED",
+                "reason": "CSATF Safety Bulletin #1 notes that the Property Master or designated Armorer maintains necessary firearm/blank licenses and controls the firearms.",
+                "citation_numbers": [
+                  3
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "Production must hold a mandatory on-site safety meeting and walk-through prior to firing.",
+                "basis": "source",
+                "status": "SUPPORTED",
+                "reason": "CSATF Safety Bulletin #1 states that production will conduct a safety meeting with all involved personnel including an on-site walk-through and/or dry run before any firearm is used.",
+                "citation_numbers": [
+                  1
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "Mandatory hearing protection (PPE) and acoustic safety buffer zones must be established for cast and crew in the line of fire",
+                "basis": "source",
+                "status": "SUPPORTED",
+                "reason": "CSATF Safety Bulletin #1 mandates protective shields, eye, and hearing protection or other PPE for personnel in close proximity and/or line of fire.",
+                "citation_numbers": [
+                  2
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "particularly to safeguard the minor performer and animal from concussive sound and muzzle discharge hazards",
+                "basis": "production",
+                "status": "UNKNOWN",
+                "reason": "The child character Sam does not establish that a minor performer will be cast; performer age and actual live animal handling plans remain unconfirmed production facts.",
+                "citation_numbers": []
+              },
+              {
+                "field": "finding",
+                "quote": "Staging may alternately utilize quarter-load blanks, electronic non-firing replicas, or post-production sound/VFX enhancement. Costs vary by armorer daily rate, prop rentals, and location logistics.",
+                "basis": "planning",
+                "status": "SUPPORTED",
+                "reason": "These represent standard safe alternative execution methods and planning considerations for blank firearm sequences.",
+                "citation_numbers": []
+              },
+              {
+                "field": "remedy",
+                "quote": "Engage a qualified, licensed Property Master / Armorer to manage, inspect, and supervise all firearms and blank ammunition on set. Conduct a mandatory safety meeting and dry-run with all cast and crew before discharge. Provide hearing protection (PPE) and maintain safe perimeter distances, or use non-firing replica rifles with visual and acoustic effects added in post-production.",
+                "basis": "planning",
+                "status": "SUPPORTED",
+                "reason": "The recommended actions align directly with CSATF Safety Bulletin #1 guidelines and standard industry mitigation practices.",
+                "citation_numbers": [
+                  1,
+                  2,
+                  3
+                ]
+              },
+              {
+                "field": "severity",
+                "quote": "MEDIUM",
+                "basis": "planning",
+                "status": "SUPPORTED",
+                "reason": "Medium severity is standard and proportionate for blank-firing firearms scenes requiring designated armorers, safety briefings, and PPE.",
+                "citation_numbers": []
+              }
+            ]
+          },
+          "after": {
+            "verdict": "SUPPORTED",
+            "reason": "The script accurately depicts an honor guard firing a three-volley salute in front of attendees, including 10-year-old Sam and a dog named Barnacle. The cited excerpts from CSATF Safety Bulletin #1 fully support the premise regarding the oversight of practical firearms by a Property Master or Armorer, conducting safety meetings/dry runs, and issuing PPE/hearing protection to personnel in proximity, while appropriately conditioning minor and animal safeguards on practical casting choices.",
+            "failure_mode": "none",
+            "claim_checks": [
+              {
+                "field": "finding",
+                "quote": "Scene S005 depicts an honor guard firing a three-volley blank rifle salute in close proximity to attendees, including a 10-year-old child character (Sam) and a dog (Barnacle).",
+                "basis": "script",
+                "status": "SUPPORTED",
+                "reason": "Scene S005 explicitly depicts the honor guard firing three volleys with rifles, with Sam (established as 10 years old in S002) clamping his hands over his ears and Barnacle the dog howling.",
+                "citation_numbers": []
+              },
+              {
+                "field": "finding",
+                "quote": "Under CSATF Safety Bulletin #1, practical firearms capable of discharging blanks must be maintained and controlled by a qualified Property Master or Armorer.",
+                "basis": "source",
+                "status": "SUPPORTED",
+                "reason": "Excerpt [3] establishes the requirement for the Property Master or designated Armorer to maintain and manage firearms and blanks.",
+                "citation_numbers": [
+                  3
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "If practical blank fire is staged, production should conduct an on-site safety meeting and walk-through prior to discharge, and provide appropriate hearing protection (PPE) and buffer distances for cast and crew in proximity, including tailored safeguards if a minor performer or live animal is utilized on set.",
+                "basis": "planning",
+                "status": "SUPPORTED",
+                "reason": "Excerpts [1] and [2] specify conducting an on-site walk-through/dry run safety meeting prior to firearm use and issuing hearing protection/PPE to personnel in close proximity.",
+                "citation_numbers": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "Staging may alternately utilize non-firing replicas or post-production sound and visual effects.",
+                "basis": "planning",
+                "status": "SUPPORTED",
+                "reason": "Recommending non-firing replicas or VFX/SFX is standard conditional risk-mitigation planning advice.",
+                "citation_numbers": []
+              },
+              {
+                "field": "remedy",
+                "quote": "Engage a qualified Property Master or Armorer to manage, inspect, and supervise any practical firearms and blank ammunition on set, or utilize non-firing replica rifles with visual and acoustic effects added in post-production.",
+                "basis": "planning",
+                "status": "SUPPORTED",
+                "reason": "Directly supported by industry safety practice and excerpt [3] regarding Property Master/Armorer supervision.",
+                "citation_numbers": [
+                  3
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "If blanks are used, conduct a safety meeting and dry-run prior to discharge, enforce safe perimeter distances, issue hearing protection (PPE) to cast and crew in proximity, and apply minor performer and animal handling safeguards if a minor or live animal is cast.",
+                "basis": "planning",
+                "status": "SUPPORTED",
+                "reason": "Directly supported by excerpts [1] and [2] for safety meetings and PPE, properly phrased conditionally for live minor/animal performers.",
+                "citation_numbers": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "field": "severity",
+                "quote": "MEDIUM",
+                "basis": "planning",
+                "status": "SUPPORTED",
+                "reason": "MEDIUM severity is appropriate for blank gunfire and firearms handling in proximity to cast/extras under standard production safety protocols.",
+                "citation_numbers": []
+              }
+            ]
+          }
+        },
+        "correction": {
+          "finding": "Scene S005 depicts an honor guard firing a three-volley blank rifle salute in close proximity to attendees, including a 10-year-old child character (Sam) and a dog (Barnacle). Under CSATF Safety Bulletin #1, practical firearms capable of discharging blanks must be maintained and controlled by a qualified Property Master or Armorer. If practical blank fire is staged, production should conduct an on-site safety meeting and walk-through prior to discharge, and provide appropriate hearing protection (PPE) and buffer distances for cast and crew in proximity, including tailored safeguards if a minor performer or live animal is utilized on set. Staging may alternately utilize non-firing replicas or post-production sound and visual effects.",
+          "remedy_detail": "Engage a qualified Property Master or Armorer to manage, inspect, and supervise any practical firearms and blank ammunition on set, or utilize non-firing replica rifles with visual and acoustic effects added in post-production. If blanks are used, conduct a safety meeting and dry-run prior to discharge, enforce safe perimeter distances, issue hearing protection (PPE) to cast and crew in proximity, and apply minor performer and animal handling safeguards if a minor or live animal is cast.",
+          "remedy_action": "ADD_SPECIALIST",
+          "severity": "MEDIUM"
+        },
+        "correction_input": "90df45a0cd9accbdecac9cb2a0ac111dbaf68a7bfad18d8ba5f766c2551d6632"
+      },
+      "kept": [
+        {
+          "flag_id": "F3008",
+          "agent": "safety_underwriter",
+          "scene_ids": [
+            "S002",
+            "S005"
+          ],
+          "entity_id": null,
+          "severity": "MEDIUM",
+          "category": "firearms_blanks",
+          "finding": "Scene S005 depicts an honor guard firing a three-volley blank rifle salute in close proximity to attendees, including a 10-year-old child character (Sam) and a dog (Barnacle). Under CSATF Safety Bulletin #1, practical firearms capable of discharging blanks must be maintained and controlled by a qualified Property Master or Armorer. If practical blank fire is staged, production should conduct an on-site safety meeting and walk-through prior to discharge, and provide appropriate hearing protection (PPE) and buffer distances for cast and crew in proximity, including tailored safeguards if a minor performer or live animal is utilized on set. Staging may alternately utilize non-firing replicas or post-production sound and visual effects.",
+          "citations": [
+            {
+              "source_type": "web",
+              "title": "CSATF Safety Bulletin #1: Recommendations For The Use Of Firearms, Blanks, And Dummy Rounds",
+              "url": "https://www.csatf.org/01_safety_bltn_firearms",
+              "excerpt": "### Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues. This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d with the Property Master, designated Production",
+              "retrieved_at": null,
+              "via": "parallel_search"
+            },
+            {
+              "source_type": "web",
+              "title": "CSATF Safety Bulletin #1: Recommendations for Safety with Firearms and Use of Blanks",
+              "url": "https://www.csatf.org/wp-content/uploads/2018/05/01FIREARMS.pdf",
+              "excerpt": "11. Protective shields, eye, and hearing protection or other appropriate Personal Protective Equipment (PPE) shall be issued and utilized by all personnel in close proximity and/or directly in the line of fire.",
+              "retrieved_at": null,
+              "via": "parallel_search"
+            },
+            {
+              "source_type": "web",
+              "title": "CSATF Safety Bulletins & Fact Sheets",
+              "url": "https://www.csatf.org/all_safety_bulletins-procedural_guidelines-info_fact_sheets/",
+              "excerpt": "or someone designated by the Property Master (i.e., the Armorer). The Property Master \u00b7 must maintain all necessary, firearms/ammunition/blanks-related licenses, permits, and",
+              "retrieved_at": null,
+              "via": "parallel_search"
+            }
+          ],
+          "remedy": {
+            "action": "ADD_SPECIALIST",
+            "detail": "Engage a qualified Property Master or Armorer to manage, inspect, and supervise any practical firearms and blank ammunition on set, or utilize non-firing replica rifles with visual and acoustic effects added in post-production. If blanks are used, conduct a safety meeting and dry-run prior to discharge, enforce safe perimeter distances, issue hearing protection (PPE) to cast and crew in proximity, and apply minor performer and animal handling safeguards if a minor or live animal is cast.",
+            "est_cost_usd": null,
+            "est_added_days": null
+          },
+          "confidence": 0.95
+        }
+      ],
+      "dropped": [],
+      "verification_incomplete": false,
+      "elapsed_s": 62.92
+    }
+  ]
+}
