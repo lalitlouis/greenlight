@@ -169,7 +169,7 @@ def test_withheld_cause_and_cost_paths_travel_with_the_binder() -> None:
     line = pdfgen.cost_paths_label(b["est_cost"], b["est_cost_paths"])
     assert "as written $1,000" in line and "$2,300" in line
     assert "target-rating path $1,000" in line and "$2,000" in line
-    assert pdfgen.score_label(None, True) == "WITHHELD (verification unavailable)"
+    assert pdfgen.score_label(None, True) == "WITHHELD (verification incomplete)"
     assert pdfgen.score_label(None, False) == "WITHHELD (analysis incomplete)"
     assert pdfgen.score_label(42, False) == "42/100"
 

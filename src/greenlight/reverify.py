@@ -21,6 +21,7 @@ from typing import Any
 
 from greenlight import parser
 from greenlight import report as report_mod
+from greenlight.agents.evidence_review import review_incomplete
 from greenlight.agents.verification import (
     _RETRY_HTTP,
     Verdict,
@@ -133,7 +134,7 @@ async def reverify_record(  # noqa: PLR0912, PLR0915 - the live panel's post-ver
         verdicts[fid] = v
         f.pop("verification_unavailable", None)
         f.pop("verification_blocked", None)
-        kept_one, dropped_one = apply_verdicts([f], {fid: v})
+        kept_one, dropped_one = apply_verdicts([f], verdicts)
         if dropped_one:
             flags = [x for x in flags if x["flag_id"] != fid]
             record["rejected_flags"] = list(record.get("rejected_flags") or []) + dropped_one
@@ -204,6 +205,7 @@ async def reverify_record(  # noqa: PLR0912, PLR0915 - the live panel's post-ver
         page_count=old_rep.get("page_count"),
         rating_prediction=pred,
         incomplete_desks=record.get("desks_incomplete") or [],
+        verification_incomplete=review_incomplete(verdicts),
     )
     from greenlight.pipeline import finalize_record_after_verification
 

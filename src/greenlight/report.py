@@ -108,6 +108,7 @@ def build_report(
     page_count: float | None = None,
     rating_prediction: dict[str, Any] | None = None,
     incomplete_desks: list[str] | None = None,
+    verification_incomplete: bool = False,
 ) -> dict[str, Any]:
     """Assemble and validate the Report object. Flags must already be verified.
 
@@ -118,7 +119,9 @@ def build_report(
     Vertex outage that fails every verification open scored 100/100 while the
     counts below still listed the blockers."""
     counts = {sev: sum(f["severity"] == sev for f in flags) for sev in SEVERITIES}
-    verification_degraded = any(f.get("verification_unavailable") for f in flags)
+    verification_degraded = verification_incomplete or any(
+        f.get("verification_unavailable") for f in flags
+    )
     by_agent: dict[str, int] = {}
     for f in flags:
         by_agent[f["agent"]] = by_agent.get(f["agent"], 0) + 1

@@ -46,6 +46,7 @@ from greenlight.agents import (  # noqa: E402
     triage,
     verification,
 )
+from greenlight.agents.evidence_review import review_incomplete  # noqa: E402
 from greenlight.agents.verification import apply_verdicts  # noqa: E402
 from greenlight.costing import accumulate_usage as _accumulate_usage  # noqa: E402
 from greenlight.costing import usage_cost_usd as _usage_cost_usd  # noqa: E402
@@ -838,6 +839,7 @@ async def run(  # noqa: PLR0912, PLR0915 - one linear run sequence, deliberately
         page_count=page_count,
         rating_prediction=state.get("rating_prediction"),
         incomplete_desks=incomplete,
+        verification_incomplete=review_incomplete(verdicts),
     )
 
     with contextlib.suppress(Exception):

@@ -217,7 +217,7 @@ def score_label(score: Any, verification_degraded: bool) -> str:
     incomplete desk, and the paper artifact must say which."""
     if score is None:
         return (
-            "WITHHELD (verification unavailable)"
+            "WITHHELD (verification incomplete)"
             if verification_degraded
             else "WITHHELD (analysis incomplete)"
         )
@@ -330,7 +330,7 @@ def onesheet_pdf(record: dict[str, Any]) -> bytes:
     y -= 0.35 * inch
     verdict = (
         (
-            "Score withheld — verification unavailable"
+            "Score withheld — verification incomplete"
             if rep.get("verification_degraded")
             else "Score withheld — analysis incomplete"
         )

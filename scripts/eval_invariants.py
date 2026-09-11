@@ -148,6 +148,26 @@ def shared_invariants(  # noqa: PLR0912, PLR0915 - a flat checklist, deliberatel
         f"{len(all_ids)} ids, {len(set(all_ids))} distinct",
     )
     verdicts = r.get("verdicts") or {}
+    unresolved_reviews = {
+        fid
+        for fid, v in verdicts.items()
+        if ":" not in fid and isinstance(v, dict) and v.get("evidence_review_unresolved")
+    }
+    check(
+        "invariant: unresolved evidence repairs do not render as findings",
+        not (unresolved_reviews & kept_ids),
+        str(sorted(unresolved_reviews & kept_ids)),
+    )
+    check(
+        "invariant: unresolved evidence repairs withhold the score",
+        not unresolved_reviews
+        or (
+            rep.get("greenlight_score") is None
+            and not rep.get("dimension_scores")
+            and bool(rep.get("verification_degraded"))
+        ),
+        str(sorted(unresolved_reviews)),
+    )
     verdict_ids = {str(k).split(":")[0] for k in verdicts}
     check(
         f"verification: ran on every kept flag, rejection rate <= {round(rejection_cap * 100)}%",

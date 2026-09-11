@@ -1262,6 +1262,9 @@ function renderReport(record) {
   // verifier that could not run. Requiring desks_incomplete here meant a
   // verifier-degraded run fell through to the numeric branch.
   const withheld = rep.greenlight_score == null;
+  const evidenceUnresolved = Object.entries(record.verdicts || {}).some(
+    ([id, v]) => !id.includes(":") && v?.evidence_review_unresolved
+  );
   const score = withheld ? "—" : (rep.greenlight_score ?? "—");
   const blockers = counts.BLOCKER || 0;
   const tone = withheld || blockers > 0 || score < 40 ? "bad" : score < 75 ? "mid" : "good";
@@ -1292,7 +1295,7 @@ function renderReport(record) {
   const meta = el("div", "score-meta");
   const verdict = withheld
     ? rep.verification_degraded
-      ? "Score withheld — verification unavailable"
+      ? "Score withheld — verification incomplete"
       : "Score withheld — analysis incomplete"
     : blockers > 0
       ? `Not cleared — ${blockers} blocker${blockers === 1 ? "" : "s"}`
@@ -1306,7 +1309,10 @@ function renderReport(record) {
       "score-caveat",
       withheld
         ? rep.verification_degraded
-          ? "The independent verifier could not run for at least one finding, so those " +
+          ? evidenceUnresolved
+            ? "Some claims or remedies could not be corrected and independently verified. " +
+              "They remain open questions for review; their removal must not raise the score."
+            : "The independent verifier could not run for at least one finding, so those " +
             "findings are unverified and the number is withheld: an unverified analysis " +
             "must never score like a verified one."
           : "A desk returned no dispositions of its own, so the number is withheld: fewer " +
@@ -1316,7 +1322,8 @@ function renderReport(record) {
           "compare drafts by findings, not by small score moves."
     )
   );
-  if (withheld && rep.verification_degraded && !IS_CASE) {
+  if (withheld && rep.verification_degraded && !IS_CASE &&
+      (record.flags || []).some((f) => f.verification_unavailable)) {
     // A transient verifier failure should cost a 30-second retry, never a full
     // paid re-run — retry ONLY the unverified findings and recompute the score.
     const retry = el("button", "btn btn-secondary", "Retry verification — free, ~30s");
@@ -1380,6 +1387,13 @@ function renderReport(record) {
     meta.appendChild(c);
   }
   meta.appendChild(el("span", "est-note", "Cost figures are estimates, not quotes."));
+  const unknownCosts = (record.flags || []).filter((f) =>
+    !f.verification_unavailable && f.remedy?.est_cost_usd == null
+  ).length;
+  if (unknownCosts) {
+    meta.appendChild(el("span", "est-note",
+      `${unknownCosts} finding(s) have no cost estimate; totals cover estimated remedies only.`));
+  }
   head.appendChild(meta);
 
   const dims = rep.dimension_scores;

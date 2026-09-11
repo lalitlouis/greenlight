@@ -107,7 +107,7 @@ def test_reverify_invalid_or_unavailable_response_does_not_count_as_verified(ver
     assert rec["report"]["greenlight_score"] is None
 
 
-def test_call_verifier_censored_fallback_caps_at_partial():
+def test_call_verifier_censored_fallback_stays_unresolved():
     """A prompt the platform filter blocks retries with the scene text withheld
     and judges the premise only — capped at PARTIAL, never full SUPPORTED
     without the script-fact check. Both-blocked fails open with the filter
@@ -145,8 +145,9 @@ def test_call_verifier_censored_fallback_caps_at_partial():
     }
     ok = '{"verdict": "SUPPORTED", "reason": "premise holds", "failure_mode": "none"}'
     v = asyncio.run(call_verifier(_Client([_Res(None, blocked=True), _Res(ok)]), flag, "ctx", ""))
-    assert v["verdict"] == "PARTIAL" and v["content_filtered"]
-    assert "content filter" in v["reason"]
+    assert v["verdict"] == "UNSUPPORTED" and v["evidence_review_unresolved"]
+    assert v["evidence_review"]["before"]["content_filtered"]
+    assert "blocked" in v["reason"]
 
     v2 = asyncio.run(
         call_verifier(_Client([_Res(None, blocked=True), _Res(None, blocked=True)]), flag, "c", "")

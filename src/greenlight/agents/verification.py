@@ -6,7 +6,7 @@ run (see docs/TECH_SPEC.md). Each verifier sees the claim and its citations — 
 the desk's reasoning — and answers one question: does this source support this claim?
 
 - SUPPORTED    flag stands
-- PARTIAL      flag stands at its filed severity, marked partially supported
+- PARTIAL      one correction + independent check; failed repairs remain unresolved
 - UNSUPPORTED  flag is dropped and logged; it never reaches the report
 
 Rejected-flag count is a metric we watch: if it is always zero, the verifier is
@@ -28,6 +28,15 @@ from google.genai import types
 from pydantic import BaseModel
 
 from greenlight.agents.evidence import PRODUCTION_EVIDENCE, RATINGS_EVIDENCE
+from greenlight.agents.evidence_review import (
+    CLAIM_CHECK_INSTRUCTIONS,
+    ClaimCheck,
+    checked_verdict,
+    corrected_flag,
+    flag_fingerprint,
+    repair_partial,
+    unresolved_verdict,
+)
 from greenlight.models import FLASH_MODEL
 from greenlight.tools.toolbelt import DESKS
 
@@ -82,7 +91,7 @@ def _candidate_blocked(res: Any) -> bool:
     return False
 
 
-async def call_verifier(
+async def _call_verifier_once(
     client: Any, flag: dict[str, Any], script_context: str, search_results: str
 ) -> dict[str, Any]:
     """One verification attempt, block-aware. Raises on transport failure or an
@@ -92,7 +101,7 @@ async def call_verifier(
         contents=_blinded_prompt(flag, script_context, search_results),
         config=types.GenerateContentConfig(
             response_mime_type="application/json",
-            response_schema=Verdict,
+            response_schema=EvidenceVerdict,
             temperature=0.0,
         ),
     )
@@ -125,8 +134,28 @@ async def call_verifier(
             "failure_mode": v.failure_mode,
             "content_filtered": True,
         }
-    v = Verdict.model_validate_json(res.text)
-    return {"verdict": v.verdict, "reason": v.reason, "failure_mode": v.failure_mode}
+    v = EvidenceVerdict.model_validate_json(res.text)
+    return checked_verdict(v.model_dump(), flag)
+
+
+async def call_verifier(
+    client: Any, flag: dict[str, Any], script_context: str, search_results: str
+) -> dict[str, Any]:
+    """Audit material clauses, repair once, and independently check the replacement.
+
+    Shared by the panel, salvage and targeted retry. No path can promote a
+    known partially supported compound claim without checking its corrected text.
+    """
+    verdict = await _call_verifier_once(client, flag, script_context, search_results)
+    production_issue = any(
+        c.get("basis") == "production" and c.get("status") != "SUPPORTED"
+        for c in verdict.get("claim_checks", [])
+    )
+    if not verdict.get("fail_open") and (verdict["verdict"] == "PARTIAL" or production_issue):
+        return await repair_partial(
+            client, flag, script_context, search_results, verdict, _call_verifier_once
+        )
+    return verdict
 
 
 SEVERITY_ORDER = ["BLOCKER", "HIGH", "MEDIUM", "LOW", "FYI"]
@@ -138,6 +167,10 @@ class Verdict(BaseModel):
     failure_mode: Literal[
         "none", "script_misstatement", "premise_unsupported", "citation_offtopic"
     ] = "none"
+
+
+class EvidenceVerdict(Verdict):
+    claim_checks: list[ClaimCheck]
 
 
 class _RatingReconcile(BaseModel):
@@ -154,6 +187,8 @@ VERIFIER_PROMPT = (
     PRODUCTION_EVIDENCE
     + "\n"
     + RATINGS_EVIDENCE
+    + "\n"
+    + CLAIM_CHECK_INSTRUCTIONS
     + "\n"
     + """\
 You are an independent citation verifier for a screenplay clearance report. You are shown one
@@ -503,7 +538,7 @@ def _apply_overturns(
     overturned: list[tuple[str, str, str]] = []
     for f in flags:
         v = verdicts.get(f["flag_id"])
-        if not v or v.get("verdict") != "UNSUPPORTED":
+        if not v or v.get("verdict") != "UNSUPPORTED" or v.get("evidence_review_unresolved"):
             continue
         reason = str(v.get("reason") or "")
         hit = _overturned_by_script(reason, state)
@@ -1040,9 +1075,10 @@ def _blinded_prompt(flag: dict[str, Any], script_context: str, search_results: s
 def apply_verdicts(
     flags: list[dict[str, Any]], verdicts: dict[str, dict[str, Any]]
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
-    """Pure function: (surviving flags, rejected flags). PARTIAL keeps the filed
-    severity and marks the finding "[partially supported]" (a citation-confidence
-    marker, never a severity cap — run-3 decision); UNSUPPORTED drops the flag.
+    """Apply verdicts and checked corrections. Legacy PARTIAL verdicts keep the
+    filed severity and marker; live PARTIAL verdicts are repaired by call_verifier
+    first. UNSUPPORTED drops the flag. Invalid correction bindings update the
+    verdict map to unresolved so callers cannot silently compute a score.
     Missing or invalid verdicts retain the finding as explicitly unverified,
     withholding the report score just like a verifier transport failure."""
     kept: list[dict[str, Any]] = []
@@ -1061,6 +1097,16 @@ def apply_verdicts(
                 marked_flag["verification_blocked"] = True
             kept.append(marked_flag)
             continue
+        if v.get("correction"):
+            try:
+                if v.get("correction_input") != flag_fingerprint(flag):
+                    raise ValueError("repair does not match the reviewed input")
+                if v["verdict"] != "SUPPORTED":
+                    raise ValueError("repair has no positive independent verdict")
+                flag = corrected_flag(flag, v["correction"])  # noqa: PLW2901 - local replacement
+            except ValueError as exc:
+                v = unresolved_verdict(v, str(exc))
+                verdicts[flag["flag_id"]] = v
         if v["verdict"] == "SUPPORTED":
             kept.append(flag)
             continue
@@ -1087,7 +1133,9 @@ def apply_verdicts(
                     **flag,
                     "rejection_reason": v["reason"],
                     "failure_mode": v.get("failure_mode", "none"),
-                    "recoverable": recoverable and not flag.get("resourced"),
+                    "recoverable": recoverable
+                    and not flag.get("resourced")
+                    and not v.get("evidence_review_unresolved"),
                 }
             )
     return kept, rejected

@@ -86,10 +86,21 @@ Every filed flag fans out to an independent verifier that receives **the claim a
 but not the desk's reasoning**, and answers one question: does this source actually support this
 claim?
 
-- `SUPPORTED` — flag stands.
-- `PARTIAL` — flag stands, marked "partially supported." A citation-confidence marker only —
-  it has not capped severity since 2026-08-29 (a blank-fire stunt had sorted below a location fee).
+- `SUPPORTED` — flag stands only after material claims in finding, remedy and severity
+  have been checked. A failed clause overrides an inconsistent positive overall label.
+- `PARTIAL` — live verification attempts one correction of the finding AND remedy, then
+  independently verifies the replacement against the same scene text and citations.
+  Only a fully supported replacement renders. A repair failure becomes an open question
+  and withholds the score. Legacy saved reports may still carry the earlier
+  "partially supported" marker; they are not retroactively repaired.
 - `UNSUPPORTED` — flag is dropped and logged. It never reaches the report.
+
+The repair preserves identity, citations and coordinates, reviews severity rather than
+automatically capping it, and clears cost/schedule estimates tied to the old remedy.
+Claim checks and before/after repair evidence live in verdict metadata; public schemas
+are unchanged. The same bounded check/repair/check path serves live fan-out, salvage and
+targeted verification retry. Failed repairs do not enter another recovery loop. Production
+facts (casting, jurisdiction, effects method) cannot be inferred from fictional events.
 
 Withholding the desk's reasoning is deliberate: a verifier shown the argument tends to ratify it.
 
