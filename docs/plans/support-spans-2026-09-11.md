@@ -114,3 +114,28 @@ stage-level latency evidence before expanding runtime budgets or retrying broadl
 Attribution-fix offline validation: 477 tests passed (39 focused evidence-review
 tests), `make check` and `git diff --check` passed. No paid validation of the new
 attribution input has run; its semantic effect remains unmeasured.
+
+### Attribution and latency follow-up plan
+
+On the next authorized continuation, run five isolated entailment probes using the
+unchanged source excerpts: conditional minor entitlement with attribution (positive),
+license/firearm substitution (negative), required dry run (negative), walk-through
+and/or dry run preserved (positive), and a scope heading used to demand a permit and
+specialist (negative). Expectations are frozen in
+`fixtures/accuracy/entailment_cases_20260911.json` before the live calls, never sent to
+the model, and are developer-authored excerpt checks rather than expert accuracy labels.
+One call per case; malformed/unavailable responses cannot count as correct rejection.
+
+Also allow one instrumented F3008 continuation reusing its returned first PARTIAL
+audit, at most three calls (correction, independent audit, independent entailment).
+This adds latency evidence instead of repeating its successful audit. Keep the
+240-second per-case deadline and runtime settings. The two follow-up checks together
+are at most eight additional logical calls, expected captured usage below $0.15;
+transport retries and interrupted charges remain outside that estimate. This new
+five-case diagnostic set is additional to the earlier three-finding gate budget.
+
+The evaluation harness now saves a sidecar after each call starts and finishes,
+including response schema/stage, elapsed time, input length/hash and returned/error/
+cancelled status. Timings measure client-observed calls including SDK retries, not
+server inference time; do not infer a server root cause from them. Runtime code,
+timeouts and schemas are unchanged. No broader paid run until the results are reviewed.

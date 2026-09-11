@@ -1,0 +1,51 @@
+{
+  "source_run_sha256": "23039b4a86b11fd353921fe20b03f9dbb2b8c7cb2903844a9abb541e675f8c5f",
+  "label_scope": "Developer-authored excerpt entailment expectations. Not legal advice, expert labels, or a representative accuracy benchmark.",
+  "cases": [
+    {
+      "case_id": "minor_attribution",
+      "source_flag_id": "F3006",
+      "citation_number": 2,
+      "claim": "If a minor performer is cast and asked to perform hazardous or questionable activities, SAG-AFTRA safety guidance entitles the minor to have the activity performed by a qualified stunt person.",
+      "quote": "If a minor is asked to perform any activity that seems hazardous or questionable, the minor is entitled to have the activity performed by a qualified stunt person.",
+      "expected_entailed": true,
+      "label_reason": "Conditional entitlement is stated in the excerpt; the citation title and official URL identify SAG-AFTRA."
+    },
+    {
+      "case_id": "licenses_not_firearms",
+      "source_flag_id": "F3008",
+      "citation_number": 3,
+      "claim": "Under CSATF guidance, all firearms capable of discharging blanks must be maintained and controlled exclusively by a licensed Property Master or certified Armorer.",
+      "quote": "or someone designated by the Property Master (i.e., the Armorer). The Property Master \u00b7 must maintain all necessary, firearms/ammunition/blanks-related licenses, permits, and",
+      "expected_entailed": false,
+      "label_reason": "Excerpt concerns maintaining licenses, not exclusive control of firearms."
+    },
+    {
+      "case_id": "dry_run_required",
+      "source_flag_id": "F3008",
+      "citation_number": 1,
+      "claim": "CSATF guidance requires a dry run before any firearm is used.",
+      "quote": "### Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues. This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d with the Property Master, designated Production",
+      "expected_entailed": false,
+      "label_reason": "Walk-through and/or dry run permits a walk-through without a dry run."
+    },
+    {
+      "case_id": "walkthrough_or_dry_run",
+      "source_flag_id": "F3008",
+      "citation_number": 1,
+      "claim": "Before any firearm is used, CSATF guidance calls for a safety meeting with all involved personnel, including an on-site walk-through and/or dry run.",
+      "quote": "### Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues. This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d with the Property Master, designated Production",
+      "expected_entailed": true,
+      "label_reason": "Preserves stated trigger, personnel and alternatives; does not invent the truncated participant list."
+    },
+    {
+      "case_id": "scope_not_permit",
+      "source_flag_id": "F3002",
+      "citation_number": 1,
+      "claim": "CSATF guidance requires a local fire marshal permit and a licensed pyrotechnician for pyrotechnic special effects.",
+      "quote": "INDUSTRY WIDE LABOR-MANAGEMENT SAFETY COMMITTEE **SAFETY BULLETIN #16 RECOMMENDED GUIDELINES FOR SAFETY WITH PYROTECHNIC SPECIAL EFFECTS This Safety Bulletin applies to pyrotechnic materials such as explosives and flammable or combustible liquids, gases and solids when used to create pyrotechnic special effects.** ALL USE, HANDLING, STORAGE AND",
+      "expected_entailed": false,
+      "label_reason": "The scope/title excerpt supplies neither a permit requirement nor a specialist requirement."
+    }
+  ]
+}
