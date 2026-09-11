@@ -27,6 +27,7 @@ from google.adk.events import Event, EventActions
 from google.genai import types
 from pydantic import BaseModel
 
+from greenlight.agents.evidence import PRODUCTION_EVIDENCE, RATINGS_EVIDENCE
 from greenlight.models import FLASH_MODEL
 from greenlight.tools.toolbelt import DESKS
 
@@ -149,7 +150,12 @@ class _CorrectedFlag(BaseModel):
     remedy: str
 
 
-VERIFIER_PROMPT = """\
+VERIFIER_PROMPT = (
+    PRODUCTION_EVIDENCE
+    + "\n"
+    + RATINGS_EVIDENCE
+    + "\n"
+    + """\
 You are an independent citation verifier for a screenplay clearance report. You are shown one
 claim, the screenplay scenes it anchors to, and the source excerpts cited for it — never the
 desk's reasoning. You did not write the claim and you owe its author nothing.
@@ -269,6 +275,7 @@ FULL-SCRIPT SEARCH (mechanical, whole screenplay):
 CITED EXCERPTS:
 {citations}
 """
+)
 
 # 28k chars ≈ a dozen full script pages. Run 6 proved the window problem
 # recurses at every aperture: run 4 was cross-scene (fixed), run 6 was WITHIN

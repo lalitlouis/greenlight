@@ -138,16 +138,30 @@ def language_census(scenes: list[dict[str, Any]]) -> dict[str, list[tuple[str, s
 _SPOKEN_F_RE = re.compile(r"\b(?:mother)?fuck\w*", re.IGNORECASE)
 
 
+def f_word_inventory(scenes: list[dict[str, Any]]) -> dict[str, list[tuple[str, str]]]:
+    """Locate F-word tokens by parsed channel, without inferring audibility.
+
+    Dialogue includes V.O./O.S. cues. Action may contain visible text, audio
+    directions or nonspoken prose; the desk must inspect those occurrences.
+    This inventory changes no parsing, coordinates, or existing census totals.
+    """
+    out: dict[str, list[tuple[str, str]]] = {"dialogue": [], "action": []}
+    for sc in scenes:
+        sid = sc.get("scene_id", "")
+        for match in _SPOKEN_F_RE.finditer(str(sc.get("action") or "")):
+            out["action"].append((match.group(0), sid))
+        for dialogue in sc.get("dialogue") or []:
+            for match in _SPOKEN_F_RE.finditer(str(dialogue.get("line") or "")):
+                out["dialogue"].append((match.group(0), sid))
+    return out
+
+
 def spoken_f_words(scenes: list[dict[str, Any]]) -> int:
     """How many times the harsher sexually-derived expletive is SPOKEN — dialogue
     lines only, never action text. The MPA rules key a rating outcome on this
     count (one use → at least PG-13; more than one → R absent a special vote), and
     a count is a script fact the regex never forgets."""
-    n = 0
-    for sc in scenes:
-        for d in sc.get("dialogue") or []:
-            n += len(_SPOKEN_F_RE.findall(str(d.get("line") or "")))
-    return n
+    return len(f_word_inventory(scenes)["dialogue"])
 
 
 def census_work_items(census: dict[str, list[tuple[str, str]]]) -> dict[str, list[dict[str, Any]]]:
@@ -168,11 +182,11 @@ def census_work_items(census: dict[str, list[tuple[str, str]]]) -> dict[str, lis
                 "entity_id": "",
                 "work_item_id": "RB-CENSUS-LANGUAGE",
                 "note": (
-                    "DETERMINISTIC LANGUAGE CENSUS (regex, exact — do not recount): "
+                    "DETERMINISTIC WHOLE-TEXT LANGUAGE INVENTORY (dialogue AND action): "
                     + "; ".join(x for x in (_fmt(prof), _fmt(slurs)) if x)
-                    + ". Your language finding must account for EVERY occurrence listed "
-                    "(spoken vs lyric noted per scene); a remedy that leaves listed "
-                    "occurrences unaddressed does not reach the target rating."
+                    + ". Review EVERY occurrence, distinguishing dialogue, visible text, "
+                    "audio described in action, and nonspoken description. This is not a "
+                    "spoken count or proof that a cut is necessary."
                 ),
             }
         )
@@ -182,9 +196,11 @@ def census_work_items(census: dict[str, list[tuple[str, str]]]) -> dict[str, lis
                 "entity_id": "",
                 "work_item_id": "TC-CENSUS-SLURS",
                 "note": (
-                    "DETERMINISTIC SLUR CENSUS (regex, exact): "
+                    "DETERMINISTIC WHOLE-TEXT SLUR INVENTORY (dialogue AND action): "
                     + _fmt(slurs)
-                    + ". Disposition territory exposure (UAE/CN broadcast and cut "
+                    + ". Read scenes to establish whether the audience hears/sees it; "
+                    "nonspoken description is not audience content. Disposition territory exposure "
+                    "(UAE/CN broadcast and cut "
                     "standards) for each listed occurrence."
                 ),
             }
@@ -485,11 +501,14 @@ def build_agent():
             ]
             new_tri["territory_censor"] = list(tri.get("territory_censor") or []) + new_axis
             census = language_census(scenes)
-            spoken_f = spoken_f_words(scenes)
+            inventory = f_word_inventory(scenes)
+            spoken_f = len(inventory["dialogue"])
             census_items = census_work_items(census)
             for it in census_items.get("ratings_board") or []:
                 it["note"] += (
                     f" Spoken F-word count (dialogue only, deterministic): {spoken_f}. "
+                    f"Dialogue token/scene pairs: {inventory['dialogue']}. "
+                    f"Action token/scene pairs (not counted as dialogue): {inventory['action']}. "
                     "The MPA rules on that count are citable via rating_rules('expletive')."
                 )
             for desk_name, extra in census_items.items():
@@ -532,6 +551,7 @@ def build_agent():
                             "profanity": census["profanity"],
                             "slurs": census["slurs"],
                             "spoken_f_words": spoken_f,
+                            "f_word_inventory": inventory,
                         },
                         "triage": new_tri,
                         "prepass_added": len(items),

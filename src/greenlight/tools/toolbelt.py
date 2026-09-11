@@ -2139,9 +2139,10 @@ _NORMATIVE_RULE_RE = re.compile(
 def _normative_rule_problem(
     category: str, finding: str, remedy_detail: str, cits: list[dict[str, Any]] | None = None
 ) -> str | None:
-    """A rating finding may not assert a normative CARA rule — the corpus measures
-    what CARA DID, not what it requires, so a rule claim is unverifiable by
-    construction and poisons the marginal cited beside it."""
+    """Rule-shaped rating claims need the MPA's quoted rule, not just a marginal.
+    This gate checks that a rules excerpt is present; the verifier must still
+    establish that the operative provision and its exceptions support the claim.
+    """
     if not category.startswith("rating_"):
         return None
     hit = _NORMATIVE_RULE_RE.search(finding or "") or _NORMATIVE_RULE_RE.search(remedy_detail or "")

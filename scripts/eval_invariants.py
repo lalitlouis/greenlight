@@ -262,7 +262,7 @@ def shared_invariants(  # noqa: PLR0912, PLR0915 - a flat checklist, deliberatel
         if m:
             rule_shaped.append(("adjudication", m.group(0)[:40]))
     check(
-        "invariant: no rating finding asserts a normative CARA rule",
+        "invariant: rating rule claims quote the MPA rules",
         not rule_shaped,
         f"rule-shaped rating claims: {rule_shaped[:4]}",
     )

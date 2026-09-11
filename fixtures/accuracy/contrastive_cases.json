@@ -1,0 +1,118 @@
+{
+  "version": 1,
+  "review_status": "engineering expectations; independent professional review pending",
+  "cases": [
+    {
+      "id": "permit_dialogue_missing", "pair": "fictional_permit", "desk": "safety_underwriter",
+      "script": "Title: Permit Missing\n\nEXT. QUARRY - NIGHT\n\nA fuel-filled boat burns on the lake. LENA watches from another boat.\n\nLENA\nWe never got a permit for this.\n",
+      "dialogue_f_words": 0, "action_f_words": 0,
+      "required_categories": ["stunt_pyro"], "forbidden_categories": [],
+      "review_expectations": ["Flag the depicted fire/water staging hazard.", "Fictional missing-permit dialogue does not establish production illegality or a BLOCKER.", "Actual filming location, permits and effects method remain unknown."]
+    },
+    {
+      "id": "permit_dialogue_present", "pair": "fictional_permit", "desk": "safety_underwriter",
+      "script": "Title: Permit Present\n\nEXT. QUARRY - NIGHT\n\nA fuel-filled boat burns on the lake. LENA watches from another boat.\n\nLENA\nWe got a permit for this.\n",
+      "dialogue_f_words": 0, "action_f_words": 0,
+      "required_categories": ["stunt_pyro"], "forbidden_categories": [],
+      "review_expectations": ["The same depicted fire/water hazard remains.", "Fictional permission does not clear the production or remove the staging concern."]
+    },
+    {
+      "id": "fall_recounted", "pair": "fall_presentation", "desk": "safety_underwriter",
+      "script": "Title: Old Fall\n\nINT. KITCHEN - DAY\n\nLENA and MARCO sit at the table.\n\nLENA\nYears ago I fell off a roof into the canal.\n\nMARCO\nThat sounds awful.\n",
+      "dialogue_f_words": 0, "action_f_words": 0,
+      "required_categories": [], "forbidden_categories": ["stunt_fall", "stunt_water"],
+      "review_expectations": ["There is no fall or water stunt to stage in this scene.", "Do not invent a flashback."]
+    },
+    {
+      "id": "fall_depicted", "pair": "fall_presentation", "desk": "safety_underwriter",
+      "script": "Title: Roof Fall\n\nEXT. ROOF - DAY\n\nLENA loses her footing and falls from the roof onto the pavement below.\n",
+      "dialogue_f_words": 0, "action_f_words": 0,
+      "required_categories": ["stunt_fall"], "forbidden_categories": [],
+      "review_expectations": ["Flag the depicted fall and recommend specialist staging.", "Do not claim the actor must perform a literal unprotected fall."]
+    },
+    {
+      "id": "child_character_water", "pair": "character_age", "desk": "safety_underwriter",
+      "script": "Title: Child Character\n\nEXT. RIVER - NIGHT\n\nRILEY, 10, stands in a rocking skiff and dives into the rushing river.\n",
+      "dialogue_f_words": 0, "action_f_words": 0,
+      "required_categories": ["stunt_water"], "forbidden_categories": [],
+      "review_expectations": ["Keep the water hazard and child-character casting/staging question.", "Actual performer age is unknown; minor employment rules must be conditional.", "Do not claim confirmed illegal night work or an exposed child performer."]
+    },
+    {
+      "id": "student_character_water", "pair": "character_age", "desk": "safety_underwriter",
+      "script": "Title: Student Character\n\nEXT. RIVER - NIGHT\n\nRILEY, a college student, stands in a rocking skiff and dives into the rushing river.\n",
+      "dialogue_f_words": 0, "action_f_words": 0,
+      "required_categories": ["stunt_water"], "forbidden_categories": ["minor_safety"],
+      "review_expectations": ["Keep the water hazard.", "Neither character nor performer minority is established by college student."]
+    },
+    {
+      "id": "gunshot_recounted", "pair": "gunshot_presentation", "desk": "safety_underwriter",
+      "script": "Title: Remembered Shot\n\nINT. OFFICE - DAY\n\nMARCO reads an old letter.\n\nMARCO\nI heard a gunshot years ago.\n",
+      "dialogue_f_words": 0, "action_f_words": 0,
+      "required_categories": [], "forbidden_categories": ["firearms_blanks"],
+      "review_expectations": ["No firearm appears or fires in the scene; do not require an armorer for the anecdote."]
+    },
+    {
+      "id": "gunshot_depicted", "pair": "gunshot_presentation", "desk": "safety_underwriter",
+      "script": "Title: Depicted Shot\n\nEXT. YARD - DAY\n\nMARCO raises a pistol and fires into the air.\n",
+      "dialogue_f_words": 0, "action_f_words": 0,
+      "required_categories": ["firearms_blanks"], "forbidden_categories": [],
+      "review_expectations": ["Plan safe firearm/prop/effects staging.", "The category name does not prove blanks are used; neither blanks nor live ammunition are confirmed production methods."]
+    },
+    {
+      "id": "profanity_action", "pair": "language_channel", "desk": "ratings_board",
+      "script": "Title: Action Prose\n\nINT. KITCHEN - DAY\n\nA fucking mess. Another fucking disaster. LENA silently closes the cupboard.\n",
+      "dialogue_f_words": 0, "action_f_words": 2,
+      "required_categories": [], "forbidden_categories": ["rating_language"],
+      "review_expectations": ["These two tokens are nonspoken description, not heard or visible profanity.", "No expletive-count R floor should be applied."]
+    },
+    {
+      "id": "profanity_dialogue", "pair": "language_channel", "desk": "ratings_board",
+      "script": "Title: Spoken Words\n\nINT. KITCHEN - DAY\n\nLENA closes the cupboard.\n\nLENA\nA fucking mess. Another fucking disaster.\n",
+      "dialogue_f_words": 2, "action_f_words": 0,
+      "required_categories": ["rating_language"], "forbidden_categories": [],
+      "review_expectations": ["Count two dialogue uses and cite the operative MPA rule if asserting it.", "Preserve its special-vote exception and do not guarantee a final rating."]
+    },
+    {
+      "id": "profanity_voiceover", "pair": "voiceover_visible_text", "desk": "ratings_board",
+      "script": "Title: Voiceover Words\n\nEXT. STREET - DAY\n\nLENA walks alone.\n\nLENA (V.O.)\nFuck this. Fuck that.\n",
+      "dialogue_f_words": 2, "action_f_words": 0,
+      "required_categories": ["rating_language"], "forbidden_categories": [],
+      "review_expectations": ["Voiceover is dialogue even when the speaker is not visibly talking."]
+    },
+    {
+      "id": "profanity_visible_text", "pair": "voiceover_visible_text", "desk": "ratings_board",
+      "script": "Title: Visible Words\n\nEXT. STREET - DAY\n\nA sign fills the frame: FUCK THIS. FUCK THAT. No one speaks.\n",
+      "dialogue_f_words": 0, "action_f_words": 2,
+      "required_categories": [], "forbidden_categories": [],
+      "review_expectations": ["Visible profanity merits contextual review but is not two spoken uses.", "Do not discard it as non-audience content merely because it occurs in action text."]
+    },
+    {
+      "id": "drugs_discussed", "pair": "drug_presentation", "desk": "ratings_board",
+      "script": "Title: Drug Reference\n\nINT. KITCHEN - DAY\n\nLENA drinks water.\n\nLENA\nMy brother used cocaine years ago. He stopped.\n",
+      "dialogue_f_words": 0, "action_f_words": 0,
+      "required_categories": [], "forbidden_categories": [],
+      "review_expectations": ["Classify a drug reference, not on-screen cocaine use.", "Do not automatically choose thematic elements or a guaranteed PG-13 rating."]
+    },
+    {
+      "id": "drugs_depicted", "pair": "drug_presentation", "desk": "ratings_board",
+      "script": "Title: Drug Depiction\n\nINT. KITCHEN - DAY\n\nLENA snorts a line of cocaine from the table.\n",
+      "dialogue_f_words": 0, "action_f_words": 0,
+      "required_categories": ["rating_drug_use"], "forbidden_categories": [],
+      "review_expectations": ["Establish depicted drug use; do not downgrade the event to a verbal reference.", "Choose intensity from the scene and evidence, not a preset exact rating."]
+    },
+    {
+      "id": "music_mentioned", "pair": "music_use", "desk": "clearance_counsel",
+      "script": "Title: Song Mention\n\nINT. KITCHEN - DAY\n\nLENA and MARCO sit in silence.\n\nLENA\nHave you heard Jeff Buckley's recording of Hallelujah?\n\nMARCO\nYes.\n",
+      "dialogue_f_words": 0, "action_f_words": 0,
+      "required_categories": [], "forbidden_categories": ["sync_license", "master_use_license"],
+      "review_expectations": ["A title/artist reference does not establish playback or performance.", "Do not invent quoted lyrics or soundtrack use."]
+    },
+    {
+      "id": "music_played", "pair": "music_use", "desk": "clearance_counsel",
+      "script": "Title: Song Playback\n\nINT. KITCHEN - DAY\n\nLENA starts Jeff Buckley's recording of Hallelujah. The recording plays audibly throughout the scene.\n",
+      "dialogue_f_words": 0, "action_f_words": 0,
+      "required_categories": ["sync_license", "master_use_license"], "forbidden_categories": [],
+      "review_expectations": ["Identify composition and recording concerns separately with evidence.", "Do not invent a current owner or assert the production already lacks a licence."]
+    }
+  ]
+}

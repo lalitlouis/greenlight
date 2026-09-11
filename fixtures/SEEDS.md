@@ -50,9 +50,9 @@ The climax stacks the underwriter's four worst words: **fire, water, night, mino
 
 | Seed | Where | Expected |
 |---|---|---|
-| Vessel burn with diesel accelerant + homemade mortar display | Boatyard prep, climax | BLOCKER as written: licensed marine pyro coordinator, fire marshal permit, safety boats. The script *says* there is no permit — Reyes states it on the page. |
+| Vessel burn with diesel accelerant + homemade mortar display | Boatyard prep, climax | HIGH staging concern: investigate marine/pyro coordination, permits and safety boats. Reyes's fictional permit dialogue does not establish the production's permit status; never use it alone to assert illegality or a BLOCKER. |
 | Night water stunt — Mara dives from a skiff near a burning vessel | Climax | Stunt coordinator, water-safety divers, night-water protocols. |
-| Sam (10) in a skiff, at night, near open flame; stands up mid-scene | Climax | Minor on water at night: work-hour limits, guardian, dedicated safety. "Sit DOWN" is on the page — the hazard is textual. |
+| Sam (10) in a skiff, at night, near open flame; stands up mid-scene | Climax | Child-character staging concern: confirm casting and safe separation/doubles/effects. Minor-performer work rules apply conditionally on actual casting and jurisdiction; character age does not prove performer age. |
 | Barnacle the dog aboard the skiff | Climax | Animal handler, AHA supervision. |
 | Three-volley rifle salute | Churchyard | Blank-firing weapons: armorer, notifications, hearing protection for the minor who is explicitly present covering his ears. |
 | Bar-fight glass break + blood | The wake | Breakaway glass, minor stunt flag. |
