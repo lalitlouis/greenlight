@@ -1,5 +1,7 @@
 """Deterministic report assembly and verdict application. No API calls."""
 
+import pytest
+
 from greenlight.agents.verification import apply_verdicts
 from greenlight.report import build_report, greenlight_score
 
@@ -63,6 +65,10 @@ def test_apply_verdicts_supported_and_missing_keep_flag():
     flags = [make_flag("F101", "HIGH"), make_flag("F102", "HIGH")]
     kept, rejected = apply_verdicts(flags, {"F101": {"verdict": "SUPPORTED", "reason": "ok"}})
     assert len(kept) == 2 and not rejected  # missing verdict fails open
+    assert not kept[0].get("verification_unavailable")
+    assert kept[1]["verification_unavailable"] is True
+    assert "verification_unavailable" not in flags[1]  # do not mutate filed evidence
+    assert build_report("X", kept)["greenlight_score"] is None
 
 
 def test_apply_verdicts_partial_marks_without_capping():
@@ -308,13 +314,23 @@ def test_failed_verifier_withholds_the_score_instead_of_inflating_it():
 # --- B5 / B13: verification must not misreport its own output ---------------
 
 
-def test_missing_verdicts_alone_do_not_mark_flags():
-    """Pins the underlying behaviour the salvage fix compensates for."""
-    from greenlight.agents.verification import apply_verdicts
-
-    kept, rejected = apply_verdicts([make_flag("F101", "HIGH")], {})
+@pytest.mark.parametrize(
+    "verdict",
+    [None, {}, {"verdict": "SUPPORTED"}, {"verdict": "UNKNOWN", "reason": "bad output"}],
+)
+def test_missing_or_invalid_verdict_withholds_score_and_estimates(verdict):
+    """Missing evidence must not certify a report or contribute verified costs."""
+    flag = make_flag("F101", "HIGH", cost=[1000, 5000], days=10)
+    kept, rejected = apply_verdicts([flag], {"F101": verdict})
     assert kept and not rejected
-    assert "verification_unavailable" not in kept[0], "unmarked is the trap"
+    assert kept[0]["verification_unavailable"] is True
+    report = build_report("X", kept)
+    assert report["greenlight_score"] is None
+    assert report["dimension_scores"] == {}
+    assert report["verification_degraded"] is True
+    assert report["est_clearance_cost_usd"] is None
+    assert report["est_added_days"] is None
+    assert report["counts"]["HIGH"] == 1
 
 
 def test_failopen_verdicts_mark_every_flag_and_withhold_the_score():

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import pytest
+
 from greenlight.revision import diff_records
 
 
@@ -25,7 +27,7 @@ def _flag(fid, eid, cat, sev="MEDIUM", finding="x"):
     }
 
 
-def test_diff_classifies_new_resolved_unchanged_and_severity():
+def test_diff_classifies_new_not_reproduced_unchanged_and_severity():
     old = _rec(
         [
             _flag("F101", "E001", "sync_license"),
@@ -46,11 +48,12 @@ def test_diff_classifies_new_resolved_unchanged_and_severity():
     )
     d = diff_records(old, new)
     assert [f["flag_id"] for f in d["new"]] == ["F203"]
-    assert [f["flag_id"] for f in d["resolved"]] == ["F102"]
+    assert [f["flag_id"] for f in d["not_reproduced"]] == ["F102"]
+    assert d["resolved"] == []
     assert [f["flag_id"] for f in d["unchanged"]] == ["F201"]
     assert d["severity_changed"][0]["was_severity"] == "HIGH"
     assert d["drafts"]["same_text"] is False
-    assert "1 new, 1 resolved" in d["summary"]
+    assert "1 new, 1 not reproduced" in d["summary"]
 
 
 def test_same_text_flagged_as_variance_not_changes():
@@ -58,6 +61,20 @@ def test_same_text_flagged_as_variance_not_changes():
     d = diff_records(r, _rec([_flag("F2", "E9", "c")], {"E9": "Thing"}, sha="same"))
     assert d["drafts"]["same_text"] is True
     assert len(d["unchanged"]) == 1
+
+
+@pytest.mark.parametrize("sha", ["same", "edited", ""])
+@pytest.mark.parametrize("failed", [False, True])
+def test_disappearing_finding_is_never_evidence_of_resolution(sha, failed):
+    old = _rec([_flag("F1", "E1", "sync_license")], {"E1": "A song"}, sha="same")
+    new = _rec([], {}, sha=sha)
+    if failed:
+        new["error"] = "Verifier unavailable"
+        new["desks_incomplete"] = ["clearance_counsel"]
+    diff = diff_records(old, new)
+    assert diff["resolved"] == []
+    assert [f["flag_id"] for f in diff["not_reproduced"]] == ["F1"]
+    assert "resolved" not in diff["summary"]
 
 
 def test_inserted_scene_does_not_flip_an_unchanged_entityless_finding():

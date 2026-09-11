@@ -1600,21 +1600,28 @@ function renderReport(record) {
   const rev = window.__REVISION__;
   if (rev && rev.diff) {
     const d = rev.diff;
+    // Older records called disappearing findings resolved without evidence.
+    // Render their legacy list conservatively too; records stay immutable.
+    const notReproduced = d.not_reproduced || d.resolved || [];
     const sec = el("div", "section-head");
     sec.id = "sec-revision";
-    sec.appendChild(el("h2", null, "What changed since your last draft"));
+    sec.appendChild(el("h2", null, "What changed since your previous analysis"));
     root.insertBefore(sec, root.firstChild ? root.firstChild.nextSibling : null);
     const card = el("div", "card rev-card");
     const line = el("p", "rev-summary",
       `Compared with ${rev.of_title || "your previous analysis"}: `);
     line.appendChild(el("b", "rev-new", `${d.new.length} new`));
     line.appendChild(document.createTextNode(" · "));
-    line.appendChild(el("b", "rev-resolved", `${d.resolved.length} resolved`));
+    line.appendChild(el("b", "rev-unverified", `${notReproduced.length} not reproduced`));
     line.appendChild(document.createTextNode(` · ${d.unchanged.length} unchanged`));
     if (d.severity_changed.length) {
       line.appendChild(document.createTextNode(` · ${d.severity_changed.length} severity change${d.severity_changed.length === 1 ? "" : "s"}`));
     }
     card.appendChild(line);
+    if (notReproduced.length) {
+      card.appendChild(el("p", "rev-note",
+        "Findings not reproduced in this analysis still need review. Their absence does not establish that the issue was fixed or cleared."));
+    }
     if (d.drafts && d.drafts.same_text) {
       card.appendChild(el("p", "rev-note",
         "Note: this draft's text is identical to the previous one — differences below reflect run-to-run variance, not script changes."));
@@ -1626,9 +1633,9 @@ function renderReport(record) {
       li.appendChild(document.createTextNode(`${f.flag_id} · ${prettyCat(f.category)} (${f.severity}) — ${f.finding.slice(0, 120)}`));
       list.appendChild(li);
     }
-    for (const f of d.resolved) {
-      const li = el("li", "rev-item-resolved");
-      li.appendChild(el("b", null, "RESOLVED "));
+    for (const f of notReproduced) {
+      const li = el("li", "rev-item-unverified");
+      li.appendChild(el("b", null, "NOT REPRODUCED "));
       li.appendChild(document.createTextNode(`${f.category ? prettyCat(f.category) : ""} — ${f.finding.slice(0, 120)}`));
       list.appendChild(li);
     }

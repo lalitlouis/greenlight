@@ -3,6 +3,8 @@ recompute the score — never a full paid re-run for a transient."""
 
 import asyncio
 
+import pytest
+
 from greenlight.reverify import reverify_record
 
 SCRIPT = "Title: T\n\nINT. A - DAY\n\nSTU\nHello there, friend.\n"
@@ -81,6 +83,28 @@ def test_reverify_keeps_honest_withhold_when_still_down():
     assert s["still_unavailable"] == 2 and s["verified"] == 0
     assert sum(1 for f in rec["flags"] if f.get("verification_unavailable")) == 2
     assert rec["report"]["greenlight_score"] is None  # withheld stands
+
+
+@pytest.mark.parametrize(
+    "verdict",
+    [
+        None,
+        {},
+        {"verdict": "UNKNOWN", "reason": "bad output"},
+        {"verdict": "SUPPORTED", "reason": "unavailable", "fail_open": True},
+    ],
+)
+def test_reverify_invalid_or_unavailable_response_does_not_count_as_verified(verdict):
+    rec = _record()
+
+    async def verify(flag):
+        return verdict
+
+    summary = asyncio.run(reverify_record(rec, SCRIPT, verify=verify))
+    assert summary["verified"] == 0
+    assert summary["still_unavailable"] == 2
+    assert sum(bool(f.get("verification_unavailable")) for f in rec["flags"]) == 2
+    assert rec["report"]["greenlight_score"] is None
 
 
 def test_call_verifier_censored_fallback_caps_at_partial():

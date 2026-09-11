@@ -23,6 +23,7 @@ from greenlight import parser
 from greenlight import report as report_mod
 from greenlight.agents.verification import (
     _RETRY_HTTP,
+    Verdict,
     _apply_overturns,
     _scene_context,
     _scrub_cutlist,
@@ -103,6 +104,7 @@ async def reverify_record(  # noqa: PLR0912, PLR0915 - the live panel's post-ver
         fid = f["flag_id"]
         try:
             v = await verify(f)
+            Verdict.model_validate(v)
         except Exception:
             summary["still_unavailable"] += 1
             continue  # still down — the honest unverified state stands
@@ -147,7 +149,10 @@ async def reverify_record(  # noqa: PLR0912, PLR0915 - the live panel's post-ver
         else:
             # PARTIAL marking / severity semantics from apply_verdicts
             flags = [kept_one[0] if x["flag_id"] == fid else x for x in flags]
-            summary["verified"] += 1
+            if kept_one[0].get("verification_unavailable"):
+                summary["still_unavailable"] += 1
+            else:
+                summary["verified"] += 1
 
     record["flags"] = flags
     record["verdicts"] = verdicts

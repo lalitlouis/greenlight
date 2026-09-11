@@ -26,13 +26,19 @@ def _slim(flag: dict[str, Any]) -> dict[str, Any]:
 
 
 def diff_records(old: dict[str, Any], new: dict[str, Any]) -> dict[str, Any]:
-    """-> {new, resolved, unchanged, severity_changed, drafts} — the delta a
-    producer reads before anything else on a revision's report."""
+    """Compare findings without treating disappearance as clearance.
+
+    `not_reproduced` holds prior findings absent from the new analysis, even
+    when the draft changed: an edit alone does not establish a remedy. Keep
+    the legacy `resolved` list empty until an evidence-backed resolution
+    workflow exists. Both identical-text reruns and partial runs can miss a
+    previously filed issue.
+    """
     match = match_runs([old, new])
     old_flags = {f["flag_id"]: f for f in old.get("flags", [])}
     new_flags = {f["flag_id"]: f for f in new.get("flags", [])}
 
-    added, resolved, unchanged, severity_changed = [], [], [], []
+    added, not_reproduced, unchanged, severity_changed = [], [], [], []
     for g in match["groups"]:
         in_old, in_new = g["runs"][0], g["runs"][1]
         ids = {fid.split(":", 1)[0]: fid.split(":", 1)[1] for fid in g["flag_ids"]}
@@ -41,7 +47,7 @@ def diff_records(old: dict[str, Any], new: dict[str, Any]) -> dict[str, Any]:
         if in_new and not in_old and nf:
             added.append(_slim(nf))
         elif in_old and not in_new and of:
-            resolved.append(_slim(of))
+            not_reproduced.append(_slim(of))
         elif of and nf:
             if of.get("severity") != nf.get("severity"):
                 severity_changed.append({**_slim(nf), "was_severity": of.get("severity")})
@@ -51,7 +57,8 @@ def diff_records(old: dict[str, Any], new: dict[str, Any]) -> dict[str, Any]:
     old_draft, new_draft = old.get("draft") or {}, new.get("draft") or {}
     return {
         "new": added,
-        "resolved": resolved,
+        "resolved": [],
+        "not_reproduced": not_reproduced,
         "unchanged": unchanged,
         "severity_changed": severity_changed,
         "fuzzy_merges": match["fuzzy_merges"],
@@ -62,7 +69,7 @@ def diff_records(old: dict[str, Any], new: dict[str, Any]) -> dict[str, Any]:
             and old_draft.get("sha256") == new_draft.get("sha256"),
         },
         "summary": (
-            f"{len(added)} new, {len(resolved)} resolved, "
+            f"{len(added)} new, {len(not_reproduced)} not reproduced, "
             f"{len(unchanged)} unchanged, {len(severity_changed)} severity changes"
         ),
     }

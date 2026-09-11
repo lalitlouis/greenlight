@@ -1036,22 +1036,26 @@ def apply_verdicts(
     """Pure function: (surviving flags, rejected flags). PARTIAL keeps the filed
     severity and marks the finding "[partially supported]" (a citation-confidence
     marker, never a severity cap — run-3 decision); UNSUPPORTED drops the flag.
-    Missing verdicts keep the flag untouched — a broken verifier must not
-    silently delete findings."""
+    Missing or invalid verdicts retain the finding as explicitly unverified,
+    withholding the report score just like a verifier transport failure."""
     kept: list[dict[str, Any]] = []
     rejected: list[dict[str, Any]] = []
     for flag in flags:
         v = verdicts.get(flag["flag_id"])
-        if v is None or v["verdict"] == "SUPPORTED":
-            if v is not None and v.get("fail_open"):
-                # the verifier never ran — the flag survives, but it must not
-                # impersonate a verified finding on any surface
-                marked_flag = {**flag, "verification_unavailable": True}
-                if v.get("content_filtered"):
-                    marked_flag["verification_blocked"] = True
-                kept.append(marked_flag)
-            else:
-                kept.append(flag)
+        try:
+            Verdict.model_validate(v)
+        except ValueError:
+            v = None
+        if v is None or v.get("fail_open"):
+            # Retain the concern without treating unavailable evidence as a
+            # positive verdict. Use the same marker on every execution path.
+            marked_flag = {**flag, "verification_unavailable": True}
+            if v is not None and v.get("content_filtered"):
+                marked_flag["verification_blocked"] = True
+            kept.append(marked_flag)
+            continue
+        if v["verdict"] == "SUPPORTED":
+            kept.append(flag)
             continue
         if v["verdict"] == "PARTIAL":
             marked = dict(flag)
