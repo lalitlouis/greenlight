@@ -173,3 +173,97 @@ staged-gag methods and rule-of-thumb estimates while separately requiring retrie
 support. Resolve that instruction conflict and use the existing `fetch_page` capability
 when excerpts are only scope headings; measure whether fewer unsupported filings and
 repairs result. This is still proposed work, not part of these verifier changes.
+
+The coverage fix passed the full 490-test suite; after extracting its helper for lint,
+all 52 focused evaluation/evidence tests and `make check` passed. Build `51d7e82`
+then completed the [skipped firearms review](../../fixtures/cassettes/firearms_entailment_20260911.json)
+in 7.62 seconds and one call, $0.0049 captured-usage estimate. Both source clauses
+passed; manual comparison found no remaining unsupported specific duty. The changed
+remedy keeps costs/days null. All eight reserved follow-up calls returned usage;
+their summed estimates total $0.0362 (not invoice reconciliation).
+
+With the selected evidence checks complete, start the previously planned single full
+SLACK TIDE gate at build `51d7e82` on September 11, 08:47:37 UTC, normal runtime
+settings and live integrations, maximum 40 minutes. This is the first full run of the
+support-span changes. Keep the original September 11 demo as the comparison record.
+Do not equate fewer findings or a withheld score with better accuracy; manually inspect
+supported hazards, lost findings, open questions and citation entailment after the
+unchanged mechanical evaluation. The full-run cost field still omits direct verification
+calls and cannot be reported as total spend.
+
+### Full gate: failed, do not release
+
+[Saved full run](../../runs/run_20260911_015915.json), build `51d7e82`, completed
+without a runtime error in 697.9 seconds (11m38s), versus 396.9 seconds for the saved
+earlier baseline. That is one run of each build, not a controlled latency benchmark.
+The normal model/desk budgets were unchanged. Live search and corpus queries ran.
+The recorded $1.4026 cost excludes direct verification calls and is **not total spend**.
+
+The unchanged eval passed **45/54** checks. It missed seven clearance seeds, the China
+supernatural seed and the rejection-rate ceiling: **6 kept, 16 rejected from 22 filed**.
+All nine filed clearance findings were rejected. This is a release-blocking completeness
+failure. Do not weaken the seed checks or call a smaller report more accurate.
+
+The deterministic safety behavior worked: 16 sourcing failures became explicit open
+questions; failed corrections do not render; the score and all dimension scores were
+withheld (`greenlight_score=null`, `dimension_scores={}`, `verification_degraded=true`).
+Costs and days are unknown, not stale estimates. Counts, scenes, comparables and
+entity dispositions passed the unchanged invariants. Three ratings findings, vessel
+fire, firearms and UAE drug-content concern survived. These six findings still require
+the following product-quality qualifications; model approval alone is insufficient.
+
+Manual findings:
+
+- **Severity review bug (fixed after this run):** F1001's first auditor voluntarily
+  supplied a citation for HIGH. The source-only reviewer then rejected HIGH because
+  the word was absent from the excerpt. Severity must stay with the script-aware
+  judgement layer even when a model attaches a receipt. The secondary batch now
+  excludes severity by field, not merely by missing receipts. This fixes that spurious
+  reason, not the independent problems in F1001's remedy.
+- **Irrelevant remedies:** five of six kept findings use the exact production-input
+  inquiry, including all three ratings findings and the UAE finding. Casting and
+  shooting method do not address a target-rating edit or distribution restrictions.
+  The inquiry escape hatch preserved text at the expense of usefulness. All six
+  actions are NO_ACTION, even the firearms remedy prescribing safety work. This is
+  not a satisfactory producer-facing result.
+- **Mixed evidence and derived edits:** F3002 combines depicted hazards with source
+  rules; the source-only reviewer complains the excerpts do not establish the depicted
+  fire/watercraft. F1001 is criticized for naming JAWS/TV playback, which are script
+  facts, alongside an independently questionable replacement prescription. F4001's
+  proposed edit is rejected because the source describes an exception without literally
+  instructing an editor to use it. These need separate evaluation of script facts,
+  external rules and proposed edits, not a blanket exemption for planning advice.
+- **Genuine retrieval gaps:** F1010's source says Columbia is part of Sony but does
+  not connect that label to the selected recording; F1005's short excerpt says
+  Whitmill sued over a design without identifying it as a tattoo; F3005 ends at
+  'all aspects of'. The ownership link and operative clauses must be retrieved.
+- **Receipt formatting failures:** F3006's requested support span omits a literal
+  `###` embedded in the supplied excerpt; F1008 omits Markdown links/emphasis.
+  Exact receipt validation rejects both before semantic review. Any future fix must
+  map a display-text match back to an exact raw-source span, preserving words and
+  negations; do not accept free paraphrases or rewrite the saved excerpt.
+- **Conditional remedy loss:** F3007's corrected approval requirement drops the
+  condition that an animal is in/around water, extending it to any water scene.
+  That rejection is substantively warranted by the supplied excerpt.
+
+Next batch, before any further full run:
+
+1. Define separate evidence handling for a source rule, verified script application,
+   proposed content edit and unknown input. Keep specific production duties and
+   ownership assertions strictly sourced. Replace the universal production inquiry
+   with desk-relevant, useful uncertainty handling; align action labels with the prose.
+2. Add positive/negative cached cases from these clearance and ratings failures,
+   including edits that remove a cited trigger without claiming guaranteed clearance
+   or a guaranteed rating. Include mixed script/source assertions and severity receipts.
+3. Resolve conflicting safety instructions and retrieve full operative passages using
+   the existing Parallel tools. Diagnose formatting-only receipts independently of
+   semantic support. Meter direct verifier work before claiming a total run cost.
+4. Batch those changes, run free checks, then a small pre-registered live comparison.
+   A new full gate is justified only after it preserves supported findings **and**
+   rejects unsupported prescriptions with useful remedies. No deployment from this run.
+
+Final free checks after the severity fix: **491 tests passed**, `make check` and
+`git diff --check` passed. The new full record has the same screenplay SHA-256 and
+identical parsed scenes as the baseline. All 16 rejected ids occur in its open
+questions. No further paid check or full run followed the failed gate; the severity
+exclusion has offline regression coverage but has not been live-tested separately.

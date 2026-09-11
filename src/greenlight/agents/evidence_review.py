@@ -282,7 +282,10 @@ async def check_entailment(client, flag, verdict):
         return verdict  # already goes to correction/rejection; do not spend twice
     claims = []
     for index, check in enumerate(verdict["claim_checks"]):
-        if not check["support_spans"]:
+        # Severity is a judgement made by the script-aware audit. A model may
+        # attach receipts voluntarily; that must not turn HIGH into a purported
+        # verbatim source assertion for this intentionally script-blind review.
+        if check["field"] == "severity" or not check["support_spans"]:
             continue  # script facts, severity or the fixed production inquiry
         claims.append(
             {

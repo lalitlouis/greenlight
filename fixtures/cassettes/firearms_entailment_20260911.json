@@ -1,0 +1,184 @@
+{
+  "source_run": "runs/run_20260911_demo.json",
+  "source_run_sha256": "23039b4a86b11fd353921fe20b03f9dbb2b8c7cb2903844a9abb541e675f8c5f",
+  "source_build": "local:6438de520c929a576aac0824dd7d730788c1819e",
+  "evaluated_build": "51d7e826eb4a0926ba3b7cdefe32546e9d58d706",
+  "model": "gemini-3.7-flash",
+  "elapsed_s": 7.66,
+  "calls": 1,
+  "responses_with_usage": 1,
+  "calls_without_returned_usage": 0,
+  "resumed_from": null,
+  "rechecked_correction_from": "fixtures/cassettes/firearms_timing_20260911.json",
+  "entailment_cases": null,
+  "entailment_cases_sha256": null,
+  "attempts": [
+    {
+      "flag_id": "F3008",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 3623,
+      "input_sha256": "be6673bb1ab7e8a37d9747a1c572c283e64597c910327e937a59e44bd834e4a7",
+      "usage_available": true,
+      "elapsed_s": 7.62
+    }
+  ],
+  "gemini_usage": {
+    "flash": {
+      "prompt": 948,
+      "cached": 0,
+      "output": 1115
+    }
+  },
+  "estimated_cost_usd": 0.0049,
+  "manual_review": {
+    "status": "Narrowed saved firearms candidate passes completed secondary review",
+    "evidence": "Both source clauses were independently accepted. Manual comparison confirms conditional practical use, safety meeting with walk-through or dry run, and the stated PPE provision. No exclusive firearms custody, unsupported acoustic perimeter or alternative staging prescription remains. Costs and days stay null.",
+    "scope": "This completes the stage skipped by a deterministic coverage defect using the identical saved correction and its returned audit. It is not a fresh desk run or a repeatability measurement. The original source report is unchanged.",
+    "timing": "7.62 seconds in the single returned call; $0.0049 captured-usage estimate. This follow-up used all eight reserved logical calls across the five probes and the firearms continuation, with all eight returning usage ($0.0362 summed estimates)."
+  },
+  "results": [
+    {
+      "flag_id": "F3008",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "reason": "The script accurately depicts an honor guard firing a three-volley rifle salute in close proximity to mourners in Scene S005. The cited CSATF Safety Bulletin #1 excerpts directly establish both the requirement for a safety meeting with an on-site walk-through or dry run prior to firearm use and the requirement for PPE (including eye, hearing protection, or shields) for personnel in close proximity or in the line of fire. The remedy uses the standardized inquiry text.",
+        "failure_mode": "none",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "Scene S005 depicts an honor guard firing a three-volley rifle salute in close proximity to attendees.",
+            "basis": "script",
+            "status": "SUPPORTED",
+            "reason": "In Scene S005, an honor guard stands in front of the mourners and fires three volleys with rifles.",
+            "citation_numbers": [],
+            "support_spans": []
+          },
+          {
+            "field": "finding",
+            "quote": "If practical firearms or blanks are utilized on set, CSATF Safety Bulletin #1 specifies that production must conduct a safety meeting with all involved personnel including an on-site walk-through or dry run before any firearm is used",
+            "basis": "source",
+            "status": "SUPPORTED",
+            "reason": "CSATF Safety Bulletin #1 explicitly mandates a safety meeting with all involved personnel including an on-site walk-through and/or dry run before any firearm is used.",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues. This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d"
+              }
+            ]
+          },
+          {
+            "field": "finding",
+            "quote": "protective shields, eye and hearing protection, or other appropriate personal protective equipment shall be issued and utilized by all personnel in close proximity or directly in the line of fire.",
+            "basis": "source",
+            "status": "SUPPORTED",
+            "reason": "CSATF Safety Bulletin #1 item 11 mandates protective shields, eye and hearing protection, or other PPE for all personnel in close proximity or directly in the line of fire.",
+            "citation_numbers": [
+              2
+            ],
+            "support_spans": [
+              {
+                "citation_number": 2,
+                "quote": "Protective shields, eye, and hearing protection or other appropriate Personal Protective Equipment (PPE) shall be issued and utilized by all personnel in close proximity and/or directly in the line of fire."
+              }
+            ]
+          },
+          {
+            "field": "remedy",
+            "quote": "Confirm casting, filming jurisdiction and staging method before specifying production requirements.",
+            "basis": "inquiry",
+            "status": "SUPPORTED",
+            "reason": "Standardized inquiry text for requesting unconfirmed production parameters before specifying mandates.",
+            "citation_numbers": [],
+            "support_spans": []
+          },
+          {
+            "field": "severity",
+            "quote": "MEDIUM",
+            "basis": "planning",
+            "status": "SUPPORTED",
+            "reason": "Medium severity is standard and justified for conditional safety planning around practical blank fire and firearms safety protocols.",
+            "citation_numbers": [],
+            "support_spans": []
+          }
+        ],
+        "support_span_version": 1,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 1,
+              "entailed": true,
+              "reason": "The quote directly supports that production must conduct a safety meeting with all involved personnel including an on-site walk-through and/or dry run before any firearm is used, and the source attribution identifies the document as CSATF Safety Bulletin #1."
+            },
+            {
+              "check_index": 2,
+              "entailed": true,
+              "reason": "The quote directly confirms that protective shields, eye and hearing protection, or other PPE must be issued and utilized by all personnel in close proximity or directly in the line of fire."
+            }
+          ]
+        }
+      },
+      "kept": [
+        {
+          "flag_id": "F3008",
+          "agent": "safety_underwriter",
+          "scene_ids": [
+            "S002",
+            "S005"
+          ],
+          "entity_id": null,
+          "severity": "MEDIUM",
+          "category": "firearms_blanks",
+          "finding": "Scene S005 depicts an honor guard firing a three-volley rifle salute in close proximity to attendees. If practical firearms or blanks are utilized on set, CSATF Safety Bulletin #1 specifies that production must conduct a safety meeting with all involved personnel including an on-site walk-through or dry run before any firearm is used, and that protective shields, eye and hearing protection, or other appropriate personal protective equipment shall be issued and utilized by all personnel in close proximity or directly in the line of fire.",
+          "citations": [
+            {
+              "source_type": "web",
+              "title": "CSATF Safety Bulletin #1: Recommendations For The Use Of Firearms, Blanks, And Dummy Rounds",
+              "url": "https://www.csatf.org/01_safety_bltn_firearms",
+              "excerpt": "### Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues. This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d with the Property Master, designated Production",
+              "retrieved_at": null,
+              "via": "parallel_search"
+            },
+            {
+              "source_type": "web",
+              "title": "CSATF Safety Bulletin #1: Recommendations for Safety with Firearms and Use of Blanks",
+              "url": "https://www.csatf.org/wp-content/uploads/2018/05/01FIREARMS.pdf",
+              "excerpt": "11. Protective shields, eye, and hearing protection or other appropriate Personal Protective Equipment (PPE) shall be issued and utilized by all personnel in close proximity and/or directly in the line of fire.",
+              "retrieved_at": null,
+              "via": "parallel_search"
+            },
+            {
+              "source_type": "web",
+              "title": "CSATF Safety Bulletins & Fact Sheets",
+              "url": "https://www.csatf.org/all_safety_bulletins-procedural_guidelines-info_fact_sheets/",
+              "excerpt": "or someone designated by the Property Master (i.e., the Armorer). The Property Master \u00b7 must maintain all necessary, firearms/ammunition/blanks-related licenses, permits, and",
+              "retrieved_at": null,
+              "via": "parallel_search"
+            }
+          ],
+          "remedy": {
+            "action": "NO_ACTION",
+            "detail": "Confirm casting, filming jurisdiction and staging method before specifying production requirements.",
+            "est_cost_usd": null,
+            "est_added_days": null
+          },
+          "confidence": 0.95
+        }
+      ],
+      "dropped": [],
+      "verification_incomplete": false,
+      "elapsed_s": 7.64
+    }
+  ],
+  "responses": [
+    {
+      "flag_id": "F3008",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 1,\n      \"entailed\": true,\n      \"reason\": \"The quote directly supports that production must conduct a safety meeting with all involved personnel including an on-site walk-through and/or dry run before any firearm is used, and the source attribution identifies the document as CSATF Safety Bulletin #1.\"\n    },\n    {\n      \"check_index\": 2,\n      \"entailed\": true,\n      \"reason\": \"The quote directly confirms that protective shields, eye and hearing protection, or other PPE must be issued and utilized by all personnel in close proximity or directly in the line of fire.\"\n    }\n  ]\n}",
+      "usage_available": true
+    }
+  ]
+}

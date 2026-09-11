@@ -104,16 +104,20 @@ facts (casting, jurisdiction, effects method) cannot be inferred from fictional 
 
 External claims and remedy prescriptions, including planning advice, require exact
 support spans inside their own cited excerpts. Missing/non-verbatim receipts and
-unreviewed material text trigger correction. Receipts prove provenance, not entailment:
+unreviewed material text trigger correction.
 Coverage permits only an internal `and` or `and that` join between audited clauses;
 omitted conditions, negation and prescriptions still fail. This keeps atomic claim
 quoting from rejecting a finding over a connective alone.
-a separate blinded batch checks each claim against its spans and excerpt context,
+
+Receipts prove provenance, not entailment. A separate blinded batch checks each claim
+against its spans and excerpt context,
 without the screenplay, severity or earlier reasoning. Citation title and URL accompany
 each excerpt solely for source attribution; metadata cannot supply an operative rule
 or establish applicability. This avoids rejecting a correctly attributed quotation
 merely because its body does not repeat the publisher's name. It must return every claim
-exactly once; an incomplete secondary review withholds the score. A supported first
+exactly once; an incomplete secondary review withholds the score. Severity judgement
+stays in the script-aware audit even if the auditor supplies optional severity receipts;
+severity never enters the source-only batch. A supported first
 pass costs two logical calls; a repair is bounded at five total. No new searches are
 introduced. Only the fixed production-input inquiry may omit external support in a
 remedy. Quote/receipt metadata is session/record-internal; frozen schemas are unchanged.

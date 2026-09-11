@@ -79,7 +79,7 @@ def entailment(verdict):
         "checks": [
             {"check_index": i, "entailed": True, "reason": "Scripted positive review."}
             for i, check in enumerate(verdict["claim_checks"])
-            if check["support_spans"]
+            if check["support_spans"] and check["field"] != "severity"
         ]
     }
 
@@ -473,6 +473,24 @@ def test_saved_firearms_audit_can_leave_an_additive_join_between_atomic_checks()
     assert not any("omitted" in c["reason"] for c in result["claim_checks"])
     # Semantic review still has to approve both source clauses independently.
     assert sum(bool(c["support_spans"]) for c in result["claim_checks"]) == 2
+
+
+def test_optional_severity_receipt_does_not_request_literal_source_support_for_high():
+    flag = saved_flag()
+    verdict = audit(flag)
+    severity = verdict["claim_checks"][2]
+    severity.update(
+        basis="source",
+        citation_numbers=[1],
+        support_spans=[{"citation_number": 1, "quote": flag["citations"][0]["excerpt"]}],
+    )
+    verdict = checked_verdict(verdict, flag)
+    client = Client(entailment(verdict))
+    result = asyncio.run(check_entailment(client, flag, verdict))
+    payload = json.loads(client.calls[0]["contents"].split("\n\n", 1)[1])
+    assert {c["check_index"] for c in payload} == {0, 1}
+    assert result["claim_checks"][2] == verdict["claim_checks"][2]
+    assert result["verdict"] == "SUPPORTED"
 
 
 @pytest.mark.parametrize(

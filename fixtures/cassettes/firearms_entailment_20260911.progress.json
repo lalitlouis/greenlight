@@ -1,0 +1,11 @@
+[
+  {
+    "flag_id": "F3008",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 3623,
+    "input_sha256": "be6673bb1ab7e8a37d9747a1c572c283e64597c910327e937a59e44bd834e4a7",
+    "usage_available": true,
+    "elapsed_s": 7.62
+  }
+]
