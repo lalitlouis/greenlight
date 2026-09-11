@@ -1,0 +1,20 @@
+[
+  {
+    "flag_id": "F1001",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 8608,
+    "input_sha256": "7aafb1b8ab9c095c83f3d398d943816ea6cbae861e821aa226e4228696194a7f",
+    "usage_available": true,
+    "elapsed_s": 11.18
+  },
+  {
+    "flag_id": "F2001",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 7498,
+    "input_sha256": "bacb8e100f9b4491b7d183e7e663068e42f3bf492e9141a8dda1d0d0c9702147",
+    "usage_available": true,
+    "elapsed_s": 6.58
+  }
+]

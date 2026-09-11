@@ -10,6 +10,7 @@ from types import SimpleNamespace
 import pytest
 
 from greenlight.agents.evidence_review import EntailmentResult, check_entailment
+from greenlight.agents.verification import apply_verdicts
 
 ROOT = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location(
@@ -126,6 +127,30 @@ def test_skipped_application_review_reuses_unchanged_saved_candidate_and_audit(f
     assert candidate["remedy"]["detail"] == correction["remedy_detail"]
     assert candidate["remedy"]["est_cost_usd"] is None
     assert any(c["basis"] in {"application", "script_edit"} for c in verdict["claim_checks"])
+
+
+@pytest.mark.parametrize(
+    "verdict",
+    [
+        {"verdict": "PARTIAL", "reason": "one option is unsupported"},
+        {"verdict": "UNSUPPORTED", "reason": "unsupported rule"},
+        {"verdict": "SUPPORTED", "fail_open": True},
+        {"verdict": "SUPPORTED", "content_filtered": True},
+    ],
+)
+def test_negative_recheck_cannot_use_legacy_partial_acceptance(verdict):
+    record = json.loads((ROOT / "runs/run_20260911_015915.json").read_text())
+    flag = record["flags"][0]
+    finished = evaluator.finish_recheck(verdict)
+    assert finished["evidence_review_unresolved"]
+    assert finished["verdict"] == "UNSUPPORTED"
+    kept, dropped = apply_verdicts([flag], {flag["flag_id"]: finished})
+    assert not kept and not dropped[0]["recoverable"]
+
+
+def test_successful_recheck_keeps_the_reviewed_verdict():
+    verdict = {"verdict": "SUPPORTED", "reason": "Supported by evidence"}
+    assert evaluator.finish_recheck(verdict) is verdict
 
 
 @pytest.mark.parametrize("outcome", ["returned", "error", "cancelled"])

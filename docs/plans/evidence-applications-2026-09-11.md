@@ -105,3 +105,46 @@ reviews of the unchanged saved candidates. Source/script hashes, exact receipts 
 the absence of a completed prior secondary review are checked first. This is a
 continuation after deterministic fixes, not a second correction or a retry of a
 negative semantic judgement. Do not reword a candidate to make the test pass.
+
+The routing/context fixes passed 508 tests and `make check` before the continuation
+at build `b760f20`. Both skipped secondary reviews completed: 11.18 seconds for
+F1001, 6.58 seconds for F2001, two calls, $0.0112 captured-token estimate.
+
+- **F2001 supported:** the saved correction keeps the special-vote exception and
+  proposes cutting/replacing two of the three expletives if pursuing PG-13 without
+  relying on that vote. The exact dialogue receipts and cited count rule support this
+  conditional edit. It does not guarantee the film's final rating. This replaces the
+  irrelevant casting question with a useful ratings remedy.
+- **F1001 unresolved:** the reviewer approves the generic clip-license rule and the
+  catalog description, but rejects the missing connection between JAWS and the named
+  licensor. The suggested replacement removes the JAWS-specific trigger; it does not
+  establish permission for any selected replacement asset. The compound correction
+  must not render while its licensing branch is unsupported.
+
+An evaluation-only bug surfaced at this boundary: the recheck mode fed its raw PARTIAL
+into legacy `apply_verdicts`, which retained a partial finding and returned exit 0.
+The runtime `repair_partial` already rejects such incomplete corrections. The harness
+now uses `finish_recheck` to mirror that acceptance rule; regressions cover PARTIAL,
+UNSUPPORTED, fail-open and filtered responses, plus success. The original live artifact
+is preserved with this defect annotated. An offline replay of the corrected handling
+rejects F1001 with incomplete verification and retains F2001:
+
+- `fixtures/cassettes/evidence_application_final_20260911.json` (raw live behavior)
+- `fixtures/cassettes/evidence_application_handling_replay_20260911.json` (zero-call replay)
+
+This batch used **20 of 22** reserved logical calls. All returned usage; summed estimates
+are **$0.1000**, not invoice reconciliation. No additional model call, full screenplay
+run or deployment follows. The prior 45/54 full gate is still the release baseline.
+
+Next: retrieve the missing work-to-rightsholder links rather than infer them from a
+catalog or corporate affiliation; improve lossless receipt anchoring for Markdown;
+then test additional clearance repairs and the revised safety desk before a new full
+gate. The selected twelve-case success and one useful ratings repair do not establish
+overall clearance accuracy, repeatability or release readiness.
+
+Final free validation: **513 tests passed**, `make check`, JavaScript syntax and
+`git diff --check` passed. After the last equivalent expression change in the harness,
+its 14 focused tests passed again and the offline handling replay was confirmed
+against the final source hash. No further live run was started. The safety prompt
+change still needs a fresh desk evaluation; these targeted checks exercise verification,
+not new retrieval or the full desk workflow.

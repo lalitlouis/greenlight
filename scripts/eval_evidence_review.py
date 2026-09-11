@@ -31,6 +31,7 @@ from greenlight.agents.evidence_review import (
     corrected_flag,
     repair_partial,
     review_incomplete,
+    unresolved_verdict,
 )
 from greenlight.agents.verification import (
     _RETRY_HTTP,
@@ -210,6 +211,17 @@ def recheck_candidate(artifact, source_bytes, flag, script_context=""):
     return candidate, verdict
 
 
+def finish_recheck(verdict):
+    """Match repair_partial's acceptance rule; legacy PARTIAL must not render."""
+    if (
+        verdict.get("verdict") != "SUPPORTED"
+        or verdict.get("fail_open")
+        or verdict.get("content_filtered")
+    ):
+        return unresolved_verdict(verdict, "saved correction did not pass independent verification")
+    return verdict
+
+
 async def evaluate(args):  # noqa: PLR0915 - linear, bounded evaluation with resume/accounting
     from google import genai
 
@@ -278,6 +290,7 @@ async def evaluate(args):  # noqa: PLR0915 - linear, bounded evaluation with res
                     operation,
                     timeout=240,
                 )
+                verdict = finish_recheck(verdict) if rechecks else verdict
                 if probes:
                     checks = verdict.get("entailment_review", {}).get("checks", [])
                     actual = checks[0]["entailed"] if len(checks) == 1 else None
