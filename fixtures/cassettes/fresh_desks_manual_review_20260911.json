@@ -1,0 +1,43 @@
+{
+  "review_scope": "Developer manual evidence review, not professional clearance validation. Raw automated artifacts remain unchanged.",
+  "sources": [
+    {
+      "path": "fixtures/cassettes/fresh_clearance_20260911.json",
+      "sha256": "f96a2580fc01c85baa9ba4838e3ae6f173b8570ec891b220f00d25ffa350f1b4"
+    },
+    {
+      "path": "fixtures/cassettes/fresh_safety_20260911.json",
+      "sha256": "ddca289bd0e5eabeb9829e868ce5c2b5f8f419358e5ec21f574545732ffa6731"
+    },
+    {
+      "path": "fixtures/cassettes/fresh_clearance_review_20260911.json",
+      "sha256": "f3665866d72e79c9238f50a8aa136f452d3b2ae8f676ba359fde48dfd37caf4d"
+    },
+    {
+      "path": "fixtures/cassettes/fresh_safety_review_20260911.json",
+      "sha256": "e627ff60d437a05314a644cc1a636602a08e449e1960d3fcfce2970ad4f2fd74"
+    }
+  ],
+  "results": [
+    {
+      "case": "clearance_clip",
+      "manual_status": "FAIL",
+      "automated_verdict": "UNSUPPORTED",
+      "reason": "Desk invented owner link, talent obligations and prices. Repair retained the unsourced owner; independent verification correctly rejected the correction."
+    },
+    {
+      "case": "safety_climax",
+      "manual_status": "FAIL",
+      "automated_verdict": "SUPPORTED",
+      "false_approval": true,
+      "reason": "Corrected remedy extends a pyrotechnic rule to open flames through an OR branch and loses the explicit license applicability qualification. Script fireworks do not support the broader prescription."
+    }
+  ],
+  "gemini_returned_calls": 23,
+  "gemini_estimate_usd": 0.1602,
+  "parallel_units": {
+    "search": 3,
+    "extract": 2
+  },
+  "release_gate_passed": false
+}

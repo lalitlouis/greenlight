@@ -1,0 +1,1948 @@
+{
+  "kind": "isolated_desk_diagnostic",
+  "case": "clearance_clip",
+  "model": "gemini-3.7-flash",
+  "build": "b49ce03d59b168cf9f616d9e706c22a7b514f577",
+  "source_run_sha256": "10f75f0e509a7049ce45c4be1f87cb954588fdbe9ee76375a50a76bf5a3b7ef2",
+  "draft": {
+    "title": "SLACK TIDE",
+    "draft_date": "2026-08-24",
+    "revision_label": "",
+    "sha256": "634444b20de3d73acfaeda4bd89b44f8e62192103cf54302db16fd3304828bfb",
+    "bytes": 16008,
+    "pages": 9,
+    "scene_count": 12,
+    "scene_numbers": "generated"
+  },
+  "script_title": "SLACK TIDE",
+  "limits": {
+    "model_calls": 12,
+    "retrieval_calls": 4,
+    "deadline_s": 360,
+    "deep_research": false,
+    "durable_cache": false
+  },
+  "events": [
+    {
+      "model_version": "gemini-3.7-flash",
+      "content": {
+        "parts": [
+          {
+            "function_call": {
+              "id": "call_106763",
+              "args": {
+                "scene_id": "S002"
+              },
+              "name": "read_scene"
+            },
+            "thought_signature": "AY89a19Gol9DTg7zCkje-5AK1EoL08ejlFz5O99R9rw6Puf4vKP14ZwvVuPRROr0fc4Ts0mqVSwRdn9NKRRukrQCoWJ1VGdE_PfI4ueONUP58RgUv-iKcGis95xF--mhvbtAf1bck27Turl-JIDQmjnUgUa3MLd6oikquFZ-m72ewkq8OkI87t2gWIvFnFT-KbRcdbdUdVa08PCx-5Kn6fFAMREKmm4p3fqzbwejU1nFoB3Tb9ZoZ2x1Jvdq63nUgZd7Vis31ZpERyUE6JG_x2KReQJFaHDcXqVIEAy8ZWowAovpQVfAzNXlXgxb8oGDG52CTIU-kQLp6_LSMDufYLO_qnYRsl2Bb3pUzeEZVv8H2tgLSY2TIgR-AlzHB9lqeCoqecPkG_EY5ekWIwJeJQo6pFxiztc5qjlPfpDQ_obGnuw9DmAuEsZ_8CBU-_llznGUU-5GKkRl1RwNKPL8VXtrmRQX8t0sZnzGnVAmVwDWcMwgqkKbusa_rjy1azZ4by38RrPtv9npJCuJujeja3BIxHbnPZgD1Ghs5zVegUg8VbgDkfSIfWXMm9QQV_XV0W9HgJEfGrA2m4roZbuq0PMsNXjQ7A=="
+          }
+        ],
+        "role": "model"
+      },
+      "finish_reason": "STOP",
+      "usage_metadata": {
+        "candidates_token_count": 21,
+        "candidates_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 21
+          }
+        ],
+        "prompt_token_count": 11562,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 11562
+          }
+        ],
+        "thoughts_token_count": 132,
+        "total_token_count": 11715,
+        "traffic_type": "ON_DEMAND"
+      },
+      "invocation_id": "e-c2addaf5-3f93-4c79-a7e2-a05c796d4ee5",
+      "author": "clearance_counsel__b1",
+      "actions": {
+        "state_delta": {},
+        "artifact_delta": {},
+        "requested_auth_configs": {},
+        "requested_tool_confirmations": {}
+      },
+      "node_info": {
+        "path": ""
+      },
+      "long_running_tool_ids": [],
+      "id": "eb198c6b-8d74-4adc-8819-92b78080a51a",
+      "timestamp": 1789180003.479897
+    },
+    {
+      "content": {
+        "parts": [
+          {
+            "function_response": {
+              "id": "call_106763",
+              "name": "read_scene",
+              "response": {
+                "result": "INT. THE WHEELHOUSE - DAY\n\nA harbor bar that hasn't changed since the Carter administration and is proud of it. Buoys on the ceiling. A woodstove. The smell of beer and diesel and forty years of wet wool.\n\nOn the wall: a sun-bleached framed print of Edward Hopper's NIGHTHAWKS, hanging slightly crooked. Behind the register, thumbtacked and curling: a Polaroid of a younger ELI VOSS arm-wrestling BRUCE SPRINGSTEEN, both of them laughing, \"1988\" in ballpoint across the white strip. Beside it, framed: a front page of the Gloucester Daily Times -- \"BANNOCK CAPTAIN PULLS FOUR FROM NOR'EASTER.\"\n\nOn the corner TV, muted, an old VHS of JAWS is playing. The shark is winning.\n\nDANNY VOSS (34) stands behind the bar, not because he works there but because standing anywhere else feels wrong today. SAM (10) sits at the end of the bar doing serious damage to a cocoa, poured from a dented Thermos.\n\nCROW (60s, foul-weather bibs, a face like a chart of bad decisions) nurses a beer he transparently hates. Across his forearm, a full-rigged schooner tattoo in fading blue-black \u2014 Teddy Krane's design, inked at his Rockland parlor the summer the Margaret Rose launched \u2014 rides every pour like weather.\n\nCROW\nThirty years I drank whatever Eli stocked, out of loyalty. Coors Light. Tastes like a wet napkin. Man ran the best bar on this coast and drank the worst beer in America.\n\nDANNY\nHe liked that it was cheap.\n\nCROW\nHe liked that it annoyed me.\n\nThe door opens. Mara stands in it with a duffel bag. The room goes quiet the way only a small town can go quiet -- all at once, and politely.\n\nDANNY (CONT'D)\nYou came.\n\nMARA\nHe died.\n\nDANNY\nPeople have died before. You didn't come.\n\nA beat. Sam slides off his stool, crosses to Mara, and offers up the Thermos cup like a church collection.\n\nSAM\nAunt Mara. Want some? Dad made it with water, though. I'm supposed to say that first.\n\nMARA\n(taking the stool beside him)\nThen absolutely not.\n\nSam grins. Something in the room loosens a notch.\n\nHELEN FITCH (60s, funeral director, cardigan over steel) comes in from the back room carrying a manila envelope like it might go off.\n\nHELEN\nGood. You're both here. He left instructions. Notarized. Which, for Eli Voss, is close to a miracle.\n\nShe hands the envelope to Danny. He opens it, unfolds a single handwritten page, and reads.\n\nDANNY\n(reading)\n\"One. No church-basement sandwiches. Real food. If there is a casserole in that building I will know.\"\n\nCROW\nFair.\n\nDANNY\n(reading)\n\"Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.\"\n\nHELEN\nAnd three?\n\nDanny reads ahead silently. Stops. Reads it again.\n\nDANNY\n(reading)\n\"Three. Burn the boat. With me on it. At slack tide, so I don't drift into the Hendersons' float again.\"\n\nSilence. Crow raises the terrible beer.\n\nCROW\nViking.\n\nMARA\nHe cannot be serious. You can't just burn a boat in the harbor.\n\nCROW\nYou can if you don't ask first.\n\n"
+              }
+            }
+          }
+        ],
+        "role": "user"
+      },
+      "invocation_id": "e-c2addaf5-3f93-4c79-a7e2-a05c796d4ee5",
+      "author": "clearance_counsel__b1",
+      "actions": {
+        "state_delta": {},
+        "artifact_delta": {},
+        "requested_auth_configs": {},
+        "requested_tool_confirmations": {}
+      },
+      "node_info": {
+        "path": ""
+      },
+      "id": "5b74f6bc-4baa-4fb5-b13d-15d768a10b82",
+      "timestamp": 1789180006.78144
+    },
+    {
+      "model_version": "gemini-3.7-flash",
+      "content": {
+        "parts": [
+          {
+            "function_call": {
+              "id": "call_226325",
+              "args": {
+                "entity_id": "E004",
+                "queries": [
+                  "film clip licensing clearing movies television",
+                  "Universal Studios clip licensing clearance",
+                  "SAG AFTRA clip reuse clearance film"
+                ],
+                "objective": "Research film clip licensing requirements for featuring a clip of Universal Pictures' 1975 film 'Jaws' playing on a background TV in a feature film, including copyright clearance and guild clip requirements."
+              },
+              "name": "research"
+            },
+            "thought_signature": "AY89a18m_x0wus19jZ94fj0zY-34wrdy8C0yDclRyinYNQmZ1rfA0PhQYZbpC79wq1j7U7COeAVtEjEkMI0E7JTWLFoCJnm_HXxJelqHYaBYysj3mD-Yg4y_YTIhyFKE0CI26jIHnAfMzYg55V7bw1Z7e6y8MQHn0nHLaXG0rM7KVVGY-KWIrBNN7Dnrs5Fas43sHlAH0uIJAOD3A7hGEeHYXz8BQguQv42UPJgq87rUKasxYZoGaH47prG1vntTRq0KONwoydZ5clNaoeveEwupnd1am0MCd1uX0bZtKW82yhp7o8cb9OMEDAtBCjjKHgMYvvEPlR5WS41stNdWc7zFtghhNkbPr4i6pdaNdNzwIcF3io_K5GdZcB4qjWDHvhDhvX87OCpALSvelKpn-U98BLETJxq8Yl2z3UHOLUjuhULRL_qWmgUBkylI4k1zM70UVMyQFTkgZprT16VIG1Ay2ZypYv9b1xWVRJezZHtJ2W8_oK23OqsZVvDUeRxI-UeOIR8D3nwXZCM9d2mn45AB0QdLPydxLGn0bfXKjUeyQttahkUL5vjwZrgUKLnx4G75niBDyHfR44vHubEFWrdvZIKKIjSufBqCsqM68n6cVmuKH_qiVWZgZGVzP0_HDLIddrTbH0Elnu8N8TzvSFb_PyY2JuyCjf7jsQXP1Rygm_kLHtZNiC6Up7MyzodvHACC_YEuF3Y8M2mqutTsQtQh7wkxG0a2gnqIFu_8nZkSEOz6T_2D0lNJMPSsBCT4VQCrIf8NrCnEXPoXWR_yVYXXEQ6854UaVPgFWtp964_dns9sE1Oaz6bTkJ0y_cLcleWJ2xKErp9hN-GWRxqIurGj5Kw_4pEjJBdHH2hCtfchjC8f7WNLTNOEXpXFdJS6KWue59rk8y87DWx6xZL3CXBDwRLNhgg6vHTlpKWORHSOw-kGb6Zi4-6f59i7lLvt03wsFpBBMHuqwvMgXikrUBIYgrg-0aRhD9hvJgKz7QHW0g3m64nLW8Pm1aZ9hQyARxTravc6a-E8GNS_l3m_lih4V2sVGrN4nIJZGXb7gCgmWIWs7SFmlrtvMsSeb9Bll-y33BtLNO0F3wHqRCmZv9W8bjCKQcJvH6txhRDEJllueyC3WUI3veKmKLjXfL5PxPe_x5CwFsZaVw=="
+          }
+        ],
+        "role": "model"
+      },
+      "finish_reason": "STOP",
+      "usage_metadata": {
+        "cache_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 7579
+          }
+        ],
+        "cached_content_token_count": 7579,
+        "candidates_token_count": 95,
+        "candidates_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 95
+          }
+        ],
+        "prompt_token_count": 12521,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 12521
+          }
+        ],
+        "thoughts_token_count": 173,
+        "total_token_count": 12789,
+        "traffic_type": "ON_DEMAND"
+      },
+      "invocation_id": "e-c2addaf5-3f93-4c79-a7e2-a05c796d4ee5",
+      "author": "clearance_counsel__b1",
+      "actions": {
+        "state_delta": {},
+        "artifact_delta": {},
+        "requested_auth_configs": {},
+        "requested_tool_confirmations": {}
+      },
+      "node_info": {
+        "path": ""
+      },
+      "long_running_tool_ids": [],
+      "id": "efeb4b2b-aa34-4975-a521-097c16e25d58",
+      "timestamp": 1789180006.783355
+    },
+    {
+      "content": {
+        "parts": [
+          {
+            "function_response": {
+              "id": "call_226325",
+              "name": "research",
+              "response": {
+                "cached": false,
+                "budget_remaining": 3,
+                "search_id": "search_39aeefd4bff778b50af6ee0304ec3b7e",
+                "results": [
+                  {
+                    "url": "https://guides.lib.umich.edu/permissions/films",
+                    "title": "Films - Obtaining Copyright Permissions - Research Guides at University of Michigan Library",
+                    "publish_date": "2012-02-03",
+                    "excerpts": [
+                      "# Obtaining Copyright Permissions\n## Film Studios and Distributors\nThis site explains how to license clips from Paramount's Theatrical Library, including some DreamWorks films.\n* [Sony Pictures Film Clip & Still Licensing This link opens in a new window](http://www.sonypictures.com/studios/filmclipandstilllicensing.php)\nThis site explains how to request licenses of clips, stills, and other items from Columbia Pictures, TriStar Pictures, Sony Pictures Animation, Screen Gems, Stage 6 Films, and Revolution Studios.\n* [Universal Studios Media Licensing This link opens in a new window](http://universalclips.com)\nThis site offers clip and still licenses for works from the Universal Pictures, Focus Features, DreamWorks Animation, and MCA Television libraries.\n* [Walt Disney Studios Licensing Website](http://www.disneystudiolicensing.com)\n\n...\n\n## Other Rights in Audiovisual Works\nIn other cases, a single licensor may not be able to provide all the rights you need. For example, in some cases, a studio may not be able to license the background music in a film clip."
+                    ]
+                  },
+                  {
+                    "url": "https://www.clearanceunlimited.net/producer-s-guidelines",
+                    "title": "PRODUCER'S GUIDELINES | clearanceunlimited",
+                    "publish_date": null,
+                    "excerpts": [
+                      "# PRODUCER'S GUIDELINES\n\u200b\nTELEVISION CLIPS\n\u200b\nTelevision clips are owned by studios, independent production companies and TV networks and are handled in the same fashion as described above with regard to film clips.\n\n...\n\nPRE-1960 THEATRICAL FEATURE FILMS Because prior to 1960, the SAG agreement did not contain any provision to pay residuals to actors appearing in feature films, rule of thumb in the industry was that actors in these films did not require clearance or payment for use in clips.\n\n...\n\nThere are separate schedules for feature films and television programs, which apply to the origination of the clip, i.e., the fee is dependent on whether the clip came from a feature film or a television show.\nFeature films rates break at a 30-second rate while television rates are much more expensive, changing rates at a 10-second cutoff. Rates can be obtained from the guilds."
+                    ]
+                  },
+                  {
+                    "url": "https://www.universalclips.com/",
+                    "title": "Universal Studios Media Licensing",
+                    "publish_date": null,
+                    "excerpts": [
+                      "# Welcome to Universal Studios Media Licensing.\nYour source for film and TV clip, still, and elements business to business media licensing from the iconic Universal Pictures, Focus Features, DreamWorks Animation, and MCA Television libraries."
+                    ]
+                  },
+                  {
+                    "url": "https://guides.lib.umich.edu/videocopyright/permission",
+                    "title": "Getting Permission - Copyright and Using Video - Research Guides at University of Michigan Library",
+                    "publish_date": "2012-10-24",
+                    "excerpts": [
+                      "# Copyright and Using Video\n## Film Studios and Distributors\nThis site explains how to license clips from Paramount's Theatrical Library, including some DreamWorks films.\n* [Sony Pictures Film Clip & Still Licensing This link opens in a new window](http://www.sonypictures.com/studios/filmclipandstilllicensing.php)\nThis site explains how to request licenses of clips, stills, and other items from Columbia Pictures, TriStar Pictures, Sony Pictures Animation, Screen Gems, Stage 6 Films, and Revolution Studios.\n* [Universal Studios Media Licensing This link opens in a new window](http://universalclips.com)\nThis site offers clip and still licenses for works from the Universal Pictures, Focus Features, DreamWorks Animation, and MCA Television libraries.\n* [Walt Disney Studios Licensing Website](http://www.disneystudiolicensing.com)\n\n...\n\n* [Warner Brothers Clip and Still Licensing Info This link opens in a new window](https://www.warnerbros.com/studio/services/clip-and-still-licensing)\nThis site explains how to request licenses for clips and stills from the Warner Bros."
+                    ]
+                  },
+                  {
+                    "url": "https://www.clearanceunlimited.net/rights-permissions",
+                    "title": "RIGHTS & CLEARANCES | clearanceunlimited",
+                    "publish_date": null,
+                    "excerpts": [
+                      "# RIGHTS & CLEARANCES\nFILM CLIPS & PHOTO CLEARANCES\n\u200b\nPermission for the use of film clips and phots, a license obtained and fee negotiated must be obtained from the owner of the work you want to use. We have many years of experience in this area and can help you obtain quick clearances and negotiate a reasonable fee for such usage.\n\u200b\n\n...\n\nPermission must be obtained from actors appearing in film and television clips. Talent clearance fees are set by SAG/AFTRA and start at the union scale payment of approximately $1000. However, an actor is not required to accept this fee and can negotiate considerably higher rates.\n\n...\n\nDetermination of whether material in in the public domain and can be used for free is frequently difficult.\n\u200b\nOUR FEES\n\u200b\nWe charge either a per clearance fee for obtaining permission for film clips, photos, talent, and music or a weekly rate depending on how many clearances are required.\n\u200b\nWeekly rate $1850/wk\n\n...\n\nWe provide you with all documents required to complete your project, including budgets, on-going clearance status reports, all payment sheets and all license agreements..\nFEATURE FILMS, TELEVISION SHOWS AND SERIES (clip-talent clearances)\n\u200b\nTruth or D"
+                    ]
+                  },
+                  {
+                    "url": "https://usnwc.libguides.com/copyright/permissions",
+                    "title": "Permissions - Copyright - LibGuides at Naval War College",
+                    "publish_date": "2021-11-08",
+                    "excerpts": [
+                      "# Copyright: Permissions\n## Obtaining Copyright Permissions\n* [Sony Pictures Film Clip & Still Licensing](http://www.sonypictures.com/studios/filmclipandstilllicensing.php) : This site explains how to request licenses of clips, stills, and other items from Columbia Pictures, TriStar Pictures, Sony Pictures Animation, Screen Gems, Stage 6 Films, and Revolution\nStudios.\n* [Universal Studios Media Licensing](http://universalclips.com/) : This site offers clip and still licenses for works from the Universal Pictures, Focus Features, DreamWorks Animation, and MCA Television libraries.\n\n...\n\nFor example, in some cases, a studio may not be able to license the background music in a film clip."
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "role": "user"
+      },
+      "invocation_id": "e-c2addaf5-3f93-4c79-a7e2-a05c796d4ee5",
+      "author": "clearance_counsel__b1",
+      "actions": {
+        "state_delta": {
+          "research_budget:clearance_counsel__b1": 3,
+          "research:E004:57894cf68449": {
+            "objective": "Research film clip licensing requirements for featuring a clip of Universal Pictures' 1975 film 'Jaws' playing on a background TV in a feature film, including copyright clearance and guild clip requirements.",
+            "search_id": "search_39aeefd4bff778b50af6ee0304ec3b7e",
+            "results": [
+              {
+                "url": "https://guides.lib.umich.edu/permissions/films",
+                "title": "Films - Obtaining Copyright Permissions - Research Guides at University of Michigan Library",
+                "publish_date": "2012-02-03",
+                "excerpts": [
+                  "# Obtaining Copyright Permissions\n## Film Studios and Distributors\nThis site explains how to license clips from Paramount's Theatrical Library, including some DreamWorks films.\n* [Sony Pictures Film Clip & Still Licensing This link opens in a new window](http://www.sonypictures.com/studios/filmclipandstilllicensing.php)\nThis site explains how to request licenses of clips, stills, and other items from Columbia Pictures, TriStar Pictures, Sony Pictures Animation, Screen Gems, Stage 6 Films, and Revolution Studios.\n* [Universal Studios Media Licensing This link opens in a new window](http://universalclips.com)\nThis site offers clip and still licenses for works from the Universal Pictures, Focus Features, DreamWorks Animation, and MCA Television libraries.\n* [Walt Disney Studios Licensing Website](http://www.disneystudiolicensing.com)\n\n...\n\n## Other Rights in Audiovisual Works\nIn other cases, a single licensor may not be able to provide all the rights you need. For example, in some cases, a studio may not be able to license the background music in a film clip."
+                ]
+              },
+              {
+                "url": "https://www.clearanceunlimited.net/producer-s-guidelines",
+                "title": "PRODUCER'S GUIDELINES | clearanceunlimited",
+                "publish_date": null,
+                "excerpts": [
+                  "# PRODUCER'S GUIDELINES\n\u200b\nTELEVISION CLIPS\n\u200b\nTelevision clips are owned by studios, independent production companies and TV networks and are handled in the same fashion as described above with regard to film clips.\n\n...\n\nPRE-1960 THEATRICAL FEATURE FILMS Because prior to 1960, the SAG agreement did not contain any provision to pay residuals to actors appearing in feature films, rule of thumb in the industry was that actors in these films did not require clearance or payment for use in clips.\n\n...\n\nThere are separate schedules for feature films and television programs, which apply to the origination of the clip, i.e., the fee is dependent on whether the clip came from a feature film or a television show.\nFeature films rates break at a 30-second rate while television rates are much more expensive, changing rates at a 10-second cutoff. Rates can be obtained from the guilds."
+                ]
+              },
+              {
+                "url": "https://www.universalclips.com/",
+                "title": "Universal Studios Media Licensing",
+                "publish_date": null,
+                "excerpts": [
+                  "# Welcome to Universal Studios Media Licensing.\nYour source for film and TV clip, still, and elements business to business media licensing from the iconic Universal Pictures, Focus Features, DreamWorks Animation, and MCA Television libraries."
+                ]
+              },
+              {
+                "url": "https://guides.lib.umich.edu/videocopyright/permission",
+                "title": "Getting Permission - Copyright and Using Video - Research Guides at University of Michigan Library",
+                "publish_date": "2012-10-24",
+                "excerpts": [
+                  "# Copyright and Using Video\n## Film Studios and Distributors\nThis site explains how to license clips from Paramount's Theatrical Library, including some DreamWorks films.\n* [Sony Pictures Film Clip & Still Licensing This link opens in a new window](http://www.sonypictures.com/studios/filmclipandstilllicensing.php)\nThis site explains how to request licenses of clips, stills, and other items from Columbia Pictures, TriStar Pictures, Sony Pictures Animation, Screen Gems, Stage 6 Films, and Revolution Studios.\n* [Universal Studios Media Licensing This link opens in a new window](http://universalclips.com)\nThis site offers clip and still licenses for works from the Universal Pictures, Focus Features, DreamWorks Animation, and MCA Television libraries.\n* [Walt Disney Studios Licensing Website](http://www.disneystudiolicensing.com)\n\n...\n\n* [Warner Brothers Clip and Still Licensing Info This link opens in a new window](https://www.warnerbros.com/studio/services/clip-and-still-licensing)\nThis site explains how to request licenses for clips and stills from the Warner Bros."
+                ]
+              },
+              {
+                "url": "https://www.clearanceunlimited.net/rights-permissions",
+                "title": "RIGHTS & CLEARANCES | clearanceunlimited",
+                "publish_date": null,
+                "excerpts": [
+                  "# RIGHTS & CLEARANCES\nFILM CLIPS & PHOTO CLEARANCES\n\u200b\nPermission for the use of film clips and phots, a license obtained and fee negotiated must be obtained from the owner of the work you want to use. We have many years of experience in this area and can help you obtain quick clearances and negotiate a reasonable fee for such usage.\n\u200b\n\n...\n\nPermission must be obtained from actors appearing in film and television clips. Talent clearance fees are set by SAG/AFTRA and start at the union scale payment of approximately $1000. However, an actor is not required to accept this fee and can negotiate considerably higher rates.\n\n...\n\nDetermination of whether material in in the public domain and can be used for free is frequently difficult.\n\u200b\nOUR FEES\n\u200b\nWe charge either a per clearance fee for obtaining permission for film clips, photos, talent, and music or a weekly rate depending on how many clearances are required.\n\u200b\nWeekly rate $1850/wk\n\n...\n\nWe provide you with all documents required to complete your project, including budgets, on-going clearance status reports, all payment sheets and all license agreements..\nFEATURE FILMS, TELEVISION SHOWS AND SERIES (clip-talent clearances)\n\u200b\nTruth or D"
+                ]
+              },
+              {
+                "url": "https://usnwc.libguides.com/copyright/permissions",
+                "title": "Permissions - Copyright - LibGuides at Naval War College",
+                "publish_date": "2021-11-08",
+                "excerpts": [
+                  "# Copyright: Permissions\n## Obtaining Copyright Permissions\n* [Sony Pictures Film Clip & Still Licensing](http://www.sonypictures.com/studios/filmclipandstilllicensing.php) : This site explains how to request licenses of clips, stills, and other items from Columbia Pictures, TriStar Pictures, Sony Pictures Animation, Screen Gems, Stage 6 Films, and Revolution\nStudios.\n* [Universal Studios Media Licensing](http://universalclips.com/) : This site offers clip and still licenses for works from the Universal Pictures, Focus Features, DreamWorks Animation, and MCA Television libraries.\n\n...\n\nFor example, in some cases, a studio may not be able to license the background music in a film clip."
+                ]
+              }
+            ]
+          },
+          "research_keys:clearance_counsel__b1": [
+            "research:E004:57894cf68449"
+          ]
+        },
+        "artifact_delta": {},
+        "requested_auth_configs": {},
+        "requested_tool_confirmations": {}
+      },
+      "node_info": {
+        "path": ""
+      },
+      "id": "fbc5175b-b117-4baa-aad7-4f8c8b6607b4",
+      "timestamp": 1789180013.00495
+    },
+    {
+      "model_version": "gemini-3.7-flash",
+      "content": {
+        "parts": [
+          {
+            "function_call": {
+              "id": "call_90334",
+              "args": {
+                "confidence": 0.95,
+                "est_cost_usd_low": 5000,
+                "finding": "Scene S002 depicts a television playing an old VHS tape of Steven Spielberg's 1975 feature film 'Jaws' ('The shark is winning'). Displaying recognizable copyrighted motion picture footage on screen constitutes reproduction of an audiovisual work and is not excused as fair use in a scripted narrative feature. The production must obtain a master clip license from the copyright owner, Universal Pictures (via Universal Studios Media Licensing), as well as any applicable guild talent clearances (SAG-AFTRA clip reuse fees) for recognizable performers visible in the selected clip.",
+                "work_item_id": "CC-W001",
+                "scene_ids": [
+                  "S002"
+                ],
+                "est_cost_usd_high": 15000,
+                "entity_id": "E004",
+                "remedy_detail": "To retain the 'Jaws' footage on the TV screen, negotiate a clip license through Universal Studios Media Licensing (licensing fee typically $5,000 to $15,000 for indie feature worldwide all-media rights) and clear SAG-AFTRA clip reuse scale/residuals for depicted performers. Alternatively, replace the TV footage on set or in post-production with public domain archival footage (pre-1931), in-house mock shark/nature footage, or pre-cleared royalty-free stock footage to eliminate licensing and talent clearance costs.",
+                "est_added_days": 0,
+                "severity": "MEDIUM",
+                "category": "film_clip_license",
+                "citations": [
+                  {
+                    "url": "https://www.universalclips.com/",
+                    "via": "parallel_search",
+                    "source_type": "web",
+                    "excerpt": "Your source for film and TV clip, still, and elements business to business media licensing from the iconic Universal Pictures, Focus Features, DreamWorks Animation, and MCA Television libraries.",
+                    "title": "Universal Studios Media Licensing"
+                  },
+                  {
+                    "source_type": "web",
+                    "title": "RIGHTS & CLEARANCES | clearanceunlimited",
+                    "excerpt": "Permission for the use of film clips and phots, a license obtained and fee negotiated must be obtained from the owner of the work you want to use. We have many years of experience in this area and can help you obtain quick clearances and negotiate a reasonable fee for such usage.",
+                    "url": "https://www.clearanceunlimited.net/rights-permissions"
+                  }
+                ],
+                "remedy_action": "OBTAIN_LICENSE"
+              },
+              "name": "file_flag"
+            },
+            "thought_signature": "AY89a18dc1BQr6FR3DqTg5i8vfVK6qqbp0RqCozKTbZ3MmOx_w5uSN03f_P4qU4LONeL4gy68WFzs2Pr6dI-T6YBQkgdx6Ld5ROHTn0Ieqq_9pTBgMU3PjFyhDChqCyB3Nyr0LfautGZ3lwNOvj88Z_JNQTactjCaxsNuiQDJDirJjWnbRBqXsB0a16EhWFAu3EV_nd5ybryFwIA1jVELUf0lAfuUtKnjRaZeGljCcnrz4ILw3C8GSABxvpCeIAqL2gVBLAPUBHPukYDnXMECrWnmKSLR6jo-E2TnLeMRBmwfbWjSFbc9mdH7c1jg8d1MDtPbJuIWEPVX22lMYVOglyHsCb1RHEixhX9z9Ig_XYhzk5EWNXOGXlEov5IQD2eyvDH-_GYNuLDJhesR86f3-4vKV6F5GeVga_LtFOPDdvyYPmPty04gjJm-HqwB3Y-FCdxEWYi-PCSu3XdH8kvpBUlls5mRlxVKHdhmJBbEhwdsqWgBmFxM8voDWcYLsglodU7kI3Iw2zBbxrgEEq7OS6Yvom-_R_WxFVWGVJubd-P7xI5uiYuNSyPdwU0h3gjq47M8YivEYfOLyjTPWGVRNwGSWP6E8QmmUtY3mX4jVK-5VjcoRUfqi47U1HXNepk5AMfzD9cAamojTTz6gNEbKBnQEmbx-IQpN54b4Lv6-SPVETUz6uGjc3H-7NuxDlbf9POs_drcuzS_Jzm414bJ02rAAfXoUT53KfMdCX0vUQS3FwW2uoEvrhgT0FC7snxLVowTDnUygUFW7KJIMl7lQjhRF4a5fEttrvm9hCXNXoEpgmetHy0qrrF9vr9NOwtGp_mIdNnL2-N408-3q6Xtnp5uoHEKjt8X8CYeQ7TUKlPATHw_lQDy92rpkktQ2fRNKeL6ZZbiIOCalqqfmbdwm6bm41rNPhKAtgJq_SmtwBnHMyT8Z_Z1IwQcimvMqWjT7zMjRGHWqVifbswmgZ7h2NgVQZXJrvIgeM73IHm6qROU8PqMXve7H3Om0OM3Jk-GCXfS-NWIPRF0N6M69wvzmILUzOj_r7vd9khEsNKC0Q1qljLx0fj9kpx4WkwNy2tMKtC5b4w8JrhQMZEVeyCHTTMTFRoVY7btvEAYukKxtpe7D6zvWfTDR9O8Cfn6TjBQ_ZEulAEQIvUhrT57FBIbn2Ht_miqPOEsclZ6bqDSKd8c_XrERPPBi4sSNytOZfXBHrF9VMA3Pj1zXPfoP8nKaJS7Ng4B4lGIslN7X0-Ew1x7nXMGo0Dy0dIZOPWXFqovjbaRyGCcUmMwj6LMt7xtAq4DPh8L5b5ExIRNrKDvLDSmNxQz2bPsMsm5_kOlUeYU2NR4S-r7EDGo5IX0VU_1V2-297unhjG133II3oZjVCXcG88Bugbyk6yLUr4NGGj2bX_D9bFaYu3ajXmWvax82TC1hvrpS35gh7v__PUjQs3qgGiZPL-kwzWMaObX7mNii3CZIm_kq_CfMCijzNZXfstwdcTZm0K6hPk80asNLY-3-Y84yIdPejRkQUMzMpQIV5WojWR7UKkq-ay4a25Ux1ntxGa4cpbheUsAIiyc0c25QfPLMshwvmT-ehMTdWU4UtHTDCyULvS-WFQo31R6BrYy6Z8c8bCEAyPCww0Zq57SW2HiTxeSaT03OMjKCc0v0zgSSgEliNqvWL6Lk4rmKordHa9e3iYWus58gFyTn6vG_cS-Ih_D-57aOvOrNJKacC-xaOswSkx7ubeoseJI9U5HtDxksEeVclMxI9N02mMUJT72wCoq-mXl1wIcumtB8jM5Pba5UkZjW0TPUYeBbSKOa8jfIw3Iju1tqbRARPJbrc9xxoW1OnuMER92YTZ2xVNXPzvxaMQkg0xvnLuxxVmZvDtwFGYl-4qcct0RvIQXmWCvXVBS-h4kgSJDduK0dGtLV2yix3ddEJO-7LOZrfUpl_fGP2o4U15UZQLzDi2L9obcQDj98S0FPlrBz894QrEV0ZJLUbFHmisH-7SwuW-L91AuUzz_cBQ--lPS1Jlmd5gy4-ANsz8Rlvmh-Dpj4tNY0NgdLM6cW7ucXDhKexwo_qLSN4rAg6S8xSY9F7YThUQ6bWQnzMXylAl4cxgk5UIfYugp12-Ch5uFXEtvzTTn-aNH4woRAPwy-fmyHKOEEPoItDXaJj1ESXXQrJu4xHbnl4QDkO8egyGK0k5gOjuF3teA0kaPi8JDdgRvNw-p47W8vw1mDw9T0rwgTQoxFStP2Drxf21gffzmXLqcKDNHvZiIZOYZBSMdQHRaY1xNZzBWouz65OyVStwaE0wpkXUdZyRiTJddgm_qTRyWJypjAMsmTHn5uqXfevUNSrrS52KfdQZ8Gdi-FL0tTCNMx-rTFVwtFfX7y8jaP89TagdPaR6JCK5-POybNcX6ppR5DOC51k69rUH3YRKr7GVI7oE2HXlXEJOJDHkHtbDszVX-nyZORsP2VhkpPcQtGORi0qqeOHlQcKgPxqsaOye9tKhTRrc5t9JXp6drttVZ_QywC9Zn2lvzt_q2BaQJRZdg-w52I6eaBstUvfsNuRinKsJdkpDgPqWy2G1g6FiE8k6JmGsccE3Tma8oos1b8wXaUdgnNZn_xZQPSvRHXM2Jyy5Jb8A3uuEEMJ6qTpUqOtccf4AxHPnRWYIg9CatVRiqcT2eV5jQ4BiYTvmP5cuy5jhaDqTIvGvD_InVDrn4vDYAjtHYvaGHE_qrQtpdcchh7gs3ETvIyW6mA99ydUozssSv0aUa5VbMeuOCKZgVotj_UU77vWoWtcY6nyo2KZliPba30iZV-fqWA71KtuFLCDt2AXUnudodgdsjcS88gmzaXAnjgCUZmT0966D2Tad4uDbmLpXihC2_2dUix-8GW4VqVOMUP7JvxXV22WoNh6gZe_mBkzG1HWlBBfyKC_DWJUmI7is1Bpka9dugodxpHJHDe3cNeWo4PIvUKTXYrCYxWC9dxoaC18Y3ElJS_8st1IRZqUoIsBJk4EGk996R2LF1t_2ClCDipKEuZzNz9nP0RxlbnaSRrpqOstfZIbWnZO1AG6eOdTaTDbcjR19cVU_JW0_erbX-7W9wfifMndHfe1NVnQ8mEWEBtYWVuMDZ0W4vMSICRfykHYIscYZXc2zMuikZOx81H1bExuTqrEMFEg3OLxUFwClSZMPjXlIek2BsE7cqnvndI4TS17DEHS7L4PQ3s1sWodzsg7zz-sntBG1fZrzX6IKCEMWm6IZ0gehWLrDc1SmCIZ-mCSYCAlOo7vwlz-NRW1GMyuGJf3hzCPCpjOIFNx-2FRLT69WKxSseZovOVH8B-1aSzRjbnEZj3o4bnz52Wa0r3Lrf4Z3ts85quty4_F75EDjSGj3HxUhm6do8w5xEiHOch3SXgtXfVEEXX58QIFtWxY7fquXgE7Iab2n-QhMiwZfq4mZbFXSjTtcdpdBvVFecX8YEj-xO4_TADmHnExnnYx_3I9Onetp8UeHcRtvpiuBAbQYjX8xo53vUg4zUAGbKzRHkkm_V_qJdFVycHnOKzBi0L4kHup7n4wGvN3qx_dEOANKaKY-bf12nM9irIkMcXDNQyUtp5Lm18ny86aDcWWI-vBlKjcbZ9_FsHFl8fv2DLUelgylzDm-nasIePYgQgjdXZFNyn5zKCcp1HTXLUMMw_OYcVLiLpPmZRd7x4mA-ZfGAaKHUIVwO3JW5uDVoem-EF0E9lecBWclCipi_I1g1kp3l2ACOmHrMybI1IC1VP1XksCsxThAAfyodo-dM6vG_vo0HoyJnZaULCW1XT0JsnGVzT_rBAg0uCxZkJy7lzraQfG3EB-HFKc1lcVOLZXWh5iIwsLWpuOR9k3raEAwcon82SMSvDEfaU9bGuvtb4lXmvtimVFjN88F2rnUSRuJYusAGNBgNDgXGX8ZsX6qmzWmrtyq5_DASY59ommRrH0="
+          }
+        ],
+        "role": "model"
+      },
+      "finish_reason": "STOP",
+      "usage_metadata": {
+        "cache_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 11370
+          }
+        ],
+        "cached_content_token_count": 11370,
+        "candidates_token_count": 547,
+        "candidates_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 547
+          }
+        ],
+        "prompt_token_count": 14181,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 14181
+          }
+        ],
+        "thoughts_token_count": 721,
+        "total_token_count": 15449,
+        "traffic_type": "ON_DEMAND"
+      },
+      "invocation_id": "e-c2addaf5-3f93-4c79-a7e2-a05c796d4ee5",
+      "author": "clearance_counsel__b1",
+      "actions": {
+        "state_delta": {},
+        "artifact_delta": {},
+        "requested_auth_configs": {},
+        "requested_tool_confirmations": {}
+      },
+      "node_info": {
+        "path": ""
+      },
+      "long_running_tool_ids": [],
+      "id": "990870eb-d376-4283-8ba6-b5212badad94",
+      "timestamp": 1789180013.010389
+    },
+    {
+      "content": {
+        "parts": [
+          {
+            "function_response": {
+              "id": "call_90334",
+              "name": "file_flag",
+              "response": {
+                "result": "Filed F1001 (MEDIUM film_clip_license)."
+              }
+            }
+          }
+        ],
+        "role": "user"
+      },
+      "invocation_id": "e-c2addaf5-3f93-4c79-a7e2-a05c796d4ee5",
+      "author": "clearance_counsel__b1",
+      "actions": {
+        "state_delta": {
+          "flags:clearance_counsel__b1": [
+            {
+              "flag_id": "F1001",
+              "agent": "clearance_counsel",
+              "scene_ids": [
+                "S002"
+              ],
+              "entity_id": "E004",
+              "severity": "MEDIUM",
+              "category": "film_clip_license",
+              "finding": "Scene S002 depicts a television playing an old VHS tape of Steven Spielberg's 1975 feature film 'Jaws' ('The shark is winning'). Displaying recognizable copyrighted motion picture footage on screen constitutes reproduction of an audiovisual work and is not excused as fair use in a scripted narrative feature. The production must obtain a master clip license from the copyright owner, Universal Pictures (via Universal Studios Media Licensing), as well as any applicable guild talent clearances (SAG-AFTRA clip reuse fees) for recognizable performers visible in the selected clip.",
+              "citations": [
+                {
+                  "source_type": "web",
+                  "title": "Universal Studios Media Licensing",
+                  "url": "https://www.universalclips.com/",
+                  "excerpt": "Your source for film and TV clip, still, and elements business to business media licensing from the iconic Universal Pictures, Focus Features, DreamWorks Animation, and MCA Television libraries.",
+                  "retrieved_at": null,
+                  "via": "parallel_search"
+                },
+                {
+                  "source_type": "web",
+                  "title": "RIGHTS & CLEARANCES | clearanceunlimited",
+                  "url": "https://www.clearanceunlimited.net/rights-permissions",
+                  "excerpt": "Permission for the use of film clips and phots, a license obtained and fee negotiated must be obtained from the owner of the work you want to use. We have many years of experience in this area and can help you obtain quick clearances and negotiate a reasonable fee for such usage.",
+                  "retrieved_at": null,
+                  "via": "parallel_search"
+                }
+              ],
+              "remedy": {
+                "action": "OBTAIN_LICENSE",
+                "detail": "To retain the 'Jaws' footage on the TV screen, negotiate a clip license through Universal Studios Media Licensing (licensing fee typically $5,000 to $15,000 for indie feature worldwide all-media rights) and clear SAG-AFTRA clip reuse scale/residuals for depicted performers. Alternatively, replace the TV footage on set or in post-production with public domain archival footage (pre-1931), in-house mock shark/nature footage, or pre-cleared royalty-free stock footage to eliminate licensing and talent clearance costs.",
+                "est_cost_usd": [
+                  5000,
+                  15000
+                ],
+                "est_added_days": 0
+              },
+              "confidence": 0.95
+            }
+          ],
+          "wi_done:clearance_counsel__b1": [
+            "CC-W001"
+          ]
+        },
+        "artifact_delta": {},
+        "requested_auth_configs": {},
+        "requested_tool_confirmations": {}
+      },
+      "node_info": {
+        "path": ""
+      },
+      "id": "96dbb812-38bc-4918-9466-d651b6980a21",
+      "timestamp": 1789180022.764106
+    },
+    {
+      "model_version": "gemini-3.7-flash",
+      "content": {
+        "parts": [
+          {
+            "function_call": {
+              "id": "call_115061",
+              "args": {
+                "reason": "Completed clearance assessment for entity E004 (JAWS film clip in S002) and filed film_clip_license flag F1001."
+              },
+              "name": "done"
+            },
+            "thought_signature": "AY89a1_M3J1UkkXttrg9_WydzWhL6XSNagddv7yugMIrcCcjnHo7bUZQQKKeNc_HN4BbzgKpfjGxy-4hQ7ilth4gvcbnCt9TeGZqHuzsFTGIBjSFyszwxoc14JZGzp88MkusonKYV58BRGwsC87mf03JFyvbrkN6xQ0MYzucnk3c6jg6iJ7zkFMtw5LMBe92OtQ4eAa7QT6VRwPBNpF5B7xhtZefXgicf2beqUhsZ1E9qDqbqJk_Zq-8T3HpMEhbf3NhPZCE0_rXuSKE8PQ8_Ewh2JRgR0dF-9BvJ-fyCKQi3dxjSZNvh62wPE389OnGTrEJlGhR8vV8xgjmecjiFQBr9v7arxALvzoE9uRU_xT30NTD3qCjKC7XMX-jXMe7j4tj4ubA2NQETa-ebElAzTUs_a5nnboIu_kaO9Cd2dD4oOGfx5yWmjid3Taxt4CurtDskVf1kf9AD-x01j98MXXQL7DKbtqKa0gG7yMTZHMdrcNnSN7meuh1gc2h02zzyvKlvYsC6N2Njj5eQgdQfoKoEXUTmjJ45zCWDHb_vpshOSk6DaWnbhR_2tCLAR5qg6pu0vgRWCpqVZdT9qaSL5V3-g24eGbllUD8nMi2PrFjNPHnBS13buvuiWbo0nPaNKTtsDame8u9NeBgiOlV97xUrEm1et7wZD140Aahxqtb6BfVShEOIYvxiL8kYsDXt174NNa-mmUBSo1yyBo8LBF6p17r_PdIujX_mhmK1C4LQC3U4Pi9Yj_e7IsAcgd1VUO6IWRlKU6zdGz-qHThXcZUmusWd0IY6OyYYvMCIR2uF8gmm_xzZxdMesVbAgdy0svMITXcpOC0P_M-7DOPHzy1ll6x1PkKKOgSoUULGGS5V5DYdVc9Bq0g7lEGbWYhVT4QZ_tzdC0bdtGiV4OFYuCRI6IIwlkwQbmsibblTu8HBWKdSH0Rkn7Gz972mCYXVOMyGKZQtbyhxa5fYxC8Ld4uYIjjH6_lVbga1Pp2vye-iYa7CNT41cW-PsCkLUmRaZ8pJ8EzZcI8fau_MEjhqd5dzweVABVkQqwcvLE3j2hlJyAzd59_wsq4I79jeGu1NNG8ZQZyLGs8Wa9VQdMn9L0cLGK7KjXlI-2OhRd1nZ9laxVZbNkVqU5UnXcei7OYJ1wu0CNitIReQS77bt5XvRiQFizNa-fE1f8BpCaZ3D9wW5bmwU8NmEWCjoyxeXoxokCg8CPs9-cPJzlA0Xkqico87MM6kPxxuit5TeiDvenJ9qGFhYUKx__m5bHIhlM0jJQFxcQiGsZIGUdB0R80k-beiCZ3XqllfoycX3ot7h858eMWVJ5iUmRPyJahNdVM0xbZIuXmg58aFR-wX-BAQnGKkMeJ7c0Cx5kN_j3f7V4Uqapii8QXCZYFQVpJn1glTlPU79JGScny8FSpA3dCiPrFmoKt5DrHCnYWlPQX6xqcJvG9kYu6ObmHJ4KvUZiF-rVovRqsRVhj2NhRAAQfnf9hc4kzKDECojEdVXPTD0UEKqM8qlYKGr6xBEa_vmcdF51i3tsQ50gTNxE4m9ISPKe_3gA-UQ1qmnGRTPSQSIj_8H30PJtvSLJRQayx1etsDTISfXliO1Sl4yF0pTEU6WsINF_2TEvu3XXOsaKJN8rCy1CNTq56qCAhmZISX4leLix35YNhbf6hm1kbfQ5QZbd7nuQ_wVStLHuv24UJBJgWkdVHjshiyUPUGfoxv7prQlI4iWYOMRPvcW8cUWgEmUkqSVlY2rACtU_e0g9RDzJqmxwEUjWm3iOZjEXkCdYww7wJSb4unkQ8u19lU6URS2h5qW8XujQV39H24vWyKOGAoweZ7DgHut9f8rhI4ezdyYkk-2_qY5AXZ1i2FnAw3W42GPIUBEx9xYo6_wk1n_-Z1NOler0FIWq9IEO2tzHiSbP7H9Zv8BIIDEDbnugd-55-WM0fSguDYHryaLIu0dRoroQGI94fF2N6vs2JUzHHyZBdOQVOfm68lR-eptyN6s4G8fJ3CbLP2ibDKpzEqHnKlvFF7m0A5N35BfAXjNws6jMnqD-t_Pp-R8IzvK3Au9q9EzddRvXVDflUjNuurJXzGWjx5vRAx1u0aH0IXCeW85QJXSzQ-PkEso9AGgSVr9eWyeZOdg0plnaFz7jRqlMn4z1vlhV7wnzLpE1KLEvVm6eLTpFxOcRyVtleniy03Mfm10ldz1_vmvo8N9-rAXtn_KeibayazCCriAojo8eNJhPuU1J9KpMk5Juh40ucKWD09cbC6cCJ4tHC8N2ltJ80-jT2RVeaHuwhLKlKzJTZHonurYMx--tKGmho8Qg3FiyAzcnXrX1rBPxbCfiDEMrqnZF2J7azcfE7We5pPKF3-lG4tkMeE7U6pal1GLoxAK9RI8oZ1tLHeg58UGvrhWbCDjfwdlpFb2jN6IRgbxGmxcI3_cOuF-XnRzlxi0oHzJTnQ3tk3UpeLkM8780dT0jD8ZehTDpmYhEJ3E-bvb-6NbqNYaZEqIYHhg2JlmKvyBSNrkO_c7OE-wSfWDU7kWDIm1EayCgfTOx9hb_CcUpMzBWkwX87xAyVhbfHZgkRzmoq-SlqlfcJEId-r5F1JDCbN2CT9wcPmXn3FAQPQYkgXYtfjoGKtFuchTwOaYzSF0QhH9Yivi2mh0K1i8xlAQC5K0ojLGTKDX-3h4VbjeQkWTFH8duaWT1hvfMCgkc8U2TvIN3dOfawN3IiXoHig-UEIcGofohu1PAQ-YwzN-6ufiEjdI4WAMDnIx-SlcVJl-TGsURDYz1gafVjoubpSHwSeq-8UGFTYcUBBK_RbZ1P8MIv31GXfTUVQZCPZ0zuMLQLhy9GutJuXEGkrrulKg-JzBueoviJ4s3r3lC5AGXmLnZ8IrLFUf8Fm9f6pxht1Gq9tm26Mgpa_bt0S8pvcOi6RSLpuL1_jdHlEQZJ2JvG-Hc6zTKgrc5GC0dzWTAlPbpRBf0D39dCKrqiWqgnVvx7sCAoXc55RswYZe6VPe_DJKXR6b1XNC1cG5Q-VdzJsLPidHbirJMn3zlqCtjpk3Q9KOgMhbN7umJWMsON0nANL1gwuf1BRd0uoNtVHEvWnO0jro5_efMq_fgWis1ZIJI10Sq83Hrk89uhMI8-e6_lF98W-F0rEeNBEzQM1X3QUGqp7jGjStI92fLbZK8Vwgbc_m6lL9UtJOu-MHfQ_bVG1FWElI-CHgoCD6dpjyF4NvHkqF1RkWTboYA73p-LSZkSwKGv4PswNAwFb9aInCLFa4eBinMlmi9KdomVEiLYd0SWIaPf67ms6837xo4-ASLlI3XpAp-ePDek9uGjIIjD2v5g8AA9WYAAiUTy7ly7qriDKZEBrRY66GuGBUaa-qAbt6S8eftczK7JJakYNpb9nTLhD-FBxS9Fcxd0Mqoyl7ahwm1ZWARTYsmTIVWl5wXxZZvUXg-9WsHpd-P_AbmndqDjDzwG_bW-tfluv_YGmqkgfCEo5fulXYHV3Mo3a2l0jtLxMh89YqszlNXYOfQyPgbEARk4RblXgAZEgXrDeG-Jp9CJyhzHlfU2_xsNRBlLJDxChb8Q9qqR6C-UVmV7qOY7nDCcWB_gRdZQfjhCOmgrVVEcsPIY5TWHLTk1bH4WuIfcXnuKLgXSM4_ywPA08sNMgeCDhFKOEDIlCcBmAs6UjdbruUSJ-4xkWhtss9W0UlMFHjwAoO8tNWAtcU2Iiam7UAPRLXaIr7QG24Ryeojoc22rzw5r65Dv-jvdDG_TBXJ9-Y8jH3q06NlkOUHc5Lwlocfd43oNH85ILIrYCvgCWO2p9cINvT7StANLVwN7oYom8pCblPJJCZB24Y0N9LUd3nBBOmg0qaqvsasdqfXCuyhtw5LIfPPqAP9TnmP2bd_ZxWFKMmaVPPlw2HX4G2cTcTw5WyZT4v72tIAZdR3-RB361-D9aZxfL1KIoFkwV_6uEZeO6ztecCi0Xor7Hbso85wliRlxxXSBT2Oxys5zHweh-T6LMyh0pYy2-Qy-00lnj8Y-VjX6wD0gPx48zQDDMiUhL_CJFb48EhHeHtR6EhU2bay7HUQu55tUlaAGeZ3KfdCV_oVo7oEGf1CBJBt2CvKiecW21Xc-iCxLX-wW_KQOqxy1QDj-7shITm4q5SehjrenHUCWbIz_yo5oT_4BEB5C4fpdYLxL4fmCVkjL6-XBbxoRhayAl23zBkvtdD58eyOA8w4V8tByNMscn3yJyYBJoFBk00WBwYkJ2plwUNcyrxpM5QLqSxXG9Ewl4VTpR8uUkb_YE3_SXSnkGtuEcpAwWXIYX8Rt0klEDoK4ptJhH7E3KEdrl_FQqZqZXqSp54Kl6F3L_oWv8YrQCz6yO6wkn7yZN9zdNMlZ_P3eeyxKzpN_ZTHnyAYJiDzYP8ePzt9rwBrWhH4bqOrYKKSmylR0fsnMErvkI_tOnJrA6GqsAPGXn6VfBLACH4Z-bvzRSz2hQI_n1XfO-f_nMQ0irPs9yIeAYMctMAEEsSd3Wt8kmNfyqba_fhyTq7ZE4Z4EpjmDvMC3vWgM_icrXkRXt441vEVHpylNj1K6QDuZmiU84N3KN2h89J1P_Ym5z59EkxZ6mfLUzmPVgwS1SiqPEUBR_YiD0pFu6_LURCodczjrOqjlK7eNynr-omqKkN6mxEq87MYL6apxvRzjBdFGN8hUaOzXkdhbQqAmrYdriHoWD8bDmbmdR3JxazIPp97nY6cox7eUEa5xUF26nJWgpzv62aojfo_nAmIKBDD4SDWGyrD15rCf023PiTPs8cmHEyw45VxCFrVSYILiL9qumed1kmHAgewodgLOsKE="
+          }
+        ],
+        "role": "model"
+      },
+      "finish_reason": "STOP",
+      "usage_metadata": {
+        "cache_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 11371
+          }
+        ],
+        "cached_content_token_count": 11371,
+        "candidates_token_count": 47,
+        "candidates_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 47
+          }
+        ],
+        "prompt_token_count": 15390,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 15390
+          }
+        ],
+        "thoughts_token_count": 852,
+        "total_token_count": 16289,
+        "traffic_type": "ON_DEMAND"
+      },
+      "invocation_id": "e-c2addaf5-3f93-4c79-a7e2-a05c796d4ee5",
+      "author": "clearance_counsel__b1",
+      "actions": {
+        "state_delta": {},
+        "artifact_delta": {},
+        "requested_auth_configs": {},
+        "requested_tool_confirmations": {}
+      },
+      "node_info": {
+        "path": ""
+      },
+      "long_running_tool_ids": [],
+      "id": "1002c3be-487a-4f2e-a524-75f1dd4d818a",
+      "timestamp": 1789180022.76621
+    },
+    {
+      "content": {
+        "parts": [
+          {
+            "function_response": {
+              "id": "call_115061",
+              "name": "done",
+              "response": {
+                "result": "Desk closed: Completed clearance assessment for entity E004 (JAWS film clip in S002) and filed film_clip_license flag F1001."
+              }
+            }
+          }
+        ],
+        "role": "user"
+      },
+      "invocation_id": "e-c2addaf5-3f93-4c79-a7e2-a05c796d4ee5",
+      "author": "clearance_counsel__b1",
+      "actions": {
+        "state_delta": {},
+        "artifact_delta": {},
+        "escalate": true,
+        "requested_auth_configs": {},
+        "requested_tool_confirmations": {}
+      },
+      "node_info": {
+        "path": ""
+      },
+      "id": "fa2a27a0-a60d-4bfb-aacc-25c7b41ef573",
+      "timestamp": 1789180030.0536342
+    },
+    {
+      "model_version": "gemini-3.7-flash",
+      "content": {
+        "parts": [
+          {
+            "text": "### Coverage Roll-Call\n- **E004 (JAWS, scene S002, work item CC-W001)**: **FLAGGED** (`F1001`, `film_clip_license`, MEDIUM severity) \u2014 Reproduction of copyrighted motion picture footage on an in-scene television requires a master clip license from Universal Pictures (via Universal Studios Media Licensing) and applicable SAG-AFTRA talent clearances/residuals for visible performers, or replacement with public domain / in-house stock footage.\n\n**Least Confident Item / Potential Open Question**: \nE004 (`CC-W001`): The exact clip segment (whether featuring recognizable actors or solely the mechanical shark/effects) is unstated in the script; if actors (e.g., Roy Scheider, Robert Shaw, Richard Dreyfuss) are identifiable, individual talent clearance and SAG-AFTRA clip fees apply in addition to the studio license.",
+            "thought_signature": "AY89a19gDnxpgFm7KssCwPt2CA3575VP8AbrioVaON1ZGGFWaEdfyJe4SC0sXCUrUe3s10Jp2MaWmdWljvbHcN90PAUZq9PjMycFrgXbCVxP7n0f4nEu-vTg-rZM9Slm5Ol1PBLGKZ7i7tNF29TG3C6vh7SaKXBRrtxiuKrgzX8CQmWVYJoY"
+          }
+        ],
+        "role": "model"
+      },
+      "finish_reason": "STOP",
+      "usage_metadata": {
+        "cache_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 11406
+          }
+        ],
+        "cached_content_token_count": 11406,
+        "candidates_token_count": 198,
+        "candidates_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 198
+          }
+        ],
+        "prompt_token_count": 16325,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 16325
+          }
+        ],
+        "thoughts_token_count": 11,
+        "total_token_count": 16534,
+        "traffic_type": "ON_DEMAND"
+      },
+      "invocation_id": "e-c2addaf5-3f93-4c79-a7e2-a05c796d4ee5",
+      "author": "clearance_counsel__b1",
+      "actions": {
+        "state_delta": {},
+        "artifact_delta": {},
+        "requested_auth_configs": {},
+        "requested_tool_confirmations": {}
+      },
+      "node_info": {
+        "path": ""
+      },
+      "id": "1f785802-932c-4e4c-b2f1-b58b23000071",
+      "timestamp": 1789180030.0585868
+    }
+  ],
+  "status": "completed_unreviewed",
+  "gemini_usage": {
+    "flash": {
+      "prompt": 69979,
+      "cached": 41726,
+      "output": 2797
+    }
+  },
+  "error": null,
+  "elapsed_s": 29.81,
+  "mechanical_errors": [],
+  "flags": [
+    {
+      "flag_id": "F1001",
+      "agent": "clearance_counsel",
+      "scene_ids": [
+        "S002"
+      ],
+      "entity_id": "E004",
+      "severity": "MEDIUM",
+      "category": "film_clip_license",
+      "finding": "Scene S002 depicts a television playing an old VHS tape of Steven Spielberg's 1975 feature film 'Jaws' ('The shark is winning'). Displaying recognizable copyrighted motion picture footage on screen constitutes reproduction of an audiovisual work and is not excused as fair use in a scripted narrative feature. The production must obtain a master clip license from the copyright owner, Universal Pictures (via Universal Studios Media Licensing), as well as any applicable guild talent clearances (SAG-AFTRA clip reuse fees) for recognizable performers visible in the selected clip.",
+      "citations": [
+        {
+          "source_type": "web",
+          "title": "Universal Studios Media Licensing",
+          "url": "https://www.universalclips.com/",
+          "excerpt": "Your source for film and TV clip, still, and elements business to business media licensing from the iconic Universal Pictures, Focus Features, DreamWorks Animation, and MCA Television libraries.",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        },
+        {
+          "source_type": "web",
+          "title": "RIGHTS & CLEARANCES | clearanceunlimited",
+          "url": "https://www.clearanceunlimited.net/rights-permissions",
+          "excerpt": "Permission for the use of film clips and phots, a license obtained and fee negotiated must be obtained from the owner of the work you want to use. We have many years of experience in this area and can help you obtain quick clearances and negotiate a reasonable fee for such usage.",
+          "retrieved_at": null,
+          "via": "parallel_search"
+        }
+      ],
+      "remedy": {
+        "action": "OBTAIN_LICENSE",
+        "detail": "To retain the 'Jaws' footage on the TV screen, negotiate a clip license through Universal Studios Media Licensing (licensing fee typically $5,000 to $15,000 for indie feature worldwide all-media rights) and clear SAG-AFTRA clip reuse scale/residuals for depicted performers. Alternatively, replace the TV footage on set or in post-production with public domain archival footage (pre-1931), in-house mock shark/nature footage, or pre-cleared royalty-free stock footage to eliminate licensing and talent clearance costs.",
+        "est_cost_usd": [
+          5000,
+          15000
+        ],
+        "est_added_days": 0
+      },
+      "confidence": 0.95
+    }
+  ],
+  "rejected_flags": [],
+  "open_questions": [],
+  "cleared": [],
+  "state": {
+    "script_text": "Title: SLACK TIDE\nCredit: written by\nAuthor: The GREENLIGHT Team\nDraft date: 2026-08-24\nNotes: Original work. Written as the demo fixture for GREENLIGHT. All characters and the town of Port Bannock are fictional.\n\nFADE IN:\n\nEXT. PORT BANNOCK HARBOR - DAWN\n\nFog sits on the water like it pays rent. Lobster boats nod against their moorings. Somewhere a halyard clinks against a mast, patient as a clock.\n\nA rental sedan rolls to a stop at the head of the town pier. MARA VOSS (38), city coat, wrong shoes for a dock, sits with both hands on the wheel long after the engine dies.\n\nThrough the windshield: a lobster boat rides alone on its mooring, hull the green of old bottles. Stenciled across the transom: MARGARET ROSE.\n\nMara looks at the boat the way you look at a photograph of yourself as a child.\n\nMARA\n(quiet)\nHey, old man.\n\nShe gets out. Gulls wheel and holler. The fog takes no notice of her at all.\n\nINT. THE WHEELHOUSE - DAY\n\nA harbor bar that hasn't changed since the Carter administration and is proud of it. Buoys on the ceiling. A woodstove. The smell of beer and diesel and forty years of wet wool.\n\nOn the wall: a sun-bleached framed print of Edward Hopper's NIGHTHAWKS, hanging slightly crooked. Behind the register, thumbtacked and curling: a Polaroid of a younger ELI VOSS arm-wrestling BRUCE SPRINGSTEEN, both of them laughing, \"1988\" in ballpoint across the white strip. Beside it, framed: a front page of the Gloucester Daily Times -- \"BANNOCK CAPTAIN PULLS FOUR FROM NOR'EASTER.\"\n\nOn the corner TV, muted, an old VHS of JAWS is playing. The shark is winning.\n\nDANNY VOSS (34) stands behind the bar, not because he works there but because standing anywhere else feels wrong today. SAM (10) sits at the end of the bar doing serious damage to a cocoa, poured from a dented Thermos.\n\nCROW (60s, foul-weather bibs, a face like a chart of bad decisions) nurses a beer he transparently hates. Across his forearm, a full-rigged schooner tattoo in fading blue-black \u2014 Teddy Krane's design, inked at his Rockland parlor the summer the Margaret Rose launched \u2014 rides every pour like weather.\n\nCROW\nThirty years I drank whatever Eli stocked, out of loyalty. Coors Light. Tastes like a wet napkin. Man ran the best bar on this coast and drank the worst beer in America.\n\nDANNY\nHe liked that it was cheap.\n\nCROW\nHe liked that it annoyed me.\n\nThe door opens. Mara stands in it with a duffel bag. The room goes quiet the way only a small town can go quiet -- all at once, and politely.\n\nDANNY (CONT'D)\nYou came.\n\nMARA\nHe died.\n\nDANNY\nPeople have died before. You didn't come.\n\nA beat. Sam slides off his stool, crosses to Mara, and offers up the Thermos cup like a church collection.\n\nSAM\nAunt Mara. Want some? Dad made it with water, though. I'm supposed to say that first.\n\nMARA\n(taking the stool beside him)\nThen absolutely not.\n\nSam grins. Something in the room loosens a notch.\n\nHELEN FITCH (60s, funeral director, cardigan over steel) comes in from the back room carrying a manila envelope like it might go off.\n\nHELEN\nGood. You're both here. He left instructions. Notarized. Which, for Eli Voss, is close to a miracle.\n\nShe hands the envelope to Danny. He opens it, unfolds a single handwritten page, and reads.\n\nDANNY\n(reading)\n\"One. No church-basement sandwiches. Real food. If there is a casserole in that building I will know.\"\n\nCROW\nFair.\n\nDANNY\n(reading)\n\"Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.\"\n\nHELEN\nAnd three?\n\nDanny reads ahead silently. Stops. Reads it again.\n\nDANNY\n(reading)\n\"Three. Burn the boat. With me on it. At slack tide, so I don't drift into the Hendersons' float again.\"\n\nSilence. Crow raises the terrible beer.\n\nCROW\nViking.\n\nMARA\nHe cannot be serious. You can't just burn a boat in the harbor.\n\nCROW\nYou can if you don't ask first.\n\nEXT. TOWN PIER - NIGHT\n\nLow tide. The pilings stand up out of the mud like the legs of something huge and patient. Mara and Danny sit on the pier's end with their feet hanging over black water.\n\nDanny produces a joint, lights it, offers it over. Mara stares at it.\n\nDANNY\nSince when do you not?\n\nMARA\nSince I bill by the hour.\n\nShe takes it anyway. A long drag. She holds it like an old phone number she's surprised she still knows.\n\nOut of the dark comes BARNACLE, an ancient black Lab with a gray muzzle and the gait of a sea captain on land. He flops down between them with a groan and puts his head on Mara's knee.\n\nMARA (CONT'D)\nHe kept the dog.\n\nDANNY\nThe dog kept him. There's a difference.\n\nThey pass the joint. Water slaps the pilings.\n\nDANNY (CONT'D)\nYou remember Fenway? He hears on the radio the game's a sellout, so obviously that's the day we're going. No tickets. Walks us past the gate guy carrying a clipboard he took off a wall. \"Walk like you own the place.\" We saw the whole game from the standing rail.\n\nMARA\n(laughing despite herself)\nHe made us wave at the camera like we belonged there.\n\nDANNY\nWe did belong there. That was the trick. He decided we belonged, so we did.\n\nThe laugh drains out of her.\n\nMARA\nHe was a selfish, glorious, fucking impossible man, and I moved four hundred miles away to stop auditioning for him, and it didn't work. It never worked.\n\nDANNY\n(quiet)\nHe kept every clipping. Every case you won that made a paper, it went up behind the register. He'd tell strangers. Strangers, Mara. He never told you because you'd have won the argument about it, and he couldn't stand losing twice.\n\nMara looks at the water for a long time. Barnacle sighs like a man twice his age.\n\nINT. ST. BRIGID'S CHURCH - DAY\n\nFull pews. Fishermen in blazers that fit them two funerals ago. The casket at the front under a spray of lilies and, at Helen's visible disapproval, a coiled dock line.\n\nAt the side of the altar, an honor guard: three OLD VETERANS in dress uniforms, service rifles held at rest, faces like the granite outside.\n\nCrow walks to the front. No accompanist. He grips the lectern, and into the dead-quiet room he sings -- rough, unhurried, surprisingly tender -- the old Stephen Foster hymn \"Hard Times Come Again No More.\"\n\nCROW\n(singing)\n'Tis the song, the sigh of the weary. Hard times, hard times, come again no more...\n\nNobody breathes. He finishes. He nods once, to the casket, like closing a bar tab, and sits.\n\nHelen steps up. She sets a battered BOOMBOX on the altar rail, and looks at it with naked distrust. Sam, in the front pew, gives her a thumbs up.\n\nShe presses play.\n\nThe opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.\n\nHold on the faces. Danny's jaw working. Sam mouthing the words. Mara, eyes forward, absolutely still, tears moving anyway.\n\nEXT. ST. BRIGID'S CHURCHYARD - DAY\n\nThe mourners in a loose crescent under a pewter sky. The honor guard stands in a row, rifles up at the ready.\n\nVETERAN\nReady. Aim. Fire.\n\nVOLLEY. Gulls explode off the church roof. Sam clamps his hands over his ears. Barnacle, tied to the fence, points his muzzle at the sky and HOWLS.\n\nVOLLEY. VOLLEY.\n\nThe senior veteran presents the folded flag -- not to Danny, not to Mara. To Sam. The boy takes it like it weighs a hundred pounds, because it does.\n\nINT. THE WHEELHOUSE - DAY\n\nTHE WAKE. The bar packed to the walls. Chowder in mismatched bowls. Real food; no sandwiches in sight. Laughter in that specific register that lives one door down from crying.\n\nAt the bar, COUSIN TEDDY (40s, tie loosened, several drinks ahead of the room) holds forth.\n\nTEDDY\nAll I'm saying -- all I'm saying is that boat surveys at forty grand, and the plan is to torch it. That's the estate. That's my family's --\n\nDANNY\nSay that again.\n\nTEDDY\nIt's a boat, Danny. He was a drunk with a fucking boat, and you're all acting like it's the crown jewels.\n\nDanny hits him. One punch, no windup, the kind you learn on a working dock.\n\nTeddy goes back over a stool and comes up swinging, and for five ugly seconds it is a real fight -- grappling, a glass shattering, blood bright from Teddy's nose across the bar top -- before Crow peels them apart with an ease that suggests long practice.\n\nCROW\n(to Teddy, mild)\nGo home, Ted. Tide's going out. Try and go with it.\n\nHelen is already there with a stack of cocktail napkins, dressing Teddy's nose with the brisk efficiency of a corner cutman. Mara surveys the wreckage.\n\nMARA\n(to Helen)\n\"Real food, no sandwiches, and a fistfight.\" He got everything he asked for.\n\nHELEN\nThey usually do.\n\nINT. THE WHEELHOUSE - NIGHT\n\nLong after. Empty. Chairs up on tables. One lamp behind the bar. Mara alone, counting the night's take, not counting it at all.\n\nShe takes down the good whiskey from the top shelf -- the bottle no one is allowed to touch -- and pours two glasses. Sets one at the far end of the bar. Old habit. She doesn't seem to notice she's done it.\n\nELI VOSS (70) is sitting in front of the far glass. Work jacket. Salt-white stubble. He was not there a moment ago, and the room does not find this strange.\n\nELI\nYou put the Hopper crooked.\n\nMara does not turn around. Her hands go still on the register.\n\nELI (CONT'D)\nIt's been crooked eleven years. But you looked at it tonight, so now it's your fault.\n\nMARA\n(not turning)\nYou're not here.\n\nELI\nI'm not anywhere. It's very freeing. No tide chart. No Coors Light.\n\nMARA\n(turning now)\nThat you drank on purpose. For thirty years. Out of spite.\n\nELI\nLoyalty. Spite is just loyalty with the brights on.\n\nShe comes down the bar. Stops an arm's length away. Up close he is exactly himself: unhurried, amused, infuriating.\n\nMARA\nI came back four times. Ma's funeral. Danny's wedding. Twice more. You talked to me about bilge pumps.\n\nELI\nI know.\n\nMARA\nThat's it? You know?\n\nELI\nYou were the one thing I ever made that didn't need fixing. I didn't have a language for that. Bilge pumps, I had.\n\nMara's eyes fill. She hates it. She lets it happen anyway.\n\nMARA\nThe boat's worth fifty thousand dollars, Dad.\n\nELI\nThe boat is a coffin with a diesel in it. Everything I loved either walked off it or died on it, except you, and you swam.\n(beat)\nBurn it, Mare. Stand on the seawall with your brother and watch it go, and be done carrying it.\n\nMARA\n(barely)\nSlack tide?\n\nELI\nSlack tide. I meant that part. The Hendersons have suffered enough.\n\nShe laughs -- an ugly, wet, wonderful laugh. She wipes her eyes with the heel of her hand, and when she looks up the stool is empty.\n\nAt the far end of the bar, his glass is empty too.\n\nEXT. BANNOCK BOATYARD - DAY\n\nThe MARGARET ROSE up on stands, Danny and Crow moving over her with jerry cans of diesel, soaking coiled blankets along the deck. It is exactly as legal as it looks.\n\nCrow lugs a milk crate aboard: cardboard tubes, mortar shells, a coil of fuse.\n\nCROW\nFourth of July stash. Three years of it. He'd want the good ones up.\n\nA white pickup with U.S. Coast Guard markings rolls into the yard. PETTY OFFICER REYES (30s, squared away, unreadable) steps out and takes a long look at the diesel cans, the blankets, the fireworks, and the two men standing in front of them like boys caught smoking.\n\nREYES\nMr. Voss. Word around the harbor is you're planning a marine event. Open flame, on a vessel, in navigable waters. I checked. There's no permit on file.\n\nDANNY\nIt's a funeral.\n\nREYES\nIt's an unpermitted burn with a homemade pyrotechnics display, is what it is.\n\nA long silence. Reyes looks past them, at the boat's transom. MARGARET ROSE.\n\nREYES (CONT'D)\nEli Voss pulled my mother out of the water in 'ninety-eight. Her and three others, in a following sea, in a boat half this size.\n(beat)\nSlack tide's at nine-forty. My patrol ends at nine. Keep it in the outer harbor, keep a skiff standing off with a radio, and keep that boy of yours in a life jacket.\n\nHe gets back in the truck. Rolls the window down.\n\nREYES (CONT'D)\nI was never here.\n\nDANNY\nNever where?\n\nThe truck pulls out. Crow watches it go.\n\nCROW\nI like her.\n\nEXT. BANNOCK HARBOR - NIGHT\n\nThe MARGARET ROSE rides at anchor in the outer harbor, dark against a darker sky. Along the seawall, the whole town has turned out, candles cupped in fists against the breeze.\n\nA Boston Whaler skiff crosses the black water. Danny at the tiller. Mara amidships with the urn in her lap. Sam in the bow in a life vest two sizes too big, one hand knotted in Barnacle's collar. The old dog rides like a figurehead, nose into the wind.\n\nThey come alongside the Margaret Rose. Danny and Mara climb aboard; Sam and the dog stay in the skiff, holding the rail.\n\nINT./EXT. MARGARET ROSE - WHEELHOUSE - NIGHT - CONTINUOUS\n\nMara sets the urn on the chart shelf, where the coffee thermos rode for forty years. Danny lashes it fast with a dock line, cinches it, tests it.\n\nMara lifts the old brass compass out of its gimbal and pockets it. Danny sees. Says nothing.\n\nDANNY\n(handing her the flare gun)\nYou do it.\n\nMARA\nWhy me?\n\nDANNY\nHe decided you belonged here. So you do.\n\nEXT. BANNOCK HARBOR - NIGHT - CONTINUOUS\n\nThey drop back into the skiff and stand off, engine idling, the radio crackling once with nothing.\n\nMara stands, braces, and fires the flare into the soaked blankets amidships.\n\nWHUMP. A line of blue-orange flame walks the deck like it knows the boat. Then the diesel catches and the MARGARET ROSE goes up -- a column of fire standing on the black water, doubled in the swell, huge.\n\nOn the seawall, a hundred candle-flames and one enormous gasp. Then, from speakers somebody has rigged on the seawall railing, Buckley's \"Hallelujah\" starts again, drifting out across the water toward the fire.\n\nCrow touches a road flare to the mortar fuse. The Fourth of July stash goes up -- white and gold chrysanthemums blooming over the burning boat, reflections shattering across the harbor.\n\nSam stands up in the skiff for a better look.\n\nDANNY\nSit DOWN --\n\nSam sits. Barnacle barks at the fireworks, once, on principle.\n\nThen -- a CRACK from the fire. The anchor line, burned through at the chock, parts. The burning boat swings free and begins to drift, slow and terrible, on the last of the tide.\n\nToward a row of moored floats. The nearest one flying a little pennant: HENDERSON.\n\nMARA\nYou have got to be kidding me.\n\nBefore Danny can speak she has the spare line over her shoulder and she DIVES -- off the skiff into the black water, surfacing in the firelight, swimming hard for the mooring buoy off the Margaret Rose's bow.\n\nDANNY\nMARA!\n\nShe reaches the buoy, gets the line through the eye with numb hands, waves. Danny throws the skiff into gear, takes up the slack, and eases the burning boat's head around -- slow, straining, the flames roaring overhead -- until the drift points at open water.\n\nHe swings back and hauls Mara over the gunwale, soaked, gasping, shaking with cold and adrenaline and something else entirely.\n\nDANNY (CONT'D)\nYou're insane. You know that. That was --\n(laughing, despite everything)\n-- that was fucking beautiful.\n\nMARA\n(through chattering teeth)\nHe would have HATED hitting the Hendersons'.\n\nOut in the dark, the MARGARET ROSE burns down to the waterline, going out the way a day goes out, while Buckley's voice carries over the water and the last fireworks fall.\n\nEXT. STONE JETTY - DAWN\n\nFlat calm. The fog is back, gentler now. Ash rides the tideline like gray lace.\n\nMara and Danny sit on the rocks with coffee, passing the dented Thermos cup between them. Barnacle lies across Mara's feet, asleep with his eyes open, the way old dogs and old sailors do.\n\nSam walks the tideline below them, the folded flag still under his arm. He hasn't put it down since the churchyard.\n\nDANNY\nYou heading back Sunday?\n\nMara turns the brass compass over in her hands. The needle finds north, patient as ever.\n\nMARA\nEventually.\n\nDanny nods. That's enough. That's plenty.\n\nOut on the empty water, the mooring where the MARGARET ROSE rode for forty years holds nothing at all. A gull lands on the buoy, decides it's not worth the trouble, and lifts away into the fog.\n\nFADE OUT.\n",
+    "scenes": [
+      {
+        "scene_id": "S001",
+        "page": 1,
+        "heading": "EXT. PORT BANNOCK HARBOR - DAWN",
+        "int_ext": "EXT",
+        "location": "PORT BANNOCK HARBOR",
+        "time_of_day": "DAWN",
+        "action": "Fog sits on the water like it pays rent. Lobster boats nod against their moorings. Somewhere a halyard clinks against a mast, patient as a clock.\n\nA rental sedan rolls to a stop at the head of the town pier. MARA VOSS (38), city coat, wrong shoes for a dock, sits with both hands on the wheel long after the engine dies.\n\nThrough the windshield: a lobster boat rides alone on its mooring, hull the green of old bottles. Stenciled across the transom: MARGARET ROSE.\n\nMara looks at the boat the way you look at a photograph of yourself as a child.\n\nShe gets out. Gulls wheel and holler. The fog takes no notice of her at all.",
+        "dialogue": [
+          {
+            "character": "MARA",
+            "line": "Hey, old man.",
+            "parenthetical": "(quiet)"
+          }
+        ],
+        "characters": [
+          "MARA"
+        ],
+        "raw_span": [
+          224,
+          910
+        ]
+      },
+      {
+        "scene_id": "S002",
+        "page": 1,
+        "heading": "INT. THE WHEELHOUSE - DAY",
+        "int_ext": "INT",
+        "location": "THE WHEELHOUSE",
+        "time_of_day": "DAY",
+        "action": "A harbor bar that hasn't changed since the Carter administration and is proud of it. Buoys on the ceiling. A woodstove. The smell of beer and diesel and forty years of wet wool.\n\nOn the wall: a sun-bleached framed print of Edward Hopper's NIGHTHAWKS, hanging slightly crooked. Behind the register, thumbtacked and curling: a Polaroid of a younger ELI VOSS arm-wrestling BRUCE SPRINGSTEEN, both of them laughing, \"1988\" in ballpoint across the white strip. Beside it, framed: a front page of the Gloucester Daily Times -- \"BANNOCK CAPTAIN PULLS FOUR FROM NOR'EASTER.\"\n\nOn the corner TV, muted, an old VHS of JAWS is playing. The shark is winning.\n\nDANNY VOSS (34) stands behind the bar, not because he works there but because standing anywhere else feels wrong today. SAM (10) sits at the end of the bar doing serious damage to a cocoa, poured from a dented Thermos.\n\nCROW (60s, foul-weather bibs, a face like a chart of bad decisions) nurses a beer he transparently hates. Across his forearm, a full-rigged schooner tattoo in fading blue-black \u2014 Teddy Krane's design, inked at his Rockland parlor the summer the Margaret Rose launched \u2014 rides every pour like weather.\n\nThe door opens. Mara stands in it with a duffel bag. The room goes quiet the way only a small town can go quiet -- all at once, and politely.\n\nA beat. Sam slides off his stool, crosses to Mara, and offers up the Thermos cup like a church collection.\n\nSam grins. Something in the room loosens a notch.\n\nHELEN FITCH (60s, funeral director, cardigan over steel) comes in from the back room carrying a manila envelope like it might go off.\n\nShe hands the envelope to Danny. He opens it, unfolds a single handwritten page, and reads.\n\nDanny reads ahead silently. Stops. Reads it again.\n\nSilence. Crow raises the terrible beer.",
+        "dialogue": [
+          {
+            "character": "CROW",
+            "line": "Thirty years I drank whatever Eli stocked, out of loyalty. Coors Light. Tastes like a wet napkin. Man ran the best bar on this coast and drank the worst beer in America."
+          },
+          {
+            "character": "DANNY",
+            "line": "He liked that it was cheap."
+          },
+          {
+            "character": "CROW",
+            "line": "He liked that it annoyed me."
+          },
+          {
+            "character": "DANNY",
+            "line": "You came."
+          },
+          {
+            "character": "MARA",
+            "line": "He died."
+          },
+          {
+            "character": "DANNY",
+            "line": "People have died before. You didn't come."
+          },
+          {
+            "character": "SAM",
+            "line": "Aunt Mara. Want some? Dad made it with water, though. I'm supposed to say that first."
+          },
+          {
+            "character": "MARA",
+            "line": "Then absolutely not.",
+            "parenthetical": "(taking the stool beside him)"
+          },
+          {
+            "character": "HELEN",
+            "line": "Good. You're both here. He left instructions. Notarized. Which, for Eli Voss, is close to a miracle."
+          },
+          {
+            "character": "DANNY",
+            "line": "\"One. No church-basement sandwiches. Real food. If there is a casserole in that building I will know.\"",
+            "parenthetical": "(reading)"
+          },
+          {
+            "character": "CROW",
+            "line": "Fair."
+          },
+          {
+            "character": "DANNY",
+            "line": "\"Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.\"",
+            "parenthetical": "(reading)"
+          },
+          {
+            "character": "HELEN",
+            "line": "And three?"
+          },
+          {
+            "character": "DANNY",
+            "line": "\"Three. Burn the boat. With me on it. At slack tide, so I don't drift into the Hendersons' float again.\"",
+            "parenthetical": "(reading)"
+          },
+          {
+            "character": "CROW",
+            "line": "Viking."
+          },
+          {
+            "character": "MARA",
+            "line": "He cannot be serious. You can't just burn a boat in the harbor."
+          },
+          {
+            "character": "CROW",
+            "line": "You can if you don't ask first."
+          }
+        ],
+        "characters": [
+          "CROW",
+          "DANNY",
+          "MARA",
+          "SAM",
+          "HELEN"
+        ],
+        "raw_span": [
+          910,
+          3888
+        ]
+      },
+      {
+        "scene_id": "S003",
+        "page": 3,
+        "heading": "EXT. TOWN PIER - NIGHT",
+        "int_ext": "EXT",
+        "location": "TOWN PIER",
+        "time_of_day": "NIGHT",
+        "action": "Low tide. The pilings stand up out of the mud like the legs of something huge and patient. Mara and Danny sit on the pier's end with their feet hanging over black water.\n\nDanny produces a joint, lights it, offers it over. Mara stares at it.\n\nShe takes it anyway. A long drag. She holds it like an old phone number she's surprised she still knows.\n\nOut of the dark comes BARNACLE, an ancient black Lab with a gray muzzle and the gait of a sea captain on land. He flops down between them with a groan and puts his head on Mara's knee.\n\nThey pass the joint. Water slaps the pilings.\n\nThe laugh drains out of her.\n\nMara looks at the water for a long time. Barnacle sighs like a man twice his age.",
+        "dialogue": [
+          {
+            "character": "DANNY",
+            "line": "Since when do you not?"
+          },
+          {
+            "character": "MARA",
+            "line": "Since I bill by the hour."
+          },
+          {
+            "character": "MARA",
+            "line": "He kept the dog."
+          },
+          {
+            "character": "DANNY",
+            "line": "The dog kept him. There's a difference."
+          },
+          {
+            "character": "DANNY",
+            "line": "You remember Fenway? He hears on the radio the game's a sellout, so obviously that's the day we're going. No tickets. Walks us past the gate guy carrying a clipboard he took off a wall. \"Walk like you own the place.\" We saw the whole game from the standing rail."
+          },
+          {
+            "character": "MARA",
+            "line": "He made us wave at the camera like we belonged there.",
+            "parenthetical": "(laughing despite herself)"
+          },
+          {
+            "character": "DANNY",
+            "line": "We did belong there. That was the trick. He decided we belonged, so we did."
+          },
+          {
+            "character": "MARA",
+            "line": "He was a selfish, glorious, fucking impossible man, and I moved four hundred miles away to stop auditioning for him, and it didn't work. It never worked."
+          },
+          {
+            "character": "DANNY",
+            "line": "He kept every clipping. Every case you won that made a paper, it went up behind the register. He'd tell strangers. Strangers, Mara. He never told you because you'd have won the argument about it, and he couldn't stand losing twice.",
+            "parenthetical": "(quiet)"
+          }
+        ],
+        "characters": [
+          "DANNY",
+          "MARA"
+        ],
+        "raw_span": [
+          3888,
+          5603
+        ]
+      },
+      {
+        "scene_id": "S004",
+        "page": 4,
+        "heading": "INT. ST. BRIGID'S CHURCH - DAY",
+        "int_ext": "INT",
+        "location": "ST. BRIGID'S CHURCH",
+        "time_of_day": "DAY",
+        "action": "Full pews. Fishermen in blazers that fit them two funerals ago. The casket at the front under a spray of lilies and, at Helen's visible disapproval, a coiled dock line.\n\nAt the side of the altar, an honor guard: three OLD VETERANS in dress uniforms, service rifles held at rest, faces like the granite outside.\n\nCrow walks to the front. No accompanist. He grips the lectern, and into the dead-quiet room he sings -- rough, unhurried, surprisingly tender -- the old Stephen Foster hymn \"Hard Times Come Again No More.\"\n\nNobody breathes. He finishes. He nods once, to the casket, like closing a bar tab, and sits.\n\nHelen steps up. She sets a battered BOOMBOX on the altar rail, and looks at it with naked distrust. Sam, in the front pew, gives her a thumbs up.\n\nShe presses play.\n\nThe opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.\n\nHold on the faces. Danny's jaw working. Sam mouthing the words. Mara, eyes forward, absolutely still, tears moving anyway.",
+        "dialogue": [
+          {
+            "character": "CROW",
+            "line": "'Tis the song, the sigh of the weary. Hard times, hard times, come again no more...",
+            "parenthetical": "(singing)"
+          }
+        ],
+        "characters": [
+          "CROW"
+        ],
+        "raw_span": [
+          5603,
+          6797
+        ]
+      },
+      {
+        "scene_id": "S005",
+        "page": 4,
+        "heading": "EXT. ST. BRIGID'S CHURCHYARD - DAY",
+        "int_ext": "EXT",
+        "location": "ST. BRIGID'S CHURCHYARD",
+        "time_of_day": "DAY",
+        "action": "The mourners in a loose crescent under a pewter sky. The honor guard stands in a row, rifles up at the ready.\n\nVOLLEY. Gulls explode off the church roof. Sam clamps his hands over his ears. Barnacle, tied to the fence, points his muzzle at the sky and HOWLS.\n\nVOLLEY. VOLLEY.\n\nThe senior veteran presents the folded flag -- not to Danny, not to Mara. To Sam. The boy takes it like it weighs a hundred pounds, because it does.",
+        "dialogue": [
+          {
+            "character": "VETERAN",
+            "line": "Ready. Aim. Fire."
+          }
+        ],
+        "characters": [
+          "VETERAN"
+        ],
+        "raw_span": [
+          6797,
+          7287
+        ]
+      },
+      {
+        "scene_id": "S006",
+        "page": 4,
+        "heading": "INT. THE WHEELHOUSE - DAY",
+        "int_ext": "INT",
+        "location": "THE WHEELHOUSE",
+        "time_of_day": "DAY",
+        "action": "THE WAKE. The bar packed to the walls. Chowder in mismatched bowls. Real food; no sandwiches in sight. Laughter in that specific register that lives one door down from crying.\n\nAt the bar, COUSIN TEDDY (40s, tie loosened, several drinks ahead of the room) holds forth.\n\nDanny hits him. One punch, no windup, the kind you learn on a working dock.\n\nTeddy goes back over a stool and comes up swinging, and for five ugly seconds it is a real fight -- grappling, a glass shattering, blood bright from Teddy's nose across the bar top -- before Crow peels them apart with an ease that suggests long practice.\n\nHelen is already there with a stack of cocktail napkins, dressing Teddy's nose with the brisk efficiency of a corner cutman. Mara surveys the wreckage.",
+        "dialogue": [
+          {
+            "character": "TEDDY",
+            "line": "All I'm saying -- all I'm saying is that boat surveys at forty grand, and the plan is to torch it. That's the estate. That's my family's --"
+          },
+          {
+            "character": "DANNY",
+            "line": "Say that again."
+          },
+          {
+            "character": "TEDDY",
+            "line": "It's a boat, Danny. He was a drunk with a fucking boat, and you're all acting like it's the crown jewels."
+          },
+          {
+            "character": "CROW",
+            "line": "Go home, Ted. Tide's going out. Try and go with it.",
+            "parenthetical": "(to Teddy, mild)"
+          },
+          {
+            "character": "MARA",
+            "line": "\"Real food, no sandwiches, and a fistfight.\" He got everything he asked for.",
+            "parenthetical": "(to Helen)"
+          },
+          {
+            "character": "HELEN",
+            "line": "They usually do."
+          }
+        ],
+        "characters": [
+          "TEDDY",
+          "DANNY",
+          "CROW",
+          "MARA",
+          "HELEN"
+        ],
+        "raw_span": [
+          7287,
+          8546
+        ]
+      },
+      {
+        "scene_id": "S007",
+        "page": 5,
+        "heading": "INT. THE WHEELHOUSE - NIGHT",
+        "int_ext": "INT",
+        "location": "THE WHEELHOUSE",
+        "time_of_day": "NIGHT",
+        "action": "Long after. Empty. Chairs up on tables. One lamp behind the bar. Mara alone, counting the night's take, not counting it at all.\n\nShe takes down the good whiskey from the top shelf -- the bottle no one is allowed to touch -- and pours two glasses. Sets one at the far end of the bar. Old habit. She doesn't seem to notice she's done it.\n\nELI VOSS (70) is sitting in front of the far glass. Work jacket. Salt-white stubble. He was not there a moment ago, and the room does not find this strange.\n\nMara does not turn around. Her hands go still on the register.\n\nShe comes down the bar. Stops an arm's length away. Up close he is exactly himself: unhurried, amused, infuriating.\n\nMara's eyes fill. She hates it. She lets it happen anyway.\n\nShe laughs -- an ugly, wet, wonderful laugh. She wipes her eyes with the heel of her hand, and when she looks up the stool is empty.\n\nAt the far end of the bar, his glass is empty too.",
+        "dialogue": [
+          {
+            "character": "ELI",
+            "line": "You put the Hopper crooked."
+          },
+          {
+            "character": "ELI",
+            "line": "It's been crooked eleven years. But you looked at it tonight, so now it's your fault."
+          },
+          {
+            "character": "MARA",
+            "line": "You're not here.",
+            "parenthetical": "(not turning)"
+          },
+          {
+            "character": "ELI",
+            "line": "I'm not anywhere. It's very freeing. No tide chart. No Coors Light."
+          },
+          {
+            "character": "MARA",
+            "line": "That you drank on purpose. For thirty years. Out of spite.",
+            "parenthetical": "(turning now)"
+          },
+          {
+            "character": "ELI",
+            "line": "Loyalty. Spite is just loyalty with the brights on."
+          },
+          {
+            "character": "MARA",
+            "line": "I came back four times. Ma's funeral. Danny's wedding. Twice more. You talked to me about bilge pumps."
+          },
+          {
+            "character": "ELI",
+            "line": "I know."
+          },
+          {
+            "character": "MARA",
+            "line": "That's it? You know?"
+          },
+          {
+            "character": "ELI",
+            "line": "You were the one thing I ever made that didn't need fixing. I didn't have a language for that. Bilge pumps, I had."
+          },
+          {
+            "character": "MARA",
+            "line": "The boat's worth fifty thousand dollars, Dad."
+          },
+          {
+            "character": "ELI",
+            "line": "The boat is a coffin with a diesel in it. Everything I loved either walked off it or died on it, except you, and you swam. (beat) Burn it, Mare. Stand on the seawall with your brother and watch it go, and be done carrying it."
+          },
+          {
+            "character": "MARA",
+            "line": "Slack tide?",
+            "parenthetical": "(barely)"
+          },
+          {
+            "character": "ELI",
+            "line": "Slack tide. I meant that part. The Hendersons have suffered enough."
+          }
+        ],
+        "characters": [
+          "ELI",
+          "MARA"
+        ],
+        "raw_span": [
+          8546,
+          10528
+        ]
+      },
+      {
+        "scene_id": "S008",
+        "page": 6,
+        "heading": "EXT. BANNOCK BOATYARD - DAY",
+        "int_ext": "EXT",
+        "location": "BANNOCK BOATYARD",
+        "time_of_day": "DAY",
+        "action": "The MARGARET ROSE up on stands, Danny and Crow moving over her with jerry cans of diesel, soaking coiled blankets along the deck. It is exactly as legal as it looks.\n\nCrow lugs a milk crate aboard: cardboard tubes, mortar shells, a coil of fuse.\n\nA white pickup with U.S. Coast Guard markings rolls into the yard. PETTY OFFICER REYES (30s, squared away, unreadable) steps out and takes a long look at the diesel cans, the blankets, the fireworks, and the two men standing in front of them like boys caught smoking.\n\nA long silence. Reyes looks past them, at the boat's transom. MARGARET ROSE.\n\nHe gets back in the truck. Rolls the window down.\n\nThe truck pulls out. Crow watches it go.",
+        "dialogue": [
+          {
+            "character": "CROW",
+            "line": "Fourth of July stash. Three years of it. He'd want the good ones up."
+          },
+          {
+            "character": "REYES",
+            "line": "Mr. Voss. Word around the harbor is you're planning a marine event. Open flame, on a vessel, in navigable waters. I checked. There's no permit on file."
+          },
+          {
+            "character": "DANNY",
+            "line": "It's a funeral."
+          },
+          {
+            "character": "REYES",
+            "line": "It's an unpermitted burn with a homemade pyrotechnics display, is what it is."
+          },
+          {
+            "character": "REYES",
+            "line": "Eli Voss pulled my mother out of the water in 'ninety-eight. Her and three others, in a following sea, in a boat half this size. (beat) Slack tide's at nine-forty. My patrol ends at nine. Keep it in the outer harbor, keep a skiff standing off with a radio, and keep that boy of yours in a life jacket."
+          },
+          {
+            "character": "REYES",
+            "line": "I was never here."
+          },
+          {
+            "character": "DANNY",
+            "line": "Never where?"
+          },
+          {
+            "character": "CROW",
+            "line": "I like her."
+          }
+        ],
+        "characters": [
+          "CROW",
+          "REYES",
+          "DANNY"
+        ],
+        "raw_span": [
+          10528,
+          11976
+        ]
+      },
+      {
+        "scene_id": "S009",
+        "page": 7,
+        "heading": "EXT. BANNOCK HARBOR - NIGHT",
+        "int_ext": "EXT",
+        "location": "BANNOCK HARBOR",
+        "time_of_day": "NIGHT",
+        "action": "The MARGARET ROSE rides at anchor in the outer harbor, dark against a darker sky. Along the seawall, the whole town has turned out, candles cupped in fists against the breeze.\n\nA Boston Whaler skiff crosses the black water. Danny at the tiller. Mara amidships with the urn in her lap. Sam in the bow in a life vest two sizes too big, one hand knotted in Barnacle's collar. The old dog rides like a figurehead, nose into the wind.\n\nThey come alongside the Margaret Rose. Danny and Mara climb aboard; Sam and the dog stay in the skiff, holding the rail.",
+        "dialogue": [],
+        "characters": [],
+        "raw_span": [
+          11976,
+          12558
+        ]
+      },
+      {
+        "scene_id": "S010",
+        "page": 7,
+        "heading": "INT./EXT. MARGARET ROSE - WHEELHOUSE - NIGHT - CONTINUOUS",
+        "int_ext": "INT/EXT",
+        "location": "MARGARET ROSE - WHEELHOUSE",
+        "time_of_day": "NIGHT - CONTINUOUS",
+        "action": "Mara sets the urn on the chart shelf, where the coffee thermos rode for forty years. Danny lashes it fast with a dock line, cinches it, tests it.\n\nMara lifts the old brass compass out of its gimbal and pockets it. Danny sees. Says nothing.",
+        "dialogue": [
+          {
+            "character": "DANNY",
+            "line": "You do it.",
+            "parenthetical": "(handing her the flare gun)"
+          },
+          {
+            "character": "MARA",
+            "line": "Why me?"
+          },
+          {
+            "character": "DANNY",
+            "line": "He decided you belonged here. So you do."
+          }
+        ],
+        "characters": [
+          "DANNY",
+          "MARA"
+        ],
+        "raw_span": [
+          12558,
+          12966
+        ]
+      },
+      {
+        "scene_id": "S011",
+        "page": 8,
+        "heading": "EXT. BANNOCK HARBOR - NIGHT - CONTINUOUS",
+        "int_ext": "EXT",
+        "location": "BANNOCK HARBOR",
+        "time_of_day": "NIGHT - CONTINUOUS",
+        "action": "They drop back into the skiff and stand off, engine idling, the radio crackling once with nothing.\n\nMara stands, braces, and fires the flare into the soaked blankets amidships.\n\nWHUMP. A line of blue-orange flame walks the deck like it knows the boat. Then the diesel catches and the MARGARET ROSE goes up -- a column of fire standing on the black water, doubled in the swell, huge.\n\nOn the seawall, a hundred candle-flames and one enormous gasp. Then, from speakers somebody has rigged on the seawall railing, Buckley's \"Hallelujah\" starts again, drifting out across the water toward the fire.\n\nCrow touches a road flare to the mortar fuse. The Fourth of July stash goes up -- white and gold chrysanthemums blooming over the burning boat, reflections shattering across the harbor.\n\nSam stands up in the skiff for a better look.\n\nSam sits. Barnacle barks at the fireworks, once, on principle.\n\nThen -- a CRACK from the fire. The anchor line, burned through at the chock, parts. The burning boat swings free and begins to drift, slow and terrible, on the last of the tide.\n\nToward a row of moored floats. The nearest one flying a little pennant: HENDERSON.\n\nBefore Danny can speak she has the spare line over her shoulder and she DIVES -- off the skiff into the black water, surfacing in the firelight, swimming hard for the mooring buoy off the Margaret Rose's bow.\n\nShe reaches the buoy, gets the line through the eye with numb hands, waves. Danny throws the skiff into gear, takes up the slack, and eases the burning boat's head around -- slow, straining, the flames roaring overhead -- until the drift points at open water.\n\nHe swings back and hauls Mara over the gunwale, soaked, gasping, shaking with cold and adrenaline and something else entirely.\n\nOut in the dark, the MARGARET ROSE burns down to the waterline, going out the way a day goes out, while Buckley's voice carries over the water and the last fireworks fall.",
+        "dialogue": [
+          {
+            "character": "DANNY",
+            "line": "Sit DOWN --"
+          },
+          {
+            "character": "MARA",
+            "line": "You have got to be kidding me."
+          },
+          {
+            "character": "DANNY",
+            "line": "MARA!"
+          },
+          {
+            "character": "DANNY",
+            "line": "You're insane. You know that. That was -- (laughing, despite everything) -- that was fucking beautiful."
+          },
+          {
+            "character": "MARA",
+            "line": "He would have HATED hitting the Hendersons'.",
+            "parenthetical": "(through chattering teeth)"
+          }
+        ],
+        "characters": [
+          "DANNY",
+          "MARA"
+        ],
+        "raw_span": [
+          12966,
+          15204
+        ]
+      },
+      {
+        "scene_id": "S012",
+        "page": 9,
+        "heading": "EXT. STONE JETTY - DAWN",
+        "int_ext": "EXT",
+        "location": "STONE JETTY",
+        "time_of_day": "DAWN",
+        "action": "Flat calm. The fog is back, gentler now. Ash rides the tideline like gray lace.\n\nMara and Danny sit on the rocks with coffee, passing the dented Thermos cup between them. Barnacle lies across Mara's feet, asleep with his eyes open, the way old dogs and old sailors do.\n\nSam walks the tideline below them, the folded flag still under his arm. He hasn't put it down since the churchyard.\n\nMara turns the brass compass over in her hands. The needle finds north, patient as ever.\n\nDanny nods. That's enough. That's plenty.\n\nOut on the empty water, the mooring where the MARGARET ROSE rode for forty years holds nothing at all. A gull lands on the buoy, decides it's not worth the trouble, and lifts away into the fog.",
+        "dialogue": [
+          {
+            "character": "DANNY",
+            "line": "You heading back Sunday?"
+          },
+          {
+            "character": "MARA",
+            "line": "Eventually."
+          }
+        ],
+        "characters": [
+          "DANNY",
+          "MARA"
+        ],
+        "raw_span": [
+          15204,
+          16004
+        ]
+      }
+    ],
+    "script_annotated": "[S001] EXT. PORT BANNOCK HARBOR - DAWN\n\nFog sits on the water like it pays rent. Lobster boats nod against their moorings. Somewhere a halyard clinks against a mast, patient as a clock.\n\nA rental sedan rolls to a stop at the head of the town pier. MARA VOSS (38), city coat, wrong shoes for a dock, sits with both hands on the wheel long after the engine dies.\n\nThrough the windshield: a lobster boat rides alone on its mooring, hull the green of old bottles. Stenciled across the transom: MARGARET ROSE.\n\nMara looks at the boat the way you look at a photograph of yourself as a child.\n\nMARA\n(quiet)\nHey, old man.\n\nShe gets out. Gulls wheel and holler. The fog takes no notice of her at all.\n\n[S002] INT. THE WHEELHOUSE - DAY\n\nA harbor bar that hasn't changed since the Carter administration and is proud of it. Buoys on the ceiling. A woodstove. The smell of beer and diesel and forty years of wet wool.\n\nOn the wall: a sun-bleached framed print of Edward Hopper's NIGHTHAWKS, hanging slightly crooked. Behind the register, thumbtacked and curling: a Polaroid of a younger ELI VOSS arm-wrestling BRUCE SPRINGSTEEN, both of them laughing, \"1988\" in ballpoint across the white strip. Beside it, framed: a front page of the Gloucester Daily Times -- \"BANNOCK CAPTAIN PULLS FOUR FROM NOR'EASTER.\"\n\nOn the corner TV, muted, an old VHS of JAWS is playing. The shark is winning.\n\nDANNY VOSS (34) stands behind the bar, not because he works there but because standing anywhere else feels wrong today. SAM (10) sits at the end of the bar doing serious damage to a cocoa, poured from a dented Thermos.\n\nCROW (60s, foul-weather bibs, a face like a chart of bad decisions) nurses a beer he transparently hates. Across his forearm, a full-rigged schooner tattoo in fading blue-black \u2014 Teddy Krane's design, inked at his Rockland parlor the summer the Margaret Rose launched \u2014 rides every pour like weather.\n\nCROW\nThirty years I drank whatever Eli stocked, out of loyalty. Coors Light. Tastes like a wet napkin. Man ran the best bar on this coast and drank the worst beer in America.\n\nDANNY\nHe liked that it was cheap.\n\nCROW\nHe liked that it annoyed me.\n\nThe door opens. Mara stands in it with a duffel bag. The room goes quiet the way only a small town can go quiet -- all at once, and politely.\n\nDANNY (CONT'D)\nYou came.\n\nMARA\nHe died.\n\nDANNY\nPeople have died before. You didn't come.\n\nA beat. Sam slides off his stool, crosses to Mara, and offers up the Thermos cup like a church collection.\n\nSAM\nAunt Mara. Want some? Dad made it with water, though. I'm supposed to say that first.\n\nMARA\n(taking the stool beside him)\nThen absolutely not.\n\nSam grins. Something in the room loosens a notch.\n\nHELEN FITCH (60s, funeral director, cardigan over steel) comes in from the back room carrying a manila envelope like it might go off.\n\nHELEN\nGood. You're both here. He left instructions. Notarized. Which, for Eli Voss, is close to a miracle.\n\nShe hands the envelope to Danny. He opens it, unfolds a single handwritten page, and reads.\n\nDANNY\n(reading)\n\"One. No church-basement sandwiches. Real food. If there is a casserole in that building I will know.\"\n\nCROW\nFair.\n\nDANNY\n(reading)\n\"Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.\"\n\nHELEN\nAnd three?\n\nDanny reads ahead silently. Stops. Reads it again.\n\nDANNY\n(reading)\n\"Three. Burn the boat. With me on it. At slack tide, so I don't drift into the Hendersons' float again.\"\n\nSilence. Crow raises the terrible beer.\n\nCROW\nViking.\n\nMARA\nHe cannot be serious. You can't just burn a boat in the harbor.\n\nCROW\nYou can if you don't ask first.\n\n[S003] EXT. TOWN PIER - NIGHT\n\nLow tide. The pilings stand up out of the mud like the legs of something huge and patient. Mara and Danny sit on the pier's end with their feet hanging over black water.\n\nDanny produces a joint, lights it, offers it over. Mara stares at it.\n\nDANNY\nSince when do you not?\n\nMARA\nSince I bill by the hour.\n\nShe takes it anyway. A long drag. She holds it like an old phone number she's surprised she still knows.\n\nOut of the dark comes BARNACLE, an ancient black Lab with a gray muzzle and the gait of a sea captain on land. He flops down between them with a groan and puts his head on Mara's knee.\n\nMARA (CONT'D)\nHe kept the dog.\n\nDANNY\nThe dog kept him. There's a difference.\n\nThey pass the joint. Water slaps the pilings.\n\nDANNY (CONT'D)\nYou remember Fenway? He hears on the radio the game's a sellout, so obviously that's the day we're going. No tickets. Walks us past the gate guy carrying a clipboard he took off a wall. \"Walk like you own the place.\" We saw the whole game from the standing rail.\n\nMARA\n(laughing despite herself)\nHe made us wave at the camera like we belonged there.\n\nDANNY\nWe did belong there. That was the trick. He decided we belonged, so we did.\n\nThe laugh drains out of her.\n\nMARA\nHe was a selfish, glorious, fucking impossible man, and I moved four hundred miles away to stop auditioning for him, and it didn't work. It never worked.\n\nDANNY\n(quiet)\nHe kept every clipping. Every case you won that made a paper, it went up behind the register. He'd tell strangers. Strangers, Mara. He never told you because you'd have won the argument about it, and he couldn't stand losing twice.\n\nMara looks at the water for a long time. Barnacle sighs like a man twice his age.\n\n[S004] INT. ST. BRIGID'S CHURCH - DAY\n\nFull pews. Fishermen in blazers that fit them two funerals ago. The casket at the front under a spray of lilies and, at Helen's visible disapproval, a coiled dock line.\n\nAt the side of the altar, an honor guard: three OLD VETERANS in dress uniforms, service rifles held at rest, faces like the granite outside.\n\nCrow walks to the front. No accompanist. He grips the lectern, and into the dead-quiet room he sings -- rough, unhurried, surprisingly tender -- the old Stephen Foster hymn \"Hard Times Come Again No More.\"\n\nCROW\n(singing)\n'Tis the song, the sigh of the weary. Hard times, hard times, come again no more...\n\nNobody breathes. He finishes. He nods once, to the casket, like closing a bar tab, and sits.\n\nHelen steps up. She sets a battered BOOMBOX on the altar rail, and looks at it with naked distrust. Sam, in the front pew, gives her a thumbs up.\n\nShe presses play.\n\nThe opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.\n\nHold on the faces. Danny's jaw working. Sam mouthing the words. Mara, eyes forward, absolutely still, tears moving anyway.\n\n[S005] EXT. ST. BRIGID'S CHURCHYARD - DAY\n\nThe mourners in a loose crescent under a pewter sky. The honor guard stands in a row, rifles up at the ready.\n\nVETERAN\nReady. Aim. Fire.\n\nVOLLEY. Gulls explode off the church roof. Sam clamps his hands over his ears. Barnacle, tied to the fence, points his muzzle at the sky and HOWLS.\n\nVOLLEY. VOLLEY.\n\nThe senior veteran presents the folded flag -- not to Danny, not to Mara. To Sam. The boy takes it like it weighs a hundred pounds, because it does.\n\n[S006] INT. THE WHEELHOUSE - DAY\n\nTHE WAKE. The bar packed to the walls. Chowder in mismatched bowls. Real food; no sandwiches in sight. Laughter in that specific register that lives one door down from crying.\n\nAt the bar, COUSIN TEDDY (40s, tie loosened, several drinks ahead of the room) holds forth.\n\nTEDDY\nAll I'm saying -- all I'm saying is that boat surveys at forty grand, and the plan is to torch it. That's the estate. That's my family's --\n\nDANNY\nSay that again.\n\nTEDDY\nIt's a boat, Danny. He was a drunk with a fucking boat, and you're all acting like it's the crown jewels.\n\nDanny hits him. One punch, no windup, the kind you learn on a working dock.\n\nTeddy goes back over a stool and comes up swinging, and for five ugly seconds it is a real fight -- grappling, a glass shattering, blood bright from Teddy's nose across the bar top -- before Crow peels them apart with an ease that suggests long practice.\n\nCROW\n(to Teddy, mild)\nGo home, Ted. Tide's going out. Try and go with it.\n\nHelen is already there with a stack of cocktail napkins, dressing Teddy's nose with the brisk efficiency of a corner cutman. Mara surveys the wreckage.\n\nMARA\n(to Helen)\n\"Real food, no sandwiches, and a fistfight.\" He got everything he asked for.\n\nHELEN\nThey usually do.\n\n[S007] INT. THE WHEELHOUSE - NIGHT\n\nLong after. Empty. Chairs up on tables. One lamp behind the bar. Mara alone, counting the night's take, not counting it at all.\n\nShe takes down the good whiskey from the top shelf -- the bottle no one is allowed to touch -- and pours two glasses. Sets one at the far end of the bar. Old habit. She doesn't seem to notice she's done it.\n\nELI VOSS (70) is sitting in front of the far glass. Work jacket. Salt-white stubble. He was not there a moment ago, and the room does not find this strange.\n\nELI\nYou put the Hopper crooked.\n\nMara does not turn around. Her hands go still on the register.\n\nELI (CONT'D)\nIt's been crooked eleven years. But you looked at it tonight, so now it's your fault.\n\nMARA\n(not turning)\nYou're not here.\n\nELI\nI'm not anywhere. It's very freeing. No tide chart. No Coors Light.\n\nMARA\n(turning now)\nThat you drank on purpose. For thirty years. Out of spite.\n\nELI\nLoyalty. Spite is just loyalty with the brights on.\n\nShe comes down the bar. Stops an arm's length away. Up close he is exactly himself: unhurried, amused, infuriating.\n\nMARA\nI came back four times. Ma's funeral. Danny's wedding. Twice more. You talked to me about bilge pumps.\n\nELI\nI know.\n\nMARA\nThat's it? You know?\n\nELI\nYou were the one thing I ever made that didn't need fixing. I didn't have a language for that. Bilge pumps, I had.\n\nMara's eyes fill. She hates it. She lets it happen anyway.\n\nMARA\nThe boat's worth fifty thousand dollars, Dad.\n\nELI\nThe boat is a coffin with a diesel in it. Everything I loved either walked off it or died on it, except you, and you swam.\n(beat)\nBurn it, Mare. Stand on the seawall with your brother and watch it go, and be done carrying it.\n\nMARA\n(barely)\nSlack tide?\n\nELI\nSlack tide. I meant that part. The Hendersons have suffered enough.\n\nShe laughs -- an ugly, wet, wonderful laugh. She wipes her eyes with the heel of her hand, and when she looks up the stool is empty.\n\nAt the far end of the bar, his glass is empty too.\n\n[S008] EXT. BANNOCK BOATYARD - DAY\n\nThe MARGARET ROSE up on stands, Danny and Crow moving over her with jerry cans of diesel, soaking coiled blankets along the deck. It is exactly as legal as it looks.\n\nCrow lugs a milk crate aboard: cardboard tubes, mortar shells, a coil of fuse.\n\nCROW\nFourth of July stash. Three years of it. He'd want the good ones up.\n\nA white pickup with U.S. Coast Guard markings rolls into the yard. PETTY OFFICER REYES (30s, squared away, unreadable) steps out and takes a long look at the diesel cans, the blankets, the fireworks, and the two men standing in front of them like boys caught smoking.\n\nREYES\nMr. Voss. Word around the harbor is you're planning a marine event. Open flame, on a vessel, in navigable waters. I checked. There's no permit on file.\n\nDANNY\nIt's a funeral.\n\nREYES\nIt's an unpermitted burn with a homemade pyrotechnics display, is what it is.\n\nA long silence. Reyes looks past them, at the boat's transom. MARGARET ROSE.\n\nREYES (CONT'D)\nEli Voss pulled my mother out of the water in 'ninety-eight. Her and three others, in a following sea, in a boat half this size.\n(beat)\nSlack tide's at nine-forty. My patrol ends at nine. Keep it in the outer harbor, keep a skiff standing off with a radio, and keep that boy of yours in a life jacket.\n\nHe gets back in the truck. Rolls the window down.\n\nREYES (CONT'D)\nI was never here.\n\nDANNY\nNever where?\n\nThe truck pulls out. Crow watches it go.\n\nCROW\nI like her.\n\n[S009] EXT. BANNOCK HARBOR - NIGHT\n\nThe MARGARET ROSE rides at anchor in the outer harbor, dark against a darker sky. Along the seawall, the whole town has turned out, candles cupped in fists against the breeze.\n\nA Boston Whaler skiff crosses the black water. Danny at the tiller. Mara amidships with the urn in her lap. Sam in the bow in a life vest two sizes too big, one hand knotted in Barnacle's collar. The old dog rides like a figurehead, nose into the wind.\n\nThey come alongside the Margaret Rose. Danny and Mara climb aboard; Sam and the dog stay in the skiff, holding the rail.\n\n[S010] INT./EXT. MARGARET ROSE - WHEELHOUSE - NIGHT - CONTINUOUS\n\nMara sets the urn on the chart shelf, where the coffee thermos rode for forty years. Danny lashes it fast with a dock line, cinches it, tests it.\n\nMara lifts the old brass compass out of its gimbal and pockets it. Danny sees. Says nothing.\n\nDANNY\n(handing her the flare gun)\nYou do it.\n\nMARA\nWhy me?\n\nDANNY\nHe decided you belonged here. So you do.\n\n[S011] EXT. BANNOCK HARBOR - NIGHT - CONTINUOUS\n\nThey drop back into the skiff and stand off, engine idling, the radio crackling once with nothing.\n\nMara stands, braces, and fires the flare into the soaked blankets amidships.\n\nWHUMP. A line of blue-orange flame walks the deck like it knows the boat. Then the diesel catches and the MARGARET ROSE goes up -- a column of fire standing on the black water, doubled in the swell, huge.\n\nOn the seawall, a hundred candle-flames and one enormous gasp. Then, from speakers somebody has rigged on the seawall railing, Buckley's \"Hallelujah\" starts again, drifting out across the water toward the fire.\n\nCrow touches a road flare to the mortar fuse. The Fourth of July stash goes up -- white and gold chrysanthemums blooming over the burning boat, reflections shattering across the harbor.\n\nSam stands up in the skiff for a better look.\n\nDANNY\nSit DOWN --\n\nSam sits. Barnacle barks at the fireworks, once, on principle.\n\nThen -- a CRACK from the fire. The anchor line, burned through at the chock, parts. The burning boat swings free and begins to drift, slow and terrible, on the last of the tide.\n\nToward a row of moored floats. The nearest one flying a little pennant: HENDERSON.\n\nMARA\nYou have got to be kidding me.\n\nBefore Danny can speak she has the spare line over her shoulder and she DIVES -- off the skiff into the black water, surfacing in the firelight, swimming hard for the mooring buoy off the Margaret Rose's bow.\n\nDANNY\nMARA!\n\nShe reaches the buoy, gets the line through the eye with numb hands, waves. Danny throws the skiff into gear, takes up the slack, and eases the burning boat's head around -- slow, straining, the flames roaring overhead -- until the drift points at open water.\n\nHe swings back and hauls Mara over the gunwale, soaked, gasping, shaking with cold and adrenaline and something else entirely.\n\nDANNY (CONT'D)\nYou're insane. You know that. That was --\n(laughing, despite everything)\n-- that was fucking beautiful.\n\nMARA\n(through chattering teeth)\nHe would have HATED hitting the Hendersons'.\n\nOut in the dark, the MARGARET ROSE burns down to the waterline, going out the way a day goes out, while Buckley's voice carries over the water and the last fireworks fall.\n\n[S012] EXT. STONE JETTY - DAWN\n\nFlat calm. The fog is back, gentler now. Ash rides the tideline like gray lace.\n\nMara and Danny sit on the rocks with coffee, passing the dented Thermos cup between them. Barnacle lies across Mara's feet, asleep with his eyes open, the way old dogs and old sailors do.\n\nSam walks the tideline below them, the folded flag still under his arm. He hasn't put it down since the churchyard.\n\nDANNY\nYou heading back Sunday?\n\nMara turns the brass compass over in her hands. The needle finds north, patient as ever.\n\nMARA\nEventually.\n\nDanny nods. That's enough. That's plenty.\n\nOut on the empty water, the mooring where the MARGARET ROSE rode for forty years holds nothing at all. A gull lands on the buoy, decides it's not worth the trouble, and lifts away into the fog.\n\nFADE OUT.",
+    "scene_index": "S001  p 1  EXT. PORT BANNOCK HARBOR - DAWN\nS002  p 1  INT. THE WHEELHOUSE - DAY\nS003  p 3  EXT. TOWN PIER - NIGHT\nS004  p 4  INT. ST. BRIGID'S CHURCH - DAY\nS005  p 4  EXT. ST. BRIGID'S CHURCHYARD - DAY\nS006  p 4  INT. THE WHEELHOUSE - DAY\nS007  p 5  INT. THE WHEELHOUSE - NIGHT\nS008  p 6  EXT. BANNOCK BOATYARD - DAY\nS009  p 7  EXT. BANNOCK HARBOR - NIGHT\nS010  p 7  INT./EXT. MARGARET ROSE - WHEELHOUSE - NIGHT - CONTINUOUS\nS011  p 8  EXT. BANNOCK HARBOR - NIGHT - CONTINUOUS\nS012  p 9  EXT. STONE JETTY - DAWN",
+    "target_rating": "",
+    "adaptation_context": "",
+    "form_facts": "12 scenes; 29% of the text is dialogue (action-forward); 5 INT / 7 EXT; 5 night scenes",
+    "script_title": "SLACK TIDE",
+    "research_budget:clearance_counsel": 4,
+    "triage": {
+      "entities": [
+        {
+          "entity_id": "E004",
+          "type": "FILM_CLIP",
+          "surface": "JAWS",
+          "scene_ids": [
+            "S002"
+          ],
+          "context": "On the corner TV, muted, an old VHS of JAWS is playing. The shark is winning.",
+          "depicted_negatively": false,
+          "portrayal": "neutral",
+          "prominence": "BACKGROUND"
+        }
+      ],
+      "clearance_counsel": [
+        {
+          "entity_id": "E004",
+          "work_item_id": "CC-W001",
+          "note": "Assess the use of JAWS on the television in S002."
+        }
+      ]
+    },
+    "deep_used:clearance_counsel": 2,
+    "research_budget:clearance_counsel__b1": 3,
+    "research:E004:57894cf68449": {
+      "objective": "Research film clip licensing requirements for featuring a clip of Universal Pictures' 1975 film 'Jaws' playing on a background TV in a feature film, including copyright clearance and guild clip requirements.",
+      "search_id": "search_39aeefd4bff778b50af6ee0304ec3b7e",
+      "results": [
+        {
+          "url": "https://guides.lib.umich.edu/permissions/films",
+          "title": "Films - Obtaining Copyright Permissions - Research Guides at University of Michigan Library",
+          "publish_date": "2012-02-03",
+          "excerpts": [
+            "# Obtaining Copyright Permissions\n## Film Studios and Distributors\nThis site explains how to license clips from Paramount's Theatrical Library, including some DreamWorks films.\n* [Sony Pictures Film Clip & Still Licensing This link opens in a new window](http://www.sonypictures.com/studios/filmclipandstilllicensing.php)\nThis site explains how to request licenses of clips, stills, and other items from Columbia Pictures, TriStar Pictures, Sony Pictures Animation, Screen Gems, Stage 6 Films, and Revolution Studios.\n* [Universal Studios Media Licensing This link opens in a new window](http://universalclips.com)\nThis site offers clip and still licenses for works from the Universal Pictures, Focus Features, DreamWorks Animation, and MCA Television libraries.\n* [Walt Disney Studios Licensing Website](http://www.disneystudiolicensing.com)\n\n...\n\n## Other Rights in Audiovisual Works\nIn other cases, a single licensor may not be able to provide all the rights you need. For example, in some cases, a studio may not be able to license the background music in a film clip."
+          ]
+        },
+        {
+          "url": "https://www.clearanceunlimited.net/producer-s-guidelines",
+          "title": "PRODUCER'S GUIDELINES | clearanceunlimited",
+          "publish_date": null,
+          "excerpts": [
+            "# PRODUCER'S GUIDELINES\n\u200b\nTELEVISION CLIPS\n\u200b\nTelevision clips are owned by studios, independent production companies and TV networks and are handled in the same fashion as described above with regard to film clips.\n\n...\n\nPRE-1960 THEATRICAL FEATURE FILMS Because prior to 1960, the SAG agreement did not contain any provision to pay residuals to actors appearing in feature films, rule of thumb in the industry was that actors in these films did not require clearance or payment for use in clips.\n\n...\n\nThere are separate schedules for feature films and television programs, which apply to the origination of the clip, i.e., the fee is dependent on whether the clip came from a feature film or a television show.\nFeature films rates break at a 30-second rate while television rates are much more expensive, changing rates at a 10-second cutoff. Rates can be obtained from the guilds."
+          ]
+        },
+        {
+          "url": "https://www.universalclips.com/",
+          "title": "Universal Studios Media Licensing",
+          "publish_date": null,
+          "excerpts": [
+            "# Welcome to Universal Studios Media Licensing.\nYour source for film and TV clip, still, and elements business to business media licensing from the iconic Universal Pictures, Focus Features, DreamWorks Animation, and MCA Television libraries."
+          ]
+        },
+        {
+          "url": "https://guides.lib.umich.edu/videocopyright/permission",
+          "title": "Getting Permission - Copyright and Using Video - Research Guides at University of Michigan Library",
+          "publish_date": "2012-10-24",
+          "excerpts": [
+            "# Copyright and Using Video\n## Film Studios and Distributors\nThis site explains how to license clips from Paramount's Theatrical Library, including some DreamWorks films.\n* [Sony Pictures Film Clip & Still Licensing This link opens in a new window](http://www.sonypictures.com/studios/filmclipandstilllicensing.php)\nThis site explains how to request licenses of clips, stills, and other items from Columbia Pictures, TriStar Pictures, Sony Pictures Animation, Screen Gems, Stage 6 Films, and Revolution Studios.\n* [Universal Studios Media Licensing This link opens in a new window](http://universalclips.com)\nThis site offers clip and still licenses for works from the Universal Pictures, Focus Features, DreamWorks Animation, and MCA Television libraries.\n* [Walt Disney Studios Licensing Website](http://www.disneystudiolicensing.com)\n\n...\n\n* [Warner Brothers Clip and Still Licensing Info This link opens in a new window](https://www.warnerbros.com/studio/services/clip-and-still-licensing)\nThis site explains how to request licenses for clips and stills from the Warner Bros."
+          ]
+        },
+        {
+          "url": "https://www.clearanceunlimited.net/rights-permissions",
+          "title": "RIGHTS & CLEARANCES | clearanceunlimited",
+          "publish_date": null,
+          "excerpts": [
+            "# RIGHTS & CLEARANCES\nFILM CLIPS & PHOTO CLEARANCES\n\u200b\nPermission for the use of film clips and phots, a license obtained and fee negotiated must be obtained from the owner of the work you want to use. We have many years of experience in this area and can help you obtain quick clearances and negotiate a reasonable fee for such usage.\n\u200b\n\n...\n\nPermission must be obtained from actors appearing in film and television clips. Talent clearance fees are set by SAG/AFTRA and start at the union scale payment of approximately $1000. However, an actor is not required to accept this fee and can negotiate considerably higher rates.\n\n...\n\nDetermination of whether material in in the public domain and can be used for free is frequently difficult.\n\u200b\nOUR FEES\n\u200b\nWe charge either a per clearance fee for obtaining permission for film clips, photos, talent, and music or a weekly rate depending on how many clearances are required.\n\u200b\nWeekly rate $1850/wk\n\n...\n\nWe provide you with all documents required to complete your project, including budgets, on-going clearance status reports, all payment sheets and all license agreements..\nFEATURE FILMS, TELEVISION SHOWS AND SERIES (clip-talent clearances)\n\u200b\nTruth or D"
+          ]
+        },
+        {
+          "url": "https://usnwc.libguides.com/copyright/permissions",
+          "title": "Permissions - Copyright - LibGuides at Naval War College",
+          "publish_date": "2021-11-08",
+          "excerpts": [
+            "# Copyright: Permissions\n## Obtaining Copyright Permissions\n* [Sony Pictures Film Clip & Still Licensing](http://www.sonypictures.com/studios/filmclipandstilllicensing.php) : This site explains how to request licenses of clips, stills, and other items from Columbia Pictures, TriStar Pictures, Sony Pictures Animation, Screen Gems, Stage 6 Films, and Revolution\nStudios.\n* [Universal Studios Media Licensing](http://universalclips.com/) : This site offers clip and still licenses for works from the Universal Pictures, Focus Features, DreamWorks Animation, and MCA Television libraries.\n\n...\n\nFor example, in some cases, a studio may not be able to license the background music in a film clip."
+          ]
+        }
+      ]
+    },
+    "research_keys:clearance_counsel__b1": [
+      "research:E004:57894cf68449"
+    ],
+    "flags:clearance_counsel__b1": [
+      {
+        "flag_id": "F1001",
+        "agent": "clearance_counsel",
+        "scene_ids": [
+          "S002"
+        ],
+        "entity_id": "E004",
+        "severity": "MEDIUM",
+        "category": "film_clip_license",
+        "finding": "Scene S002 depicts a television playing an old VHS tape of Steven Spielberg's 1975 feature film 'Jaws' ('The shark is winning'). Displaying recognizable copyrighted motion picture footage on screen constitutes reproduction of an audiovisual work and is not excused as fair use in a scripted narrative feature. The production must obtain a master clip license from the copyright owner, Universal Pictures (via Universal Studios Media Licensing), as well as any applicable guild talent clearances (SAG-AFTRA clip reuse fees) for recognizable performers visible in the selected clip.",
+        "citations": [
+          {
+            "source_type": "web",
+            "title": "Universal Studios Media Licensing",
+            "url": "https://www.universalclips.com/",
+            "excerpt": "Your source for film and TV clip, still, and elements business to business media licensing from the iconic Universal Pictures, Focus Features, DreamWorks Animation, and MCA Television libraries.",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          },
+          {
+            "source_type": "web",
+            "title": "RIGHTS & CLEARANCES | clearanceunlimited",
+            "url": "https://www.clearanceunlimited.net/rights-permissions",
+            "excerpt": "Permission for the use of film clips and phots, a license obtained and fee negotiated must be obtained from the owner of the work you want to use. We have many years of experience in this area and can help you obtain quick clearances and negotiate a reasonable fee for such usage.",
+            "retrieved_at": null,
+            "via": "parallel_search"
+          }
+        ],
+        "remedy": {
+          "action": "OBTAIN_LICENSE",
+          "detail": "To retain the 'Jaws' footage on the TV screen, negotiate a clip license through Universal Studios Media Licensing (licensing fee typically $5,000 to $15,000 for indie feature worldwide all-media rights) and clear SAG-AFTRA clip reuse scale/residuals for depicted performers. Alternatively, replace the TV footage on set or in post-production with public domain archival footage (pre-1931), in-house mock shark/nature footage, or pre-cleared royalty-free stock footage to eliminate licensing and talent clearance costs.",
+          "est_cost_usd": [
+            5000,
+            15000
+          ],
+          "est_added_days": 0
+        },
+        "confidence": 0.95
+      }
+    ],
+    "wi_done:clearance_counsel__b1": [
+      "CC-W001"
+    ]
+  },
+  "scenes": [
+    {
+      "scene_id": "S001",
+      "page": 1,
+      "heading": "EXT. PORT BANNOCK HARBOR - DAWN",
+      "int_ext": "EXT",
+      "location": "PORT BANNOCK HARBOR",
+      "time_of_day": "DAWN",
+      "action": "Fog sits on the water like it pays rent. Lobster boats nod against their moorings. Somewhere a halyard clinks against a mast, patient as a clock.\n\nA rental sedan rolls to a stop at the head of the town pier. MARA VOSS (38), city coat, wrong shoes for a dock, sits with both hands on the wheel long after the engine dies.\n\nThrough the windshield: a lobster boat rides alone on its mooring, hull the green of old bottles. Stenciled across the transom: MARGARET ROSE.\n\nMara looks at the boat the way you look at a photograph of yourself as a child.\n\nShe gets out. Gulls wheel and holler. The fog takes no notice of her at all.",
+      "dialogue": [
+        {
+          "character": "MARA",
+          "line": "Hey, old man.",
+          "parenthetical": "(quiet)"
+        }
+      ],
+      "characters": [
+        "MARA"
+      ],
+      "raw_span": [
+        224,
+        910
+      ]
+    },
+    {
+      "scene_id": "S002",
+      "page": 1,
+      "heading": "INT. THE WHEELHOUSE - DAY",
+      "int_ext": "INT",
+      "location": "THE WHEELHOUSE",
+      "time_of_day": "DAY",
+      "action": "A harbor bar that hasn't changed since the Carter administration and is proud of it. Buoys on the ceiling. A woodstove. The smell of beer and diesel and forty years of wet wool.\n\nOn the wall: a sun-bleached framed print of Edward Hopper's NIGHTHAWKS, hanging slightly crooked. Behind the register, thumbtacked and curling: a Polaroid of a younger ELI VOSS arm-wrestling BRUCE SPRINGSTEEN, both of them laughing, \"1988\" in ballpoint across the white strip. Beside it, framed: a front page of the Gloucester Daily Times -- \"BANNOCK CAPTAIN PULLS FOUR FROM NOR'EASTER.\"\n\nOn the corner TV, muted, an old VHS of JAWS is playing. The shark is winning.\n\nDANNY VOSS (34) stands behind the bar, not because he works there but because standing anywhere else feels wrong today. SAM (10) sits at the end of the bar doing serious damage to a cocoa, poured from a dented Thermos.\n\nCROW (60s, foul-weather bibs, a face like a chart of bad decisions) nurses a beer he transparently hates. Across his forearm, a full-rigged schooner tattoo in fading blue-black \u2014 Teddy Krane's design, inked at his Rockland parlor the summer the Margaret Rose launched \u2014 rides every pour like weather.\n\nThe door opens. Mara stands in it with a duffel bag. The room goes quiet the way only a small town can go quiet -- all at once, and politely.\n\nA beat. Sam slides off his stool, crosses to Mara, and offers up the Thermos cup like a church collection.\n\nSam grins. Something in the room loosens a notch.\n\nHELEN FITCH (60s, funeral director, cardigan over steel) comes in from the back room carrying a manila envelope like it might go off.\n\nShe hands the envelope to Danny. He opens it, unfolds a single handwritten page, and reads.\n\nDanny reads ahead silently. Stops. Reads it again.\n\nSilence. Crow raises the terrible beer.",
+      "dialogue": [
+        {
+          "character": "CROW",
+          "line": "Thirty years I drank whatever Eli stocked, out of loyalty. Coors Light. Tastes like a wet napkin. Man ran the best bar on this coast and drank the worst beer in America."
+        },
+        {
+          "character": "DANNY",
+          "line": "He liked that it was cheap."
+        },
+        {
+          "character": "CROW",
+          "line": "He liked that it annoyed me."
+        },
+        {
+          "character": "DANNY",
+          "line": "You came."
+        },
+        {
+          "character": "MARA",
+          "line": "He died."
+        },
+        {
+          "character": "DANNY",
+          "line": "People have died before. You didn't come."
+        },
+        {
+          "character": "SAM",
+          "line": "Aunt Mara. Want some? Dad made it with water, though. I'm supposed to say that first."
+        },
+        {
+          "character": "MARA",
+          "line": "Then absolutely not.",
+          "parenthetical": "(taking the stool beside him)"
+        },
+        {
+          "character": "HELEN",
+          "line": "Good. You're both here. He left instructions. Notarized. Which, for Eli Voss, is close to a miracle."
+        },
+        {
+          "character": "DANNY",
+          "line": "\"One. No church-basement sandwiches. Real food. If there is a casserole in that building I will know.\"",
+          "parenthetical": "(reading)"
+        },
+        {
+          "character": "CROW",
+          "line": "Fair."
+        },
+        {
+          "character": "DANNY",
+          "line": "\"Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.\"",
+          "parenthetical": "(reading)"
+        },
+        {
+          "character": "HELEN",
+          "line": "And three?"
+        },
+        {
+          "character": "DANNY",
+          "line": "\"Three. Burn the boat. With me on it. At slack tide, so I don't drift into the Hendersons' float again.\"",
+          "parenthetical": "(reading)"
+        },
+        {
+          "character": "CROW",
+          "line": "Viking."
+        },
+        {
+          "character": "MARA",
+          "line": "He cannot be serious. You can't just burn a boat in the harbor."
+        },
+        {
+          "character": "CROW",
+          "line": "You can if you don't ask first."
+        }
+      ],
+      "characters": [
+        "CROW",
+        "DANNY",
+        "MARA",
+        "SAM",
+        "HELEN"
+      ],
+      "raw_span": [
+        910,
+        3888
+      ]
+    },
+    {
+      "scene_id": "S003",
+      "page": 3,
+      "heading": "EXT. TOWN PIER - NIGHT",
+      "int_ext": "EXT",
+      "location": "TOWN PIER",
+      "time_of_day": "NIGHT",
+      "action": "Low tide. The pilings stand up out of the mud like the legs of something huge and patient. Mara and Danny sit on the pier's end with their feet hanging over black water.\n\nDanny produces a joint, lights it, offers it over. Mara stares at it.\n\nShe takes it anyway. A long drag. She holds it like an old phone number she's surprised she still knows.\n\nOut of the dark comes BARNACLE, an ancient black Lab with a gray muzzle and the gait of a sea captain on land. He flops down between them with a groan and puts his head on Mara's knee.\n\nThey pass the joint. Water slaps the pilings.\n\nThe laugh drains out of her.\n\nMara looks at the water for a long time. Barnacle sighs like a man twice his age.",
+      "dialogue": [
+        {
+          "character": "DANNY",
+          "line": "Since when do you not?"
+        },
+        {
+          "character": "MARA",
+          "line": "Since I bill by the hour."
+        },
+        {
+          "character": "MARA",
+          "line": "He kept the dog."
+        },
+        {
+          "character": "DANNY",
+          "line": "The dog kept him. There's a difference."
+        },
+        {
+          "character": "DANNY",
+          "line": "You remember Fenway? He hears on the radio the game's a sellout, so obviously that's the day we're going. No tickets. Walks us past the gate guy carrying a clipboard he took off a wall. \"Walk like you own the place.\" We saw the whole game from the standing rail."
+        },
+        {
+          "character": "MARA",
+          "line": "He made us wave at the camera like we belonged there.",
+          "parenthetical": "(laughing despite herself)"
+        },
+        {
+          "character": "DANNY",
+          "line": "We did belong there. That was the trick. He decided we belonged, so we did."
+        },
+        {
+          "character": "MARA",
+          "line": "He was a selfish, glorious, fucking impossible man, and I moved four hundred miles away to stop auditioning for him, and it didn't work. It never worked."
+        },
+        {
+          "character": "DANNY",
+          "line": "He kept every clipping. Every case you won that made a paper, it went up behind the register. He'd tell strangers. Strangers, Mara. He never told you because you'd have won the argument about it, and he couldn't stand losing twice.",
+          "parenthetical": "(quiet)"
+        }
+      ],
+      "characters": [
+        "DANNY",
+        "MARA"
+      ],
+      "raw_span": [
+        3888,
+        5603
+      ]
+    },
+    {
+      "scene_id": "S004",
+      "page": 4,
+      "heading": "INT. ST. BRIGID'S CHURCH - DAY",
+      "int_ext": "INT",
+      "location": "ST. BRIGID'S CHURCH",
+      "time_of_day": "DAY",
+      "action": "Full pews. Fishermen in blazers that fit them two funerals ago. The casket at the front under a spray of lilies and, at Helen's visible disapproval, a coiled dock line.\n\nAt the side of the altar, an honor guard: three OLD VETERANS in dress uniforms, service rifles held at rest, faces like the granite outside.\n\nCrow walks to the front. No accompanist. He grips the lectern, and into the dead-quiet room he sings -- rough, unhurried, surprisingly tender -- the old Stephen Foster hymn \"Hard Times Come Again No More.\"\n\nNobody breathes. He finishes. He nods once, to the casket, like closing a bar tab, and sits.\n\nHelen steps up. She sets a battered BOOMBOX on the altar rail, and looks at it with naked distrust. Sam, in the front pew, gives her a thumbs up.\n\nShe presses play.\n\nThe opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.\n\nHold on the faces. Danny's jaw working. Sam mouthing the words. Mara, eyes forward, absolutely still, tears moving anyway.",
+      "dialogue": [
+        {
+          "character": "CROW",
+          "line": "'Tis the song, the sigh of the weary. Hard times, hard times, come again no more...",
+          "parenthetical": "(singing)"
+        }
+      ],
+      "characters": [
+        "CROW"
+      ],
+      "raw_span": [
+        5603,
+        6797
+      ]
+    },
+    {
+      "scene_id": "S005",
+      "page": 4,
+      "heading": "EXT. ST. BRIGID'S CHURCHYARD - DAY",
+      "int_ext": "EXT",
+      "location": "ST. BRIGID'S CHURCHYARD",
+      "time_of_day": "DAY",
+      "action": "The mourners in a loose crescent under a pewter sky. The honor guard stands in a row, rifles up at the ready.\n\nVOLLEY. Gulls explode off the church roof. Sam clamps his hands over his ears. Barnacle, tied to the fence, points his muzzle at the sky and HOWLS.\n\nVOLLEY. VOLLEY.\n\nThe senior veteran presents the folded flag -- not to Danny, not to Mara. To Sam. The boy takes it like it weighs a hundred pounds, because it does.",
+      "dialogue": [
+        {
+          "character": "VETERAN",
+          "line": "Ready. Aim. Fire."
+        }
+      ],
+      "characters": [
+        "VETERAN"
+      ],
+      "raw_span": [
+        6797,
+        7287
+      ]
+    },
+    {
+      "scene_id": "S006",
+      "page": 4,
+      "heading": "INT. THE WHEELHOUSE - DAY",
+      "int_ext": "INT",
+      "location": "THE WHEELHOUSE",
+      "time_of_day": "DAY",
+      "action": "THE WAKE. The bar packed to the walls. Chowder in mismatched bowls. Real food; no sandwiches in sight. Laughter in that specific register that lives one door down from crying.\n\nAt the bar, COUSIN TEDDY (40s, tie loosened, several drinks ahead of the room) holds forth.\n\nDanny hits him. One punch, no windup, the kind you learn on a working dock.\n\nTeddy goes back over a stool and comes up swinging, and for five ugly seconds it is a real fight -- grappling, a glass shattering, blood bright from Teddy's nose across the bar top -- before Crow peels them apart with an ease that suggests long practice.\n\nHelen is already there with a stack of cocktail napkins, dressing Teddy's nose with the brisk efficiency of a corner cutman. Mara surveys the wreckage.",
+      "dialogue": [
+        {
+          "character": "TEDDY",
+          "line": "All I'm saying -- all I'm saying is that boat surveys at forty grand, and the plan is to torch it. That's the estate. That's my family's --"
+        },
+        {
+          "character": "DANNY",
+          "line": "Say that again."
+        },
+        {
+          "character": "TEDDY",
+          "line": "It's a boat, Danny. He was a drunk with a fucking boat, and you're all acting like it's the crown jewels."
+        },
+        {
+          "character": "CROW",
+          "line": "Go home, Ted. Tide's going out. Try and go with it.",
+          "parenthetical": "(to Teddy, mild)"
+        },
+        {
+          "character": "MARA",
+          "line": "\"Real food, no sandwiches, and a fistfight.\" He got everything he asked for.",
+          "parenthetical": "(to Helen)"
+        },
+        {
+          "character": "HELEN",
+          "line": "They usually do."
+        }
+      ],
+      "characters": [
+        "TEDDY",
+        "DANNY",
+        "CROW",
+        "MARA",
+        "HELEN"
+      ],
+      "raw_span": [
+        7287,
+        8546
+      ]
+    },
+    {
+      "scene_id": "S007",
+      "page": 5,
+      "heading": "INT. THE WHEELHOUSE - NIGHT",
+      "int_ext": "INT",
+      "location": "THE WHEELHOUSE",
+      "time_of_day": "NIGHT",
+      "action": "Long after. Empty. Chairs up on tables. One lamp behind the bar. Mara alone, counting the night's take, not counting it at all.\n\nShe takes down the good whiskey from the top shelf -- the bottle no one is allowed to touch -- and pours two glasses. Sets one at the far end of the bar. Old habit. She doesn't seem to notice she's done it.\n\nELI VOSS (70) is sitting in front of the far glass. Work jacket. Salt-white stubble. He was not there a moment ago, and the room does not find this strange.\n\nMara does not turn around. Her hands go still on the register.\n\nShe comes down the bar. Stops an arm's length away. Up close he is exactly himself: unhurried, amused, infuriating.\n\nMara's eyes fill. She hates it. She lets it happen anyway.\n\nShe laughs -- an ugly, wet, wonderful laugh. She wipes her eyes with the heel of her hand, and when she looks up the stool is empty.\n\nAt the far end of the bar, his glass is empty too.",
+      "dialogue": [
+        {
+          "character": "ELI",
+          "line": "You put the Hopper crooked."
+        },
+        {
+          "character": "ELI",
+          "line": "It's been crooked eleven years. But you looked at it tonight, so now it's your fault."
+        },
+        {
+          "character": "MARA",
+          "line": "You're not here.",
+          "parenthetical": "(not turning)"
+        },
+        {
+          "character": "ELI",
+          "line": "I'm not anywhere. It's very freeing. No tide chart. No Coors Light."
+        },
+        {
+          "character": "MARA",
+          "line": "That you drank on purpose. For thirty years. Out of spite.",
+          "parenthetical": "(turning now)"
+        },
+        {
+          "character": "ELI",
+          "line": "Loyalty. Spite is just loyalty with the brights on."
+        },
+        {
+          "character": "MARA",
+          "line": "I came back four times. Ma's funeral. Danny's wedding. Twice more. You talked to me about bilge pumps."
+        },
+        {
+          "character": "ELI",
+          "line": "I know."
+        },
+        {
+          "character": "MARA",
+          "line": "That's it? You know?"
+        },
+        {
+          "character": "ELI",
+          "line": "You were the one thing I ever made that didn't need fixing. I didn't have a language for that. Bilge pumps, I had."
+        },
+        {
+          "character": "MARA",
+          "line": "The boat's worth fifty thousand dollars, Dad."
+        },
+        {
+          "character": "ELI",
+          "line": "The boat is a coffin with a diesel in it. Everything I loved either walked off it or died on it, except you, and you swam. (beat) Burn it, Mare. Stand on the seawall with your brother and watch it go, and be done carrying it."
+        },
+        {
+          "character": "MARA",
+          "line": "Slack tide?",
+          "parenthetical": "(barely)"
+        },
+        {
+          "character": "ELI",
+          "line": "Slack tide. I meant that part. The Hendersons have suffered enough."
+        }
+      ],
+      "characters": [
+        "ELI",
+        "MARA"
+      ],
+      "raw_span": [
+        8546,
+        10528
+      ]
+    },
+    {
+      "scene_id": "S008",
+      "page": 6,
+      "heading": "EXT. BANNOCK BOATYARD - DAY",
+      "int_ext": "EXT",
+      "location": "BANNOCK BOATYARD",
+      "time_of_day": "DAY",
+      "action": "The MARGARET ROSE up on stands, Danny and Crow moving over her with jerry cans of diesel, soaking coiled blankets along the deck. It is exactly as legal as it looks.\n\nCrow lugs a milk crate aboard: cardboard tubes, mortar shells, a coil of fuse.\n\nA white pickup with U.S. Coast Guard markings rolls into the yard. PETTY OFFICER REYES (30s, squared away, unreadable) steps out and takes a long look at the diesel cans, the blankets, the fireworks, and the two men standing in front of them like boys caught smoking.\n\nA long silence. Reyes looks past them, at the boat's transom. MARGARET ROSE.\n\nHe gets back in the truck. Rolls the window down.\n\nThe truck pulls out. Crow watches it go.",
+      "dialogue": [
+        {
+          "character": "CROW",
+          "line": "Fourth of July stash. Three years of it. He'd want the good ones up."
+        },
+        {
+          "character": "REYES",
+          "line": "Mr. Voss. Word around the harbor is you're planning a marine event. Open flame, on a vessel, in navigable waters. I checked. There's no permit on file."
+        },
+        {
+          "character": "DANNY",
+          "line": "It's a funeral."
+        },
+        {
+          "character": "REYES",
+          "line": "It's an unpermitted burn with a homemade pyrotechnics display, is what it is."
+        },
+        {
+          "character": "REYES",
+          "line": "Eli Voss pulled my mother out of the water in 'ninety-eight. Her and three others, in a following sea, in a boat half this size. (beat) Slack tide's at nine-forty. My patrol ends at nine. Keep it in the outer harbor, keep a skiff standing off with a radio, and keep that boy of yours in a life jacket."
+        },
+        {
+          "character": "REYES",
+          "line": "I was never here."
+        },
+        {
+          "character": "DANNY",
+          "line": "Never where?"
+        },
+        {
+          "character": "CROW",
+          "line": "I like her."
+        }
+      ],
+      "characters": [
+        "CROW",
+        "REYES",
+        "DANNY"
+      ],
+      "raw_span": [
+        10528,
+        11976
+      ]
+    },
+    {
+      "scene_id": "S009",
+      "page": 7,
+      "heading": "EXT. BANNOCK HARBOR - NIGHT",
+      "int_ext": "EXT",
+      "location": "BANNOCK HARBOR",
+      "time_of_day": "NIGHT",
+      "action": "The MARGARET ROSE rides at anchor in the outer harbor, dark against a darker sky. Along the seawall, the whole town has turned out, candles cupped in fists against the breeze.\n\nA Boston Whaler skiff crosses the black water. Danny at the tiller. Mara amidships with the urn in her lap. Sam in the bow in a life vest two sizes too big, one hand knotted in Barnacle's collar. The old dog rides like a figurehead, nose into the wind.\n\nThey come alongside the Margaret Rose. Danny and Mara climb aboard; Sam and the dog stay in the skiff, holding the rail.",
+      "dialogue": [],
+      "characters": [],
+      "raw_span": [
+        11976,
+        12558
+      ]
+    },
+    {
+      "scene_id": "S010",
+      "page": 7,
+      "heading": "INT./EXT. MARGARET ROSE - WHEELHOUSE - NIGHT - CONTINUOUS",
+      "int_ext": "INT/EXT",
+      "location": "MARGARET ROSE - WHEELHOUSE",
+      "time_of_day": "NIGHT - CONTINUOUS",
+      "action": "Mara sets the urn on the chart shelf, where the coffee thermos rode for forty years. Danny lashes it fast with a dock line, cinches it, tests it.\n\nMara lifts the old brass compass out of its gimbal and pockets it. Danny sees. Says nothing.",
+      "dialogue": [
+        {
+          "character": "DANNY",
+          "line": "You do it.",
+          "parenthetical": "(handing her the flare gun)"
+        },
+        {
+          "character": "MARA",
+          "line": "Why me?"
+        },
+        {
+          "character": "DANNY",
+          "line": "He decided you belonged here. So you do."
+        }
+      ],
+      "characters": [
+        "DANNY",
+        "MARA"
+      ],
+      "raw_span": [
+        12558,
+        12966
+      ]
+    },
+    {
+      "scene_id": "S011",
+      "page": 8,
+      "heading": "EXT. BANNOCK HARBOR - NIGHT - CONTINUOUS",
+      "int_ext": "EXT",
+      "location": "BANNOCK HARBOR",
+      "time_of_day": "NIGHT - CONTINUOUS",
+      "action": "They drop back into the skiff and stand off, engine idling, the radio crackling once with nothing.\n\nMara stands, braces, and fires the flare into the soaked blankets amidships.\n\nWHUMP. A line of blue-orange flame walks the deck like it knows the boat. Then the diesel catches and the MARGARET ROSE goes up -- a column of fire standing on the black water, doubled in the swell, huge.\n\nOn the seawall, a hundred candle-flames and one enormous gasp. Then, from speakers somebody has rigged on the seawall railing, Buckley's \"Hallelujah\" starts again, drifting out across the water toward the fire.\n\nCrow touches a road flare to the mortar fuse. The Fourth of July stash goes up -- white and gold chrysanthemums blooming over the burning boat, reflections shattering across the harbor.\n\nSam stands up in the skiff for a better look.\n\nSam sits. Barnacle barks at the fireworks, once, on principle.\n\nThen -- a CRACK from the fire. The anchor line, burned through at the chock, parts. The burning boat swings free and begins to drift, slow and terrible, on the last of the tide.\n\nToward a row of moored floats. The nearest one flying a little pennant: HENDERSON.\n\nBefore Danny can speak she has the spare line over her shoulder and she DIVES -- off the skiff into the black water, surfacing in the firelight, swimming hard for the mooring buoy off the Margaret Rose's bow.\n\nShe reaches the buoy, gets the line through the eye with numb hands, waves. Danny throws the skiff into gear, takes up the slack, and eases the burning boat's head around -- slow, straining, the flames roaring overhead -- until the drift points at open water.\n\nHe swings back and hauls Mara over the gunwale, soaked, gasping, shaking with cold and adrenaline and something else entirely.\n\nOut in the dark, the MARGARET ROSE burns down to the waterline, going out the way a day goes out, while Buckley's voice carries over the water and the last fireworks fall.",
+      "dialogue": [
+        {
+          "character": "DANNY",
+          "line": "Sit DOWN --"
+        },
+        {
+          "character": "MARA",
+          "line": "You have got to be kidding me."
+        },
+        {
+          "character": "DANNY",
+          "line": "MARA!"
+        },
+        {
+          "character": "DANNY",
+          "line": "You're insane. You know that. That was -- (laughing, despite everything) -- that was fucking beautiful."
+        },
+        {
+          "character": "MARA",
+          "line": "He would have HATED hitting the Hendersons'.",
+          "parenthetical": "(through chattering teeth)"
+        }
+      ],
+      "characters": [
+        "DANNY",
+        "MARA"
+      ],
+      "raw_span": [
+        12966,
+        15204
+      ]
+    },
+    {
+      "scene_id": "S012",
+      "page": 9,
+      "heading": "EXT. STONE JETTY - DAWN",
+      "int_ext": "EXT",
+      "location": "STONE JETTY",
+      "time_of_day": "DAWN",
+      "action": "Flat calm. The fog is back, gentler now. Ash rides the tideline like gray lace.\n\nMara and Danny sit on the rocks with coffee, passing the dented Thermos cup between them. Barnacle lies across Mara's feet, asleep with his eyes open, the way old dogs and old sailors do.\n\nSam walks the tideline below them, the folded flag still under his arm. He hasn't put it down since the churchyard.\n\nMara turns the brass compass over in her hands. The needle finds north, patient as ever.\n\nDanny nods. That's enough. That's plenty.\n\nOut on the empty water, the mooring where the MARGARET ROSE rode for forty years holds nothing at all. A gull lands on the buoy, decides it's not worth the trouble, and lifts away into the fog.",
+      "dialogue": [
+        {
+          "character": "DANNY",
+          "line": "You heading back Sunday?"
+        },
+        {
+          "character": "MARA",
+          "line": "Eventually."
+        }
+      ],
+      "characters": [
+        "DANNY",
+        "MARA"
+      ],
+      "raw_span": [
+        15204,
+        16004
+      ]
+    }
+  ],
+  "retrieval": [
+    {
+      "api": "search",
+      "args": [
+        "Research film clip licensing requirements for featuring a clip of Universal Pictures' 1975 film 'Jaws' playing on a background TV in a feature film, including copyright clearance and guild clip requirements.",
+        [
+          "film clip licensing clearing movies television",
+          "Universal Studios clip licensing clearance",
+          "SAG AFTRA clip reuse clearance film"
+        ]
+      ],
+      "kwargs": {
+        "session_id": "scriptrisk-e-c2addaf5-3f93-4c79-a7e2-a05c796d4ee5",
+        "country": "",
+        "include_domains": null
+      },
+      "status": "returned",
+      "response": {
+        "results": [
+          {
+            "excerpts": [
+              "# Obtaining Copyright Permissions\n## Film Studios and Distributors\nThis site explains how to license clips from Paramount's Theatrical Library, including some DreamWorks films.\n* [Sony Pictures Film Clip & Still Licensing This link opens in a new window](http://www.sonypictures.com/studios/filmclipandstilllicensing.php)\nThis site explains how to request licenses of clips, stills, and other items from Columbia Pictures, TriStar Pictures, Sony Pictures Animation, Screen Gems, Stage 6 Films, and Revolution Studios.\n* [Universal Studios Media Licensing This link opens in a new window](http://universalclips.com)\nThis site offers clip and still licenses for works from the Universal Pictures, Focus Features, DreamWorks Animation, and MCA Television libraries.\n* [Walt Disney Studios Licensing Website](http://www.disneystudiolicensing.com)\n\n...\n\n## Other Rights in Audiovisual Works\nIn other cases, a single licensor may not be able to provide all the rights you need. For example, in some cases, a studio may not be able to license the background music in a film clip."
+            ],
+            "url": "https://guides.lib.umich.edu/permissions/films",
+            "publish_date": "2012-02-03",
+            "title": "Films - Obtaining Copyright Permissions - Research Guides at University of Michigan Library"
+          },
+          {
+            "excerpts": [
+              "# PRODUCER'S GUIDELINES\n\u200b\nTELEVISION CLIPS\n\u200b\nTelevision clips are owned by studios, independent production companies and TV networks and are handled in the same fashion as described above with regard to film clips.\n\n...\n\nPRE-1960 THEATRICAL FEATURE FILMS Because prior to 1960, the SAG agreement did not contain any provision to pay residuals to actors appearing in feature films, rule of thumb in the industry was that actors in these films did not require clearance or payment for use in clips.\n\n...\n\nThere are separate schedules for feature films and television programs, which apply to the origination of the clip, i.e., the fee is dependent on whether the clip came from a feature film or a television show.\nFeature films rates break at a 30-second rate while television rates are much more expensive, changing rates at a 10-second cutoff. Rates can be obtained from the guilds."
+            ],
+            "url": "https://www.clearanceunlimited.net/producer-s-guidelines",
+            "publish_date": null,
+            "title": "PRODUCER'S GUIDELINES | clearanceunlimited"
+          },
+          {
+            "excerpts": [
+              "# Welcome to Universal Studios Media Licensing.\nYour source for film and TV clip, still, and elements business to business media licensing from the iconic Universal Pictures, Focus Features, DreamWorks Animation, and MCA Television libraries."
+            ],
+            "url": "https://www.universalclips.com/",
+            "publish_date": null,
+            "title": "Universal Studios Media Licensing"
+          },
+          {
+            "excerpts": [
+              "# Copyright and Using Video\n## Film Studios and Distributors\nThis site explains how to license clips from Paramount's Theatrical Library, including some DreamWorks films.\n* [Sony Pictures Film Clip & Still Licensing This link opens in a new window](http://www.sonypictures.com/studios/filmclipandstilllicensing.php)\nThis site explains how to request licenses of clips, stills, and other items from Columbia Pictures, TriStar Pictures, Sony Pictures Animation, Screen Gems, Stage 6 Films, and Revolution Studios.\n* [Universal Studios Media Licensing This link opens in a new window](http://universalclips.com)\nThis site offers clip and still licenses for works from the Universal Pictures, Focus Features, DreamWorks Animation, and MCA Television libraries.\n* [Walt Disney Studios Licensing Website](http://www.disneystudiolicensing.com)\n\n...\n\n* [Warner Brothers Clip and Still Licensing Info This link opens in a new window](https://www.warnerbros.com/studio/services/clip-and-still-licensing)\nThis site explains how to request licenses for clips and stills from the Warner Bros."
+            ],
+            "url": "https://guides.lib.umich.edu/videocopyright/permission",
+            "publish_date": "2012-10-24",
+            "title": "Getting Permission - Copyright and Using Video - Research Guides at University of Michigan Library"
+          },
+          {
+            "excerpts": [
+              "# RIGHTS & CLEARANCES\nFILM CLIPS & PHOTO CLEARANCES\n\u200b\nPermission for the use of film clips and phots, a license obtained and fee negotiated must be obtained from the owner of the work you want to use. We have many years of experience in this area and can help you obtain quick clearances and negotiate a reasonable fee for such usage.\n\u200b\n\n...\n\nPermission must be obtained from actors appearing in film and television clips. Talent clearance fees are set by SAG/AFTRA and start at the union scale payment of approximately $1000. However, an actor is not required to accept this fee and can negotiate considerably higher rates.\n\n...\n\nDetermination of whether material in in the public domain and can be used for free is frequently difficult.\n\u200b\nOUR FEES\n\u200b\nWe charge either a per clearance fee for obtaining permission for film clips, photos, talent, and music or a weekly rate depending on how many clearances are required.\n\u200b\nWeekly rate $1850/wk\n\n...\n\nWe provide you with all documents required to complete your project, including budgets, on-going clearance status reports, all payment sheets and all license agreements..\nFEATURE FILMS, TELEVISION SHOWS AND SERIES (clip-talent clearances)\n\u200b\nTruth or Dare - Lionsgate Films"
+            ],
+            "url": "https://www.clearanceunlimited.net/rights-permissions",
+            "publish_date": null,
+            "title": "RIGHTS & CLEARANCES | clearanceunlimited"
+          },
+          {
+            "excerpts": [
+              "# Copyright: Permissions\n## Obtaining Copyright Permissions\n* [Sony Pictures Film Clip & Still Licensing](http://www.sonypictures.com/studios/filmclipandstilllicensing.php) : This site explains how to request licenses of clips, stills, and other items from Columbia Pictures, TriStar Pictures, Sony Pictures Animation, Screen Gems, Stage 6 Films, and Revolution\nStudios.\n* [Universal Studios Media Licensing](http://universalclips.com/) : This site offers clip and still licenses for works from the Universal Pictures, Focus Features, DreamWorks Animation, and MCA Television libraries.\n\n...\n\nFor example, in some cases, a studio may not be able to license the background music in a film clip."
+            ],
+            "url": "https://usnwc.libguides.com/copyright/permissions",
+            "publish_date": "2021-11-08",
+            "title": "Permissions - Copyright - LibGuides at Naval War College"
+          },
+          {
+            "excerpts": [
+              "# Employers Meta Menu\n* FAQ\n* Contact\n* SAG-Pension\n* SAG-AFTRA Health\nHome\n\n...\n\n## Employers Main menu\nProvide SAG-AFTRA Health Plans with the Project title and Signatory of the original clip and the Production date of the current project the original clip is being used in. The project title should be in the following format, CLIP USE OF Title of the original clip IN title of the project the clip is being used in, e.g."
+            ],
+            "url": "https://www.sagaftraplans.org/employers/faq/how-should-i-remit-clip-use",
+            "publish_date": null,
+            "title": "How should I remit Clip Use? | SAG-AFTRA Plans"
+          },
+          {
+            "excerpts": [
+              "# Artificial Intelligence Resources\n## AI FAQs\n+ This concept is already in the Codified Basic Agreement and the TV Agreement relating to reuse of clips, so the same principle will generally apply here. Before the union takes any action, we will make sure the producer has exhausted all reasonable avenues to locate your authorized representative.\n\n...\n\nThe concept is the same as how the producer has to get your consent and pay you to reuse clips in which you appear or how you earn residuals when the film or show is released in a new market \u2014 these are bargained exceptions to the employer\u2019s legal rights."
+            ],
+            "url": "https://www.sagaftra.org/contracts-industry-resources/contracts/2023-tvtheatrical-contracts/artificial-intelligence-resources",
+            "publish_date": null,
+            "title": "Artificial Intelligence Resources | SAG-AFTRA"
+          },
+          {
+            "excerpts": [
+              "Loading \u00b7 This site supports the latest versions of Chrome, Firefox, Safari, Microsoft Edge, and Internet Explorer"
+            ],
+            "url": "https://www.universalclips.com/faq",
+            "publish_date": null,
+            "title": "Rightsline Portals"
+          },
+          {
+            "excerpts": [
+              "# Welcome to The Walt Disney Studios Licensing Website\n## Frequently Asked Questions\nAlterations or modifications to the film clips or stills are not permitted without the express written consent of Disney Studios Licensing.\n[Can I use a film clip and/or still on my website?](https://www.disneystudiolicensing.com/?p=77)\n\n...\n\nCertain film clip re-use payments may be triggered relative to talent, stunt performers, writers, directors and musicians, depending on when a film was released, in accordance with current guild collective bargaining agreements.\n\n...\n\nWhen you license a film clip, still image, sound bite, screenplay excerpt, thematic element, or poster, our license will cover use of the licensed content for the media, term, and territory to which both parties have agreed, for a negotiated fee."
+            ],
+            "url": "https://www.disneystudiolicensing.com/",
+            "publish_date": null,
+            "title": "Welcome to The Walt Disney Studios Licensing Website"
+          }
+        ],
+        "search_id": "search_39aeefd4bff778b50af6ee0304ec3b7e",
+        "session_id": "scriptrisk-e-c2addaf5-3f93-4c79-a7e2-a05c796d4ee5",
+        "usage": [
+          {
+            "count": 1,
+            "name": "sku_search"
+          }
+        ],
+        "warnings": null,
+        "metadata": null
+      },
+      "elapsed_s": 1.5
+    }
+  ],
+  "gemini_cost_estimate_usd": 0.0348,
+  "accuracy_pass": null
+}

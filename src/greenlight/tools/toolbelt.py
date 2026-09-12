@@ -2746,8 +2746,11 @@ def file_flag(  # noqa: PLR0912, PLR0915 - a deliberate sequence of filing gates
       "consider alternatives".
     confidence: 0.0-1.0, your confidence in the finding.
     entity_id: the entity this concerns, or "" for findings not tied to one.
-    est_cost_usd_low/high: rule-of-thumb remedy cost range in USD; pass -1 if unknown.
-    est_added_days: schedule impact in days; pass -1 if unknown.
+    est_cost_usd_low/high: remedy cost range in USD only with a sourced basis and
+      applicable assumptions stated in remedy_detail and supported by the citations.
+      Omit or pass -1 when unknown; never invent a rule-of-thumb price from memory.
+    est_added_days: sourced schedule estimate with its basis in remedy_detail;
+      omit or pass -1 when unknown. Zero means supported no added days, not missing data.
     work_item_id: the worklist item this dispositions (e.g. "TC-W003") — pass it
       whenever your worklist item shows one; it is how the closing gate sees
       scene-level work that has no entity_id.

@@ -36,10 +36,13 @@ PROCEDURE, per worklist item:
 2. HAZARDS STACK. Fire on a boat is one risk; fire on a boat at night with a child and an animal
    in an adjacent skiff is a different, much larger one. Flag the stacked scene as a unit, and
    say in the finding which elements stack.
-3. research() what the hazard requires: licensed pyrotechnician / marine coordinator / stunt
-   coordinator / animal handler, permits (fire marshal, marine event), minor work rules
-   (work-hour limits, guardian, studio teacher), OSHA or jurisdiction rules, and what insurers
-   demand. Cite what you find verbatim.
+3. research() operative guidance for the depicted hazard. Derive each specialist,
+   equipment, permit or insurance prescription from the retrieved text and its scope;
+   do not assemble a standard crew/permit checklist from memory. 'Obtain required permits'
+   does not establish that a particular permit or issuing authority applies. A direction
+   to prevent hypothermia does not specify heated tents, wetsuits or rescue personnel.
+   Preserve conditions such as 'if practical pyrotechnics are used' in BOTH finding and
+   remedy; a conditional sentence later in the finding does not qualify earlier duties.
 4. file_flag with a concrete, supported remedy. Name a specialist or production method
    only when retrieved operative guidance supports it and its applicability is explicit.
    Use fetch_page on the exact source URL when search excerpts are only titles, scope
@@ -72,9 +75,10 @@ takes the dominant slug; name the stacked elements in the finding). Open flame a
 fire hazards are stunt_pyro. A night scene is never a finding by itself — night is a
 stacking element inside another hazard's flag.
 
-COST DISCIPLINE: remedy costs here are almost always LABOR/PRODUCTION costs — say
-"varies by shooting region and union agreements" in the detail rather than presenting a
-single national number as fixed.
+COST DISCIPLINE: state the sourced basis and production assumptions for every cost/day
+estimate in the remedy. 'Varies by shooting region and union agreements' does not justify
+an unsupported range or schedule. When the selected method or evidence is missing, omit
+the numeric tool arguments or pass -1, including days; never invent a standard allowance.
 
 DOCTRINE:
 - DEPICTED vs RECOUNTED: you underwrite what the production must STAGE. Action in
@@ -89,8 +93,9 @@ DOCTRINE:
   staging and confirm local requirements. Do not assert that the real shoot is under a
   ban. Pure plot illegality with no staged physical hazard is not safety work.
 - CHILD CHARACTERS: when a child is depicted near a hazard, keep the hazard and identify
-  the casting/staging question. Recommend confirming performer age and safe separation,
-  doubles or effects. Minor-performer obligations are conditional until casting and
+  the casting/staging question. Confirm performer age and the planned method; prescribe
+  separation, doubles or effects only with applicable retrieved support. Minor-performer
+  obligations are conditional until casting and
   jurisdiction are known. Never infer minority from 'student' or 'college'.
 - ENVIRONMENTAL COMPOUNDING: night, rain, cold, or exterior are conditions, not
   hazards — flag them only when COMPOUNDED with a physical hazard (night + vehicle

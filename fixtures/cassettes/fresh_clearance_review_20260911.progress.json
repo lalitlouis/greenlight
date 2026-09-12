@@ -1,0 +1,29 @@
+[
+  {
+    "flag_id": "F1001",
+    "schema": "EvidenceVerdict",
+    "status": "returned",
+    "input_chars": 20399,
+    "input_sha256": "89f1085ea23006cdbd52b8c2d8b68fca82d731d19310d42b9155697841ae92ee",
+    "usage_available": true,
+    "elapsed_s": 13.86
+  },
+  {
+    "flag_id": "F1001",
+    "schema": "CorrectedClaim",
+    "status": "returned",
+    "input_chars": 16158,
+    "input_sha256": "b439a05d75c7a79e73239fb292660ad9854069c8bbacfa93fca4f6e9fd5fdd20",
+    "usage_available": true,
+    "elapsed_s": 4.37
+  },
+  {
+    "flag_id": "F1001",
+    "schema": "EvidenceVerdict",
+    "status": "returned",
+    "input_chars": 19956,
+    "input_sha256": "b87a03e695697f595061f39f1efed146856fb043d0e565a455fd3b49bfa59978",
+    "usage_available": true,
+    "elapsed_s": 11.32
+  }
+]

@@ -1,0 +1,689 @@
+{
+  "source_run": "fixtures/cassettes/fresh_safety_20260911.json",
+  "source_run_sha256": "ddca289bd0e5eabeb9829e868ce5c2b5f8f419358e5ec21f574545732ffa6731",
+  "source_build": "b49ce03d59b168cf9f616d9e706c22a7b514f577",
+  "evaluated_build": "b49ce03d59b168cf9f616d9e706c22a7b514f577",
+  "model": "gemini-3.7-flash",
+  "elapsed_s": 82.06,
+  "calls": 4,
+  "responses_with_usage": 4,
+  "calls_without_returned_usage": 0,
+  "resumed_from": null,
+  "rechecked_correction_from": null,
+  "entailment_cases": null,
+  "entailment_cases_sha256": null,
+  "attempts": [
+    {
+      "flag_id": "F3001",
+      "schema": "EvidenceVerdict",
+      "status": "returned",
+      "input_chars": 21262,
+      "input_sha256": "df988a251a9ee3863dd3681d321626d481058951fe00f514583db0dc82667545",
+      "usage_available": true,
+      "elapsed_s": 52.36
+    },
+    {
+      "flag_id": "F3001",
+      "schema": "CorrectedClaim",
+      "status": "returned",
+      "input_chars": 20904,
+      "input_sha256": "7b345a4b2a2bab82202123202cad0414e41daca15559403127125c1a6fd0894a",
+      "usage_available": true,
+      "elapsed_s": 6.58
+    },
+    {
+      "flag_id": "F3001",
+      "schema": "EvidenceVerdict",
+      "status": "returned",
+      "input_chars": 20995,
+      "input_sha256": "ef7450855ec3e36931b703952c0c31e9e8ece791e760a85201a5ad0797127411",
+      "usage_available": true,
+      "elapsed_s": 15.49
+    },
+    {
+      "flag_id": "F3001",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 13475,
+      "input_sha256": "da55005d1828b3d1c89ee0c3d1e127d4c19a65aaec6b7e68c5b97937b7bebe12",
+      "usage_available": true,
+      "elapsed_s": 7.57
+    }
+  ],
+  "gemini_usage": {
+    "flash": {
+      "prompt": 18306,
+      "cached": 0,
+      "output": 6973
+    }
+  },
+  "estimated_cost_usd": 0.0399,
+  "manual_review": "pending; model approval is not an accuracy label",
+  "results": [
+    {
+      "flag_id": "F3001",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "reason": "The script text explicitly depicts a boat being set on fire with a flare gun, fireworks mortars fired overhead, and a character diving into cold harbor water at night. The safety requirements regarding pyrotechnic licensing/permits and water exposure/hypothermia monitoring are verbatim supported by the cited Safety Bulletins #16 and #17, properly conditioned on practical staging choices.",
+        "failure_mode": "none",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "Scenes S009, S010, and S011 depict a vessel fire ignited by a flare gun, fireworks mortars overhead, and a performer diving into cold harbor water at night near an adjacent skiff with a child character and dog.",
+            "basis": "script",
+            "status": "SUPPORTED",
+            "reason": "Scenes S009, S010, and S011 explicitly depict the flare gun ignition of the boat, mortar fireworks exploding overhead, and Mara diving into cold night harbor water while Sam and Barnacle are in the skiff.",
+            "citation_numbers": [],
+            "support_spans": [],
+            "script_spans": [
+              "Mara stands, braces, and fires the flare into the soaked blankets amidships.",
+              "Crow touches a road flare to the mortar fuse. The Fourth of July stash goes up -- white and gold chrysanthemums blooming over the burning boat",
+              "she DIVES -- off the skiff into the black water, surfacing in the firelight, swimming hard for the mooring buoy",
+              "Sam in the bow in a life vest two sizes too big, one hand knotted in Barnacle's collar. The old dog rides like a figurehead"
+            ]
+          },
+          {
+            "field": "finding",
+            "quote": "If practical pyrotechnic special effects are staged, Industry-Wide Safety Bulletin #16 requires that any required licenses and permits be obtained from the proper Authorities Having Jurisdiction (AHJ) prior to use, and that pyrotechnic special effects operators hold valid applicable licenses.",
+            "basis": "source",
+            "status": "SUPPORTED",
+            "reason": "Safety Bulletin #16 directly mandates obtaining AHJ permits/licenses prior to use and requiring operators to hold valid State and Federal licenses.",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "Any required licenses and/or permits shall be obtained from proper Authorities Having Jurisdiction (AHJ) over pyrotechnic materials prior to using pyrotechnic special effects.\nPyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable."
+              }
+            ],
+            "script_spans": []
+          },
+          {
+            "field": "finding",
+            "quote": "Additionally, Safety Bulletin #17 specifies that water temperature and exposure be monitored and that production management take steps to prevent hypothermia during cast and crew water operations.",
+            "basis": "source",
+            "status": "SUPPORTED",
+            "reason": "Safety Bulletin #17 directly prescribes monitoring water temperature and exposure and taking steps to prevent hypothermia for cast and crew.",
+            "citation_numbers": [
+              2
+            ],
+            "support_spans": [
+              {
+                "citation_number": 2,
+                "quote": "The temperature should be monitored when cast and crew are expected to be working in water.\nProlonged exposure to water can become hazardous. Cast and crew should be monitored for signs\nand symptoms of both hyperthermia and hypothermia.\nProduction Management should take steps to prevent hyperthermia (elevated body temperature)\nand hypothermia (reduced body temperature)."
+              }
+            ],
+            "script_spans": []
+          },
+          {
+            "field": "finding",
+            "quote": "Staging execution (practical open-water burn vs. controlled tank or VFX) and actual performer casting/doubling remain unconfirmed production facts.",
+            "basis": "production",
+            "status": "SUPPORTED",
+            "reason": "Accurately notes that practical vs VFX staging and stunt doubling remain unconfirmed production facts.",
+            "citation_numbers": [],
+            "support_spans": [],
+            "script_spans": []
+          },
+          {
+            "field": "remedy",
+            "quote": "If practical pyrotechnics or open flames are utilized, engage a licensed Pyrotechnic Special Effects Operator holding valid state/federal licenses and obtain required permits from the proper Authorities Having Jurisdiction prior to shooting.",
+            "basis": "application",
+            "status": "SUPPORTED",
+            "reason": "Properly applies the Bulletin #16 requirement to practical pyrotechnic and open-flame shooting.",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "Any required licenses and/or permits shall be obtained from proper Authorities Having Jurisdiction (AHJ) over pyrotechnic materials prior to using pyrotechnic special effects.\nPyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable."
+              }
+            ],
+            "script_spans": [
+              "Mara stands, braces, and fires the flare into the soaked blankets amidships.",
+              "Crow touches a road flare to the mortar fuse. The Fourth of July stash goes up -- white and gold chrysanthemums blooming over the burning boat"
+            ]
+          },
+          {
+            "field": "remedy",
+            "quote": "For water immersion scenes, implement protocols to monitor temperature and take necessary steps to prevent hypothermia among cast and crew.",
+            "basis": "application",
+            "status": "SUPPORTED",
+            "reason": "Directly applies Bulletin #17 safeguards to the night water dive and swimming sequence depicted in the scene.",
+            "citation_numbers": [
+              2
+            ],
+            "support_spans": [
+              {
+                "citation_number": 2,
+                "quote": "The temperature should be monitored when cast and crew are expected to be working in water.\nProlonged exposure to water can become hazardous. Cast and crew should be monitored for signs\nand symptoms of both hyperthermia and hypothermia.\nProduction Management should take steps to prevent hyperthermia (elevated body temperature)\nand hypothermia (reduced body temperature)."
+              }
+            ],
+            "script_spans": [
+              "she DIVES -- off the skiff into the black water, surfacing in the firelight, swimming hard for the mooring buoy off the Margaret Rose's bow."
+            ]
+          },
+          {
+            "field": "remedy",
+            "quote": "Confirm whether the sequence will be executed practically, in a controlled tank facility, or augmented via visual effects, and confirm casting and stunt doubling arrangements.",
+            "basis": "inquiry",
+            "status": "SUPPORTED",
+            "reason": "A valid and necessary planning inquiry to determine specific production methods, risk mitigations, and safety obligations.",
+            "citation_numbers": [],
+            "support_spans": [],
+            "script_spans": []
+          },
+          {
+            "field": "severity",
+            "quote": "HIGH",
+            "basis": "planning",
+            "status": "SUPPORTED",
+            "reason": "Combining large open-water vessel fire, aerial fireworks, and night water immersion carries significant safety risks requiring specialized personnel and permits.",
+            "citation_numbers": [],
+            "support_spans": [],
+            "script_spans": []
+          }
+        ],
+        "support_span_version": 2,
+        "support_span_reanchors": [
+          {
+            "check_index": 1,
+            "span_index": 0,
+            "citation_number": 1,
+            "submitted_quote": "Any required licenses and/or permits shall be obtained from proper Authorities Having Jurisdiction (AHJ) over pyrotechnic materials prior to using pyrotechnic special effects. Pyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable.",
+            "raw_quote": "Any required licenses and/or permits shall be obtained from proper Authorities Having Jurisdiction (AHJ) over pyrotechnic materials prior to using pyrotechnic special effects.\nPyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable."
+          },
+          {
+            "check_index": 2,
+            "span_index": 0,
+            "citation_number": 2,
+            "submitted_quote": "The temperature should be monitored when cast and crew are expected to be working in water. Prolonged exposure to water can become hazardous. Cast and crew should be monitored for signs and symptoms of both hyperthermia and hypothermia. Production Management should take steps to prevent hyperthermia (elevated body temperature) and hypothermia (reduced body temperature).",
+            "raw_quote": "The temperature should be monitored when cast and crew are expected to be working in water.\nProlonged exposure to water can become hazardous. Cast and crew should be monitored for signs\nand symptoms of both hyperthermia and hypothermia.\nProduction Management should take steps to prevent hyperthermia (elevated body temperature)\nand hypothermia (reduced body temperature)."
+          },
+          {
+            "check_index": 4,
+            "span_index": 0,
+            "citation_number": 1,
+            "submitted_quote": "Any required licenses and/or permits shall be obtained from proper Authorities Having Jurisdiction (AHJ) over pyrotechnic materials prior to using pyrotechnic special effects. Pyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable.",
+            "raw_quote": "Any required licenses and/or permits shall be obtained from proper Authorities Having Jurisdiction (AHJ) over pyrotechnic materials prior to using pyrotechnic special effects.\nPyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable."
+          },
+          {
+            "check_index": 5,
+            "span_index": 0,
+            "citation_number": 2,
+            "submitted_quote": "The temperature should be monitored when cast and crew are expected to be working in water. Prolonged exposure to water can become hazardous. Cast and crew should be monitored for signs and symptoms of both hyperthermia and hypothermia. Production Management should take steps to prevent hyperthermia (elevated body temperature) and hypothermia (reduced body temperature).",
+            "raw_quote": "The temperature should be monitored when cast and crew are expected to be working in water.\nProlonged exposure to water can become hazardous. Cast and crew should be monitored for signs\nand symptoms of both hyperthermia and hypothermia.\nProduction Management should take steps to prevent hyperthermia (elevated body temperature)\nand hypothermia (reduced body temperature)."
+          }
+        ],
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 1,
+              "entailed": true,
+              "reason": "The quote directly supports that permits and licenses must be obtained from proper AHJs prior to use and that pyrotechnic operators must hold valid state/federal licenses."
+            },
+            {
+              "check_index": 2,
+              "entailed": true,
+              "reason": "The cited text from Safety Bulletin #17 confirms that water temperature and exposure should be monitored and production management should take steps to prevent hypothermia."
+            },
+            {
+              "check_index": 4,
+              "entailed": true,
+              "reason": "Script evidence depicts flare ignition and fireworks mortar detonations, correctly triggering the conditional requirement for licensed pyrotechnic operators and AHJ permits if executed practically."
+            },
+            {
+              "check_index": 5,
+              "entailed": true,
+              "reason": "Script evidence depicts a character diving into water and swimming, directly supporting the application of water temperature monitoring and hypothermia prevention safeguards."
+            },
+            {
+              "check_index": 6,
+              "entailed": true,
+              "reason": "The inquiry directly requests relevant missing factual inputs (practical staging vs tank/VFX and casting/stunt doubling) pertinent to the safety underwriter finding."
+            }
+          ]
+        },
+        "evidence_review": {
+          "before": {
+            "verdict": "PARTIAL",
+            "reason": "The script facts accurately reflect the sequence across S009\u2013S011 depicting an intentional boat fire ignited by a flare gun, mortar fireworks, night water operations, a dog and child character in a skiff, and a night dive into cold harbor water. The cited safety bulletins support the requirements for a licensed Pyrotechnic Special Effects Operator, AHJ permits for pyrotechnic special effects, and hypothermia prevention/monitoring for water work. However, the excerpts do not provide specific regulatory or bulletin support for mandating a Marine Coordinator, Stunt Coordinator, USCG/harbor master permits, or specific rescue boat/lifeguard staffing.",
+            "failure_mode": "none",
+            "claim_checks": [
+              {
+                "field": "finding",
+                "quote": "Scenes S009, S010, and S011 depict a high-risk stacked sequence combining an intentional vessel fire (ignited by flare gun), overhead fireworks mortars, nighttime open water operations, a child character and dog in an adjacent skiff, a drifting burning vessel, and a live water-immersion dive stunt in cold harbor water.",
+                "basis": "script",
+                "status": "SUPPORTED",
+                "reason": "Accurately summarizes the depicted actions across scenes S009, S010, and S011.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "A line of blue-orange flame walks the deck like it knows the boat. Then the diesel catches and the MARGARET ROSE goes up -- a column of fire standing on the black water",
+                  "Crow touches a road flare to the mortar fuse. The Fourth of July stash goes up -- white and gold chrysanthemums blooming over the burning boat",
+                  "she DIVES -- off the skiff into the black water, surfacing in the firelight, swimming hard for the mooring buoy",
+                  "Sam in the bow in a life vest two sizes too big, one hand knotted in Barnacle's collar. The old dog rides like a figurehead"
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "Staging these stacked practical elements requires engagement of a licensed Pyrotechnic Special Effects Operator, acquisition of burn and marine permits from local Authorities Having Jurisdiction (AHJ) and the Coast Guard/harbor master",
+                "basis": "source",
+                "status": "SUPPORTED",
+                "reason": "Excerpt 1 establishes that licenses and permits must be obtained from the AHJ prior to using pyrotechnic special effects and operators must hold valid licenses.",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "Any required licenses and/or permits shall be obtained from proper Authorities Having Jurisdiction (AHJ) over pyrotechnic materials prior to using pyrotechnic special effects.\nPyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable."
+                  }
+                ],
+                "script_spans": []
+              },
+              {
+                "field": "finding",
+                "quote": "dedicated marine safety/rescue boats with qualified water rescue personnel, a Stunt Coordinator for the night water dive and tow",
+                "basis": "planning",
+                "status": "UNSUPPORTED",
+                "reason": "Neither excerpt mentions requirements for dedicated marine rescue boats, qualified water rescue personnel, or a Stunt Coordinator.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              },
+              {
+                "field": "finding",
+                "quote": "strict hypothermia prevention protocols (heated warming tents, dry suits/wetsuits, immediate post-immersion care).",
+                "basis": "source",
+                "status": "SUPPORTED",
+                "reason": "Excerpt 2 supports taking steps to prevent hypothermia during water exposure, though specific equipment like heated tents or dry suits is planning elaboration.",
+                "citation_numbers": [
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 2,
+                    "quote": "Prolonged exposure to water can become hazardous. Cast and crew should be monitored for signs\nand symptoms of both hyperthermia and hypothermia.\nProduction Management should take steps to prevent hyperthermia (elevated body temperature)\nand hypothermia (reduced body temperature)."
+                  }
+                ],
+                "script_spans": []
+              },
+              {
+                "field": "finding",
+                "quote": "Practical vessel burns and night water stunts are heavily restricted; if practical execution is chosen over VFX/controlled tank burns, safe standoff distances must be established for all crew, performers, and any minor or animal performers.",
+                "basis": "planning",
+                "status": "UNKNOWN",
+                "reason": "No exact supporting span for this external claim or prescription. Original assessment: Reasonable conditional planning advice for practical staging options versus VFX/tank staging.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              },
+              {
+                "field": "remedy",
+                "quote": "Engage a licensed Pyrotechnic Special Effects Operator, Marine Coordinator, and Stunt Coordinator to design an integrated safety and contingency plan;",
+                "basis": "planning",
+                "status": "UNSUPPORTED",
+                "reason": "While a licensed Pyrotechnic Special Effects Operator is supported by Excerpt 1, the specific mandates for Marine Coordinator and Stunt Coordinator are uncited.",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "Pyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable."
+                  }
+                ],
+                "script_spans": []
+              },
+              {
+                "field": "remedy",
+                "quote": "obtain required municipal, fire marshal, and USCG/harbor authority permits for waterborne open flame and pyrotechnics;",
+                "basis": "source",
+                "status": "SUPPORTED",
+                "reason": "Excerpt 1 establishes obtaining required permits from proper Authorities Having Jurisdiction prior to using pyrotechnic special effects.",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "Any required licenses and/or permits shall be obtained from proper Authorities Having Jurisdiction (AHJ) over pyrotechnic materials prior to using pyrotechnic special effects."
+                  }
+                ],
+                "script_spans": []
+              },
+              {
+                "field": "remedy",
+                "quote": "deploy dedicated rescue watercraft and lifeguards; provide thermal protection and hypothermia response for water immersion;",
+                "basis": "application",
+                "status": "SUPPORTED",
+                "reason": "Thermal protection and hypothermia response are directly supported by Excerpt 2 regarding water exposure safety.",
+                "citation_numbers": [
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 2,
+                    "quote": "Production Management should take steps to prevent hyperthermia (elevated body temperature)\nand hypothermia (reduced body temperature)."
+                  }
+                ],
+                "script_spans": [
+                  "she DIVES -- off the skiff into the black water",
+                  "He swings back and hauls Mara over the gunwale, soaked, gasping, shaking with cold and adrenaline"
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "and determine whether the vessel burn will be executed practically on open water, in a controlled tank environment, or augmented via VFX. Cost and schedule impacts vary by shooting region, practical burn method, and union agreements.",
+                "basis": "planning",
+                "status": "UNKNOWN",
+                "reason": "No exact supporting span for this external claim or prescription. Original assessment: Standard production planning considerations for staging execution without unverified mandates.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              },
+              {
+                "field": "severity",
+                "quote": "HIGH",
+                "basis": "planning",
+                "status": "SUPPORTED",
+                "reason": "The combination of live night pyrotechnics, boat fire, and open water diving warrants a HIGH hazard level flag.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              }
+            ],
+            "support_span_version": 2,
+            "support_span_reanchors": [
+              {
+                "check_index": 1,
+                "span_index": 0,
+                "citation_number": 1,
+                "submitted_quote": "Any required licenses and/or permits shall be obtained from proper Authorities Having Jurisdiction (AHJ) over pyrotechnic materials prior to using pyrotechnic special effects. Pyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable.",
+                "raw_quote": "Any required licenses and/or permits shall be obtained from proper Authorities Having Jurisdiction (AHJ) over pyrotechnic materials prior to using pyrotechnic special effects.\nPyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable."
+              },
+              {
+                "check_index": 3,
+                "span_index": 0,
+                "citation_number": 2,
+                "submitted_quote": "Prolonged exposure to water can become hazardous. Cast and crew should be monitored for signs and symptoms of both hyperthermia and hypothermia. Production Management should take steps to prevent hyperthermia (elevated body temperature) and hypothermia (reduced body temperature).",
+                "raw_quote": "Prolonged exposure to water can become hazardous. Cast and crew should be monitored for signs\nand symptoms of both hyperthermia and hypothermia.\nProduction Management should take steps to prevent hyperthermia (elevated body temperature)\nand hypothermia (reduced body temperature)."
+              },
+              {
+                "check_index": 7,
+                "span_index": 0,
+                "citation_number": 2,
+                "submitted_quote": "Production Management should take steps to prevent hyperthermia (elevated body temperature) and hypothermia (reduced body temperature).",
+                "raw_quote": "Production Management should take steps to prevent hyperthermia (elevated body temperature)\nand hypothermia (reduced body temperature)."
+              }
+            ]
+          },
+          "after": {
+            "verdict": "SUPPORTED",
+            "reason": "The script text explicitly depicts a boat being set on fire with a flare gun, fireworks mortars fired overhead, and a character diving into cold harbor water at night. The safety requirements regarding pyrotechnic licensing/permits and water exposure/hypothermia monitoring are verbatim supported by the cited Safety Bulletins #16 and #17, properly conditioned on practical staging choices.",
+            "failure_mode": "none",
+            "claim_checks": [
+              {
+                "field": "finding",
+                "quote": "Scenes S009, S010, and S011 depict a vessel fire ignited by a flare gun, fireworks mortars overhead, and a performer diving into cold harbor water at night near an adjacent skiff with a child character and dog.",
+                "basis": "script",
+                "status": "SUPPORTED",
+                "reason": "Scenes S009, S010, and S011 explicitly depict the flare gun ignition of the boat, mortar fireworks exploding overhead, and Mara diving into cold night harbor water while Sam and Barnacle are in the skiff.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "Mara stands, braces, and fires the flare into the soaked blankets amidships.",
+                  "Crow touches a road flare to the mortar fuse. The Fourth of July stash goes up -- white and gold chrysanthemums blooming over the burning boat",
+                  "she DIVES -- off the skiff into the black water, surfacing in the firelight, swimming hard for the mooring buoy",
+                  "Sam in the bow in a life vest two sizes too big, one hand knotted in Barnacle's collar. The old dog rides like a figurehead"
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "If practical pyrotechnic special effects are staged, Industry-Wide Safety Bulletin #16 requires that any required licenses and permits be obtained from the proper Authorities Having Jurisdiction (AHJ) prior to use, and that pyrotechnic special effects operators hold valid applicable licenses.",
+                "basis": "source",
+                "status": "SUPPORTED",
+                "reason": "Safety Bulletin #16 directly mandates obtaining AHJ permits/licenses prior to use and requiring operators to hold valid State and Federal licenses.",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "Any required licenses and/or permits shall be obtained from proper Authorities Having Jurisdiction (AHJ) over pyrotechnic materials prior to using pyrotechnic special effects.\nPyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable."
+                  }
+                ],
+                "script_spans": []
+              },
+              {
+                "field": "finding",
+                "quote": "Additionally, Safety Bulletin #17 specifies that water temperature and exposure be monitored and that production management take steps to prevent hypothermia during cast and crew water operations.",
+                "basis": "source",
+                "status": "SUPPORTED",
+                "reason": "Safety Bulletin #17 directly prescribes monitoring water temperature and exposure and taking steps to prevent hypothermia for cast and crew.",
+                "citation_numbers": [
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 2,
+                    "quote": "The temperature should be monitored when cast and crew are expected to be working in water.\nProlonged exposure to water can become hazardous. Cast and crew should be monitored for signs\nand symptoms of both hyperthermia and hypothermia.\nProduction Management should take steps to prevent hyperthermia (elevated body temperature)\nand hypothermia (reduced body temperature)."
+                  }
+                ],
+                "script_spans": []
+              },
+              {
+                "field": "finding",
+                "quote": "Staging execution (practical open-water burn vs. controlled tank or VFX) and actual performer casting/doubling remain unconfirmed production facts.",
+                "basis": "production",
+                "status": "SUPPORTED",
+                "reason": "Accurately notes that practical vs VFX staging and stunt doubling remain unconfirmed production facts.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              },
+              {
+                "field": "remedy",
+                "quote": "If practical pyrotechnics or open flames are utilized, engage a licensed Pyrotechnic Special Effects Operator holding valid state/federal licenses and obtain required permits from the proper Authorities Having Jurisdiction prior to shooting.",
+                "basis": "application",
+                "status": "SUPPORTED",
+                "reason": "Properly applies the Bulletin #16 requirement to practical pyrotechnic and open-flame shooting.",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "Any required licenses and/or permits shall be obtained from proper Authorities Having Jurisdiction (AHJ) over pyrotechnic materials prior to using pyrotechnic special effects.\nPyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable."
+                  }
+                ],
+                "script_spans": [
+                  "Mara stands, braces, and fires the flare into the soaked blankets amidships.",
+                  "Crow touches a road flare to the mortar fuse. The Fourth of July stash goes up -- white and gold chrysanthemums blooming over the burning boat"
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "For water immersion scenes, implement protocols to monitor temperature and take necessary steps to prevent hypothermia among cast and crew.",
+                "basis": "application",
+                "status": "SUPPORTED",
+                "reason": "Directly applies Bulletin #17 safeguards to the night water dive and swimming sequence depicted in the scene.",
+                "citation_numbers": [
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 2,
+                    "quote": "The temperature should be monitored when cast and crew are expected to be working in water.\nProlonged exposure to water can become hazardous. Cast and crew should be monitored for signs\nand symptoms of both hyperthermia and hypothermia.\nProduction Management should take steps to prevent hyperthermia (elevated body temperature)\nand hypothermia (reduced body temperature)."
+                  }
+                ],
+                "script_spans": [
+                  "she DIVES -- off the skiff into the black water, surfacing in the firelight, swimming hard for the mooring buoy off the Margaret Rose's bow."
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "Confirm whether the sequence will be executed practically, in a controlled tank facility, or augmented via visual effects, and confirm casting and stunt doubling arrangements.",
+                "basis": "inquiry",
+                "status": "SUPPORTED",
+                "reason": "A valid and necessary planning inquiry to determine specific production methods, risk mitigations, and safety obligations.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              },
+              {
+                "field": "severity",
+                "quote": "HIGH",
+                "basis": "planning",
+                "status": "SUPPORTED",
+                "reason": "Combining large open-water vessel fire, aerial fireworks, and night water immersion carries significant safety risks requiring specialized personnel and permits.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              }
+            ],
+            "support_span_version": 2,
+            "support_span_reanchors": [
+              {
+                "check_index": 1,
+                "span_index": 0,
+                "citation_number": 1,
+                "submitted_quote": "Any required licenses and/or permits shall be obtained from proper Authorities Having Jurisdiction (AHJ) over pyrotechnic materials prior to using pyrotechnic special effects. Pyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable.",
+                "raw_quote": "Any required licenses and/or permits shall be obtained from proper Authorities Having Jurisdiction (AHJ) over pyrotechnic materials prior to using pyrotechnic special effects.\nPyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable."
+              },
+              {
+                "check_index": 2,
+                "span_index": 0,
+                "citation_number": 2,
+                "submitted_quote": "The temperature should be monitored when cast and crew are expected to be working in water. Prolonged exposure to water can become hazardous. Cast and crew should be monitored for signs and symptoms of both hyperthermia and hypothermia. Production Management should take steps to prevent hyperthermia (elevated body temperature) and hypothermia (reduced body temperature).",
+                "raw_quote": "The temperature should be monitored when cast and crew are expected to be working in water.\nProlonged exposure to water can become hazardous. Cast and crew should be monitored for signs\nand symptoms of both hyperthermia and hypothermia.\nProduction Management should take steps to prevent hyperthermia (elevated body temperature)\nand hypothermia (reduced body temperature)."
+              },
+              {
+                "check_index": 4,
+                "span_index": 0,
+                "citation_number": 1,
+                "submitted_quote": "Any required licenses and/or permits shall be obtained from proper Authorities Having Jurisdiction (AHJ) over pyrotechnic materials prior to using pyrotechnic special effects. Pyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable.",
+                "raw_quote": "Any required licenses and/or permits shall be obtained from proper Authorities Having Jurisdiction (AHJ) over pyrotechnic materials prior to using pyrotechnic special effects.\nPyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable."
+              },
+              {
+                "check_index": 5,
+                "span_index": 0,
+                "citation_number": 2,
+                "submitted_quote": "The temperature should be monitored when cast and crew are expected to be working in water. Prolonged exposure to water can become hazardous. Cast and crew should be monitored for signs and symptoms of both hyperthermia and hypothermia. Production Management should take steps to prevent hyperthermia (elevated body temperature) and hypothermia (reduced body temperature).",
+                "raw_quote": "The temperature should be monitored when cast and crew are expected to be working in water.\nProlonged exposure to water can become hazardous. Cast and crew should be monitored for signs\nand symptoms of both hyperthermia and hypothermia.\nProduction Management should take steps to prevent hyperthermia (elevated body temperature)\nand hypothermia (reduced body temperature)."
+              }
+            ],
+            "entailment_review": {
+              "checks": [
+                {
+                  "check_index": 1,
+                  "entailed": true,
+                  "reason": "The quote directly supports that permits and licenses must be obtained from proper AHJs prior to use and that pyrotechnic operators must hold valid state/federal licenses."
+                },
+                {
+                  "check_index": 2,
+                  "entailed": true,
+                  "reason": "The cited text from Safety Bulletin #17 confirms that water temperature and exposure should be monitored and production management should take steps to prevent hypothermia."
+                },
+                {
+                  "check_index": 4,
+                  "entailed": true,
+                  "reason": "Script evidence depicts flare ignition and fireworks mortar detonations, correctly triggering the conditional requirement for licensed pyrotechnic operators and AHJ permits if executed practically."
+                },
+                {
+                  "check_index": 5,
+                  "entailed": true,
+                  "reason": "Script evidence depicts a character diving into water and swimming, directly supporting the application of water temperature monitoring and hypothermia prevention safeguards."
+                },
+                {
+                  "check_index": 6,
+                  "entailed": true,
+                  "reason": "The inquiry directly requests relevant missing factual inputs (practical staging vs tank/VFX and casting/stunt doubling) pertinent to the safety underwriter finding."
+                }
+              ]
+            }
+          }
+        },
+        "correction": {
+          "finding": "Scenes S009, S010, and S011 depict a vessel fire ignited by a flare gun, fireworks mortars overhead, and a performer diving into cold harbor water at night near an adjacent skiff with a child character and dog. If practical pyrotechnic special effects are staged, Industry-Wide Safety Bulletin #16 requires that any required licenses and permits be obtained from the proper Authorities Having Jurisdiction (AHJ) prior to use, and that pyrotechnic special effects operators hold valid applicable licenses. Additionally, Safety Bulletin #17 specifies that water temperature and exposure be monitored and that production management take steps to prevent hypothermia during cast and crew water operations. Staging execution (practical open-water burn vs. controlled tank or VFX) and actual performer casting/doubling remain unconfirmed production facts.",
+          "remedy_detail": "If practical pyrotechnics or open flames are utilized, engage a licensed Pyrotechnic Special Effects Operator holding valid state/federal licenses and obtain required permits from the proper Authorities Having Jurisdiction prior to shooting. For water immersion scenes, implement protocols to monitor temperature and take necessary steps to prevent hypothermia among cast and crew. Confirm whether the sequence will be executed practically, in a controlled tank facility, or augmented via visual effects, and confirm casting and stunt doubling arrangements.",
+          "remedy_action": "ADD_SPECIALIST",
+          "severity": "HIGH"
+        },
+        "correction_input": "315e8fc4df0239240030ef2b0e0f9270c6c9839b21966e13428948235085ae5b"
+      },
+      "kept": [
+        {
+          "flag_id": "F3001",
+          "agent": "safety_underwriter",
+          "scene_ids": [
+            "S009",
+            "S010",
+            "S011"
+          ],
+          "entity_id": null,
+          "severity": "HIGH",
+          "category": "stunt_pyro",
+          "finding": "Scenes S009, S010, and S011 depict a vessel fire ignited by a flare gun, fireworks mortars overhead, and a performer diving into cold harbor water at night near an adjacent skiff with a child character and dog. If practical pyrotechnic special effects are staged, Industry-Wide Safety Bulletin #16 requires that any required licenses and permits be obtained from the proper Authorities Having Jurisdiction (AHJ) prior to use, and that pyrotechnic special effects operators hold valid applicable licenses. Additionally, Safety Bulletin #17 specifies that water temperature and exposure be monitored and that production management take steps to prevent hypothermia during cast and crew water operations. Staging execution (practical open-water burn vs. controlled tank or VFX) and actual performer casting/doubling remain unconfirmed production facts.",
+          "citations": [
+            {
+              "source_type": "web",
+              "title": "Microsoft Word - SftyBull #16 PYROTECHNIC.doc",
+              "url": "https://www.csatf.org/wp-content/uploads/2018/05/16PYROTECHNIC.pdf",
+              "excerpt": "Any required licenses and/or permits shall be obtained from proper Authorities Having Jurisdiction (AHJ) over pyrotechnic materials prior to using pyrotechnic special effects.\nPyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable.",
+              "retrieved_at": null,
+              "via": "parallel_search"
+            },
+            {
+              "source_type": "web",
+              "title": "INDUSTRY WIDE LABOR-MANAGEMENT SAFETY ...",
+              "url": "https://www.csatf.org/17_safety_bltn_water_hazards/",
+              "excerpt": "The temperature should be monitored when cast and crew are expected to be working in water.\nProlonged exposure to water can become hazardous. Cast and crew should be monitored for signs\nand symptoms of both hyperthermia and hypothermia.\nProduction Management should take steps to prevent hyperthermia (elevated body temperature)\nand hypothermia (reduced body temperature). While hyperthermia can occur, hypothermia is a\nmore likely hazard.",
+              "retrieved_at": null,
+              "via": "parallel_search"
+            }
+          ],
+          "remedy": {
+            "action": "ADD_SPECIALIST",
+            "detail": "If practical pyrotechnics or open flames are utilized, engage a licensed Pyrotechnic Special Effects Operator holding valid state/federal licenses and obtain required permits from the proper Authorities Having Jurisdiction prior to shooting. For water immersion scenes, implement protocols to monitor temperature and take necessary steps to prevent hypothermia among cast and crew. Confirm whether the sequence will be executed practically, in a controlled tank facility, or augmented via visual effects, and confirm casting and stunt doubling arrangements.",
+            "est_cost_usd": null,
+            "est_added_days": null
+          },
+          "confidence": 0.95
+        }
+      ],
+      "dropped": [],
+      "verification_incomplete": false,
+      "elapsed_s": 82.03
+    }
+  ],
+  "responses": [
+    {
+      "flag_id": "F3001",
+      "schema": "EvidenceVerdict",
+      "text": "{\n  \"verdict\": \"PARTIAL\",\n  \"reason\": \"The script facts accurately reflect the sequence across S009\\u2013S011 depicting an intentional boat fire ignited by a flare gun, mortar fireworks, night water operations, a dog and child character in a skiff, and a night dive into cold harbor water. The cited safety bulletins support the requirements for a licensed Pyrotechnic Special Effects Operator, AHJ permits for pyrotechnic special effects, and hypothermia prevention/monitoring for water work. However, the excerpts do not provide specific regulatory or bulletin support for mandating a Marine Coordinator, Stunt Coordinator, USCG/harbor master permits, or specific rescue boat/lifeguard staffing.\",\n  \"failure_mode\": \"none\",\n  \"claim_checks\": [\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Scenes S009, S010, and S011 depict a high-risk stacked sequence combining an intentional vessel fire (ignited by flare gun), overhead fireworks mortars, nighttime open water operations, a child character and dog in an adjacent skiff, a drifting burning vessel, and a live water-immersion dive stunt in cold harbor water.\",\n      \"basis\": \"script\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Accurately summarizes the depicted actions across scenes S009, S010, and S011.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": [\n        \"A line of blue-orange flame walks the deck like it knows the boat. Then the diesel catches and the MARGARET ROSE goes up -- a column of fire standing on the black water\",\n        \"Crow touches a road flare to the mortar fuse. The Fourth of July stash goes up -- white and gold chrysanthemums blooming over the burning boat\",\n        \"she DIVES -- off the skiff into the black water, surfacing in the firelight, swimming hard for the mooring buoy\",\n        \"Sam in the bow in a life vest two sizes too big, one hand knotted in Barnacle's collar. The old dog rides like a figurehead\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Staging these stacked practical elements requires engagement of a licensed Pyrotechnic Special Effects Operator, acquisition of burn and marine permits from local Authorities Having Jurisdiction (AHJ) and the Coast Guard/harbor master\",\n      \"basis\": \"source\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Excerpt 1 establishes that licenses and permits must be obtained from the AHJ prior to using pyrotechnic special effects and operators must hold valid licenses.\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"Any required licenses and/or permits shall be obtained from proper Authorities Having Jurisdiction (AHJ) over pyrotechnic materials prior to using pyrotechnic special effects. Pyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable.\"\n        }\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"dedicated marine safety/rescue boats with qualified water rescue personnel, a Stunt Coordinator for the night water dive and tow\",\n      \"basis\": \"planning\",\n      \"status\": \"UNSUPPORTED\",\n      \"reason\": \"Neither excerpt mentions requirements for dedicated marine rescue boats, qualified water rescue personnel, or a Stunt Coordinator.\",\n      \"citation_numbers\": [],\n      \"support_spans\": []\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"strict hypothermia prevention protocols (heated warming tents, dry suits/wetsuits, immediate post-immersion care).\",\n      \"basis\": \"source\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Excerpt 2 supports taking steps to prevent hypothermia during water exposure, though specific equipment like heated tents or dry suits is planning elaboration.\",\n      \"citation_numbers\": [2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 2,\n          \"quote\": \"Prolonged exposure to water can become hazardous. Cast and crew should be monitored for signs and symptoms of both hyperthermia and hypothermia. Production Management should take steps to prevent hyperthermia (elevated body temperature) and hypothermia (reduced body temperature).\"\n        }\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Practical vessel burns and night water stunts are heavily restricted; if practical execution is chosen over VFX/controlled tank burns, safe standoff distances must be established for all crew, performers, and any minor or animal performers.\",\n      \"basis\": \"planning\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Reasonable conditional planning advice for practical staging options versus VFX/tank staging.\",\n      \"citation_numbers\": [],\n      \"support_spans\": []\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"Engage a licensed Pyrotechnic Special Effects Operator, Marine Coordinator, and Stunt Coordinator to design an integrated safety and contingency plan;\",\n      \"basis\": \"planning\",\n      \"status\": \"UNSUPPORTED\",\n      \"reason\": \"While a licensed Pyrotechnic Special Effects Operator is supported by Excerpt 1, the specific mandates for Marine Coordinator and Stunt Coordinator are uncited.\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"Pyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable.\"\n        }\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"obtain required municipal, fire marshal, and USCG/harbor authority permits for waterborne open flame and pyrotechnics;\",\n      \"basis\": \"source\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Excerpt 1 establishes obtaining required permits from proper Authorities Having Jurisdiction prior to using pyrotechnic special effects.\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"Any required licenses and/or permits shall be obtained from proper Authorities Having Jurisdiction (AHJ) over pyrotechnic materials prior to using pyrotechnic special effects.\"\n        }\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"deploy dedicated rescue watercraft and lifeguards; provide thermal protection and hypothermia response for water immersion;\",\n      \"basis\": \"application\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Thermal protection and hypothermia response are directly supported by Excerpt 2 regarding water exposure safety.\",\n      \"citation_numbers\": [2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 2,\n          \"quote\": \"Production Management should take steps to prevent hyperthermia (elevated body temperature) and hypothermia (reduced body temperature).\"\n        }\n      ],\n      \"script_spans\": [\n        \"she DIVES -- off the skiff into the black water\",\n        \"He swings back and hauls Mara over the gunwale, soaked, gasping, shaking with cold and adrenaline\"\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"and determine whether the vessel burn will be executed practically on open water, in a controlled tank environment, or augmented via VFX. Cost and schedule impacts vary by shooting region, practical burn method, and union agreements.\",\n      \"basis\": \"planning\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Standard production planning considerations for staging execution without unverified mandates.\",\n      \"citation_numbers\": [],\n      \"support_spans\": []\n    },\n    {\n      \"field\": \"severity\",\n      \"quote\": \"HIGH\",\n      \"basis\": \"planning\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"The combination of live night pyrotechnics, boat fire, and open water diving warrants a HIGH hazard level flag.\",\n      \"citation_numbers\": [],\n      \"support_spans\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F3001",
+      "schema": "CorrectedClaim",
+      "text": "{\n  \"finding\": \"Scenes S009, S010, and S011 depict a vessel fire ignited by a flare gun, fireworks mortars overhead, and a performer diving into cold harbor water at night near an adjacent skiff with a child character and dog. If practical pyrotechnic special effects are staged, Industry-Wide Safety Bulletin #16 requires that any required licenses and permits be obtained from the proper Authorities Having Jurisdiction (AHJ) prior to use, and that pyrotechnic special effects operators hold valid applicable licenses. Additionally, Safety Bulletin #17 specifies that water temperature and exposure be monitored and that production management take steps to prevent hypothermia during cast and crew water operations. Staging execution (practical open-water burn vs. controlled tank or VFX) and actual performer casting/doubling remain unconfirmed production facts.\",\n  \"remedy_detail\": \"If practical pyrotechnics or open flames are utilized, engage a licensed Pyrotechnic Special Effects Operator holding valid state/federal licenses and obtain required permits from the proper Authorities Having Jurisdiction prior to shooting. For water immersion scenes, implement protocols to monitor temperature and take necessary steps to prevent hypothermia among cast and crew. Confirm whether the sequence will be executed practically, in a controlled tank facility, or augmented via visual effects, and confirm casting and stunt doubling arrangements.\",\n  \"remedy_action\": \"ADD_SPECIALIST\",\n  \"severity\": \"HIGH\"\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F3001",
+      "schema": "EvidenceVerdict",
+      "text": "{\n  \"verdict\": \"SUPPORTED\",\n  \"reason\": \"The script text explicitly depicts a boat being set on fire with a flare gun, fireworks mortars fired overhead, and a character diving into cold harbor water at night. The safety requirements regarding pyrotechnic licensing/permits and water exposure/hypothermia monitoring are verbatim supported by the cited Safety Bulletins #16 and #17, properly conditioned on practical staging choices.\",\n  \"failure_mode\": \"none\",\n  \"claim_checks\": [\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Scenes S009, S010, and S011 depict a vessel fire ignited by a flare gun, fireworks mortars overhead, and a performer diving into cold harbor water at night near an adjacent skiff with a child character and dog.\",\n      \"basis\": \"script\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Scenes S009, S010, and S011 explicitly depict the flare gun ignition of the boat, mortar fireworks exploding overhead, and Mara diving into cold night harbor water while Sam and Barnacle are in the skiff.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": [\n        \"Mara stands, braces, and fires the flare into the soaked blankets amidships.\",\n        \"Crow touches a road flare to the mortar fuse. The Fourth of July stash goes up -- white and gold chrysanthemums blooming over the burning boat\",\n        \"she DIVES -- off the skiff into the black water, surfacing in the firelight, swimming hard for the mooring buoy\",\n        \"Sam in the bow in a life vest two sizes too big, one hand knotted in Barnacle's collar. The old dog rides like a figurehead\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"If practical pyrotechnic special effects are staged, Industry-Wide Safety Bulletin #16 requires that any required licenses and permits be obtained from the proper Authorities Having Jurisdiction (AHJ) prior to use, and that pyrotechnic special effects operators hold valid applicable licenses.\",\n      \"basis\": \"source\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Safety Bulletin #16 directly mandates obtaining AHJ permits/licenses prior to use and requiring operators to hold valid State and Federal licenses.\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"Any required licenses and/or permits shall be obtained from proper Authorities Having Jurisdiction (AHJ) over pyrotechnic materials prior to using pyrotechnic special effects. Pyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable.\"\n        }\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Additionally, Safety Bulletin #17 specifies that water temperature and exposure be monitored and that production management take steps to prevent hypothermia during cast and crew water operations.\",\n      \"basis\": \"source\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Safety Bulletin #17 directly prescribes monitoring water temperature and exposure and taking steps to prevent hypothermia for cast and crew.\",\n      \"citation_numbers\": [2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 2,\n          \"quote\": \"The temperature should be monitored when cast and crew are expected to be working in water. Prolonged exposure to water can become hazardous. Cast and crew should be monitored for signs and symptoms of both hyperthermia and hypothermia. Production Management should take steps to prevent hyperthermia (elevated body temperature) and hypothermia (reduced body temperature).\"\n        }\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Staging execution (practical open-water burn vs. controlled tank or VFX) and actual performer casting/doubling remain unconfirmed production facts.\",\n      \"basis\": \"production\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Accurately notes that practical vs VFX staging and stunt doubling remain unconfirmed production facts.\",\n      \"citation_numbers\": [],\n      \"support_spans\": []\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"If practical pyrotechnics or open flames are utilized, engage a licensed Pyrotechnic Special Effects Operator holding valid state/federal licenses and obtain required permits from the proper Authorities Having Jurisdiction prior to shooting.\",\n      \"basis\": \"application\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Properly applies the Bulletin #16 requirement to practical pyrotechnic and open-flame shooting.\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"Any required licenses and/or permits shall be obtained from proper Authorities Having Jurisdiction (AHJ) over pyrotechnic materials prior to using pyrotechnic special effects. Pyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable.\"\n        }\n      ],\n      \"script_spans\": [\n        \"Mara stands, braces, and fires the flare into the soaked blankets amidships.\",\n        \"Crow touches a road flare to the mortar fuse. The Fourth of July stash goes up -- white and gold chrysanthemums blooming over the burning boat\"\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"For water immersion scenes, implement protocols to monitor temperature and take necessary steps to prevent hypothermia among cast and crew.\",\n      \"basis\": \"application\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Directly applies Bulletin #17 safeguards to the night water dive and swimming sequence depicted in the scene.\",\n      \"citation_numbers\": [2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 2,\n          \"quote\": \"The temperature should be monitored when cast and crew are expected to be working in water. Prolonged exposure to water can become hazardous. Cast and crew should be monitored for signs and symptoms of both hyperthermia and hypothermia. Production Management should take steps to prevent hyperthermia (elevated body temperature) and hypothermia (reduced body temperature).\"\n        }\n      ],\n      \"script_spans\": [\n        \"she DIVES -- off the skiff into the black water, surfacing in the firelight, swimming hard for the mooring buoy off the Margaret Rose's bow.\"\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"Confirm whether the sequence will be executed practically, in a controlled tank facility, or augmented via visual effects, and confirm casting and stunt doubling arrangements.\",\n      \"basis\": \"inquiry\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"A valid and necessary planning inquiry to determine specific production methods, risk mitigations, and safety obligations.\",\n      \"citation_numbers\": [],\n      \"support_spans\": []\n    },\n    {\n      \"field\": \"severity\",\n      \"quote\": \"HIGH\",\n      \"basis\": \"planning\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Combining large open-water vessel fire, aerial fireworks, and night water immersion carries significant safety risks requiring specialized personnel and permits.\",\n      \"citation_numbers\": [],\n      \"support_spans\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F3001",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 1,\n      \"entailed\": true,\n      \"reason\": \"The quote directly supports that permits and licenses must be obtained from proper AHJs prior to use and that pyrotechnic operators must hold valid state/federal licenses.\"\n    },\n    {\n      \"check_index\": 2,\n      \"entailed\": true,\n      \"reason\": \"The cited text from Safety Bulletin #17 confirms that water temperature and exposure should be monitored and production management should take steps to prevent hypothermia.\"\n    },\n    {\n      \"check_index\": 4,\n      \"entailed\": true,\n      \"reason\": \"Script evidence depicts flare ignition and fireworks mortar detonations, correctly triggering the conditional requirement for licensed pyrotechnic operators and AHJ permits if executed practically.\"\n    },\n    {\n      \"check_index\": 5,\n      \"entailed\": true,\n      \"reason\": \"Script evidence depicts a character diving into water and swimming, directly supporting the application of water temperature monitoring and hypothermia prevention safeguards.\"\n    },\n    {\n      \"check_index\": 6,\n      \"entailed\": true,\n      \"reason\": \"The inquiry directly requests relevant missing factual inputs (practical staging vs tank/VFX and casting/stunt doubling) pertinent to the safety underwriter finding.\"\n    }\n  ]\n}",
+      "usage_available": true
+    }
+  ]
+}

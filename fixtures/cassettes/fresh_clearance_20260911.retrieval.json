@@ -1,0 +1,114 @@
+[
+  {
+    "api": "search",
+    "args": [
+      "Research film clip licensing requirements for featuring a clip of Universal Pictures' 1975 film 'Jaws' playing on a background TV in a feature film, including copyright clearance and guild clip requirements.",
+      [
+        "film clip licensing clearing movies television",
+        "Universal Studios clip licensing clearance",
+        "SAG AFTRA clip reuse clearance film"
+      ]
+    ],
+    "kwargs": {
+      "session_id": "scriptrisk-e-c2addaf5-3f93-4c79-a7e2-a05c796d4ee5",
+      "country": "",
+      "include_domains": null
+    },
+    "status": "returned",
+    "response": {
+      "results": [
+        {
+          "excerpts": [
+            "# Obtaining Copyright Permissions\n## Film Studios and Distributors\nThis site explains how to license clips from Paramount's Theatrical Library, including some DreamWorks films.\n* [Sony Pictures Film Clip & Still Licensing This link opens in a new window](http://www.sonypictures.com/studios/filmclipandstilllicensing.php)\nThis site explains how to request licenses of clips, stills, and other items from Columbia Pictures, TriStar Pictures, Sony Pictures Animation, Screen Gems, Stage 6 Films, and Revolution Studios.\n* [Universal Studios Media Licensing This link opens in a new window](http://universalclips.com)\nThis site offers clip and still licenses for works from the Universal Pictures, Focus Features, DreamWorks Animation, and MCA Television libraries.\n* [Walt Disney Studios Licensing Website](http://www.disneystudiolicensing.com)\n\n...\n\n## Other Rights in Audiovisual Works\nIn other cases, a single licensor may not be able to provide all the rights you need. For example, in some cases, a studio may not be able to license the background music in a film clip."
+          ],
+          "url": "https://guides.lib.umich.edu/permissions/films",
+          "publish_date": "2012-02-03",
+          "title": "Films - Obtaining Copyright Permissions - Research Guides at University of Michigan Library"
+        },
+        {
+          "excerpts": [
+            "# PRODUCER'S GUIDELINES\n\u200b\nTELEVISION CLIPS\n\u200b\nTelevision clips are owned by studios, independent production companies and TV networks and are handled in the same fashion as described above with regard to film clips.\n\n...\n\nPRE-1960 THEATRICAL FEATURE FILMS Because prior to 1960, the SAG agreement did not contain any provision to pay residuals to actors appearing in feature films, rule of thumb in the industry was that actors in these films did not require clearance or payment for use in clips.\n\n...\n\nThere are separate schedules for feature films and television programs, which apply to the origination of the clip, i.e., the fee is dependent on whether the clip came from a feature film or a television show.\nFeature films rates break at a 30-second rate while television rates are much more expensive, changing rates at a 10-second cutoff. Rates can be obtained from the guilds."
+          ],
+          "url": "https://www.clearanceunlimited.net/producer-s-guidelines",
+          "publish_date": null,
+          "title": "PRODUCER'S GUIDELINES | clearanceunlimited"
+        },
+        {
+          "excerpts": [
+            "# Welcome to Universal Studios Media Licensing.\nYour source for film and TV clip, still, and elements business to business media licensing from the iconic Universal Pictures, Focus Features, DreamWorks Animation, and MCA Television libraries."
+          ],
+          "url": "https://www.universalclips.com/",
+          "publish_date": null,
+          "title": "Universal Studios Media Licensing"
+        },
+        {
+          "excerpts": [
+            "# Copyright and Using Video\n## Film Studios and Distributors\nThis site explains how to license clips from Paramount's Theatrical Library, including some DreamWorks films.\n* [Sony Pictures Film Clip & Still Licensing This link opens in a new window](http://www.sonypictures.com/studios/filmclipandstilllicensing.php)\nThis site explains how to request licenses of clips, stills, and other items from Columbia Pictures, TriStar Pictures, Sony Pictures Animation, Screen Gems, Stage 6 Films, and Revolution Studios.\n* [Universal Studios Media Licensing This link opens in a new window](http://universalclips.com)\nThis site offers clip and still licenses for works from the Universal Pictures, Focus Features, DreamWorks Animation, and MCA Television libraries.\n* [Walt Disney Studios Licensing Website](http://www.disneystudiolicensing.com)\n\n...\n\n* [Warner Brothers Clip and Still Licensing Info This link opens in a new window](https://www.warnerbros.com/studio/services/clip-and-still-licensing)\nThis site explains how to request licenses for clips and stills from the Warner Bros."
+          ],
+          "url": "https://guides.lib.umich.edu/videocopyright/permission",
+          "publish_date": "2012-10-24",
+          "title": "Getting Permission - Copyright and Using Video - Research Guides at University of Michigan Library"
+        },
+        {
+          "excerpts": [
+            "# RIGHTS & CLEARANCES\nFILM CLIPS & PHOTO CLEARANCES\n\u200b\nPermission for the use of film clips and phots, a license obtained and fee negotiated must be obtained from the owner of the work you want to use. We have many years of experience in this area and can help you obtain quick clearances and negotiate a reasonable fee for such usage.\n\u200b\n\n...\n\nPermission must be obtained from actors appearing in film and television clips. Talent clearance fees are set by SAG/AFTRA and start at the union scale payment of approximately $1000. However, an actor is not required to accept this fee and can negotiate considerably higher rates.\n\n...\n\nDetermination of whether material in in the public domain and can be used for free is frequently difficult.\n\u200b\nOUR FEES\n\u200b\nWe charge either a per clearance fee for obtaining permission for film clips, photos, talent, and music or a weekly rate depending on how many clearances are required.\n\u200b\nWeekly rate $1850/wk\n\n...\n\nWe provide you with all documents required to complete your project, including budgets, on-going clearance status reports, all payment sheets and all license agreements..\nFEATURE FILMS, TELEVISION SHOWS AND SERIES (clip-talent clearances)\n\u200b\nTruth or Dare - Lionsgate Films"
+          ],
+          "url": "https://www.clearanceunlimited.net/rights-permissions",
+          "publish_date": null,
+          "title": "RIGHTS & CLEARANCES | clearanceunlimited"
+        },
+        {
+          "excerpts": [
+            "# Copyright: Permissions\n## Obtaining Copyright Permissions\n* [Sony Pictures Film Clip & Still Licensing](http://www.sonypictures.com/studios/filmclipandstilllicensing.php) : This site explains how to request licenses of clips, stills, and other items from Columbia Pictures, TriStar Pictures, Sony Pictures Animation, Screen Gems, Stage 6 Films, and Revolution\nStudios.\n* [Universal Studios Media Licensing](http://universalclips.com/) : This site offers clip and still licenses for works from the Universal Pictures, Focus Features, DreamWorks Animation, and MCA Television libraries.\n\n...\n\nFor example, in some cases, a studio may not be able to license the background music in a film clip."
+          ],
+          "url": "https://usnwc.libguides.com/copyright/permissions",
+          "publish_date": "2021-11-08",
+          "title": "Permissions - Copyright - LibGuides at Naval War College"
+        },
+        {
+          "excerpts": [
+            "# Employers Meta Menu\n* FAQ\n* Contact\n* SAG-Pension\n* SAG-AFTRA Health\nHome\n\n...\n\n## Employers Main menu\nProvide SAG-AFTRA Health Plans with the Project title and Signatory of the original clip and the Production date of the current project the original clip is being used in. The project title should be in the following format, CLIP USE OF Title of the original clip IN title of the project the clip is being used in, e.g."
+          ],
+          "url": "https://www.sagaftraplans.org/employers/faq/how-should-i-remit-clip-use",
+          "publish_date": null,
+          "title": "How should I remit Clip Use? | SAG-AFTRA Plans"
+        },
+        {
+          "excerpts": [
+            "# Artificial Intelligence Resources\n## AI FAQs\n+ This concept is already in the Codified Basic Agreement and the TV Agreement relating to reuse of clips, so the same principle will generally apply here. Before the union takes any action, we will make sure the producer has exhausted all reasonable avenues to locate your authorized representative.\n\n...\n\nThe concept is the same as how the producer has to get your consent and pay you to reuse clips in which you appear or how you earn residuals when the film or show is released in a new market \u2014 these are bargained exceptions to the employer\u2019s legal rights."
+          ],
+          "url": "https://www.sagaftra.org/contracts-industry-resources/contracts/2023-tvtheatrical-contracts/artificial-intelligence-resources",
+          "publish_date": null,
+          "title": "Artificial Intelligence Resources | SAG-AFTRA"
+        },
+        {
+          "excerpts": [
+            "Loading \u00b7 This site supports the latest versions of Chrome, Firefox, Safari, Microsoft Edge, and Internet Explorer"
+          ],
+          "url": "https://www.universalclips.com/faq",
+          "publish_date": null,
+          "title": "Rightsline Portals"
+        },
+        {
+          "excerpts": [
+            "# Welcome to The Walt Disney Studios Licensing Website\n## Frequently Asked Questions\nAlterations or modifications to the film clips or stills are not permitted without the express written consent of Disney Studios Licensing.\n[Can I use a film clip and/or still on my website?](https://www.disneystudiolicensing.com/?p=77)\n\n...\n\nCertain film clip re-use payments may be triggered relative to talent, stunt performers, writers, directors and musicians, depending on when a film was released, in accordance with current guild collective bargaining agreements.\n\n...\n\nWhen you license a film clip, still image, sound bite, screenplay excerpt, thematic element, or poster, our license will cover use of the licensed content for the media, term, and territory to which both parties have agreed, for a negotiated fee."
+          ],
+          "url": "https://www.disneystudiolicensing.com/",
+          "publish_date": null,
+          "title": "Welcome to The Walt Disney Studios Licensing Website"
+        }
+      ],
+      "search_id": "search_39aeefd4bff778b50af6ee0304ec3b7e",
+      "session_id": "scriptrisk-e-c2addaf5-3f93-4c79-a7e2-a05c796d4ee5",
+      "usage": [
+        {
+          "count": 1,
+          "name": "sku_search"
+        }
+      ],
+      "warnings": null,
+      "metadata": null
+    },
+    "elapsed_s": 1.5
+  }
+]

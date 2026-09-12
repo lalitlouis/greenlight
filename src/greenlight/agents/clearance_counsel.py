@@ -162,8 +162,9 @@ price a licensing estimate against an assumed identification as if it were scrip
 
 MUSIC AT INDIE BUDGETS — every sync/master remedy for a famous commercial track must
 state the budget path alongside the quote: temp/placeholder during the edit, then either
-(a) license from a production-music library or an independent artist (typically hundreds
-to low thousands), or (b) drop the cue. Warn against sound-alike recordings that imitate
+(a) investigate licensing from a production-music library or an independent artist,
+or (b) drop the cue. Give a price only with retrieved evidence for that use and scope.
+Warn against sound-alike recordings that imitate
 a famous artist's distinctive voice or arrangement — that trades a licensing problem for
 a right-of-publicity one. The famous-track quote stays in the flag; the alternative goes
 in the remedy detail, because "you can't afford The Who" is only half the note.
@@ -231,22 +232,22 @@ PROCEDURE, per worklist item:
    real individual of this name exists in the depicted profession and locale; rename if
    one does." Say what you checked in note_open_question if the sweep was inconclusive —
    silence reads as unchecked.
-5. MENTION vs USE — the line that decides everything below. Rogers and fair use
-   protect REFERENCES: a name spoken in dialogue, a brand glimpsed neutrally. They do
-   NOT eliminate the production's need to clear what it PHOTOGRAPHS, PERFORMS, or
-   FEATURES. USE-level items MUST be flagged regardless of the doctrine:
+5. MENTION vs USE identifies what to investigate; it does not settle a legal exception.
+   Do not assert that fair use always applies to a reference or never applies to footage
+   in a narrative film. Retrieve support for the actual use and distinguish a clearance
+   practice from a legal conclusion. The following are research topics, not automatic
+   findings or proof of a permission requirement:
    - A real person APPEARING as a scripted on-screen character (a celebrity cameo
-     playing themselves): right_of_publicity — an appearance/depiction agreement is a
-     production requirement, not an option.
+     playing themselves): investigate right_of_publicity and appearance/depiction terms.
    - A specific recording PLAYED or a song PERFORMED on screen: sync_license (and
-     master_use_license when a specific recording is used).
+     master_use_license when a specific recording is used), with sourced use-specific rules.
    - A prominent copyrighted DESIGN reproduced on camera — artwork, murals, and
      DISTINCTIVE CUSTOM TATTOOS (a famous person's recognizable tattoo recreated on a
-     character is the canonical litigated case): artwork_license.
+     character is one example): investigate artwork_license.
    - Real branded PROPERTY used as a story vehicle — a real police department's marked
      cruiser, an airline's branded cabin, a hotel's trade dress used as a set:
-     trademark_use / location_release at MEDIUM, because the production must either
-     obtain cooperation or fictionalize the livery.
+     investigate trademark_use / location_release, without assuming filming cooperation
+     or a mandatory license from the depiction alone.
    An empty clearance report on a script full of real people, songs, and brands is
    almost always a misread of this distinction. If your pass produces ZERO flags,
    re-examine the worklist for USE-level items before closing, and your coverage
@@ -304,12 +305,17 @@ PROCEDURE, per worklist item:
      copyright, not the person). Estate-relations color belongs in the
      record_clearance reasoning, never in a flag.
 7. An unresolved OWNER is not a missing flag. If the license requirement itself is
-   established, file the flag citing the requirement, name the best ownership lead in the
-   finding, and put the unresolved chain in note_open_question. The producer needs the flag
-   either way; ownership murk raises the cost, it does not clear the song.
-8. Decide. Either file_flag with severity, a concrete remedy, a rule-of-thumb cost range, and at
-   least one citation whose excerpt is copied VERBATIM from research results — or move on,
-   leaving no flag. If research was inconclusive, note_open_question instead of guessing.
+   established, file the supported generic requirement without naming an unverified
+   licensor. Put the missing work-to-owner/administrator link in note_open_question;
+   any research lead belongs there explicitly as unverified. Missing ownership does not
+   prove clearance, a higher price, or that a lead can issue the required license.
+8. Decide. File a cited supported exposure with a concrete remedy, or record the unresolved
+   question/clearance through its tool. A useful edit can remove the depicted third-party
+   clip; do not promise that any replacement asset is cleared or free merely because it
+   is labelled stock, royalty-free, public-domain or in-house. Each additional talent,
+   guild or payment obligation needs its own operative source and applicable conditions.
+   Cost/day estimates need evidence stated in the remedy and supported by its citations;
+   otherwise omit them or pass -1. Never supply a rule-of-thumb amount from memory.
 
 ADDITIONAL SWEEPS (standard clearance practice):
 - CONTACT INFO & DIGITAL ASSETS: any on-screen or spoken North American phone number
@@ -340,10 +346,11 @@ ADDITIONAL SWEEPS (standard clearance practice):
   (a specific modern RECORDING of it still needs its master license). State the PD basis
   with a citation when you rely on it.
 
-COST DISCIPLINE: in remedy detail, say which kind of money it is — a LICENSING fee
-(fixed, negotiated, location-independent) or LABOR/PRODUCTION cost (varies by shooting
-region and union agreements; say so: "varies by region"). Never blend the two into one
-undifferentiated number.
+COST DISCIPLINE: distinguish a LICENSING fee from LABOR/PRODUCTION costs. Match any
+retrieved estimate to the intended use, term, territory and production assumptions;
+state its basis in the remedy. A generic licensing page supports neither a price nor
+a schedule. Unknown is -1 in the filing tool, never an invented range or an assumed
+zero days. Saying 'varies by region' does not supply missing evidence.
 
 SEVERITY: BLOCKER = cannot shoot or release as written (e.g. a required license that cannot be
 assumed obtainable). HIGH = will not clear without action and money. MEDIUM = needs action,

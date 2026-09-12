@@ -59,3 +59,32 @@ def test_retrieval_limit_counts_failures_and_preserves_raw_receipts(tmp_path):
     saved = json.loads(tracker.checkpoint.read_text())
     assert saved[0]["status"] == "error"
     assert saved[-1]["response"]["results"][0]["excerpts"] == ["Raw **source** text."]
+
+
+def test_scope_probes_pin_observed_false_approval_and_valid_source_receipts():
+    import hashlib
+
+    spec = importlib.util.spec_from_file_location(
+        "scope_eval", ROOT / "scripts/eval_evidence_review.py"
+    )
+    evaluator = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(evaluator)
+    cases = json.loads((ROOT / "fixtures/accuracy/production_scope_20260911.json").read_text())
+    source = (ROOT / "fixtures/cassettes/fresh_safety_20260911.json").read_bytes()
+    script = (ROOT / "fixtures/slack_tide.fountain").read_text()
+    inputs = evaluator.entailment_inputs(cases, source, script)
+    assert len(inputs) == 6
+    assert sum(expected for _, _, expected in inputs) == 2
+    provenance = cases["observed_false_approval"]
+    recorded = (ROOT / provenance["path"]).read_bytes()
+    assert hashlib.sha256(recorded).hexdigest() == provenance["sha256"]
+    verdict = json.loads(recorded)["results"][0]["verdict"]
+    bad = next(c for c in cases["cases"] if c["case_id"] == provenance["case_id"])
+    assert bad["expected_entailed"] is False
+    index = next(i for i, c in enumerate(verdict["claim_checks"]) if c["quote"] == bad["claim"])
+    assert (
+        next(c for c in verdict["entailment_review"]["checks"] if c["check_index"] == index)[
+            "entailed"
+        ]
+        is True
+    )

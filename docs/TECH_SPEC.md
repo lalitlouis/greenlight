@@ -142,6 +142,15 @@ agree with their detail; NO_ACTION is not proof that no follow-up is needed.
 Quote/receipt metadata is session/record-internal (`support_span_version=2`);
 frozen public schemas are unchanged.
 
+Fresh desk diagnostics (`scripts/eval_desks.py --live`) run hand-assigned worklists
+through the existing desk factory and live tools with explicit model/retrieval/time
+limits. They preserve the original script and parser coordinates, save model events
+and raw retrieval, and label completion as unreviewed. They do not measure triage,
+full-panel coverage or release readiness. The September 11 diagnostic exposed an
+automatically accepted scope expansion from pyrotechnics to open flames; it remains
+a failed manual case despite the automated SUPPORTED verdict. See
+`docs/plans/fresh-desks-2026-09-11.md` for evidence and remaining validation.
+
 Withholding the desk's reasoning is deliberate: a verifier shown the argument tends to ratify it.
 
 Implementation note: ADK's `ParallelAgent` takes a static sub-agent list, and flag count is not
