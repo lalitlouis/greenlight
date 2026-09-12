@@ -1,0 +1,395 @@
+{
+  "source_run": "fixtures/cassettes/fresh_clearance_20260911.json",
+  "source_run_sha256": "f96a2580fc01c85baa9ba4838e3ae6f173b8570ec891b220f00d25ffa350f1b4",
+  "source_build": "b49ce03d59b168cf9f616d9e706c22a7b514f577",
+  "evaluated_build": "89ad4e28af41917971ee915f5fa83b6bc80db575",
+  "model": "gemini-3.7-flash",
+  "elapsed_s": 41.01,
+  "calls": 6,
+  "responses_with_usage": 6,
+  "calls_without_returned_usage": 0,
+  "resumed_from": null,
+  "rechecked_correction_from": null,
+  "entailment_cases": "fixtures/accuracy/prequalification_clearance_20260911.json",
+  "entailment_cases_sha256": "99a7452b3adc4521ceafba43e9de00c77b03f82ee466ed4acd5ea6af5b44ade9",
+  "attempts": [
+    {
+      "flag_id": "clip_conditional_warning",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 7177,
+      "input_sha256": "e5e3b481f58ae366404485633377d5c48bad71da0a1365e9b35edc04492c7970",
+      "usage_available": true,
+      "elapsed_s": 6.29
+    },
+    {
+      "flag_id": "clip_remove_trigger",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 7097,
+      "input_sha256": "bd2574a609a1ed609d74331b29a0bfae7ad8134d3cd72492512464fb7e879b58",
+      "usage_available": true,
+      "elapsed_s": 6.35
+    },
+    {
+      "flag_id": "clip_relevant_input",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 6932,
+      "input_sha256": "6e44efd833a0ddd82e6fa4a197b84cdf39ddd721772cefd134a62754a0e34188",
+      "usage_available": true,
+      "elapsed_s": 4.71
+    },
+    {
+      "flag_id": "clip_unproved_owner",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 6776,
+      "input_sha256": "f6c30cf61ed1a9db8f77b4a36edc938be0af4cea35767478c87a45f55f3afb3b",
+      "usage_available": true,
+      "elapsed_s": 15.03
+    },
+    {
+      "flag_id": "clip_unproved_amount",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 6873,
+      "input_sha256": "706c71b35d4bff05243cb4ee92bd5cb513df7fb9085d4a2105f606df33065786",
+      "usage_available": true,
+      "elapsed_s": 4.5
+    },
+    {
+      "flag_id": "clip_replacement_guarantee",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 7053,
+      "input_sha256": "492fc647f90e9b84bd2e000098ffefea57d72b33c8c98efdb7284e09e7cdc829",
+      "usage_available": true,
+      "elapsed_s": 4.07
+    }
+  ],
+  "gemini_usage": {
+    "flash": {
+      "prompt": 9473,
+      "cached": 0,
+      "output": 3458
+    }
+  },
+  "estimated_cost_usd": 0.0201,
+  "manual_review": "pending; model approval is not an accuracy label",
+  "results": [
+    {
+      "flag_id": "clip_conditional_warning",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "If the JAWS footage is retained on screen, permissions and a licensing fee may need to be investigated. The current licensor and any fee are not established by these excerpts.",
+            "basis": "risk_assessment",
+            "status": "SUPPORTED",
+            "reason": "Probe to be independently assessed",
+            "citation_numbers": [
+              2
+            ],
+            "support_spans": [
+              {
+                "citation_number": 2,
+                "quote": "Permission for the use of film clips and phots, a license obtained and fee negotiated must be obtained from the owner of the work you want to use. We have many years of experience in this area and can help you obtain quick clearances and negotiate a reasonable fee for such usage."
+              }
+            ],
+            "script_spans": [
+              "On the corner TV, muted, an old VHS of JAWS is playing. The shark is winning."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The source confirms that permissions, licensing, and fee negotiations are required for the use of film clips, supporting the conditional risk assessment regarding the JAWS footage depicted on screen.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The claim properly conditions the risk on retaining the footage and acknowledges that the specific licensor and fee are unestablished.",
+              "unsupported_parts": []
+            }
+          ]
+        },
+        "estimate_exclusions": []
+      },
+      "expected_entailed": true,
+      "actual_entailed": true,
+      "passed": true,
+      "elapsed_s": 6.3
+    },
+    {
+      "flag_id": "clip_remove_trigger",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "claim_checks": [
+          {
+            "field": "remedy",
+            "quote": "Cut or replace the JAWS clip to remove this specific third-party footage from the scene; assess any replacement separately.",
+            "basis": "script_edit",
+            "status": "SUPPORTED",
+            "reason": "Probe to be independently assessed",
+            "citation_numbers": [
+              2
+            ],
+            "support_spans": [
+              {
+                "citation_number": 2,
+                "quote": "Permission for the use of film clips and phots, a license obtained and fee negotiated must be obtained from the owner of the work you want to use. We have many years of experience in this area and can help you obtain quick clearances and negotiate a reasonable fee for such usage."
+              }
+            ],
+            "script_spans": [
+              "On the corner TV, muted, an old VHS of JAWS is playing. The shark is winning."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The script edit directly addresses the film clip trigger present in the script evidence and supported by the source clearance rule, without introducing unsupported duties or guaranteeing clearance outcomes.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The proposed cut/replacement addresses the specific third-party footage trigger and explicitly notes that replacements must be assessed separately.",
+              "unsupported_parts": []
+            }
+          ]
+        },
+        "estimate_exclusions": []
+      },
+      "expected_entailed": true,
+      "actual_entailed": true,
+      "passed": true,
+      "elapsed_s": 6.36
+    },
+    {
+      "flag_id": "clip_relevant_input",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "claim_checks": [
+          {
+            "field": "remedy",
+            "quote": "Will the finished shot retain identifiable JAWS footage, and do you already have permission for that use?",
+            "basis": "inquiry",
+            "status": "SUPPORTED",
+            "reason": "Probe to be independently assessed",
+            "citation_numbers": [],
+            "support_spans": [],
+            "script_spans": [
+              "On the corner TV, muted, an old VHS of JAWS is playing. The shark is winning."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The inquiry directly requests relevant missing input regarding clearance and use of the JAWS footage depicted in the script evidence without asserting unconfirmed factual premises or introducing unsupported obligations.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The question directly addresses the specific clearance issue triggered by the on-screen display of JAWS footage.",
+              "unsupported_parts": []
+            }
+          ]
+        },
+        "estimate_exclusions": []
+      },
+      "expected_entailed": true,
+      "actual_entailed": true,
+      "passed": true,
+      "elapsed_s": 4.72
+    },
+    {
+      "flag_id": "clip_unproved_owner",
+      "verdict": {
+        "verdict": "PARTIAL",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "Universal Pictures owns the JAWS footage and Universal Studios Media Licensing can license its use for this production.",
+            "basis": "source",
+            "status": "UNSUPPORTED",
+            "reason": "Independent span review: The cited excerpt does not mention JAWS or establish that Universal Pictures owns the JAWS footage.; The source excerpt only mentions licensing from Universal Pictures libraries generally and does not confirm ownership of JAWS footage.; Universal Pictures owns the JAWS footage",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "Your source for film and TV clip, still, and elements business to business media licensing from the iconic Universal Pictures, Focus Features, DreamWorks Animation, and MCA Television libraries."
+              }
+            ],
+            "script_spans": []
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": false,
+              "reason": "The cited excerpt does not mention JAWS or establish that Universal Pictures owns the JAWS footage.",
+              "scope_preserved": false,
+              "requirements_supported": false,
+              "scope_reason": "The source excerpt only mentions licensing from Universal Pictures libraries generally and does not confirm ownership of JAWS footage.",
+              "unsupported_parts": [
+                "Universal Pictures owns the JAWS footage"
+              ]
+            }
+          ]
+        },
+        "estimate_exclusions": [],
+        "reason": "Claim audit requires correction: Independent span review: The cited excerpt does not mention JAWS or establish that Universal Pictures owns the JAWS footage.; The source excerpt only mentions licensing from Universal Pictures libraries generally and does not confirm ownership of JAWS footage.; Universal Pictures owns the JAWS footage"
+      },
+      "expected_entailed": false,
+      "actual_entailed": false,
+      "passed": true,
+      "elapsed_s": 15.03
+    },
+    {
+      "flag_id": "clip_unproved_amount",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "claim_checks": [
+          {
+            "field": "est_cost_usd",
+            "quote": "[5000,15000]",
+            "basis": "estimate",
+            "status": "UNSUPPORTED",
+            "reason": "Independent span review: The cited source excerpt does not provide any numeric rate, pricing benchmark, or cost data to support the estimated range of [5000, 15000].; The cited text only states that a fee must be negotiated and licensed from the owner; it provides no rates or quantitative basis for the estimate.; [5000,15000]",
+            "citation_numbers": [
+              2
+            ],
+            "support_spans": [
+              {
+                "citation_number": 2,
+                "quote": "Permission for the use of film clips and phots, a license obtained and fee negotiated must be obtained from the owner of the work you want to use. We have many years of experience in this area and can help you obtain quick clearances and negotiate a reasonable fee for such usage."
+              }
+            ],
+            "script_spans": []
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": false,
+              "reason": "The cited source excerpt does not provide any numeric rate, pricing benchmark, or cost data to support the estimated range of [5000, 15000].",
+              "scope_preserved": false,
+              "requirements_supported": false,
+              "scope_reason": "The cited text only states that a fee must be negotiated and licensed from the owner; it provides no rates or quantitative basis for the estimate.",
+              "unsupported_parts": [
+                "[5000,15000]"
+              ]
+            }
+          ]
+        },
+        "estimate_exclusions": [
+          "est_cost_usd"
+        ]
+      },
+      "expected_entailed": false,
+      "actual_entailed": false,
+      "passed": true,
+      "elapsed_s": 4.5
+    },
+    {
+      "flag_id": "clip_replacement_guarantee",
+      "verdict": {
+        "verdict": "PARTIAL",
+        "claim_checks": [
+          {
+            "field": "remedy",
+            "quote": "Replacing the JAWS clip with royalty-free footage guarantees no licensing obligations or talent fees.",
+            "basis": "script_edit",
+            "status": "UNSUPPORTED",
+            "reason": "Independent span review: Script edits cannot promise or guarantee clearance, permission, or the complete absence of licensing obligations/talent fees.; While replacing the JAWS clip addresses the specific script trigger, claiming it guarantees no licensing obligations or talent fees introduces an unsupported outcome guarantee.; guarantees no licensing obligations or talent fees",
+            "citation_numbers": [
+              2
+            ],
+            "support_spans": [
+              {
+                "citation_number": 2,
+                "quote": "Permission for the use of film clips and phots, a license obtained and fee negotiated must be obtained from the owner of the work you want to use. We have many years of experience in this area and can help you obtain quick clearances and negotiate a reasonable fee for such usage."
+              }
+            ],
+            "script_spans": [
+              "On the corner TV, muted, an old VHS of JAWS is playing. The shark is winning."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": false,
+              "reason": "Script edits cannot promise or guarantee clearance, permission, or the complete absence of licensing obligations/talent fees.",
+              "scope_preserved": true,
+              "requirements_supported": false,
+              "scope_reason": "While replacing the JAWS clip addresses the specific script trigger, claiming it guarantees no licensing obligations or talent fees introduces an unsupported outcome guarantee.",
+              "unsupported_parts": [
+                "guarantees no licensing obligations or talent fees"
+              ]
+            }
+          ]
+        },
+        "estimate_exclusions": [],
+        "reason": "Claim audit requires correction: Independent span review: Script edits cannot promise or guarantee clearance, permission, or the complete absence of licensing obligations/talent fees.; While replacing the JAWS clip addresses the specific script trigger, claiming it guarantees no licensing obligations or talent fees introduces an unsupported outcome guarantee.; guarantees no licensing obligations or talent fees"
+      },
+      "expected_entailed": false,
+      "actual_entailed": false,
+      "passed": true,
+      "elapsed_s": 4.08
+    }
+  ],
+  "responses": [
+    {
+      "flag_id": "clip_conditional_warning",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The source confirms that permissions, licensing, and fee negotiations are required for the use of film clips, supporting the conditional risk assessment regarding the JAWS footage depicted on screen.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The claim properly conditions the risk on retaining the footage and acknowledges that the specific licensor and fee are unestablished.\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "clip_remove_trigger",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The script edit directly addresses the film clip trigger present in the script evidence and supported by the source clearance rule, without introducing unsupported duties or guaranteeing clearance outcomes.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The proposed cut/replacement addresses the specific third-party footage trigger and explicitly notes that replacements must be assessed separately.\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "clip_relevant_input",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The inquiry directly requests relevant missing input regarding clearance and use of the JAWS footage depicted in the script evidence without asserting unconfirmed factual premises or introducing unsupported obligations.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The question directly addresses the specific clearance issue triggered by the on-screen display of JAWS footage.\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "clip_unproved_owner",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": false,\n      \"reason\": \"The cited excerpt does not mention JAWS or establish that Universal Pictures owns the JAWS footage.\",\n      \"scope_preserved\": false,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"The source excerpt only mentions licensing from Universal Pictures libraries generally and does not confirm ownership of JAWS footage.\",\n      \"unsupported_parts\": [\n        \"Universal Pictures owns the JAWS footage\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "clip_unproved_amount",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": false,\n      \"reason\": \"The cited source excerpt does not provide any numeric rate, pricing benchmark, or cost data to support the estimated range of [5000, 15000].\",\n      \"scope_preserved\": false,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"The cited text only states that a fee must be negotiated and licensed from the owner; it provides no rates or quantitative basis for the estimate.\",\n      \"unsupported_parts\": [\n        \"[5000,15000]\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "clip_replacement_guarantee",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": false,\n      \"reason\": \"Script edits cannot promise or guarantee clearance, permission, or the complete absence of licensing obligations/talent fees.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"While replacing the JAWS clip addresses the specific script trigger, claiming it guarantees no licensing obligations or talent fees introduces an unsupported outcome guarantee.\",\n      \"unsupported_parts\": [\n        \"guarantees no licensing obligations or talent fees\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    }
+  ]
+}

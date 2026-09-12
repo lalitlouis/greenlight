@@ -77,3 +77,42 @@ a pass. A full release gate and deployment require further report-level evidence
 these narrow diagnostics alone are insufficient to establish a general accuracy rate.
 
 Evaluation results will be appended below without changing the frozen labels.
+
+## Candidate `89ad4e2`: observed results
+
+All twelve isolated cases matched the frozen labels (five supported, seven unsupported).
+The previously false-approved open-flame alternative was rejected explicitly on scope.
+Captured Gemini usage for those twelve calls estimates $0.0414 at repository rates.
+
+The full saved clearance finding now survives with a useful licensing/replacement next
+step, no asserted Universal ownership, no guild-fee claim, no price, and no blanket
+fair-use exclusion. Five calls, 47.64 seconds, estimated $0.0449 captured Gemini usage.
+In-session source inspection accepts this as pre-qualification; it is not independent
+practitioner review.
+
+The full saved safety correction **failed**. Its repair again added an open-flame
+alternative to the pyrotechnic operator requirement. The independent check rejected it,
+so the error no longer reached delivery, but the useful warning was still lost. Five
+calls, 190.98 seconds, estimated $0.0566; the corrected audit alone took 113.93 seconds.
+This is not accepted as a usefulness improvement. Fresh desks and the full gate were
+not started after that failure. All responses and progress records are retained.
+
+## Follow-up: source-bound wording
+
+The repair now has a narrow structured route for two reviewed source snapshots: CSATF
+pyrotechnic licensing and water exposure. Cards activate only for the safety desk when
+an existing Parallel citation matches both the exact URL and the entire excerpt hash.
+They add no citations and perform no substitute offline retrieval. Changed, broader,
+truncated or differently attributed excerpts do not activate a card.
+
+The model selects relevant rule IDs and writes the scene/risk assessment. Code constructs
+the remedy from the selected cards' fixed conditions and next steps; the model cannot
+rewrite those duties or add an open-flame branch. The normal independent audit and
+entailment check still review the complete result. Known-rule wording is a development
+prototype, not professional validation or proof of local applicability; unfamiliar
+sources retain the existing bounded correction path.
+
+Before another whole-finding attempt, check the two fixed remedy texts as new positive
+probes (`source_bound_repairs_20260911.json`). Budget two probe calls and at most five
+calls for one new safety repair. This is a changed implementation, not replaying the
+rejected judgment until it passes. The twelve earlier labels remain unchanged.

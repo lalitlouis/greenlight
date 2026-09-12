@@ -1,0 +1,45 @@
+{
+  "source_run_sha256": "ddca289bd0e5eabeb9829e868ce5c2b5f8f419358e5ec21f574545732ffa6731",
+  "source_script_sha256": "634444b20de3d73acfaeda4bd89b44f8e62192103cf54302db16fd3304828bfb",
+  "label_scope": "Two development acceptance checks for fixed rule wording, frozen before live use. Previously frozen unsupported scope controls remain regression cases.",
+  "cases": [
+    {
+      "case_id": "csatf16_pyrotechnics_licenses_2018",
+      "source_flag_id": "F3001",
+      "field": "remedy",
+      "basis": "application",
+      "claim": "If practical pyrotechnic special effects are planned, obtain any required licenses and/or permits from the proper Authorities Having Jurisdiction over pyrotechnic materials before use. Use Pyrotechnic Special Effects Operators with valid State and Federal license(s), as applicable. Confirm the planned effects method and filming jurisdiction to assess which requirements apply.",
+      "action": "ADD_SPECIALIST",
+      "support_spans": [
+        {
+          "citation_number": 1,
+          "quote": "Any required licenses and/or permits shall be obtained from proper Authorities Having Jurisdiction (AHJ) over pyrotechnic materials prior to using pyrotechnic special effects.\nPyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable."
+        }
+      ],
+      "script_spans": [
+        "Crow touches a road flare to the mortar fuse. The Fourth of July stash goes up"
+      ],
+      "expected_entailed": true,
+      "label_reason": "Retains the exact source trigger and applicability qualifications. The next step is conditional and introduces no named equipment or unrelated duty. This is development evidence review, not independent professional validation."
+    },
+    {
+      "case_id": "csatf17_water_exposure_monitoring",
+      "source_flag_id": "F3001",
+      "field": "remedy",
+      "basis": "inquiry",
+      "claim": "Confirm whether cast or crew will work in water and how temperature monitoring and prevention of hyperthermia and hypothermia will be planned for that work.",
+      "action": "NO_ACTION",
+      "support_spans": [
+        {
+          "citation_number": 2,
+          "quote": "The temperature should be monitored when cast and crew are expected to be working in water.\nProlonged exposure to water can become hazardous. Cast and crew should be monitored for signs\nand symptoms of both hyperthermia and hypothermia.\nProduction Management should take steps to prevent hyperthermia (elevated body temperature)\nand hypothermia (reduced body temperature). While hyperthermia can occur, hypothermia is a\nmore likely hazard."
+        }
+      ],
+      "script_spans": [
+        "she DIVES -- off the skiff into the black water, surfacing in the firelight, swimming hard for the mooring buoy"
+      ],
+      "expected_entailed": true,
+      "label_reason": "Retains the exact source trigger and applicability qualifications. The next step is conditional and introduces no named equipment or unrelated duty. This is development evidence review, not independent professional validation."
+    }
+  ]
+}

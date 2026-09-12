@@ -1,0 +1,625 @@
+{
+  "source_run": "fixtures/cassettes/fresh_clearance_20260911.json",
+  "source_run_sha256": "f96a2580fc01c85baa9ba4838e3ae6f173b8570ec891b220f00d25ffa350f1b4",
+  "source_build": "b49ce03d59b168cf9f616d9e706c22a7b514f577",
+  "evaluated_build": "89ad4e28af41917971ee915f5fa83b6bc80db575",
+  "model": "gemini-3.7-flash",
+  "elapsed_s": 47.67,
+  "calls": 5,
+  "responses_with_usage": 5,
+  "calls_without_returned_usage": 0,
+  "resumed_from": null,
+  "rechecked_correction_from": null,
+  "entailment_cases": null,
+  "entailment_cases_sha256": null,
+  "attempts": [
+    {
+      "flag_id": "F1001",
+      "schema": "EvidenceVerdict",
+      "status": "returned",
+      "input_chars": 22729,
+      "input_sha256": "cf4eeffb8b0aac4b9075b2e9851e78e0ec54edb4f26894ac09a7438ec282b28e",
+      "usage_available": true,
+      "elapsed_s": 16.67
+    },
+    {
+      "flag_id": "F1001",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 12910,
+      "input_sha256": "012a8750500fc03a6878fdbabef1c896a273e6e5bb599f3ebcb2d4fe67380016",
+      "usage_available": true,
+      "elapsed_s": 9.42
+    },
+    {
+      "flag_id": "F1001",
+      "schema": "CorrectedClaim",
+      "status": "returned",
+      "input_chars": 22178,
+      "input_sha256": "f34d813b34c97c0844b4304201093bbd81f3cac606437b5efbdb5edaff9f4d6d",
+      "usage_available": true,
+      "elapsed_s": 4.85
+    },
+    {
+      "flag_id": "F1001",
+      "schema": "EvidenceVerdict",
+      "status": "returned",
+      "input_chars": 22068,
+      "input_sha256": "3c1b4814b81bfb0dd4acc4ea07cd0292f4a71f0b00e95b636bcac0f3b75cd649",
+      "usage_available": true,
+      "elapsed_s": 9.17
+    },
+    {
+      "flag_id": "F1001",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 9389,
+      "input_sha256": "4b80fe6a758984108f45cc606fd8d3114cf1728d001d45067f36b36d8e1637f2",
+      "usage_available": true,
+      "elapsed_s": 7.5
+    }
+  ],
+  "gemini_usage": {
+    "flash": {
+      "prompt": 21480,
+      "cached": 0,
+      "output": 7686
+    }
+  },
+  "estimated_cost_usd": 0.0449,
+  "manual_review": "pending; model approval is not an accuracy label",
+  "results": [
+    {
+      "flag_id": "F1001",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "reason": "The script explicitly depicts a corner TV playing a VHS of 'JAWS' in Scene S002, and the cited clearance source establishes that using third-party film clips requires obtaining permission and negotiating a license from the copyright owner.",
+        "failure_mode": "none",
+        "claim_checks": [
+          {
+            "field": "severity",
+            "quote": "MEDIUM",
+            "basis": "risk_assessment",
+            "status": "SUPPORTED",
+            "reason": "Depicting identifiable copyrighted feature film footage without prior clearance poses a standard medium-level clearance risk.",
+            "citation_numbers": [],
+            "support_spans": [],
+            "script_spans": [
+              "On the corner TV, muted, an old VHS of JAWS is playing."
+            ]
+          },
+          {
+            "field": "finding",
+            "quote": "Scene S002 depicts a corner television playing an old VHS tape of the feature film 'Jaws'.",
+            "basis": "script",
+            "status": "SUPPORTED",
+            "reason": "Scene S002 directly describes the corner TV playing an old VHS of JAWS.",
+            "citation_numbers": [],
+            "support_spans": [],
+            "script_spans": [
+              "On the corner TV, muted, an old VHS of JAWS is playing."
+            ]
+          },
+          {
+            "field": "finding",
+            "quote": "The use of third-party film clips typically requires obtaining permission and negotiating a license from the owner of the work to avoid copyright infringement risks.",
+            "basis": "source",
+            "status": "SUPPORTED",
+            "reason": "Citation 2 confirms that permission and license negotiation from the owner of the work are required for using film clips.",
+            "citation_numbers": [
+              2
+            ],
+            "support_spans": [
+              {
+                "citation_number": 2,
+                "quote": "Permission for the use of film clips and phots, a license obtained and fee negotiated must be obtained from the owner of the work you want to use."
+              }
+            ],
+            "script_spans": []
+          },
+          {
+            "field": "remedy",
+            "quote": "Identify the copyright owner of the 'Jaws' footage to negotiate a film clip license",
+            "basis": "application",
+            "status": "SUPPORTED",
+            "reason": "Directly applies the sourced rule regarding obtaining clearance and licensing from the copyright holder of the footage.",
+            "citation_numbers": [
+              2
+            ],
+            "support_spans": [
+              {
+                "citation_number": 2,
+                "quote": "Permission for the use of film clips and phots, a license obtained and fee negotiated must be obtained from the owner of the work you want to use."
+              }
+            ],
+            "script_spans": [
+              "On the corner TV, muted, an old VHS of JAWS is playing."
+            ]
+          },
+          {
+            "field": "remedy",
+            "quote": "replace the television display with original in-house footage, pre-cleared stock, or public domain material to address the clip clearance trigger.",
+            "basis": "script_edit",
+            "status": "SUPPORTED",
+            "reason": "Suggests standard alternative screenplay edits (public domain, original footage) to eliminate the clearance trigger of depicting a commercial film clip.",
+            "citation_numbers": [
+              2
+            ],
+            "support_spans": [
+              {
+                "citation_number": 2,
+                "quote": "Permission for the use of film clips and phots, a license obtained and fee negotiated must be obtained from the owner of the work you want to use."
+              }
+            ],
+            "script_spans": [
+              "On the corner TV, muted, an old VHS of JAWS is playing."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "audit_input": "1e32777695e9f49c54657eb42960291b068598cca8b6da1a20750a1837197d0e",
+        "estimate_exclusions": [],
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 2,
+              "entailed": true,
+              "reason": "The cited source explicitly states that permission, licensing, and fee negotiation must be obtained from the owner of the work for the use of film clips.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The scope of third-party film clip licensing from the work owner matches the cited source excerpt.",
+              "unsupported_parts": []
+            },
+            {
+              "check_index": 3,
+              "entailed": true,
+              "reason": "Applying the sourced rule regarding film clip permissions to the script trigger where JAWS is playing on television supports identifying the owner to negotiate a license.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The application accurately preserves the rule and script context without asserting unsupported mandatory requirements or confirmed ownership.",
+              "unsupported_parts": []
+            },
+            {
+              "check_index": 4,
+              "entailed": true,
+              "reason": "The proposed script edit addresses the specific on-screen clearance trigger (the third-party JAWS film clip) by replacing the television display without asserting guaranteed legal clearance or unsupported duties.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The edit focuses directly on removing or substituting the identified trigger present in the script evidence.",
+              "unsupported_parts": []
+            }
+          ]
+        },
+        "evidence_review": {
+          "before": {
+            "verdict": "PARTIAL",
+            "reason": "The script fact (depicting a VHS of 'Jaws' playing on a TV in S002) is verified, and the cited excerpts support the core requirement that using motion picture clips requires obtaining permission and a license from the rightsholder (Universal Studios Media Licensing). However, the specific SAG-AFTRA guild talent clearance requirements and the structured cost estimate ($5,000\u2013$15,000) lack citation support.",
+            "failure_mode": "none",
+            "claim_checks": [
+              {
+                "field": "finding",
+                "quote": "Scene S002 depicts a television playing an old VHS tape of Steven Spielberg's 1975 feature film 'Jaws' ('The shark is winning').",
+                "basis": "script",
+                "status": "SUPPORTED",
+                "reason": "Accurately reflects the action description in scene S002.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "On the corner TV, muted, an old VHS of JAWS is playing. The shark is winning."
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "Displaying recognizable copyrighted motion picture footage on screen constitutes reproduction of an audiovisual work and is not excused as fair use in a scripted narrative feature.",
+                "basis": "risk_assessment",
+                "status": "UNSUPPORTED",
+                "reason": "Independent span review: The cited text states that permission and a license must be obtained from the owner of film clips and photos, but it does not state that such usage constitutes reproduction of an audiovisual work or that it is categorically not excused as fair use in a scripted narrative feature.; The source does not establish legal categorical bars to fair use or specific statutory reproduction determinations.; constitutes reproduction of an audiovisual work; is not excused as fair use in a scripted narrative feature",
+                "citation_numbers": [
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 2,
+                    "quote": "Permission for the use of film clips and phots, a license obtained and fee negotiated must be obtained from the owner of the work you want to use."
+                  }
+                ],
+                "script_spans": [
+                  "On the corner TV, muted, an old VHS of JAWS is playing."
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "The production must obtain a master clip license from the copyright owner, Universal Pictures (via Universal Studios Media Licensing)",
+                "basis": "risk_assessment",
+                "status": "UNSUPPORTED",
+                "reason": "Independent span review: The sources do not state that Universal Pictures is the copyright owner of 'Jaws' or that 'Jaws' specifically must be licensed through Universal Studios Media Licensing.; Neither excerpt identifies the copyright owner or licensing representative of 'Jaws'.; Universal Pictures is the copyright owner of Jaws; Universal Studios Media Licensing is the licensing representative for Jaws",
+                "citation_numbers": [
+                  1,
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "Your source for film and TV clip, still, and elements business to business media licensing from the iconic Universal Pictures"
+                  },
+                  {
+                    "citation_number": 2,
+                    "quote": "Permission for the use of film clips and phots, a license obtained and fee negotiated must be obtained from the owner of the work you want to use."
+                  }
+                ],
+                "script_spans": [
+                  "an old VHS of JAWS is playing."
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "as well as any applicable guild talent clearances (SAG-AFTRA clip reuse fees) for recognizable performers visible in the selected clip.",
+                "basis": "risk_assessment",
+                "status": "UNKNOWN",
+                "reason": "The provided excerpts do not mention SAG-AFTRA guild requirements or talent reuse fees.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "an old VHS of JAWS is playing."
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "To retain the 'Jaws' footage on the TV screen, negotiate a clip license through Universal Studios Media Licensing",
+                "basis": "application",
+                "status": "UNSUPPORTED",
+                "reason": "Independent span review: The cited evidence does not establish that 'Jaws' is part of the Universal Pictures catalog or licensed through Universal Studios Media Licensing.; The sources establish licensing requirements generally and describe Universal's business, but do not connect 'Jaws' to Universal Studios Media Licensing.; negotiating a clip license for Jaws through Universal Studios Media Licensing",
+                "citation_numbers": [
+                  1,
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "Your source for film and TV clip, still, and elements business to business media licensing from the iconic Universal Pictures"
+                  },
+                  {
+                    "citation_number": 2,
+                    "quote": "a license obtained and fee negotiated must be obtained from the owner of the work you want to use."
+                  }
+                ],
+                "script_spans": [
+                  "an old VHS of JAWS is playing."
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "(licensing fee typically $5,000 to $15,000 for indie feature worldwide all-media rights)",
+                "basis": "risk_assessment",
+                "status": "UNKNOWN",
+                "reason": "No cited excerpt supports the specific dollar figure range for indie worldwide all-media clip licenses.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "an old VHS of JAWS is playing."
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "clear SAG-AFTRA clip reuse scale/residuals for depicted performers.",
+                "basis": "application",
+                "status": "UNKNOWN",
+                "reason": "No cited excerpt covers SAG-AFTRA reuse rules or residual scales.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "an old VHS of JAWS is playing."
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "Alternatively, replace the TV footage on set or in post-production with public domain archival footage (pre-1931), in-house mock shark/nature footage, or pre-cleared royalty-free stock footage to eliminate licensing and talent clearance costs.",
+                "basis": "script_edit",
+                "status": "UNSUPPORTED",
+                "reason": "Independent span review: The proposal makes an impermissible guarantee of outcome ('to eliminate licensing and talent clearance costs') and replacement labels alone do not establish permission or clearance outcomes under the guidelines.; While replacing the footage directly addresses the on-screen clip trigger, the claim asserts guaranteed resolution of clearance and cost obligations.; eliminate licensing and talent clearance costs",
+                "citation_numbers": [
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 2,
+                    "quote": "Permission for the use of film clips and phots, a license obtained and fee negotiated must be obtained from the owner of the work you want to use."
+                  }
+                ],
+                "script_spans": [
+                  "On the corner TV, muted, an old VHS of JAWS is playing. The shark is winning."
+                ]
+              },
+              {
+                "field": "est_cost_usd",
+                "quote": "[5000,15000]",
+                "basis": "estimate",
+                "status": "UNKNOWN",
+                "reason": "The cost estimate range lacks explicit source citation support.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              },
+              {
+                "field": "est_added_days",
+                "quote": "0",
+                "basis": "estimate",
+                "status": "UNKNOWN",
+                "reason": "No exact supporting span for this external claim or prescription. Original assessment: Post-production replacement or paper licensing typically does not add principal photography days.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              },
+              {
+                "field": "severity",
+                "quote": "MEDIUM",
+                "basis": "planning",
+                "status": "SUPPORTED",
+                "reason": "Third-party studio film clips present a standard clearance obstacle with substantial licensing costs if left unaddressed.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              }
+            ],
+            "support_span_version": 3,
+            "audit_input": "fd7a46b6fa33400b04066fb2354a7966c11650614b78fa506f75cc7e9058060d",
+            "estimate_exclusions": [
+              "est_added_days",
+              "est_cost_usd"
+            ],
+            "entailment_review": {
+              "checks": [
+                {
+                  "check_index": 1,
+                  "entailed": false,
+                  "reason": "The cited text states that permission and a license must be obtained from the owner of film clips and photos, but it does not state that such usage constitutes reproduction of an audiovisual work or that it is categorically not excused as fair use in a scripted narrative feature.",
+                  "scope_preserved": false,
+                  "requirements_supported": false,
+                  "scope_reason": "The source does not establish legal categorical bars to fair use or specific statutory reproduction determinations.",
+                  "unsupported_parts": [
+                    "constitutes reproduction of an audiovisual work",
+                    "is not excused as fair use in a scripted narrative feature"
+                  ]
+                },
+                {
+                  "check_index": 2,
+                  "entailed": false,
+                  "reason": "The sources do not state that Universal Pictures is the copyright owner of 'Jaws' or that 'Jaws' specifically must be licensed through Universal Studios Media Licensing.",
+                  "scope_preserved": false,
+                  "requirements_supported": false,
+                  "scope_reason": "Neither excerpt identifies the copyright owner or licensing representative of 'Jaws'.",
+                  "unsupported_parts": [
+                    "Universal Pictures is the copyright owner of Jaws",
+                    "Universal Studios Media Licensing is the licensing representative for Jaws"
+                  ]
+                },
+                {
+                  "check_index": 4,
+                  "entailed": false,
+                  "reason": "The cited evidence does not establish that 'Jaws' is part of the Universal Pictures catalog or licensed through Universal Studios Media Licensing.",
+                  "scope_preserved": false,
+                  "requirements_supported": false,
+                  "scope_reason": "The sources establish licensing requirements generally and describe Universal's business, but do not connect 'Jaws' to Universal Studios Media Licensing.",
+                  "unsupported_parts": [
+                    "negotiating a clip license for Jaws through Universal Studios Media Licensing"
+                  ]
+                },
+                {
+                  "check_index": 7,
+                  "entailed": false,
+                  "reason": "The proposal makes an impermissible guarantee of outcome ('to eliminate licensing and talent clearance costs') and replacement labels alone do not establish permission or clearance outcomes under the guidelines.",
+                  "scope_preserved": true,
+                  "requirements_supported": false,
+                  "scope_reason": "While replacing the footage directly addresses the on-screen clip trigger, the claim asserts guaranteed resolution of clearance and cost obligations.",
+                  "unsupported_parts": [
+                    "eliminate licensing and talent clearance costs"
+                  ]
+                }
+              ]
+            }
+          },
+          "after": {
+            "verdict": "SUPPORTED",
+            "reason": "The script explicitly depicts a corner TV playing a VHS of 'JAWS' in Scene S002, and the cited clearance source establishes that using third-party film clips requires obtaining permission and negotiating a license from the copyright owner.",
+            "failure_mode": "none",
+            "claim_checks": [
+              {
+                "field": "severity",
+                "quote": "MEDIUM",
+                "basis": "risk_assessment",
+                "status": "SUPPORTED",
+                "reason": "Depicting identifiable copyrighted feature film footage without prior clearance poses a standard medium-level clearance risk.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "On the corner TV, muted, an old VHS of JAWS is playing."
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "Scene S002 depicts a corner television playing an old VHS tape of the feature film 'Jaws'.",
+                "basis": "script",
+                "status": "SUPPORTED",
+                "reason": "Scene S002 directly describes the corner TV playing an old VHS of JAWS.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "On the corner TV, muted, an old VHS of JAWS is playing."
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "The use of third-party film clips typically requires obtaining permission and negotiating a license from the owner of the work to avoid copyright infringement risks.",
+                "basis": "source",
+                "status": "SUPPORTED",
+                "reason": "Citation 2 confirms that permission and license negotiation from the owner of the work are required for using film clips.",
+                "citation_numbers": [
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 2,
+                    "quote": "Permission for the use of film clips and phots, a license obtained and fee negotiated must be obtained from the owner of the work you want to use."
+                  }
+                ],
+                "script_spans": []
+              },
+              {
+                "field": "remedy",
+                "quote": "Identify the copyright owner of the 'Jaws' footage to negotiate a film clip license",
+                "basis": "application",
+                "status": "SUPPORTED",
+                "reason": "Directly applies the sourced rule regarding obtaining clearance and licensing from the copyright holder of the footage.",
+                "citation_numbers": [
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 2,
+                    "quote": "Permission for the use of film clips and phots, a license obtained and fee negotiated must be obtained from the owner of the work you want to use."
+                  }
+                ],
+                "script_spans": [
+                  "On the corner TV, muted, an old VHS of JAWS is playing."
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "replace the television display with original in-house footage, pre-cleared stock, or public domain material to address the clip clearance trigger.",
+                "basis": "script_edit",
+                "status": "SUPPORTED",
+                "reason": "Suggests standard alternative screenplay edits (public domain, original footage) to eliminate the clearance trigger of depicting a commercial film clip.",
+                "citation_numbers": [
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 2,
+                    "quote": "Permission for the use of film clips and phots, a license obtained and fee negotiated must be obtained from the owner of the work you want to use."
+                  }
+                ],
+                "script_spans": [
+                  "On the corner TV, muted, an old VHS of JAWS is playing."
+                ]
+              }
+            ],
+            "support_span_version": 3,
+            "audit_input": "1e32777695e9f49c54657eb42960291b068598cca8b6da1a20750a1837197d0e",
+            "estimate_exclusions": [],
+            "entailment_review": {
+              "checks": [
+                {
+                  "check_index": 2,
+                  "entailed": true,
+                  "reason": "The cited source explicitly states that permission, licensing, and fee negotiation must be obtained from the owner of the work for the use of film clips.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "The scope of third-party film clip licensing from the work owner matches the cited source excerpt.",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 3,
+                  "entailed": true,
+                  "reason": "Applying the sourced rule regarding film clip permissions to the script trigger where JAWS is playing on television supports identifying the owner to negotiate a license.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "The application accurately preserves the rule and script context without asserting unsupported mandatory requirements or confirmed ownership.",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 4,
+                  "entailed": true,
+                  "reason": "The proposed script edit addresses the specific on-screen clearance trigger (the third-party JAWS film clip) by replacing the television display without asserting guaranteed legal clearance or unsupported duties.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "The edit focuses directly on removing or substituting the identified trigger present in the script evidence.",
+                  "unsupported_parts": []
+                }
+              ]
+            }
+          }
+        },
+        "correction": {
+          "finding": "Scene S002 depicts a corner television playing an old VHS tape of the feature film 'Jaws'. The use of third-party film clips typically requires obtaining permission and negotiating a license from the owner of the work to avoid copyright infringement risks.",
+          "remedy_detail": "Identify the copyright owner of the 'Jaws' footage to negotiate a film clip license, or replace the television display with original in-house footage, pre-cleared stock, or public domain material to address the clip clearance trigger.",
+          "remedy_action": "OBTAIN_LICENSE",
+          "severity": "MEDIUM"
+        },
+        "correction_input": "fd7a46b6fa33400b04066fb2354a7966c11650614b78fa506f75cc7e9058060d"
+      },
+      "kept": [
+        {
+          "flag_id": "F1001",
+          "agent": "clearance_counsel",
+          "scene_ids": [
+            "S002"
+          ],
+          "entity_id": "E004",
+          "severity": "MEDIUM",
+          "category": "film_clip_license",
+          "finding": "Scene S002 depicts a corner television playing an old VHS tape of the feature film 'Jaws'. The use of third-party film clips typically requires obtaining permission and negotiating a license from the owner of the work to avoid copyright infringement risks.",
+          "citations": [
+            {
+              "source_type": "web",
+              "title": "Universal Studios Media Licensing",
+              "url": "https://www.universalclips.com/",
+              "excerpt": "Your source for film and TV clip, still, and elements business to business media licensing from the iconic Universal Pictures, Focus Features, DreamWorks Animation, and MCA Television libraries.",
+              "retrieved_at": null,
+              "via": "parallel_search"
+            },
+            {
+              "source_type": "web",
+              "title": "RIGHTS & CLEARANCES | clearanceunlimited",
+              "url": "https://www.clearanceunlimited.net/rights-permissions",
+              "excerpt": "Permission for the use of film clips and phots, a license obtained and fee negotiated must be obtained from the owner of the work you want to use. We have many years of experience in this area and can help you obtain quick clearances and negotiate a reasonable fee for such usage.",
+              "retrieved_at": null,
+              "via": "parallel_search"
+            }
+          ],
+          "remedy": {
+            "action": "OBTAIN_LICENSE",
+            "detail": "Identify the copyright owner of the 'Jaws' footage to negotiate a film clip license, or replace the television display with original in-house footage, pre-cleared stock, or public domain material to address the clip clearance trigger.",
+            "est_cost_usd": null,
+            "est_added_days": null
+          },
+          "confidence": 0.95
+        }
+      ],
+      "dropped": [],
+      "verification_incomplete": false,
+      "elapsed_s": 47.64
+    }
+  ],
+  "responses": [
+    {
+      "flag_id": "F1001",
+      "schema": "EvidenceVerdict",
+      "text": "{\n  \"verdict\": \"PARTIAL\",\n  \"reason\": \"The script fact (depicting a VHS of 'Jaws' playing on a TV in S002) is verified, and the cited excerpts support the core requirement that using motion picture clips requires obtaining permission and a license from the rightsholder (Universal Studios Media Licensing). However, the specific SAG-AFTRA guild talent clearance requirements and the structured cost estimate ($5,000\u2013$15,000) lack citation support.\",\n  \"failure_mode\": \"none\",\n  \"claim_checks\": [\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Scene S002 depicts a television playing an old VHS tape of Steven Spielberg's 1975 feature film 'Jaws' ('The shark is winning').\",\n      \"basis\": \"script\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Accurately reflects the action description in scene S002.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": [\n        \"On the corner TV, muted, an old VHS of JAWS is playing. The shark is winning.\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Displaying recognizable copyrighted motion picture footage on screen constitutes reproduction of an audiovisual work and is not excused as fair use in a scripted narrative feature.\",\n      \"basis\": \"risk_assessment\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Supported by the clearance authority stating permission and a license must be obtained for film clip usage.\",\n      \"citation_numbers\": [2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 2,\n          \"quote\": \"Permission for the use of film clips and phots, a license obtained and fee negotiated must be obtained from the owner of the work you want to use.\"\n        }\n      ],\n      \"script_spans\": [\n        \"On the corner TV, muted, an old VHS of JAWS is playing.\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"The production must obtain a master clip license from the copyright owner, Universal Pictures (via Universal Studios Media Licensing)\",\n      \"basis\": \"risk_assessment\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Supported by Universal Studios Media Licensing being the source for licensing clips from Universal Pictures libraries and general film clip licensing rules.\",\n      \"citation_numbers\": [1, 2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"Your source for film and TV clip, still, and elements business to business media licensing from the iconic Universal Pictures\"\n        },\n        {\n          \"citation_number\": 2,\n          \"quote\": \"Permission for the use of film clips and phots, a license obtained and fee negotiated must be obtained from the owner of the work you want to use.\"\n        }\n      ],\n      \"script_spans\": [\n        \"an old VHS of JAWS is playing.\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"as well as any applicable guild talent clearances (SAG-AFTRA clip reuse fees) for recognizable performers visible in the selected clip.\",\n      \"basis\": \"risk_assessment\",\n      \"status\": \"UNKNOWN\",\n      \"reason\": \"The provided excerpts do not mention SAG-AFTRA guild requirements or talent reuse fees.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": [\n        \"an old VHS of JAWS is playing.\"\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"To retain the 'Jaws' footage on the TV screen, negotiate a clip license through Universal Studios Media Licensing\",\n      \"basis\": \"application\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Universal Studios Media Licensing provides film/TV clip licensing for Universal properties.\",\n      \"citation_numbers\": [1, 2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"Your source for film and TV clip, still, and elements business to business media licensing from the iconic Universal Pictures\"\n        },\n        {\n          \"citation_number\": 2,\n          \"quote\": \"a license obtained and fee negotiated must be obtained from the owner of the work you want to use.\"\n        }\n      ],\n      \"script_spans\": [\n        \"an old VHS of JAWS is playing.\"\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"(licensing fee typically $5,000 to $15,000 for indie feature worldwide all-media rights)\",\n      \"basis\": \"risk_assessment\",\n      \"status\": \"UNKNOWN\",\n      \"reason\": \"No cited excerpt supports the specific dollar figure range for indie worldwide all-media clip licenses.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": [\n        \"an old VHS of JAWS is playing.\"\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"clear SAG-AFTRA clip reuse scale/residuals for depicted performers.\",\n      \"basis\": \"application\",\n      \"status\": \"UNKNOWN\",\n      \"reason\": \"No cited excerpt covers SAG-AFTRA reuse rules or residual scales.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": [\n        \"an old VHS of JAWS is playing.\"\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"Alternatively, replace the TV footage on set or in post-production with public domain archival footage (pre-1931), in-house mock shark/nature footage, or pre-cleared royalty-free stock footage to eliminate licensing and talent clearance costs.\",\n      \"basis\": \"script_edit\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Offers an actionable on-screen replacement that eliminates the third-party clip clearance trigger.\",\n      \"citation_numbers\": [2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 2,\n          \"quote\": \"Permission for the use of film clips and phots, a license obtained and fee negotiated must be obtained from the owner of the work you want to use.\"\n        }\n      ],\n      \"script_spans\": [\n        \"On the corner TV, muted, an old VHS of JAWS is playing. The shark is winning.\"\n      ]\n    },\n    {\n      \"field\": \"est_cost_usd\",\n      \"quote\": \"[5000,15000]\",\n      \"basis\": \"estimate\",\n      \"status\": \"UNKNOWN\",\n      \"reason\": \"The cost estimate range lacks explicit source citation support.\",\n      \"citation_numbers\": [],\n      \"support_spans\": []\n    },\n    {\n      \"field\": \"est_added_days\",\n      \"quote\": \"0\",\n      \"basis\": \"estimate\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Post-production replacement or paper licensing typically does not add principal photography days.\",\n      \"citation_numbers\": [],\n      \"support_spans\": []\n    },\n    {\n      \"field\": \"severity\",\n      \"quote\": \"MEDIUM\",\n      \"basis\": \"planning\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Third-party studio film clips present a standard clearance obstacle with substantial licensing costs if left unaddressed.\",\n      \"citation_numbers\": [],\n      \"support_spans\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F1001",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 1,\n      \"entailed\": false,\n      \"reason\": \"The cited text states that permission and a license must be obtained from the owner of film clips and photos, but it does not state that such usage constitutes reproduction of an audiovisual work or that it is categorically not excused as fair use in a scripted narrative feature.\",\n      \"scope_preserved\": false,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"The source does not establish legal categorical bars to fair use or specific statutory reproduction determinations.\",\n      \"unsupported_parts\": [\n        \"constitutes reproduction of an audiovisual work\",\n        \"is not excused as fair use in a scripted narrative feature\"\n      ]\n    },\n    {\n      \"check_index\": 2,\n      \"entailed\": false,\n      \"reason\": \"The sources do not state that Universal Pictures is the copyright owner of 'Jaws' or that 'Jaws' specifically must be licensed through Universal Studios Media Licensing.\",\n      \"scope_preserved\": false,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"Neither excerpt identifies the copyright owner or licensing representative of 'Jaws'.\",\n      \"unsupported_parts\": [\n        \"Universal Pictures is the copyright owner of Jaws\",\n        \"Universal Studios Media Licensing is the licensing representative for Jaws\"\n      ]\n    },\n    {\n      \"check_index\": 4,\n      \"entailed\": false,\n      \"reason\": \"The cited evidence does not establish that 'Jaws' is part of the Universal Pictures catalog or licensed through Universal Studios Media Licensing.\",\n      \"scope_preserved\": false,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"The sources establish licensing requirements generally and describe Universal's business, but do not connect 'Jaws' to Universal Studios Media Licensing.\",\n      \"unsupported_parts\": [\n        \"negotiating a clip license for Jaws through Universal Studios Media Licensing\"\n      ]\n    },\n    {\n      \"check_index\": 7,\n      \"entailed\": false,\n      \"reason\": \"The proposal makes an impermissible guarantee of outcome ('to eliminate licensing and talent clearance costs') and replacement labels alone do not establish permission or clearance outcomes under the guidelines.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"While replacing the footage directly addresses the on-screen clip trigger, the claim asserts guaranteed resolution of clearance and cost obligations.\",\n      \"unsupported_parts\": [\n        \"eliminate licensing and talent clearance costs\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F1001",
+      "schema": "CorrectedClaim",
+      "text": "{\n  \"finding\": \"Scene S002 depicts a corner television playing an old VHS tape of the feature film 'Jaws'. The use of third-party film clips typically requires obtaining permission and negotiating a license from the owner of the work to avoid copyright infringement risks.\",\n  \"remedy_detail\": \"Identify the copyright owner of the 'Jaws' footage to negotiate a film clip license, or replace the television display with original in-house footage, pre-cleared stock, or public domain material to address the clip clearance trigger.\",\n  \"remedy_action\": \"OBTAIN_LICENSE\",\n  \"severity\": \"MEDIUM\"\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F1001",
+      "schema": "EvidenceVerdict",
+      "text": "{\n  \"verdict\": \"SUPPORTED\",\n  \"reason\": \"The script explicitly depicts a corner TV playing a VHS of 'JAWS' in Scene S002, and the cited clearance source establishes that using third-party film clips requires obtaining permission and negotiating a license from the copyright owner.\",\n  \"failure_mode\": \"none\",\n  \"claim_checks\": [\n    {\n      \"field\": \"severity\",\n      \"quote\": \"MEDIUM\",\n      \"basis\": \"risk_assessment\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Depicting identifiable copyrighted feature film footage without prior clearance poses a standard medium-level clearance risk.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": [\n        \"On the corner TV, muted, an old VHS of JAWS is playing.\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Scene S002 depicts a corner television playing an old VHS tape of the feature film 'Jaws'.\",\n      \"basis\": \"script\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Scene S002 directly describes the corner TV playing an old VHS of JAWS.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": [\n        \"On the corner TV, muted, an old VHS of JAWS is playing.\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"The use of third-party film clips typically requires obtaining permission and negotiating a license from the owner of the work to avoid copyright infringement risks.\",\n      \"basis\": \"source\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Citation 2 confirms that permission and license negotiation from the owner of the work are required for using film clips.\",\n      \"citation_numbers\": [2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 2,\n          \"quote\": \"Permission for the use of film clips and phots, a license obtained and fee negotiated must be obtained from the owner of the work you want to use.\"\n        }\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"Identify the copyright owner of the 'Jaws' footage to negotiate a film clip license\",\n      \"basis\": \"application\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Directly applies the sourced rule regarding obtaining clearance and licensing from the copyright holder of the footage.\",\n      \"citation_numbers\": [2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 2,\n          \"quote\": \"Permission for the use of film clips and phots, a license obtained and fee negotiated must be obtained from the owner of the work you want to use.\"\n        }\n      ],\n      \"script_spans\": [\n        \"On the corner TV, muted, an old VHS of JAWS is playing.\"\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"replace the television display with original in-house footage, pre-cleared stock, or public domain material to address the clip clearance trigger.\",\n      \"basis\": \"script_edit\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Suggests standard alternative screenplay edits (public domain, original footage) to eliminate the clearance trigger of depicting a commercial film clip.\",\n      \"citation_numbers\": [2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 2,\n          \"quote\": \"Permission for the use of film clips and phots, a license obtained and fee negotiated must be obtained from the owner of the work you want to use.\"\n        }\n      ],\n      \"script_spans\": [\n        \"On the corner TV, muted, an old VHS of JAWS is playing.\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F1001",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 2,\n      \"entailed\": true,\n      \"reason\": \"The cited source explicitly states that permission, licensing, and fee negotiation must be obtained from the owner of the work for the use of film clips.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The scope of third-party film clip licensing from the work owner matches the cited source excerpt.\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 3,\n      \"entailed\": true,\n      \"reason\": \"Applying the sourced rule regarding film clip permissions to the script trigger where JAWS is playing on television supports identifying the owner to negotiate a license.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The application accurately preserves the rule and script context without asserting unsupported mandatory requirements or confirmed ownership.\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 4,\n      \"entailed\": true,\n      \"reason\": \"The proposed script edit addresses the specific on-screen clearance trigger (the third-party JAWS film clip) by replacing the television display without asserting guaranteed legal clearance or unsupported duties.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The edit focuses directly on removing or substituting the identified trigger present in the script evidence.\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    }
+  ]
+}

@@ -21,6 +21,7 @@ from greenlight.agents.evidence import (
     RATINGS_EVIDENCE,
 )
 from greenlight.agents.quote_anchor import anchor_quote
+from greenlight.agents.source_rules import SourceBoundRepair, available_rules, bound_correction
 from greenlight.contracts import validate
 from greenlight.models import FLASH_MODEL
 
@@ -168,7 +169,7 @@ def _summarize_checks(verdict: dict[str, Any]) -> dict[str, Any]:
         {c["field"] for c in bad if c["field"] in ESTIMATE_FIELDS}
     )
     material = [c for c in bad if c["field"] not in ESTIMATE_FIELDS]
-    if material and verdict["verdict"] == "SUPPORTED":
+    if material and verdict["verdict"] in {"SUPPORTED", "PARTIAL"}:
         result.update(
             verdict="PARTIAL",
             reason="Claim audit requires correction: " + "; ".join(c["reason"] for c in material),
@@ -629,6 +630,7 @@ async def repair_partial(client, flag, context, search, original, verify_once):
     # A censored verifier has not checked the script. It cannot approve a repair.
     if original.get("content_filtered"):
         return unresolved_verdict(original, "script verification was blocked")
+    rules = available_rules(flag)
     prompt = (
         PREQUALIFICATION_EVIDENCE
         + "\n"
@@ -664,8 +666,19 @@ async def repair_partial(client, flag, context, search, original, verify_once):
         "mandatory production work under NO_ACTION. "
         "Review severity against the surviving hazard, not the removed assumptions; it may "
         "remain HIGH for a serious hazard. Costs and days will be withheld because the "
-        "remedy changed. Return the corrected finding, remedy_detail, remedy_action, severity. "
-        "If no supported exposure remains, return an empty finding (repair will be refused).\n\n"
+        "remedy changed. "
+        + (
+            "Return a finding containing only verified screenplay observations and relevant "
+            "conditional risks, a severity, and the applicable rule_ids from SOURCE RULES. "
+            "Do not restate external duties in the finding. Code will construct the remedy "
+            "from the selected rules' exact wording; you cannot add or rewrite a requirement, "
+            "condition, alternative, owner, amount or exception. Select only rules relevant "
+            "to the depicted risk; missing production facts must remain conditional.\n"
+            "SOURCE RULES:\n" + json.dumps(rules) + "\n"
+            if rules
+            else "Return the corrected finding, remedy_detail, remedy_action, severity. "
+        )
+        + "If no supported exposure remains, return an empty finding (repair will be refused).\n\n"
         + "FLAG:\n"
         + json.dumps(flag)
         + "\nVERIFICATION:\n"
@@ -681,11 +694,17 @@ async def repair_partial(client, flag, context, search, original, verify_once):
             contents=prompt,
             config=types.GenerateContentConfig(
                 response_mime_type="application/json",
-                response_schema=CorrectedClaim,
+                response_schema=SourceBoundRepair if rules else CorrectedClaim,
                 temperature=0.0,
             ),
         )
-        correction = CorrectedClaim.model_validate_json(res.text).model_dump()
+        selected_rules = []
+        if rules:
+            correction, selected_rules = bound_correction(
+                SourceBoundRepair.model_validate_json(res.text), rules
+            )
+        else:
+            correction = CorrectedClaim.model_validate_json(res.text).model_dump()
         candidate = corrected_flag(flag, correction)
         from greenlight.agents.verification import _refile_gate_problem
 
@@ -706,10 +725,11 @@ async def repair_partial(client, flag, context, search, original, verify_once):
             "corrected claim did not pass independent verification",
             correction=correction,
             after=after,
+            source_rules=selected_rules,
         )
     return {
         **after,
-        "evidence_review": {"before": original, "after": after},
+        "evidence_review": {"before": original, "after": after, "source_rules": selected_rules},
         "correction": correction,
         "correction_input": flag_fingerprint(flag),
     }

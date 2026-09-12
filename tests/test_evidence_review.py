@@ -825,3 +825,40 @@ def test_partial_audit_positives_are_checked_before_the_correction_inherits_them
     )
     assert reviewed["claim_checks"][0]["status"] == "UNSUPPORTED"
     assert "claimed relationship is absent" in reviewed["claim_checks"][0]["reason"]
+
+
+@pytest.mark.parametrize("accepted", [True, False])
+def test_source_bound_repair_still_requires_the_full_independent_acceptance_path(accepted):
+    from greenlight.agents.source_rules import SourceBoundRepair, available_rules, bound_correction
+
+    flag = json.loads((ROOT / "fixtures/cassettes/fresh_safety_20260911.json").read_text())[
+        "flags"
+    ][0]
+    rules = available_rules(flag)
+    proposal = SourceBoundRepair(
+        finding="The sequence depicts fireworks and night-water exposure; "
+        "the production method is unknown.",
+        rule_ids=[r["rule_id"] for r in rules],
+        severity="HIGH",
+    )
+    patch, _ = bound_correction(proposal, rules)
+    candidate = corrected_flag(flag, patch)
+    initial = audit(flag, issue="Marine Coordinator")
+    final_review = entailment(audit(candidate))
+    if not accepted:
+        final_review["checks"][0].update(entailed=False, reason="Tested independent rejection.")
+    client = Client(
+        initial, entailment(initial), proposal.model_dump(), audit(candidate), final_review
+    )
+    verdict = asyncio.run(call_verifier(client, flag, "scene", "search"))
+    assert len(client.calls) == 5
+    assert client.calls[2]["config"].response_schema is SourceBoundRepair
+    assert "SOURCE RULES" in client.calls[2]["contents"]
+    kept, dropped = apply_verdicts([flag], {flag["flag_id"]: verdict})
+    if accepted:
+        assert not dropped and kept[0]["remedy"]["detail"] == patch["remedy_detail"]
+        assert verdict["evidence_review"]["source_rules"] == rules
+        assert kept[0]["citations"] == flag["citations"]
+        assert kept[0]["scene_ids"] == flag["scene_ids"]
+    else:
+        assert not kept and dropped and verdict["evidence_review_unresolved"]

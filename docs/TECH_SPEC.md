@@ -160,6 +160,15 @@ interpretation and are not silently represented as having passed the new audit.
 Quote/receipt metadata is session/record-internal (`support_span_version=3`);
 frozen public schemas are unchanged.
 
+For a small set of development-reviewed production-rule snapshots, repair can select
+source-bound cards from `data/production_rules.json`. A card requires the safety desk,
+an existing Parallel receipt, its exact URL and full excerpt hash. Selection cannot
+introduce a source or accept changed context. `SourceBoundRepair` selects rule IDs and
+writes scene/risk prose; code assembles the remedy from fixed wording that preserves
+each rule's trigger and qualifications. The complete correction still goes through
+the ordinary blinded audit and secondary check. Selected cards and original receipts
+remain in the internal audit trail. Other evidence uses the bounded general repair.
+
 Fresh desk diagnostics (`scripts/eval_desks.py --live`) run hand-assigned worklists
 through the existing desk factory and live tools with explicit model/retrieval/time
 limits. They preserve the original script and parser coordinates, save model events

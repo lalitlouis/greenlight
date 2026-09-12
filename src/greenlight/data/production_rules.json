@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "rule_id": "csatf16_pyrotechnics_licenses_2018",
+      "trigger": "Practical pyrotechnic special effects; licensing applies to the operators of those effects.",
+      "force": "Required licenses/permits and operator licenses as applicable. No general open-flame branch.",
+      "exceptions": "Only required permits and applicable State/Federal licenses; does not identify jurisdiction-specific authorities or establish marine permits.",
+      "action": "ADD_SPECIALIST",
+      "remedy_detail": "If practical pyrotechnic special effects are planned, obtain any required licenses and/or permits from the proper Authorities Having Jurisdiction over pyrotechnic materials before use. Use Pyrotechnic Special Effects Operators with valid State and Federal license(s), as applicable. Confirm the planned effects method and filming jurisdiction to assess which requirements apply.",
+      "source_url": "https://www.csatf.org/wp-content/uploads/2018/05/16PYROTECHNIC.pdf",
+      "source_sha256": "5d3c74c45c39439198e6cc1d2846953daac7430b538ba3bfe654a326e5754d1b",
+      "reviewed_at": "2026-09-11",
+      "review_scope": "Development wording review against the exact supplied excerpt; not independent professional review or validation of local requirements."
+    },
+    {
+      "rule_id": "csatf17_water_exposure_monitoring",
+      "trigger": "Cast and crew expected to work in water.",
+      "force": "Guidance recommends temperature monitoring, monitoring people for hyperthermia/hypothermia, and prevention.",
+      "exceptions": "Does not prescribe watercraft, lifeguards, dry suits, warming tents or a Marine Coordinator.",
+      "action": "NO_ACTION",
+      "remedy_detail": "Confirm whether cast or crew will work in water and how temperature monitoring and prevention of hyperthermia and hypothermia will be planned for that work.",
+      "source_url": "https://www.csatf.org/17_safety_bltn_water_hazards/",
+      "source_sha256": "93d743768d0d6a4992d64af8351201c50180d9773e42ff4d6fde02c06f7eb463",
+      "reviewed_at": "2026-09-11",
+      "review_scope": "Development wording review against the exact supplied excerpt; not independent professional review or validation of local requirements."
+    }
+  ]
+}

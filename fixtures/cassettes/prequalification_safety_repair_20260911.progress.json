@@ -1,0 +1,47 @@
+[
+  {
+    "flag_id": "F3001",
+    "schema": "EvidenceVerdict",
+    "status": "returned",
+    "input_chars": 23594,
+    "input_sha256": "c86972137e20f283745895e38f4d46d534b30763b362da909e4b990146431992",
+    "usage_available": true,
+    "elapsed_s": 28.76
+  },
+  {
+    "flag_id": "F3001",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 17101,
+    "input_sha256": "81191ff46f7fa7ad757f8ffcfd9749659763552e5bf7b68c45631472e4e5080f",
+    "usage_available": true,
+    "elapsed_s": 27.5
+  },
+  {
+    "flag_id": "F3001",
+    "schema": "CorrectedClaim",
+    "status": "returned",
+    "input_chars": 27196,
+    "input_sha256": "7f53ba72ee67d8e2aa73eeb0e77b130bf6a532d99c33392bc28f86cfb3662749",
+    "usage_available": true,
+    "elapsed_s": 6.83
+  },
+  {
+    "flag_id": "F3001",
+    "schema": "EvidenceVerdict",
+    "status": "returned",
+    "input_chars": 23282,
+    "input_sha256": "0d00d3f0979e1fbc1bd559bcdf59b844f49bf050579d01686bd78aa096cd6f3c",
+    "usage_available": true,
+    "elapsed_s": 113.93
+  },
+  {
+    "flag_id": "F3001",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 15912,
+    "input_sha256": "94ce198525c9dffaafd7317cd7411fce53ed5dc3a48523bd7fda5eda068fb733",
+    "usage_available": true,
+    "elapsed_s": 13.93
+  }
+]

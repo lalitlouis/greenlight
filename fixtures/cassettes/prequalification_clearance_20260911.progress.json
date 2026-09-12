@@ -1,0 +1,56 @@
+[
+  {
+    "flag_id": "clip_conditional_warning",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 7177,
+    "input_sha256": "e5e3b481f58ae366404485633377d5c48bad71da0a1365e9b35edc04492c7970",
+    "usage_available": true,
+    "elapsed_s": 6.29
+  },
+  {
+    "flag_id": "clip_remove_trigger",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 7097,
+    "input_sha256": "bd2574a609a1ed609d74331b29a0bfae7ad8134d3cd72492512464fb7e879b58",
+    "usage_available": true,
+    "elapsed_s": 6.35
+  },
+  {
+    "flag_id": "clip_relevant_input",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 6932,
+    "input_sha256": "6e44efd833a0ddd82e6fa4a197b84cdf39ddd721772cefd134a62754a0e34188",
+    "usage_available": true,
+    "elapsed_s": 4.71
+  },
+  {
+    "flag_id": "clip_unproved_owner",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 6776,
+    "input_sha256": "f6c30cf61ed1a9db8f77b4a36edc938be0af4cea35767478c87a45f55f3afb3b",
+    "usage_available": true,
+    "elapsed_s": 15.03
+  },
+  {
+    "flag_id": "clip_unproved_amount",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 6873,
+    "input_sha256": "706c71b35d4bff05243cb4ee92bd5cb513df7fb9085d4a2105f606df33065786",
+    "usage_available": true,
+    "elapsed_s": 4.5
+  },
+  {
+    "flag_id": "clip_replacement_guarantee",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 7053,
+    "input_sha256": "492fc647f90e9b84bd2e000098ffefea57d72b33c8c98efdb7284e09e7cdc829",
+    "usage_available": true,
+    "elapsed_s": 4.07
+  }
+]
