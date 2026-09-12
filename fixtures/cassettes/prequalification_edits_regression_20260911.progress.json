@@ -1,0 +1,56 @@
+[
+  {
+    "flag_id": "clip_removal",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 7002,
+    "input_sha256": "b9ba7274e30ccab9e142a92b0ef639e6feabc5334c9129c1d139c0bfcab8ab44",
+    "usage_available": true,
+    "elapsed_s": 5.64
+  },
+  {
+    "flag_id": "specialist_disguised_as_edit",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 7326,
+    "input_sha256": "348544d28fae0e0de8b70e8ba51566714c4458b6e46dbb009c36746174594f53",
+    "usage_available": true,
+    "elapsed_s": 5.92
+  },
+  {
+    "flag_id": "inquiry_irrelevant",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 6773,
+    "input_sha256": "f9e9e78452e4e7fb810efa19b101bc1c15ac97408e65d64b6234fde0af8ed76f",
+    "usage_available": true,
+    "elapsed_s": 17.68
+  },
+  {
+    "flag_id": "inquiry_conceals_duty",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 6495,
+    "input_sha256": "51211a018a2add77c9d02f5f9f5afb963a6829369871ee79152530109eea76e5",
+    "usage_available": true,
+    "elapsed_s": 3.73
+  },
+  {
+    "flag_id": "territory_conditional_edit",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 7783,
+    "input_sha256": "7c7916ebda4f6ecbc15d9345f06abdd8f72d6d3a49c71709effa949f811b976c",
+    "usage_available": true,
+    "elapsed_s": 5.0
+  },
+  {
+    "flag_id": "firearms_conditional",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 7231,
+    "input_sha256": "f8b2646c113747461b35e2e39431afdbe5e4fb90441c8fcfeefbc69e5d3a7650",
+    "usage_available": true,
+    "elapsed_s": 5.11
+  }
+]

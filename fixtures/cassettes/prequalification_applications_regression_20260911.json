@@ -1,0 +1,401 @@
+{
+  "source_run": "runs/run_20260911_015915.json",
+  "source_run_sha256": "10f75f0e509a7049ce45c4be1f87cb954588fdbe9ee76375a50a76bf5a3b7ef2",
+  "source_build": "local:51d7e826eb4a0926ba3b7cdefe32546e9d58d706",
+  "evaluated_build": "ab2efab3710c4e2e1baf73e8f79b23841cffc180",
+  "model": "gemini-3.7-flash",
+  "elapsed_s": 35.54,
+  "calls": 6,
+  "responses_with_usage": 6,
+  "calls_without_returned_usage": 0,
+  "resumed_from": null,
+  "rechecked_correction_from": null,
+  "entailment_cases": "fixtures/accuracy/evidence_applications_20260911.json",
+  "entailment_cases_sha256": "75b00650092d70131478c47763cc99969f1715bbfc6c6b7561134b876f0c6609",
+  "attempts": [
+    {
+      "flag_id": "ratings_cut",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 8289,
+      "input_sha256": "cd570abecb073b01a729c87750db13d97d898ef4ef2f70489b9d3a05472596c2",
+      "usage_available": true,
+      "elapsed_s": 7.24
+    },
+    {
+      "flag_id": "ratings_guarantee",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 8013,
+      "input_sha256": "74655e85bb96f61cf245db5974f024913c5df7b1c80fa0b845469986584ef8de",
+      "usage_available": true,
+      "elapsed_s": 5.47
+    },
+    {
+      "flag_id": "clip_application",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 7040,
+      "input_sha256": "71a2b9166056b2f52ec0dcd84379dba763ee1ecc70d1afed1d9a8bde0b897577",
+      "usage_available": true,
+      "elapsed_s": 4.36
+    },
+    {
+      "flag_id": "recording_owner",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 6721,
+      "input_sha256": "4a6913740d142cb6463b409d34ac4d246ac927e4420319e57c32803ce11fcf5b",
+      "usage_available": true,
+      "elapsed_s": 6.88
+    },
+    {
+      "flag_id": "performer_from_character",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 7115,
+      "input_sha256": "84abe1ec8fb04d17f1d541064f0aaccb813be88d9af3b18a860fb6d8b8fef0ac",
+      "usage_available": true,
+      "elapsed_s": 5.79
+    },
+    {
+      "flag_id": "inquiry_clearance",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 6794,
+      "input_sha256": "bc5462a69393325e1198e3878ca1e9e83d634832d362d06979c0b0b7d25711d6",
+      "usage_available": true,
+      "elapsed_s": 5.73
+    }
+  ],
+  "gemini_usage": {
+    "flash": {
+      "prompt": 10116,
+      "cached": 0,
+      "output": 4001
+    }
+  },
+  "estimated_cost_usd": 0.0226,
+  "manual_review": "pending; model approval is not an accuracy label",
+  "results": [
+    {
+      "flag_id": "ratings_cut",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "claim_checks": [
+          {
+            "field": "remedy",
+            "quote": "To address the cited expletive-count trigger, cut 'fucking' from Mara's 'selfish, glorious' line and Teddy's 'drunk with a boat' line, leaving Danny's single expletive. This does not guarantee PG-13 for the film.",
+            "basis": "script_edit",
+            "status": "SUPPORTED",
+            "reason": "Probe to be independently assessed",
+            "citation_numbers": [
+              2
+            ],
+            "support_spans": [
+              {
+                "citation_number": 2,
+                "quote": "A motion picture's single use of one of the harsher sexually-derived words, though only as an expletive, initially requires at least a PG-13 rating. More than one such expletive requires an R rating, as must even one of those words used in a sexual context. The Rating Board nevertheless may rate such a motion picture PG-13 if, based on a special vote by a two-thirds majority, the Raters feel that most American parents would believe that a PG-13 rating is appropriate because of the context or manner in which the words are used or because the use of those words in the motion picture is inconspicuous."
+              }
+            ],
+            "script_spans": [
+              "MARA\nHe was a selfish, glorious, fucking impossible man, and I moved four hundred miles away to stop auditioning for him, and it didn't work. It never worked.",
+              "TEDDY\nIt's a boat, Danny. He was a drunk with a fucking boat, and you're all acting like it's the crown jewels.",
+              "DANNY (CONT'D)\nYou're insane. You know that. That was --\n(laughing, despite everything)\n-- that was fucking beautiful."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The proposed script edit directly addresses the MPA rating rule trigger regarding multiple uses of harsher sexually-derived expletives by cutting two instances and leaving one, and it explicitly disclaims any guaranteed rating outcome.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The edit accurately targets the expletives identified in the script evidence and avoids asserting guaranteed classification.",
+              "unsupported_parts": []
+            }
+          ]
+        },
+        "estimate_exclusions": []
+      },
+      "expected_entailed": true,
+      "actual_entailed": true,
+      "passed": true,
+      "elapsed_s": 7.26
+    },
+    {
+      "flag_id": "ratings_guarantee",
+      "verdict": {
+        "verdict": "PARTIAL",
+        "claim_checks": [
+          {
+            "field": "remedy",
+            "quote": "Cut those two uses of 'fucking' and the film is guaranteed a PG-13 rating.",
+            "basis": "script_edit",
+            "status": "UNSUPPORTED",
+            "reason": "Independent span review: The claim guarantees a PG-13 rating outcome if the two uses are cut. Sourced rating rules do not guarantee final ratings, and guidelines explicitly prohibit guaranteeing clearance, permission, safety, or rating outcomes from a script edit.; While cutting the expletives targets an established rating trigger, it introduces an unsupported guarantee of a PG-13 rating outcome.; the film is guaranteed a PG-13 rating",
+            "citation_numbers": [
+              2
+            ],
+            "support_spans": [
+              {
+                "citation_number": 2,
+                "quote": "A motion picture's single use of one of the harsher sexually-derived words, though only as an expletive, initially requires at least a PG-13 rating. More than one such expletive requires an R rating, as must even one of those words used in a sexual context. The Rating Board nevertheless may rate such a motion picture PG-13 if, based on a special vote by a two-thirds majority, the Raters feel that most American parents would believe that a PG-13 rating is appropriate because of the context or manner in which the words are used or because the use of those words in the motion picture is inconspicuous."
+              }
+            ],
+            "script_spans": [
+              "MARA\nHe was a selfish, glorious, fucking impossible man, and I moved four hundred miles away to stop auditioning for him, and it didn't work. It never worked.",
+              "TEDDY\nIt's a boat, Danny. He was a drunk with a fucking boat, and you're all acting like it's the crown jewels.",
+              "DANNY (CONT'D)\nYou're insane. You know that. That was --\n(laughing, despite everything)\n-- that was fucking beautiful."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": false,
+              "reason": "The claim guarantees a PG-13 rating outcome if the two uses are cut. Sourced rating rules do not guarantee final ratings, and guidelines explicitly prohibit guaranteeing clearance, permission, safety, or rating outcomes from a script edit.",
+              "scope_preserved": true,
+              "requirements_supported": false,
+              "scope_reason": "While cutting the expletives targets an established rating trigger, it introduces an unsupported guarantee of a PG-13 rating outcome.",
+              "unsupported_parts": [
+                "the film is guaranteed a PG-13 rating"
+              ]
+            }
+          ]
+        },
+        "estimate_exclusions": [],
+        "reason": "Claim audit requires correction: Independent span review: The claim guarantees a PG-13 rating outcome if the two uses are cut. Sourced rating rules do not guarantee final ratings, and guidelines explicitly prohibit guaranteeing clearance, permission, safety, or rating outcomes from a script edit.; While cutting the expletives targets an established rating trigger, it introduces an unsupported guarantee of a PG-13 rating outcome.; the film is guaranteed a PG-13 rating"
+      },
+      "expected_entailed": false,
+      "actual_entailed": false,
+      "passed": true,
+      "elapsed_s": 5.48
+    },
+    {
+      "flag_id": "clip_application",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "The screenplay shows JAWS playing on the television. If a feature-film excerpt is used in the finished film, the cited guidance requires a clip license from its copyright holder.",
+            "basis": "application",
+            "status": "SUPPORTED",
+            "reason": "Probe to be independently assessed",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "Any excerpt from a feature film must be licensed from the copyright holder and an agreement negotiated for payment for use of the clips. Most studios charge a fee on the basis of a minute or fraction thereof."
+              }
+            ],
+            "script_spans": [
+              "On the corner TV, muted, an old VHS of JAWS is playing. The shark is winning."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The script evidence confirms that JAWS is playing on TV, and the cited source explicitly establishes that any excerpt from a feature film must be licensed from the copyright holder.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The conditional statement correctly preserves the requirement and applicability scope established by the source.",
+              "unsupported_parts": []
+            }
+          ]
+        },
+        "estimate_exclusions": []
+      },
+      "expected_entailed": true,
+      "actual_entailed": true,
+      "passed": true,
+      "elapsed_s": 4.36
+    },
+    {
+      "flag_id": "recording_owner",
+      "verdict": {
+        "verdict": "PARTIAL",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "Columbia Records / Sony Music Entertainment owns the exact Jeff Buckley recording of Hallelujah selected by this screenplay.",
+            "basis": "application",
+            "status": "UNSUPPORTED",
+            "reason": "Independent span review: The cited excerpt only contains the label name string 'Columbia Records, a division of Sony Music Entertainment' from Apple Music metadata and does not legally verify ownership of the master recording. Furthermore, script dialogue establishes only fictional choices, not real-world rights ownership.; A label attribution fragment does not establish legal ownership of the specified sound recording.; Columbia Records / Sony Music Entertainment owns the exact Jeff Buckley recording of Hallelujah",
+            "citation_numbers": [
+              2
+            ],
+            "support_spans": [
+              {
+                "citation_number": 2,
+                "quote": "Columbia Records, a division of Sony Music Entertainment"
+              }
+            ],
+            "script_spans": [
+              "\"Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.\""
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": false,
+              "reason": "The cited excerpt only contains the label name string 'Columbia Records, a division of Sony Music Entertainment' from Apple Music metadata and does not legally verify ownership of the master recording. Furthermore, script dialogue establishes only fictional choices, not real-world rights ownership.",
+              "scope_preserved": false,
+              "requirements_supported": false,
+              "scope_reason": "A label attribution fragment does not establish legal ownership of the specified sound recording.",
+              "unsupported_parts": [
+                "Columbia Records / Sony Music Entertainment owns the exact Jeff Buckley recording of Hallelujah"
+              ]
+            }
+          ]
+        },
+        "estimate_exclusions": [],
+        "reason": "Claim audit requires correction: Independent span review: The cited excerpt only contains the label name string 'Columbia Records, a division of Sony Music Entertainment' from Apple Music metadata and does not legally verify ownership of the master recording. Furthermore, script dialogue establishes only fictional choices, not real-world rights ownership.; A label attribution fragment does not establish legal ownership of the specified sound recording.; Columbia Records / Sony Music Entertainment owns the exact Jeff Buckley recording of Hallelujah"
+      },
+      "expected_entailed": false,
+      "actual_entailed": false,
+      "passed": true,
+      "elapsed_s": 6.88
+    },
+    {
+      "flag_id": "performer_from_character",
+      "verdict": {
+        "verdict": "PARTIAL",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "Sam is 10 in the screenplay, so production has a ten-year-old performer and must follow the cited minor work-hour restrictions.",
+            "basis": "application",
+            "status": "UNSUPPORTED",
+            "reason": "Independent span review: Script evidence establishes only fictional character ages, not real casting decisions or mandatory real-world production duties.; Screenplay character age does not establish the age of the actual cast performer or impose a non-conditional legal duty on production.; production has a ten-year-old performer; must follow the cited minor work-hour restrictions",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "Minors who have reached the age of nine (9) years but who have not attained the age of sixteen (16) years may be permitted at the place of employment for nine (9) hours (excluding meal periods, but including school time)."
+              }
+            ],
+            "script_spans": [
+              "DANNY VOSS (34) stands behind the bar, not because he works there but because standing anywhere else feels wrong today. SAM (10) sits at the end of the bar doing serious damage to a cocoa, poured from a dented Thermos."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": false,
+              "reason": "Script evidence establishes only fictional character ages, not real casting decisions or mandatory real-world production duties.",
+              "scope_preserved": false,
+              "requirements_supported": false,
+              "scope_reason": "Screenplay character age does not establish the age of the actual cast performer or impose a non-conditional legal duty on production.",
+              "unsupported_parts": [
+                "production has a ten-year-old performer",
+                "must follow the cited minor work-hour restrictions"
+              ]
+            }
+          ]
+        },
+        "estimate_exclusions": [],
+        "reason": "Claim audit requires correction: Independent span review: Script evidence establishes only fictional character ages, not real casting decisions or mandatory real-world production duties.; Screenplay character age does not establish the age of the actual cast performer or impose a non-conditional legal duty on production.; production has a ten-year-old performer; must follow the cited minor work-hour restrictions"
+      },
+      "expected_entailed": false,
+      "actual_entailed": false,
+      "passed": true,
+      "elapsed_s": 5.8
+    },
+    {
+      "flag_id": "inquiry_clearance",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "claim_checks": [
+          {
+            "field": "remedy",
+            "quote": "Is the JAWS clip intended for the finished film, and has permission for that use already been obtained?",
+            "basis": "inquiry",
+            "status": "SUPPORTED",
+            "reason": "Probe to be independently assessed",
+            "citation_numbers": [],
+            "support_spans": [],
+            "script_spans": []
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The inquiry appropriately seeks relevant missing production intent and clearance status regarding the JAWS clip without asserting unsupported duties or guarantees.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The inquiry directly addresses the clearance issue identified in the finding context.",
+              "unsupported_parts": []
+            }
+          ]
+        },
+        "estimate_exclusions": []
+      },
+      "expected_entailed": true,
+      "actual_entailed": true,
+      "passed": true,
+      "elapsed_s": 5.73
+    }
+  ],
+  "responses": [
+    {
+      "flag_id": "ratings_cut",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The proposed script edit directly addresses the MPA rating rule trigger regarding multiple uses of harsher sexually-derived expletives by cutting two instances and leaving one, and it explicitly disclaims any guaranteed rating outcome.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The edit accurately targets the expletives identified in the script evidence and avoids asserting guaranteed classification.\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "ratings_guarantee",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": false,\n      \"reason\": \"The claim guarantees a PG-13 rating outcome if the two uses are cut. Sourced rating rules do not guarantee final ratings, and guidelines explicitly prohibit guaranteeing clearance, permission, safety, or rating outcomes from a script edit.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"While cutting the expletives targets an established rating trigger, it introduces an unsupported guarantee of a PG-13 rating outcome.\",\n      \"unsupported_parts\": [\n        \"the film is guaranteed a PG-13 rating\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "clip_application",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The script evidence confirms that JAWS is playing on TV, and the cited source explicitly establishes that any excerpt from a feature film must be licensed from the copyright holder.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The conditional statement correctly preserves the requirement and applicability scope established by the source.\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "recording_owner",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": false,\n      \"reason\": \"The cited excerpt only contains the label name string 'Columbia Records, a division of Sony Music Entertainment' from Apple Music metadata and does not legally verify ownership of the master recording. Furthermore, script dialogue establishes only fictional choices, not real-world rights ownership.\",\n      \"scope_preserved\": false,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"A label attribution fragment does not establish legal ownership of the specified sound recording.\",\n      \"unsupported_parts\": [\n        \"Columbia Records / Sony Music Entertainment owns the exact Jeff Buckley recording of Hallelujah\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "performer_from_character",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": false,\n      \"reason\": \"Script evidence establishes only fictional character ages, not real casting decisions or mandatory real-world production duties.\",\n      \"scope_preserved\": false,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"Screenplay character age does not establish the age of the actual cast performer or impose a non-conditional legal duty on production.\",\n      \"unsupported_parts\": [\n        \"production has a ten-year-old performer\",\n        \"must follow the cited minor work-hour restrictions\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "inquiry_clearance",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The inquiry appropriately seeks relevant missing production intent and clearance status regarding the JAWS clip without asserting unsupported duties or guarantees.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The inquiry directly addresses the clearance issue identified in the finding context.\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    }
+  ]
+}

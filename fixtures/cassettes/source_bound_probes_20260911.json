@@ -1,0 +1,152 @@
+{
+  "source_run": "fixtures/cassettes/fresh_safety_20260911.json",
+  "source_run_sha256": "ddca289bd0e5eabeb9829e868ce5c2b5f8f419358e5ec21f574545732ffa6731",
+  "source_build": "b49ce03d59b168cf9f616d9e706c22a7b514f577",
+  "evaluated_build": "ab2efab3710c4e2e1baf73e8f79b23841cffc180",
+  "model": "gemini-3.7-flash",
+  "elapsed_s": 11.45,
+  "calls": 2,
+  "responses_with_usage": 2,
+  "calls_without_returned_usage": 0,
+  "resumed_from": null,
+  "rechecked_correction_from": null,
+  "entailment_cases": "fixtures/accuracy/source_bound_repairs_20260911.json",
+  "entailment_cases_sha256": "9dedb00e12e1b844e648503101c32f3685e29999d8e144751a1e14acbd081bc3",
+  "attempts": [
+    {
+      "flag_id": "csatf16_pyrotechnics_licenses_2018",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 7627,
+      "input_sha256": "7eacb2badd069f1314c64ca383e9c5577f91c4495437d0d17c7dbe862f769d1e",
+      "usage_available": true,
+      "elapsed_s": 5.2
+    },
+    {
+      "flag_id": "csatf17_water_exposure_monitoring",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 8621,
+      "input_sha256": "1c42aa60d5fc967d07ab4c4c6e82599e3b60dd94325fce95e7f9850435d2dcdc",
+      "usage_available": true,
+      "elapsed_s": 6.21
+    }
+  ],
+  "gemini_usage": {
+    "flash": {
+      "prompt": 3649,
+      "cached": 0,
+      "output": 1308
+    }
+  },
+  "estimated_cost_usd": 0.0076,
+  "manual_review": "pending; model approval is not an accuracy label",
+  "results": [
+    {
+      "flag_id": "csatf16_pyrotechnics_licenses_2018",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "claim_checks": [
+          {
+            "field": "remedy",
+            "quote": "If practical pyrotechnic special effects are planned, obtain any required licenses and/or permits from the proper Authorities Having Jurisdiction over pyrotechnic materials before use. Use Pyrotechnic Special Effects Operators with valid State and Federal license(s), as applicable. Confirm the planned effects method and filming jurisdiction to assess which requirements apply.",
+            "basis": "application",
+            "status": "SUPPORTED",
+            "reason": "Probe to be independently assessed",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "Any required licenses and/or permits shall be obtained from proper Authorities Having Jurisdiction (AHJ) over pyrotechnic materials prior to using pyrotechnic special effects.\nPyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable."
+              }
+            ],
+            "script_spans": [
+              "Crow touches a road flare to the mortar fuse. The Fourth of July stash goes up"
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The claim accurately reflects the source requirements conditioned on practical pyrotechnics being planned, matching the rule on obtaining permits from the AHJ and using licensed operators as applicable.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The claim properly preserves conditions regarding planned practical effects and jurisdictional applicability.",
+              "unsupported_parts": []
+            }
+          ]
+        },
+        "estimate_exclusions": []
+      },
+      "expected_entailed": true,
+      "actual_entailed": true,
+      "passed": true,
+      "elapsed_s": 5.21
+    },
+    {
+      "flag_id": "csatf17_water_exposure_monitoring",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "claim_checks": [
+          {
+            "field": "remedy",
+            "quote": "Confirm whether cast or crew will work in water and how temperature monitoring and prevention of hyperthermia and hypothermia will be planned for that work.",
+            "basis": "inquiry",
+            "status": "SUPPORTED",
+            "reason": "Probe to be independently assessed",
+            "citation_numbers": [
+              2
+            ],
+            "support_spans": [
+              {
+                "citation_number": 2,
+                "quote": "The temperature should be monitored when cast and crew are expected to be working in water.\nProlonged exposure to water can become hazardous. Cast and crew should be monitored for signs\nand symptoms of both hyperthermia and hypothermia.\nProduction Management should take steps to prevent hyperthermia (elevated body temperature)\nand hypothermia (reduced body temperature). While hyperthermia can occur, hypothermia is a\nmore likely hazard."
+              }
+            ],
+            "script_spans": [
+              "she DIVES -- off the skiff into the black water, surfacing in the firelight, swimming hard for the mooring buoy"
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The inquiry directly requests relevant missing production planning input regarding water immersion and temperature safety protocols supported by Safety Bulletin #17 and script evidence of a character diving into water.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The inquiry addresses the specific water hazard risk identified in the script and sources without asserting unconfirmed facts or imposing unsupported guarantees.",
+              "unsupported_parts": []
+            }
+          ]
+        },
+        "estimate_exclusions": []
+      },
+      "expected_entailed": true,
+      "actual_entailed": true,
+      "passed": true,
+      "elapsed_s": 6.22
+    }
+  ],
+  "responses": [
+    {
+      "flag_id": "csatf16_pyrotechnics_licenses_2018",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The claim accurately reflects the source requirements conditioned on practical pyrotechnics being planned, matching the rule on obtaining permits from the AHJ and using licensed operators as applicable.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The claim properly preserves conditions regarding planned practical effects and jurisdictional applicability.\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "csatf17_water_exposure_monitoring",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The inquiry directly requests relevant missing production planning input regarding water immersion and temperature safety protocols supported by Safety Bulletin #17 and script evidence of a character diving into water.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The inquiry addresses the specific water hazard risk identified in the script and sources without asserting unconfirmed facts or imposing unsupported guarantees.\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    }
+  ]
+}

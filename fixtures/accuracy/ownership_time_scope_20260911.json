@@ -1,0 +1,82 @@
+{
+  "source_run_sha256": "9de01086d0553fa295092598859f3ef9d8b13ba35078b90d001eaf33e4827ec0",
+  "source_script_sha256": "634444b20de3d73acfaeda4bd89b44f8e62192103cf54302db16fd3304828bfb",
+  "label_scope": "Development temporal-scope controls frozen before candidate calls; supplied-source support only, not independent current-ownership investigation. Two supported controls and two unsupported assertions from one shared script/source group.",
+  "cases": [
+    {
+      "case_id": "historical_ownership_qualified",
+      "field": "finding",
+      "basis": "source",
+      "claim": "In the cited 1982 court decision, Universal was identified as the copyright owner of the motion picture JAWS.",
+      "support_spans": [
+        {
+          "citation_number": 1,
+          "quote": "Universal is the owner of the copyright in a motion picture entitled \"Jaws\". Prior to June 20, 1975, Universal produced the motion picture \"Jaws\" based on the book \"Jaws\" written by Benchley."
+        }
+      ],
+      "script_spans": [],
+      "expected_entailed": true,
+      "label_reason": "Explicitly limits the ownership statement to the dated decision; the source title supplies the decision date.",
+      "source_flag_id": "F1002"
+    },
+    {
+      "case_id": "historical_ownership_current",
+      "field": "finding",
+      "basis": "source",
+      "claim": "Universal is the current copyright owner of JAWS, and Universal Studios Media Licensing is authorized to grant the rights needed for this production.",
+      "support_spans": [
+        {
+          "citation_number": 1,
+          "quote": "Universal is the owner of the copyright in a motion picture entitled \"Jaws\". Prior to June 20, 1975, Universal produced the motion picture \"Jaws\" based on the book \"Jaws\" written by Benchley."
+        },
+        {
+          "citation_number": 2,
+          "quote": "Your source for film and TV clip, still, and elements business to business media licensing from the iconic Universal Pictures, Focus Features, DreamWorks Animation, and MCA Television libraries."
+        }
+      ],
+      "script_spans": [],
+      "expected_entailed": false,
+      "label_reason": "A 1982 ownership statement plus a generic studio catalog does not establish current ownership and use-specific licensing authority.",
+      "source_flag_id": "F1002"
+    },
+    {
+      "case_id": "historical_ownership_lead",
+      "field": "remedy",
+      "basis": "inquiry",
+      "action": "NO_ACTION",
+      "claim": "The 1982 decision identifies Universal as the owner at that time. Use its media-licensing service as a starting point to inquire about the JAWS clip, and confirm current ownership and authority for the intended use.",
+      "support_spans": [
+        {
+          "citation_number": 1,
+          "quote": "Universal is the owner of the copyright in a motion picture entitled \"Jaws\". Prior to June 20, 1975, Universal produced the motion picture \"Jaws\" based on the book \"Jaws\" written by Benchley."
+        },
+        {
+          "citation_number": 2,
+          "quote": "Your source for film and TV clip, still, and elements business to business media licensing from the iconic Universal Pictures, Focus Features, DreamWorks Animation, and MCA Television libraries."
+        }
+      ],
+      "script_spans": [
+        "On the corner TV, muted, an old VHS of JAWS is playing. The shark is winning."
+      ],
+      "expected_entailed": true,
+      "label_reason": "A qualified historical lead supports a relevant rights inquiry, without claiming that current ownership or requested rights have been confirmed.",
+      "source_flag_id": "F1002"
+    },
+    {
+      "case_id": "retrieval_does_not_update_ownership",
+      "field": "finding",
+      "basis": "source",
+      "claim": "The historical ownership statement proves Universal still owns JAWS today because the page is available on the web today.",
+      "support_spans": [
+        {
+          "citation_number": 1,
+          "quote": "Universal is the owner of the copyright in a motion picture entitled \"Jaws\". Prior to June 20, 1975, Universal produced the motion picture \"Jaws\" based on the book \"Jaws\" written by Benchley."
+        }
+      ],
+      "script_spans": [],
+      "expected_entailed": false,
+      "label_reason": "Current access to a historical document does not update the temporal scope of its facts.",
+      "source_flag_id": "F1002"
+    }
+  ]
+}

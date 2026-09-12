@@ -56,8 +56,7 @@ def prepare_case(record, script, case_id):
         raise ValueError("screenplay differs from source record")
     _, scenes = parse_fountain(script)
     coordinates = {
-        s["scene_id"]: {k: s.get(k, "") for k in ("heading", "page", "number")}
-        for s in scenes
+        s["scene_id"]: {k: s.get(k, "") for k in ("heading", "page", "number")} for s in scenes
     }
     if len(scenes) != record["scenes"] or coordinates != record["scene_meta"]:
         raise ValueError("parser coordinates differ from source record")
@@ -165,7 +164,7 @@ async def evaluate(args):
         "draft": record["draft"],
         "script_title": record["script_title"],
         "limits": {
-            "model_calls": MAX_MODEL_CALLS,
+            "model_calls": args.model_call_cap,
             "retrieval_calls": MAX_RETRIEVAL_CALLS,
             "deadline_s": CASE_TIMEOUT_S,
             "deep_research": False,
@@ -185,7 +184,7 @@ async def evaluate(args):
                 role="user",
                 parts=[types.Part(text="Complete your assigned desk worklist on this screenplay.")],
             ),
-            run_config=RunConfig(max_llm_calls=MAX_MODEL_CALLS),
+            run_config=RunConfig(max_llm_calls=args.model_call_cap),
         ):
             accumulate_usage(result["gemini_usage"], event)
             result["events"].append(event.model_dump(mode="json", exclude_none=True))
@@ -244,6 +243,13 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--live", action="store_true")
     parser.add_argument("--case", choices=CASES, required=True)
+    parser.add_argument(
+        "--model-call-cap",
+        type=int,
+        choices=(12, 20),
+        default=MAX_MODEL_CALLS,
+        help="explicit diagnostic model budget; production desk limits are unchanged",
+    )
     parser.add_argument("--record", type=Path, default=ROOT / "runs/run_20260911_015915.json")
     parser.add_argument("--script", type=Path, default=ROOT / "fixtures/slack_tide.fountain")
     parser.add_argument("--output", type=Path, required=True)

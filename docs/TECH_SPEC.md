@@ -123,6 +123,10 @@ is not repaired. The original excerpt remains immutable; internal
 `support_span_reanchors` records submitted and raw quotes. The independent reviewer
 still receives the raw receipt and full excerpt, so anchoring never establishes truth
 or applicability.
+The redundant `citation_numbers` array is derived from successfully anchored receipts;
+extra indexes never generate evidence. `citation_index_reanchors` retains the submitted
+and receipt-derived lists. A missing, invented or wrongly attributed receipt still
+fails; metadata normalization does not approve its associated claim.
 Coverage permits only internal `and`, `and that`, `or` or `and/or` joins between audited clauses;
 omitted conditions, negation and prescriptions still fail. This keeps atomic claim
 quoting from rejecting a finding over a connective alone. The second reviewer receives
@@ -136,7 +140,10 @@ Script receipts establish fictional content, not actual production facts or owne
 Citation title and URL accompany
 each excerpt solely for source attribution; metadata cannot supply an operative rule
 or establish applicability. This avoids rejecting a correctly attributed quotation
-merely because its body does not repeat the publisher's name. It must return every claim
+merely because its body does not repeat the publisher's name. Time scope must be
+preserved: a dated ownership decision may support a qualified lead
+or historical statement, but not by itself a current licensing-authority assertion.
+Retrieval date is not the date of the facts stated in the source. It must return every claim
 exactly once; an incomplete secondary review withholds the score. Severity judgement
 stays in the script-aware audit regardless of the model-chosen basis or optional receipts;
 severity never enters the source-only batch. A supported first

@@ -101,6 +101,9 @@ TEXT anchoring the relevant content. They cannot assert production facts. Separa
 pure rule assertions from script facts when possible; don't demand that sources name
 fictional characters, dialogue or props. A sourced ownership link still needs a source;
 it cannot be inferred from a name in the script or the label's corporate parent.
+A historical judgment or credit establishes ownership at that time; it does not alone
+prove current ownership or authority for the requested use. Keep historical leads
+qualified and distinguish document date from retrieval date.
 For every source/planning/application/script_edit/risk_assessment claim (except severity), and every
 remedy prescription,
 provide support_spans: citation_number plus an EXACT verbatim quote from that numbered
@@ -239,7 +242,7 @@ def _support_problem(  # noqa: PLR0912 - independent provenance boundaries
     if needs_span and not check.support_spans:
         return "No exact supporting span for this external claim or prescription"
     indexes = {span.citation_number for span in check.support_spans}
-    if indexes != set(check.citation_numbers):
+    if not check.support_spans and indexes != set(check.citation_numbers):
         return "Citation indexes and supporting spans do not match"
     anchored = []
     for span in check.support_spans:
@@ -253,6 +256,9 @@ def _support_problem(  # noqa: PLR0912 - independent provenance boundaries
     # Apply only after every receipt passes; citations themselves never change.
     for span, quote in zip(check.support_spans, anchored, strict=True):
         span.quote = quote
+    # The quoted receipts are authoritative. Repair this redundant index list
+    # only after every receipt validates; never invent a span for an extra index.
+    check.citation_numbers = sorted(indexes)
     return None
 
 
@@ -278,12 +284,22 @@ def checked_verdict(
         raise ValueError("claim audit must cover finding, remedy and severity")
     fields = audit_fields(flag)
     reanchors = []
+    index_reanchors = []
     for check_index, check in enumerate(checks):
         if check.field not in fields or check.quote not in fields[check.field]:
             raise ValueError("claim audit quote is not in its field")
         if check.status == "SUPPORTED":
             submitted = [s.quote for s in check.support_spans]
+            submitted_indexes = list(check.citation_numbers)
             problem = _support_problem(check, flag, script_context)
+            if not problem and submitted_indexes != check.citation_numbers:
+                index_reanchors.append(
+                    {
+                        "check_index": check_index,
+                        "submitted_indexes": submitted_indexes,
+                        "receipt_indexes": list(check.citation_numbers),
+                    }
+                )
             reanchors.extend(
                 {
                     "check_index": check_index,
@@ -336,6 +352,7 @@ def checked_verdict(
         "support_span_version": AUDIT_VERSION,
         "audit_input": flag_fingerprint(flag),
         **({"support_span_reanchors": reanchors} if reanchors else {}),
+        **({"citation_index_reanchors": index_reanchors} if index_reanchors else {}),
     }
     return _summarize_checks(verdict)
 
@@ -507,6 +524,11 @@ async def check_entailment(client, flag, verdict):
         "source. Use it to assess attribution such as 'SAG-AFTRA guidance'; the excerpt "
         "need not repeat its publisher's name. Metadata cannot establish an operative "
         "rule, duty, scope of applicability or precaution missing from the excerpt. "
+        "Preserve time scope: a historical court decision, credit or announcement "
+        "establishes the relationship at that time, not necessarily current ownership "
+        "or authority to license a new use. Retrieval today does not make an old "
+        "document current. A historical rights lead or an explicit inquiry can be useful, "
+        "but an unqualified current owner/licensor assertion needs current scoped support. "
         "Do not infer publisher endorsement from a name mentioned only in a title; "
         "consider the URL as well, and do not follow links or use remembered page text. "
         "For basis=source/planning, the excerpts must establish the external assertions. "

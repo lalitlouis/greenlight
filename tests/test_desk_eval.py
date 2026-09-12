@@ -2,6 +2,7 @@
 
 import importlib.util
 import json
+import sys
 from copy import deepcopy
 from pathlib import Path
 
@@ -88,3 +89,32 @@ def test_scope_probes_pin_observed_false_approval_and_valid_source_receipts():
         ]
         is True
     )
+
+
+@pytest.mark.parametrize("cap", [None, "20", "0", "9999"])
+def test_cli_preserves_default_budget_and_rejects_unbounded_increases(monkeypatch, tmp_path, cap):
+    args = [
+        "eval_desks.py",
+        "--live",
+        "--case",
+        "safety_climax",
+        "--output",
+        str(tmp_path / "out.json"),
+    ]
+    if cap is not None:
+        args += ["--model-call-cap", cap]
+    monkeypatch.setattr(sys, "argv", args)
+    captured = []
+
+    async def fake_evaluate(parsed):
+        captured.append(parsed.model_call_cap)
+        return 0
+
+    monkeypatch.setattr(desk_eval, "evaluate", fake_evaluate)
+    if cap in {"0", "9999"}:
+        with pytest.raises(SystemExit) as exc:
+            desk_eval.main()
+        assert exc.value.code == 2 and not captured
+    else:
+        assert desk_eval.main() == 0
+        assert captured == [12 if cap is None else 20]

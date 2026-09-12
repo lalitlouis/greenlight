@@ -142,6 +142,7 @@ def test_audit_requires_real_field_and_citation_anchors(problem):
         check["quote"] = "This is not in the finding."
     elif problem == "bad_citation":
         check["citation_numbers"] = [99]
+        check["support_spans"][0]["citation_number"] = 99
     else:
         check["basis"] = "source"
         check["support_spans"] = []
@@ -862,3 +863,38 @@ def test_source_bound_repair_still_requires_the_full_independent_acceptance_path
         assert kept[0]["scene_ids"] == flag["scene_ids"]
     else:
         assert not kept and dropped and verdict["evidence_review_unresolved"]
+
+
+def test_redundant_citation_indexes_are_derived_from_valid_receipts_without_adding_evidence():
+    artifact = json.loads(
+        (
+            ROOT / "fixtures/cassettes/prequalification_fresh_clearance_review_20260911.json"
+        ).read_text()
+    )
+    source = json.loads(
+        (ROOT / "fixtures/cassettes/prequalification_fresh_clearance_20260911.json").read_text()
+    )
+    flag = source["flags"][0]
+    patch = artifact["results"][0]["verdict"]["evidence_review"]["correction"]
+    candidate = corrected_flag(flag, patch)
+    raw = next(r for r in reversed(artifact["responses"]) if r["schema"] == "EvidenceVerdict")
+    audit_before = json.loads(raw["text"])
+    original = deepcopy(candidate)
+    checked = checked_verdict(
+        audit_before, candidate, (ROOT / "fixtures/slack_tide.fountain").read_text()
+    )
+    assert candidate == original
+    assert checked["verdict"] == "SUPPORTED"  # bookkeeping only; time scope still needs review
+    repair = next(
+        r for r in checked["citation_index_reanchors"] if r["submitted_indexes"] == [1, 2, 3]
+    )
+    assert repair["receipt_indexes"] == [2, 3]
+    check = checked["claim_checks"][repair["check_index"]]
+    assert check["citation_numbers"] == [2, 3]
+    assert all(span["citation_number"] != 1 for span in check["support_spans"])
+    response = entailment(checked)
+    response["checks"][0].update(
+        entailed=False, reason="Historical evidence cannot prove current scope."
+    )
+    result = asyncio.run(check_entailment(Client(response), candidate, checked))
+    assert result["verdict"] == "PARTIAL"  # normalizing indexes cannot override a semantic failure

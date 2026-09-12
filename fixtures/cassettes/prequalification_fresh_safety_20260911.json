@@ -1,0 +1,2605 @@
+{
+  "kind": "isolated_desk_diagnostic",
+  "case": "safety_climax",
+  "model": "gemini-3.7-flash",
+  "build": "ab2efab3710c4e2e1baf73e8f79b23841cffc180",
+  "source_run_sha256": "10f75f0e509a7049ce45c4be1f87cb954588fdbe9ee76375a50a76bf5a3b7ef2",
+  "draft": {
+    "title": "SLACK TIDE",
+    "draft_date": "2026-08-24",
+    "revision_label": "",
+    "sha256": "634444b20de3d73acfaeda4bd89b44f8e62192103cf54302db16fd3304828bfb",
+    "bytes": 16008,
+    "pages": 9,
+    "scene_count": 12,
+    "scene_numbers": "generated"
+  },
+  "script_title": "SLACK TIDE",
+  "limits": {
+    "model_calls": 12,
+    "retrieval_calls": 4,
+    "deadline_s": 360,
+    "deep_research": false,
+    "durable_cache": false
+  },
+  "events": [
+    {
+      "model_version": "gemini-3.7-flash",
+      "content": {
+        "parts": [
+          {
+            "function_call": {
+              "id": "call_147862",
+              "args": {
+                "scene_id": "S009"
+              },
+              "name": "read_scene"
+            },
+            "thought_signature": "AY89a1_2tRQqSQkc0mkCbB8KfgLNN34PdwVcwMBx9zWD-o87M8UdfKHgc0tbc3uz6fGql-kY8xzk0B0PeDkO-4eQOBJ-9IHOBKs7RSDdFuvmNdpdJNzybQHXI0hsvGxAvuiQtQy3pgZ7Dvp_mXV1gznNTb-kuC6C7zVmzhOcmCqTxP7_Kmd_qS1TKHWPf20S7m_nXMMMtqph4vpi1aSLsUcb4M3pdVqjnk2kFZ0d5rN7wtZdd_TSil0KzvQVLfBZwQSt2nzPcJ06B9lUxFDzbiE4eg_5UUhCrTkxnZ0-jwdalW3dKgns18QEFjKx-a8WamxN-UG3VQuewOUNxvY9M3m77f9Qhq6VRJh5z-dkw4dtEHLfzYJ5fU86PNGdcvUEtb8iCgxn2zfxIUhXZJznzW-INLzejeiIwl4UkXDD1n3Lwu_4ZP2IjtrzuYkroev1n6TOQStSQon5TNc5p4g6BmuWXX6OltkmVeMd75fMwhLhZvP9phT5xpxslDUpvnD0ZP5chQaI7X3BdJeRWM_WKluy"
+          }
+        ],
+        "role": "model"
+      },
+      "finish_reason": "STOP",
+      "usage_metadata": {
+        "candidates_token_count": 21,
+        "candidates_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 21
+          }
+        ],
+        "prompt_token_count": 7789,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 7789
+          }
+        ],
+        "thoughts_token_count": 113,
+        "total_token_count": 7923,
+        "traffic_type": "ON_DEMAND"
+      },
+      "invocation_id": "e-2c26be53-5315-4e02-93fe-79e111cae9c7",
+      "author": "safety_underwriter",
+      "actions": {
+        "state_delta": {},
+        "artifact_delta": {},
+        "requested_auth_configs": {},
+        "requested_tool_confirmations": {}
+      },
+      "node_info": {
+        "path": ""
+      },
+      "long_running_tool_ids": [],
+      "id": "6ae48b27-8f42-48c9-8d97-2711b12301d7",
+      "timestamp": 1789191379.7352588
+    },
+    {
+      "content": {
+        "parts": [
+          {
+            "function_response": {
+              "id": "call_147862",
+              "name": "read_scene",
+              "response": {
+                "result": "EXT. BANNOCK HARBOR - NIGHT\n\nThe MARGARET ROSE rides at anchor in the outer harbor, dark against a darker sky. Along the seawall, the whole town has turned out, candles cupped in fists against the breeze.\n\nA Boston Whaler skiff crosses the black water. Danny at the tiller. Mara amidships with the urn in her lap. Sam in the bow in a life vest two sizes too big, one hand knotted in Barnacle's collar. The old dog rides like a figurehead, nose into the wind.\n\nThey come alongside the Margaret Rose. Danny and Mara climb aboard; Sam and the dog stay in the skiff, holding the rail.\n\n"
+              }
+            }
+          }
+        ],
+        "role": "user"
+      },
+      "invocation_id": "e-2c26be53-5315-4e02-93fe-79e111cae9c7",
+      "author": "safety_underwriter",
+      "actions": {
+        "state_delta": {},
+        "artifact_delta": {},
+        "requested_auth_configs": {},
+        "requested_tool_confirmations": {}
+      },
+      "node_info": {
+        "path": ""
+      },
+      "id": "4b863a3a-1284-4b6a-b574-7957c4c88e92",
+      "timestamp": 1789191382.451534
+    },
+    {
+      "model_version": "gemini-3.7-flash",
+      "content": {
+        "parts": [
+          {
+            "function_call": {
+              "id": "call_128425",
+              "args": {
+                "scene_id": "S010"
+              },
+              "name": "read_scene"
+            },
+            "thought_signature": "AY89a1-M_BpOOpfO2o2U3WV6v7SgnQR_9RLi0Mm7Y2oNOxx32MfL72z4KZqlQeSj-_st35fmRr8fI0EoxOiUkz6QyDZ9_7O32sV5T_0Puo64a8kXp_B04mkG0qFxdRzz1S4Ops8A3YB3Tvjpz1UI"
+          }
+        ],
+        "role": "model"
+      },
+      "finish_reason": "STOP",
+      "usage_metadata": {
+        "cache_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 3639
+          }
+        ],
+        "cached_content_token_count": 3639,
+        "candidates_token_count": 21,
+        "candidates_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 21
+          }
+        ],
+        "prompt_token_count": 8067,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 8067
+          }
+        ],
+        "thoughts_token_count": 16,
+        "total_token_count": 8104,
+        "traffic_type": "ON_DEMAND"
+      },
+      "invocation_id": "e-2c26be53-5315-4e02-93fe-79e111cae9c7",
+      "author": "safety_underwriter",
+      "actions": {
+        "state_delta": {},
+        "artifact_delta": {},
+        "requested_auth_configs": {},
+        "requested_tool_confirmations": {}
+      },
+      "node_info": {
+        "path": ""
+      },
+      "long_running_tool_ids": [],
+      "id": "86f65b0c-ca35-4043-93c4-b5f9784e962c",
+      "timestamp": 1789191382.45332
+    },
+    {
+      "content": {
+        "parts": [
+          {
+            "function_response": {
+              "id": "call_128425",
+              "name": "read_scene",
+              "response": {
+                "result": "INT./EXT. MARGARET ROSE - WHEELHOUSE - NIGHT - CONTINUOUS\n\nMara sets the urn on the chart shelf, where the coffee thermos rode for forty years. Danny lashes it fast with a dock line, cinches it, tests it.\n\nMara lifts the old brass compass out of its gimbal and pockets it. Danny sees. Says nothing.\n\nDANNY\n(handing her the flare gun)\nYou do it.\n\nMARA\nWhy me?\n\nDANNY\nHe decided you belonged here. So you do.\n\n"
+              }
+            }
+          }
+        ],
+        "role": "user"
+      },
+      "invocation_id": "e-2c26be53-5315-4e02-93fe-79e111cae9c7",
+      "author": "safety_underwriter",
+      "actions": {
+        "state_delta": {},
+        "artifact_delta": {},
+        "requested_auth_configs": {},
+        "requested_tool_confirmations": {}
+      },
+      "node_info": {
+        "path": ""
+      },
+      "id": "368c01e6-935f-40c5-a60c-1bdfa8a2da34",
+      "timestamp": 1789191384.2359319
+    },
+    {
+      "model_version": "gemini-3.7-flash",
+      "content": {
+        "parts": [
+          {
+            "function_call": {
+              "id": "call_128587",
+              "args": {
+                "scene_id": "S011"
+              },
+              "name": "read_scene"
+            },
+            "thought_signature": "AY89a18Z9_GsE7NbopBVDElpyaJbmslude74ujxK9XHBVHbaGUj45YOkjKRHCAZqrTr2jfEPGbtRpHEeMiQYz9MDi5H1FLK2o_VBHF4f3gsCTttovZ2sDAtq5anJPg=="
+          }
+        ],
+        "role": "model"
+      },
+      "finish_reason": "STOP",
+      "usage_metadata": {
+        "cache_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 3638
+          }
+        ],
+        "cached_content_token_count": 3638,
+        "candidates_token_count": 21,
+        "candidates_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 21
+          }
+        ],
+        "prompt_token_count": 8217,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 8217
+          }
+        ],
+        "thoughts_token_count": 9,
+        "total_token_count": 8247,
+        "traffic_type": "ON_DEMAND"
+      },
+      "invocation_id": "e-2c26be53-5315-4e02-93fe-79e111cae9c7",
+      "author": "safety_underwriter",
+      "actions": {
+        "state_delta": {},
+        "artifact_delta": {},
+        "requested_auth_configs": {},
+        "requested_tool_confirmations": {}
+      },
+      "node_info": {
+        "path": ""
+      },
+      "long_running_tool_ids": [],
+      "id": "92625fce-cab7-4376-82d0-001abd018eaa",
+      "timestamp": 1789191384.23968
+    },
+    {
+      "content": {
+        "parts": [
+          {
+            "function_response": {
+              "id": "call_128587",
+              "name": "read_scene",
+              "response": {
+                "result": "EXT. BANNOCK HARBOR - NIGHT - CONTINUOUS\n\nThey drop back into the skiff and stand off, engine idling, the radio crackling once with nothing.\n\nMara stands, braces, and fires the flare into the soaked blankets amidships.\n\nWHUMP. A line of blue-orange flame walks the deck like it knows the boat. Then the diesel catches and the MARGARET ROSE goes up -- a column of fire standing on the black water, doubled in the swell, huge.\n\nOn the seawall, a hundred candle-flames and one enormous gasp. Then, from speakers somebody has rigged on the seawall railing, Buckley's \"Hallelujah\" starts again, drifting out across the water toward the fire.\n\nCrow touches a road flare to the mortar fuse. The Fourth of July stash goes up -- white and gold chrysanthemums blooming over the burning boat, reflections shattering across the harbor.\n\nSam stands up in the skiff for a better look.\n\nDANNY\nSit DOWN --\n\nSam sits. Barnacle barks at the fireworks, once, on principle.\n\nThen -- a CRACK from the fire. The anchor line, burned through at the chock, parts. The burning boat swings free and begins to drift, slow and terrible, on the last of the tide.\n\nToward a row of moored floats. The nearest one flying a little pennant: HENDERSON.\n\nMARA\nYou have got to be kidding me.\n\nBefore Danny can speak she has the spare line over her shoulder and she DIVES -- off the skiff into the black water, surfacing in the firelight, swimming hard for the mooring buoy off the Margaret Rose's bow.\n\nDANNY\nMARA!\n\nShe reaches the buoy, gets the line through the eye with numb hands, waves. Danny throws the skiff into gear, takes up the slack, and eases the burning boat's head around -- slow, straining, the flames roaring overhead -- until the drift points at open water.\n\nHe swings back and hauls Mara over the gunwale, soaked, gasping, shaking with cold and adrenaline and something else entirely.\n\nDANNY (CONT'D)\nYou're insane. You know that. That was --\n(laughing, despite everything)\n-- that was fucking beautiful.\n\nMARA\n(through chattering teeth)\nHe would have HATED hitting the Hendersons'.\n\nOut in the dark, the MARGARET ROSE burns down to the waterline, going out the way a day goes out, while Buckley's voice carries over the water and the last fireworks fall.\n\n"
+              }
+            }
+          }
+        ],
+        "role": "user"
+      },
+      "invocation_id": "e-2c26be53-5315-4e02-93fe-79e111cae9c7",
+      "author": "safety_underwriter",
+      "actions": {
+        "state_delta": {},
+        "artifact_delta": {},
+        "requested_auth_configs": {},
+        "requested_tool_confirmations": {}
+      },
+      "node_info": {
+        "path": ""
+      },
+      "id": "e04f9b0e-6214-47a8-8aad-cb23410c8999",
+      "timestamp": 1789191386.027216
+    },
+    {
+      "model_version": "gemini-3.7-flash",
+      "content": {
+        "parts": [
+          {
+            "function_call": {
+              "id": "call_77645",
+              "args": {
+                "topic": "water"
+              },
+              "name": "csatf_bulletin"
+            },
+            "thought_signature": "AY89a1_sQJMkkg8A6U3SvxiBONY3Fg2izxuIZX91Bh1Mt6-ZgFDogifo9xeMaFn8aI2XPVHHOLMMo2WYfKWrdLHPw6z5zeMf92mZLXiM-RRTQ1yqxW5I5TeA9nRi9Q225_JCYCH3_Hofx8HIWMho2_bxffhrWtCjv6Y7KxKmjm8oys-JyZNTM2QSwvuDV290_GIOVgi6HjwbTDqY4kxTcGyTKK69rbM18fDDF8tizHe0bZE1v_21k7innAJtJ3ODnTRpkyNkWNL5H2FYLqv1zNcWmasZKGtRPfzebMN6wMSMG8sp-2B8zxJOJc7cRum1zJZQlQKKrFE8zFRQKah_0X6lvVcf9gQrG4jw6eY6WjzeE2bvVDturNdwPfHNLBIC00FJxXPt6CLGG8egoMTcjDiXNOFSbumDQ45tVK5T7RGCaqcuw7TFQkfjxTyG6ImCPdVv20uhT9sxdGwsDeUjbAk9Ugh5JgYJAU2sRWWk3IzaP1TrleZ2JiNK-DM_TMlW_0kQkiVDam0QPs6Lsv7LxeSI0Q3LD2GrG494t0cbdn20M0lorFnBUhZHQRgw5ynV_Agc3DHMCAkQb6T22kDj7dT5T2qpOnl3y06tBtLIBk6mLo_KPjA3kDjYYDZxk5fS4E0mSzUm-iI4_1qhmKLU96QUwvBUNPBV2W88rn8SBIkWU0Yy4cZfSJ8l63DCqA402BPgnYjae-CMZ6OamXIvVPLM9WKwO6dB4nD6zm7CqEY8LL1w0VQB85X_INIvIg1RK12pflLuZQFBLiqmvNrZMK0bwtp2ovb-0YDUlcE8Hng_JDyKJcAPBi32YaYETb2MBujijRMXY2K7ozlNndWXEw=="
+          }
+        ],
+        "role": "model"
+      },
+      "finish_reason": "STOP",
+      "usage_metadata": {
+        "candidates_token_count": 19,
+        "candidates_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 19
+          }
+        ],
+        "prompt_token_count": 8789,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 8789
+          }
+        ],
+        "thoughts_token_count": 172,
+        "total_token_count": 8980,
+        "traffic_type": "ON_DEMAND"
+      },
+      "invocation_id": "e-2c26be53-5315-4e02-93fe-79e111cae9c7",
+      "author": "safety_underwriter",
+      "actions": {
+        "state_delta": {},
+        "artifact_delta": {},
+        "requested_auth_configs": {},
+        "requested_tool_confirmations": {}
+      },
+      "node_info": {
+        "path": ""
+      },
+      "long_running_tool_ids": [],
+      "id": "17f86266-4812-4bf0-aa89-1aa2bc8a5ade",
+      "timestamp": 1789191386.033155
+    },
+    {
+      "content": {
+        "parts": [
+          {
+            "function_response": {
+              "id": "call_77645",
+              "name": "csatf_bulletin",
+              "response": {
+                "matches": {
+                  "15": "Guidelines for Boating/Watercraft Safety for Film Crews",
+                  "17": "Water Hazards"
+                }
+              }
+            }
+          }
+        ],
+        "role": "user"
+      },
+      "invocation_id": "e-2c26be53-5315-4e02-93fe-79e111cae9c7",
+      "author": "safety_underwriter",
+      "actions": {
+        "state_delta": {},
+        "artifact_delta": {},
+        "requested_auth_configs": {},
+        "requested_tool_confirmations": {}
+      },
+      "node_info": {
+        "path": ""
+      },
+      "id": "19192ca4-97fc-45e3-a32f-ab0d0fede519",
+      "timestamp": 1789191389.629619
+    },
+    {
+      "model_version": "gemini-3.7-flash",
+      "content": {
+        "parts": [
+          {
+            "function_call": {
+              "id": "call_118476",
+              "args": {
+                "topic": "pyrotechnics"
+              },
+              "name": "csatf_bulletin"
+            },
+            "thought_signature": "AY89a1-htr2h6kSj-Yhnb3_NHHi7l4PiiD3Rr0jSQ5RizAYR9ggqZqNrGExRDhbJ28SbmyRmlBTEnq_IRu5GtHorw57H9unjSbUcCgDOMhRWIj4zT3-IzLAOfo10T0L_vnk8KyTjtagTBCXfpfLIM_ee0PeCPbu2_n5oNsiPjU8mis4Hn9MaB6Od9k1ZOef8Rkl_W_3r2g=="
+          }
+        ],
+        "role": "model"
+      },
+      "finish_reason": "STOP",
+      "usage_metadata": {
+        "cache_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 3656
+          }
+        ],
+        "cached_content_token_count": 3656,
+        "candidates_token_count": 21,
+        "candidates_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 21
+          }
+        ],
+        "prompt_token_count": 9001,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 9001
+          }
+        ],
+        "thoughts_token_count": 19,
+        "total_token_count": 9041,
+        "traffic_type": "ON_DEMAND"
+      },
+      "invocation_id": "e-2c26be53-5315-4e02-93fe-79e111cae9c7",
+      "author": "safety_underwriter",
+      "actions": {
+        "state_delta": {},
+        "artifact_delta": {},
+        "requested_auth_configs": {},
+        "requested_tool_confirmations": {}
+      },
+      "node_info": {
+        "path": ""
+      },
+      "long_running_tool_ids": [],
+      "id": "86bcc0a6-ee2f-4428-af02-7c64e30f26cf",
+      "timestamp": 1789191389.632861
+    },
+    {
+      "content": {
+        "parts": [
+          {
+            "function_response": {
+              "id": "call_118476",
+              "name": "csatf_bulletin",
+              "response": {
+                "matches": {},
+                "guidance": "No bulletin title matches. Broaden the keywords, or cite the hazard without a bulletin number rather than guessing one."
+              }
+            }
+          }
+        ],
+        "role": "user"
+      },
+      "invocation_id": "e-2c26be53-5315-4e02-93fe-79e111cae9c7",
+      "author": "safety_underwriter",
+      "actions": {
+        "state_delta": {},
+        "artifact_delta": {},
+        "requested_auth_configs": {},
+        "requested_tool_confirmations": {}
+      },
+      "node_info": {
+        "path": ""
+      },
+      "id": "8b2e6581-0966-4de7-8eb3-b0874c784335",
+      "timestamp": 1789191391.624799
+    },
+    {
+      "model_version": "gemini-3.7-flash",
+      "content": {
+        "parts": [
+          {
+            "function_call": {
+              "id": "call_137555",
+              "args": {
+                "topic": "fire"
+              },
+              "name": "csatf_bulletin"
+            },
+            "thought_signature": "AY89a18QhU53t7Wjm4f1TUTEROdy0JBi3BE2O14ixZc61jiI7Q7nRpIxgzPPdbUV4oUPaOiQ8VoIVYRmU0x0x3UBwoXxRJAwb1akxTI_4tgQsl2cDe0lfX_pRamPy19ucka0tDxqyS8V1ur_VEt8YQ0Mda0OJ50d5nJdTIeK58KUDCViI6w="
+          }
+        ],
+        "role": "model"
+      },
+      "finish_reason": "STOP",
+      "usage_metadata": {
+        "cache_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 3650
+          }
+        ],
+        "cached_content_token_count": 3650,
+        "candidates_token_count": 19,
+        "candidates_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 19
+          }
+        ],
+        "prompt_token_count": 9070,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 9070
+          }
+        ],
+        "thoughts_token_count": 21,
+        "total_token_count": 9110,
+        "traffic_type": "ON_DEMAND"
+      },
+      "invocation_id": "e-2c26be53-5315-4e02-93fe-79e111cae9c7",
+      "author": "safety_underwriter",
+      "actions": {
+        "state_delta": {},
+        "artifact_delta": {},
+        "requested_auth_configs": {},
+        "requested_tool_confirmations": {}
+      },
+      "node_info": {
+        "path": ""
+      },
+      "long_running_tool_ids": [],
+      "id": "7e85723a-a7e2-41d5-bc2d-36a7749231fb",
+      "timestamp": 1789191391.630192
+    },
+    {
+      "content": {
+        "parts": [
+          {
+            "function_response": {
+              "id": "call_137555",
+              "name": "csatf_bulletin",
+              "response": {
+                "matches": {
+                  "1": "Recommendations For The Use Of Firearms, Blanks, And Dummy Rounds"
+                }
+              }
+            }
+          }
+        ],
+        "role": "user"
+      },
+      "invocation_id": "e-2c26be53-5315-4e02-93fe-79e111cae9c7",
+      "author": "safety_underwriter",
+      "actions": {
+        "state_delta": {},
+        "artifact_delta": {},
+        "requested_auth_configs": {},
+        "requested_tool_confirmations": {}
+      },
+      "node_info": {
+        "path": ""
+      },
+      "id": "1292ce07-f505-4aaa-9b9c-fd8408bd9d4c",
+      "timestamp": 1789191393.6417909
+    },
+    {
+      "model_version": "gemini-3.7-flash",
+      "content": {
+        "parts": [
+          {
+            "function_call": {
+              "id": "call_138250",
+              "args": {
+                "topic": "special effects"
+              },
+              "name": "csatf_bulletin"
+            },
+            "thought_signature": "AY89a19DZL48IBGlEiKkvZxm7arBDzupSxm_h9bdvPpfvlCncbEb8SC9ktpXzjEL3yV1LvIZHM6QsXBF0xO3qmX7XsZr2eOIiPjZkCYoAmjlIZy-1G-mGNKM6RSJdCs7cG8CB5qffIkBJkR6_rpG9BGhiakJgLPBd6b1k-gZKWtprwgiNXuxCKzzezgdN1Iw05QpYL_g3LcvFH5yr9xe5fTfIic4qaeu"
+          }
+        ],
+        "role": "model"
+      },
+      "finish_reason": "STOP",
+      "usage_metadata": {
+        "cache_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 7289
+          }
+        ],
+        "cached_content_token_count": 7289,
+        "candidates_token_count": 20,
+        "candidates_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 20
+          }
+        ],
+        "prompt_token_count": 9128,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 9128
+          }
+        ],
+        "thoughts_token_count": 28,
+        "total_token_count": 9176,
+        "traffic_type": "ON_DEMAND"
+      },
+      "invocation_id": "e-2c26be53-5315-4e02-93fe-79e111cae9c7",
+      "author": "safety_underwriter",
+      "actions": {
+        "state_delta": {},
+        "artifact_delta": {},
+        "requested_auth_configs": {},
+        "requested_tool_confirmations": {}
+      },
+      "node_info": {
+        "path": ""
+      },
+      "long_running_tool_ids": [],
+      "id": "8a65db52-1c8f-4723-95a1-2f5eac29ec8f",
+      "timestamp": 1789191393.646337
+    },
+    {
+      "content": {
+        "parts": [
+          {
+            "function_response": {
+              "id": "call_138250",
+              "name": "csatf_bulletin",
+              "response": {
+                "matches": {
+                  "2": "Prohibitions And Special Restrictions On The Use Of Live Ammunition",
+                  "4A": "Addendum A \u2014 Specialized Activities",
+                  "16": "Recommended Guidelines for Safety with Pyrotechnic Special Effects",
+                  "33": "Special Safety Considerations when Employing Infant Actors"
+                }
+              }
+            }
+          }
+        ],
+        "role": "user"
+      },
+      "invocation_id": "e-2c26be53-5315-4e02-93fe-79e111cae9c7",
+      "author": "safety_underwriter",
+      "actions": {
+        "state_delta": {},
+        "artifact_delta": {},
+        "requested_auth_configs": {},
+        "requested_tool_confirmations": {}
+      },
+      "node_info": {
+        "path": ""
+      },
+      "id": "6b075ce0-6642-419c-bcf6-1c4933f1b8f8",
+      "timestamp": 1789191395.4914901
+    },
+    {
+      "model_version": "gemini-3.7-flash",
+      "content": {
+        "parts": [
+          {
+            "function_call": {
+              "id": "call_141356",
+              "args": {
+                "topic": "minor"
+              },
+              "name": "csatf_bulletin"
+            },
+            "thought_signature": "AY89a1-UMgKxSICtMIrPJYxguLaBfiOXCeFXCMwkfOo-FrXBw6C22P6Fh9QgcwsLokBrTLrmpa0h1Y3it3ebblGnzKGyWs3D7e1hONH4t-tMUwxcy3VlmvBYVx1h65_wXu81xLfeLP2V9rpPDBBbwYYKvczwzOw2GecrSPwRIkbC4WivJARlwLFNxBs7-yE5dUwOgNolkJ8NeizXhDg7RIHxg-47snrmGp-hjNX2PAQojZAThu6Jv5MX-LYTG36GnZaNu-fc1TctJB9rzSss9R_tNqqYHZ77AXI6PmrmxZhZtwTMQdIEmJvdKH-7KlBKXg3b04V5FMM21jVy28hhchJ5HiHfkGh86HXUx48-iGpBEvp8nuIUL1ETPfWOmtOLdoAcIklXVthnSOFOH00gxj1TIhsth2w4YqTVeCcer9TiXCgtpW4hMvZpx5rWHXK7fzHLSUkVNMI9KIyph1l9SS62WwakYQ=="
+          }
+        ],
+        "role": "model"
+      },
+      "finish_reason": "STOP",
+      "usage_metadata": {
+        "cache_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 7273
+          }
+        ],
+        "cached_content_token_count": 7273,
+        "candidates_token_count": 19,
+        "candidates_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 19
+          }
+        ],
+        "prompt_token_count": 9224,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 9224
+          }
+        ],
+        "thoughts_token_count": 73,
+        "total_token_count": 9316,
+        "traffic_type": "ON_DEMAND"
+      },
+      "invocation_id": "e-2c26be53-5315-4e02-93fe-79e111cae9c7",
+      "author": "safety_underwriter",
+      "actions": {
+        "state_delta": {},
+        "artifact_delta": {},
+        "requested_auth_configs": {},
+        "requested_tool_confirmations": {}
+      },
+      "node_info": {
+        "path": ""
+      },
+      "long_running_tool_ids": [],
+      "id": "284839b4-89b5-48cb-950e-fedde9c88f1f",
+      "timestamp": 1789191395.496376
+    },
+    {
+      "content": {
+        "parts": [
+          {
+            "function_response": {
+              "id": "call_141356",
+              "name": "csatf_bulletin",
+              "response": {
+                "matches": {},
+                "guidance": "No bulletin title matches. Broaden the keywords, or cite the hazard without a bulletin number rather than guessing one."
+              }
+            }
+          }
+        ],
+        "role": "user"
+      },
+      "invocation_id": "e-2c26be53-5315-4e02-93fe-79e111cae9c7",
+      "author": "safety_underwriter",
+      "actions": {
+        "state_delta": {},
+        "artifact_delta": {},
+        "requested_auth_configs": {},
+        "requested_tool_confirmations": {}
+      },
+      "node_info": {
+        "path": ""
+      },
+      "id": "4ce9bf72-5d57-4b56-8567-152e54af9ea3",
+      "timestamp": 1789191397.646088
+    },
+    {
+      "model_version": "gemini-3.7-flash",
+      "content": {
+        "parts": [
+          {
+            "function_call": {
+              "id": "call_141613",
+              "args": {
+                "topic": "animal"
+              },
+              "name": "csatf_bulletin"
+            },
+            "thought_signature": "AY89a1_93MY5E9X6wMPbJwB2jgB4798gyeM-GpRDHwcXXGNM7swFa0frRIY3Rn5QW8rpTh9lCbkl3C2WiSuqjZpSQQK1fX1CTk56DObEXgSQrLB9WLM6pXCZ1VduXSGoxjaqfaarZ3YMKSCixI_LtHYj7uZxlX1Vzt_lSQ=="
+          }
+        ],
+        "role": "model"
+      },
+      "finish_reason": "STOP",
+      "usage_metadata": {
+        "cache_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 7267
+          }
+        ],
+        "cached_content_token_count": 7267,
+        "candidates_token_count": 19,
+        "candidates_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 19
+          }
+        ],
+        "prompt_token_count": 9345,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 9345
+          }
+        ],
+        "thoughts_token_count": 15,
+        "total_token_count": 9379,
+        "traffic_type": "ON_DEMAND"
+      },
+      "invocation_id": "e-2c26be53-5315-4e02-93fe-79e111cae9c7",
+      "author": "safety_underwriter",
+      "actions": {
+        "state_delta": {},
+        "artifact_delta": {},
+        "requested_auth_configs": {},
+        "requested_tool_confirmations": {}
+      },
+      "node_info": {
+        "path": ""
+      },
+      "long_running_tool_ids": [],
+      "id": "476eb0e2-ce02-4702-9ae8-d973933fa848",
+      "timestamp": 1789191397.652148
+    },
+    {
+      "content": {
+        "parts": [
+          {
+            "function_response": {
+              "id": "call_141613",
+              "name": "csatf_bulletin",
+              "response": {
+                "matches": {
+                  "6": "Animal Handling Rules for the Motion Picture Industry"
+                }
+              }
+            }
+          }
+        ],
+        "role": "user"
+      },
+      "invocation_id": "e-2c26be53-5315-4e02-93fe-79e111cae9c7",
+      "author": "safety_underwriter",
+      "actions": {
+        "state_delta": {},
+        "artifact_delta": {},
+        "requested_auth_configs": {},
+        "requested_tool_confirmations": {}
+      },
+      "node_info": {
+        "path": ""
+      },
+      "id": "0b7a0b6b-604a-4072-bcb9-0b5448d024c2",
+      "timestamp": 1789191399.406332
+    },
+    {
+      "model_version": "gemini-3.7-flash",
+      "content": {
+        "parts": [
+          {
+            "function_call": {
+              "id": "call_154493",
+              "args": {
+                "queries": [
+                  "CSATF Safety Bulletin 16 Pyrotechnic",
+                  "CSATF Safety Bulletin 17 Water Hazards",
+                  "CSATF Safety Bulletin 15 Boating"
+                ],
+                "entity_id": "",
+                "objective": "Find operative safety requirements in CSATF Safety Bulletins #15 (Boating), #16 (Pyrotechnics), and #17 (Water Hazards) regarding pyrotechnic special effects, open burning/fireworks, night water work, water rescue, safety personnel, and life vests."
+              },
+              "name": "research"
+            },
+            "thought_signature": "AY89a19D4EpFyM1iBkq3FgI73yVdUqTrIgenauaD5bqsSIYbM6qWSmfuiNmDdhaECdHt8Oyem0ZZvAunag6o_1u5_fsyBNt4pVwLGZ_pYGejzQA_J8a40U_c8k83Lq5BP1EF1KP-8bZXirEiIvT3OyO0DdWP3eGegXNlLFPfQfF8ymPIfk4HHd-J2THwZEtJ5N-mq0m4PnwpdM3RPiiOVOq9MgXyTqKfM9Oi1bCv9XGUzvu8zonwD_MJ5ncHImG0qJpeJyFMgz9cEpHtlZfb_rUm4Lnk5_HC96WSRHRgKvruQ1Yi5J_IS7s6kKdLgktYYlVv9cTcv72TgUIxQfVood-FdRmvJMyWcZ48oxIeanBsA25SfUVCEj-Los36eBf1hpB6ZWw="
+          }
+        ],
+        "role": "model"
+      },
+      "finish_reason": "STOP",
+      "usage_metadata": {
+        "cache_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 7255
+          }
+        ],
+        "cached_content_token_count": 7255,
+        "candidates_token_count": 123,
+        "candidates_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 123
+          }
+        ],
+        "prompt_token_count": 9392,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 9392
+          }
+        ],
+        "thoughts_token_count": 58,
+        "total_token_count": 9573,
+        "traffic_type": "ON_DEMAND"
+      },
+      "invocation_id": "e-2c26be53-5315-4e02-93fe-79e111cae9c7",
+      "author": "safety_underwriter",
+      "actions": {
+        "state_delta": {},
+        "artifact_delta": {},
+        "requested_auth_configs": {},
+        "requested_tool_confirmations": {}
+      },
+      "node_info": {
+        "path": ""
+      },
+      "long_running_tool_ids": [],
+      "id": "c69898d9-69b1-46e0-b82c-d1e0a4bd390a",
+      "timestamp": 1789191399.4109561
+    },
+    {
+      "content": {
+        "parts": [
+          {
+            "function_response": {
+              "id": "call_154493",
+              "name": "research",
+              "response": {
+                "cached": false,
+                "budget_remaining": 3,
+                "search_id": "search_6f54b2206f825ab78247e8b36bdd7212",
+                "results": [
+                  {
+                    "url": "https://www.csatf.org/wp-content/uploads/2018/05/16PYROTECHNIC.pdf",
+                    "title": "Safety Bulletin 16 - Pyrotechnic",
+                    "publish_date": "2009-05-27",
+                    "excerpts": [
+                      "INDUSTRY WIDE LABOR-MANAGEMENT SAFETY COMMITTEE **SAFETY BULLETIN #16 RECOMMENDED GUIDELINES FOR SAFETY WITH PYROTECHNIC SPECIAL EFFECTS This Safety Bulletin applies to pyrotechnic materials such as explosives and flammable or combustible liquids, gases and solids when used to create pyrotechnic special effects.** ALL USE, HANDLING, STORAGE AND\n\n...\n\nPyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable. \u2022 Consideration of using remote control detonation devices should be discussed with Safety, Fire, Production, Stunts, and Special Effects prior to use.\n\n...\n\nSafety Bulletin #16\nPyrotechnic\n**Revised: May 22, 2009 Page 3 of 5**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\n_G:\\data\\wpdata\\AMPTP\\Bulletins\\Current\\SftyBull #16 PYROTECHNIC.doc_\n\n...\n\nSafety Bulletin #16\nPyrotechnic\n**Revised: May 22, 2009 Page 4 of 5**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\n_G:\\data\\wpdata\\AMPTP\\"
+                    ]
+                  },
+                  {
+                    "url": "https://www.csatf.org/17_safety_bltn_water_hazards/",
+                    "title": "INDUSTRY WIDE LABOR-MANAGEMENT SAFETY ...",
+                    "publish_date": null,
+                    "excerpts": [
+                      "**Revised: February 7, 2025**\n**Page 1 of 5**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\nINDUSTRY WIDE LABOR-MANAGEMENT SAFETY COMMITTEE\n**SAFETY BULLETIN #17**\n**WATER HAZARDS**\n\n...\n\nincluding those mandated by the appropriate AHJ. (See Safety Bulletin #15 - _Guidelines for_\n_Boating/Watercraft Safety for Film Crews_ )\n**Electrical Hazards**\nAll electrical connections should be made by, or under the supervision of, a qualified person. (See\n\n...\n\nmitigate it. Appropriate water safety devices (e.g., life vests, life preservers, safety rings, safety\nhooks, buoys) should be available for all personnel working in or around water. When necessary,\nthe Production Management should implement a plan to account for personnel in the water, such\nas a \u201cbuddy\u201d or a check in/check out system.\n\n...\n\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\nSafety Bulletin 17\nWater Hazards\n**Poor Water Quality**\nWhen water quality results are poor or un"
+                    ]
+                  },
+                  {
+                    "url": "https://www.csatf.org/wp-content/uploads/2018/05/15BOATING.pdf",
+                    "title": "Boating and Watercraft Safety",
+                    "publish_date": "2013-08-28",
+                    "excerpts": [
+                      "# INDUSTRY WIDE LABOR-MANAGEMENT SAFETY COMMITTEE\n## **SAFETY BULLETIN #15**\n### 8. The production will establish work procedures to be followed while working on or around watercraft, including procedures for abandoning the watercraft; responding to f\n**Revised: August 20, 2013 Page 2 of 5**\n\n...\n\n### 3. Avoid clothing, jewelry or loose items that can get caught in machinery or rigging, or impede watercraft transfers.\n**Revised: August 20, 2013 Page 3 of 5**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\n\n...\n\n### 3. Prior to transferring to another watercraft, allow watercraft personnel to assist in the transfer of gear and equipment. Use two hands to steady yourself when transferring to the other watercraft.\n**Revised: August 20, 2013 Page 5 of 5**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n\n...\n\n_H:\\Bulletins\\SftyBull #15 BOATING-Revised-2013 August 20.docx_"
+                    ]
+                  },
+                  {
+                    "url": "https://www.csatf.org/production-affairs-safety/safety-bulletins",
+                    "title": "Safety Bulletins \u2013 Contract Services - csatf.org",
+                    "publish_date": null,
+                    "excerpts": [
+                      "# Operating Hours:\n## Safety Bulletins\n### SAFETY BULLETINS\n[Guidelines for Boating/Watercraft Safety for Film Crews](https://www.csatf.org/wp-content/uploads/2018/05/15BOATING.pdf)\nRevised 08/20/13\n16\n[Recommended Guidelines for Safety with Pyrotechnic Special Effects](https://www.csatf.org/wp-content/uploads/2018/05/16PYROTECHNIC.pdf)\nRevised 05/22/09\n17\nWater Hazards\nRevised 02/07/25\n18\n[Guidelines for Safe Use of Stunt Air Bags, Boxes or Other Freefall Catch Systems](https://www.csatf.org/wp-content/uploads/2018/05/18AIR_BAGS.pdf)\nRevised 04/17/13\n19\n[Recommended Guidelines for the Use of Open Flame on Production](https://www.csatf.org/wp-content/uploads/2018/05/19FLAMES.pdf)\n\n...\n\n### Boletines de Seguridad en Espa\u00f1ol\n| 13 | Lineamientos Recomendados Para Combustibles Inflamables Y Equipo Relacionado | Actualizado el 07/01/22 |\n| 14 | Paracaidismo Y Ca\u00edda Libre | Actualizado el 01/06/06 |\n| 15 | Recomendaciones De Seguridad Para El Personal De Filmaci\u00f3n En Botes/Embarcaciones | Actualizado el 08/20/13 |\n| 16 | Recomendaciones De Seguridad Para La Creaci\u00f3n De Efectos Especiales Con Pirotecnia | Actualizado el 05/22/09 |\n| 17 | Peligros Relacionados Con El Agua | Actualizado el "
+                    ]
+                  },
+                  {
+                    "url": "https://www.csatf.org/wp-content/uploads/2018/05/17WATER_HAZARDS.pdf",
+                    "title": "Safety Bulletin #17 Water Hazards",
+                    "publish_date": null,
+                    "excerpts": [
+                      "**Revised: August 20, 2013 Page 1 of 2**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\n_H:\\Bulletins\\SftyBull #17 WATER HAZARDS-Revised 2013 August 20.docx_\n\n# INDUSTRY WIDE LABOR-MANAGEMENT SAFETY COMMITTEE\n**SAFETY BULLETIN #17**\n\n## **WATER HAZARDS**\n### 6. All personnel scheduled for water work shall be notified in advance via the Call Sheet. Personnel who are uncomfortable working in or around water should notify their supervisor prior to that day\u2019s call.\nSafety Bulletin #17\nWater Hazards\n**Revised: August 20, 2013 Page 2 of 2**\n\n...\n\n_H:\\Bulletins\\SftyBull #17 WATER HAZARDS-Revised 2013 August 20.docx_"
+                    ]
+                  },
+                  {
+                    "url": "https://www.csatf.org/all_safety_bulletins-procedural_guidelines-info_fact_sheets/",
+                    "title": "Revised: July 10, 2025 Page 1 of 3",
+                    "publish_date": null,
+                    "excerpts": [
+                      "Recommended Guidelines for Safety with Pyrotechnic \u00b7 Special Effects \u00b7 Revised 05/22/09 \u00b7 17 \u00b7 Water Hazards \u00b7 Revised 02/07/25 \u00b7 18 \u00b7 Guidelines for Safe Use of Stunt Air Bags, Boxes or Other \u00b7 Freefall Catch Systems \u00b7 Revised 04/17/13 \u00b7 19 \u00b7 Recommended Guidelines for the Use of Open Flame on \u00b7"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "role": "user"
+      },
+      "invocation_id": "e-2c26be53-5315-4e02-93fe-79e111cae9c7",
+      "author": "safety_underwriter",
+      "actions": {
+        "state_delta": {
+          "research_budget:safety_underwriter": 3,
+          "research:0cd71b0c4d08": {
+            "objective": "Find operative safety requirements in CSATF Safety Bulletins #15 (Boating), #16 (Pyrotechnics), and #17 (Water Hazards) regarding pyrotechnic special effects, open burning/fireworks, night water work, water rescue, safety personnel, and life vests.",
+            "search_id": "search_6f54b2206f825ab78247e8b36bdd7212",
+            "results": [
+              {
+                "url": "https://www.csatf.org/wp-content/uploads/2018/05/16PYROTECHNIC.pdf",
+                "title": "Safety Bulletin 16 - Pyrotechnic",
+                "publish_date": "2009-05-27",
+                "excerpts": [
+                  "INDUSTRY WIDE LABOR-MANAGEMENT SAFETY COMMITTEE **SAFETY BULLETIN #16 RECOMMENDED GUIDELINES FOR SAFETY WITH PYROTECHNIC SPECIAL EFFECTS This Safety Bulletin applies to pyrotechnic materials such as explosives and flammable or combustible liquids, gases and solids when used to create pyrotechnic special effects.** ALL USE, HANDLING, STORAGE AND\n\n...\n\nPyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable. \u2022 Consideration of using remote control detonation devices should be discussed with Safety, Fire, Production, Stunts, and Special Effects prior to use.\n\n...\n\nSafety Bulletin #16\nPyrotechnic\n**Revised: May 22, 2009 Page 3 of 5**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\n_G:\\data\\wpdata\\AMPTP\\Bulletins\\Current\\SftyBull #16 PYROTECHNIC.doc_\n\n...\n\nSafety Bulletin #16\nPyrotechnic\n**Revised: May 22, 2009 Page 4 of 5**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\n_G:\\data\\wpdata\\AMPTP\\"
+                ]
+              },
+              {
+                "url": "https://www.csatf.org/17_safety_bltn_water_hazards/",
+                "title": "INDUSTRY WIDE LABOR-MANAGEMENT SAFETY ...",
+                "publish_date": null,
+                "excerpts": [
+                  "**Revised: February 7, 2025**\n**Page 1 of 5**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\nINDUSTRY WIDE LABOR-MANAGEMENT SAFETY COMMITTEE\n**SAFETY BULLETIN #17**\n**WATER HAZARDS**\n\n...\n\nincluding those mandated by the appropriate AHJ. (See Safety Bulletin #15 - _Guidelines for_\n_Boating/Watercraft Safety for Film Crews_ )\n**Electrical Hazards**\nAll electrical connections should be made by, or under the supervision of, a qualified person. (See\n\n...\n\nmitigate it. Appropriate water safety devices (e.g., life vests, life preservers, safety rings, safety\nhooks, buoys) should be available for all personnel working in or around water. When necessary,\nthe Production Management should implement a plan to account for personnel in the water, such\nas a \u201cbuddy\u201d or a check in/check out system.\n\n...\n\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\nSafety Bulletin 17\nWater Hazards\n**Poor Water Quality**\nWhen water quality results are poor or un"
+                ]
+              },
+              {
+                "url": "https://www.csatf.org/wp-content/uploads/2018/05/15BOATING.pdf",
+                "title": "Boating and Watercraft Safety",
+                "publish_date": "2013-08-28",
+                "excerpts": [
+                  "# INDUSTRY WIDE LABOR-MANAGEMENT SAFETY COMMITTEE\n## **SAFETY BULLETIN #15**\n### 8. The production will establish work procedures to be followed while working on or around watercraft, including procedures for abandoning the watercraft; responding to f\n**Revised: August 20, 2013 Page 2 of 5**\n\n...\n\n### 3. Avoid clothing, jewelry or loose items that can get caught in machinery or rigging, or impede watercraft transfers.\n**Revised: August 20, 2013 Page 3 of 5**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\n\n...\n\n### 3. Prior to transferring to another watercraft, allow watercraft personnel to assist in the transfer of gear and equipment. Use two hands to steady yourself when transferring to the other watercraft.\n**Revised: August 20, 2013 Page 5 of 5**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n\n...\n\n_H:\\Bulletins\\SftyBull #15 BOATING-Revised-2013 August 20.docx_"
+                ]
+              },
+              {
+                "url": "https://www.csatf.org/production-affairs-safety/safety-bulletins",
+                "title": "Safety Bulletins \u2013 Contract Services - csatf.org",
+                "publish_date": null,
+                "excerpts": [
+                  "# Operating Hours:\n## Safety Bulletins\n### SAFETY BULLETINS\n[Guidelines for Boating/Watercraft Safety for Film Crews](https://www.csatf.org/wp-content/uploads/2018/05/15BOATING.pdf)\nRevised 08/20/13\n16\n[Recommended Guidelines for Safety with Pyrotechnic Special Effects](https://www.csatf.org/wp-content/uploads/2018/05/16PYROTECHNIC.pdf)\nRevised 05/22/09\n17\nWater Hazards\nRevised 02/07/25\n18\n[Guidelines for Safe Use of Stunt Air Bags, Boxes or Other Freefall Catch Systems](https://www.csatf.org/wp-content/uploads/2018/05/18AIR_BAGS.pdf)\nRevised 04/17/13\n19\n[Recommended Guidelines for the Use of Open Flame on Production](https://www.csatf.org/wp-content/uploads/2018/05/19FLAMES.pdf)\n\n...\n\n### Boletines de Seguridad en Espa\u00f1ol\n| 13 | Lineamientos Recomendados Para Combustibles Inflamables Y Equipo Relacionado | Actualizado el 07/01/22 |\n| 14 | Paracaidismo Y Ca\u00edda Libre | Actualizado el 01/06/06 |\n| 15 | Recomendaciones De Seguridad Para El Personal De Filmaci\u00f3n En Botes/Embarcaciones | Actualizado el 08/20/13 |\n| 16 | Recomendaciones De Seguridad Para La Creaci\u00f3n De Efectos Especiales Con Pirotecnia | Actualizado el 05/22/09 |\n| 17 | Peligros Relacionados Con El Agua | Actualizado el "
+                ]
+              },
+              {
+                "url": "https://www.csatf.org/wp-content/uploads/2018/05/17WATER_HAZARDS.pdf",
+                "title": "Safety Bulletin #17 Water Hazards",
+                "publish_date": null,
+                "excerpts": [
+                  "**Revised: August 20, 2013 Page 1 of 2**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\n_H:\\Bulletins\\SftyBull #17 WATER HAZARDS-Revised 2013 August 20.docx_\n\n# INDUSTRY WIDE LABOR-MANAGEMENT SAFETY COMMITTEE\n**SAFETY BULLETIN #17**\n\n## **WATER HAZARDS**\n### 6. All personnel scheduled for water work shall be notified in advance via the Call Sheet. Personnel who are uncomfortable working in or around water should notify their supervisor prior to that day\u2019s call.\nSafety Bulletin #17\nWater Hazards\n**Revised: August 20, 2013 Page 2 of 2**\n\n...\n\n_H:\\Bulletins\\SftyBull #17 WATER HAZARDS-Revised 2013 August 20.docx_"
+                ]
+              },
+              {
+                "url": "https://www.csatf.org/all_safety_bulletins-procedural_guidelines-info_fact_sheets/",
+                "title": "Revised: July 10, 2025 Page 1 of 3",
+                "publish_date": null,
+                "excerpts": [
+                  "Recommended Guidelines for Safety with Pyrotechnic \u00b7 Special Effects \u00b7 Revised 05/22/09 \u00b7 17 \u00b7 Water Hazards \u00b7 Revised 02/07/25 \u00b7 18 \u00b7 Guidelines for Safe Use of Stunt Air Bags, Boxes or Other \u00b7 Freefall Catch Systems \u00b7 Revised 04/17/13 \u00b7 19 \u00b7 Recommended Guidelines for the Use of Open Flame on \u00b7"
+                ]
+              }
+            ]
+          },
+          "research_keys:safety_underwriter": [
+            "research:0cd71b0c4d08"
+          ]
+        },
+        "artifact_delta": {},
+        "requested_auth_configs": {},
+        "requested_tool_confirmations": {}
+      },
+      "node_info": {
+        "path": ""
+      },
+      "id": "5b84ea07-e470-4c37-9b38-70b3846d9ea3",
+      "timestamp": 1789191404.5334332
+    },
+    {
+      "model_version": "gemini-3.7-flash",
+      "content": {
+        "parts": [
+          {
+            "function_call": {
+              "id": "call_175110",
+              "args": {
+                "objective": "Get operative requirements on pyrotechnics licensing, safety precautions, fire prevention, and clearances from CSATF Safety Bulletin 16",
+                "url": "https://www.csatf.org/wp-content/uploads/2018/05/16PYROTECHNIC.pdf"
+              },
+              "name": "fetch_page"
+            },
+            "thought_signature": "AY89a1_7Y0DpXPTEELQCl0YjYI02VseK4Zq3nM3A_03I8qJDRS0axbcsCt9SDld5tq9Qsxu0G_tdx75vlzFLIOMUfydURCFD9qRgtDWvB1AZS391tJ3gKWcYSzppTpVwTOkjOxr76DX-vacNORL34v2C1zwrk4qr38_-W4pvNkaa7u3mq8SyqrNTSikiRWuOAXZVVQov14L2_aFbIJe1tciOnAiEdVMroSgxuRvmbwAVTFWI0Q2FpBfBbXzgiCHafa03R7Hovp5C7L4Ip8xZ4d1M41MovyKCDM3wC-pah-2Y0aM-AtjEJUI-7GbXRjyFuDuxVDpuE35ZXPXWjRfZUmnVtdPLzRc5BAL8_l-sK8mp6aoaQxF9JDFKtsxRR-DfWFAnCf_mvIu5XTrBtwJiOsUShOUMVSzhvVV4zvJmyQ8OHXoi0cK4QPsmbAmV1ajsbSC2aFiHsGw2K1WcQIt2rSGIkX-w-N7u5eRaiRGD8_XygBKunCXayTZSBJuZnzkwvIgUm4s="
+          }
+        ],
+        "role": "model"
+      },
+      "finish_reason": "STOP",
+      "usage_metadata": {
+        "cache_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 7339
+          }
+        ],
+        "cached_content_token_count": 7339,
+        "candidates_token_count": 78,
+        "candidates_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 78
+          }
+        ],
+        "prompt_token_count": 11561,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 11561
+          }
+        ],
+        "thoughts_token_count": 88,
+        "total_token_count": 11727,
+        "traffic_type": "ON_DEMAND"
+      },
+      "invocation_id": "e-2c26be53-5315-4e02-93fe-79e111cae9c7",
+      "author": "safety_underwriter",
+      "actions": {
+        "state_delta": {},
+        "artifact_delta": {},
+        "requested_auth_configs": {},
+        "requested_tool_confirmations": {}
+      },
+      "node_info": {
+        "path": ""
+      },
+      "long_running_tool_ids": [],
+      "id": "a92906dc-a735-41fa-b499-a973f64c57d5",
+      "timestamp": 1789191404.5372102
+    },
+    {
+      "content": {
+        "parts": [
+          {
+            "function_response": {
+              "id": "call_175110",
+              "name": "fetch_page",
+              "response": {
+                "cached": false,
+                "budget_remaining": 2,
+                "results": [
+                  {
+                    "url": "https://www.csatf.org/wp-content/uploads/2018/05/16PYROTECHNIC.pdf",
+                    "title": "Microsoft Word - SftyBull #16 PYROTECHNIC.doc",
+                    "publish_date": "2009-05-27",
+                    "excerpts": [
+                      "Safety Bulletin #16\nPyrotechnic\n**Revised: May 22, 2009 Page 1 of 5**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\n_G:\\data\\wpdata\\AMPTP\\Bulletins\\Current\\SftyBull #16 PYROTECHNIC.doc_\nINDUSTRY WIDE LABOR-MANAGEMENT SAFETY COMMITTEE **SAFETY BULLETIN #16 RECOMMENDED GUIDELINES FOR SAFETY WITH PYROTECHNIC SPECIAL EFFECTS This Safety Bulletin applies to pyrotechnic materials such as explosives and flammable or combustible liquids, gases and solids when used to create pyrotechnic special effects.** ALL USE, HANDLING, STORAGE AND\nTRANSPORTATION OF PYROTECHNIC MATERIALS SHALL BE IN COMPLIANCE WITH ALL APPLICABLE FEDERAL, STATE, AND LOCAL LAWS AND REGULATIONS. **Pre-Production/Planning** \u2022 When pyrotechnic materials are used on set, such use shall be under controlled conditions with due regard for the safety of all involved.\n\u2022 The Production Company or Studio shall make sufficient advanced notification of the use of pyrotechnic materials to the appropriate departments (such as Special Effects, Stunts, Camera, Art, Construction, Hair, Make-up and Wardrobe), in order to safely plan pyrotechnic special effects.\nAny performer who may be involved in a pyrotechnic special effect shall be notified. \u2022 Any required licenses and/or permits shall be obtained from proper Authorities Having Jurisdiction (AHJ) over pyrotechnic materials prior to using pyrotechnic special effects.\nPyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable. \u2022 Consideration of using remote control detonation devices should be discussed with Safety, Fire, Production, Stunts, and Special Effects prior to use.\n\u2022 Prior to pyrotechnic special effects work, productions must develop emergency procedures and contingency plans, including identifying emergency fire suppression equipment and personnel needs. All equipment shall be checked to verify that it is in good operating condition.\nIndividuals using this equipment must have proper training in its use and limitations. \u2022 The need for personal protective equipment (PPE) should be identified during the planning stage. \u2022 Special effects personnel must inform the Transportation Coordinator of what pyrotechnic materials will be transported. Vehicles must be properly placarded when\nSafety Bulletin #16\nPyrotechnic\n**Revised: May 22, 2009 Page 2 of 5**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\n_G:\\data\\wpdata\\AMPTP\\Bulletins\\Current\\SftyBull #16 PYROTECHNIC.doc_\n\n...\n\nthat will be in close proximity to planned pyrotechnic special effects must be prepared accordingly and/or should be made of flame retardant material.\nAll sets, equipment, props, wardrobe, wigs, etc., must be made available in advance to the Pyrotechnic Special Effects Operator in charge for evaluation, to establish placement, and if necessary, for testing.\n**Clothing and Personal Protective Equipment** \u2022 Cast and crew in close proximity to planned effects should wear appropriate protective clothing.\nDepending on the hazards involved, this clothing should include appropriate closed-toe footwear, long pants, and a long-sleeved shirt made of 100% cotton or material which provides equal or greater protection.\n\u2022 Cast and crew must be notified by the Pyrotechnic Special Effects Operator in charge when there is potential for exposures to pyrotechnics, such as fireball, debris, and shock wave. PPE must be provided as appropriate for the hazard(s) involved and considerations must be made for head, hand, eye, ear and respiratory protection.\nDepending on the hazards involved, the AHJ may require full fire turnout gear and Self Contained Breathing Apparatus (SCBA). These guidelines will also apply to performers when appropriate. All users must have proper training in the use and "
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "role": "user"
+      },
+      "invocation_id": "e-2c26be53-5315-4e02-93fe-79e111cae9c7",
+      "author": "safety_underwriter",
+      "actions": {
+        "state_delta": {
+          "research_budget:safety_underwriter": 2,
+          "extract:2c822b7a4030": {
+            "objective": "Get operative requirements on pyrotechnics licensing, safety precautions, fire prevention, and clearances from CSATF Safety Bulletin 16",
+            "results": [
+              {
+                "url": "https://www.csatf.org/wp-content/uploads/2018/05/16PYROTECHNIC.pdf",
+                "title": "Microsoft Word - SftyBull #16 PYROTECHNIC.doc",
+                "publish_date": "2009-05-27",
+                "excerpts": [
+                  "Safety Bulletin #16\nPyrotechnic\n**Revised: May 22, 2009 Page 1 of 5**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\n_G:\\data\\wpdata\\AMPTP\\Bulletins\\Current\\SftyBull #16 PYROTECHNIC.doc_\nINDUSTRY WIDE LABOR-MANAGEMENT SAFETY COMMITTEE **SAFETY BULLETIN #16 RECOMMENDED GUIDELINES FOR SAFETY WITH PYROTECHNIC SPECIAL EFFECTS This Safety Bulletin applies to pyrotechnic materials such as explosives and flammable or combustible liquids, gases and solids when used to create pyrotechnic special effects.** ALL USE, HANDLING, STORAGE AND\nTRANSPORTATION OF PYROTECHNIC MATERIALS SHALL BE IN COMPLIANCE WITH ALL APPLICABLE FEDERAL, STATE, AND LOCAL LAWS AND REGULATIONS. **Pre-Production/Planning** \u2022 When pyrotechnic materials are used on set, such use shall be under controlled conditions with due regard for the safety of all involved.\n\u2022 The Production Company or Studio shall make sufficient advanced notification of the use of pyrotechnic materials to the appropriate departments (such as Special Effects, Stunts, Camera, Art, Construction, Hair, Make-up and Wardrobe), in order to safely plan pyrotechnic special effects.\nAny performer who may be involved in a pyrotechnic special effect shall be notified. \u2022 Any required licenses and/or permits shall be obtained from proper Authorities Having Jurisdiction (AHJ) over pyrotechnic materials prior to using pyrotechnic special effects.\nPyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable. \u2022 Consideration of using remote control detonation devices should be discussed with Safety, Fire, Production, Stunts, and Special Effects prior to use.\n\u2022 Prior to pyrotechnic special effects work, productions must develop emergency procedures and contingency plans, including identifying emergency fire suppression equipment and personnel needs. All equipment shall be checked to verify that it is in good operating condition.\nIndividuals using this equipment must have proper training in its use and limitations. \u2022 The need for personal protective equipment (PPE) should be identified during the planning stage. \u2022 Special effects personnel must inform the Transportation Coordinator of what pyrotechnic materials will be transported. Vehicles must be properly placarded when\nSafety Bulletin #16\nPyrotechnic\n**Revised: May 22, 2009 Page 2 of 5**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\n_G:\\data\\wpdata\\AMPTP\\Bulletins\\Current\\SftyBull #16 PYROTECHNIC.doc_\n\n...\n\nthat will be in close proximity to planned pyrotechnic special effects must be prepared accordingly and/or should be made of flame retardant material.\nAll sets, equipment, props, wardrobe, wigs, etc., must be made available in advance to the Pyrotechnic Special Effects Operator in charge for evaluation, to establish placement, and if necessary, for testing.\n**Clothing and Personal Protective Equipment** \u2022 Cast and crew in close proximity to planned effects should wear appropriate protective clothing.\nDepending on the hazards involved, this clothing should include appropriate closed-toe footwear, long pants, and a long-sleeved shirt made of 100% cotton or material which provides equal or greater protection.\n\u2022 Cast and crew must be notified by the Pyrotechnic Special Effects Operator in charge when there is potential for exposures to pyrotechnics, such as fireball, debris, and shock wave. PPE must be provided as appropriate for the hazard(s) involved and considerations must be made for head, hand, eye, ear and respiratory protection.\nDepending on the hazards involved, the AHJ may require full fire turnout gear and Self Contained Breathing Apparatus (SCBA). These guidelines will also apply to performers when appropriate. All users must have proper training in the use and "
+                ]
+              }
+            ]
+          },
+          "research_keys:safety_underwriter": [
+            "research:0cd71b0c4d08",
+            "extract:2c822b7a4030"
+          ]
+        },
+        "artifact_delta": {},
+        "requested_auth_configs": {},
+        "requested_tool_confirmations": {}
+      },
+      "node_info": {
+        "path": ""
+      },
+      "id": "0c8b1b16-64ee-402f-8359-1ef32d72a943",
+      "timestamp": 1789191409.0585349
+    },
+    {
+      "model_version": "gemini-3.7-flash",
+      "content": {
+        "parts": [
+          {
+            "function_call": {
+              "id": "call_286247",
+              "args": {
+                "objective": "Get operative safety requirements regarding water safety personnel, rescue equipment, cold water immersion/hypothermia, and night water filming from CSATF Safety Bulletin 17",
+                "url": "https://www.csatf.org/wp-content/uploads/2018/05/17WATER_HAZARDS.pdf"
+              },
+              "name": "fetch_page"
+            },
+            "thought_signature": "AY89a18MaO3VsDTw3pO6HOdSO-0d9y4JMkSVpVCy71qD-HoCHexkV18pERYYkiW86u6A-SwZNqFLlJAwO75z92wo_UAqssgWfVN1mR5dxZprmztfhqIKS-pii6OlQscKLjm8Xzy5vITV5eyTy6D-3iAfxb0bAJqoCxkx3c92uDCYgEDzvYEgnKoMJ8O9cVqLJYrjCek-k6sL5WIWOwPKPWaEGC_Wd-MQJukn5Jom"
+          }
+        ],
+        "role": "model"
+      },
+      "finish_reason": "STOP",
+      "usage_metadata": {
+        "cache_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 7384
+          }
+        ],
+        "cached_content_token_count": 7384,
+        "candidates_token_count": 86,
+        "candidates_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 86
+          }
+        ],
+        "prompt_token_count": 12668,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 12668
+          }
+        ],
+        "thoughts_token_count": 29,
+        "total_token_count": 12783,
+        "traffic_type": "ON_DEMAND"
+      },
+      "invocation_id": "e-2c26be53-5315-4e02-93fe-79e111cae9c7",
+      "author": "safety_underwriter",
+      "actions": {
+        "state_delta": {},
+        "artifact_delta": {},
+        "requested_auth_configs": {},
+        "requested_tool_confirmations": {}
+      },
+      "node_info": {
+        "path": ""
+      },
+      "long_running_tool_ids": [],
+      "id": "fc91274a-15e1-4d67-b5c6-76cf092db709",
+      "timestamp": 1789191409.0657358
+    },
+    {
+      "content": {
+        "parts": [
+          {
+            "function_response": {
+              "id": "call_286247",
+              "name": "fetch_page",
+              "response": {
+                "cached": false,
+                "budget_remaining": 1,
+                "results": [
+                  {
+                    "url": "https://www.csatf.org/wp-content/uploads/2018/05/17WATER_HAZARDS.pdf",
+                    "title": "INDUSTRY WIDE LABOR-MANAGEMENT SAFETY COMMITTEE",
+                    "publish_date": "2013-08-28",
+                    "excerpts": [
+                      "**Revised: August 20, 2013 Page 1 of 2**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\n_H:\\Bulletins\\SftyBull #17 WATER HAZARDS-Revised 2013 August 20.docx_\n\n# INDUSTRY WIDE LABOR-MANAGEMENT SAFETY COMMITTEE\n**SAFETY BULLETIN #17**\n\n## **WATER HAZARDS**\n### 6. All personnel scheduled for water work shall be notified in advance via the Call Sheet. Personnel who are uncomfortable working in or around water should notify their supervisor prior to that day\u2019s call.\nSafety Bulletin #17\nWater Hazards\n**Revised: August 20, 2013 Page 2 of 2**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\n_H:\\Bulletins\\SftyBull #17 WATER HAZARDS-Revised 2013 August 20.docx_"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "role": "user"
+      },
+      "invocation_id": "e-2c26be53-5315-4e02-93fe-79e111cae9c7",
+      "author": "safety_underwriter",
+      "actions": {
+        "state_delta": {
+          "research_budget:safety_underwriter": 1,
+          "extract:0cbdf0192da9": {
+            "objective": "Get operative safety requirements regarding water safety personnel, rescue equipment, cold water immersion/hypothermia, and night water filming from CSATF Safety Bulletin 17",
+            "results": [
+              {
+                "url": "https://www.csatf.org/wp-content/uploads/2018/05/17WATER_HAZARDS.pdf",
+                "title": "INDUSTRY WIDE LABOR-MANAGEMENT SAFETY COMMITTEE",
+                "publish_date": "2013-08-28",
+                "excerpts": [
+                  "**Revised: August 20, 2013 Page 1 of 2**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\n_H:\\Bulletins\\SftyBull #17 WATER HAZARDS-Revised 2013 August 20.docx_\n\n# INDUSTRY WIDE LABOR-MANAGEMENT SAFETY COMMITTEE\n**SAFETY BULLETIN #17**\n\n## **WATER HAZARDS**\n### 6. All personnel scheduled for water work shall be notified in advance via the Call Sheet. Personnel who are uncomfortable working in or around water should notify their supervisor prior to that day\u2019s call.\nSafety Bulletin #17\nWater Hazards\n**Revised: August 20, 2013 Page 2 of 2**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\n_H:\\Bulletins\\SftyBull #17 WATER HAZARDS-Revised 2013 August 20.docx_"
+                ]
+              }
+            ]
+          },
+          "research_keys:safety_underwriter": [
+            "research:0cd71b0c4d08",
+            "extract:2c822b7a4030",
+            "extract:0cbdf0192da9"
+          ]
+        },
+        "artifact_delta": {},
+        "requested_auth_configs": {},
+        "requested_tool_confirmations": {}
+      },
+      "node_info": {
+        "path": ""
+      },
+      "id": "1c02b1b2-48e9-465f-bb6d-9fbf078a4c14",
+      "timestamp": 1789191416.596919
+    }
+  ],
+  "status": "incomplete",
+  "gemini_usage": {
+    "flash": {
+      "prompt": 112251,
+      "cached": 58390,
+      "output": 1108
+    }
+  },
+  "error": "LlmCallsLimitExceededError",
+  "elapsed_s": 37.01,
+  "mechanical_errors": [
+    "LlmCallsLimitExceededError",
+    "assigned work item lacks a disposition"
+  ],
+  "flags": [],
+  "rejected_flags": [],
+  "open_questions": [],
+  "cleared": [],
+  "state": {
+    "script_text": "Title: SLACK TIDE\nCredit: written by\nAuthor: The GREENLIGHT Team\nDraft date: 2026-08-24\nNotes: Original work. Written as the demo fixture for GREENLIGHT. All characters and the town of Port Bannock are fictional.\n\nFADE IN:\n\nEXT. PORT BANNOCK HARBOR - DAWN\n\nFog sits on the water like it pays rent. Lobster boats nod against their moorings. Somewhere a halyard clinks against a mast, patient as a clock.\n\nA rental sedan rolls to a stop at the head of the town pier. MARA VOSS (38), city coat, wrong shoes for a dock, sits with both hands on the wheel long after the engine dies.\n\nThrough the windshield: a lobster boat rides alone on its mooring, hull the green of old bottles. Stenciled across the transom: MARGARET ROSE.\n\nMara looks at the boat the way you look at a photograph of yourself as a child.\n\nMARA\n(quiet)\nHey, old man.\n\nShe gets out. Gulls wheel and holler. The fog takes no notice of her at all.\n\nINT. THE WHEELHOUSE - DAY\n\nA harbor bar that hasn't changed since the Carter administration and is proud of it. Buoys on the ceiling. A woodstove. The smell of beer and diesel and forty years of wet wool.\n\nOn the wall: a sun-bleached framed print of Edward Hopper's NIGHTHAWKS, hanging slightly crooked. Behind the register, thumbtacked and curling: a Polaroid of a younger ELI VOSS arm-wrestling BRUCE SPRINGSTEEN, both of them laughing, \"1988\" in ballpoint across the white strip. Beside it, framed: a front page of the Gloucester Daily Times -- \"BANNOCK CAPTAIN PULLS FOUR FROM NOR'EASTER.\"\n\nOn the corner TV, muted, an old VHS of JAWS is playing. The shark is winning.\n\nDANNY VOSS (34) stands behind the bar, not because he works there but because standing anywhere else feels wrong today. SAM (10) sits at the end of the bar doing serious damage to a cocoa, poured from a dented Thermos.\n\nCROW (60s, foul-weather bibs, a face like a chart of bad decisions) nurses a beer he transparently hates. Across his forearm, a full-rigged schooner tattoo in fading blue-black \u2014 Teddy Krane's design, inked at his Rockland parlor the summer the Margaret Rose launched \u2014 rides every pour like weather.\n\nCROW\nThirty years I drank whatever Eli stocked, out of loyalty. Coors Light. Tastes like a wet napkin. Man ran the best bar on this coast and drank the worst beer in America.\n\nDANNY\nHe liked that it was cheap.\n\nCROW\nHe liked that it annoyed me.\n\nThe door opens. Mara stands in it with a duffel bag. The room goes quiet the way only a small town can go quiet -- all at once, and politely.\n\nDANNY (CONT'D)\nYou came.\n\nMARA\nHe died.\n\nDANNY\nPeople have died before. You didn't come.\n\nA beat. Sam slides off his stool, crosses to Mara, and offers up the Thermos cup like a church collection.\n\nSAM\nAunt Mara. Want some? Dad made it with water, though. I'm supposed to say that first.\n\nMARA\n(taking the stool beside him)\nThen absolutely not.\n\nSam grins. Something in the room loosens a notch.\n\nHELEN FITCH (60s, funeral director, cardigan over steel) comes in from the back room carrying a manila envelope like it might go off.\n\nHELEN\nGood. You're both here. He left instructions. Notarized. Which, for Eli Voss, is close to a miracle.\n\nShe hands the envelope to Danny. He opens it, unfolds a single handwritten page, and reads.\n\nDANNY\n(reading)\n\"One. No church-basement sandwiches. Real food. If there is a casserole in that building I will know.\"\n\nCROW\nFair.\n\nDANNY\n(reading)\n\"Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.\"\n\nHELEN\nAnd three?\n\nDanny reads ahead silently. Stops. Reads it again.\n\nDANNY\n(reading)\n\"Three. Burn the boat. With me on it. At slack tide, so I don't drift into the Hendersons' float again.\"\n\nSilence. Crow raises the terrible beer.\n\nCROW\nViking.\n\nMARA\nHe cannot be serious. You can't just burn a boat in the harbor.\n\nCROW\nYou can if you don't ask first.\n\nEXT. TOWN PIER - NIGHT\n\nLow tide. The pilings stand up out of the mud like the legs of something huge and patient. Mara and Danny sit on the pier's end with their feet hanging over black water.\n\nDanny produces a joint, lights it, offers it over. Mara stares at it.\n\nDANNY\nSince when do you not?\n\nMARA\nSince I bill by the hour.\n\nShe takes it anyway. A long drag. She holds it like an old phone number she's surprised she still knows.\n\nOut of the dark comes BARNACLE, an ancient black Lab with a gray muzzle and the gait of a sea captain on land. He flops down between them with a groan and puts his head on Mara's knee.\n\nMARA (CONT'D)\nHe kept the dog.\n\nDANNY\nThe dog kept him. There's a difference.\n\nThey pass the joint. Water slaps the pilings.\n\nDANNY (CONT'D)\nYou remember Fenway? He hears on the radio the game's a sellout, so obviously that's the day we're going. No tickets. Walks us past the gate guy carrying a clipboard he took off a wall. \"Walk like you own the place.\" We saw the whole game from the standing rail.\n\nMARA\n(laughing despite herself)\nHe made us wave at the camera like we belonged there.\n\nDANNY\nWe did belong there. That was the trick. He decided we belonged, so we did.\n\nThe laugh drains out of her.\n\nMARA\nHe was a selfish, glorious, fucking impossible man, and I moved four hundred miles away to stop auditioning for him, and it didn't work. It never worked.\n\nDANNY\n(quiet)\nHe kept every clipping. Every case you won that made a paper, it went up behind the register. He'd tell strangers. Strangers, Mara. He never told you because you'd have won the argument about it, and he couldn't stand losing twice.\n\nMara looks at the water for a long time. Barnacle sighs like a man twice his age.\n\nINT. ST. BRIGID'S CHURCH - DAY\n\nFull pews. Fishermen in blazers that fit them two funerals ago. The casket at the front under a spray of lilies and, at Helen's visible disapproval, a coiled dock line.\n\nAt the side of the altar, an honor guard: three OLD VETERANS in dress uniforms, service rifles held at rest, faces like the granite outside.\n\nCrow walks to the front. No accompanist. He grips the lectern, and into the dead-quiet room he sings -- rough, unhurried, surprisingly tender -- the old Stephen Foster hymn \"Hard Times Come Again No More.\"\n\nCROW\n(singing)\n'Tis the song, the sigh of the weary. Hard times, hard times, come again no more...\n\nNobody breathes. He finishes. He nods once, to the casket, like closing a bar tab, and sits.\n\nHelen steps up. She sets a battered BOOMBOX on the altar rail, and looks at it with naked distrust. Sam, in the front pew, gives her a thumbs up.\n\nShe presses play.\n\nThe opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.\n\nHold on the faces. Danny's jaw working. Sam mouthing the words. Mara, eyes forward, absolutely still, tears moving anyway.\n\nEXT. ST. BRIGID'S CHURCHYARD - DAY\n\nThe mourners in a loose crescent under a pewter sky. The honor guard stands in a row, rifles up at the ready.\n\nVETERAN\nReady. Aim. Fire.\n\nVOLLEY. Gulls explode off the church roof. Sam clamps his hands over his ears. Barnacle, tied to the fence, points his muzzle at the sky and HOWLS.\n\nVOLLEY. VOLLEY.\n\nThe senior veteran presents the folded flag -- not to Danny, not to Mara. To Sam. The boy takes it like it weighs a hundred pounds, because it does.\n\nINT. THE WHEELHOUSE - DAY\n\nTHE WAKE. The bar packed to the walls. Chowder in mismatched bowls. Real food; no sandwiches in sight. Laughter in that specific register that lives one door down from crying.\n\nAt the bar, COUSIN TEDDY (40s, tie loosened, several drinks ahead of the room) holds forth.\n\nTEDDY\nAll I'm saying -- all I'm saying is that boat surveys at forty grand, and the plan is to torch it. That's the estate. That's my family's --\n\nDANNY\nSay that again.\n\nTEDDY\nIt's a boat, Danny. He was a drunk with a fucking boat, and you're all acting like it's the crown jewels.\n\nDanny hits him. One punch, no windup, the kind you learn on a working dock.\n\nTeddy goes back over a stool and comes up swinging, and for five ugly seconds it is a real fight -- grappling, a glass shattering, blood bright from Teddy's nose across the bar top -- before Crow peels them apart with an ease that suggests long practice.\n\nCROW\n(to Teddy, mild)\nGo home, Ted. Tide's going out. Try and go with it.\n\nHelen is already there with a stack of cocktail napkins, dressing Teddy's nose with the brisk efficiency of a corner cutman. Mara surveys the wreckage.\n\nMARA\n(to Helen)\n\"Real food, no sandwiches, and a fistfight.\" He got everything he asked for.\n\nHELEN\nThey usually do.\n\nINT. THE WHEELHOUSE - NIGHT\n\nLong after. Empty. Chairs up on tables. One lamp behind the bar. Mara alone, counting the night's take, not counting it at all.\n\nShe takes down the good whiskey from the top shelf -- the bottle no one is allowed to touch -- and pours two glasses. Sets one at the far end of the bar. Old habit. She doesn't seem to notice she's done it.\n\nELI VOSS (70) is sitting in front of the far glass. Work jacket. Salt-white stubble. He was not there a moment ago, and the room does not find this strange.\n\nELI\nYou put the Hopper crooked.\n\nMara does not turn around. Her hands go still on the register.\n\nELI (CONT'D)\nIt's been crooked eleven years. But you looked at it tonight, so now it's your fault.\n\nMARA\n(not turning)\nYou're not here.\n\nELI\nI'm not anywhere. It's very freeing. No tide chart. No Coors Light.\n\nMARA\n(turning now)\nThat you drank on purpose. For thirty years. Out of spite.\n\nELI\nLoyalty. Spite is just loyalty with the brights on.\n\nShe comes down the bar. Stops an arm's length away. Up close he is exactly himself: unhurried, amused, infuriating.\n\nMARA\nI came back four times. Ma's funeral. Danny's wedding. Twice more. You talked to me about bilge pumps.\n\nELI\nI know.\n\nMARA\nThat's it? You know?\n\nELI\nYou were the one thing I ever made that didn't need fixing. I didn't have a language for that. Bilge pumps, I had.\n\nMara's eyes fill. She hates it. She lets it happen anyway.\n\nMARA\nThe boat's worth fifty thousand dollars, Dad.\n\nELI\nThe boat is a coffin with a diesel in it. Everything I loved either walked off it or died on it, except you, and you swam.\n(beat)\nBurn it, Mare. Stand on the seawall with your brother and watch it go, and be done carrying it.\n\nMARA\n(barely)\nSlack tide?\n\nELI\nSlack tide. I meant that part. The Hendersons have suffered enough.\n\nShe laughs -- an ugly, wet, wonderful laugh. She wipes her eyes with the heel of her hand, and when she looks up the stool is empty.\n\nAt the far end of the bar, his glass is empty too.\n\nEXT. BANNOCK BOATYARD - DAY\n\nThe MARGARET ROSE up on stands, Danny and Crow moving over her with jerry cans of diesel, soaking coiled blankets along the deck. It is exactly as legal as it looks.\n\nCrow lugs a milk crate aboard: cardboard tubes, mortar shells, a coil of fuse.\n\nCROW\nFourth of July stash. Three years of it. He'd want the good ones up.\n\nA white pickup with U.S. Coast Guard markings rolls into the yard. PETTY OFFICER REYES (30s, squared away, unreadable) steps out and takes a long look at the diesel cans, the blankets, the fireworks, and the two men standing in front of them like boys caught smoking.\n\nREYES\nMr. Voss. Word around the harbor is you're planning a marine event. Open flame, on a vessel, in navigable waters. I checked. There's no permit on file.\n\nDANNY\nIt's a funeral.\n\nREYES\nIt's an unpermitted burn with a homemade pyrotechnics display, is what it is.\n\nA long silence. Reyes looks past them, at the boat's transom. MARGARET ROSE.\n\nREYES (CONT'D)\nEli Voss pulled my mother out of the water in 'ninety-eight. Her and three others, in a following sea, in a boat half this size.\n(beat)\nSlack tide's at nine-forty. My patrol ends at nine. Keep it in the outer harbor, keep a skiff standing off with a radio, and keep that boy of yours in a life jacket.\n\nHe gets back in the truck. Rolls the window down.\n\nREYES (CONT'D)\nI was never here.\n\nDANNY\nNever where?\n\nThe truck pulls out. Crow watches it go.\n\nCROW\nI like her.\n\nEXT. BANNOCK HARBOR - NIGHT\n\nThe MARGARET ROSE rides at anchor in the outer harbor, dark against a darker sky. Along the seawall, the whole town has turned out, candles cupped in fists against the breeze.\n\nA Boston Whaler skiff crosses the black water. Danny at the tiller. Mara amidships with the urn in her lap. Sam in the bow in a life vest two sizes too big, one hand knotted in Barnacle's collar. The old dog rides like a figurehead, nose into the wind.\n\nThey come alongside the Margaret Rose. Danny and Mara climb aboard; Sam and the dog stay in the skiff, holding the rail.\n\nINT./EXT. MARGARET ROSE - WHEELHOUSE - NIGHT - CONTINUOUS\n\nMara sets the urn on the chart shelf, where the coffee thermos rode for forty years. Danny lashes it fast with a dock line, cinches it, tests it.\n\nMara lifts the old brass compass out of its gimbal and pockets it. Danny sees. Says nothing.\n\nDANNY\n(handing her the flare gun)\nYou do it.\n\nMARA\nWhy me?\n\nDANNY\nHe decided you belonged here. So you do.\n\nEXT. BANNOCK HARBOR - NIGHT - CONTINUOUS\n\nThey drop back into the skiff and stand off, engine idling, the radio crackling once with nothing.\n\nMara stands, braces, and fires the flare into the soaked blankets amidships.\n\nWHUMP. A line of blue-orange flame walks the deck like it knows the boat. Then the diesel catches and the MARGARET ROSE goes up -- a column of fire standing on the black water, doubled in the swell, huge.\n\nOn the seawall, a hundred candle-flames and one enormous gasp. Then, from speakers somebody has rigged on the seawall railing, Buckley's \"Hallelujah\" starts again, drifting out across the water toward the fire.\n\nCrow touches a road flare to the mortar fuse. The Fourth of July stash goes up -- white and gold chrysanthemums blooming over the burning boat, reflections shattering across the harbor.\n\nSam stands up in the skiff for a better look.\n\nDANNY\nSit DOWN --\n\nSam sits. Barnacle barks at the fireworks, once, on principle.\n\nThen -- a CRACK from the fire. The anchor line, burned through at the chock, parts. The burning boat swings free and begins to drift, slow and terrible, on the last of the tide.\n\nToward a row of moored floats. The nearest one flying a little pennant: HENDERSON.\n\nMARA\nYou have got to be kidding me.\n\nBefore Danny can speak she has the spare line over her shoulder and she DIVES -- off the skiff into the black water, surfacing in the firelight, swimming hard for the mooring buoy off the Margaret Rose's bow.\n\nDANNY\nMARA!\n\nShe reaches the buoy, gets the line through the eye with numb hands, waves. Danny throws the skiff into gear, takes up the slack, and eases the burning boat's head around -- slow, straining, the flames roaring overhead -- until the drift points at open water.\n\nHe swings back and hauls Mara over the gunwale, soaked, gasping, shaking with cold and adrenaline and something else entirely.\n\nDANNY (CONT'D)\nYou're insane. You know that. That was --\n(laughing, despite everything)\n-- that was fucking beautiful.\n\nMARA\n(through chattering teeth)\nHe would have HATED hitting the Hendersons'.\n\nOut in the dark, the MARGARET ROSE burns down to the waterline, going out the way a day goes out, while Buckley's voice carries over the water and the last fireworks fall.\n\nEXT. STONE JETTY - DAWN\n\nFlat calm. The fog is back, gentler now. Ash rides the tideline like gray lace.\n\nMara and Danny sit on the rocks with coffee, passing the dented Thermos cup between them. Barnacle lies across Mara's feet, asleep with his eyes open, the way old dogs and old sailors do.\n\nSam walks the tideline below them, the folded flag still under his arm. He hasn't put it down since the churchyard.\n\nDANNY\nYou heading back Sunday?\n\nMara turns the brass compass over in her hands. The needle finds north, patient as ever.\n\nMARA\nEventually.\n\nDanny nods. That's enough. That's plenty.\n\nOut on the empty water, the mooring where the MARGARET ROSE rode for forty years holds nothing at all. A gull lands on the buoy, decides it's not worth the trouble, and lifts away into the fog.\n\nFADE OUT.\n",
+    "scenes": [
+      {
+        "scene_id": "S001",
+        "page": 1,
+        "heading": "EXT. PORT BANNOCK HARBOR - DAWN",
+        "int_ext": "EXT",
+        "location": "PORT BANNOCK HARBOR",
+        "time_of_day": "DAWN",
+        "action": "Fog sits on the water like it pays rent. Lobster boats nod against their moorings. Somewhere a halyard clinks against a mast, patient as a clock.\n\nA rental sedan rolls to a stop at the head of the town pier. MARA VOSS (38), city coat, wrong shoes for a dock, sits with both hands on the wheel long after the engine dies.\n\nThrough the windshield: a lobster boat rides alone on its mooring, hull the green of old bottles. Stenciled across the transom: MARGARET ROSE.\n\nMara looks at the boat the way you look at a photograph of yourself as a child.\n\nShe gets out. Gulls wheel and holler. The fog takes no notice of her at all.",
+        "dialogue": [
+          {
+            "character": "MARA",
+            "line": "Hey, old man.",
+            "parenthetical": "(quiet)"
+          }
+        ],
+        "characters": [
+          "MARA"
+        ],
+        "raw_span": [
+          224,
+          910
+        ]
+      },
+      {
+        "scene_id": "S002",
+        "page": 1,
+        "heading": "INT. THE WHEELHOUSE - DAY",
+        "int_ext": "INT",
+        "location": "THE WHEELHOUSE",
+        "time_of_day": "DAY",
+        "action": "A harbor bar that hasn't changed since the Carter administration and is proud of it. Buoys on the ceiling. A woodstove. The smell of beer and diesel and forty years of wet wool.\n\nOn the wall: a sun-bleached framed print of Edward Hopper's NIGHTHAWKS, hanging slightly crooked. Behind the register, thumbtacked and curling: a Polaroid of a younger ELI VOSS arm-wrestling BRUCE SPRINGSTEEN, both of them laughing, \"1988\" in ballpoint across the white strip. Beside it, framed: a front page of the Gloucester Daily Times -- \"BANNOCK CAPTAIN PULLS FOUR FROM NOR'EASTER.\"\n\nOn the corner TV, muted, an old VHS of JAWS is playing. The shark is winning.\n\nDANNY VOSS (34) stands behind the bar, not because he works there but because standing anywhere else feels wrong today. SAM (10) sits at the end of the bar doing serious damage to a cocoa, poured from a dented Thermos.\n\nCROW (60s, foul-weather bibs, a face like a chart of bad decisions) nurses a beer he transparently hates. Across his forearm, a full-rigged schooner tattoo in fading blue-black \u2014 Teddy Krane's design, inked at his Rockland parlor the summer the Margaret Rose launched \u2014 rides every pour like weather.\n\nThe door opens. Mara stands in it with a duffel bag. The room goes quiet the way only a small town can go quiet -- all at once, and politely.\n\nA beat. Sam slides off his stool, crosses to Mara, and offers up the Thermos cup like a church collection.\n\nSam grins. Something in the room loosens a notch.\n\nHELEN FITCH (60s, funeral director, cardigan over steel) comes in from the back room carrying a manila envelope like it might go off.\n\nShe hands the envelope to Danny. He opens it, unfolds a single handwritten page, and reads.\n\nDanny reads ahead silently. Stops. Reads it again.\n\nSilence. Crow raises the terrible beer.",
+        "dialogue": [
+          {
+            "character": "CROW",
+            "line": "Thirty years I drank whatever Eli stocked, out of loyalty. Coors Light. Tastes like a wet napkin. Man ran the best bar on this coast and drank the worst beer in America."
+          },
+          {
+            "character": "DANNY",
+            "line": "He liked that it was cheap."
+          },
+          {
+            "character": "CROW",
+            "line": "He liked that it annoyed me."
+          },
+          {
+            "character": "DANNY",
+            "line": "You came."
+          },
+          {
+            "character": "MARA",
+            "line": "He died."
+          },
+          {
+            "character": "DANNY",
+            "line": "People have died before. You didn't come."
+          },
+          {
+            "character": "SAM",
+            "line": "Aunt Mara. Want some? Dad made it with water, though. I'm supposed to say that first."
+          },
+          {
+            "character": "MARA",
+            "line": "Then absolutely not.",
+            "parenthetical": "(taking the stool beside him)"
+          },
+          {
+            "character": "HELEN",
+            "line": "Good. You're both here. He left instructions. Notarized. Which, for Eli Voss, is close to a miracle."
+          },
+          {
+            "character": "DANNY",
+            "line": "\"One. No church-basement sandwiches. Real food. If there is a casserole in that building I will know.\"",
+            "parenthetical": "(reading)"
+          },
+          {
+            "character": "CROW",
+            "line": "Fair."
+          },
+          {
+            "character": "DANNY",
+            "line": "\"Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.\"",
+            "parenthetical": "(reading)"
+          },
+          {
+            "character": "HELEN",
+            "line": "And three?"
+          },
+          {
+            "character": "DANNY",
+            "line": "\"Three. Burn the boat. With me on it. At slack tide, so I don't drift into the Hendersons' float again.\"",
+            "parenthetical": "(reading)"
+          },
+          {
+            "character": "CROW",
+            "line": "Viking."
+          },
+          {
+            "character": "MARA",
+            "line": "He cannot be serious. You can't just burn a boat in the harbor."
+          },
+          {
+            "character": "CROW",
+            "line": "You can if you don't ask first."
+          }
+        ],
+        "characters": [
+          "CROW",
+          "DANNY",
+          "MARA",
+          "SAM",
+          "HELEN"
+        ],
+        "raw_span": [
+          910,
+          3888
+        ]
+      },
+      {
+        "scene_id": "S003",
+        "page": 3,
+        "heading": "EXT. TOWN PIER - NIGHT",
+        "int_ext": "EXT",
+        "location": "TOWN PIER",
+        "time_of_day": "NIGHT",
+        "action": "Low tide. The pilings stand up out of the mud like the legs of something huge and patient. Mara and Danny sit on the pier's end with their feet hanging over black water.\n\nDanny produces a joint, lights it, offers it over. Mara stares at it.\n\nShe takes it anyway. A long drag. She holds it like an old phone number she's surprised she still knows.\n\nOut of the dark comes BARNACLE, an ancient black Lab with a gray muzzle and the gait of a sea captain on land. He flops down between them with a groan and puts his head on Mara's knee.\n\nThey pass the joint. Water slaps the pilings.\n\nThe laugh drains out of her.\n\nMara looks at the water for a long time. Barnacle sighs like a man twice his age.",
+        "dialogue": [
+          {
+            "character": "DANNY",
+            "line": "Since when do you not?"
+          },
+          {
+            "character": "MARA",
+            "line": "Since I bill by the hour."
+          },
+          {
+            "character": "MARA",
+            "line": "He kept the dog."
+          },
+          {
+            "character": "DANNY",
+            "line": "The dog kept him. There's a difference."
+          },
+          {
+            "character": "DANNY",
+            "line": "You remember Fenway? He hears on the radio the game's a sellout, so obviously that's the day we're going. No tickets. Walks us past the gate guy carrying a clipboard he took off a wall. \"Walk like you own the place.\" We saw the whole game from the standing rail."
+          },
+          {
+            "character": "MARA",
+            "line": "He made us wave at the camera like we belonged there.",
+            "parenthetical": "(laughing despite herself)"
+          },
+          {
+            "character": "DANNY",
+            "line": "We did belong there. That was the trick. He decided we belonged, so we did."
+          },
+          {
+            "character": "MARA",
+            "line": "He was a selfish, glorious, fucking impossible man, and I moved four hundred miles away to stop auditioning for him, and it didn't work. It never worked."
+          },
+          {
+            "character": "DANNY",
+            "line": "He kept every clipping. Every case you won that made a paper, it went up behind the register. He'd tell strangers. Strangers, Mara. He never told you because you'd have won the argument about it, and he couldn't stand losing twice.",
+            "parenthetical": "(quiet)"
+          }
+        ],
+        "characters": [
+          "DANNY",
+          "MARA"
+        ],
+        "raw_span": [
+          3888,
+          5603
+        ]
+      },
+      {
+        "scene_id": "S004",
+        "page": 4,
+        "heading": "INT. ST. BRIGID'S CHURCH - DAY",
+        "int_ext": "INT",
+        "location": "ST. BRIGID'S CHURCH",
+        "time_of_day": "DAY",
+        "action": "Full pews. Fishermen in blazers that fit them two funerals ago. The casket at the front under a spray of lilies and, at Helen's visible disapproval, a coiled dock line.\n\nAt the side of the altar, an honor guard: three OLD VETERANS in dress uniforms, service rifles held at rest, faces like the granite outside.\n\nCrow walks to the front. No accompanist. He grips the lectern, and into the dead-quiet room he sings -- rough, unhurried, surprisingly tender -- the old Stephen Foster hymn \"Hard Times Come Again No More.\"\n\nNobody breathes. He finishes. He nods once, to the casket, like closing a bar tab, and sits.\n\nHelen steps up. She sets a battered BOOMBOX on the altar rail, and looks at it with naked distrust. Sam, in the front pew, gives her a thumbs up.\n\nShe presses play.\n\nThe opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.\n\nHold on the faces. Danny's jaw working. Sam mouthing the words. Mara, eyes forward, absolutely still, tears moving anyway.",
+        "dialogue": [
+          {
+            "character": "CROW",
+            "line": "'Tis the song, the sigh of the weary. Hard times, hard times, come again no more...",
+            "parenthetical": "(singing)"
+          }
+        ],
+        "characters": [
+          "CROW"
+        ],
+        "raw_span": [
+          5603,
+          6797
+        ]
+      },
+      {
+        "scene_id": "S005",
+        "page": 4,
+        "heading": "EXT. ST. BRIGID'S CHURCHYARD - DAY",
+        "int_ext": "EXT",
+        "location": "ST. BRIGID'S CHURCHYARD",
+        "time_of_day": "DAY",
+        "action": "The mourners in a loose crescent under a pewter sky. The honor guard stands in a row, rifles up at the ready.\n\nVOLLEY. Gulls explode off the church roof. Sam clamps his hands over his ears. Barnacle, tied to the fence, points his muzzle at the sky and HOWLS.\n\nVOLLEY. VOLLEY.\n\nThe senior veteran presents the folded flag -- not to Danny, not to Mara. To Sam. The boy takes it like it weighs a hundred pounds, because it does.",
+        "dialogue": [
+          {
+            "character": "VETERAN",
+            "line": "Ready. Aim. Fire."
+          }
+        ],
+        "characters": [
+          "VETERAN"
+        ],
+        "raw_span": [
+          6797,
+          7287
+        ]
+      },
+      {
+        "scene_id": "S006",
+        "page": 4,
+        "heading": "INT. THE WHEELHOUSE - DAY",
+        "int_ext": "INT",
+        "location": "THE WHEELHOUSE",
+        "time_of_day": "DAY",
+        "action": "THE WAKE. The bar packed to the walls. Chowder in mismatched bowls. Real food; no sandwiches in sight. Laughter in that specific register that lives one door down from crying.\n\nAt the bar, COUSIN TEDDY (40s, tie loosened, several drinks ahead of the room) holds forth.\n\nDanny hits him. One punch, no windup, the kind you learn on a working dock.\n\nTeddy goes back over a stool and comes up swinging, and for five ugly seconds it is a real fight -- grappling, a glass shattering, blood bright from Teddy's nose across the bar top -- before Crow peels them apart with an ease that suggests long practice.\n\nHelen is already there with a stack of cocktail napkins, dressing Teddy's nose with the brisk efficiency of a corner cutman. Mara surveys the wreckage.",
+        "dialogue": [
+          {
+            "character": "TEDDY",
+            "line": "All I'm saying -- all I'm saying is that boat surveys at forty grand, and the plan is to torch it. That's the estate. That's my family's --"
+          },
+          {
+            "character": "DANNY",
+            "line": "Say that again."
+          },
+          {
+            "character": "TEDDY",
+            "line": "It's a boat, Danny. He was a drunk with a fucking boat, and you're all acting like it's the crown jewels."
+          },
+          {
+            "character": "CROW",
+            "line": "Go home, Ted. Tide's going out. Try and go with it.",
+            "parenthetical": "(to Teddy, mild)"
+          },
+          {
+            "character": "MARA",
+            "line": "\"Real food, no sandwiches, and a fistfight.\" He got everything he asked for.",
+            "parenthetical": "(to Helen)"
+          },
+          {
+            "character": "HELEN",
+            "line": "They usually do."
+          }
+        ],
+        "characters": [
+          "TEDDY",
+          "DANNY",
+          "CROW",
+          "MARA",
+          "HELEN"
+        ],
+        "raw_span": [
+          7287,
+          8546
+        ]
+      },
+      {
+        "scene_id": "S007",
+        "page": 5,
+        "heading": "INT. THE WHEELHOUSE - NIGHT",
+        "int_ext": "INT",
+        "location": "THE WHEELHOUSE",
+        "time_of_day": "NIGHT",
+        "action": "Long after. Empty. Chairs up on tables. One lamp behind the bar. Mara alone, counting the night's take, not counting it at all.\n\nShe takes down the good whiskey from the top shelf -- the bottle no one is allowed to touch -- and pours two glasses. Sets one at the far end of the bar. Old habit. She doesn't seem to notice she's done it.\n\nELI VOSS (70) is sitting in front of the far glass. Work jacket. Salt-white stubble. He was not there a moment ago, and the room does not find this strange.\n\nMara does not turn around. Her hands go still on the register.\n\nShe comes down the bar. Stops an arm's length away. Up close he is exactly himself: unhurried, amused, infuriating.\n\nMara's eyes fill. She hates it. She lets it happen anyway.\n\nShe laughs -- an ugly, wet, wonderful laugh. She wipes her eyes with the heel of her hand, and when she looks up the stool is empty.\n\nAt the far end of the bar, his glass is empty too.",
+        "dialogue": [
+          {
+            "character": "ELI",
+            "line": "You put the Hopper crooked."
+          },
+          {
+            "character": "ELI",
+            "line": "It's been crooked eleven years. But you looked at it tonight, so now it's your fault."
+          },
+          {
+            "character": "MARA",
+            "line": "You're not here.",
+            "parenthetical": "(not turning)"
+          },
+          {
+            "character": "ELI",
+            "line": "I'm not anywhere. It's very freeing. No tide chart. No Coors Light."
+          },
+          {
+            "character": "MARA",
+            "line": "That you drank on purpose. For thirty years. Out of spite.",
+            "parenthetical": "(turning now)"
+          },
+          {
+            "character": "ELI",
+            "line": "Loyalty. Spite is just loyalty with the brights on."
+          },
+          {
+            "character": "MARA",
+            "line": "I came back four times. Ma's funeral. Danny's wedding. Twice more. You talked to me about bilge pumps."
+          },
+          {
+            "character": "ELI",
+            "line": "I know."
+          },
+          {
+            "character": "MARA",
+            "line": "That's it? You know?"
+          },
+          {
+            "character": "ELI",
+            "line": "You were the one thing I ever made that didn't need fixing. I didn't have a language for that. Bilge pumps, I had."
+          },
+          {
+            "character": "MARA",
+            "line": "The boat's worth fifty thousand dollars, Dad."
+          },
+          {
+            "character": "ELI",
+            "line": "The boat is a coffin with a diesel in it. Everything I loved either walked off it or died on it, except you, and you swam. (beat) Burn it, Mare. Stand on the seawall with your brother and watch it go, and be done carrying it."
+          },
+          {
+            "character": "MARA",
+            "line": "Slack tide?",
+            "parenthetical": "(barely)"
+          },
+          {
+            "character": "ELI",
+            "line": "Slack tide. I meant that part. The Hendersons have suffered enough."
+          }
+        ],
+        "characters": [
+          "ELI",
+          "MARA"
+        ],
+        "raw_span": [
+          8546,
+          10528
+        ]
+      },
+      {
+        "scene_id": "S008",
+        "page": 6,
+        "heading": "EXT. BANNOCK BOATYARD - DAY",
+        "int_ext": "EXT",
+        "location": "BANNOCK BOATYARD",
+        "time_of_day": "DAY",
+        "action": "The MARGARET ROSE up on stands, Danny and Crow moving over her with jerry cans of diesel, soaking coiled blankets along the deck. It is exactly as legal as it looks.\n\nCrow lugs a milk crate aboard: cardboard tubes, mortar shells, a coil of fuse.\n\nA white pickup with U.S. Coast Guard markings rolls into the yard. PETTY OFFICER REYES (30s, squared away, unreadable) steps out and takes a long look at the diesel cans, the blankets, the fireworks, and the two men standing in front of them like boys caught smoking.\n\nA long silence. Reyes looks past them, at the boat's transom. MARGARET ROSE.\n\nHe gets back in the truck. Rolls the window down.\n\nThe truck pulls out. Crow watches it go.",
+        "dialogue": [
+          {
+            "character": "CROW",
+            "line": "Fourth of July stash. Three years of it. He'd want the good ones up."
+          },
+          {
+            "character": "REYES",
+            "line": "Mr. Voss. Word around the harbor is you're planning a marine event. Open flame, on a vessel, in navigable waters. I checked. There's no permit on file."
+          },
+          {
+            "character": "DANNY",
+            "line": "It's a funeral."
+          },
+          {
+            "character": "REYES",
+            "line": "It's an unpermitted burn with a homemade pyrotechnics display, is what it is."
+          },
+          {
+            "character": "REYES",
+            "line": "Eli Voss pulled my mother out of the water in 'ninety-eight. Her and three others, in a following sea, in a boat half this size. (beat) Slack tide's at nine-forty. My patrol ends at nine. Keep it in the outer harbor, keep a skiff standing off with a radio, and keep that boy of yours in a life jacket."
+          },
+          {
+            "character": "REYES",
+            "line": "I was never here."
+          },
+          {
+            "character": "DANNY",
+            "line": "Never where?"
+          },
+          {
+            "character": "CROW",
+            "line": "I like her."
+          }
+        ],
+        "characters": [
+          "CROW",
+          "REYES",
+          "DANNY"
+        ],
+        "raw_span": [
+          10528,
+          11976
+        ]
+      },
+      {
+        "scene_id": "S009",
+        "page": 7,
+        "heading": "EXT. BANNOCK HARBOR - NIGHT",
+        "int_ext": "EXT",
+        "location": "BANNOCK HARBOR",
+        "time_of_day": "NIGHT",
+        "action": "The MARGARET ROSE rides at anchor in the outer harbor, dark against a darker sky. Along the seawall, the whole town has turned out, candles cupped in fists against the breeze.\n\nA Boston Whaler skiff crosses the black water. Danny at the tiller. Mara amidships with the urn in her lap. Sam in the bow in a life vest two sizes too big, one hand knotted in Barnacle's collar. The old dog rides like a figurehead, nose into the wind.\n\nThey come alongside the Margaret Rose. Danny and Mara climb aboard; Sam and the dog stay in the skiff, holding the rail.",
+        "dialogue": [],
+        "characters": [],
+        "raw_span": [
+          11976,
+          12558
+        ]
+      },
+      {
+        "scene_id": "S010",
+        "page": 7,
+        "heading": "INT./EXT. MARGARET ROSE - WHEELHOUSE - NIGHT - CONTINUOUS",
+        "int_ext": "INT/EXT",
+        "location": "MARGARET ROSE - WHEELHOUSE",
+        "time_of_day": "NIGHT - CONTINUOUS",
+        "action": "Mara sets the urn on the chart shelf, where the coffee thermos rode for forty years. Danny lashes it fast with a dock line, cinches it, tests it.\n\nMara lifts the old brass compass out of its gimbal and pockets it. Danny sees. Says nothing.",
+        "dialogue": [
+          {
+            "character": "DANNY",
+            "line": "You do it.",
+            "parenthetical": "(handing her the flare gun)"
+          },
+          {
+            "character": "MARA",
+            "line": "Why me?"
+          },
+          {
+            "character": "DANNY",
+            "line": "He decided you belonged here. So you do."
+          }
+        ],
+        "characters": [
+          "DANNY",
+          "MARA"
+        ],
+        "raw_span": [
+          12558,
+          12966
+        ]
+      },
+      {
+        "scene_id": "S011",
+        "page": 8,
+        "heading": "EXT. BANNOCK HARBOR - NIGHT - CONTINUOUS",
+        "int_ext": "EXT",
+        "location": "BANNOCK HARBOR",
+        "time_of_day": "NIGHT - CONTINUOUS",
+        "action": "They drop back into the skiff and stand off, engine idling, the radio crackling once with nothing.\n\nMara stands, braces, and fires the flare into the soaked blankets amidships.\n\nWHUMP. A line of blue-orange flame walks the deck like it knows the boat. Then the diesel catches and the MARGARET ROSE goes up -- a column of fire standing on the black water, doubled in the swell, huge.\n\nOn the seawall, a hundred candle-flames and one enormous gasp. Then, from speakers somebody has rigged on the seawall railing, Buckley's \"Hallelujah\" starts again, drifting out across the water toward the fire.\n\nCrow touches a road flare to the mortar fuse. The Fourth of July stash goes up -- white and gold chrysanthemums blooming over the burning boat, reflections shattering across the harbor.\n\nSam stands up in the skiff for a better look.\n\nSam sits. Barnacle barks at the fireworks, once, on principle.\n\nThen -- a CRACK from the fire. The anchor line, burned through at the chock, parts. The burning boat swings free and begins to drift, slow and terrible, on the last of the tide.\n\nToward a row of moored floats. The nearest one flying a little pennant: HENDERSON.\n\nBefore Danny can speak she has the spare line over her shoulder and she DIVES -- off the skiff into the black water, surfacing in the firelight, swimming hard for the mooring buoy off the Margaret Rose's bow.\n\nShe reaches the buoy, gets the line through the eye with numb hands, waves. Danny throws the skiff into gear, takes up the slack, and eases the burning boat's head around -- slow, straining, the flames roaring overhead -- until the drift points at open water.\n\nHe swings back and hauls Mara over the gunwale, soaked, gasping, shaking with cold and adrenaline and something else entirely.\n\nOut in the dark, the MARGARET ROSE burns down to the waterline, going out the way a day goes out, while Buckley's voice carries over the water and the last fireworks fall.",
+        "dialogue": [
+          {
+            "character": "DANNY",
+            "line": "Sit DOWN --"
+          },
+          {
+            "character": "MARA",
+            "line": "You have got to be kidding me."
+          },
+          {
+            "character": "DANNY",
+            "line": "MARA!"
+          },
+          {
+            "character": "DANNY",
+            "line": "You're insane. You know that. That was -- (laughing, despite everything) -- that was fucking beautiful."
+          },
+          {
+            "character": "MARA",
+            "line": "He would have HATED hitting the Hendersons'.",
+            "parenthetical": "(through chattering teeth)"
+          }
+        ],
+        "characters": [
+          "DANNY",
+          "MARA"
+        ],
+        "raw_span": [
+          12966,
+          15204
+        ]
+      },
+      {
+        "scene_id": "S012",
+        "page": 9,
+        "heading": "EXT. STONE JETTY - DAWN",
+        "int_ext": "EXT",
+        "location": "STONE JETTY",
+        "time_of_day": "DAWN",
+        "action": "Flat calm. The fog is back, gentler now. Ash rides the tideline like gray lace.\n\nMara and Danny sit on the rocks with coffee, passing the dented Thermos cup between them. Barnacle lies across Mara's feet, asleep with his eyes open, the way old dogs and old sailors do.\n\nSam walks the tideline below them, the folded flag still under his arm. He hasn't put it down since the churchyard.\n\nMara turns the brass compass over in her hands. The needle finds north, patient as ever.\n\nDanny nods. That's enough. That's plenty.\n\nOut on the empty water, the mooring where the MARGARET ROSE rode for forty years holds nothing at all. A gull lands on the buoy, decides it's not worth the trouble, and lifts away into the fog.",
+        "dialogue": [
+          {
+            "character": "DANNY",
+            "line": "You heading back Sunday?"
+          },
+          {
+            "character": "MARA",
+            "line": "Eventually."
+          }
+        ],
+        "characters": [
+          "DANNY",
+          "MARA"
+        ],
+        "raw_span": [
+          15204,
+          16004
+        ]
+      }
+    ],
+    "script_annotated": "[S001] EXT. PORT BANNOCK HARBOR - DAWN\n\nFog sits on the water like it pays rent. Lobster boats nod against their moorings. Somewhere a halyard clinks against a mast, patient as a clock.\n\nA rental sedan rolls to a stop at the head of the town pier. MARA VOSS (38), city coat, wrong shoes for a dock, sits with both hands on the wheel long after the engine dies.\n\nThrough the windshield: a lobster boat rides alone on its mooring, hull the green of old bottles. Stenciled across the transom: MARGARET ROSE.\n\nMara looks at the boat the way you look at a photograph of yourself as a child.\n\nMARA\n(quiet)\nHey, old man.\n\nShe gets out. Gulls wheel and holler. The fog takes no notice of her at all.\n\n[S002] INT. THE WHEELHOUSE - DAY\n\nA harbor bar that hasn't changed since the Carter administration and is proud of it. Buoys on the ceiling. A woodstove. The smell of beer and diesel and forty years of wet wool.\n\nOn the wall: a sun-bleached framed print of Edward Hopper's NIGHTHAWKS, hanging slightly crooked. Behind the register, thumbtacked and curling: a Polaroid of a younger ELI VOSS arm-wrestling BRUCE SPRINGSTEEN, both of them laughing, \"1988\" in ballpoint across the white strip. Beside it, framed: a front page of the Gloucester Daily Times -- \"BANNOCK CAPTAIN PULLS FOUR FROM NOR'EASTER.\"\n\nOn the corner TV, muted, an old VHS of JAWS is playing. The shark is winning.\n\nDANNY VOSS (34) stands behind the bar, not because he works there but because standing anywhere else feels wrong today. SAM (10) sits at the end of the bar doing serious damage to a cocoa, poured from a dented Thermos.\n\nCROW (60s, foul-weather bibs, a face like a chart of bad decisions) nurses a beer he transparently hates. Across his forearm, a full-rigged schooner tattoo in fading blue-black \u2014 Teddy Krane's design, inked at his Rockland parlor the summer the Margaret Rose launched \u2014 rides every pour like weather.\n\nCROW\nThirty years I drank whatever Eli stocked, out of loyalty. Coors Light. Tastes like a wet napkin. Man ran the best bar on this coast and drank the worst beer in America.\n\nDANNY\nHe liked that it was cheap.\n\nCROW\nHe liked that it annoyed me.\n\nThe door opens. Mara stands in it with a duffel bag. The room goes quiet the way only a small town can go quiet -- all at once, and politely.\n\nDANNY (CONT'D)\nYou came.\n\nMARA\nHe died.\n\nDANNY\nPeople have died before. You didn't come.\n\nA beat. Sam slides off his stool, crosses to Mara, and offers up the Thermos cup like a church collection.\n\nSAM\nAunt Mara. Want some? Dad made it with water, though. I'm supposed to say that first.\n\nMARA\n(taking the stool beside him)\nThen absolutely not.\n\nSam grins. Something in the room loosens a notch.\n\nHELEN FITCH (60s, funeral director, cardigan over steel) comes in from the back room carrying a manila envelope like it might go off.\n\nHELEN\nGood. You're both here. He left instructions. Notarized. Which, for Eli Voss, is close to a miracle.\n\nShe hands the envelope to Danny. He opens it, unfolds a single handwritten page, and reads.\n\nDANNY\n(reading)\n\"One. No church-basement sandwiches. Real food. If there is a casserole in that building I will know.\"\n\nCROW\nFair.\n\nDANNY\n(reading)\n\"Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.\"\n\nHELEN\nAnd three?\n\nDanny reads ahead silently. Stops. Reads it again.\n\nDANNY\n(reading)\n\"Three. Burn the boat. With me on it. At slack tide, so I don't drift into the Hendersons' float again.\"\n\nSilence. Crow raises the terrible beer.\n\nCROW\nViking.\n\nMARA\nHe cannot be serious. You can't just burn a boat in the harbor.\n\nCROW\nYou can if you don't ask first.\n\n[S003] EXT. TOWN PIER - NIGHT\n\nLow tide. The pilings stand up out of the mud like the legs of something huge and patient. Mara and Danny sit on the pier's end with their feet hanging over black water.\n\nDanny produces a joint, lights it, offers it over. Mara stares at it.\n\nDANNY\nSince when do you not?\n\nMARA\nSince I bill by the hour.\n\nShe takes it anyway. A long drag. She holds it like an old phone number she's surprised she still knows.\n\nOut of the dark comes BARNACLE, an ancient black Lab with a gray muzzle and the gait of a sea captain on land. He flops down between them with a groan and puts his head on Mara's knee.\n\nMARA (CONT'D)\nHe kept the dog.\n\nDANNY\nThe dog kept him. There's a difference.\n\nThey pass the joint. Water slaps the pilings.\n\nDANNY (CONT'D)\nYou remember Fenway? He hears on the radio the game's a sellout, so obviously that's the day we're going. No tickets. Walks us past the gate guy carrying a clipboard he took off a wall. \"Walk like you own the place.\" We saw the whole game from the standing rail.\n\nMARA\n(laughing despite herself)\nHe made us wave at the camera like we belonged there.\n\nDANNY\nWe did belong there. That was the trick. He decided we belonged, so we did.\n\nThe laugh drains out of her.\n\nMARA\nHe was a selfish, glorious, fucking impossible man, and I moved four hundred miles away to stop auditioning for him, and it didn't work. It never worked.\n\nDANNY\n(quiet)\nHe kept every clipping. Every case you won that made a paper, it went up behind the register. He'd tell strangers. Strangers, Mara. He never told you because you'd have won the argument about it, and he couldn't stand losing twice.\n\nMara looks at the water for a long time. Barnacle sighs like a man twice his age.\n\n[S004] INT. ST. BRIGID'S CHURCH - DAY\n\nFull pews. Fishermen in blazers that fit them two funerals ago. The casket at the front under a spray of lilies and, at Helen's visible disapproval, a coiled dock line.\n\nAt the side of the altar, an honor guard: three OLD VETERANS in dress uniforms, service rifles held at rest, faces like the granite outside.\n\nCrow walks to the front. No accompanist. He grips the lectern, and into the dead-quiet room he sings -- rough, unhurried, surprisingly tender -- the old Stephen Foster hymn \"Hard Times Come Again No More.\"\n\nCROW\n(singing)\n'Tis the song, the sigh of the weary. Hard times, hard times, come again no more...\n\nNobody breathes. He finishes. He nods once, to the casket, like closing a bar tab, and sits.\n\nHelen steps up. She sets a battered BOOMBOX on the altar rail, and looks at it with naked distrust. Sam, in the front pew, gives her a thumbs up.\n\nShe presses play.\n\nThe opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.\n\nHold on the faces. Danny's jaw working. Sam mouthing the words. Mara, eyes forward, absolutely still, tears moving anyway.\n\n[S005] EXT. ST. BRIGID'S CHURCHYARD - DAY\n\nThe mourners in a loose crescent under a pewter sky. The honor guard stands in a row, rifles up at the ready.\n\nVETERAN\nReady. Aim. Fire.\n\nVOLLEY. Gulls explode off the church roof. Sam clamps his hands over his ears. Barnacle, tied to the fence, points his muzzle at the sky and HOWLS.\n\nVOLLEY. VOLLEY.\n\nThe senior veteran presents the folded flag -- not to Danny, not to Mara. To Sam. The boy takes it like it weighs a hundred pounds, because it does.\n\n[S006] INT. THE WHEELHOUSE - DAY\n\nTHE WAKE. The bar packed to the walls. Chowder in mismatched bowls. Real food; no sandwiches in sight. Laughter in that specific register that lives one door down from crying.\n\nAt the bar, COUSIN TEDDY (40s, tie loosened, several drinks ahead of the room) holds forth.\n\nTEDDY\nAll I'm saying -- all I'm saying is that boat surveys at forty grand, and the plan is to torch it. That's the estate. That's my family's --\n\nDANNY\nSay that again.\n\nTEDDY\nIt's a boat, Danny. He was a drunk with a fucking boat, and you're all acting like it's the crown jewels.\n\nDanny hits him. One punch, no windup, the kind you learn on a working dock.\n\nTeddy goes back over a stool and comes up swinging, and for five ugly seconds it is a real fight -- grappling, a glass shattering, blood bright from Teddy's nose across the bar top -- before Crow peels them apart with an ease that suggests long practice.\n\nCROW\n(to Teddy, mild)\nGo home, Ted. Tide's going out. Try and go with it.\n\nHelen is already there with a stack of cocktail napkins, dressing Teddy's nose with the brisk efficiency of a corner cutman. Mara surveys the wreckage.\n\nMARA\n(to Helen)\n\"Real food, no sandwiches, and a fistfight.\" He got everything he asked for.\n\nHELEN\nThey usually do.\n\n[S007] INT. THE WHEELHOUSE - NIGHT\n\nLong after. Empty. Chairs up on tables. One lamp behind the bar. Mara alone, counting the night's take, not counting it at all.\n\nShe takes down the good whiskey from the top shelf -- the bottle no one is allowed to touch -- and pours two glasses. Sets one at the far end of the bar. Old habit. She doesn't seem to notice she's done it.\n\nELI VOSS (70) is sitting in front of the far glass. Work jacket. Salt-white stubble. He was not there a moment ago, and the room does not find this strange.\n\nELI\nYou put the Hopper crooked.\n\nMara does not turn around. Her hands go still on the register.\n\nELI (CONT'D)\nIt's been crooked eleven years. But you looked at it tonight, so now it's your fault.\n\nMARA\n(not turning)\nYou're not here.\n\nELI\nI'm not anywhere. It's very freeing. No tide chart. No Coors Light.\n\nMARA\n(turning now)\nThat you drank on purpose. For thirty years. Out of spite.\n\nELI\nLoyalty. Spite is just loyalty with the brights on.\n\nShe comes down the bar. Stops an arm's length away. Up close he is exactly himself: unhurried, amused, infuriating.\n\nMARA\nI came back four times. Ma's funeral. Danny's wedding. Twice more. You talked to me about bilge pumps.\n\nELI\nI know.\n\nMARA\nThat's it? You know?\n\nELI\nYou were the one thing I ever made that didn't need fixing. I didn't have a language for that. Bilge pumps, I had.\n\nMara's eyes fill. She hates it. She lets it happen anyway.\n\nMARA\nThe boat's worth fifty thousand dollars, Dad.\n\nELI\nThe boat is a coffin with a diesel in it. Everything I loved either walked off it or died on it, except you, and you swam.\n(beat)\nBurn it, Mare. Stand on the seawall with your brother and watch it go, and be done carrying it.\n\nMARA\n(barely)\nSlack tide?\n\nELI\nSlack tide. I meant that part. The Hendersons have suffered enough.\n\nShe laughs -- an ugly, wet, wonderful laugh. She wipes her eyes with the heel of her hand, and when she looks up the stool is empty.\n\nAt the far end of the bar, his glass is empty too.\n\n[S008] EXT. BANNOCK BOATYARD - DAY\n\nThe MARGARET ROSE up on stands, Danny and Crow moving over her with jerry cans of diesel, soaking coiled blankets along the deck. It is exactly as legal as it looks.\n\nCrow lugs a milk crate aboard: cardboard tubes, mortar shells, a coil of fuse.\n\nCROW\nFourth of July stash. Three years of it. He'd want the good ones up.\n\nA white pickup with U.S. Coast Guard markings rolls into the yard. PETTY OFFICER REYES (30s, squared away, unreadable) steps out and takes a long look at the diesel cans, the blankets, the fireworks, and the two men standing in front of them like boys caught smoking.\n\nREYES\nMr. Voss. Word around the harbor is you're planning a marine event. Open flame, on a vessel, in navigable waters. I checked. There's no permit on file.\n\nDANNY\nIt's a funeral.\n\nREYES\nIt's an unpermitted burn with a homemade pyrotechnics display, is what it is.\n\nA long silence. Reyes looks past them, at the boat's transom. MARGARET ROSE.\n\nREYES (CONT'D)\nEli Voss pulled my mother out of the water in 'ninety-eight. Her and three others, in a following sea, in a boat half this size.\n(beat)\nSlack tide's at nine-forty. My patrol ends at nine. Keep it in the outer harbor, keep a skiff standing off with a radio, and keep that boy of yours in a life jacket.\n\nHe gets back in the truck. Rolls the window down.\n\nREYES (CONT'D)\nI was never here.\n\nDANNY\nNever where?\n\nThe truck pulls out. Crow watches it go.\n\nCROW\nI like her.\n\n[S009] EXT. BANNOCK HARBOR - NIGHT\n\nThe MARGARET ROSE rides at anchor in the outer harbor, dark against a darker sky. Along the seawall, the whole town has turned out, candles cupped in fists against the breeze.\n\nA Boston Whaler skiff crosses the black water. Danny at the tiller. Mara amidships with the urn in her lap. Sam in the bow in a life vest two sizes too big, one hand knotted in Barnacle's collar. The old dog rides like a figurehead, nose into the wind.\n\nThey come alongside the Margaret Rose. Danny and Mara climb aboard; Sam and the dog stay in the skiff, holding the rail.\n\n[S010] INT./EXT. MARGARET ROSE - WHEELHOUSE - NIGHT - CONTINUOUS\n\nMara sets the urn on the chart shelf, where the coffee thermos rode for forty years. Danny lashes it fast with a dock line, cinches it, tests it.\n\nMara lifts the old brass compass out of its gimbal and pockets it. Danny sees. Says nothing.\n\nDANNY\n(handing her the flare gun)\nYou do it.\n\nMARA\nWhy me?\n\nDANNY\nHe decided you belonged here. So you do.\n\n[S011] EXT. BANNOCK HARBOR - NIGHT - CONTINUOUS\n\nThey drop back into the skiff and stand off, engine idling, the radio crackling once with nothing.\n\nMara stands, braces, and fires the flare into the soaked blankets amidships.\n\nWHUMP. A line of blue-orange flame walks the deck like it knows the boat. Then the diesel catches and the MARGARET ROSE goes up -- a column of fire standing on the black water, doubled in the swell, huge.\n\nOn the seawall, a hundred candle-flames and one enormous gasp. Then, from speakers somebody has rigged on the seawall railing, Buckley's \"Hallelujah\" starts again, drifting out across the water toward the fire.\n\nCrow touches a road flare to the mortar fuse. The Fourth of July stash goes up -- white and gold chrysanthemums blooming over the burning boat, reflections shattering across the harbor.\n\nSam stands up in the skiff for a better look.\n\nDANNY\nSit DOWN --\n\nSam sits. Barnacle barks at the fireworks, once, on principle.\n\nThen -- a CRACK from the fire. The anchor line, burned through at the chock, parts. The burning boat swings free and begins to drift, slow and terrible, on the last of the tide.\n\nToward a row of moored floats. The nearest one flying a little pennant: HENDERSON.\n\nMARA\nYou have got to be kidding me.\n\nBefore Danny can speak she has the spare line over her shoulder and she DIVES -- off the skiff into the black water, surfacing in the firelight, swimming hard for the mooring buoy off the Margaret Rose's bow.\n\nDANNY\nMARA!\n\nShe reaches the buoy, gets the line through the eye with numb hands, waves. Danny throws the skiff into gear, takes up the slack, and eases the burning boat's head around -- slow, straining, the flames roaring overhead -- until the drift points at open water.\n\nHe swings back and hauls Mara over the gunwale, soaked, gasping, shaking with cold and adrenaline and something else entirely.\n\nDANNY (CONT'D)\nYou're insane. You know that. That was --\n(laughing, despite everything)\n-- that was fucking beautiful.\n\nMARA\n(through chattering teeth)\nHe would have HATED hitting the Hendersons'.\n\nOut in the dark, the MARGARET ROSE burns down to the waterline, going out the way a day goes out, while Buckley's voice carries over the water and the last fireworks fall.\n\n[S012] EXT. STONE JETTY - DAWN\n\nFlat calm. The fog is back, gentler now. Ash rides the tideline like gray lace.\n\nMara and Danny sit on the rocks with coffee, passing the dented Thermos cup between them. Barnacle lies across Mara's feet, asleep with his eyes open, the way old dogs and old sailors do.\n\nSam walks the tideline below them, the folded flag still under his arm. He hasn't put it down since the churchyard.\n\nDANNY\nYou heading back Sunday?\n\nMara turns the brass compass over in her hands. The needle finds north, patient as ever.\n\nMARA\nEventually.\n\nDanny nods. That's enough. That's plenty.\n\nOut on the empty water, the mooring where the MARGARET ROSE rode for forty years holds nothing at all. A gull lands on the buoy, decides it's not worth the trouble, and lifts away into the fog.\n\nFADE OUT.",
+    "scene_index": "S001  p 1  EXT. PORT BANNOCK HARBOR - DAWN\nS002  p 1  INT. THE WHEELHOUSE - DAY\nS003  p 3  EXT. TOWN PIER - NIGHT\nS004  p 4  INT. ST. BRIGID'S CHURCH - DAY\nS005  p 4  EXT. ST. BRIGID'S CHURCHYARD - DAY\nS006  p 4  INT. THE WHEELHOUSE - DAY\nS007  p 5  INT. THE WHEELHOUSE - NIGHT\nS008  p 6  EXT. BANNOCK BOATYARD - DAY\nS009  p 7  EXT. BANNOCK HARBOR - NIGHT\nS010  p 7  INT./EXT. MARGARET ROSE - WHEELHOUSE - NIGHT - CONTINUOUS\nS011  p 8  EXT. BANNOCK HARBOR - NIGHT - CONTINUOUS\nS012  p 9  EXT. STONE JETTY - DAWN",
+    "target_rating": "",
+    "adaptation_context": "",
+    "form_facts": "12 scenes; 29% of the text is dialogue (action-forward); 5 INT / 7 EXT; 5 night scenes",
+    "script_title": "SLACK TIDE",
+    "research_budget:safety_underwriter": 1,
+    "triage": {
+      "entities": [],
+      "safety_underwriter": [
+        {
+          "entity_id": "",
+          "work_item_id": "SU-W001",
+          "note": "Assess the depicted vessel fire, fireworks and adjacent skiff with a child at night in S009, S010 and S011."
+        }
+      ]
+    },
+    "deep_used:safety_underwriter": 2,
+    "research:0cd71b0c4d08": {
+      "objective": "Find operative safety requirements in CSATF Safety Bulletins #15 (Boating), #16 (Pyrotechnics), and #17 (Water Hazards) regarding pyrotechnic special effects, open burning/fireworks, night water work, water rescue, safety personnel, and life vests.",
+      "search_id": "search_6f54b2206f825ab78247e8b36bdd7212",
+      "results": [
+        {
+          "url": "https://www.csatf.org/wp-content/uploads/2018/05/16PYROTECHNIC.pdf",
+          "title": "Safety Bulletin 16 - Pyrotechnic",
+          "publish_date": "2009-05-27",
+          "excerpts": [
+            "INDUSTRY WIDE LABOR-MANAGEMENT SAFETY COMMITTEE **SAFETY BULLETIN #16 RECOMMENDED GUIDELINES FOR SAFETY WITH PYROTECHNIC SPECIAL EFFECTS This Safety Bulletin applies to pyrotechnic materials such as explosives and flammable or combustible liquids, gases and solids when used to create pyrotechnic special effects.** ALL USE, HANDLING, STORAGE AND\n\n...\n\nPyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable. \u2022 Consideration of using remote control detonation devices should be discussed with Safety, Fire, Production, Stunts, and Special Effects prior to use.\n\n...\n\nSafety Bulletin #16\nPyrotechnic\n**Revised: May 22, 2009 Page 3 of 5**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\n_G:\\data\\wpdata\\AMPTP\\Bulletins\\Current\\SftyBull #16 PYROTECHNIC.doc_\n\n...\n\nSafety Bulletin #16\nPyrotechnic\n**Revised: May 22, 2009 Page 4 of 5**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\n_G:\\data\\wpdata\\AMPTP\\"
+          ]
+        },
+        {
+          "url": "https://www.csatf.org/17_safety_bltn_water_hazards/",
+          "title": "INDUSTRY WIDE LABOR-MANAGEMENT SAFETY ...",
+          "publish_date": null,
+          "excerpts": [
+            "**Revised: February 7, 2025**\n**Page 1 of 5**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\nINDUSTRY WIDE LABOR-MANAGEMENT SAFETY COMMITTEE\n**SAFETY BULLETIN #17**\n**WATER HAZARDS**\n\n...\n\nincluding those mandated by the appropriate AHJ. (See Safety Bulletin #15 - _Guidelines for_\n_Boating/Watercraft Safety for Film Crews_ )\n**Electrical Hazards**\nAll electrical connections should be made by, or under the supervision of, a qualified person. (See\n\n...\n\nmitigate it. Appropriate water safety devices (e.g., life vests, life preservers, safety rings, safety\nhooks, buoys) should be available for all personnel working in or around water. When necessary,\nthe Production Management should implement a plan to account for personnel in the water, such\nas a \u201cbuddy\u201d or a check in/check out system.\n\n...\n\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\nSafety Bulletin 17\nWater Hazards\n**Poor Water Quality**\nWhen water quality results are poor or un"
+          ]
+        },
+        {
+          "url": "https://www.csatf.org/wp-content/uploads/2018/05/15BOATING.pdf",
+          "title": "Boating and Watercraft Safety",
+          "publish_date": "2013-08-28",
+          "excerpts": [
+            "# INDUSTRY WIDE LABOR-MANAGEMENT SAFETY COMMITTEE\n## **SAFETY BULLETIN #15**\n### 8. The production will establish work procedures to be followed while working on or around watercraft, including procedures for abandoning the watercraft; responding to f\n**Revised: August 20, 2013 Page 2 of 5**\n\n...\n\n### 3. Avoid clothing, jewelry or loose items that can get caught in machinery or rigging, or impede watercraft transfers.\n**Revised: August 20, 2013 Page 3 of 5**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\n\n...\n\n### 3. Prior to transferring to another watercraft, allow watercraft personnel to assist in the transfer of gear and equipment. Use two hands to steady yourself when transferring to the other watercraft.\n**Revised: August 20, 2013 Page 5 of 5**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n\n...\n\n_H:\\Bulletins\\SftyBull #15 BOATING-Revised-2013 August 20.docx_"
+          ]
+        },
+        {
+          "url": "https://www.csatf.org/production-affairs-safety/safety-bulletins",
+          "title": "Safety Bulletins \u2013 Contract Services - csatf.org",
+          "publish_date": null,
+          "excerpts": [
+            "# Operating Hours:\n## Safety Bulletins\n### SAFETY BULLETINS\n[Guidelines for Boating/Watercraft Safety for Film Crews](https://www.csatf.org/wp-content/uploads/2018/05/15BOATING.pdf)\nRevised 08/20/13\n16\n[Recommended Guidelines for Safety with Pyrotechnic Special Effects](https://www.csatf.org/wp-content/uploads/2018/05/16PYROTECHNIC.pdf)\nRevised 05/22/09\n17\nWater Hazards\nRevised 02/07/25\n18\n[Guidelines for Safe Use of Stunt Air Bags, Boxes or Other Freefall Catch Systems](https://www.csatf.org/wp-content/uploads/2018/05/18AIR_BAGS.pdf)\nRevised 04/17/13\n19\n[Recommended Guidelines for the Use of Open Flame on Production](https://www.csatf.org/wp-content/uploads/2018/05/19FLAMES.pdf)\n\n...\n\n### Boletines de Seguridad en Espa\u00f1ol\n| 13 | Lineamientos Recomendados Para Combustibles Inflamables Y Equipo Relacionado | Actualizado el 07/01/22 |\n| 14 | Paracaidismo Y Ca\u00edda Libre | Actualizado el 01/06/06 |\n| 15 | Recomendaciones De Seguridad Para El Personal De Filmaci\u00f3n En Botes/Embarcaciones | Actualizado el 08/20/13 |\n| 16 | Recomendaciones De Seguridad Para La Creaci\u00f3n De Efectos Especiales Con Pirotecnia | Actualizado el 05/22/09 |\n| 17 | Peligros Relacionados Con El Agua | Actualizado el "
+          ]
+        },
+        {
+          "url": "https://www.csatf.org/wp-content/uploads/2018/05/17WATER_HAZARDS.pdf",
+          "title": "Safety Bulletin #17 Water Hazards",
+          "publish_date": null,
+          "excerpts": [
+            "**Revised: August 20, 2013 Page 1 of 2**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\n_H:\\Bulletins\\SftyBull #17 WATER HAZARDS-Revised 2013 August 20.docx_\n\n# INDUSTRY WIDE LABOR-MANAGEMENT SAFETY COMMITTEE\n**SAFETY BULLETIN #17**\n\n## **WATER HAZARDS**\n### 6. All personnel scheduled for water work shall be notified in advance via the Call Sheet. Personnel who are uncomfortable working in or around water should notify their supervisor prior to that day\u2019s call.\nSafety Bulletin #17\nWater Hazards\n**Revised: August 20, 2013 Page 2 of 2**\n\n...\n\n_H:\\Bulletins\\SftyBull #17 WATER HAZARDS-Revised 2013 August 20.docx_"
+          ]
+        },
+        {
+          "url": "https://www.csatf.org/all_safety_bulletins-procedural_guidelines-info_fact_sheets/",
+          "title": "Revised: July 10, 2025 Page 1 of 3",
+          "publish_date": null,
+          "excerpts": [
+            "Recommended Guidelines for Safety with Pyrotechnic \u00b7 Special Effects \u00b7 Revised 05/22/09 \u00b7 17 \u00b7 Water Hazards \u00b7 Revised 02/07/25 \u00b7 18 \u00b7 Guidelines for Safe Use of Stunt Air Bags, Boxes or Other \u00b7 Freefall Catch Systems \u00b7 Revised 04/17/13 \u00b7 19 \u00b7 Recommended Guidelines for the Use of Open Flame on \u00b7"
+          ]
+        }
+      ]
+    },
+    "research_keys:safety_underwriter": [
+      "research:0cd71b0c4d08",
+      "extract:2c822b7a4030",
+      "extract:0cbdf0192da9"
+    ],
+    "extract:2c822b7a4030": {
+      "objective": "Get operative requirements on pyrotechnics licensing, safety precautions, fire prevention, and clearances from CSATF Safety Bulletin 16",
+      "results": [
+        {
+          "url": "https://www.csatf.org/wp-content/uploads/2018/05/16PYROTECHNIC.pdf",
+          "title": "Microsoft Word - SftyBull #16 PYROTECHNIC.doc",
+          "publish_date": "2009-05-27",
+          "excerpts": [
+            "Safety Bulletin #16\nPyrotechnic\n**Revised: May 22, 2009 Page 1 of 5**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\n_G:\\data\\wpdata\\AMPTP\\Bulletins\\Current\\SftyBull #16 PYROTECHNIC.doc_\nINDUSTRY WIDE LABOR-MANAGEMENT SAFETY COMMITTEE **SAFETY BULLETIN #16 RECOMMENDED GUIDELINES FOR SAFETY WITH PYROTECHNIC SPECIAL EFFECTS This Safety Bulletin applies to pyrotechnic materials such as explosives and flammable or combustible liquids, gases and solids when used to create pyrotechnic special effects.** ALL USE, HANDLING, STORAGE AND\nTRANSPORTATION OF PYROTECHNIC MATERIALS SHALL BE IN COMPLIANCE WITH ALL APPLICABLE FEDERAL, STATE, AND LOCAL LAWS AND REGULATIONS. **Pre-Production/Planning** \u2022 When pyrotechnic materials are used on set, such use shall be under controlled conditions with due regard for the safety of all involved.\n\u2022 The Production Company or Studio shall make sufficient advanced notification of the use of pyrotechnic materials to the appropriate departments (such as Special Effects, Stunts, Camera, Art, Construction, Hair, Make-up and Wardrobe), in order to safely plan pyrotechnic special effects.\nAny performer who may be involved in a pyrotechnic special effect shall be notified. \u2022 Any required licenses and/or permits shall be obtained from proper Authorities Having Jurisdiction (AHJ) over pyrotechnic materials prior to using pyrotechnic special effects.\nPyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable. \u2022 Consideration of using remote control detonation devices should be discussed with Safety, Fire, Production, Stunts, and Special Effects prior to use.\n\u2022 Prior to pyrotechnic special effects work, productions must develop emergency procedures and contingency plans, including identifying emergency fire suppression equipment and personnel needs. All equipment shall be checked to verify that it is in good operating condition.\nIndividuals using this equipment must have proper training in its use and limitations. \u2022 The need for personal protective equipment (PPE) should be identified during the planning stage. \u2022 Special effects personnel must inform the Transportation Coordinator of what pyrotechnic materials will be transported. Vehicles must be properly placarded when\nSafety Bulletin #16\nPyrotechnic\n**Revised: May 22, 2009 Page 2 of 5**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\n_G:\\data\\wpdata\\AMPTP\\Bulletins\\Current\\SftyBull #16 PYROTECHNIC.doc_\n\n...\n\nthat will be in close proximity to planned pyrotechnic special effects must be prepared accordingly and/or should be made of flame retardant material.\nAll sets, equipment, props, wardrobe, wigs, etc., must be made available in advance to the Pyrotechnic Special Effects Operator in charge for evaluation, to establish placement, and if necessary, for testing.\n**Clothing and Personal Protective Equipment** \u2022 Cast and crew in close proximity to planned effects should wear appropriate protective clothing.\nDepending on the hazards involved, this clothing should include appropriate closed-toe footwear, long pants, and a long-sleeved shirt made of 100% cotton or material which provides equal or greater protection.\n\u2022 Cast and crew must be notified by the Pyrotechnic Special Effects Operator in charge when there is potential for exposures to pyrotechnics, such as fireball, debris, and shock wave. PPE must be provided as appropriate for the hazard(s) involved and considerations must be made for head, hand, eye, ear and respiratory protection.\nDepending on the hazards involved, the AHJ may require full fire turnout gear and Self Contained Breathing Apparatus (SCBA). These guidelines will also apply to performers when appropriate. All users must have proper training in the use and "
+          ]
+        }
+      ]
+    },
+    "extract:0cbdf0192da9": {
+      "objective": "Get operative safety requirements regarding water safety personnel, rescue equipment, cold water immersion/hypothermia, and night water filming from CSATF Safety Bulletin 17",
+      "results": [
+        {
+          "url": "https://www.csatf.org/wp-content/uploads/2018/05/17WATER_HAZARDS.pdf",
+          "title": "INDUSTRY WIDE LABOR-MANAGEMENT SAFETY COMMITTEE",
+          "publish_date": "2013-08-28",
+          "excerpts": [
+            "**Revised: August 20, 2013 Page 1 of 2**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\n_H:\\Bulletins\\SftyBull #17 WATER HAZARDS-Revised 2013 August 20.docx_\n\n# INDUSTRY WIDE LABOR-MANAGEMENT SAFETY COMMITTEE\n**SAFETY BULLETIN #17**\n\n## **WATER HAZARDS**\n### 6. All personnel scheduled for water work shall be notified in advance via the Call Sheet. Personnel who are uncomfortable working in or around water should notify their supervisor prior to that day\u2019s call.\nSafety Bulletin #17\nWater Hazards\n**Revised: August 20, 2013 Page 2 of 2**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\n_H:\\Bulletins\\SftyBull #17 WATER HAZARDS-Revised 2013 August 20.docx_"
+          ]
+        }
+      ]
+    }
+  },
+  "scenes": [
+    {
+      "scene_id": "S001",
+      "page": 1,
+      "heading": "EXT. PORT BANNOCK HARBOR - DAWN",
+      "int_ext": "EXT",
+      "location": "PORT BANNOCK HARBOR",
+      "time_of_day": "DAWN",
+      "action": "Fog sits on the water like it pays rent. Lobster boats nod against their moorings. Somewhere a halyard clinks against a mast, patient as a clock.\n\nA rental sedan rolls to a stop at the head of the town pier. MARA VOSS (38), city coat, wrong shoes for a dock, sits with both hands on the wheel long after the engine dies.\n\nThrough the windshield: a lobster boat rides alone on its mooring, hull the green of old bottles. Stenciled across the transom: MARGARET ROSE.\n\nMara looks at the boat the way you look at a photograph of yourself as a child.\n\nShe gets out. Gulls wheel and holler. The fog takes no notice of her at all.",
+      "dialogue": [
+        {
+          "character": "MARA",
+          "line": "Hey, old man.",
+          "parenthetical": "(quiet)"
+        }
+      ],
+      "characters": [
+        "MARA"
+      ],
+      "raw_span": [
+        224,
+        910
+      ]
+    },
+    {
+      "scene_id": "S002",
+      "page": 1,
+      "heading": "INT. THE WHEELHOUSE - DAY",
+      "int_ext": "INT",
+      "location": "THE WHEELHOUSE",
+      "time_of_day": "DAY",
+      "action": "A harbor bar that hasn't changed since the Carter administration and is proud of it. Buoys on the ceiling. A woodstove. The smell of beer and diesel and forty years of wet wool.\n\nOn the wall: a sun-bleached framed print of Edward Hopper's NIGHTHAWKS, hanging slightly crooked. Behind the register, thumbtacked and curling: a Polaroid of a younger ELI VOSS arm-wrestling BRUCE SPRINGSTEEN, both of them laughing, \"1988\" in ballpoint across the white strip. Beside it, framed: a front page of the Gloucester Daily Times -- \"BANNOCK CAPTAIN PULLS FOUR FROM NOR'EASTER.\"\n\nOn the corner TV, muted, an old VHS of JAWS is playing. The shark is winning.\n\nDANNY VOSS (34) stands behind the bar, not because he works there but because standing anywhere else feels wrong today. SAM (10) sits at the end of the bar doing serious damage to a cocoa, poured from a dented Thermos.\n\nCROW (60s, foul-weather bibs, a face like a chart of bad decisions) nurses a beer he transparently hates. Across his forearm, a full-rigged schooner tattoo in fading blue-black \u2014 Teddy Krane's design, inked at his Rockland parlor the summer the Margaret Rose launched \u2014 rides every pour like weather.\n\nThe door opens. Mara stands in it with a duffel bag. The room goes quiet the way only a small town can go quiet -- all at once, and politely.\n\nA beat. Sam slides off his stool, crosses to Mara, and offers up the Thermos cup like a church collection.\n\nSam grins. Something in the room loosens a notch.\n\nHELEN FITCH (60s, funeral director, cardigan over steel) comes in from the back room carrying a manila envelope like it might go off.\n\nShe hands the envelope to Danny. He opens it, unfolds a single handwritten page, and reads.\n\nDanny reads ahead silently. Stops. Reads it again.\n\nSilence. Crow raises the terrible beer.",
+      "dialogue": [
+        {
+          "character": "CROW",
+          "line": "Thirty years I drank whatever Eli stocked, out of loyalty. Coors Light. Tastes like a wet napkin. Man ran the best bar on this coast and drank the worst beer in America."
+        },
+        {
+          "character": "DANNY",
+          "line": "He liked that it was cheap."
+        },
+        {
+          "character": "CROW",
+          "line": "He liked that it annoyed me."
+        },
+        {
+          "character": "DANNY",
+          "line": "You came."
+        },
+        {
+          "character": "MARA",
+          "line": "He died."
+        },
+        {
+          "character": "DANNY",
+          "line": "People have died before. You didn't come."
+        },
+        {
+          "character": "SAM",
+          "line": "Aunt Mara. Want some? Dad made it with water, though. I'm supposed to say that first."
+        },
+        {
+          "character": "MARA",
+          "line": "Then absolutely not.",
+          "parenthetical": "(taking the stool beside him)"
+        },
+        {
+          "character": "HELEN",
+          "line": "Good. You're both here. He left instructions. Notarized. Which, for Eli Voss, is close to a miracle."
+        },
+        {
+          "character": "DANNY",
+          "line": "\"One. No church-basement sandwiches. Real food. If there is a casserole in that building I will know.\"",
+          "parenthetical": "(reading)"
+        },
+        {
+          "character": "CROW",
+          "line": "Fair."
+        },
+        {
+          "character": "DANNY",
+          "line": "\"Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.\"",
+          "parenthetical": "(reading)"
+        },
+        {
+          "character": "HELEN",
+          "line": "And three?"
+        },
+        {
+          "character": "DANNY",
+          "line": "\"Three. Burn the boat. With me on it. At slack tide, so I don't drift into the Hendersons' float again.\"",
+          "parenthetical": "(reading)"
+        },
+        {
+          "character": "CROW",
+          "line": "Viking."
+        },
+        {
+          "character": "MARA",
+          "line": "He cannot be serious. You can't just burn a boat in the harbor."
+        },
+        {
+          "character": "CROW",
+          "line": "You can if you don't ask first."
+        }
+      ],
+      "characters": [
+        "CROW",
+        "DANNY",
+        "MARA",
+        "SAM",
+        "HELEN"
+      ],
+      "raw_span": [
+        910,
+        3888
+      ]
+    },
+    {
+      "scene_id": "S003",
+      "page": 3,
+      "heading": "EXT. TOWN PIER - NIGHT",
+      "int_ext": "EXT",
+      "location": "TOWN PIER",
+      "time_of_day": "NIGHT",
+      "action": "Low tide. The pilings stand up out of the mud like the legs of something huge and patient. Mara and Danny sit on the pier's end with their feet hanging over black water.\n\nDanny produces a joint, lights it, offers it over. Mara stares at it.\n\nShe takes it anyway. A long drag. She holds it like an old phone number she's surprised she still knows.\n\nOut of the dark comes BARNACLE, an ancient black Lab with a gray muzzle and the gait of a sea captain on land. He flops down between them with a groan and puts his head on Mara's knee.\n\nThey pass the joint. Water slaps the pilings.\n\nThe laugh drains out of her.\n\nMara looks at the water for a long time. Barnacle sighs like a man twice his age.",
+      "dialogue": [
+        {
+          "character": "DANNY",
+          "line": "Since when do you not?"
+        },
+        {
+          "character": "MARA",
+          "line": "Since I bill by the hour."
+        },
+        {
+          "character": "MARA",
+          "line": "He kept the dog."
+        },
+        {
+          "character": "DANNY",
+          "line": "The dog kept him. There's a difference."
+        },
+        {
+          "character": "DANNY",
+          "line": "You remember Fenway? He hears on the radio the game's a sellout, so obviously that's the day we're going. No tickets. Walks us past the gate guy carrying a clipboard he took off a wall. \"Walk like you own the place.\" We saw the whole game from the standing rail."
+        },
+        {
+          "character": "MARA",
+          "line": "He made us wave at the camera like we belonged there.",
+          "parenthetical": "(laughing despite herself)"
+        },
+        {
+          "character": "DANNY",
+          "line": "We did belong there. That was the trick. He decided we belonged, so we did."
+        },
+        {
+          "character": "MARA",
+          "line": "He was a selfish, glorious, fucking impossible man, and I moved four hundred miles away to stop auditioning for him, and it didn't work. It never worked."
+        },
+        {
+          "character": "DANNY",
+          "line": "He kept every clipping. Every case you won that made a paper, it went up behind the register. He'd tell strangers. Strangers, Mara. He never told you because you'd have won the argument about it, and he couldn't stand losing twice.",
+          "parenthetical": "(quiet)"
+        }
+      ],
+      "characters": [
+        "DANNY",
+        "MARA"
+      ],
+      "raw_span": [
+        3888,
+        5603
+      ]
+    },
+    {
+      "scene_id": "S004",
+      "page": 4,
+      "heading": "INT. ST. BRIGID'S CHURCH - DAY",
+      "int_ext": "INT",
+      "location": "ST. BRIGID'S CHURCH",
+      "time_of_day": "DAY",
+      "action": "Full pews. Fishermen in blazers that fit them two funerals ago. The casket at the front under a spray of lilies and, at Helen's visible disapproval, a coiled dock line.\n\nAt the side of the altar, an honor guard: three OLD VETERANS in dress uniforms, service rifles held at rest, faces like the granite outside.\n\nCrow walks to the front. No accompanist. He grips the lectern, and into the dead-quiet room he sings -- rough, unhurried, surprisingly tender -- the old Stephen Foster hymn \"Hard Times Come Again No More.\"\n\nNobody breathes. He finishes. He nods once, to the casket, like closing a bar tab, and sits.\n\nHelen steps up. She sets a battered BOOMBOX on the altar rail, and looks at it with naked distrust. Sam, in the front pew, gives her a thumbs up.\n\nShe presses play.\n\nThe opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.\n\nHold on the faces. Danny's jaw working. Sam mouthing the words. Mara, eyes forward, absolutely still, tears moving anyway.",
+      "dialogue": [
+        {
+          "character": "CROW",
+          "line": "'Tis the song, the sigh of the weary. Hard times, hard times, come again no more...",
+          "parenthetical": "(singing)"
+        }
+      ],
+      "characters": [
+        "CROW"
+      ],
+      "raw_span": [
+        5603,
+        6797
+      ]
+    },
+    {
+      "scene_id": "S005",
+      "page": 4,
+      "heading": "EXT. ST. BRIGID'S CHURCHYARD - DAY",
+      "int_ext": "EXT",
+      "location": "ST. BRIGID'S CHURCHYARD",
+      "time_of_day": "DAY",
+      "action": "The mourners in a loose crescent under a pewter sky. The honor guard stands in a row, rifles up at the ready.\n\nVOLLEY. Gulls explode off the church roof. Sam clamps his hands over his ears. Barnacle, tied to the fence, points his muzzle at the sky and HOWLS.\n\nVOLLEY. VOLLEY.\n\nThe senior veteran presents the folded flag -- not to Danny, not to Mara. To Sam. The boy takes it like it weighs a hundred pounds, because it does.",
+      "dialogue": [
+        {
+          "character": "VETERAN",
+          "line": "Ready. Aim. Fire."
+        }
+      ],
+      "characters": [
+        "VETERAN"
+      ],
+      "raw_span": [
+        6797,
+        7287
+      ]
+    },
+    {
+      "scene_id": "S006",
+      "page": 4,
+      "heading": "INT. THE WHEELHOUSE - DAY",
+      "int_ext": "INT",
+      "location": "THE WHEELHOUSE",
+      "time_of_day": "DAY",
+      "action": "THE WAKE. The bar packed to the walls. Chowder in mismatched bowls. Real food; no sandwiches in sight. Laughter in that specific register that lives one door down from crying.\n\nAt the bar, COUSIN TEDDY (40s, tie loosened, several drinks ahead of the room) holds forth.\n\nDanny hits him. One punch, no windup, the kind you learn on a working dock.\n\nTeddy goes back over a stool and comes up swinging, and for five ugly seconds it is a real fight -- grappling, a glass shattering, blood bright from Teddy's nose across the bar top -- before Crow peels them apart with an ease that suggests long practice.\n\nHelen is already there with a stack of cocktail napkins, dressing Teddy's nose with the brisk efficiency of a corner cutman. Mara surveys the wreckage.",
+      "dialogue": [
+        {
+          "character": "TEDDY",
+          "line": "All I'm saying -- all I'm saying is that boat surveys at forty grand, and the plan is to torch it. That's the estate. That's my family's --"
+        },
+        {
+          "character": "DANNY",
+          "line": "Say that again."
+        },
+        {
+          "character": "TEDDY",
+          "line": "It's a boat, Danny. He was a drunk with a fucking boat, and you're all acting like it's the crown jewels."
+        },
+        {
+          "character": "CROW",
+          "line": "Go home, Ted. Tide's going out. Try and go with it.",
+          "parenthetical": "(to Teddy, mild)"
+        },
+        {
+          "character": "MARA",
+          "line": "\"Real food, no sandwiches, and a fistfight.\" He got everything he asked for.",
+          "parenthetical": "(to Helen)"
+        },
+        {
+          "character": "HELEN",
+          "line": "They usually do."
+        }
+      ],
+      "characters": [
+        "TEDDY",
+        "DANNY",
+        "CROW",
+        "MARA",
+        "HELEN"
+      ],
+      "raw_span": [
+        7287,
+        8546
+      ]
+    },
+    {
+      "scene_id": "S007",
+      "page": 5,
+      "heading": "INT. THE WHEELHOUSE - NIGHT",
+      "int_ext": "INT",
+      "location": "THE WHEELHOUSE",
+      "time_of_day": "NIGHT",
+      "action": "Long after. Empty. Chairs up on tables. One lamp behind the bar. Mara alone, counting the night's take, not counting it at all.\n\nShe takes down the good whiskey from the top shelf -- the bottle no one is allowed to touch -- and pours two glasses. Sets one at the far end of the bar. Old habit. She doesn't seem to notice she's done it.\n\nELI VOSS (70) is sitting in front of the far glass. Work jacket. Salt-white stubble. He was not there a moment ago, and the room does not find this strange.\n\nMara does not turn around. Her hands go still on the register.\n\nShe comes down the bar. Stops an arm's length away. Up close he is exactly himself: unhurried, amused, infuriating.\n\nMara's eyes fill. She hates it. She lets it happen anyway.\n\nShe laughs -- an ugly, wet, wonderful laugh. She wipes her eyes with the heel of her hand, and when she looks up the stool is empty.\n\nAt the far end of the bar, his glass is empty too.",
+      "dialogue": [
+        {
+          "character": "ELI",
+          "line": "You put the Hopper crooked."
+        },
+        {
+          "character": "ELI",
+          "line": "It's been crooked eleven years. But you looked at it tonight, so now it's your fault."
+        },
+        {
+          "character": "MARA",
+          "line": "You're not here.",
+          "parenthetical": "(not turning)"
+        },
+        {
+          "character": "ELI",
+          "line": "I'm not anywhere. It's very freeing. No tide chart. No Coors Light."
+        },
+        {
+          "character": "MARA",
+          "line": "That you drank on purpose. For thirty years. Out of spite.",
+          "parenthetical": "(turning now)"
+        },
+        {
+          "character": "ELI",
+          "line": "Loyalty. Spite is just loyalty with the brights on."
+        },
+        {
+          "character": "MARA",
+          "line": "I came back four times. Ma's funeral. Danny's wedding. Twice more. You talked to me about bilge pumps."
+        },
+        {
+          "character": "ELI",
+          "line": "I know."
+        },
+        {
+          "character": "MARA",
+          "line": "That's it? You know?"
+        },
+        {
+          "character": "ELI",
+          "line": "You were the one thing I ever made that didn't need fixing. I didn't have a language for that. Bilge pumps, I had."
+        },
+        {
+          "character": "MARA",
+          "line": "The boat's worth fifty thousand dollars, Dad."
+        },
+        {
+          "character": "ELI",
+          "line": "The boat is a coffin with a diesel in it. Everything I loved either walked off it or died on it, except you, and you swam. (beat) Burn it, Mare. Stand on the seawall with your brother and watch it go, and be done carrying it."
+        },
+        {
+          "character": "MARA",
+          "line": "Slack tide?",
+          "parenthetical": "(barely)"
+        },
+        {
+          "character": "ELI",
+          "line": "Slack tide. I meant that part. The Hendersons have suffered enough."
+        }
+      ],
+      "characters": [
+        "ELI",
+        "MARA"
+      ],
+      "raw_span": [
+        8546,
+        10528
+      ]
+    },
+    {
+      "scene_id": "S008",
+      "page": 6,
+      "heading": "EXT. BANNOCK BOATYARD - DAY",
+      "int_ext": "EXT",
+      "location": "BANNOCK BOATYARD",
+      "time_of_day": "DAY",
+      "action": "The MARGARET ROSE up on stands, Danny and Crow moving over her with jerry cans of diesel, soaking coiled blankets along the deck. It is exactly as legal as it looks.\n\nCrow lugs a milk crate aboard: cardboard tubes, mortar shells, a coil of fuse.\n\nA white pickup with U.S. Coast Guard markings rolls into the yard. PETTY OFFICER REYES (30s, squared away, unreadable) steps out and takes a long look at the diesel cans, the blankets, the fireworks, and the two men standing in front of them like boys caught smoking.\n\nA long silence. Reyes looks past them, at the boat's transom. MARGARET ROSE.\n\nHe gets back in the truck. Rolls the window down.\n\nThe truck pulls out. Crow watches it go.",
+      "dialogue": [
+        {
+          "character": "CROW",
+          "line": "Fourth of July stash. Three years of it. He'd want the good ones up."
+        },
+        {
+          "character": "REYES",
+          "line": "Mr. Voss. Word around the harbor is you're planning a marine event. Open flame, on a vessel, in navigable waters. I checked. There's no permit on file."
+        },
+        {
+          "character": "DANNY",
+          "line": "It's a funeral."
+        },
+        {
+          "character": "REYES",
+          "line": "It's an unpermitted burn with a homemade pyrotechnics display, is what it is."
+        },
+        {
+          "character": "REYES",
+          "line": "Eli Voss pulled my mother out of the water in 'ninety-eight. Her and three others, in a following sea, in a boat half this size. (beat) Slack tide's at nine-forty. My patrol ends at nine. Keep it in the outer harbor, keep a skiff standing off with a radio, and keep that boy of yours in a life jacket."
+        },
+        {
+          "character": "REYES",
+          "line": "I was never here."
+        },
+        {
+          "character": "DANNY",
+          "line": "Never where?"
+        },
+        {
+          "character": "CROW",
+          "line": "I like her."
+        }
+      ],
+      "characters": [
+        "CROW",
+        "REYES",
+        "DANNY"
+      ],
+      "raw_span": [
+        10528,
+        11976
+      ]
+    },
+    {
+      "scene_id": "S009",
+      "page": 7,
+      "heading": "EXT. BANNOCK HARBOR - NIGHT",
+      "int_ext": "EXT",
+      "location": "BANNOCK HARBOR",
+      "time_of_day": "NIGHT",
+      "action": "The MARGARET ROSE rides at anchor in the outer harbor, dark against a darker sky. Along the seawall, the whole town has turned out, candles cupped in fists against the breeze.\n\nA Boston Whaler skiff crosses the black water. Danny at the tiller. Mara amidships with the urn in her lap. Sam in the bow in a life vest two sizes too big, one hand knotted in Barnacle's collar. The old dog rides like a figurehead, nose into the wind.\n\nThey come alongside the Margaret Rose. Danny and Mara climb aboard; Sam and the dog stay in the skiff, holding the rail.",
+      "dialogue": [],
+      "characters": [],
+      "raw_span": [
+        11976,
+        12558
+      ]
+    },
+    {
+      "scene_id": "S010",
+      "page": 7,
+      "heading": "INT./EXT. MARGARET ROSE - WHEELHOUSE - NIGHT - CONTINUOUS",
+      "int_ext": "INT/EXT",
+      "location": "MARGARET ROSE - WHEELHOUSE",
+      "time_of_day": "NIGHT - CONTINUOUS",
+      "action": "Mara sets the urn on the chart shelf, where the coffee thermos rode for forty years. Danny lashes it fast with a dock line, cinches it, tests it.\n\nMara lifts the old brass compass out of its gimbal and pockets it. Danny sees. Says nothing.",
+      "dialogue": [
+        {
+          "character": "DANNY",
+          "line": "You do it.",
+          "parenthetical": "(handing her the flare gun)"
+        },
+        {
+          "character": "MARA",
+          "line": "Why me?"
+        },
+        {
+          "character": "DANNY",
+          "line": "He decided you belonged here. So you do."
+        }
+      ],
+      "characters": [
+        "DANNY",
+        "MARA"
+      ],
+      "raw_span": [
+        12558,
+        12966
+      ]
+    },
+    {
+      "scene_id": "S011",
+      "page": 8,
+      "heading": "EXT. BANNOCK HARBOR - NIGHT - CONTINUOUS",
+      "int_ext": "EXT",
+      "location": "BANNOCK HARBOR",
+      "time_of_day": "NIGHT - CONTINUOUS",
+      "action": "They drop back into the skiff and stand off, engine idling, the radio crackling once with nothing.\n\nMara stands, braces, and fires the flare into the soaked blankets amidships.\n\nWHUMP. A line of blue-orange flame walks the deck like it knows the boat. Then the diesel catches and the MARGARET ROSE goes up -- a column of fire standing on the black water, doubled in the swell, huge.\n\nOn the seawall, a hundred candle-flames and one enormous gasp. Then, from speakers somebody has rigged on the seawall railing, Buckley's \"Hallelujah\" starts again, drifting out across the water toward the fire.\n\nCrow touches a road flare to the mortar fuse. The Fourth of July stash goes up -- white and gold chrysanthemums blooming over the burning boat, reflections shattering across the harbor.\n\nSam stands up in the skiff for a better look.\n\nSam sits. Barnacle barks at the fireworks, once, on principle.\n\nThen -- a CRACK from the fire. The anchor line, burned through at the chock, parts. The burning boat swings free and begins to drift, slow and terrible, on the last of the tide.\n\nToward a row of moored floats. The nearest one flying a little pennant: HENDERSON.\n\nBefore Danny can speak she has the spare line over her shoulder and she DIVES -- off the skiff into the black water, surfacing in the firelight, swimming hard for the mooring buoy off the Margaret Rose's bow.\n\nShe reaches the buoy, gets the line through the eye with numb hands, waves. Danny throws the skiff into gear, takes up the slack, and eases the burning boat's head around -- slow, straining, the flames roaring overhead -- until the drift points at open water.\n\nHe swings back and hauls Mara over the gunwale, soaked, gasping, shaking with cold and adrenaline and something else entirely.\n\nOut in the dark, the MARGARET ROSE burns down to the waterline, going out the way a day goes out, while Buckley's voice carries over the water and the last fireworks fall.",
+      "dialogue": [
+        {
+          "character": "DANNY",
+          "line": "Sit DOWN --"
+        },
+        {
+          "character": "MARA",
+          "line": "You have got to be kidding me."
+        },
+        {
+          "character": "DANNY",
+          "line": "MARA!"
+        },
+        {
+          "character": "DANNY",
+          "line": "You're insane. You know that. That was -- (laughing, despite everything) -- that was fucking beautiful."
+        },
+        {
+          "character": "MARA",
+          "line": "He would have HATED hitting the Hendersons'.",
+          "parenthetical": "(through chattering teeth)"
+        }
+      ],
+      "characters": [
+        "DANNY",
+        "MARA"
+      ],
+      "raw_span": [
+        12966,
+        15204
+      ]
+    },
+    {
+      "scene_id": "S012",
+      "page": 9,
+      "heading": "EXT. STONE JETTY - DAWN",
+      "int_ext": "EXT",
+      "location": "STONE JETTY",
+      "time_of_day": "DAWN",
+      "action": "Flat calm. The fog is back, gentler now. Ash rides the tideline like gray lace.\n\nMara and Danny sit on the rocks with coffee, passing the dented Thermos cup between them. Barnacle lies across Mara's feet, asleep with his eyes open, the way old dogs and old sailors do.\n\nSam walks the tideline below them, the folded flag still under his arm. He hasn't put it down since the churchyard.\n\nMara turns the brass compass over in her hands. The needle finds north, patient as ever.\n\nDanny nods. That's enough. That's plenty.\n\nOut on the empty water, the mooring where the MARGARET ROSE rode for forty years holds nothing at all. A gull lands on the buoy, decides it's not worth the trouble, and lifts away into the fog.",
+      "dialogue": [
+        {
+          "character": "DANNY",
+          "line": "You heading back Sunday?"
+        },
+        {
+          "character": "MARA",
+          "line": "Eventually."
+        }
+      ],
+      "characters": [
+        "DANNY",
+        "MARA"
+      ],
+      "raw_span": [
+        15204,
+        16004
+      ]
+    }
+  ],
+  "retrieval": [
+    {
+      "api": "search",
+      "args": [
+        "Find operative safety requirements in CSATF Safety Bulletins #15 (Boating), #16 (Pyrotechnics), and #17 (Water Hazards) regarding pyrotechnic special effects, open burning/fireworks, night water work, water rescue, safety personnel, and life vests.",
+        [
+          "CSATF Safety Bulletin 16 Pyrotechnic",
+          "CSATF Safety Bulletin 17 Water Hazards",
+          "CSATF Safety Bulletin 15 Boating"
+        ]
+      ],
+      "kwargs": {
+        "session_id": "scriptrisk-e-2c26be53-5315-4e02-93fe-79e111cae9c7",
+        "country": "",
+        "include_domains": null
+      },
+      "status": "returned",
+      "response": {
+        "results": [
+          {
+            "excerpts": [
+              "INDUSTRY WIDE LABOR-MANAGEMENT SAFETY COMMITTEE **SAFETY BULLETIN #16 RECOMMENDED GUIDELINES FOR SAFETY WITH PYROTECHNIC SPECIAL EFFECTS This Safety Bulletin applies to pyrotechnic materials such as explosives and flammable or combustible liquids, gases and solids when used to create pyrotechnic special effects.** ALL USE, HANDLING, STORAGE AND\n\n...\n\nPyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable. \u2022 Consideration of using remote control detonation devices should be discussed with Safety, Fire, Production, Stunts, and Special Effects prior to use.\n\n...\n\nSafety Bulletin #16\nPyrotechnic\n**Revised: May 22, 2009 Page 3 of 5**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\n_G:\\data\\wpdata\\AMPTP\\Bulletins\\Current\\SftyBull #16 PYROTECHNIC.doc_\n\n...\n\nSafety Bulletin #16\nPyrotechnic\n**Revised: May 22, 2009 Page 4 of 5**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\n_G:\\data\\wpdata\\AMPTP\\Bulletins\\Current\\SftyBull #16 PYROTECHNIC.doc_\n\n...\n\nSafety Bulletin #16\nPyrotechnic\n**Revised: May 22, 2009 Page 5 of 5**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\n_G:\\data\\wpdata\\AMPTP\\Bulletins\\Current\\SftyBull #16 PYROTECHNIC.doc_"
+            ],
+            "url": "https://www.csatf.org/wp-content/uploads/2018/05/16PYROTECHNIC.pdf",
+            "publish_date": "2009-05-27",
+            "title": "Safety Bulletin 16 - Pyrotechnic"
+          },
+          {
+            "excerpts": [
+              "**Revised: February 7, 2025**\n**Page 1 of 5**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\nINDUSTRY WIDE LABOR-MANAGEMENT SAFETY COMMITTEE\n**SAFETY BULLETIN #17**\n**WATER HAZARDS**\n\n...\n\nincluding those mandated by the appropriate AHJ. (See Safety Bulletin #15 - _Guidelines for_\n_Boating/Watercraft Safety for Film Crews_ )\n**Electrical Hazards**\nAll electrical connections should be made by, or under the supervision of, a qualified person. (See\n\n...\n\nmitigate it. Appropriate water safety devices (e.g., life vests, life preservers, safety rings, safety\nhooks, buoys) should be available for all personnel working in or around water. When necessary,\nthe Production Management should implement a plan to account for personnel in the water, such\nas a \u201cbuddy\u201d or a check in/check out system.\n\n...\n\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\nSafety Bulletin 17\nWater Hazards\n**Poor Water Quality**\nWhen water quality results are poor or unknown, Production Management should implement the\nfollowing guidelines:\n\u2022"
+            ],
+            "url": "https://www.csatf.org/17_safety_bltn_water_hazards/",
+            "publish_date": null,
+            "title": "INDUSTRY WIDE LABOR-MANAGEMENT SAFETY ..."
+          },
+          {
+            "excerpts": [
+              "# INDUSTRY WIDE LABOR-MANAGEMENT SAFETY COMMITTEE\n## **SAFETY BULLETIN #15**\n### 8. The production will establish work procedures to be followed while working on or around watercraft, including procedures for abandoning the watercraft; responding to f\n**Revised: August 20, 2013 Page 2 of 5**\n\n...\n\n### 3. Avoid clothing, jewelry or loose items that can get caught in machinery or rigging, or impede watercraft transfers.\n**Revised: August 20, 2013 Page 3 of 5**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\n\n...\n\n### 3. Prior to transferring to another watercraft, allow watercraft personnel to assist in the transfer of gear and equipment. Use two hands to steady yourself when transferring to the other watercraft.\n**Revised: August 20, 2013 Page 5 of 5**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n\n...\n\n_H:\\Bulletins\\SftyBull #15 BOATING-Revised-2013 August 20.docx_"
+            ],
+            "url": "https://www.csatf.org/wp-content/uploads/2018/05/15BOATING.pdf",
+            "publish_date": "2013-08-28",
+            "title": "Boating and Watercraft Safety"
+          },
+          {
+            "excerpts": [
+              "# Operating Hours:\n## Safety Bulletins\n### SAFETY BULLETINS\n[Guidelines for Boating/Watercraft Safety for Film Crews](https://www.csatf.org/wp-content/uploads/2018/05/15BOATING.pdf)\nRevised 08/20/13\n16\n[Recommended Guidelines for Safety with Pyrotechnic Special Effects](https://www.csatf.org/wp-content/uploads/2018/05/16PYROTECHNIC.pdf)\nRevised 05/22/09\n17\nWater Hazards\nRevised 02/07/25\n18\n[Guidelines for Safe Use of Stunt Air Bags, Boxes or Other Freefall Catch Systems](https://www.csatf.org/wp-content/uploads/2018/05/18AIR_BAGS.pdf)\nRevised 04/17/13\n19\n[Recommended Guidelines for the Use of Open Flame on Production](https://www.csatf.org/wp-content/uploads/2018/05/19FLAMES.pdf)\n\n...\n\n### Boletines de Seguridad en Espa\u00f1ol\n| 13 | Lineamientos Recomendados Para Combustibles Inflamables Y Equipo Relacionado | Actualizado el 07/01/22 |\n| 14 | Paracaidismo Y Ca\u00edda Libre | Actualizado el 01/06/06 |\n| 15 | Recomendaciones De Seguridad Para El Personal De Filmaci\u00f3n En Botes/Embarcaciones | Actualizado el 08/20/13 |\n| 16 | Recomendaciones De Seguridad Para La Creaci\u00f3n De Efectos Especiales Con Pirotecnia | Actualizado el 05/22/09 |\n| 17 | Peligros Relacionados Con El Agua | Actualizado el 02/07/25 |"
+            ],
+            "url": "https://www.csatf.org/production-affairs-safety/safety-bulletins",
+            "publish_date": null,
+            "title": "Safety Bulletins \u2013 Contract Services - csatf.org"
+          },
+          {
+            "excerpts": [
+              "**Revised: August 20, 2013 Page 1 of 2**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\n_H:\\Bulletins\\SftyBull #17 WATER HAZARDS-Revised 2013 August 20.docx_\n\n# INDUSTRY WIDE LABOR-MANAGEMENT SAFETY COMMITTEE\n**SAFETY BULLETIN #17**\n\n## **WATER HAZARDS**\n### 6. All personnel scheduled for water work shall be notified in advance via the Call Sheet. Personnel who are uncomfortable working in or around water should notify their supervisor prior to that day\u2019s call.\nSafety Bulletin #17\nWater Hazards\n**Revised: August 20, 2013 Page 2 of 2**\n\n...\n\n_H:\\Bulletins\\SftyBull #17 WATER HAZARDS-Revised 2013 August 20.docx_"
+            ],
+            "url": "https://www.csatf.org/wp-content/uploads/2018/05/17WATER_HAZARDS.pdf",
+            "publish_date": null,
+            "title": "Safety Bulletin #17 Water Hazards"
+          },
+          {
+            "excerpts": [
+              "Recommended Guidelines for Safety with Pyrotechnic \u00b7 Special Effects \u00b7 Revised 05/22/09 \u00b7 17 \u00b7 Water Hazards \u00b7 Revised 02/07/25 \u00b7 18 \u00b7 Guidelines for Safe Use of Stunt Air Bags, Boxes or Other \u00b7 Freefall Catch Systems \u00b7 Revised 04/17/13 \u00b7 19 \u00b7 Recommended Guidelines for the Use of Open Flame on \u00b7"
+            ],
+            "url": "https://www.csatf.org/all_safety_bulletins-procedural_guidelines-info_fact_sheets/",
+            "publish_date": null,
+            "title": "Revised: July 10, 2025 Page 1 of 3"
+          },
+          {
+            "excerpts": [
+              "Recommended Guidelines for Safety with Pyrotechnic \u00b7 Special Effects \u00b7 Revised 05/22/09 \u00b7 17 \u00b7 Water Hazards \u00b7 Revised 08/20/13 \u00b7 18 \u00b7 Guidelines for Safe Use of Stunt Air Bags, Boxes or Other \u00b7 Freefall Catch Systems \u00b7 Revised 04/17/13 \u00b7 19 \u00b7 Recommended Guidelines for the Use of Open Flame on \u00b7"
+            ],
+            "url": "https://www.csatf.org/toc_safety_bulletins/",
+            "publish_date": null,
+            "title": "Revised: December 19, 2023 Page 1 of 3"
+          },
+          {
+            "excerpts": [
+              "# **Actsafe Safety Bulletin #17**\n## WATER HAZARDS\n1. When working on a body of water is contemplated, the Producer should identify and make known prior to actual filming, all available knowledge regarding currents; and natu- ral and man made hazards, including sub-surface objects, underwater life and contami- nation.\n\n...\n\n4. When necessary for personnel to work in fast-moving rivers, downstream safety pickup personnel and safety equipment should be stationed for downstream emergency rescue.\n5. Where boating traffic is anticipated, all precautions, including those mandated by the appropriate authorities, will be enforced. (See Safety Bulletin #15 -Guidelines for Boat- ing Safety for Film Crews).\n6. All personnel scheduled for water work shall be notified in advance via the Call Sheet. Personnel who are uncomfortable working in or around water should notify their supervi- sor prior to that day\u2019s call."
+            ],
+            "url": "https://actsafe.ca/wp-content/uploads/2017/11/Water-Hazards-Motion-Picture-Safety-Bulletin-PDF.pdf",
+            "publish_date": "2010-03-04",
+            "title": "Actsafe Safety Bulletin #17"
+          },
+          {
+            "excerpts": [
+              "personnel working with or around pyrotechnics and/or open flame on production should \u00b7 refer to Safety Bulletin #16, \u201c<strong>Recommended Guidelines for Safety with Pyrotechnic</strong> \u00b7 Special Effects\u201d and/or Safety Bulletin #19, \u201cRecommended Guidelines for the Use of \u00b7"
+            ],
+            "url": "https://www.csatf.org/bulletin-21/",
+            "publish_date": null,
+            "title": "Safety Bulletin #21 Appropriate Clothing Revised: June 5, 2009 Page 1 of 4"
+          },
+          {
+            "excerpts": [
+              "Safety Bulletin #17 (Water Hazards) was expanded with new sections on \u00b7 <strong>environmental concerns, physical hazards, biological hazards, and safety</strong> \u00b7 procedures when water quality is poor. There are also new details on water \u00b7 quality testing. Safety and Health Awareness Sheet (Indoor Heat"
+            ],
+            "url": "https://www.csatf.org/2025-q1-newsletter/",
+            "publish_date": null,
+            "title": "New Safety Advisor Training Launches"
+          }
+        ],
+        "search_id": "search_6f54b2206f825ab78247e8b36bdd7212",
+        "session_id": "scriptrisk-e-2c26be53-5315-4e02-93fe-79e111cae9c7",
+        "usage": [
+          {
+            "count": 1,
+            "name": "sku_search"
+          }
+        ],
+        "warnings": null,
+        "metadata": null
+      },
+      "elapsed_s": 1.75
+    },
+    {
+      "api": "extract",
+      "args": [
+        [
+          "https://www.csatf.org/wp-content/uploads/2018/05/16PYROTECHNIC.pdf"
+        ],
+        "Get operative requirements on pyrotechnics licensing, safety precautions, fire prevention, and clearances from CSATF Safety Bulletin 16"
+      ],
+      "kwargs": {
+        "session_id": "scriptrisk-e-2c26be53-5315-4e02-93fe-79e111cae9c7"
+      },
+      "status": "returned",
+      "response": {
+        "errors": [],
+        "extract_id": "extract_e9c559fad0458081e3e3dd8676e77288",
+        "results": [
+          {
+            "excerpts": [
+              "Safety Bulletin #16\nPyrotechnic\n**Revised: May 22, 2009 Page 1 of 5**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\n_G:\\data\\wpdata\\AMPTP\\Bulletins\\Current\\SftyBull #16 PYROTECHNIC.doc_\nINDUSTRY WIDE LABOR-MANAGEMENT SAFETY COMMITTEE **SAFETY BULLETIN #16 RECOMMENDED GUIDELINES FOR SAFETY WITH PYROTECHNIC SPECIAL EFFECTS This Safety Bulletin applies to pyrotechnic materials such as explosives and flammable or combustible liquids, gases and solids when used to create pyrotechnic special effects.** ALL USE, HANDLING, STORAGE AND\nTRANSPORTATION OF PYROTECHNIC MATERIALS SHALL BE IN COMPLIANCE WITH ALL APPLICABLE FEDERAL, STATE, AND LOCAL LAWS AND REGULATIONS. **Pre-Production/Planning** \u2022 When pyrotechnic materials are used on set, such use shall be under controlled conditions with due regard for the safety of all involved.\n\u2022 The Production Company or Studio shall make sufficient advanced notification of the use of pyrotechnic materials to the appropriate departments (such as Special Effects, Stunts, Camera, Art, Construction, Hair, Make-up and Wardrobe), in order to safely plan pyrotechnic special effects.\nAny performer who may be involved in a pyrotechnic special effect shall be notified. \u2022 Any required licenses and/or permits shall be obtained from proper Authorities Having Jurisdiction (AHJ) over pyrotechnic materials prior to using pyrotechnic special effects.\nPyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable. \u2022 Consideration of using remote control detonation devices should be discussed with Safety, Fire, Production, Stunts, and Special Effects prior to use.\n\u2022 Prior to pyrotechnic special effects work, productions must develop emergency procedures and contingency plans, including identifying emergency fire suppression equipment and personnel needs. All equipment shall be checked to verify that it is in good operating condition.\nIndividuals using this equipment must have proper training in its use and limitations. \u2022 The need for personal protective equipment (PPE) should be identified during the planning stage. \u2022 Special effects personnel must inform the Transportation Coordinator of what pyrotechnic materials will be transported. Vehicles must be properly placarded when\nSafety Bulletin #16\nPyrotechnic\n**Revised: May 22, 2009 Page 2 of 5**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\n_G:\\data\\wpdata\\AMPTP\\Bulletins\\Current\\SftyBull #16 PYROTECHNIC.doc_\n\n...\n\nthat will be in close proximity to planned pyrotechnic special effects must be prepared accordingly and/or should be made of flame retardant material.\nAll sets, equipment, props, wardrobe, wigs, etc., must be made available in advance to the Pyrotechnic Special Effects Operator in charge for evaluation, to establish placement, and if necessary, for testing.\n**Clothing and Personal Protective Equipment** \u2022 Cast and crew in close proximity to planned effects should wear appropriate protective clothing.\nDepending on the hazards involved, this clothing should include appropriate closed-toe footwear, long pants, and a long-sleeved shirt made of 100% cotton or material which provides equal or greater protection.\n\u2022 Cast and crew must be notified by the Pyrotechnic Special Effects Operator in charge when there is potential for exposures to pyrotechnics, such as fireball, debris, and shock wave. PPE must be provided as appropriate for the hazard(s) involved and considerations must be made for head, hand, eye, ear and respiratory protection.\nDepending on the hazards involved, the AHJ may require full fire turnout gear and Self Contained Breathing Apparatus (SCBA). These guidelines will also apply to performers when appropriate. All users must have proper training in the use and limitations of such PPE.\n**Fire Protection** \u2022 Pyrotechnic materials shall be kept a safe distance from open flames and other sources of ignition. Where required, such materials shall also be stored in approved, properly labeled containers.\n\u2022 Smoking is prohibited in all pyrotechnic areas and \"No Smoking\" signs shall be posted in all appropriate areas of the premises or locations where pyrotechnic materials are stored and handled.\n\u2022 Sufficient fire suppression equipment (such as charged extinguishers and fire hoses) must be manned, ready for use and placed at an appropriate safe distance from the effect, during testing, rehearsal and filming.\n\u2022 Designated personnel performing fire suppression activities during testing, rehearsal and filming must be properly clothed and wear appropriate PPE.\nSafety Bulletin #16\nPyrotechnic\n**Revised: May 22, 2009 Page 3 of 5**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\n_G:\\data\\wpdata\\AMPTP\\Bulletins\\Current\\SftyBull #16 PYROTECHNIC.doc_\n**Personnel Using and Handling Pyrotechnic Materials** \u2022 Special effects personnel working with pyrotechnic materials (pyrotechnicians) should be dressed in appropriate clothing to protect them from potential hazards.\nAt a minimum, clothing should consist of appropriate closed-toe footwear, long pants, and a long-sleeved shirt made of 100% cotton or material which provides equal or greater protection. PPE considerations must be made for head, hand, eye, ear and respiratory protection. Depending on the hazards involved, the AHJ may require full fire turnout gear.\n\u2022 Intoxicating liquids, drugs and other controlled substances (except for prescription drugs not impairing the user's judgment and motor functions) shall not be used by any person handling pyrotechnic special effects at any time during transportation, set-up, firing or removal.\n\u2022 Pyrotechnicians must be given sufficient time to safely perform the work (including the transporting, storing, creating, rigging, firing, striking and extinguishing of all pyrotechnic special effects materials). While conducting such duties, pyrotechnicians should not be rushed, interrupted or distracted from focusing on their work.\n\u2022 The rigging of any type of pyrotechnic device to a performer shall be done by a qualified special effects operator.\n\u2022 Pyrotechnic special effects shall not be fired unless the area involved with the firing is in the continuously unobstructed full view of the Pyrotechnic Special Effects Operator in charge or his or her designated representative at the time of firing, unless equal means of observation are used.\n**Awareness** \u2022 When using pyrotechnic special effects on any set, notification shall be given to personnel by way of the call sheet, or other suitable means. The call sheet should also state the type of pyrotechnic special effects work that is planned.\n\u2022 Before any pyrotechnic special effects or potentially hazardous sequence is to be performed, all persons involved shall be thoroughly briefed at a safety orientation meeting on the site.\n\u2022 The safety orientation meeting shall include an \"on site walk-through\" and/or \"dry run\" with the Pyrotechnic Special Effects Operator in charge and all other persons involved in the event, including Stunt Coordinator if applicable. PPE should be in place at that time.\nSafety Bulletin #16\nPyrotechnic\n**Revised: May 22, 2009 Page 4 of 5**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\n_G:\\data\\wpdata\\AMPTP\\Bulletins\\Current\\SftyBull #16 PYROTECHNIC.doc_\n\u2022 No performer shall be rigged with a pyrotechnic device without his or her prior consent and consultation with the qualified Pyrotechnic Special Effects Operator in charge and, if applicable, Stunt Coordinator.\n\u2022 If practical and upon a reasonable and timely request, the Pyrotechnic Special Effects Operator in charge may conduct a test firing of pyrotechnics when such are to be discharged in the vicinity of cast and crew.\n\n...\n\n**Emergency Procedures** \u2022 Emergency procedures and contingency plans, including appropriate signs and signals and the authority to abort the shot, shall be specified prior to engaging in any pyrotechnic special effects work.\n\u2022 Before the performance of a pyrotechnic special effect, the First Assistant Director, or designee, shall clearly announce to all persons the location of exits, the primary escape route and alternate escape routes. Escape routes must provide a clear and unobstructed passage to a designated safe area.\n\n...\n\n\u2022 In the event of an emergency, only those designated with emergency response roles should enter the pyrotechnic special effects area. **Authorized Personnel in the Pyrotechnics Area** \u2022 Access to areas where pyrotechnic materials are stored or handled shall be limited to authorized personnel only.\nAll other personnel shall remain at a designated safe distance. If needed to prevent unintentional entry into hazardous areas, warning signs should be posted and/or other appropriate precautions taken.\n\u2022 Prior to using pyrotechnic special effects with minors present, key production personnel, such as the Director, First Assistant Director, Pyrotechnic Special Effects Operator in charge, Stunt Coordinator and safety professional, should confer with the minor, minor\u2019s parent/legal guardian and Studio Teacher to review and discuss the planned\n\n...\n\nSafety Bulletin #16\nPyrotechnic\n**Revised: May 22, 2009 Page 5 of 5**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\n_G:\\data\\wpdata\\AMPTP\\Bulletins\\Current\\SftyBull #16 PYROTECHNIC.doc_\ncheck applicable state laws with respect to the employment of minors in these situations. The production shall consider any reasonable request from the minor, minor\u2019s parent/legal guardian, and/or Studio Teacher regarding the minor\u2019s proximity to any pyrotechnic special effect.\n**Use of Power Sources in Firing Pyrotechnic Materials** \u2022 To protect against accidental firing, all electrically fired pyrotechnic devices shall be shunted at all times prior to firing.\n\u2022 Power sources for firing pyrotechnic special effects devices shall be restricted to isolated ungrounded batteries or individually designated ungrounded generators (below 5 kilowatts to comply with non-grounding requirements) used exclusively for firing purposes only. \u2022 Commercial or house power shall not be used directly for firing purposes.\n\u2022 There should be no wireless transmissions in the area where electrically fired pyrotechnic devices are being used without prior consultation with the Pyrotechnic Special Effects Operator in charge.\nIn addition, caution should be taken to avoid extraneous or induced electrical currents from sources such as power lines, radar/microwave transmitters, electrical cable, lightning, static electricity, etc. Note that static electricity is especially a problem during periods of low humidity.\n\u2022 Whenever practical, pyrotechnic special effects should be hard wired from the effect to the firing system.\nWhen remote control firing is planned, special precautions must be taken to prevent accidents, including but not limited to the following:  Having familiarity with the system being used and its limitations;  Performing a risk analysis in the event of premature firing or firing failure; and  Testing the firing system under the anticipated\nconditions of use. **Safety on the Set After Use of Pyrotechnic Material** \u2022 After each pyrotechnic event, no one shall enter the pyrotechnic area other than the Pyrotechnic Special Effects Operator in charge, or his or her designated representative(s), until it is declared safe. This includes testing, rehearsals, and filming.\n\u2022 Appropriate fire watch, as determined by the AHJ, should be maintained after each pyrotechnic event."
+            ],
+            "url": "https://www.csatf.org/wp-content/uploads/2018/05/16PYROTECHNIC.pdf",
+            "full_content": null,
+            "publish_date": "2009-05-27",
+            "title": "Microsoft Word - SftyBull #16 PYROTECHNIC.doc"
+          }
+        ],
+        "session_id": "scriptrisk-e-2c26be53-5315-4e02-93fe-79e111cae9c7",
+        "usage": [
+          {
+            "count": 1,
+            "name": "sku_extract_excerpts"
+          }
+        ],
+        "warnings": null,
+        "metadata": null
+      },
+      "elapsed_s": 0.83
+    },
+    {
+      "api": "extract",
+      "args": [
+        [
+          "https://www.csatf.org/wp-content/uploads/2018/05/17WATER_HAZARDS.pdf"
+        ],
+        "Get operative safety requirements regarding water safety personnel, rescue equipment, cold water immersion/hypothermia, and night water filming from CSATF Safety Bulletin 17"
+      ],
+      "kwargs": {
+        "session_id": "scriptrisk-e-2c26be53-5315-4e02-93fe-79e111cae9c7"
+      },
+      "status": "returned",
+      "response": {
+        "errors": [],
+        "extract_id": "extract_6d1eac3bc12a64898a0c25e3b57369c6",
+        "results": [
+          {
+            "excerpts": [
+              "**Revised: August 20, 2013 Page 1 of 2**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\n_H:\\Bulletins\\SftyBull #17 WATER HAZARDS-Revised 2013 August 20.docx_\n\n# INDUSTRY WIDE LABOR-MANAGEMENT SAFETY COMMITTEE\n**SAFETY BULLETIN #17**\n\n## **WATER HAZARDS**\n### 6. All personnel scheduled for water work shall be notified in advance via the Call Sheet. Personnel who are uncomfortable working in or around water should notify their supervisor prior to that day\u2019s call.\nSafety Bulletin #17\nWater Hazards\n**Revised: August 20, 2013 Page 2 of 2**\nSAFETY BULLETINS ARE RECOMMENDED GUIDELINES ONLY; CONSULT ALL APPLICABLE RULES AND REGULATIONS\n**SAFETY BULLETINS MAY BE VIEWED OR DOWNLOADED FROM THE WEBSITE WWW.CSATF.ORG**\n_H:\\Bulletins\\SftyBull #17 WATER HAZARDS-Revised 2013 August 20.docx_"
+            ],
+            "url": "https://www.csatf.org/wp-content/uploads/2018/05/17WATER_HAZARDS.pdf",
+            "full_content": null,
+            "publish_date": "2013-08-28",
+            "title": "INDUSTRY WIDE LABOR-MANAGEMENT SAFETY COMMITTEE"
+          }
+        ],
+        "session_id": "scriptrisk-e-2c26be53-5315-4e02-93fe-79e111cae9c7",
+        "usage": [
+          {
+            "count": 1,
+            "name": "sku_extract_excerpts"
+          }
+        ],
+        "warnings": null,
+        "metadata": null
+      },
+      "elapsed_s": 0.78
+    }
+  ],
+  "gemini_cost_estimate_usd": 0.0489,
+  "accuracy_pass": null
+}

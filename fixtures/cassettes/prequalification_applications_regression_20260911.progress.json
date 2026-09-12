@@ -1,0 +1,56 @@
+[
+  {
+    "flag_id": "ratings_cut",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 8289,
+    "input_sha256": "cd570abecb073b01a729c87750db13d97d898ef4ef2f70489b9d3a05472596c2",
+    "usage_available": true,
+    "elapsed_s": 7.24
+  },
+  {
+    "flag_id": "ratings_guarantee",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 8013,
+    "input_sha256": "74655e85bb96f61cf245db5974f024913c5df7b1c80fa0b845469986584ef8de",
+    "usage_available": true,
+    "elapsed_s": 5.47
+  },
+  {
+    "flag_id": "clip_application",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 7040,
+    "input_sha256": "71a2b9166056b2f52ec0dcd84379dba763ee1ecc70d1afed1d9a8bde0b897577",
+    "usage_available": true,
+    "elapsed_s": 4.36
+  },
+  {
+    "flag_id": "recording_owner",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 6721,
+    "input_sha256": "4a6913740d142cb6463b409d34ac4d246ac927e4420319e57c32803ce11fcf5b",
+    "usage_available": true,
+    "elapsed_s": 6.88
+  },
+  {
+    "flag_id": "performer_from_character",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 7115,
+    "input_sha256": "84abe1ec8fb04d17f1d541064f0aaccb813be88d9af3b18a860fb6d8b8fef0ac",
+    "usage_available": true,
+    "elapsed_s": 5.79
+  },
+  {
+    "flag_id": "inquiry_clearance",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 6794,
+    "input_sha256": "bc5462a69393325e1198e3878ca1e9e83d634832d362d06979c0b0b7d25711d6",
+    "usage_available": true,
+    "elapsed_s": 5.73
+  }
+]

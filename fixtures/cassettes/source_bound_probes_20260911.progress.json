@@ -1,0 +1,20 @@
+[
+  {
+    "flag_id": "csatf16_pyrotechnics_licenses_2018",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 7627,
+    "input_sha256": "7eacb2badd069f1314c64ca383e9c5577f91c4495437d0d17c7dbe862f769d1e",
+    "usage_available": true,
+    "elapsed_s": 5.2
+  },
+  {
+    "flag_id": "csatf17_water_exposure_monitoring",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 8621,
+    "input_sha256": "1c42aa60d5fc967d07ab4c4c6e82599e3b60dd94325fce95e7f9850435d2dcdc",
+    "usage_available": true,
+    "elapsed_s": 6.21
+  }
+]

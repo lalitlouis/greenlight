@@ -1,0 +1,47 @@
+[
+  {
+    "flag_id": "F3001",
+    "schema": "EvidenceVerdict",
+    "status": "returned",
+    "input_chars": 23594,
+    "input_sha256": "c86972137e20f283745895e38f4d46d534b30763b362da909e4b990146431992",
+    "usage_available": true,
+    "elapsed_s": 19.35
+  },
+  {
+    "flag_id": "F3001",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 16634,
+    "input_sha256": "3437ad62ff01f3ded3e6c7750c12c2164c18a0e002edf1acb1d75e4aadf7a308",
+    "usage_available": true,
+    "elapsed_s": 16.21
+  },
+  {
+    "flag_id": "F3001",
+    "schema": "SourceBoundRepair",
+    "status": "returned",
+    "input_chars": 33720,
+    "input_sha256": "40093cfa9b5cd5317864782067808ce7b43f5fb0a894a3742e267bf1f5eb0bb6",
+    "usage_available": true,
+    "elapsed_s": 7.68
+  },
+  {
+    "flag_id": "F3001",
+    "schema": "EvidenceVerdict",
+    "status": "returned",
+    "input_chars": 22745,
+    "input_sha256": "28ec8848b5e5c99a0226111a36bca6f4956fc4abca7b4ed4e066b897c980c8fd",
+    "usage_available": true,
+    "elapsed_s": 12.15
+  },
+  {
+    "flag_id": "F3001",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 15110,
+    "input_sha256": "d221ce1eb44f5b0015bbb5e4eb4564b87e3df27b8698ed6a36f40c428def187c",
+    "usage_available": true,
+    "elapsed_s": 9.31
+  }
+]

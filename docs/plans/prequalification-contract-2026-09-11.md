@@ -116,3 +116,40 @@ Before another whole-finding attempt, check the two fixed remedy texts as new po
 probes (`source_bound_repairs_20260911.json`). Budget two probe calls and at most five
 calls for one new safety repair. This is a changed implementation, not replaying the
 rejected judgment until it passes. The twelve earlier labels remain unchanged.
+
+## Source-bound repair and regression results
+
+Build `ab2efab` passed both fixed-wording probes. The saved safety finding then passed
+the complete five-call check in 64.72 seconds (estimated $0.0507 captured Gemini usage).
+It preserves a HIGH conditional fire/fireworks/water warning with unknown cost and
+schedule, the exact pyrotechnic trigger and applicable-license qualifications, and
+specific questions about effects method, jurisdiction and water work. In-session source
+inspection accepts that text against the pre-qualification rubric. Two new wording
+probes used $0.0076; the twelve earlier application/edit/inquiry controls all still
+matched their labels on this build (estimated $0.0425 total). This is 26 matched
+development probes, not 26 independent scripts or a product accuracy percentage.
+
+Fresh clearance completed with a new finding, now awaiting verification. The fresh
+safety diagnostic exhausted its 12-model-call cap **before filing**: three scene reads,
+six local bulletin lookups, one research call and two page fetches used the whole cap.
+That run is retained as incomplete, not called an accuracy pass or a false finding.
+The harness now permits an explicit 20-call diagnostic cap, while keeping 12 as its
+default and the four-retrieval/360-second limits. One additional fresh safety diagnostic
+at that stated cap is justified to observe a completed investigation. Production desk
+limits are unchanged; this is not retrying a rejected semantic judgment.
+
+The fresh clearance finding's first complete review failed (five calls, 86.57 seconds,
+estimated $0.0573). Its correction audit listed citation numbers `[1,2,3]` but supplied
+valid receipts only from `[2,3]` for a generic licensing inquiry. The redundant index
+array caused that recommendation to be discarded without semantic review. The audit
+now derives those indexes from the validated receipts, retains the submitted list in
+metadata, and still independently checks the claim using only the actual receipts.
+No citation or quoted source is added by this normalization.
+
+Source inspection also found a separate time-scope problem: an unqualified current
+ownership statement relied on a 1982 court decision. New frozen temporal controls
+(`ownership_time_scope_20260911.json`, two positive/two negative) distinguish a useful
+historical lead from current licensing authority. The reviewer now checks that distinction
+explicitly. Budget four narrow probes and one fresh-clearance repair after this code
+change, retaining the earlier failure unchanged. A current registry/rights investigation
+and general product accuracy are not established by these source-support tests.
