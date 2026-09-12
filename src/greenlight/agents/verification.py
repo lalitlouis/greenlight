@@ -141,7 +141,7 @@ async def _call_verifier_once(
         }
     v = EvidenceVerdict.model_validate_json(res.text)
     return await check_entailment(
-        client, flag, checked_verdict(v.model_dump(), flag, script_context)
+        client, flag, checked_verdict(v.model_dump(), flag, script_context), script_context
     )
 
 
@@ -1358,6 +1358,30 @@ def _refile_gate_problem(flag: dict[str, Any], *, check_authority: bool) -> str 
 _RATING_RANK = {"G": 0, "PG": 1, "PG-13": 2, "R": 3, "NC-17": 4}
 
 
+def _explain_revised_boundary(pred: dict[str, Any], removed: list[str]) -> dict[str, Any]:
+    """Record the evidence change, without inventing a new desk judgement."""
+    coverage = pred.get("conformal_set") or []
+    if not coverage or pred.get("predicted") in coverage:
+        return pred
+    change = (
+        "Verification removed these comparison descriptors: " + ", ".join(removed) + ". "
+        if removed
+        else "Following verification, "
+    )
+    explanation = (
+        change
+        + ("The" if removed else "the")
+        + " range calculated from the remaining descriptors is "
+        + ", ".join(coverage)
+        + f". The desk's earlier {pred['predicted']} prediction is retained pending "
+        "reassessment against this revised range."
+    )
+    prior = str(pred.get("divergence_reason") or "").strip()
+    if prior:
+        explanation += " Earlier desk explanation: " + prior
+    return {**pred, "divergence_reason": explanation}
+
+
 def _recompute_boundary_after_drop(
     pred: dict[str, Any], dropped: list[dict[str, Any]], kept: list[dict[str, Any]]
 ) -> tuple[dict[str, Any], dict[str, Any] | None]:
@@ -1392,8 +1416,10 @@ def _recompute_boundary_after_drop(
         "set_floor": list(ev.get("set_floor") or []),
         "reconciled_after_verification": True,
     }
+    removed = [d for d in descs if d not in keep]
+    new = _explain_revised_boundary(new, removed)
     note = {
-        "dropped_descriptors": [d for d in descs if d not in keep],
+        "dropped_descriptors": removed,
         "set_before": list(pred.get("conformal_set") or []),
         "set_after": new["conformal_set"],
     }

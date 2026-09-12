@@ -1,0 +1,719 @@
+{
+  "source_run": "runs/run_20260912_003816.json",
+  "source_run_sha256": "ea4637bc230fcfd1b7ad6c567c7e8c5e08589a4874596f5206e039f4fdffd3bd",
+  "source_build": "local:9318011a954f4f44149300e8a968c166cd84d973",
+  "evaluated_build": "7ac5ac03a127b5edaaa08041613f6e0640e4bd1e",
+  "model": "gemini-3.7-flash",
+  "elapsed_s": 222.36,
+  "calls": 5,
+  "responses_with_usage": 5,
+  "calls_without_returned_usage": 0,
+  "resumed_from": null,
+  "rechecked_correction_from": null,
+  "entailment_cases": null,
+  "entailment_cases_sha256": null,
+  "attempts": [
+    {
+      "flag_id": "F3003",
+      "schema": "EvidenceVerdict",
+      "status": "returned",
+      "input_chars": 23691,
+      "input_sha256": "273ba13e4b8b3d3314d1028112204f40c457ef4116256f3d2550c333df81447b",
+      "usage_available": true,
+      "elapsed_s": 95.65
+    },
+    {
+      "flag_id": "F3003",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 22472,
+      "input_sha256": "c71385d2f4229604f436259453373e4e2e98940b2c2e3361991430686705d9f2",
+      "usage_available": true,
+      "elapsed_s": 51.5
+    },
+    {
+      "flag_id": "F3003",
+      "schema": "SourceBoundRepair",
+      "status": "returned",
+      "input_chars": 17142,
+      "input_sha256": "f7dd002d5c9f6a2b0621fb66249af0af63791559bd4c9bd71fbb7105f5cdebc0",
+      "usage_available": true,
+      "elapsed_s": 18.63
+    },
+    {
+      "flag_id": "F3003",
+      "schema": "EvidenceVerdict",
+      "status": "returned",
+      "input_chars": 22781,
+      "input_sha256": "ad5844f2b45236f7c243360b773b1d6e7f28e7e955b0501aa0c07e2cb761b07c",
+      "usage_available": true,
+      "elapsed_s": 34.58
+    },
+    {
+      "flag_id": "F3003",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 18539,
+      "input_sha256": "d841e501935b73ea3ca51b71f3304f388fa19368df6b22404a2d55e58f5bd0f2",
+      "usage_available": true,
+      "elapsed_s": 21.95
+    }
+  ],
+  "gemini_usage": {
+    "flash": {
+      "prompt": 24095,
+      "cached": 0,
+      "output": 10285
+    }
+  },
+  "estimated_cost_usd": 0.0566,
+  "manual_review": "pending; model approval is not an accuracy label",
+  "results": [
+    {
+      "flag_id": "F3003",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "reason": "The script accurately depicts an honor guard firing three rifle volleys in Scene S005 at an outdoor funeral with mourners, Sam, and Barnacle present. The safety risks of blank fire and handling are directly supported by Safety Bulletin #1, and the remedy accurately cites the bulletin's requirement for a safety meeting with all involved personnel while offering a high-level hazard removal option.",
+        "failure_mode": "none",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "Scene S005 depicts an honor guard firing three rifle volleys at an outdoor funeral in the presence of mourners, a child (Sam), and a dog (Barnacle).",
+            "basis": "script",
+            "status": "SUPPORTED",
+            "reason": "Scene S005 shows the honor guard with rifles firing three volleys in the churchyard with mourners, Sam (the boy), and Barnacle (the dog).",
+            "citation_numbers": [],
+            "support_spans": [],
+            "script_spans": [
+              "The mourners in a loose crescent under a pewter sky. The honor guard stands in a row, rifles up at the ready.\n\nVETERAN\nReady. Aim. Fire.\n\nVOLLEY. Gulls explode off the church roof. Sam clamps his hands over his ears. Barnacle, tied to the fence, points his muzzle at the sky and HOWLS.\n\nVOLLEY. VOLLEY.\n\nThe senior veteran presents the folded flag -- not to Danny, not to Mara. To Sam. The boy takes it like it weighs a hundred pounds, because it does."
+            ]
+          },
+          {
+            "field": "finding",
+            "quote": "If practical firearms or blank ammunition are used during production, this introduces safety risks associated with blank fire and firearm handling.",
+            "basis": "risk_assessment",
+            "status": "SUPPORTED",
+            "reason": "Safety Bulletin #1 explicitly warns that blanks can kill and that all firearms must be treated as loaded, confirming the safety hazards of live handling and blank fire.",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "BLANKS CAN KILL. TREAT ALL FIREARMS AS THOUGH THEY ARE LOADED."
+              }
+            ],
+            "script_spans": [
+              "The honor guard stands in a row, rifles up at the ready.\n\nVETERAN\nReady. Aim. Fire.\n\nVOLLEY."
+            ]
+          },
+          {
+            "field": "finding",
+            "quote": "The production method, including whether functional firearms, replica props, or post-production visual effects will be utilized, remains unconfirmed.",
+            "basis": "production",
+            "status": "SUPPORTED",
+            "reason": "The production method is appropriately framed as unconfirmed based solely on the screenplay text.",
+            "citation_numbers": [],
+            "support_spans": [],
+            "script_spans": []
+          },
+          {
+            "field": "remedy",
+            "quote": "Confirm whether firearms will be used on set and how the planned approach addresses the cited guidance for a safety meeting with all involved personnel to review relevant safety issues before any firearm is used.",
+            "basis": "inquiry",
+            "status": "SUPPORTED",
+            "reason": "The inquiry requests needed staging confirmation and cites the verbatim requirement from Safety Bulletin #1 regarding a safety meeting.",
+            "citation_numbers": [
+              2
+            ],
+            "support_spans": [
+              {
+                "citation_number": 2,
+                "quote": "Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues."
+              }
+            ],
+            "script_spans": [
+              "The honor guard stands in a row, rifles up at the ready."
+            ]
+          },
+          {
+            "field": "remedy",
+            "quote": "Consider depicting the rifle volleys without on-set firing, using non-firing props and effects added in post-production.",
+            "basis": "production_option",
+            "status": "SUPPORTED",
+            "reason": "Proposes an optional hazard elimination approach by utilizing non-firing props and VFX instead of practical blank fire on set.",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "BLANKS CAN KILL. TREAT ALL FIREARMS AS THOUGH THEY ARE LOADED."
+              }
+            ],
+            "script_spans": [
+              "The honor guard stands in a row, rifles up at the ready.\n\nVETERAN\nReady. Aim. Fire.\n\nVOLLEY."
+            ]
+          },
+          {
+            "field": "severity",
+            "quote": "HIGH",
+            "basis": "risk_assessment",
+            "status": "SUPPORTED",
+            "reason": "Practical blank fire and firearm handling on set carry life-safety hazards as emphasized by Safety Bulletin #1.",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "BLANKS CAN KILL."
+              }
+            ],
+            "script_spans": [
+              "The honor guard stands in a row, rifles up at the ready."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "audit_input": "1a3f765a7b59ed51954f6c3a7ef41ca3ed381ba37ed3e82d301b205d00c98653",
+        "estimate_exclusions": [],
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The script excerpt directly supports the scene description of an honor guard firing three rifle volleys at an outdoor funeral in the presence of mourners, Sam, and Barnacle.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "Directly matches the scene action and dialogue found in the script evidence.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            },
+            {
+              "check_index": 1,
+              "entailed": true,
+              "reason": "The conditional risk assessment is justified by the cited Safety Bulletin #1 stating 'BLANKS CAN KILL' and the depicted rifle volleys.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "Preserves conditional framing regarding unconfirmed practical production methods.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            },
+            {
+              "check_index": 2,
+              "entailed": true,
+              "reason": "The statement accurately reflects that production methods and practical effects plans are unconfirmed in the screenplay input.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "Properly identifies standard unconfirmed production inputs without asserting external facts.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            },
+            {
+              "check_index": 3,
+              "entailed": true,
+              "reason": "The inquiry requests relevant missing production information and accurately references the cited safety meeting guidance from Safety Bulletin #1.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "Inquiry is relevant to the safety underwriter desk and accurately reflects the cited source requirement without introducing unsupported mandates.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            },
+            {
+              "check_index": 4,
+              "entailed": true,
+              "reason": "The production option proposes a high-level physical hazard removal (non-firing props and post-production effects) that directly addresses the depicted rifle volleys.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "High-level optional substitution addressing the physical trigger without prescribing unsupported operational procedures.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            }
+          ]
+        },
+        "entailment_policy_version": 2,
+        "evidence_review": {
+          "before": {
+            "verdict": "PARTIAL",
+            "reason": "Claim audit requires correction: Independent span review: The script evidence establishes an honor guard discharging three volleys in the presence of mourners, Sam, and Barnacle, but does not state the number of veterans in the honor guard or specify that they are military service rifles.; The script excerpt confirms the scene elements generally, but introduces unverified specific details regarding the exact count of veterans and rifle type.; three veterans; military service rifle; Independent span review: The cited safety bulletin states that blanks can kill, but does not provide operative source support for specific physical risks such as muzzle blast, burning powder fragments, acoustic sound pressure levels causing permanent hearing damage, or projectile/wad hazards.; While the source establishes that blanks are dangerous/lethal, it does not support the specific detailed catalogue of acoustic and projectile hazards claimed.; muzzle blast, burning powder fragments, high acoustic sound pressure levels causing permanent hearing damage, and projectile/wad hazards; Independent span review: The cited source excerpt does not establish a requirement to retain a licensed and qualified Armorer/Property Master to manage custody, inspection, loading, and handling of firearms.; The excerpt only mentions a walk-through/dry run involving the Property Master and designated personnel, not the specific staffing duties or armorer licensing mandates asserted.; retain a licensed and qualified Armorer / Property Master to manage custody, inspection, loading, and handling of all firearms in strict compliance with CSATF Safety Bulletin #1; Independent span review: The source supports holding a safety meeting with all involved personnel before a firearm is used, but does not support the specific expanded roster of background performers and nearby minor/animal handlers or the timing requirement 'before loading blanks'.; The truncated source excerpt specifies 'all involved personnel' rather than the specific itemized cast/crew/handler categories or the 'before loading blanks' restriction.; with all cast, crew, background performers, and nearby minor/animal handlers before loading blanks; The supplied excerpts do not mention buffer zones, eye protection, or earplugs.; Material text was omitted from the claim audit",
+            "failure_mode": "none",
+            "claim_checks": [
+              {
+                "field": "finding",
+                "quote": "Scene S005 depicts an honor guard of three veterans discharging three synchronized military service rifle volleys (ceremonial blank fire) in a churchyard funeral setting, in close proximity to a crowd of mourners, a child character (Sam), and a dog (Barnacle).",
+                "basis": "script",
+                "status": "UNSUPPORTED",
+                "reason": "Independent span review: The script evidence establishes an honor guard discharging three volleys in the presence of mourners, Sam, and Barnacle, but does not state the number of veterans in the honor guard or specify that they are military service rifles.; The script excerpt confirms the scene elements generally, but introduces unverified specific details regarding the exact count of veterans and rifle type.; three veterans; military service rifle",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "The mourners in a loose crescent under a pewter sky. The honor guard stands in a row, rifles up at the ready.\n\nVETERAN\nReady. Aim. Fire.\n\nVOLLEY. Gulls explode off the church roof. Sam clamps his hands over his ears. Barnacle, tied to the fence, points his muzzle at the sky and HOWLS.\n\nVOLLEY. VOLLEY."
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "Live blank ammunition discharges pose serious physical risks including muzzle blast, burning powder fragments, high acoustic sound pressure levels causing permanent hearing damage, and projectile/wad hazards.",
+                "basis": "risk_assessment",
+                "status": "UNSUPPORTED",
+                "reason": "Independent span review: The cited safety bulletin states that blanks can kill, but does not provide operative source support for specific physical risks such as muzzle blast, burning powder fragments, acoustic sound pressure levels causing permanent hearing damage, or projectile/wad hazards.; While the source establishes that blanks are dangerous/lethal, it does not support the specific detailed catalogue of acoustic and projectile hazards claimed.; muzzle blast, burning powder fragments, high acoustic sound pressure levels causing permanent hearing damage, and projectile/wad hazards",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "BLANKS CAN KILL. TREAT ALL FIREARMS AS THOUGH THEY ARE LOADED."
+                  }
+                ],
+                "script_spans": [
+                  "The honor guard stands in a row, rifles up at the ready.\n\nVETERAN\nReady. Aim. Fire.\n\nVOLLEY."
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "Whether the production plans to utilize real functional firearms firing quarter/half-load blanks, non-firing replica prop firearms with post-production CGI muzzle flashes and sound design, or electronic gas-discharge props remains unconfirmed.",
+                "basis": "production",
+                "status": "SUPPORTED",
+                "reason": "Appropriately leaves the production's actual technical staging method unconfirmed.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              },
+              {
+                "field": "remedy",
+                "quote": "If practical blank discharge is selected, retain a licensed and qualified Armorer / Property Master to manage custody, inspection, loading, and handling of all firearms in strict compliance with CSATF Safety Bulletin #1.",
+                "basis": "application",
+                "status": "UNSUPPORTED",
+                "reason": "Independent span review: The cited source excerpt does not establish a requirement to retain a licensed and qualified Armorer/Property Master to manage custody, inspection, loading, and handling of firearms.; The excerpt only mentions a walk-through/dry run involving the Property Master and designated personnel, not the specific staffing duties or armorer licensing mandates asserted.; retain a licensed and qualified Armorer / Property Master to manage custody, inspection, loading, and handling of all firearms in strict compliance with CSATF Safety Bulletin #1",
+                "citation_numbers": [
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 2,
+                    "quote": "This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d with the Property Master, designated Production"
+                  }
+                ],
+                "script_spans": [
+                  "The honor guard stands in a row, rifles up at the ready."
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "Conduct a mandatory on-set safety meeting and dry-run walk-through with all cast, crew, background performers, and nearby minor/animal handlers before loading blanks.",
+                "basis": "application",
+                "status": "UNSUPPORTED",
+                "reason": "Independent span review: The source supports holding a safety meeting with all involved personnel before a firearm is used, but does not support the specific expanded roster of background performers and nearby minor/animal handlers or the timing requirement 'before loading blanks'.; The truncated source excerpt specifies 'all involved personnel' rather than the specific itemized cast/crew/handler categories or the 'before loading blanks' restriction.; with all cast, crew, background performers, and nearby minor/animal handlers before loading blanks",
+                "citation_numbers": [
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 2,
+                    "quote": "Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues. This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d"
+                  }
+                ],
+                "script_spans": [
+                  "The honor guard stands in a row, rifles up at the ready.\n\nVETERAN\nReady. Aim. Fire.\n\nVOLLEY."
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "Establish strict lines of fire with clear safety buffer zones, and issue appropriate eye protection and hearing protection (such as flesh-toned acoustic earplugs) to all performers and crew within proximity.",
+                "basis": "planning",
+                "status": "UNSUPPORTED",
+                "reason": "The supplied excerpts do not mention buffer zones, eye protection, or earplugs.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              },
+              {
+                "field": "remedy",
+                "quote": "Alternatively, eliminate on-set blank discharge hazards entirely by utilizing non-firing replica rifles or inert prop firearms with digital visual effects (VFX) muzzle flashes and sound design added in post-production.",
+                "basis": "production_option",
+                "status": "SUPPORTED",
+                "reason": "A high-level production option to remove the blank discharge hazard depicted in the script.",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "BLANKS CAN KILL. TREAT ALL FIREARMS AS THOUGH THEY ARE LOADED."
+                  }
+                ],
+                "script_spans": [
+                  "The honor guard stands in a row, rifles up at the ready.\n\nVETERAN\nReady. Aim. Fire.\n\nVOLLEY."
+                ]
+              },
+              {
+                "field": "severity",
+                "quote": "HIGH",
+                "basis": "risk_assessment",
+                "status": "SUPPORTED",
+                "reason": "Blank fire near crowds, minors, and animals carries substantial physical safety and hearing risks if unmanaged.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              },
+              {
+                "field": "remedy",
+                "quote": "Budget and schedule variances depend on whether a licensed armorer with blank-fire weaponry is contracted or digital post-production effects are utilized",
+                "basis": "source",
+                "status": "UNKNOWN",
+                "reason": "Material text was omitted from the claim audit",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              }
+            ],
+            "support_span_version": 3,
+            "audit_input": "e49bd29bdf4e35beb6c1869613ba20e3d193f809e79cba74908478d1175128a2",
+            "estimate_exclusions": [],
+            "entailment_review": {
+              "checks": [
+                {
+                  "check_index": 0,
+                  "entailed": false,
+                  "reason": "The script evidence establishes an honor guard discharging three volleys in the presence of mourners, Sam, and Barnacle, but does not state the number of veterans in the honor guard or specify that they are military service rifles.",
+                  "scope_preserved": true,
+                  "requirements_supported": false,
+                  "scope_reason": "The script excerpt confirms the scene elements generally, but introduces unverified specific details regarding the exact count of veterans and rifle type.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": [
+                    "three veterans",
+                    "military service rifle"
+                  ]
+                },
+                {
+                  "check_index": 1,
+                  "entailed": false,
+                  "reason": "The cited safety bulletin states that blanks can kill, but does not provide operative source support for specific physical risks such as muzzle blast, burning powder fragments, acoustic sound pressure levels causing permanent hearing damage, or projectile/wad hazards.",
+                  "scope_preserved": true,
+                  "requirements_supported": false,
+                  "scope_reason": "While the source establishes that blanks are dangerous/lethal, it does not support the specific detailed catalogue of acoustic and projectile hazards claimed.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": [
+                    "muzzle blast, burning powder fragments, high acoustic sound pressure levels causing permanent hearing damage, and projectile/wad hazards"
+                  ]
+                },
+                {
+                  "check_index": 2,
+                  "entailed": true,
+                  "reason": "The claim accurately notes that the practical execution method, whether real blank-firing firearms or replica/VFX props, is unconfirmed in the current production inputs.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "Accurately frames unknown production execution methods as unconfirmed without asserting unverified facts.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 3,
+                  "entailed": false,
+                  "reason": "The cited source excerpt does not establish a requirement to retain a licensed and qualified Armorer/Property Master to manage custody, inspection, loading, and handling of firearms.",
+                  "scope_preserved": true,
+                  "requirements_supported": false,
+                  "scope_reason": "The excerpt only mentions a walk-through/dry run involving the Property Master and designated personnel, not the specific staffing duties or armorer licensing mandates asserted.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": [
+                    "retain a licensed and qualified Armorer / Property Master to manage custody, inspection, loading, and handling of all firearms in strict compliance with CSATF Safety Bulletin #1"
+                  ]
+                },
+                {
+                  "check_index": 4,
+                  "entailed": false,
+                  "reason": "The source supports holding a safety meeting with all involved personnel before a firearm is used, but does not support the specific expanded roster of background performers and nearby minor/animal handlers or the timing requirement 'before loading blanks'.",
+                  "scope_preserved": true,
+                  "requirements_supported": false,
+                  "scope_reason": "The truncated source excerpt specifies 'all involved personnel' rather than the specific itemized cast/crew/handler categories or the 'before loading blanks' restriction.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": [
+                    "with all cast, crew, background performers, and nearby minor/animal handlers before loading blanks"
+                  ]
+                },
+                {
+                  "check_index": 6,
+                  "entailed": true,
+                  "reason": "The proposal offers a valid high-level production alternative to eliminate on-set blank discharge hazards using non-firing replicas and post-production VFX/sound, addressing the physical firearm hazard identified by the source.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "Properly addresses the depicted firearm discharge trigger by proposing a high-level physical hazard removal without introducing unsupported mandatory operating instructions or clearance guarantees.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                }
+              ]
+            },
+            "entailment_policy_version": 2
+          },
+          "after": {
+            "verdict": "SUPPORTED",
+            "reason": "The script accurately depicts an honor guard firing three rifle volleys in Scene S005 at an outdoor funeral with mourners, Sam, and Barnacle present. The safety risks of blank fire and handling are directly supported by Safety Bulletin #1, and the remedy accurately cites the bulletin's requirement for a safety meeting with all involved personnel while offering a high-level hazard removal option.",
+            "failure_mode": "none",
+            "claim_checks": [
+              {
+                "field": "finding",
+                "quote": "Scene S005 depicts an honor guard firing three rifle volleys at an outdoor funeral in the presence of mourners, a child (Sam), and a dog (Barnacle).",
+                "basis": "script",
+                "status": "SUPPORTED",
+                "reason": "Scene S005 shows the honor guard with rifles firing three volleys in the churchyard with mourners, Sam (the boy), and Barnacle (the dog).",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "The mourners in a loose crescent under a pewter sky. The honor guard stands in a row, rifles up at the ready.\n\nVETERAN\nReady. Aim. Fire.\n\nVOLLEY. Gulls explode off the church roof. Sam clamps his hands over his ears. Barnacle, tied to the fence, points his muzzle at the sky and HOWLS.\n\nVOLLEY. VOLLEY.\n\nThe senior veteran presents the folded flag -- not to Danny, not to Mara. To Sam. The boy takes it like it weighs a hundred pounds, because it does."
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "If practical firearms or blank ammunition are used during production, this introduces safety risks associated with blank fire and firearm handling.",
+                "basis": "risk_assessment",
+                "status": "SUPPORTED",
+                "reason": "Safety Bulletin #1 explicitly warns that blanks can kill and that all firearms must be treated as loaded, confirming the safety hazards of live handling and blank fire.",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "BLANKS CAN KILL. TREAT ALL FIREARMS AS THOUGH THEY ARE LOADED."
+                  }
+                ],
+                "script_spans": [
+                  "The honor guard stands in a row, rifles up at the ready.\n\nVETERAN\nReady. Aim. Fire.\n\nVOLLEY."
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "The production method, including whether functional firearms, replica props, or post-production visual effects will be utilized, remains unconfirmed.",
+                "basis": "production",
+                "status": "SUPPORTED",
+                "reason": "The production method is appropriately framed as unconfirmed based solely on the screenplay text.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              },
+              {
+                "field": "remedy",
+                "quote": "Confirm whether firearms will be used on set and how the planned approach addresses the cited guidance for a safety meeting with all involved personnel to review relevant safety issues before any firearm is used.",
+                "basis": "inquiry",
+                "status": "SUPPORTED",
+                "reason": "The inquiry requests needed staging confirmation and cites the verbatim requirement from Safety Bulletin #1 regarding a safety meeting.",
+                "citation_numbers": [
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 2,
+                    "quote": "Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues."
+                  }
+                ],
+                "script_spans": [
+                  "The honor guard stands in a row, rifles up at the ready."
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "Consider depicting the rifle volleys without on-set firing, using non-firing props and effects added in post-production.",
+                "basis": "production_option",
+                "status": "SUPPORTED",
+                "reason": "Proposes an optional hazard elimination approach by utilizing non-firing props and VFX instead of practical blank fire on set.",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "BLANKS CAN KILL. TREAT ALL FIREARMS AS THOUGH THEY ARE LOADED."
+                  }
+                ],
+                "script_spans": [
+                  "The honor guard stands in a row, rifles up at the ready.\n\nVETERAN\nReady. Aim. Fire.\n\nVOLLEY."
+                ]
+              },
+              {
+                "field": "severity",
+                "quote": "HIGH",
+                "basis": "risk_assessment",
+                "status": "SUPPORTED",
+                "reason": "Practical blank fire and firearm handling on set carry life-safety hazards as emphasized by Safety Bulletin #1.",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "BLANKS CAN KILL."
+                  }
+                ],
+                "script_spans": [
+                  "The honor guard stands in a row, rifles up at the ready."
+                ]
+              }
+            ],
+            "support_span_version": 3,
+            "audit_input": "1a3f765a7b59ed51954f6c3a7ef41ca3ed381ba37ed3e82d301b205d00c98653",
+            "estimate_exclusions": [],
+            "entailment_review": {
+              "checks": [
+                {
+                  "check_index": 0,
+                  "entailed": true,
+                  "reason": "The script excerpt directly supports the scene description of an honor guard firing three rifle volleys at an outdoor funeral in the presence of mourners, Sam, and Barnacle.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "Directly matches the scene action and dialogue found in the script evidence.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 1,
+                  "entailed": true,
+                  "reason": "The conditional risk assessment is justified by the cited Safety Bulletin #1 stating 'BLANKS CAN KILL' and the depicted rifle volleys.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "Preserves conditional framing regarding unconfirmed practical production methods.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 2,
+                  "entailed": true,
+                  "reason": "The statement accurately reflects that production methods and practical effects plans are unconfirmed in the screenplay input.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "Properly identifies standard unconfirmed production inputs without asserting external facts.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 3,
+                  "entailed": true,
+                  "reason": "The inquiry requests relevant missing production information and accurately references the cited safety meeting guidance from Safety Bulletin #1.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "Inquiry is relevant to the safety underwriter desk and accurately reflects the cited source requirement without introducing unsupported mandates.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 4,
+                  "entailed": true,
+                  "reason": "The production option proposes a high-level physical hazard removal (non-firing props and post-production effects) that directly addresses the depicted rifle volleys.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "High-level optional substitution addressing the physical trigger without prescribing unsupported operational procedures.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                }
+              ]
+            },
+            "entailment_policy_version": 2
+          },
+          "source_rules": [
+            {
+              "rule_id": "csatf1_firearm_method_and_meeting",
+              "trigger": "Depicted firearm discharge with actual production method unconfirmed.",
+              "force": "Confirm the intended method and pre-use safety meeting with all involved personnel; optional non-firing staging.",
+              "exceptions": "The second source sentence ends mid-roster; do not infer who may substitute for whom or complete that list. The source does not establish safety of a particular prop or setup.",
+              "action": "REPLACE",
+              "remedy_detail": "Confirm whether firearms will be used on set and how the planned approach addresses the cited guidance for a safety meeting with all involved personnel to review relevant safety issues before any firearm is used. Consider depicting the rifle volleys without on-set firing, using non-firing props and effects added in post-production.",
+              "source_url": "https://www.csatf.org/01_safety_bltn_firearms/",
+              "source_sha256": "fb8b89b4a8a024130c26a6a020d1ff82e83e20aeb0e035c743b8f43314de12f7",
+              "required_sources": [
+                {
+                  "source_url": "https://www.csatf.org/wp-content/uploads/2018/05/01FIREARMS.pdf",
+                  "source_sha256": "48a9f00af6a615999cdacac777606f1a1a6de331a8d79828ebf74f11d7d62e46"
+                }
+              ],
+              "reviewed_at": "2026-09-12",
+              "review_scope": "Development wording review of both saved Parallel excerpts. Uses only the complete meeting sentence; no reconstruction of the truncated personnel list or independent professional certification.",
+              "matched_source_sha256": "fb8b89b4a8a024130c26a6a020d1ff82e83e20aeb0e035c743b8f43314de12f7",
+              "citation_number": 2,
+              "source_quote": "Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues. This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d with the Property Master, designated Production"
+            }
+          ]
+        },
+        "correction": {
+          "finding": "Scene S005 depicts an honor guard firing three rifle volleys at an outdoor funeral in the presence of mourners, a child (Sam), and a dog (Barnacle). If practical firearms or blank ammunition are used during production, this introduces safety risks associated with blank fire and firearm handling. The production method, including whether functional firearms, replica props, or post-production visual effects will be utilized, remains unconfirmed.",
+          "remedy_detail": "Confirm whether firearms will be used on set and how the planned approach addresses the cited guidance for a safety meeting with all involved personnel to review relevant safety issues before any firearm is used. Consider depicting the rifle volleys without on-set firing, using non-firing props and effects added in post-production.",
+          "remedy_action": "REPLACE",
+          "severity": "HIGH"
+        },
+        "correction_input": "e49bd29bdf4e35beb6c1869613ba20e3d193f809e79cba74908478d1175128a2"
+      },
+      "kept": [
+        {
+          "flag_id": "F3003",
+          "agent": "safety_underwriter",
+          "scene_ids": [
+            "S005"
+          ],
+          "entity_id": null,
+          "severity": "HIGH",
+          "category": "firearms_blanks",
+          "finding": "Scene S005 depicts an honor guard firing three rifle volleys at an outdoor funeral in the presence of mourners, a child (Sam), and a dog (Barnacle). If practical firearms or blank ammunition are used during production, this introduces safety risks associated with blank fire and firearm handling. The production method, including whether functional firearms, replica props, or post-production visual effects will be utilized, remains unconfirmed.",
+          "citations": [
+            {
+              "source_type": "web",
+              "title": "Safety Bulletin #1",
+              "url": "https://www.csatf.org/wp-content/uploads/2018/05/01FIREARMS.pdf",
+              "excerpt": "BLANKS CAN KILL. TREAT ALL FIREARMS AS THOUGH THEY ARE LOADED. \"LIVE AMMUNITION\" IS NEVER TO BE USED NOR BROUGHT ONTO ANY STUDIO LOT OR STAGE.",
+              "retrieved_at": null,
+              "via": "parallel_search"
+            },
+            {
+              "source_type": "web",
+              "title": "safety bulletin #1 recommendations for the use of firearms, ...",
+              "url": "https://www.csatf.org/01_safety_bltn_firearms/",
+              "excerpt": "Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues. This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d with the Property Master, designated Production",
+              "retrieved_at": null,
+              "via": "parallel_search"
+            }
+          ],
+          "remedy": {
+            "action": "REPLACE",
+            "detail": "Confirm whether firearms will be used on set and how the planned approach addresses the cited guidance for a safety meeting with all involved personnel to review relevant safety issues before any firearm is used. Consider depicting the rifle volleys without on-set firing, using non-firing props and effects added in post-production.",
+            "est_cost_usd": null,
+            "est_added_days": null
+          },
+          "confidence": 0.95
+        }
+      ],
+      "dropped": [],
+      "verification_incomplete": false,
+      "elapsed_s": 222.34
+    }
+  ],
+  "responses": [
+    {
+      "flag_id": "F3003",
+      "schema": "EvidenceVerdict",
+      "text": "{\n  \"verdict\": \"PARTIAL\",\n  \"reason\": \"The script facts in S005 are accurately described (an honor guard firing rifle volleys in proximity to mourners, Sam, and Barnacle). The cited excerpts support the core premise that blank fire is hazardous ('BLANKS CAN KILL') and that a pre-use safety meeting including an on-site dry run/walk-through with the Property Master is recommended. However, several specific remedy prescriptions (lines of fire buffer zones, eye and acoustic hearing protection) are not detailed in the supplied excerpts.\",\n  \"failure_mode\": \"none\",\n  \"claim_checks\": [\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Scene S005 depicts an honor guard of three veterans discharging three synchronized military service rifle volleys (ceremonial blank fire) in a churchyard funeral setting, in close proximity to a crowd of mourners, a child character (Sam), and a dog (Barnacle).\",\n      \"basis\": \"script\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Accurately reflects the action and dialogue in scene S005.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": [\n        \"The mourners in a loose crescent under a pewter sky. The honor guard stands in a row, rifles up at the ready.\\n\\nVETERAN\\nReady. Aim. Fire.\\n\\nVOLLEY. Gulls explode off the church roof. Sam clamps his hands over his ears. Barnacle, tied to the fence, points his muzzle at the sky and HOWLS.\\n\\nVOLLEY. VOLLEY.\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Live blank ammunition discharges pose serious physical risks including muzzle blast, burning powder fragments, high acoustic sound pressure levels causing permanent hearing damage, and projectile/wad hazards.\",\n      \"basis\": \"risk_assessment\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Safety Bulletin #1 explicitly warns that blanks can kill and must be treated as loaded firearms.\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"BLANKS CAN KILL. TREAT ALL FIREARMS AS THOUGH THEY ARE LOADED.\"\n        }\n      ],\n      \"script_spans\": [\n        \"The honor guard stands in a row, rifles up at the ready.\\n\\nVETERAN\\nReady. Aim. Fire.\\n\\nVOLLEY.\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Whether the production plans to utilize real functional firearms firing quarter/half-load blanks, non-firing replica prop firearms with post-production CGI muzzle flashes and sound design, or electronic gas-discharge props remains unconfirmed.\",\n      \"basis\": \"production\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Appropriately leaves the production's actual technical staging method unconfirmed.\",\n      \"citation_numbers\": [],\n      \"support_spans\": []\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"If practical blank discharge is selected, retain a licensed and qualified Armorer / Property Master to manage custody, inspection, loading, and handling of all firearms in strict compliance with CSATF Safety Bulletin #1.\",\n      \"basis\": \"application\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Safety Bulletin #1 identifies the Property Master for firearm safety walk-throughs and dry runs.\",\n      \"citation_numbers\": [2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 2,\n          \"quote\": \"This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d with the Property Master, designated Production\"\n        }\n      ],\n      \"script_spans\": [\n        \"The honor guard stands in a row, rifles up at the ready.\"\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"Conduct a mandatory on-set safety meeting and dry-run walk-through with all cast, crew, background performers, and nearby minor/animal handlers before loading blanks.\",\n      \"basis\": \"application\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Directly supported by the requirement in Safety Bulletin #1 to hold a safety meeting with all involved personnel including an on-site walk-through or dry run before firearm use.\",\n      \"citation_numbers\": [2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 2,\n          \"quote\": \"Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues. This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d\"\n        }\n      ],\n      \"script_spans\": [\n        \"The honor guard stands in a row, rifles up at the ready.\\n\\nVETERAN\\nReady. Aim. Fire.\\n\\nVOLLEY.\"\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"Establish strict lines of fire with clear safety buffer zones, and issue appropriate eye protection and hearing protection (such as flesh-toned acoustic earplugs) to all performers and crew within proximity.\",\n      \"basis\": \"planning\",\n      \"status\": \"UNSUPPORTED\",\n      \"reason\": \"The supplied excerpts do not mention buffer zones, eye protection, or earplugs.\",\n      \"citation_numbers\": [],\n      \"support_spans\": []\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"Alternatively, eliminate on-set blank discharge hazards entirely by utilizing non-firing replica rifles or inert prop firearms with digital visual effects (VFX) muzzle flashes and sound design added in post-production.\",\n      \"basis\": \"production_option\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"A high-level production option to remove the blank discharge hazard depicted in the script.\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"BLANKS CAN KILL. TREAT ALL FIREARMS AS THOUGH THEY ARE LOADED.\"\n        }\n      ],\n      \"script_spans\": [\n        \"The honor guard stands in a row, rifles up at the ready.\\n\\nVETERAN\\nReady. Aim. Fire.\\n\\nVOLLEY.\"\n      ]\n    },\n    {\n      \"field\": \"severity\",\n      \"quote\": \"HIGH\",\n      \"basis\": \"risk_assessment\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Blank fire near crowds, minors, and animals carries substantial physical safety and hearing risks if unmanaged.\",\n      \"citation_numbers\": [],\n      \"support_spans\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F3003",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": false,\n      \"reason\": \"The script evidence establishes an honor guard discharging three volleys in the presence of mourners, Sam, and Barnacle, but does not state the number of veterans in the honor guard or specify that they are military service rifles.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"The script excerpt confirms the scene elements generally, but introduces unverified specific details regarding the exact count of veterans and rifle type.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": [\n        \"three veterans\",\n        \"military service rifle\"\n      ]\n    },\n    {\n      \"check_index\": 1,\n      \"entailed\": false,\n      \"reason\": \"The cited safety bulletin states that blanks can kill, but does not provide operative source support for specific physical risks such as muzzle blast, burning powder fragments, acoustic sound pressure levels causing permanent hearing damage, or projectile/wad hazards.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"While the source establishes that blanks are dangerous/lethal, it does not support the specific detailed catalogue of acoustic and projectile hazards claimed.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": [\n        \"muzzle blast, burning powder fragments, high acoustic sound pressure levels causing permanent hearing damage, and projectile/wad hazards\"\n      ]\n    },\n    {\n      \"check_index\": 2,\n      \"entailed\": true,\n      \"reason\": \"The claim accurately notes that the practical execution method, whether real blank-firing firearms or replica/VFX props, is unconfirmed in the current production inputs.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"Accurately frames unknown production execution methods as unconfirmed without asserting unverified facts.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 3,\n      \"entailed\": false,\n      \"reason\": \"The cited source excerpt does not establish a requirement to retain a licensed and qualified Armorer/Property Master to manage custody, inspection, loading, and handling of firearms.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"The excerpt only mentions a walk-through/dry run involving the Property Master and designated personnel, not the specific staffing duties or armorer licensing mandates asserted.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": [\n        \"retain a licensed and qualified Armorer / Property Master to manage custody, inspection, loading, and handling of all firearms in strict compliance with CSATF Safety Bulletin #1\"\n      ]\n    },\n    {\n      \"check_index\": 4,\n      \"entailed\": false,\n      \"reason\": \"The source supports holding a safety meeting with all involved personnel before a firearm is used, but does not support the specific expanded roster of background performers and nearby minor/animal handlers or the timing requirement 'before loading blanks'.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"The truncated source excerpt specifies 'all involved personnel' rather than the specific itemized cast/crew/handler categories or the 'before loading blanks' restriction.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": [\n        \"with all cast, crew, background performers, and nearby minor/animal handlers before loading blanks\"\n      ]\n    },\n    {\n      \"check_index\": 6,\n      \"entailed\": true,\n      \"reason\": \"The proposal offers a valid high-level production alternative to eliminate on-set blank discharge hazards using non-firing replicas and post-production VFX/sound, addressing the physical firearm hazard identified by the source.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"Properly addresses the depicted firearm discharge trigger by proposing a high-level physical hazard removal without introducing unsupported mandatory operating instructions or clearance guarantees.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F3003",
+      "schema": "SourceBoundRepair",
+      "text": "{\"finding\":\"Scene S005 depicts an honor guard firing three rifle volleys at an outdoor funeral in the presence of mourners, a child (Sam), and a dog (Barnacle). If practical firearms or blank ammunition are used during production, this introduces safety risks associated with blank fire and firearm handling. The production method, including whether functional firearms, replica props, or post-production visual effects will be utilized, remains unconfirmed.\",\"rule_ids\":[\"csatf1_firearm_method_and_meeting\"],\"severity\":\"HIGH\"}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F3003",
+      "schema": "EvidenceVerdict",
+      "text": "{\n  \"verdict\": \"SUPPORTED\",\n  \"reason\": \"The script accurately depicts an honor guard firing three rifle volleys in Scene S005 at an outdoor funeral with mourners, Sam, and Barnacle present. The safety risks of blank fire and handling are directly supported by Safety Bulletin #1, and the remedy accurately cites the bulletin's requirement for a safety meeting with all involved personnel while offering a high-level hazard removal option.\",\n  \"failure_mode\": \"none\",\n  \"claim_checks\": [\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Scene S005 depicts an honor guard firing three rifle volleys at an outdoor funeral in the presence of mourners, a child (Sam), and a dog (Barnacle).\",\n      \"basis\": \"script\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Scene S005 shows the honor guard with rifles firing three volleys in the churchyard with mourners, Sam (the boy), and Barnacle (the dog).\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": [\n        \"The mourners in a loose crescent under a pewter sky. The honor guard stands in a row, rifles up at the ready.\\n\\nVETERAN\\nReady. Aim. Fire.\\n\\nVOLLEY. Gulls explode off the church roof. Sam clamps his hands over his ears. Barnacle, tied to the fence, points his muzzle at the sky and HOWLS.\\n\\nVOLLEY. VOLLEY.\\n\\nThe senior veteran presents the folded flag -- not to Danny, not to Mara. To Sam. The boy takes it like it weighs a hundred pounds, because it does.\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"If practical firearms or blank ammunition are used during production, this introduces safety risks associated with blank fire and firearm handling.\",\n      \"basis\": \"risk_assessment\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Safety Bulletin #1 explicitly warns that blanks can kill and that all firearms must be treated as loaded, confirming the safety hazards of live handling and blank fire.\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"BLANKS CAN KILL. TREAT ALL FIREARMS AS THOUGH THEY ARE LOADED.\"\n        }\n      ],\n      \"script_spans\": [\n        \"The honor guard stands in a row, rifles up at the ready.\\n\\nVETERAN\\nReady. Aim. Fire.\\n\\nVOLLEY.\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"The production method, including whether functional firearms, replica props, or post-production visual effects will be utilized, remains unconfirmed.\",\n      \"basis\": \"production\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"The production method is appropriately framed as unconfirmed based solely on the screenplay text.\",\n      \"citation_numbers\": [],\n      \"support_spans\": []\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"Confirm whether firearms will be used on set and how the planned approach addresses the cited guidance for a safety meeting with all involved personnel to review relevant safety issues before any firearm is used.\",\n      \"basis\": \"inquiry\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"The inquiry requests needed staging confirmation and cites the verbatim requirement from Safety Bulletin #1 regarding a safety meeting.\",\n      \"citation_numbers\": [2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 2,\n          \"quote\": \"Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues.\"\n        }\n      ],\n      \"script_spans\": [\n        \"The honor guard stands in a row, rifles up at the ready.\"\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"Consider depicting the rifle volleys without on-set firing, using non-firing props and effects added in post-production.\",\n      \"basis\": \"production_option\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Proposes an optional hazard elimination approach by utilizing non-firing props and VFX instead of practical blank fire on set.\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"BLANKS CAN KILL. TREAT ALL FIREARMS AS THOUGH THEY ARE LOADED.\"\n        }\n      ],\n      \"script_spans\": [\n        \"The honor guard stands in a row, rifles up at the ready.\\n\\nVETERAN\\nReady. Aim. Fire.\\n\\nVOLLEY.\"\n      ]\n    },\n    {\n      \"field\": \"severity\",\n      \"quote\": \"HIGH\",\n      \"basis\": \"risk_assessment\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Practical blank fire and firearm handling on set carry life-safety hazards as emphasized by Safety Bulletin #1.\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"BLANKS CAN KILL.\"\n        }\n      ],\n      \"script_spans\": [\n        \"The honor guard stands in a row, rifles up at the ready.\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F3003",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The script excerpt directly supports the scene description of an honor guard firing three rifle volleys at an outdoor funeral in the presence of mourners, Sam, and Barnacle.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"Directly matches the scene action and dialogue found in the script evidence.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 1,\n      \"entailed\": true,\n      \"reason\": \"The conditional risk assessment is justified by the cited Safety Bulletin #1 stating 'BLANKS CAN KILL' and the depicted rifle volleys.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"Preserves conditional framing regarding unconfirmed practical production methods.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 2,\n      \"entailed\": true,\n      \"reason\": \"The statement accurately reflects that production methods and practical effects plans are unconfirmed in the screenplay input.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"Properly identifies standard unconfirmed production inputs without asserting external facts.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 3,\n      \"entailed\": true,\n      \"reason\": \"The inquiry requests relevant missing production information and accurately references the cited safety meeting guidance from Safety Bulletin #1.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"Inquiry is relevant to the safety underwriter desk and accurately reflects the cited source requirement without introducing unsupported mandates.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 4,\n      \"entailed\": true,\n      \"reason\": \"The production option proposes a high-level physical hazard removal (non-firing props and post-production effects) that directly addresses the depicted rifle volleys.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"High-level optional substitution addressing the physical trigger without prescribing unsupported operational procedures.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    }
+  ]
+}

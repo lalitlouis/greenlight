@@ -27,6 +27,8 @@ from greenlight.contracts import validate
 from greenlight.models import FLASH_MODEL
 
 AUDIT_VERSION = 3
+ENTAILMENT_POLICY_VERSION = 3
+_RIGHTS_SCOPE_VERSION = 2
 
 
 class SupportSpan(BaseModel):
@@ -57,6 +59,18 @@ PRODUCTION_INQUIRY = (
     "Confirm casting, filming jurisdiction and staging method before specifying "
     "production requirements."
 )
+
+_DESK_INQUIRIES = {
+    "clearance_counsel": (
+        "Confirm the intended screen use, the ownership evidence available and whether "
+        "permission covering that use has been obtained."
+    ),
+    "ratings_board": "Confirm which depicted content can be changed to pursue the target rating.",
+    "safety_underwriter": PRODUCTION_INQUIRY,
+    "territory_censor": (
+        "Confirm the intended distribution markets and whether a separate version is planned."
+    ),
+}
 
 
 class ClaimCheck(BaseModel):
@@ -548,11 +562,11 @@ def unresolved_verdict(original: dict[str, Any], reason: str, **trail: Any) -> d
     }
 
 
-async def check_entailment(client, flag, verdict):
+async def check_entailment(client, flag, verdict, script_context=""):
     """One narrow independent batch: can these exact spans support these claims?
 
-    Only exact scene receipts accompany rule applications/edits; no previous
-    reasoning or severity is shown. Script evidence cannot supply external duties.
+    Raw scene context accompanies exact receipts; no previous reasoning or severity
+    is shown. Script evidence cannot supply external duties.
     Full excerpt context prevents a receipt from hiding a negation or exception.
     Source metadata identifies attribution; it cannot supply an operative rule.
     """
@@ -620,6 +634,10 @@ async def check_entailment(client, flag, verdict):
         )
     if not claims:
         return verdict
+    # A short receipt can omit the setting or qualifier in the surrounding scene.
+    # Supply the same bounded raw context the primary reviewer saw, once per
+    # batch. Never expand from model prose or retrieve additional script text.
+    receipt_context = script_context if any(c["script_evidence"] for c in claims) else ""
     prompt = (
         PREQUALIFICATION_EVIDENCE
         + "\n"
@@ -663,6 +681,10 @@ async def check_entailment(client, flag, verdict):
         "Script evidence establishes only fictional content, not permits, real casting, "
         "shooting jurisdiction, practical method, ownership or permission. Sources need "
         "not name screenplay characters or dialogue. Retain conditions on unknown facts. "
+        "RAW SCENE CONTEXT, when supplied, is additional authoritative screenplay "
+        "evidence surrounding the exact script receipts. Use it for setting, participants "
+        "and qualifications omitted from a short receipt. It cannot establish an external "
+        "rule or actual production fact. Respect any explicit truncation markers. "
         "For basis=script_edit, verify that the proposed on-screen change addresses a "
         "trigger established by the source and present in script_evidence. The source "
         "need not literally instruct an editor or name replacement dialogue. Reject "
@@ -721,7 +743,10 @@ async def check_entailment(client, flag, verdict):
         "For an inquiry, script edit or production option, scope_preserved means it "
         "addresses this issue "
         "and requirements_supported means it introduces no unsupported duty or guarantee. "
-        "Any failed component must set entailed=false.\n\n" + json.dumps(claims)
+        "Any failed component must set entailed=false.\nRAW SCENE CONTEXT:\n"
+        + receipt_context
+        + "\n\n"
+        + json.dumps(claims)
     )
     try:
         response = await client.aio.models.generate_content(
@@ -779,7 +804,7 @@ async def check_entailment(client, flag, verdict):
             **verdict,
             "claim_checks": checks,
             "entailment_review": result.model_dump(),
-            "entailment_policy_version": 2,
+            "entailment_policy_version": ENTAILMENT_POLICY_VERSION,
         }
     )
 
@@ -816,8 +841,108 @@ def repair_evidence(flag: dict, verdict: dict) -> tuple[dict, dict]:
     return identity, {"accepted_assertions": accepted, "limitations": limitations}
 
 
+def remedy_inquiry_correction(candidate: dict, after: dict, context: str) -> dict | None:
+    """Preserve only an entirely audited warning when its remedy alone failed.
+
+    This cannot salvage a failed fact, severity, missing receipt, incomplete audit
+    or unavailable reviewer. It never edits clauses or reuses a rejected remedy.
+    The proposed question is still subject to a new full two-stage verification.
+    """
+    inquiry = _DESK_INQUIRIES.get(candidate.get("agent"))
+    if (
+        not inquiry
+        or after.get("verdict") != "PARTIAL"
+        or after.get("fail_open")
+        or after.get("content_filtered")
+        or after.get("evidence_review_unresolved")
+        or after.get("support_span_version") != AUDIT_VERSION
+        or after.get("entailment_policy_version", 0) < _RIGHTS_SCOPE_VERSION
+        or after.get("audit_input") != flag_fingerprint(candidate)
+    ):
+        return None
+    try:
+        checked = checked_verdict(after, candidate, context)
+        review = EntailmentResult.model_validate(after.get("entailment_review"))
+    except (ValueError, KeyError, TypeError):
+        return None
+    checks = checked["claim_checks"]
+    finding = [(i, c) for i, c in enumerate(checks) if c["field"] == "finding"]
+    if (
+        any(c["status"] != "SUPPORTED" for c in checks if c["field"] in {"finding", "severity"})
+        or not any(c["field"] == "remedy" and c["status"] != "SUPPORTED" for c in checks)
+        or not any(c.get("script_spans") for _, c in finding)
+        or not any(c.get("support_spans") for _, c in finding)
+    ):
+        return None
+    by_index = {c.check_index: c for c in review.checks}
+    if len(by_index) != len(review.checks):
+        return None
+    for index, _ in finding:
+        c = by_index.get(index)
+        if (
+            c is None
+            or not c.entailed
+            or not c.scope_preserved
+            or not c.requirements_supported
+            or c.unsupported_parts
+            or c.named_rights_status == "unqualified_relationship"
+        ):
+            return None
+    return {
+        "finding": candidate["finding"],
+        "severity": candidate["severity"],
+        "remedy_detail": inquiry,
+        "remedy_action": "NO_ACTION",
+    }
+
+
+async def finish_repair(
+    client, flag, context, search, original, correction, after, selected_rules, verify_once
+):
+    """Accept a checked repair, or check one fixed inquiry if only its remedy failed."""
+    trail = {"source_rules": selected_rules}
+    candidate = corrected_flag(flag, correction)
+    fallback = remedy_inquiry_correction(candidate, after, context)
+    if fallback:
+        trail.update(attempted_correction=correction, attempted_after=after, remedy_fallback=True)
+        correction = fallback
+        candidate = corrected_flag(flag, correction)
+        try:
+            from greenlight.agents.verification import _refile_gate_problem
+
+            gate = _refile_gate_problem(candidate, check_authority=False)
+            if gate:
+                return unresolved_verdict(original, gate, correction=correction, **trail)
+            after = await verify_once(client, candidate, context, search)
+        except Exception as exc:
+            return unresolved_verdict(
+                original,
+                f"inquiry verification unavailable ({type(exc).__name__})",
+                correction=correction,
+                **trail,
+            )
+    if (
+        after.get("verdict") != "SUPPORTED"
+        or after.get("fail_open")
+        or after.get("content_filtered")
+    ):
+        return unresolved_verdict(
+            original,
+            "corrected claim did not pass independent verification",
+            correction=correction,
+            after=after,
+            **trail,
+        )
+    return {
+        **after,
+        "evidence_review": {"before": original, "after": after, **trail},
+        "correction": correction,
+        "correction_input": flag_fingerprint(flag),
+    }
+
+
 async def repair_partial(client, flag, context, search, original, verify_once):
-    """One correction + one blinded check. No recursive repair or new retrieval."""
+    """One generation and full check; at most one fixed inquiry with a new full check."""
     # A censored verifier has not checked the script. It cannot approve a repair.
     if original.get("content_filtered"):
         return unresolved_verdict(original, "script verification was blocked")
@@ -919,24 +1044,9 @@ async def repair_partial(client, flag, context, search, original, verify_once):
         after = await verify_once(client, candidate, context, search)
     except Exception as exc:
         return unresolved_verdict(original, f"repair/check unavailable ({type(exc).__name__})")
-    if (
-        after.get("verdict") != "SUPPORTED"
-        or after.get("fail_open")
-        or after.get("content_filtered")
-    ):
-        return unresolved_verdict(
-            original,
-            "corrected claim did not pass independent verification",
-            correction=correction,
-            after=after,
-            source_rules=selected_rules,
-        )
-    return {
-        **after,
-        "evidence_review": {"before": original, "after": after, "source_rules": selected_rules},
-        "correction": correction,
-        "correction_input": flag_fingerprint(flag),
-    }
+    return await finish_repair(
+        client, flag, context, search, original, correction, after, selected_rules, verify_once
+    )
 
 
 def review_incomplete(verdicts: dict[str, Any]) -> bool:

@@ -32,7 +32,9 @@ from greenlight.agents.evidence_review import (
     check_entailment,
     checked_verdict,
     corrected_flag,
+    finish_repair,
     flag_fingerprint,
+    remedy_inquiry_correction,
     repair_partial,
     review_incomplete,
     unresolved_verdict,
@@ -209,7 +211,7 @@ def resumable_audit(artifact, source_bytes, flag, script_context=""):
 
 async def resume_partial(client, flag, context, search, initial):
     """A resumed audit must pass the same positive-claim review before repair."""
-    reviewed = await check_entailment(client, flag, initial)
+    reviewed = await check_entailment(client, flag, initial, context)
     if reviewed["verdict"] != "PARTIAL":
         return reviewed
     return await repair_partial(client, flag, context, search, reviewed, _call_verifier_once)
@@ -274,6 +276,23 @@ async def resume_candidate(client, flag, context, search, saved):
     }
 
 
+def saved_remedy_recovery(record, flag, context):
+    """A new fixed-question candidate from a complete, rejected remedy audit."""
+    verdict = record.get("verdicts", {}).get(flag["flag_id"], {})
+    trail = verdict.get("evidence_review", {})
+    if (
+        not verdict.get("evidence_review_unresolved")
+        or trail.get("before", {}).get("audit_input") != flag_fingerprint(flag)
+        or not trail.get("correction")
+        or trail.get("remedy_fallback")
+    ):
+        raise ValueError("no complete original remedy-only failure available")
+    candidate = corrected_flag(flag, trail["correction"])
+    if not remedy_inquiry_correction(candidate, trail.get("after", {}), context):
+        raise ValueError("finding is not eligible for a fixed remedy inquiry")
+    return trail
+
+
 def recheck_candidate(artifact, source_bytes, flag, script_context=""):
     """Complete only the skipped entailment stage after a deterministic audit fix."""
     if artifact["source_run_sha256"] != hashlib.sha256(source_bytes).hexdigest():
@@ -333,6 +352,11 @@ async def evaluate(args):  # noqa: PLR0912, PLR0915 - bounded diagnostic modes a
         flags = [r[0] for r in rechecks]
     _, scenes = parser.parse_fountain(script)
     state = {"script_text": script, "scenes": scenes}
+    recoveries = (
+        {f["flag_id"]: saved_remedy_recovery(record, f, _scene_context(f, state)) for f in flags}
+        if args.recover_remedy
+        else {}
+    )
     resume = json.loads(args.resume_from.read_text()) if args.resume_from else None
     candidates = (
         {
@@ -365,10 +389,12 @@ async def evaluate(args):  # noqa: PLR0912, PLR0915 - bounded diagnostic modes a
     tracked = CallRecorder(
         client,
         args.output.with_suffix(".progress.json"),
-        len(flags)
+        len(flags) * 2
+        if recoveries
+        else len(flags)
         if probes or rechecks
         else sum(
-            2 if candidates.get(f["flag_id"]) else 4 if resumed.get(f["flag_id"]) else 5
+            2 if candidates.get(f["flag_id"]) else 6 if resumed.get(f["flag_id"]) else 7
             for f in flags
         ),
     )
@@ -381,9 +407,21 @@ async def evaluate(args):  # noqa: PLR0912, PLR0915 - bounded diagnostic modes a
             try:
                 context, search = _scene_context(flag, state), _search_context(flag, state)
                 if probes:
-                    operation = check_entailment(tracked, flag, probes[index][1])
+                    operation = check_entailment(tracked, flag, probes[index][1], context)
                 elif rechecks:
-                    operation = check_entailment(tracked, flag, rechecks[index][1])
+                    operation = check_entailment(tracked, flag, rechecks[index][1], context)
+                elif recovery := recoveries.get(flag["flag_id"]):
+                    operation = finish_repair(
+                        tracked,
+                        flag,
+                        context,
+                        search,
+                        recovery["before"],
+                        recovery["correction"],
+                        recovery["after"],
+                        recovery.get("source_rules", []),
+                        _call_verifier_once,
+                    )
                 elif candidate := candidates.get(flag["flag_id"]):
                     operation = resume_candidate(tracked, flag, context, search, candidate)
                 elif initial := resumed.get(flag["flag_id"]):
@@ -392,7 +430,7 @@ async def evaluate(args):  # noqa: PLR0912, PLR0915 - bounded diagnostic modes a
                     operation = call_verifier(tracked, flag, context, search)
                 verdict = await asyncio.wait_for(
                     operation,
-                    timeout=240,
+                    timeout=360,
                 )
                 verdict = finish_recheck(verdict) if rechecks else verdict
                 if probes:
@@ -440,6 +478,7 @@ async def evaluate(args):  # noqa: PLR0912, PLR0915 - bounded diagnostic modes a
         "calls_without_returned_usage": calls - sum(r["usage_available"] for r in responses),
         "resumed_from": str(args.resume_from) if args.resume_from else None,
         "rechecked_correction_from": str(args.recheck_correction_from) if rechecks else None,
+        "recovered_remedy_from_source": bool(recoveries),
         "entailment_cases": str(args.entailment_cases) if case_bytes else None,
         "entailment_cases_sha256": hashlib.sha256(case_bytes).hexdigest() if case_bytes else None,
         "attempts": tracked.attempts,
@@ -479,8 +518,13 @@ def main():
         type=Path,
         help="complete a skipped entailment stage after a deterministic audit fix",
     )
+    mode.add_argument(
+        "--recover-remedy",
+        action="store_true",
+        help="verify one fixed inquiry after a saved remedy-only failure (at most two calls)",
+    )
     p.add_argument(
-        "--live", action="store_true", help="spends money on up to 5 logical model calls per flag"
+        "--live", action="store_true", help="spends money on up to 7 logical model calls per flag"
     )
     args = p.parse_args()
     if not args.live:

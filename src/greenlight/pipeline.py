@@ -609,6 +609,24 @@ def finalize_record_after_verification(record: dict[str, Any]) -> list[dict[str,
     acct = record.get("entity_accounting")
     if isinstance(acct, dict):
         acct["items_examined"] = entity_accounting.items_examined(record)
+    # Reverify and delivery must share the live panel's boundary reconciliation.
+    # The desk prediction is not silently changed to make its comparison set fit.
+    from greenlight.agents.verification import (
+        _explain_revised_boundary,
+        _recompute_boundary_after_drop,
+    )
+
+    report = record.get("report") or {}
+    pred = report.get("rating_prediction")
+    if pred:
+        revised, note = _recompute_boundary_after_drop(
+            pred, record.get("rejected_flags") or [], flags
+        )
+        if note:
+            manifest.append({"guard": "conformal_set_recomputed", "stage": "delivery", **note})
+        if revised.get("reconciled_after_verification") and not revised.get("divergence_reason"):
+            revised = _explain_revised_boundary(revised, [])
+        report["rating_prediction"] = revised
     return manifest
 
 

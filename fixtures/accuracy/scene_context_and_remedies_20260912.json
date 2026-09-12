@@ -1,0 +1,121 @@
+{
+  "source_run": "runs/run_20260912_030306.json",
+  "source_run_sha256": "c7eee84bd40a5b345c889258d822f76b04121cdb45f583284dfc95f129fc83e0",
+  "label_origin": "Developer-labelled source-entailment controls, frozen before live evaluation; not population accuracy labels.",
+  "cases": [
+    {
+      "case_id": "scene_context_funeral",
+      "source_flag_id": "F3004",
+      "claim": "Scene S005 depicts an honor guard firing three rifle volleys during an outdoor funeral service.",
+      "field": "finding",
+      "basis": "script",
+      "action": "NO_ACTION",
+      "support_spans": [],
+      "script_spans": [
+        "The honor guard stands in a row, rifles up at the ready.",
+        "VOLLEY.",
+        "VOLLEY. VOLLEY."
+      ],
+      "expected_entailed": true,
+      "label_reason": "The raw scene establishes the exterior churchyard, mourners, salute and folded flag despite the short action receipts."
+    },
+    {
+      "case_id": "scene_context_false_beach",
+      "source_flag_id": "F3004",
+      "claim": "Scene S005 depicts an honor guard firing three rifle volleys on a beach at midnight.",
+      "field": "finding",
+      "basis": "script",
+      "action": "NO_ACTION",
+      "support_spans": [],
+      "script_spans": [
+        "The honor guard stands in a row, rifles up at the ready.",
+        "VOLLEY.",
+        "VOLLEY. VOLLEY."
+      ],
+      "expected_entailed": false,
+      "label_reason": "The raw scene is an exterior churchyard during day, not a beach at midnight."
+    },
+    {
+      "case_id": "scene_context_actual_blanks",
+      "source_flag_id": "F3004",
+      "claim": "Production has confirmed that live blank ammunition will be fired on set during the funeral scene.",
+      "field": "finding",
+      "basis": "production",
+      "action": "NO_ACTION",
+      "support_spans": [],
+      "script_spans": [
+        "The honor guard stands in a row, rifles up at the ready.",
+        "VOLLEY.",
+        "VOLLEY. VOLLEY."
+      ],
+      "expected_entailed": false,
+      "label_reason": "Depicted volleys do not confirm real staging or ammunition."
+    },
+    {
+      "case_id": "tattoo_remedy_guarantee",
+      "source_flag_id": "F1010",
+      "claim": "Alternatively, replace the tattoo with an original generic design or cover the artwork during filming to eliminate copyright exposure.",
+      "field": "remedy",
+      "basis": "production_option",
+      "action": "REPLACE",
+      "support_spans": [
+        {
+          "citation_number": 1,
+          "quote": "Tattoo artist who created Mike Tyson's facial art sues Warner Brothers over the use of a similar tattoo on actor Ed Helms in the film, \"The Hangover 2.\""
+        },
+        {
+          "citation_number": 2,
+          "quote": "artist S. Victor Whitmill (\u201cVictor\u201d), creator of Mike Tyson\u2019s face tattoo, filed a lawsuit against Warner Brothers Entertainment Inc.\n(\u201cWarner Brothers\u201d) for not seeking his approval to use the tattoo design on the face of another character in the movie."
+        },
+        {
+          "citation_number": 3,
+          "quote": "Mr.\nWhitmill had a registered copyright for the design and sought an injunction to prevent release of the movie as Warner Brothers had not sought a license to use his protected work."
+        }
+      ],
+      "script_spans": [
+        "Across his forearm, a full-rigged schooner tattoo in fading blue-black \u2014 Teddy Krane's design, inked at his Rockland parlor the summer the Margaret Rose launched \u2014 rides every pour like weather."
+      ],
+      "expected_entailed": false,
+      "label_reason": "Replacement artwork and covering an onscreen design do not establish guaranteed clearance."
+    },
+    {
+      "case_id": "tattoo_cover_option",
+      "source_flag_id": "F1010",
+      "claim": "Consider keeping the custom schooner tattoo out of view during the scene.",
+      "field": "remedy",
+      "basis": "script_edit",
+      "action": "REPLACE",
+      "support_spans": [
+        {
+          "citation_number": 1,
+          "quote": "Tattoo artist who created Mike Tyson's facial art sues Warner Brothers over the use of a similar tattoo on actor Ed Helms in the film, \"The Hangover 2.\""
+        },
+        {
+          "citation_number": 2,
+          "quote": "artist S. Victor Whitmill (\u201cVictor\u201d), creator of Mike Tyson\u2019s face tattoo, filed a lawsuit against Warner Brothers Entertainment Inc.\n(\u201cWarner Brothers\u201d) for not seeking his approval to use the tattoo design on the face of another character in the movie."
+        },
+        {
+          "citation_number": 3,
+          "quote": "Mr.\nWhitmill had a registered copyright for the design and sought an injunction to prevent release of the movie as Warner Brothers had not sought a license to use his protected work."
+        }
+      ],
+      "script_spans": [
+        "Across his forearm, a full-rigged schooner tattoo in fading blue-black \u2014 Teddy Krane's design, inked at his Rockland parlor the summer the Margaret Rose launched \u2014 rides every pour like weather."
+      ],
+      "expected_entailed": true,
+      "label_reason": "A high-level change removes the depicted custom design without promising permission or clearance."
+    },
+    {
+      "case_id": "tattoo_input_inquiry",
+      "source_flag_id": "F1010",
+      "claim": "Confirm the intended screen use, the ownership evidence available and whether permission covering that use has been obtained.",
+      "field": "remedy",
+      "basis": "inquiry",
+      "action": "NO_ACTION",
+      "support_spans": [],
+      "script_spans": [],
+      "expected_entailed": true,
+      "label_reason": "Relevant missing use and permission input; no hidden mandate or owner assertion."
+    }
+  ]
+}

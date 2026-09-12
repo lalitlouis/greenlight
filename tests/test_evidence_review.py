@@ -42,6 +42,46 @@ def saved_flag(fid="F3006"):
     return next(f for f in record["flags"] if f["flag_id"] == fid)
 
 
+@pytest.mark.parametrize(
+    "fid,artifact_name",
+    [
+        ("F1001", "input_and_rights_repairs_20260912"),
+        ("F1002", "input_and_rights_repairs_20260912"),
+        ("F1011", "response_options_repairs_20260912"),
+        ("F3003", "firearm_source_bound_repair_20260912"),
+    ],
+)
+def test_recovered_live_findings_deliver_the_exact_audited_text_and_unchanged_receipts(
+    fid, artifact_name
+):
+    record = json.loads((ROOT / "runs/run_20260912_003816.json").read_text())
+    original = next(f for f in record["rejected_flags"] if f["flag_id"] == fid)
+    before = deepcopy(original)
+    artifact = json.loads((ROOT / f"fixtures/cassettes/{artifact_name}.json").read_text())
+    result = next(r for r in artifact["results"] if r["flag_id"] == fid)
+    verdicts = {fid: result["verdict"]}
+    kept, dropped = apply_verdicts([original], verdicts)
+    assert original == before
+    assert kept == result["kept"] and len(kept) == 1 and not dropped
+    assert not review_incomplete(verdicts)
+    for key in ("flag_id", "agent", "scene_ids", "category", "citations"):
+        assert kept[0][key] == original[key]
+    assert kept[0]["remedy"]["est_cost_usd"] is None
+    assert kept[0]["remedy"]["est_added_days"] is None
+    if fid in {"F1001", "F1002"}:
+        assert "lead" in kept[0]["finding"] and "current" in kept[0]["finding"]
+        assert "Sony" not in kept[0]["remedy"]["detail"]
+    elif fid == "F1011":
+        assert "principal photography" not in kept[0]["remedy"]["detail"]
+    else:
+        assert "all involved personnel" in kept[0]["remedy"]["detail"]
+        assert "Property Master or" not in kept[0]["remedy"]["detail"]
+    # Delivery cannot silently accept a later edit to the approved correction.
+    forged = deepcopy(result["verdict"])
+    forged["correction"]["remedy_detail"] += " This guarantees clearance and safety."
+    assert not apply_verdicts([original], {fid: forged})[0]
+
+
 def test_withheld_optional_estimates_serialize_identically_across_processes():
     flag = saved_flag()
     flag["remedy"].pop("est_cost_usd", None)

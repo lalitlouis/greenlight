@@ -386,3 +386,62 @@ truncated procedures. Four new frozen controls include the actual false approval
 fixed remedy, the complete source sentence, and exclusion of other involved personnel.
 No public schema or runtime call-budget change is made. Full-gate validation remains
 pending; model approval alone is not a manual accuracy label.
+
+Build `7ac5ac0` matched all four truncated-roster controls ($0.0189 returned usage).
+The full source-bound firearm repair passed both review stages in five calls
+(222.34 seconds, $0.0566). In-session source inspection accepts its conditional
+blank/firearm warning, unconfirmed actual method, complete all-personnel meeting
+inquiry and optional non-firing approach. It adds no invented roster, equipment
+specification, staffing mandate or safety guarantee.
+
+`fixtures/cassettes/recovered_report_replay_20260912.json` preserves a **cached replay**,
+not a fresh run: the original desks plus the later verified sync/master, tattoo and
+source-bound firearm corrections, and the existing rating-statistic presentation fix.
+It binds each contributing artifact by hash and build. The unchanged 54 checks now
+all pass, with 19 kept and five rejected findings; the score remains withheld for the
+five other unresolved safety repairs. This is improvement from the prior 50/54 replay,
+not proof of population accuracy or a fresh pipeline result.
+
+The generation clock is explicitly fixed to the original report's timestamp for
+deterministic replay. Two separate process rebuilds were byte-identical with SHA256
+`5bd5bb9e16167012f737d2c069406fef6255127934381bee28cd3a57edd51253`.
+Four additional delivery tests pin the real corrected artifacts, unchanged sources,
+withheld amounts and rejection of a later unaudited text edit. `make check` and all
+623 tests pass. A fresh full gate started on `7ac5ac0`, logged at
+`.cache/accuracy/live_gate_20260912_093955.log`; its result is still pending here.
+
+### Fresh result and remaining failure mechanisms
+
+The completed fresh record is `runs/run_20260912_030306.json`, build `7ac5ac0`:
+**52/54** unchanged checks, 17 kept and seven rejected. Sync/master and the other
+required coverage checks passed. The tattoo warning was lost, and the recalculated
+rating range excluded the retained prediction with an empty divergence explanation.
+Firearms coverage passed through the animal-risk finding; the separate firearm
+finding still failed. This is not evidence that every individual safety assessment
+is correct or complete.
+
+The corrected tattoo finding passed both independent reviewers. Its remedy failed
+because an alternative promised to "eliminate copyright exposure"; the whole useful
+warning was discarded. The new bounded recovery preserves only an entirely audited
+finding and severity, replaces the failed remedy with a fixed desk-relevant input
+question, clears estimates and verifies that exact narrower candidate again. It
+does not salvage failed findings, partially audited text, unsupported ownership,
+missing receipts or unavailable reviewers. Normal verification remains two/five
+calls; this exceptional path has a hard seven-call structure with one generation.
+The targeted harness now allows 360 seconds per selected finding and at most seven
+logical calls, or two for `--recover-remedy` from a complete saved eligible failure.
+This is a new candidate, not a retry of an unchanged negative judgement.
+
+The firearm correction's primary auditor supplied only the rifle/volley receipts,
+omitting the scene's exterior churchyard and mourners. The independent reviewer
+therefore rejected its funeral setting. The second review now receives the same
+bounded raw scene context as the first, while keeping external source support and
+production assumptions separate. Six new frozen controls cover true/false settings,
+actual ammunition assumptions, a tattoo remedy guarantee, a narrow edit and inquiry.
+
+The rating reconciliation now explicitly records when changed comparison inputs put
+the retained desk prediction outside the revised range. It states that reassessment
+is pending; it does not manufacture a new rating judgement. The shared delivery pass
+applies the same reconciliation to live and reverified records. Existing public
+fields carry the explanation, with no public schema, parser, scoring or model change.
+Validation of this batch is pending below.

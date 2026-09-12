@@ -146,6 +146,11 @@ against its spans and excerpt context. Every available, already anchored screenp
 receipt accompanies its claim, including mixed script/authorship assertions labelled
 `script` or `source`. A model-chosen basis must not hide relevant evidence. The batch
 never receives the earlier auditor's reasoning or severity.
+Under `entailment_policy_version=3`, a batch containing script receipts also receives
+the same bounded raw scene context the primary auditor saw, once per batch. This
+prevents a short action receipt from losing a setting or qualifying detail. Context
+cannot establish external rules, ownership or actual production facts; truncation
+markers remain authoritative. No additional retrieval is introduced.
 An anchored screenplay observation is independently reviewable with no source span
 even if the first auditor labels it `application` or `source`. The second reviewer
 determines its semantic role from the assertion and evidence, not the suggested label.
@@ -166,7 +171,18 @@ Retrieval date is not the date of the facts stated in the source. It must return
 exactly once; an incomplete secondary review withholds the score. Severity judgement
 stays in the script-aware audit regardless of the model-chosen basis or optional receipts;
 severity never enters the source-only batch. A supported first
-pass costs two logical calls; a repair is bounded at five total. No new searches are
+pass costs two logical calls; the normal repair is bounded at five total. If a
+corrected finding and severity are fully supported and only the remedy fails, code
+may replace that remedy with a fixed, desk-relevant input inquiry and verify the
+exact narrower candidate through both audit stages (at most seven total calls).
+Eligibility requires complete coverage, the exact input fingerprint, anchored
+script and source evidence, and positive independent scope/rights checks for every
+finding assertion. No sentence or failed factual clause is deleted to manufacture
+eligibility. The finding and severity remain unchanged, action becomes NO_ACTION,
+and estimates remain unknown. Failure or unavailability of either final reviewer
+leaves the warning unresolved; there is no second free generation or recursion.
+Both attempted corrections and their verdicts remain in the internal audit trail.
+No new searches are
 introduced. Desk-relevant inquiries may omit external support but receive independent
 review for relevance, concealed requirements and unsupported premises. The fixed
 production-input inquiry is permitted only for the safety desk. The batch also checks

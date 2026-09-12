@@ -34,6 +34,37 @@ def positive_check():
     }
 
 
+def test_saved_remedy_recovery_requires_complete_finding_audit_and_changed_candidate():
+    from greenlight import parser
+    from greenlight.agents.verification import _scene_context
+
+    record = json.loads((ROOT / "runs/run_20260912_030306.json").read_text())
+    script = (ROOT / "fixtures/slack_tide.fountain").read_text()
+    _, scenes = parser.parse_fountain(script)
+    flag = next(f for f in record["rejected_flags"] if f["flag_id"] == "F1010")
+    context = _scene_context(flag, {"script_text": script, "scenes": scenes})
+    trail = evaluator.saved_remedy_recovery(record, flag, context)
+    assert trail["after"]["verdict"] == "PARTIAL"
+    changed = {**flag, "finding": flag["finding"] + " Invented extra claim."}
+    with pytest.raises(ValueError, match="no complete original"):
+        evaluator.saved_remedy_recovery(record, changed, context)
+    trail["after"]["claim_checks"][0]["status"] = "UNSUPPORTED"
+    with pytest.raises(ValueError, match="not eligible"):
+        evaluator.saved_remedy_recovery(record, flag, context)
+
+
+def test_scene_context_controls_are_balanced_and_bound_to_saved_run():
+    cases = json.loads(
+        (ROOT / "fixtures/accuracy/scene_context_and_remedies_20260912.json").read_text()
+    )
+    source = (ROOT / "runs/run_20260912_030306.json").read_bytes()
+    script = (ROOT / "fixtures/slack_tide.fountain").read_text()
+    rows = evaluator.entailment_inputs(cases, source, script)
+    assert len(rows) == 6 and sum(label for _, _, label in rows) == 3
+    with pytest.raises(ValueError, match="source hash"):
+        evaluator.entailment_inputs(cases, source + b" ", script)
+
+
 def test_probes_bind_original_excerpts_and_hide_expected_labels():
     cases = json.loads((ROOT / "fixtures/accuracy/entailment_cases_20260911.json").read_text())
     source = (ROOT / "runs/run_20260911_demo.json").read_bytes()

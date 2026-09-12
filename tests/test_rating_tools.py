@@ -529,6 +529,52 @@ def test_recompute_boundary_after_rating_rejection():
     assert none is None and same is pred
 
 
+def test_revised_rating_range_explains_retained_prediction_and_preserves_old_reason():
+    from greenlight.agents.verification import _recompute_boundary_after_drop
+
+    pred = {
+        "predicted": "R",
+        "descriptors": ["unmodified language", "brief drugs", "unmodified thematic", "violence"],
+        "conformal_set": ["R"],
+        "divergence_reason": "Earlier desk judgement about the overall profile.",
+    }
+    dropped = [{"flag_id": "F2003", "category": "rating_violence"}]
+    kept = [{"category": "rating_language"}, {"category": "rating_drug_use"}]
+    new, note = _recompute_boundary_after_drop(pred, dropped, kept)
+    assert note and "R" not in new["conformal_set"]
+    assert new["predicted"] == "R"  # no invented replacement classification
+    assert "pending reassessment" in new["divergence_reason"]
+    assert "removed these comparison descriptors: violence" in new["divergence_reason"]
+    assert pred["divergence_reason"] in new["divergence_reason"]
+    assert pred["conformal_set"] == ["R"] and not pred.get("reconciled_after_verification")
+    again, note = _recompute_boundary_after_drop(new, dropped, kept)
+    assert again == new and note is None
+
+
+def test_saved_fresh_report_rating_divergence_is_reconciled_on_every_delivery():
+    import json
+    from copy import deepcopy
+    from pathlib import Path
+
+    from greenlight.pipeline import finalize_record_after_verification
+
+    path = Path(__file__).resolve().parents[1] / "runs/run_20260912_030306.json"
+    record = json.loads(path.read_text())
+    original = deepcopy(record)
+    pred = record["report"]["rating_prediction"]
+    assert pred["predicted"] not in pred["conformal_set"] and not pred["divergence_reason"]
+    finalize_record_after_verification(record)
+    revised = record["report"]["rating_prediction"]
+    assert "pending reassessment" in revised["divergence_reason"]
+    assert {k: v for k, v in revised.items() if k != "divergence_reason"} == {
+        k: v for k, v in pred.items() if k != "divergence_reason"
+    }
+    assert record["flags"] == original["flags"]
+    once = deepcopy(record)
+    finalize_record_after_verification(record)
+    assert record == once
+
+
 def test_scene_count_claim_must_match_coordinates():
     from greenlight.tools.toolbelt import _scene_count_problem
 

@@ -694,8 +694,11 @@ function renderPrediction(root, pred) {
       majorityDiffers ? `its ${pred.comps_majority} neighbours` : null,
       outsideSet ? `the ${setArr.join("/")} coverage set` : null,
     ].filter(Boolean).join(" and ");
+    const label = pred.reconciled_after_verification
+      ? `Prediction compared with ${against}`
+      : `Why the desk diverges from ${against}`;
     meta.appendChild(el("p", "pred-evidence pred-diverge",
-      `Why the desk diverges from ${against}: ${pred.divergence_reason}`));
+      `${label}: ${pred.divergence_reason}`));
   } else if (outsideSet) {
     meta.appendChild(el("p", "pred-evidence pred-diverge",
       `The desk's ${pred.predicted} call sits outside the ${setArr.join("/")} coverage set and recorded no reason — weigh the measured set as the evidence.`));
