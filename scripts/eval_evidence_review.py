@@ -24,6 +24,8 @@ if __name__ == "__main__":
 
 from greenlight import parser
 from greenlight.agents.evidence_review import (
+    AUDIT_VERSION,
+    ESTIMATE_FIELDS,
     ClaimCheck,
     _support_problem,
     check_entailment,
@@ -137,8 +139,17 @@ def entailment_inputs(cases, source_bytes, script_context=""):
             flag["finding"] = row["claim"]
         elif field == "remedy":
             flag["remedy"] = {"detail": row["claim"], "action": row.get("action", "NO_ACTION")}
+        elif field in ESTIMATE_FIELDS:
+            value = json.loads(row["claim"])
+            if json.dumps(value, separators=(",", ":")) != row["claim"]:
+                raise ValueError("numeric probe must use its canonical JSON value")
+            flag["remedy"] = {
+                **flag["remedy"],
+                field: value,
+                "detail": row.get("estimate_context", flag["remedy"]["detail"]),
+            }
         else:
-            raise ValueError("probe field must be finding or remedy")
+            raise ValueError("probe field must be finding, remedy or a structured estimate")
         spans = row.get("support_spans")
         if spans is None:
             spans = [{"citation_number": row["citation_number"], "quote": row["quote"]}]
@@ -156,7 +167,11 @@ def entailment_inputs(cases, source_bytes, script_context=""):
         validated = ClaimCheck.model_validate(check)
         if _support_problem(validated, flag, script_context):
             raise ValueError("probe does not carry a valid excerpt receipt")
-        verdict = {"verdict": "SUPPORTED", "claim_checks": [validated.model_dump()]}
+        verdict = {
+            "verdict": "SUPPORTED",
+            "claim_checks": [validated.model_dump()],
+            "support_span_version": AUDIT_VERSION,
+        }
         if not isinstance(row["expected_entailed"], bool):
             raise ValueError("expected entailment must be boolean")
         inputs.append((flag, verdict, row["expected_entailed"]))
@@ -185,6 +200,14 @@ def resumable_audit(artifact, source_bytes, flag, script_context=""):
         if verdict["verdict"] == "PARTIAL":
             return verdict
     return None  # the first audit never returned; restart this case only
+
+
+async def resume_partial(client, flag, context, search, initial):
+    """A resumed audit must pass the same positive-claim review before repair."""
+    reviewed = await check_entailment(client, flag, initial)
+    if reviewed["verdict"] != "PARTIAL":
+        return reviewed
+    return await repair_partial(client, flag, context, search, reviewed, _call_verifier_once)
 
 
 def recheck_candidate(artifact, source_bytes, flag, script_context=""):
@@ -266,7 +289,7 @@ async def evaluate(args):  # noqa: PLR0915 - linear, bounded evaluation with res
         args.output.with_suffix(".progress.json"),
         len(flags)
         if probes or rechecks
-        else sum(3 if resumed.get(f["flag_id"]) else 5 for f in flags),
+        else sum(4 if resumed.get(f["flag_id"]) else 5 for f in flags),
     )
     results = []
     started = time.monotonic()
@@ -281,9 +304,7 @@ async def evaluate(args):  # noqa: PLR0915 - linear, bounded evaluation with res
                 elif rechecks:
                     operation = check_entailment(tracked, flag, rechecks[index][1])
                 elif initial := resumed.get(flag["flag_id"]):
-                    operation = repair_partial(
-                        tracked, flag, context, search, initial, _call_verifier_once
-                    )
+                    operation = resume_partial(tracked, flag, context, search, initial)
                 else:
                     operation = call_verifier(tracked, flag, context, search)
                 verdict = await asyncio.wait_for(

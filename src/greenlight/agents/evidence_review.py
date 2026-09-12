@@ -15,10 +15,16 @@ from typing import Any, Literal
 from google.genai import types
 from pydantic import BaseModel, Field
 
-from greenlight.agents.evidence import PRODUCTION_EVIDENCE, RATINGS_EVIDENCE
+from greenlight.agents.evidence import (
+    PREQUALIFICATION_EVIDENCE,
+    PRODUCTION_EVIDENCE,
+    RATINGS_EVIDENCE,
+)
 from greenlight.agents.quote_anchor import anchor_quote
 from greenlight.contracts import validate
 from greenlight.models import FLASH_MODEL
+
+AUDIT_VERSION = 3
 
 
 class SupportSpan(BaseModel):
@@ -30,6 +36,10 @@ class EntailmentCheck(BaseModel):
     check_index: int
     entailed: bool
     reason: str
+    scope_preserved: bool | None = None
+    requirements_supported: bool | None = None
+    scope_reason: str = ""
+    unsupported_parts: list[str] = Field(default_factory=list)
 
 
 class EntailmentResult(BaseModel):
@@ -45,10 +55,18 @@ PRODUCTION_INQUIRY = (
 
 
 class ClaimCheck(BaseModel):
-    field: Literal["finding", "remedy", "severity"]
+    field: Literal["finding", "remedy", "severity", "est_cost_usd", "est_added_days"]
     quote: str = Field(min_length=1)
     basis: Literal[
-        "script", "production", "source", "planning", "application", "script_edit", "inquiry"
+        "script",
+        "production",
+        "source",
+        "planning",
+        "application",
+        "script_edit",
+        "inquiry",
+        "risk_assessment",
+        "estimate",
     ]
     status: Literal["SUPPORTED", "UNSUPPORTED", "UNKNOWN"]
     reason: str
@@ -57,25 +75,32 @@ class ClaimCheck(BaseModel):
     script_spans: list[str] = Field(default_factory=list)
 
 
-CLAIM_CHECK_INSTRUCTIONS = """\
+CLAIM_CHECK_INSTRUCTIONS = (
+    PREQUALIFICATION_EVIDENCE
+    + "\n"
+    + """\
 Return claim_checks covering EVERY material assertion in BOTH finding and remedy,
 plus the severity. Use a separate check for each asserted obligation or production
 fact; one supported precaution cannot support the entire paragraph. quote is an exact
 substring of that field (for severity, quote the level itself). For remedy quotes
 use the detail prose only, excluding the action label. basis distinguishes script
 facts, production facts, outside-world source claims, and planning advice.
+Use basis=risk_assessment for a potential consequence justified by a cited rule and
+actual screenplay trigger, with unknown applicability kept conditional. Include both
+script_spans and support_spans. Missing final ownership or staging does not disprove
+such an assessment. Distinguish it from asserting a specific owner, fee or requirement.
 Use basis=application for applying a sourced rule to a screenplay fact or an explicitly
 conditional production choice. Use basis=script_edit ONLY for a proposed change to
 on-screen content that removes/reduces a cited trigger, not for equipment, specialists,
 permits or rightsholder assertions. Such an edit need not be prescribed verbatim by
 the source; the source must establish the trigger/rule and the edit must address it.
 Never promise clearance, permission, safety or a final rating from a proposed edit.
-For application/script_edit include script_spans: EXACT substrings of supplied SCENE
+For application/script_edit/risk_assessment include script_spans: EXACT substrings of supplied SCENE
 TEXT anchoring the relevant content. They cannot assert production facts. Separate
 pure rule assertions from script facts when possible; don't demand that sources name
 fictional characters, dialogue or props. A sourced ownership link still needs a source;
 it cannot be inferred from a name in the script or the label's corporate parent.
-For every source/planning/application/script_edit claim (except severity), and every
+For every source/planning/application/script_edit/risk_assessment claim (except severity), and every
 remedy prescription,
 provide support_spans: citation_number plus an EXACT verbatim quote from that numbered
 excerpt. citation_numbers must match the receipt indexes. Choose the operative clause,
@@ -101,9 +126,66 @@ does NOT qualify an unconditional studio-teacher or permit requirement in the re
 General compliance language does not establish permits from specific authorities.
 Planning advice must distinguish a recommendation from a mandatory requirement.
 Mark unknown casting, jurisdiction or method asserted as fact UNKNOWN, even if a
-safe production could plausibly choose it. SUPPORTED requires every material check
-SUPPORTED. Any UNKNOWN/UNSUPPORTED clause prevents overall SUPPORTED.
+safe production could plausibly choose it. SUPPORTED requires every material prose check
+SUPPORTED. Unsupported standalone numeric estimates may be withheld separately.
 """
+)
+
+CLAIM_CHECK_INSTRUCTIONS += """
+Audit each non-null structured estimate even when absent from the prose. For field
+est_cost_usd use its canonical JSON array as quote (e.g. [5000,15000]); for field
+est_added_days use its JSON number (e.g. 2). Use basis=estimate and support_spans for
+the applicable rate/quote or comparable data, with quantities and assumptions explained
+in the remedy. A range is not its own evidence. Zero days needs support too. Missing
+or inapplicable numeric evidence is UNKNOWN; it does not invalidate a supported risk
+assessment when those numbers can simply be withheld. Unsupported numbers asserted
+in the prose must still be corrected. Do not require cost/day checks for null values.
+"""
+
+
+ESTIMATE_FIELDS = frozenset({"est_cost_usd", "est_added_days"})
+
+
+def audit_fields(flag: dict[str, Any]) -> dict[str, str]:
+    """Canonical audit surface, including numbers that never occur in prose."""
+    return {
+        "finding": flag["finding"],
+        "remedy": flag["remedy"]["detail"],
+        "severity": flag["severity"],
+        **{
+            key: json.dumps(flag["remedy"][key], separators=(",", ":"))
+            for key in sorted(ESTIMATE_FIELDS)
+            if flag["remedy"].get(key) is not None
+        },
+    }
+
+
+def _summarize_checks(verdict: dict[str, Any]) -> dict[str, Any]:
+    """Withhold unsupported numeric fields without erasing a supported concern."""
+    bad = [c for c in verdict["claim_checks"] if c["status"] != "SUPPORTED"]
+    result = dict(verdict)
+    result["estimate_exclusions"] = sorted(
+        {c["field"] for c in bad if c["field"] in ESTIMATE_FIELDS}
+    )
+    material = [c for c in bad if c["field"] not in ESTIMATE_FIELDS]
+    if material and verdict["verdict"] == "SUPPORTED":
+        result.update(
+            verdict="PARTIAL",
+            reason="Claim audit requires correction: " + "; ".join(c["reason"] for c in material),
+        )
+    elif (
+        bad
+        and not material
+        and verdict["verdict"] == "PARTIAL"
+        and verdict.get("failure_mode", "none") == "none"
+        and not verdict.get("fail_open")
+        and not verdict.get("content_filtered")
+    ):
+        result.update(
+            verdict="SUPPORTED", reason="Risk assessment supported; unverified estimates withheld"
+        )
+    return result
+
 
 CLAIM_CHECK_INSTRUCTIONS += """
 Use basis=inquiry ONLY for questions requesting missing input or a user decision
@@ -122,7 +204,9 @@ input question; it must not disguise a content edit or mandatory production work
 """
 
 
-def _support_problem(check: ClaimCheck, flag: dict[str, Any], script_context: str) -> str | None:
+def _support_problem(  # noqa: PLR0912 - independent provenance boundaries
+    check: ClaimCheck, flag: dict[str, Any], script_context: str
+) -> str | None:
     """Validate provenance and anchor display quotes back to immutable raw sources."""
     if check.field == "severity":
         return None  # field, not a model-chosen basis, defines this judgement
@@ -135,14 +219,19 @@ def _support_problem(check: ClaimCheck, flag: dict[str, Any], script_context: st
     ):
         return "Production-input inquiry is irrelevant to this desk"
     citations = flag["citations"]
+    if check.field in ESTIMATE_FIELDS and (
+        check.basis != "estimate" or check.quote != audit_fields(flag)[check.field]
+    ):
+        return "Numeric fields require a separate check of the complete canonical value"
     if check.basis == "script_edit" and check.field != "remedy":
         return "A proposed script edit belongs in the remedy"
-    if check.basis in {"application", "script_edit"} and not check.script_spans:
+    if check.basis in {"application", "script_edit", "risk_assessment"} and not check.script_spans:
         return "An application or edit needs exact screenplay evidence"
     if any(not s.strip() or s not in script_context for s in check.script_spans):
         return "Script evidence is not verbatim in the supplied scene text"
     needs_span = (
-        check.basis in {"source", "planning", "application", "script_edit"}
+        check.basis
+        in {"source", "planning", "application", "script_edit", "risk_assessment", "estimate"}
         and check.field != "severity"
     )
     needs_span |= check.field == "remedy" and check.basis != "inquiry"
@@ -184,16 +273,12 @@ def checked_verdict(
 ) -> dict[str, Any]:
     """Validate the audit's anchors; a positive label cannot override failed clauses."""
     checks = [ClaimCheck.model_validate(c) for c in verdict["claim_checks"]]
-    if {c.field for c in checks} != {"finding", "remedy", "severity"}:
+    if not {"finding", "remedy", "severity"}.issubset({c.field for c in checks}):
         raise ValueError("claim audit must cover finding, remedy and severity")
-    fields = {
-        "finding": flag["finding"],
-        "remedy": flag["remedy"]["detail"],
-        "severity": flag["severity"],
-    }
+    fields = audit_fields(flag)
     reanchors = []
     for check_index, check in enumerate(checks):
-        if check.quote not in fields[check.field]:
+        if check.field not in fields or check.quote not in fields[check.field]:
             raise ValueError("claim audit quote is not in its field")
         if check.status == "SUPPORTED":
             submitted = [s.quote for s in check.support_spans]
@@ -247,17 +332,11 @@ def checked_verdict(
     verdict = {
         **verdict,
         "claim_checks": [c.model_dump() for c in checks],
-        "support_span_version": 2,
+        "support_span_version": AUDIT_VERSION,
+        "audit_input": flag_fingerprint(flag),
         **({"support_span_reanchors": reanchors} if reanchors else {}),
     }
-    issues = [c for c in checks if c.status != "SUPPORTED"]
-    if issues and verdict["verdict"] == "SUPPORTED":
-        verdict = {
-            **verdict,
-            "verdict": "PARTIAL",
-            "reason": "Claim audit requires correction: " + "; ".join(c.reason for c in issues),
-        }
-    return verdict
+    return _summarize_checks(verdict)
 
 
 def flag_fingerprint(flag: dict[str, Any]) -> str:
@@ -276,6 +355,23 @@ def flag_fingerprint(flag: dict[str, Any]) -> str:
         )
     }
     return hashlib.sha256(json.dumps(fields, sort_keys=True).encode()).hexdigest()
+
+
+def apply_estimate_audit(flag: dict[str, Any], verdict: dict[str, Any]) -> dict[str, Any]:
+    """A new audit cannot deliver an unreviewed number; old records stay unchanged."""
+    if verdict.get("support_span_version", 0) < AUDIT_VERSION:
+        return flag
+    if verdict.get("audit_input") != flag_fingerprint(flag):
+        raise ValueError("claim audit does not match the reviewed finding")
+    excluded = set(verdict.get("estimate_exclusions", []))
+    for field in ESTIMATE_FIELDS:
+        checks = [c for c in verdict["claim_checks"] if c["field"] == field]
+        if not checks or any(c["status"] != "SUPPORTED" for c in checks):
+            excluded.add(field)
+    return {
+        **flag,
+        "remedy": {**flag["remedy"], **{k: None for k in excluded if k in ESTIMATE_FIELDS}},
+    }
 
 
 class CorrectedClaim(BaseModel):
@@ -344,10 +440,12 @@ async def check_entailment(client, flag, verdict):
     Full excerpt context prevents a receipt from hiding a negation or exception.
     Source metadata identifies attribution; it cannot supply an operative rule.
     """
-    if verdict["verdict"] != "SUPPORTED":
-        return verdict  # already goes to correction/rejection; do not spend twice
+    if verdict["verdict"] not in {"SUPPORTED", "PARTIAL"}:
+        return verdict
     claims = []
     for index, check in enumerate(verdict["claim_checks"]):
+        if check["status"] != "SUPPORTED":
+            continue  # review the claimed positives before repair can inherit them
         # Severity is a judgement made by the script-aware audit. A model may
         # attach receipts voluntarily; that must not turn HIGH into a purported
         # verbatim source assertion for this intentionally script-blind review.
@@ -364,9 +462,7 @@ async def check_entailment(client, flag, verdict):
             {
                 "check_index": index,
                 "claim": check["quote"],
-                "claim_context": flag["remedy"]["detail"]
-                if check["field"] == "remedy"
-                else flag["finding"],
+                "claim_context": audit_fields(flag)[check["field"]],
                 "basis": check["basis"],
                 **(
                     {"remedy_action": flag["remedy"].get("action")}
@@ -374,11 +470,16 @@ async def check_entailment(client, flag, verdict):
                     else {}
                 ),
                 "script_evidence": check.get("script_spans", [])
-                if check["basis"] in {"application", "script_edit", "inquiry"}
+                if check["basis"] in {"application", "script_edit", "inquiry", "risk_assessment"}
                 else [],
                 **(
                     {"desk": flag.get("agent"), "finding_context": flag["finding"]}
                     if check["basis"] == "inquiry"
+                    else {}
+                ),
+                **(
+                    {"estimate_context": flag["remedy"]["detail"]}
+                    if check["field"] in ESTIMATE_FIELDS
                     else {}
                 ),
                 "support": [
@@ -399,7 +500,8 @@ async def check_entailment(client, flag, verdict):
     if not claims:
         return verdict
     prompt = (
-        "Independently assess textual entailment, using ONLY the supplied evidence. "
+        PREQUALIFICATION_EVIDENCE
+        + "\nIndependently assess textual entailment, using ONLY the supplied evidence. "
         "source_attribution contains the cited title and URL solely to identify the "
         "source. Use it to assess attribution such as 'SAG-AFTRA guidance'; the excerpt "
         "need not repeat its publisher's name. Metadata cannot establish an operative "
@@ -413,6 +515,12 @@ async def check_entailment(client, flag, verdict):
         "strengthen an optional alternative into a required action or let one supported "
         "option hide an unsupported one. Preserve each option's applicability conditions. "
         "For basis=application, combine the exact script_evidence with the sourced rule. "
+        "For basis=risk_assessment, decide whether the rule and script trigger justify "
+        "the potential complication with the stated uncertainty. A final licensor, actual "
+        "performer or shooting plan is not required for a generic conditional warning. "
+        "For basis=estimate, independently validate the numeric value/range against its "
+        "cited rate or comparable data and applicable quantities/assumptions. "
+        "estimate_context explains the calculation but is not evidence of a rate. "
         "Script evidence establishes only fictional content, not permits, real casting, "
         "shooting jurisdiction, practical method, ownership or permission. Sources need "
         "not name screenplay characters or dialogue. Retain conditions on unknown facts. "
@@ -445,7 +553,17 @@ async def check_entailment(client, flag, verdict):
         "is negated by its context. Reasonable application to a stated hypothetical is "
         "allowed only if the source actually supplies that rule or safeguard. Never "
         "treat a nearby related topic as entailment. Return every check_index exactly "
-        "once, with entailed and a concise reason.\n\n" + json.dumps(claims)
+        "once. In addition to entailed, separately answer scope_preserved and "
+        "requirements_supported, and give scope_reason. List every unsupported "
+        "assertion/condition in unsupported_parts (empty only if all pass). "
+        "Test the scope counterfactually: for EACH alternative triggering condition, "
+        "would this source establish the rule if ONLY that alternative occurred? "
+        "Script evidence satisfying one branch cannot justify another branch. Compare "
+        "source trigger, exclusions and 'as applicable' qualifications against the claim. "
+        "Check every named duty/owner/amount separately from the risk assessment. "
+        "For an inquiry or script edit, scope_preserved means it addresses this issue "
+        "and requirements_supported means it introduces no unsupported duty or guarantee. "
+        "Any failed component must set entailed=false.\n\n" + json.dumps(claims)
     )
     try:
         response = await client.aio.models.generate_content(
@@ -467,25 +585,43 @@ async def check_entailment(client, flag, verdict):
             verdict, f"span entailment review unavailable ({type(exc).__name__})"
         )
     checks = [dict(c) for c in verdict["claim_checks"]]
-    failures = []
     for result_check in result.checks:
-        if not result_check.entailed:
-            failures.append(result_check.reason)
+        if verdict.get("support_span_version", 0) >= AUDIT_VERSION and (
+            result_check.scope_preserved is None
+            or result_check.requirements_supported is None
+            or not result_check.scope_reason.strip()
+        ):
+            return unresolved_verdict(
+                verdict, "independent review omitted scope or requirement checks"
+            )
+        if (
+            not result_check.entailed
+            or result_check.scope_preserved is False
+            or result_check.requirements_supported is False
+            or result_check.unsupported_parts
+        ):
+            result_check.entailed = False
             checks[result_check.check_index] = {
                 **checks[result_check.check_index],
                 "status": "UNSUPPORTED",
-                "reason": "Independent span review: " + result_check.reason,
+                "reason": "Independent span review: "
+                + "; ".join(
+                    part
+                    for part in (
+                        result_check.reason,
+                        result_check.scope_reason,
+                        *result_check.unsupported_parts,
+                    )
+                    if part.strip()
+                ),
             }
-    return {
-        **verdict,
-        "claim_checks": checks,
-        "entailment_review": result.model_dump(),
-        **(
-            {"verdict": "PARTIAL", "reason": "Independent span review: " + "; ".join(failures)}
-            if failures
-            else {}
-        ),
-    }
+    return _summarize_checks(
+        {
+            **verdict,
+            "claim_checks": checks,
+            "entailment_review": result.model_dump(),
+        }
+    )
 
 
 async def repair_partial(client, flag, context, search, original, verify_once):
@@ -494,7 +630,9 @@ async def repair_partial(client, flag, context, search, original, verify_once):
     if original.get("content_filtered"):
         return unresolved_verdict(original, "script verification was blocked")
     prompt = (
-        PRODUCTION_EVIDENCE
+        PREQUALIFICATION_EVIDENCE
+        + "\n"
+        + PRODUCTION_EVIDENCE
         + "\n"
         + RATINGS_EVIDENCE
         + "\nDESK: "
@@ -518,6 +656,10 @@ async def repair_partial(client, flag, context, search, original, verify_once):
         "If only a depicted safety hazard and unknown production facts remain, preserve "
         "the concern and ask what casting/method/jurisdiction is planned. Other desks "
         "must ask relevant missing-use, permission, distribution or content questions. "
+        "Build the correction from the independently accepted observations and source "
+        "rules. Do not preserve an owner, fee or requirement merely because it appeared "
+        "in the original flag. With an unresolved owner, retain a generic licensing-risk "
+        "assessment and a useful removal/replacement or rights-investigation option. "
         "Choose an action consistent with the remedy; do not put a content edit or "
         "mandatory production work under NO_ACTION. "
         "Review severity against the surviving hazard, not the removed assumptions; it may "

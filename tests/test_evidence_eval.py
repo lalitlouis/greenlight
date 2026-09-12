@@ -20,6 +20,18 @@ evaluator = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(evaluator)
 
 
+def positive_check():
+    return {
+        "check_index": 0,
+        "entailed": True,
+        "reason": "Scripted wiring check",
+        "scope_preserved": True,
+        "requirements_supported": True,
+        "scope_reason": "Scripted matching scope",
+        "unsupported_parts": [],
+    }
+
+
 def test_probes_bind_original_excerpts_and_hide_expected_labels():
     cases = json.loads((ROOT / "fixtures/accuracy/entailment_cases_20260911.json").read_text())
     source = (ROOT / "runs/run_20260911_demo.json").read_bytes()
@@ -28,11 +40,7 @@ def test_probes_bind_original_excerpts_and_hide_expected_labels():
 
     async def generate_content(**kwargs):
         prompts.append(kwargs["contents"])
-        return SimpleNamespace(
-            text=json.dumps(
-                {"checks": [{"check_index": 0, "entailed": True, "reason": "Scripted"}]}
-            )
-        )
+        return SimpleNamespace(text=json.dumps({"checks": [positive_check()]}))
 
     client = SimpleNamespace(
         aio=SimpleNamespace(models=SimpleNamespace(generate_content=generate_content))
@@ -40,7 +48,7 @@ def test_probes_bind_original_excerpts_and_hide_expected_labels():
     for flag, verdict, _ in inputs:
         asyncio.run(check_entailment(client, flag, verdict))
     for prompt, case in zip(prompts, cases["cases"], strict=True):
-        payload = json.loads(prompt.split("\n\n", 1)[1])
+        payload = json.loads(prompt.rsplit("\n\n", 1)[1])
         assert len(payload) == 1
         assert payload[0]["claim"] == case["claim"]
         assert "expected_entailed" not in prompt and case["label_reason"] not in prompt
@@ -70,6 +78,35 @@ def test_recheck_requires_matching_source_and_a_previously_skipped_stage():
         evaluator.recheck_candidate(artifact, source, flag)
 
 
+def test_prequalification_controls_include_useful_unknowns_and_structured_amounts():
+    cases = json.loads(
+        (ROOT / "fixtures/accuracy/prequalification_clearance_20260911.json").read_text()
+    )
+    source = (ROOT / "fixtures/cassettes/fresh_clearance_20260911.json").read_bytes()
+    script = (ROOT / "fixtures/slack_tide.fountain").read_text()
+    inputs = evaluator.entailment_inputs(cases, source, script)
+    assert len(inputs) == 6 and sum(expected for _, _, expected in inputs) == 3
+    amount_flag, amount_verdict, expected = inputs[4]
+    assert amount_flag["remedy"]["est_cost_usd"] == [5000, 15000]
+    assert amount_verdict["claim_checks"][0]["basis"] == "estimate" and not expected
+    prompts = []
+
+    async def generate_content(**kwargs):
+        prompts.append(kwargs["contents"])
+        return SimpleNamespace(text=json.dumps({"checks": [positive_check()]}))
+
+    client = SimpleNamespace(
+        aio=SimpleNamespace(models=SimpleNamespace(generate_content=generate_content))
+    )
+    for flag, verdict, _ in inputs:
+        result = asyncio.run(check_entailment(client, flag, verdict))
+        assert result["entailment_review"]["checks"][0]["entailed"]
+    amount_payload = json.loads(prompts[4].rsplit("\n\n", 1)[1])[0]
+    assert amount_payload["claim"] == "[5000,15000]"
+    assert amount_payload["estimate_context"] == cases["cases"][4]["estimate_context"]
+    assert all("expected_entailed" not in prompt for prompt in prompts)
+
+
 @pytest.mark.parametrize("name", ["applications", "edits_inquiries"])
 def test_application_cases_use_real_script_receipts_and_never_send_expected_labels(name):
     cases = json.loads((ROOT / f"fixtures/accuracy/evidence_{name}_20260911.json").read_text())
@@ -80,15 +117,7 @@ def test_application_cases_use_real_script_receipts_and_never_send_expected_labe
 
     async def generate_content(**kwargs):
         prompts.append(kwargs["contents"])
-        return SimpleNamespace(
-            text=json.dumps(
-                {
-                    "checks": [
-                        {"check_index": 0, "entailed": True, "reason": "Scripted wiring check"}
-                    ]
-                }
-            )
-        )
+        return SimpleNamespace(text=json.dumps({"checks": [positive_check()]}))
 
     client = SimpleNamespace(
         aio=SimpleNamespace(models=SimpleNamespace(generate_content=generate_content))
@@ -97,7 +126,7 @@ def test_application_cases_use_real_script_receipts_and_never_send_expected_labe
         asyncio.run(check_entailment(client, flag, verdict))
     assert len(prompts) == len(cases["cases"])
     for prompt, row in zip(prompts, cases["cases"], strict=True):
-        payload = json.loads(prompt.split("\n\n", 1)[1])
+        payload = json.loads(prompt.rsplit("\n\n", 1)[1])
         assert payload[0]["script_evidence"] == row["script_spans"]
         assert "expected_entailed" not in prompt and row["label_reason"] not in prompt
         assert all(s in script for s in payload[0]["script_evidence"])

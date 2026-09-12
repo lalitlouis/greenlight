@@ -102,6 +102,12 @@ are unchanged. The same bounded check/repair/check path serves live fan-out, sal
 targeted verification retry. Failed repairs do not enter another recovery loop. Production
 facts (casting, jurisdiction, effects method) cannot be inferred from fictional events.
 
+All desks and reviewers share the automated pre-qualification scope. A `risk_assessment`
+may combine exact script and source receipts into a conditional early warning without
+establishing the final licensor, cast or staging method. Normal unknown production facts
+do not by themselves constitute verification failure. Evidence strength and potential
+impact remain separate; this is not a final clearance or shooting-plan determination.
+
 External rules and production prescriptions, including planning advice, require exact
 support spans inside their own cited excerpts. Rule applications and proposed content
 edits additionally carry exact screenplay receipts from the first auditor's supplied
@@ -124,7 +130,7 @@ the complete field as claim context to judge those operators and each alternativ
 conditions. Claim context is not source evidence or verified script evidence.
 
 Receipts prove provenance, not entailment. A separate blinded batch checks each claim
-against its spans and excerpt context. Only applications/edits carry the exact relevant
+against its spans and excerpt context. Applications, edits and risk assessments carry the exact relevant
 script receipts; the batch never receives the earlier auditor's reasoning or severity.
 Script receipts establish fictional content, not actual production facts or ownership.
 Citation title and URL accompany
@@ -137,9 +143,21 @@ severity never enters the source-only batch. A supported first
 pass costs two logical calls; a repair is bounded at five total. No new searches are
 introduced. Desk-relevant inquiries may omit external support but receive independent
 review for relevance, concealed requirements and unsupported premises. The fixed
-production-input inquiry is permitted only for the safety desk. Remedy actions must
+production-input inquiry is permitted only for the safety desk. The batch also checks
+the initial auditor's positive claims when the overall audit is PARTIAL, before repair
+can inherit them. Scope and requirements are separate returned decisions; a negative
+component overrides a positive overall boolean, and missing components fail verification.
+This is a structured review contract, not deterministic proof of source interpretation.
+Remedy actions must
 agree with their detail; NO_ACTION is not proof that no follow-up is needed.
-Quote/receipt metadata is session/record-internal (`support_span_version=2`);
+Every non-null `est_cost_usd`/`est_added_days` value, including zero, is separately
+audited as a canonical JSON value with `basis=estimate`. Missing or rejected numeric
+support withholds that field without dropping supported prose or treating normal cost
+uncertainty as a verifier outage. Unsupported numbers in prose still need correction.
+`audit_input` binds the new audit to the exact flag, including its numeric fields;
+`estimate_exclusions` records withheld values. Older saved audits retain their prior
+interpretation and are not silently represented as having passed the new audit.
+Quote/receipt metadata is session/record-internal (`support_span_version=3`);
 frozen public schemas are unchanged.
 
 Fresh desk diagnostics (`scripts/eval_desks.py --live`) run hand-assigned worklists

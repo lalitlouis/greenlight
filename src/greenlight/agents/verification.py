@@ -16,6 +16,7 @@ not doing its job.
 from __future__ import annotations
 
 import asyncio
+import json
 import os
 import re as _re
 from collections.abc import AsyncGenerator
@@ -31,6 +32,8 @@ from greenlight.agents.evidence import PRODUCTION_EVIDENCE, RATINGS_EVIDENCE
 from greenlight.agents.evidence_review import (
     CLAIM_CHECK_INSTRUCTIONS,
     ClaimCheck,
+    apply_estimate_audit,
+    audit_fields,
     check_entailment,
     checked_verdict,
     corrected_flag,
@@ -299,10 +302,13 @@ it, not an unrelated council's meeting minutes; a legal doctrine needs more than
 obscure aggregator. Real support from a non-authoritative source is PARTIAL, not
 SUPPORTED.
 
+DESK: {desk}
 CLAIM (severity {severity}, category {category}):
 {finding}
 
 REMEDY ASSERTED: {remedy}
+
+STRUCTURED ESTIMATE VALUES (canonical JSON quotes to audit): {estimates}
 
 SCRIPT CONTEXT (authoritative, scenes {scene_ids}):
 {script_context}
@@ -1064,10 +1070,12 @@ def _blinded_prompt(flag: dict[str, Any], script_context: str, search_results: s
     )
     remedy = f"{flag['remedy']['action']} — {flag['remedy']['detail']}"
     return VERIFIER_PROMPT.format(
+        desk=flag.get("agent", ""),
         severity=flag["severity"],
         category=flag["category"],
         finding=flag["finding"],
         remedy=remedy,
+        estimates=json.dumps({k: v for k, v in audit_fields(flag).items() if k.startswith("est_")}),
         scene_ids=", ".join(flag["scene_ids"]),
         script_context=script_context,
         search_results=search_results,
@@ -1075,7 +1083,7 @@ def _blinded_prompt(flag: dict[str, Any], script_context: str, search_results: s
     )
 
 
-def apply_verdicts(
+def apply_verdicts(  # noqa: PLR0912 - explicit delivery states
     flags: list[dict[str, Any]], verdicts: dict[str, dict[str, Any]]
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     """Apply verdicts and checked corrections. Legacy PARTIAL verdicts keep the
@@ -1111,8 +1119,14 @@ def apply_verdicts(
                 v = unresolved_verdict(v, str(exc))
                 verdicts[flag["flag_id"]] = v
         if v["verdict"] == "SUPPORTED":
-            kept.append(flag)
-            continue
+            try:
+                flag = apply_estimate_audit(flag, v)  # noqa: PLW2901 - accepted delivery fields
+            except (ValueError, KeyError) as exc:
+                v = unresolved_verdict(v, str(exc))
+                verdicts[flag["flag_id"]] = v
+            else:
+                kept.append(flag)
+                continue
         if v["verdict"] == "PARTIAL":
             marked = dict(flag)
             # Severity is a RISK judgment and stays untouched: the old MEDIUM

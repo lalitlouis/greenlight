@@ -4,6 +4,23 @@ These are instructions about the input's evidentiary scope, not legal rules.
 Keep them shared so a desk cannot be punished for respecting that scope.
 """
 
+PREQUALIFICATION_EVIDENCE = """\
+PRODUCT SCOPE — PRE-QUALIFICATION:
+This report identifies potential clearance, rating, distribution and production
+complications early. It does not establish final permission, classification or a
+shooting plan. Preserve a useful, cited risk assessment when ownership, casting,
+jurisdiction or method is unknown: explain the relevant condition and next step.
+Distinguish the scene observation, sourced rule, potential consequence and proposed
+response. A relevant rule and actual script trigger can justify 'could create a
+licensing cost' without a confirmed owner or quote. Risk magnitude is not certainty.
+A CUT/REPLACE suggestion can address that trigger without the source prescribing an
+edit. Specific owners, mandatory duties, permits, equipment and numeric prices still
+need their own evidence; adding 'could' does not make an unsupported claim reliable.
+Prefer a narrow useful warning and relevant options over an unrelated generic question.
+Unknown production inputs are normal; do not call them failed verification when the
+conditional assessment itself is supported. Failed or missing evidence is different.
+"""
+
 PRODUCTION_EVIDENCE = """\
 SCRIPT FACTS AND PRODUCTION FACTS ARE DIFFERENT:
 - The screenplay establishes fictional events, character ages, story locations and dialogue.

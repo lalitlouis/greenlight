@@ -1,0 +1,110 @@
+{
+  "source_run_sha256": "f96a2580fc01c85baa9ba4838e3ae6f173b8570ec891b220f00d25ffa350f1b4",
+  "source_script_sha256": "634444b20de3d73acfaeda4bd89b44f8e62192103cf54302db16fd3304828bfb",
+  "label_scope": "Development cases frozen before the candidate live comparison. Developer-authored labels for supplied evidence and pre-qualification usefulness; not independent real-world accuracy validation. Related cases share one source/script and are not independent samples.",
+  "cases": [
+    {
+      "case_id": "clip_conditional_warning",
+      "field": "finding",
+      "basis": "risk_assessment",
+      "claim": "If the JAWS footage is retained on screen, permissions and a licensing fee may need to be investigated. The current licensor and any fee are not established by these excerpts.",
+      "support_spans": [
+        {
+          "citation_number": 2,
+          "quote": "Permission for the use of film clips and phots, a license obtained and fee negotiated must be obtained from the owner of the work you want to use. We have many years of experience in this area and can help you obtain quick clearances and negotiate a reasonable fee for such usage."
+        }
+      ],
+      "script_spans": [
+        "On the corner TV, muted, an old VHS of JAWS is playing. The shark is winning."
+      ],
+      "expected_entailed": true,
+      "label_reason": "The depicted clip and relevant permission guidance justify a conditional permissions/budget concern without an established owner or amount.",
+      "source_flag_id": "F1001"
+    },
+    {
+      "case_id": "clip_remove_trigger",
+      "field": "remedy",
+      "basis": "script_edit",
+      "action": "REPLACE",
+      "claim": "Cut or replace the JAWS clip to remove this specific third-party footage from the scene; assess any replacement separately.",
+      "support_spans": [
+        {
+          "citation_number": 2,
+          "quote": "Permission for the use of film clips and phots, a license obtained and fee negotiated must be obtained from the owner of the work you want to use. We have many years of experience in this area and can help you obtain quick clearances and negotiate a reasonable fee for such usage."
+        }
+      ],
+      "script_spans": [
+        "On the corner TV, muted, an old VHS of JAWS is playing. The shark is winning."
+      ],
+      "expected_entailed": true,
+      "label_reason": "An edit can remove the cited clip trigger without guaranteeing rights in replacement assets.",
+      "source_flag_id": "F1001"
+    },
+    {
+      "case_id": "clip_relevant_input",
+      "field": "remedy",
+      "basis": "inquiry",
+      "action": "NO_ACTION",
+      "claim": "Will the finished shot retain identifiable JAWS footage, and do you already have permission for that use?",
+      "support_spans": [],
+      "script_spans": [
+        "On the corner TV, muted, an old VHS of JAWS is playing. The shark is winning."
+      ],
+      "expected_entailed": true,
+      "label_reason": "Relevant missing production/use facts; no hidden owner, price or mandate.",
+      "source_flag_id": "F1001"
+    },
+    {
+      "case_id": "clip_unproved_owner",
+      "field": "finding",
+      "basis": "source",
+      "claim": "Universal Pictures owns the JAWS footage and Universal Studios Media Licensing can license its use for this production.",
+      "support_spans": [
+        {
+          "citation_number": 1,
+          "quote": "Your source for film and TV clip, still, and elements business to business media licensing from the iconic Universal Pictures, Focus Features, DreamWorks Animation, and MCA Television libraries."
+        }
+      ],
+      "script_spans": [],
+      "expected_entailed": false,
+      "label_reason": "The catalog excerpt neither names JAWS nor connects the exact footage and requested use to its current licensing authority. This labels supplied evidence, not actual ownership.",
+      "source_flag_id": "F1001"
+    },
+    {
+      "case_id": "clip_unproved_amount",
+      "field": "est_cost_usd",
+      "basis": "estimate",
+      "claim": "[5000,15000]",
+      "estimate_context": "Retain the JAWS clip in an independent feature for worldwide all-media distribution.",
+      "support_spans": [
+        {
+          "citation_number": 2,
+          "quote": "Permission for the use of film clips and phots, a license obtained and fee negotiated must be obtained from the owner of the work you want to use. We have many years of experience in this area and can help you obtain quick clearances and negotiate a reasonable fee for such usage."
+        }
+      ],
+      "script_spans": [],
+      "expected_entailed": false,
+      "label_reason": "A statement that a fee is negotiated supplies no rate, comparable amount or calculation supporting this range.",
+      "source_flag_id": "F1001"
+    },
+    {
+      "case_id": "clip_replacement_guarantee",
+      "field": "remedy",
+      "basis": "script_edit",
+      "action": "REPLACE",
+      "claim": "Replacing the JAWS clip with royalty-free footage guarantees no licensing obligations or talent fees.",
+      "support_spans": [
+        {
+          "citation_number": 2,
+          "quote": "Permission for the use of film clips and phots, a license obtained and fee negotiated must be obtained from the owner of the work you want to use. We have many years of experience in this area and can help you obtain quick clearances and negotiate a reasonable fee for such usage."
+        }
+      ],
+      "script_spans": [
+        "On the corner TV, muted, an old VHS of JAWS is playing. The shark is winning."
+      ],
+      "expected_entailed": false,
+      "label_reason": "Removing one clip does not establish the selected replacement rights or a guarantee of no fees.",
+      "source_flag_id": "F1001"
+    }
+  ]
+}

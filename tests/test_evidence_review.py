@@ -10,7 +10,10 @@ from types import SimpleNamespace
 import pytest
 
 from greenlight.agents.evidence_review import (
+    AUDIT_VERSION,
     PRODUCTION_INQUIRY,
+    apply_estimate_audit,
+    audit_fields,
     check_entailment,
     checked_verdict,
     corrected_flag,
@@ -77,9 +80,20 @@ def entailment(verdict):
     """Scripted positive secondary review; tests here establish mechanics only."""
     return {
         "checks": [
-            {"check_index": i, "entailed": True, "reason": "Scripted positive review."}
+            {
+                "check_index": i,
+                "entailed": True,
+                "reason": "Scripted positive review.",
+                "scope_preserved": True,
+                "requirements_supported": True,
+                "scope_reason": "Scripted matching scope.",
+                "unsupported_parts": [],
+            }
             for i, check in enumerate(verdict["claim_checks"])
-            if check["support_spans"] and check["field"] != "severity"
+            if check["status"] == "SUPPORTED"
+            and (check["support_spans"] or check["basis"] == "inquiry")
+            and check["field"] != "severity"
+            and check["quote"] != PRODUCTION_INQUIRY
         ]
     }
 
@@ -143,16 +157,18 @@ def test_corrected_remedy_is_reverified_without_original_review_and_stale_estima
     before = deepcopy(flag)
     patch = correction()
     candidate = corrected_flag(flag, patch)
+    initial = audit(flag, issue="Employ a certified Studio Teacher")
     client = Client(
-        audit(flag, issue="Employ a certified Studio Teacher"),
+        initial,
+        entailment(initial),
         patch,
         audit(candidate),
         entailment(audit(candidate)),
     )
     verdict = asyncio.run(call_verifier(client, flag, "scene evidence", "search evidence"))
-    assert len(client.calls) == 4
-    assert "Return claim_checks" not in client.calls[1]["contents"]
-    assert "Return the corrected finding" in client.calls[1]["contents"]
+    assert len(client.calls) == 5
+    assert "Return claim_checks" not in client.calls[2]["contents"]
+    assert "Return the corrected finding" in client.calls[2]["contents"]
     assert (
         "Casting is unconfirmed; the remedy must retain its condition."
         not in (client.calls[-1]["contents"])
@@ -179,21 +195,30 @@ def test_repair_failure_is_unresolved_not_a_scored_partial_or_silent_clearance(f
     patch = correction()
     initial = audit(flag, issue="Employ a certified Studio Teacher")
     if failure == "malformed":
-        client = Client(initial, {"finding": ""})
+        client = Client(initial, entailment(initial), {"finding": ""})
     else:
         after = (
             RuntimeError("offline failure")
             if failure == "transport"
             else audit(corrected_flag(flag, patch), verdict=failure.upper())
         )
-        client = Client(initial, patch, after)
+        client = Client(
+            initial,
+            entailment(initial),
+            patch,
+            after,
+            *([entailment(after)] if failure == "partial" else []),
+        )
     verdict = asyncio.run(call_verifier(client, flag, "scene", "search"))
     verdicts = {flag["flag_id"]: verdict}
     kept, dropped = apply_verdicts([flag], verdicts)
     assert not kept and len(dropped) == 1
     assert not dropped[0]["recoverable"]  # no recursive repair or new search loop
     assert review_incomplete(verdicts)
-    assert len(client.calls) <= 3
+    assert (
+        len(client.calls)
+        == {"malformed": 3, "transport": 4, "unsupported": 4, "partial": 5}[failure]
+    )
     report = build_report("X", kept, verification_incomplete=review_incomplete(verdicts))
     assert report["greenlight_score"] is None and report["dimension_scores"] == {}
     assert report["verification_degraded"]
@@ -206,6 +231,7 @@ def test_repair_failure_is_unresolved_not_a_scored_partial_or_silent_clearance(f
 
 def test_already_supported_claim_uses_one_narrow_span_review_and_is_unchanged():
     flag = saved_flag()
+    flag["remedy"].update(est_cost_usd=None, est_added_days=None)
     client = Client(audit(flag), entailment(audit(flag)))
     verdict = asyncio.run(call_verifier(client, flag, "scene", "search"))
     kept, _ = apply_verdicts([flag], {flag["flag_id"]: verdict})
@@ -231,8 +257,10 @@ def test_repair_cannot_change_coordinates_or_be_reused_on_different_text():
 def test_reverify_uses_repaired_text_and_retains_prior_unresolved_score_withhold():
     flag = {**saved_flag(), "verification_unavailable": True}
     candidate = corrected_flag(flag, correction())
+    initial = audit(flag, issue="Employ a certified Studio Teacher")
     client = Client(
-        audit(flag, issue="Employ a certified Studio Teacher"),
+        initial,
+        entailment(initial),
         correction(),
         audit(candidate),
         entailment(audit(candidate)),
@@ -321,11 +349,13 @@ def test_panel_and_salvage_share_repair_semantics(monkeypatch, route, repair_ok)
     flag = saved_flag()
     patch = correction()
     candidate = corrected_flag(flag, patch)
+    initial = audit(flag, issue="Employ a certified Studio Teacher")
     client = Client(
-        audit(flag, issue="Employ a certified Studio Teacher"),
+        initial,
+        entailment(initial),
         patch,
         audit(candidate, verdict="SUPPORTED" if repair_ok else "PARTIAL"),
-        *([entailment(audit(candidate))] if repair_ok else []),
+        entailment(audit(candidate)),
     )
     monkeypatch.setattr(genai, "Client", lambda **kw: client)
     monkeypatch.setenv("GOOGLE_CLOUD_PROJECT", "offline-test")
@@ -349,7 +379,7 @@ def test_panel_and_salvage_share_repair_semantics(monkeypatch, route, repair_ok)
         assert kept[0]["finding"] == patch["finding"] and not dropped
     else:
         assert not kept and dropped and review_incomplete(verdicts)
-    assert len(client.calls) == (4 if repair_ok else 3)  # bounded; no research loop
+    assert len(client.calls) == 5  # bounded; no research loop, even after a PARTIAL repair
 
 
 @pytest.mark.parametrize(
@@ -444,21 +474,17 @@ def test_inquiry_label_still_gets_independent_review_without_citations():
     verdict = audit(flag)
     verdict["claim_checks"][1].update(basis="inquiry", citation_numbers=[], support_spans=[])
     result = checked_verdict(verdict, flag)
-    response = {
-        "checks": [
-            {"check_index": 0, "entailed": True, "reason": "Scripted"},
-            {"check_index": 1, "entailed": False, "reason": "Concealed hiring requirement"},
-        ]
-    }
+    response = entailment(result)
+    response["checks"][1].update(entailed=False, reason="Concealed hiring requirement")
     client = Client(response)
     checked = asyncio.run(check_entailment(client, flag, result))
     assert checked["verdict"] == "PARTIAL"
-    payload = json.loads(client.calls[0]["contents"].split("\n\n", 1)[1])
+    payload = json.loads(client.calls[0]["contents"].rsplit("\n\n", 1)[1])
     assert payload[1]["basis"] == "inquiry" and payload[1]["support"] == []
     assert payload[1]["desk"] == "safety_underwriter"
 
 
-@pytest.mark.parametrize("basis", ["application", "script_edit"])
+@pytest.mark.parametrize("basis", ["application", "script_edit", "risk_assessment"])
 def test_applications_need_both_source_and_exact_script_receipts(basis):
     flag = saved_flag()
     verdict = audit(flag)
@@ -517,7 +543,7 @@ def test_saved_minor_correction_supplies_attribution_without_prior_reasoning():
     assert verdict["verdict"] == "SUPPORTED"
     client = Client(entailment(verdict))  # verifies input isolation, not model accuracy
     asyncio.run(check_entailment(client, candidate, verdict))
-    claims = json.loads(client.calls[0]["contents"].split("\n\n", 1)[1])
+    claims = json.loads(client.calls[0]["contents"].rsplit("\n\n", 1)[1])
     assert len(claims) == 1
     receipt = claims[0]["support"][0]
     source = flag["citations"][1]
@@ -574,7 +600,7 @@ def test_optional_severity_receipt_does_not_request_literal_source_support_for_h
     verdict = checked_verdict(verdict, flag)
     client = Client(entailment(verdict))
     result = asyncio.run(check_entailment(client, flag, verdict))
-    payload = json.loads(client.calls[0]["contents"].split("\n\n", 1)[1])
+    payload = json.loads(client.calls[0]["contents"].rsplit("\n\n", 1)[1])
     assert {c["check_index"] for c in payload} == {0, 1}
     assert result["claim_checks"][2] == verdict["claim_checks"][2]
     assert result["verdict"] == "SUPPORTED"
@@ -643,7 +669,7 @@ def test_clause_context_does_not_override_rejection_of_an_unsupported_alternativ
     client = Client(response)
     after = asyncio.run(check_entailment(client, flag, before))
     assert after["verdict"] == "PARTIAL"
-    payload = json.loads(client.calls[0]["contents"].split("\n\n", 1)[1])
+    payload = json.loads(client.calls[0]["contents"].rsplit("\n\n", 1)[1])
     remedies = [c for c in payload if "remedy_action" in c]
     assert all(c["claim_context"] == flag["remedy"]["detail"] for c in remedies)
     assert len(remedies) == 2
@@ -665,9 +691,137 @@ def test_resume_reuses_only_a_timed_out_audit_with_matching_source():
     artifact = json.loads((ROOT / "fixtures/cassettes/support_spans_20260911.json").read_text())
     source = (ROOT / "runs/run_20260911_demo.json").read_bytes()
     partial = evaluator.resumable_audit(artifact, source, saved_flag("F3006"))
-    assert partial["verdict"] == "PARTIAL" and partial["support_span_version"] == 2
+    assert partial["verdict"] == "PARTIAL" and partial["support_span_version"] == AUDIT_VERSION
     assert evaluator.resumable_audit(artifact, source, saved_flag("F3008")) is None
     with pytest.raises(ValueError, match="different source"):
         evaluator.resumable_audit(artifact, b"changed source", saved_flag("F3006"))
     with pytest.raises(ValueError, match="only interrupted"):
         evaluator.resumable_audit(artifact, source, saved_flag("F3002"))
+
+
+def test_structured_only_estimates_are_visible_and_withheld_without_losing_the_warning():
+    flag = saved_flag()
+    flag["remedy"].update(est_cost_usd=[4321, 6789], est_added_days=3)
+    before = deepcopy(flag)
+    client = Client(audit(flag), entailment(audit(flag)))  # first auditor omits numeric fields
+    verdict = asyncio.run(call_verifier(client, flag, "scene", "search"))
+    assert "[4321,6789]" in client.calls[0]["contents"]
+    assert '"est_added_days": "3"' in client.calls[0]["contents"]
+    assert verdict["verdict"] == "SUPPORTED" and len(client.calls) == 2
+    assert set(verdict["estimate_exclusions"]) == {"est_cost_usd", "est_added_days"}
+    kept, dropped = apply_verdicts([flag], {flag["flag_id"]: verdict})
+    assert not dropped and kept[0]["finding"] == flag["finding"]
+    assert kept[0]["remedy"]["detail"] == flag["remedy"]["detail"]
+    assert kept[0]["remedy"]["est_cost_usd"] is None
+    assert kept[0]["remedy"]["est_added_days"] is None
+    assert flag == before
+    report = build_report("X", kept, verification_incomplete=review_incomplete({"F": verdict}))
+    assert report["greenlight_score"] is not None
+    assert not report.get("verification_degraded")
+    assert report["est_clearance_cost_usd"] is None and report["est_added_days"] is None
+
+
+def estimate_checks(flag):
+    """Scripted numeric evidence; does not establish real-world rate accuracy."""
+    return [
+        {
+            "field": field,
+            "quote": quote,
+            "basis": "estimate",
+            "status": "SUPPORTED",
+            "reason": "Scripted estimate audit",
+            "citation_numbers": [1],
+            "support_spans": [{"citation_number": 1, "quote": flag["citations"][0]["excerpt"]}],
+        }
+        for field, quote in audit_fields(flag).items()
+        if field.startswith("est_")
+    ]
+
+
+@pytest.mark.parametrize("stage", ["initial", "secondary"])
+def test_a_rejected_numeric_estimate_does_not_require_rewriting_supported_prose(stage):
+    flag = saved_flag()
+    flag["remedy"].update(est_cost_usd=[100, 200], est_added_days=0)
+    original = audit(flag)
+    original["claim_checks"].extend(estimate_checks(flag))
+    cost = next(c for c in original["claim_checks"] if c["field"] == "est_cost_usd")
+    if stage == "initial":
+        original["verdict"] = "PARTIAL"
+        cost.update(status="UNKNOWN", reason="No applicable rate supports the range.")
+    response = entailment(original)
+    if stage == "secondary":
+        response["checks"][-1].update(entailed=False, reason="No applicable rate supports cost.")
+    client = Client(original, response)
+    verdict = asyncio.run(call_verifier(client, flag, "scene", "search"))
+    assert verdict["verdict"] == "SUPPORTED" and len(client.calls) == 2
+    kept, dropped = apply_verdicts([flag], {flag["flag_id"]: verdict})
+    assert not dropped and kept[0]["remedy"]["est_cost_usd"] is None
+    assert kept[0]["remedy"]["est_added_days"] == 0  # independently accepted, not defaulted
+    assert kept[0]["finding"] == flag["finding"]
+
+
+def test_unknown_number_in_prose_still_requires_correction():
+    flag = saved_flag()
+    flag["remedy"]["detail"] = "The license will cost $5000."
+    verdict = audit(flag)
+    verdict["claim_checks"][1].update(status="UNKNOWN", reason="Unsupported price assertion.")
+    assert checked_verdict(verdict, flag)["verdict"] == "PARTIAL"
+
+
+def test_new_audit_is_bound_to_amounts_and_sources_while_legacy_records_are_unchanged():
+    flag = saved_flag()
+    original = deepcopy(flag)
+    verdict = checked_verdict(audit(flag), flag)
+    assert apply_estimate_audit(flag, {"support_span_version": 2}) == original
+    changed = deepcopy(flag)
+    changed["remedy"]["est_cost_usd"] = [1, 2]
+    verdicts = {flag["flag_id"]: verdict}
+    kept, dropped = apply_verdicts([changed], verdicts)
+    assert not kept and dropped and review_incomplete(verdicts)
+    assert flag == original
+
+
+@pytest.mark.parametrize(
+    "component", ["scope_preserved", "requirements_supported", "unsupported_parts"]
+)
+def test_failed_scope_or_duty_component_overrides_a_positive_boolean(component):
+    flag = saved_flag()
+    verdict = checked_verdict(audit(flag), flag)
+    response = entailment(verdict)
+    response["checks"][0][component] = (
+        ["Unsupported open-flame alternative"] if component == "unsupported_parts" else False
+    )
+    client = Client(response)
+    result = asyncio.run(check_entailment(client, flag, verdict))
+    assert result["verdict"] == "PARTIAL"
+    assert result["claim_checks"][0]["status"] == "UNSUPPORTED"
+    assert result["entailment_review"]["checks"][0]["entailed"] is False
+
+
+@pytest.mark.parametrize("component", ["scope_preserved", "requirements_supported", "scope_reason"])
+def test_new_live_review_cannot_silently_omit_scope_checks(component):
+    flag = saved_flag()
+    verdict = checked_verdict(audit(flag), flag)
+    response = entailment(verdict)
+    response["checks"][0].pop(component)
+    client = Client(response)
+    result = asyncio.run(check_entailment(client, flag, verdict))
+    assert result["evidence_review_unresolved"] and result["verdict"] == "UNSUPPORTED"
+
+
+def test_partial_audit_positives_are_checked_before_the_correction_inherits_them():
+    flag = saved_flag()
+    initial = audit(flag, issue="Employ a certified Studio Teacher")
+    first_review = entailment(initial)
+    first_review["checks"][0].update(entailed=False, reason="The claimed relationship is absent.")
+    patch = correction()
+    candidate = corrected_flag(flag, patch)
+    client = Client(initial, first_review, patch, audit(candidate), entailment(audit(candidate)))
+    result = asyncio.run(call_verifier(client, flag, "scene", "search"))
+    assert len(client.calls) == 5 and result["verdict"] == "SUPPORTED"
+    repair_prompt = client.calls[2]["contents"]
+    reviewed = json.loads(
+        repair_prompt.split("\nVERIFICATION:\n", 1)[1].split("\nSCENE TEXT:", 1)[0]
+    )
+    assert reviewed["claim_checks"][0]["status"] == "UNSUPPORTED"
+    assert "claimed relationship is absent" in reviewed["claim_checks"][0]["reason"]
