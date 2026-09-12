@@ -1,0 +1,781 @@
+{
+  "source_run": "runs/run_20260912_040149.json",
+  "source_run_sha256": "9c042bbe0fc645882b44bdc0542e6e099ebe8ce4fcf414486359ee77fddac397",
+  "source_build": "local:705d7b870ce7d1fe8a91d7645c91c355a08c9cf0",
+  "evaluated_build": "4f577da04e00b2ee389eb133daf67d5349ed6b9d",
+  "model": "gemini-3.7-flash",
+  "elapsed_s": 228.72,
+  "calls": 5,
+  "responses_with_usage": 5,
+  "calls_without_returned_usage": 0,
+  "resumed_from": null,
+  "rechecked_correction_from": null,
+  "recovered_remedy_from_source": false,
+  "entailment_cases": null,
+  "entailment_cases_sha256": null,
+  "attempts": [
+    {
+      "flag_id": "F1007",
+      "schema": "EvidenceVerdict",
+      "status": "returned",
+      "input_chars": 29172,
+      "input_sha256": "b9df73fe6302bfc3f99c79b853a85181d2b45396e731fb61418241b3c8a08ac3",
+      "usage_available": true,
+      "elapsed_s": 12.54
+    },
+    {
+      "flag_id": "F1007",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 27643,
+      "input_sha256": "8ab902a80e13263e6a03af1fa300c3d6d9351c9b1eebe095a90f3974c10f0301",
+      "usage_available": true,
+      "elapsed_s": 18.65
+    },
+    {
+      "flag_id": "F1007",
+      "schema": "CorrectedClaim",
+      "status": "returned",
+      "input_chars": 20430,
+      "input_sha256": "79fa14f0f9482527e957466aec33ac29e5806c48cf3d3765063ce4f4a86a4cef",
+      "usage_available": true,
+      "elapsed_s": 6.95
+    },
+    {
+      "flag_id": "F1007",
+      "schema": "EvidenceVerdict",
+      "status": "returned",
+      "input_chars": 29147,
+      "input_sha256": "811e927a68dfe8a9bb2adac243480c4a1622eeccb395b240abf98a8189ab940a",
+      "usage_available": true,
+      "elapsed_s": 13.96
+    },
+    {
+      "flag_id": "F1007",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 28636,
+      "input_sha256": "0c45f3467fcd50173cbb98132e447385fd6519132c82e7d2bb614a8ac6b2507f",
+      "usage_available": true,
+      "elapsed_s": 176.56
+    }
+  ],
+  "gemini_usage": {
+    "flash": {
+      "prompt": 32568,
+      "cached": 4013,
+      "output": 10429
+    }
+  },
+  "estimated_cost_usd": 0.0608,
+  "manual_review": "pending; model approval is not an accuracy label",
+  "results": [
+    {
+      "flag_id": "F1007",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "reason": "The script text accurately contains the dialogue in S002 disparaging Coors Light ('Tastes like a wet napkin. Man ran the best bar on this coast and drank the worst beer in America.') and the additional reference in S007 ('No Coors Light.'). The cited sources directly support the principles of trade libel regarding product disparagement and trademark limits in film.",
+        "failure_mode": "none",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "In scene S002, dialogue explicitly names the commercial brand 'Coors Light' and disparages its quality ('Tastes like a wet napkin. Man ran the best bar on this coast and drank the worst beer in America.')",
+            "basis": "script",
+            "status": "SUPPORTED",
+            "reason": "The exact dialogue appears in scene S002 spoken by Crow.",
+            "citation_numbers": [],
+            "support_spans": [],
+            "script_spans": [
+              "Coors Light. Tastes like a wet napkin. Man ran the best bar on this coast and drank the worst beer in America."
+            ]
+          },
+          {
+            "field": "finding",
+            "quote": "followed by an additional spoken reference in scene S007 ('No Coors Light.')",
+            "basis": "script",
+            "status": "SUPPORTED",
+            "reason": "The exact line appears in scene S007 spoken by Eli Voss.",
+            "citation_numbers": [],
+            "support_spans": [],
+            "script_spans": [
+              "No Coors Light."
+            ]
+          },
+          {
+            "field": "finding",
+            "quote": "Trade libel principles establish that making statements that disparage the quality of a commercial product or service creates legal exposure",
+            "basis": "source",
+            "status": "SUPPORTED",
+            "reason": "CACI No. 1731 establishes that making a statement disparaging the quality of a plaintiff's product or service is an essential factual element of trade libel.",
+            "citation_numbers": [
+              2
+            ],
+            "support_spans": [
+              {
+                "citation_number": 2,
+                "quote": "1.That[ name of defendant ] made a statement that [would be clearly\nornecessarilyunderstoodtohave]disparagedthequalityof\n[ name of plaintiff ]\u2019s [ product/service ];"
+              }
+            ],
+            "script_spans": []
+          },
+          {
+            "field": "finding",
+            "quote": "and trademark guidance notes that filmmakers do not have the right to disparage an active trademark.",
+            "basis": "source",
+            "status": "SUPPORTED",
+            "reason": "The cited trademark commentary notes that filmmakers have no right to disparage a trademark.",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "A filmmaker has every right to dress sets with real products, but no right to disparage a trademark."
+              }
+            ],
+            "script_spans": []
+          },
+          {
+            "field": "finding",
+            "quote": "Using a real brand in dialogue specifically attacking its quality risks trade libel claims and clearance disputes.",
+            "basis": "risk_assessment",
+            "status": "SUPPORTED",
+            "reason": "The risk assessment logically connects the specific dialogue attacking product quality with trade libel legal exposure supported by the sources.",
+            "citation_numbers": [
+              1,
+              2
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "However, even if you have the right to use a trademark, you do not have the right to commit trade libel in the name of entertainment."
+              },
+              {
+                "citation_number": 2,
+                "quote": "1.That[ name of defendant ] made a statement that [would be clearly\nornecessarilyunderstoodtohave]disparagedthequalityof\n[ name of plaintiff ]\u2019s [ product/service ];"
+              }
+            ],
+            "script_spans": [
+              "Coors Light. Tastes like a wet napkin. Man ran the best bar on this coast and drank the worst beer in America."
+            ]
+          },
+          {
+            "field": "remedy",
+            "quote": "REPLACE the spoken brand reference 'Coors Light' in scenes S002 and S007 with a fictional beer brand name or generic descriptive phrasing.",
+            "basis": "script_edit",
+            "status": "SUPPORTED",
+            "reason": "Replacing the real brand reference with a fictional or generic name eliminates the disparagement trigger.",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "A filmmaker has every right to dress sets with real products, but no right to disparage a trademark."
+              }
+            ],
+            "script_spans": [
+              "Coors Light."
+            ]
+          },
+          {
+            "field": "remedy",
+            "quote": "If the production intends to retain the real brand name and disparaging remarks, consult clearance counsel to evaluate trade libel risk.",
+            "basis": "inquiry",
+            "status": "SUPPORTED",
+            "reason": "This is a conditional planning inquiry/escalation regarding production clearance decisions.",
+            "citation_numbers": [],
+            "support_spans": [],
+            "script_spans": []
+          },
+          {
+            "field": "severity",
+            "quote": "MEDIUM",
+            "basis": "risk_assessment",
+            "status": "SUPPORTED",
+            "reason": "A direct spoken disparagement of an identifiable commercial product's quality poses an actionable legal risk warranting medium severity.",
+            "citation_numbers": [
+              1,
+              2
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "Trade libel occurs when a product or service is falsely accused of some bad attribute."
+              }
+            ],
+            "script_spans": []
+          }
+        ],
+        "support_span_version": 3,
+        "audit_input": "f906b3c61e3bce3ba92872c110931357a48ef1abda21a74d1c47ab788d2047b0",
+        "estimate_exclusions": [],
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "Accurately reflects the dialogue spoken by Crow in scene S002.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "Matches the exact screenplay dialogue in scene S002.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            },
+            {
+              "check_index": 1,
+              "entailed": true,
+              "reason": "Accurately reflects the dialogue spoken by Eli in scene S007.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "Matches the exact screenplay dialogue in scene S007.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            },
+            {
+              "check_index": 2,
+              "entailed": true,
+              "reason": "Supported by CACI No. 1731 establishing trade libel elements for disparaging the quality of a product or service.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The cited legal instruction directly supports the stated principle of trade libel.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            },
+            {
+              "check_index": 3,
+              "entailed": true,
+              "reason": "Directly supported by the Bloomberg Law excerpt stating filmmakers have no right to disparage a trademark.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "Matches the cited guidance on trademark disparagement.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            },
+            {
+              "check_index": 4,
+              "entailed": true,
+              "reason": "A properly qualified risk assessment connecting the script's disparaging brand references to cited trade libel and trademark principles.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "Correctly links the script trigger to potential legal risk without overstating certainty.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            },
+            {
+              "check_index": 5,
+              "entailed": true,
+              "reason": "Proposes a standard script edit that removes the specific brand name trigger without introducing unsupported duties or guarantees.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "Directly addresses the brand disparagement trigger identified in the scene.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            },
+            {
+              "check_index": 6,
+              "entailed": true,
+              "reason": "A relevant next-step inquiry conditional on the production's creative decision to retain the brand name.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "Directly relevant to clearance evaluation if the brand reference is retained.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            }
+          ]
+        },
+        "entailment_policy_version": 3,
+        "evidence_review": {
+          "before": {
+            "verdict": "PARTIAL",
+            "reason": "Claim audit requires correction: Independent span review: The claim guarantees that legal exposure is eliminated entirely and makes an unsupported assertion regarding 'zero schedule or financial cost'.; Guaranteed legal outcomes and unevidenced financial/schedule assertions violate clearance assessment standards.; eliminates product disparagement and trade libel exposure entirely; at zero schedule or financial cost",
+            "failure_mode": "none",
+            "claim_checks": [
+              {
+                "field": "finding",
+                "quote": "Scenes S002 and S007 feature character dialogue that explicitly disparages the registered commercial brand 'Coors Light'. In S002, Crow declares: 'Coors Light. Tastes like a wet napkin. Man ran the best bar on this coast and drank the worst beer in America.'",
+                "basis": "script",
+                "status": "SUPPORTED",
+                "reason": "The script text in S002 shows Crow explicitly saying this line about Coors Light.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "Coors Light. Tastes like a wet napkin. Man ran the best bar on this coast and drank the worst beer in America."
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "In S007, Eli Voss references drinking it 'out of spite.'",
+                "basis": "script",
+                "status": "SUPPORTED",
+                "reason": "In S007, Mara and Eli discuss drinking Coors Light 'out of spite' and loyalty.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "No Coors Light.",
+                  "That you drank on purpose. For thirty years. Out of spite.",
+                  "Loyalty. Spite is just loyalty with the brights on."
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "While character opinions in expressive entertainment are generally defensible under First Amendment principles, aggressive disparagement of an active consumer brand invites trade libel claims, corporate demand letters, and E&O clearance exceptions. The cost is defense and insurance complications rather than clear liability.",
+                "basis": "risk_assessment",
+                "status": "SUPPORTED",
+                "reason": "Citations 1 and 2 establish that filmmakers have no right to disparage trademarks or commit trade libel by disparaging product quality, which creates legal and clearance risks.",
+                "citation_numbers": [
+                  1,
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "A filmmaker has every right to dress sets with real products, but no right to disparage a trademark."
+                  },
+                  {
+                    "citation_number": 1,
+                    "quote": "Trade libel occurs when a product or service is falsely accused of some bad attribute."
+                  },
+                  {
+                    "citation_number": 2,
+                    "quote": "That[ name of defendant ] made a statement that [would be clearly\nornecessarilyunderstoodtohave]disparagedthequalityof\n[ name of plaintiff ]\u2019s [ product/service ];"
+                  }
+                ],
+                "script_spans": [
+                  "Coors Light. Tastes like a wet napkin. Man ran the best bar on this coast and drank the worst beer in America."
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "REPLACE the spoken brand 'Coors Light' in S002 and S007 with a fictional beer brand (e.g., 'Bannock Draft' or 'Old Anchor Light') or generic dialogue ('cheap light lager').",
+                "basis": "script_edit",
+                "status": "SUPPORTED",
+                "reason": "Proposing fictional or generic names directly resolves the trademark disparagement trigger in the scene.",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "A filmmaker has every right to dress sets with real products, but no right to disparage a trademark."
+                  }
+                ],
+                "script_spans": [
+                  "Coors Light. Tastes like a wet napkin. Man ran the best bar on this coast and drank the worst beer in America.",
+                  "No Coors Light."
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "Fictionalizing the brand eliminates product disparagement and trade libel exposure entirely at zero schedule or financial cost.",
+                "basis": "risk_assessment",
+                "status": "UNSUPPORTED",
+                "reason": "Independent span review: The claim guarantees that legal exposure is eliminated entirely and makes an unsupported assertion regarding 'zero schedule or financial cost'.; Guaranteed legal outcomes and unevidenced financial/schedule assertions violate clearance assessment standards.; eliminates product disparagement and trade libel exposure entirely; at zero schedule or financial cost",
+                "citation_numbers": [
+                  1,
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "A filmmaker has every right to dress sets with real products, but no right to disparage a trademark."
+                  },
+                  {
+                    "citation_number": 2,
+                    "quote": "1.That[ name of defendant ] made a statement that [would be clearly\nornecessarilyunderstoodtohave]disparagedthequalityof\n[ name of plaintiff ]\u2019s [ product/service ];"
+                  }
+                ],
+                "script_spans": [
+                  "Coors Light. Tastes like a wet napkin. Man ran the best bar on this coast and drank the worst beer in America."
+                ]
+              },
+              {
+                "field": "severity",
+                "quote": "MEDIUM",
+                "basis": "risk_assessment",
+                "status": "SUPPORTED",
+                "reason": "Clearance and trade libel risks from disparaging an active major trademark warrant a medium advisory severity.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              }
+            ],
+            "support_span_version": 3,
+            "audit_input": "21f7c0baa55d89347fe4e459fb9d79cff2e571e59e9039ca0b3b2b78df557ae6",
+            "support_span_reanchors": [
+              {
+                "check_index": 2,
+                "span_index": 2,
+                "citation_number": 2,
+                "submitted_quote": "That[ name of defendant ] made a statement that [would be clearly ornecessarilyunderstoodtohave]disparagedthequalityof [ name of plaintiff ]\u2019s [ product/service ];",
+                "raw_quote": "That[ name of defendant ] made a statement that [would be clearly\nornecessarilyunderstoodtohave]disparagedthequalityof\n[ name of plaintiff ]\u2019s [ product/service ];"
+              },
+              {
+                "check_index": 4,
+                "span_index": 1,
+                "citation_number": 2,
+                "submitted_quote": "1.That[ name of defendant ] made a statement that [would be clearly ornecessarilyunderstoodtohave]disparagedthequalityof [ name of plaintiff ]\u2019s [ product/service ];",
+                "raw_quote": "1.That[ name of defendant ] made a statement that [would be clearly\nornecessarilyunderstoodtohave]disparagedthequalityof\n[ name of plaintiff ]\u2019s [ product/service ];"
+              }
+            ],
+            "estimate_exclusions": [],
+            "entailment_review": {
+              "checks": [
+                {
+                  "check_index": 0,
+                  "entailed": true,
+                  "reason": "The script evidence directly contains Crow's dialogue in scene S002 explicitly disparaging Coors Light.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "Screenplay dialogue in S002 directly supports the scene observation.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 1,
+                  "entailed": true,
+                  "reason": "Scene S007 script evidence supports the character dialogue exchange between Mara and Eli referencing drinking Coors Light out of spite.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "Script dialogue in S007 directly verifies the claim.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 2,
+                  "entailed": true,
+                  "reason": "The cited legal sources on trade libel and trademark disparagement combined with the script dialogue justify the qualified conditional risk assessment regarding potential claims and insurance complications.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "The risk assessment maintains appropriate conditionality without asserting definitive liability.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 3,
+                  "entailed": true,
+                  "reason": "The proposed script edit replaces the specific brand trigger in dialogue with fictional or generic options without guaranteeing legal outcomes or imposing unsupported production burdens.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "The edit proposal directly addresses the cited brand disparagement trigger in the scene.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 4,
+                  "entailed": false,
+                  "reason": "The claim guarantees that legal exposure is eliminated entirely and makes an unsupported assertion regarding 'zero schedule or financial cost'.",
+                  "scope_preserved": false,
+                  "requirements_supported": false,
+                  "scope_reason": "Guaranteed legal outcomes and unevidenced financial/schedule assertions violate clearance assessment standards.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": [
+                    "eliminates product disparagement and trade libel exposure entirely",
+                    "at zero schedule or financial cost"
+                  ]
+                }
+              ]
+            },
+            "entailment_policy_version": 3
+          },
+          "after": {
+            "verdict": "SUPPORTED",
+            "reason": "The script text accurately contains the dialogue in S002 disparaging Coors Light ('Tastes like a wet napkin. Man ran the best bar on this coast and drank the worst beer in America.') and the additional reference in S007 ('No Coors Light.'). The cited sources directly support the principles of trade libel regarding product disparagement and trademark limits in film.",
+            "failure_mode": "none",
+            "claim_checks": [
+              {
+                "field": "finding",
+                "quote": "In scene S002, dialogue explicitly names the commercial brand 'Coors Light' and disparages its quality ('Tastes like a wet napkin. Man ran the best bar on this coast and drank the worst beer in America.')",
+                "basis": "script",
+                "status": "SUPPORTED",
+                "reason": "The exact dialogue appears in scene S002 spoken by Crow.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "Coors Light. Tastes like a wet napkin. Man ran the best bar on this coast and drank the worst beer in America."
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "followed by an additional spoken reference in scene S007 ('No Coors Light.')",
+                "basis": "script",
+                "status": "SUPPORTED",
+                "reason": "The exact line appears in scene S007 spoken by Eli Voss.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "No Coors Light."
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "Trade libel principles establish that making statements that disparage the quality of a commercial product or service creates legal exposure",
+                "basis": "source",
+                "status": "SUPPORTED",
+                "reason": "CACI No. 1731 establishes that making a statement disparaging the quality of a plaintiff's product or service is an essential factual element of trade libel.",
+                "citation_numbers": [
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 2,
+                    "quote": "1.That[ name of defendant ] made a statement that [would be clearly\nornecessarilyunderstoodtohave]disparagedthequalityof\n[ name of plaintiff ]\u2019s [ product/service ];"
+                  }
+                ],
+                "script_spans": []
+              },
+              {
+                "field": "finding",
+                "quote": "and trademark guidance notes that filmmakers do not have the right to disparage an active trademark.",
+                "basis": "source",
+                "status": "SUPPORTED",
+                "reason": "The cited trademark commentary notes that filmmakers have no right to disparage a trademark.",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "A filmmaker has every right to dress sets with real products, but no right to disparage a trademark."
+                  }
+                ],
+                "script_spans": []
+              },
+              {
+                "field": "finding",
+                "quote": "Using a real brand in dialogue specifically attacking its quality risks trade libel claims and clearance disputes.",
+                "basis": "risk_assessment",
+                "status": "SUPPORTED",
+                "reason": "The risk assessment logically connects the specific dialogue attacking product quality with trade libel legal exposure supported by the sources.",
+                "citation_numbers": [
+                  1,
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "However, even if you have the right to use a trademark, you do not have the right to commit trade libel in the name of entertainment."
+                  },
+                  {
+                    "citation_number": 2,
+                    "quote": "1.That[ name of defendant ] made a statement that [would be clearly\nornecessarilyunderstoodtohave]disparagedthequalityof\n[ name of plaintiff ]\u2019s [ product/service ];"
+                  }
+                ],
+                "script_spans": [
+                  "Coors Light. Tastes like a wet napkin. Man ran the best bar on this coast and drank the worst beer in America."
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "REPLACE the spoken brand reference 'Coors Light' in scenes S002 and S007 with a fictional beer brand name or generic descriptive phrasing.",
+                "basis": "script_edit",
+                "status": "SUPPORTED",
+                "reason": "Replacing the real brand reference with a fictional or generic name eliminates the disparagement trigger.",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "A filmmaker has every right to dress sets with real products, but no right to disparage a trademark."
+                  }
+                ],
+                "script_spans": [
+                  "Coors Light."
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "If the production intends to retain the real brand name and disparaging remarks, consult clearance counsel to evaluate trade libel risk.",
+                "basis": "inquiry",
+                "status": "SUPPORTED",
+                "reason": "This is a conditional planning inquiry/escalation regarding production clearance decisions.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              },
+              {
+                "field": "severity",
+                "quote": "MEDIUM",
+                "basis": "risk_assessment",
+                "status": "SUPPORTED",
+                "reason": "A direct spoken disparagement of an identifiable commercial product's quality poses an actionable legal risk warranting medium severity.",
+                "citation_numbers": [
+                  1,
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "Trade libel occurs when a product or service is falsely accused of some bad attribute."
+                  }
+                ],
+                "script_spans": []
+              }
+            ],
+            "support_span_version": 3,
+            "audit_input": "f906b3c61e3bce3ba92872c110931357a48ef1abda21a74d1c47ab788d2047b0",
+            "estimate_exclusions": [],
+            "entailment_review": {
+              "checks": [
+                {
+                  "check_index": 0,
+                  "entailed": true,
+                  "reason": "Accurately reflects the dialogue spoken by Crow in scene S002.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "Matches the exact screenplay dialogue in scene S002.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 1,
+                  "entailed": true,
+                  "reason": "Accurately reflects the dialogue spoken by Eli in scene S007.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "Matches the exact screenplay dialogue in scene S007.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 2,
+                  "entailed": true,
+                  "reason": "Supported by CACI No. 1731 establishing trade libel elements for disparaging the quality of a product or service.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "The cited legal instruction directly supports the stated principle of trade libel.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 3,
+                  "entailed": true,
+                  "reason": "Directly supported by the Bloomberg Law excerpt stating filmmakers have no right to disparage a trademark.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "Matches the cited guidance on trademark disparagement.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 4,
+                  "entailed": true,
+                  "reason": "A properly qualified risk assessment connecting the script's disparaging brand references to cited trade libel and trademark principles.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "Correctly links the script trigger to potential legal risk without overstating certainty.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 5,
+                  "entailed": true,
+                  "reason": "Proposes a standard script edit that removes the specific brand name trigger without introducing unsupported duties or guarantees.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "Directly addresses the brand disparagement trigger identified in the scene.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 6,
+                  "entailed": true,
+                  "reason": "A relevant next-step inquiry conditional on the production's creative decision to retain the brand name.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "Directly relevant to clearance evaluation if the brand reference is retained.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                }
+              ]
+            },
+            "entailment_policy_version": 3
+          },
+          "source_rules": []
+        },
+        "correction": {
+          "finding": "In scene S002, dialogue explicitly names the commercial brand 'Coors Light' and disparages its quality ('Tastes like a wet napkin. Man ran the best bar on this coast and drank the worst beer in America.'), followed by an additional spoken reference in scene S007 ('No Coors Light.'). Trade libel principles establish that making statements that disparage the quality of a commercial product or service creates legal exposure, and trademark guidance notes that filmmakers do not have the right to disparage an active trademark. Using a real brand in dialogue specifically attacking its quality risks trade libel claims and clearance disputes.",
+          "remedy_detail": "REPLACE the spoken brand reference 'Coors Light' in scenes S002 and S007 with a fictional beer brand name or generic descriptive phrasing. If the production intends to retain the real brand name and disparaging remarks, consult clearance counsel to evaluate trade libel risk.",
+          "remedy_action": "REPLACE",
+          "severity": "MEDIUM"
+        },
+        "correction_input": "21f7c0baa55d89347fe4e459fb9d79cff2e571e59e9039ca0b3b2b78df557ae6"
+      },
+      "kept": [
+        {
+          "flag_id": "F1007",
+          "agent": "clearance_counsel",
+          "scene_ids": [
+            "S002",
+            "S007"
+          ],
+          "entity_id": "E008",
+          "severity": "MEDIUM",
+          "category": "trademark_disparagement",
+          "finding": "In scene S002, dialogue explicitly names the commercial brand 'Coors Light' and disparages its quality ('Tastes like a wet napkin. Man ran the best bar on this coast and drank the worst beer in America.'), followed by an additional spoken reference in scene S007 ('No Coors Light.'). Trade libel principles establish that making statements that disparage the quality of a commercial product or service creates legal exposure, and trademark guidance notes that filmmakers do not have the right to disparage an active trademark. Using a real brand in dialogue specifically attacking its quality risks trade libel claims and clearance disputes.",
+          "citations": [
+            {
+              "source_type": "web",
+              "title": "Using Trademarks in Film and TV",
+              "url": "https://news.bloomberglaw.com/ip-law/using-trademarks-in-film-and-tv",
+              "excerpt": "However, even if you have the right to use a trademark, you do not have the right to commit trade libel in the name of entertainment. Trade libel occurs when a product or service is falsely accused of some bad attribute.\n\n...\n\nCorporations live and die by their trademarks. A filmmaker has every right to dress sets with real products, but no right to disparage a trademark. If the movie does not misrepresent the source of the product there is typically no prohibition of the use of a trademark in a film.",
+              "retrieved_at": null,
+              "via": "parallel_search"
+            },
+            {
+              "source_type": "web",
+              "title": "CACI No. 1731. Trade Libel - Essential Factual Elements :: California Civil Jury Instructions (CACI) (2026) :: Justia",
+              "url": "https://www.justia.com/trials-litigation/docs/caci/1700/1731/",
+              "excerpt": "1731 . T rade Libel - Essential Factual Elements\n[ Name of plaintiff ] claims that [ name of defendant ] harmed\n[him/her/ nonbinary pr onoun ] by making a statement that disparaged\n[ name of plaintiff ]\u2019 s [ specify pr oduct ]. T o establish this claim, [ name of\nplaintiff ] must prove all of the following:\n1.That[ name of defendant ] made a statement that [would be clearly\nornecessarilyunderstoodtohave]disparagedthequalityof\n[ name of plaintiff ]\u2019s [ product/service ];",
+              "retrieved_at": null,
+              "via": "parallel_search"
+            }
+          ],
+          "remedy": {
+            "action": "REPLACE",
+            "detail": "REPLACE the spoken brand reference 'Coors Light' in scenes S002 and S007 with a fictional beer brand name or generic descriptive phrasing. If the production intends to retain the real brand name and disparaging remarks, consult clearance counsel to evaluate trade libel risk.",
+            "est_cost_usd": null,
+            "est_added_days": null
+          },
+          "confidence": 0.9
+        }
+      ],
+      "dropped": [],
+      "verification_incomplete": false,
+      "elapsed_s": 228.7
+    }
+  ],
+  "responses": [
+    {
+      "flag_id": "F1007",
+      "schema": "EvidenceVerdict",
+      "text": "{\n  \"verdict\": \"SUPPORTED\",\n  \"reason\": \"The scene dialogue is quoted accurately from S002 and S007. The cited legal commentary and jury instructions support the premise that product disparagement in entertainment creates potential trade libel exposure and clearance complications, and replacing the trademarked brand with a fictional or generic alternative directly addresses that risk.\",\n  \"failure_mode\": \"none\",\n  \"claim_checks\": [\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Scenes S002 and S007 feature character dialogue that explicitly disparages the registered commercial brand 'Coors Light'. In S002, Crow declares: 'Coors Light. Tastes like a wet napkin. Man ran the best bar on this coast and drank the worst beer in America.'\",\n      \"basis\": \"script\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"The script text in S002 shows Crow explicitly saying this line about Coors Light.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": [\n        \"Coors Light. Tastes like a wet napkin. Man ran the best bar on this coast and drank the worst beer in America.\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"In S007, Eli Voss references drinking it 'out of spite.'\",\n      \"basis\": \"script\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"In S007, Mara and Eli discuss drinking Coors Light 'out of spite' and loyalty.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": [\n        \"No Coors Light.\",\n        \"That you drank on purpose. For thirty years. Out of spite.\",\n        \"Loyalty. Spite is just loyalty with the brights on.\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"While character opinions in expressive entertainment are generally defensible under First Amendment principles, aggressive disparagement of an active consumer brand invites trade libel claims, corporate demand letters, and E&O clearance exceptions. The cost is defense and insurance complications rather than clear liability.\",\n      \"basis\": \"risk_assessment\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Citations 1 and 2 establish that filmmakers have no right to disparage trademarks or commit trade libel by disparaging product quality, which creates legal and clearance risks.\",\n      \"citation_numbers\": [1, 2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"A filmmaker has every right to dress sets with real products, but no right to disparage a trademark.\"\n        },\n        {\n          \"citation_number\": 1,\n          \"quote\": \"Trade libel occurs when a product or service is falsely accused of some bad attribute.\"\n        },\n        {\n          \"citation_number\": 2,\n          \"quote\": \"That[ name of defendant ] made a statement that [would be clearly ornecessarilyunderstoodtohave]disparagedthequalityof [ name of plaintiff ]\u2019s [ product/service ];\"\n        }\n      ],\n      \"script_spans\": [\n        \"Coors Light. Tastes like a wet napkin. Man ran the best bar on this coast and drank the worst beer in America.\"\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"REPLACE the spoken brand 'Coors Light' in S002 and S007 with a fictional beer brand (e.g., 'Bannock Draft' or 'Old Anchor Light') or generic dialogue ('cheap light lager').\",\n      \"basis\": \"script_edit\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Proposing fictional or generic names directly resolves the trademark disparagement trigger in the scene.\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"A filmmaker has every right to dress sets with real products, but no right to disparage a trademark.\"\n        }\n      ],\n      \"script_spans\": [\n        \"Coors Light. Tastes like a wet napkin. Man ran the best bar on this coast and drank the worst beer in America.\",\n        \"No Coors Light.\"\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"Fictionalizing the brand eliminates product disparagement and trade libel exposure entirely at zero schedule or financial cost.\",\n      \"basis\": \"risk_assessment\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Replacing the real trademark with a fictional brand eliminates the basis for trademark disparagement or trade libel claims against an existing brand.\",\n      \"citation_numbers\": [1, 2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"A filmmaker has every right to dress sets with real products, but no right to disparage a trademark.\"\n        },\n        {\n          \"citation_number\": 2,\n          \"quote\": \"1.That[ name of defendant ] made a statement that [would be clearly ornecessarilyunderstoodtohave]disparagedthequalityof [ name of plaintiff ]\u2019s [ product/service ];\"\n        }\n      ],\n      \"script_spans\": [\n        \"Coors Light. Tastes like a wet napkin. Man ran the best bar on this coast and drank the worst beer in America.\"\n      ]\n    },\n    {\n      \"field\": \"severity\",\n      \"quote\": \"MEDIUM\",\n      \"basis\": \"risk_assessment\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Clearance and trade libel risks from disparaging an active major trademark warrant a medium advisory severity.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F1007",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The script evidence directly contains Crow's dialogue in scene S002 explicitly disparaging Coors Light.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"Screenplay dialogue in S002 directly supports the scene observation.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 1,\n      \"entailed\": true,\n      \"reason\": \"Scene S007 script evidence supports the character dialogue exchange between Mara and Eli referencing drinking Coors Light out of spite.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"Script dialogue in S007 directly verifies the claim.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 2,\n      \"entailed\": true,\n      \"reason\": \"The cited legal sources on trade libel and trademark disparagement combined with the script dialogue justify the qualified conditional risk assessment regarding potential claims and insurance complications.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The risk assessment maintains appropriate conditionality without asserting definitive liability.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 3,\n      \"entailed\": true,\n      \"reason\": \"The proposed script edit replaces the specific brand trigger in dialogue with fictional or generic options without guaranteeing legal outcomes or imposing unsupported production burdens.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The edit proposal directly addresses the cited brand disparagement trigger in the scene.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 4,\n      \"entailed\": false,\n      \"reason\": \"The claim guarantees that legal exposure is eliminated entirely and makes an unsupported assertion regarding 'zero schedule or financial cost'.\",\n      \"scope_preserved\": false,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"Guaranteed legal outcomes and unevidenced financial/schedule assertions violate clearance assessment standards.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": [\n        \"eliminates product disparagement and trade libel exposure entirely\",\n        \"at zero schedule or financial cost\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F1007",
+      "schema": "CorrectedClaim",
+      "text": "{\n  \"finding\": \"In scene S002, dialogue explicitly names the commercial brand 'Coors Light' and disparages its quality ('Tastes like a wet napkin. Man ran the best bar on this coast and drank the worst beer in America.'), followed by an additional spoken reference in scene S007 ('No Coors Light.'). Trade libel principles establish that making statements that disparage the quality of a commercial product or service creates legal exposure, and trademark guidance notes that filmmakers do not have the right to disparage an active trademark. Using a real brand in dialogue specifically attacking its quality risks trade libel claims and clearance disputes.\",\n  \"remedy_detail\": \"REPLACE the spoken brand reference 'Coors Light' in scenes S002 and S007 with a fictional beer brand name or generic descriptive phrasing. If the production intends to retain the real brand name and disparaging remarks, consult clearance counsel to evaluate trade libel risk.\",\n  \"remedy_action\": \"REPLACE\",\n  \"severity\": \"MEDIUM\"\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F1007",
+      "schema": "EvidenceVerdict",
+      "text": "{\n  \"verdict\": \"SUPPORTED\",\n  \"reason\": \"The script text accurately contains the dialogue in S002 disparaging Coors Light ('Tastes like a wet napkin. Man ran the best bar on this coast and drank the worst beer in America.') and the additional reference in S007 ('No Coors Light.'). The cited sources directly support the principles of trade libel regarding product disparagement and trademark limits in film.\",\n  \"failure_mode\": \"none\",\n  \"claim_checks\": [\n    {\n      \"field\": \"finding\",\n      \"quote\": \"In scene S002, dialogue explicitly names the commercial brand 'Coors Light' and disparages its quality ('Tastes like a wet napkin. Man ran the best bar on this coast and drank the worst beer in America.')\",\n      \"basis\": \"script\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"The exact dialogue appears in scene S002 spoken by Crow.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": [\n        \"Coors Light. Tastes like a wet napkin. Man ran the best bar on this coast and drank the worst beer in America.\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"followed by an additional spoken reference in scene S007 ('No Coors Light.')\",\n      \"basis\": \"script\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"The exact line appears in scene S007 spoken by Eli Voss.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": [\n        \"No Coors Light.\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Trade libel principles establish that making statements that disparage the quality of a commercial product or service creates legal exposure\",\n      \"basis\": \"source\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"CACI No. 1731 establishes that making a statement disparaging the quality of a plaintiff's product or service is an essential factual element of trade libel.\",\n      \"citation_numbers\": [2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 2,\n          \"quote\": \"1.That[ name of defendant ] made a statement that [would be clearly\\nornecessarilyunderstoodtohave]disparagedthequalityof\\n[ name of plaintiff ]\u2019s [ product/service ];\"\n        }\n      ],\n      \"script_spans\": []\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"and trademark guidance notes that filmmakers do not have the right to disparage an active trademark.\",\n      \"basis\": \"source\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"The cited trademark commentary notes that filmmakers have no right to disparage a trademark.\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"A filmmaker has every right to dress sets with real products, but no right to disparage a trademark.\"\n        }\n      ],\n      \"script_spans\": []\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Using a real brand in dialogue specifically attacking its quality risks trade libel claims and clearance disputes.\",\n      \"basis\": \"risk_assessment\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"The risk assessment logically connects the specific dialogue attacking product quality with trade libel legal exposure supported by the sources.\",\n      \"citation_numbers\": [1, 2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"However, even if you have the right to use a trademark, you do not have the right to commit trade libel in the name of entertainment.\"\n        },\n        {\n          \"citation_number\": 2,\n          \"quote\": \"1.That[ name of defendant ] made a statement that [would be clearly\\nornecessarilyunderstoodtohave]disparagedthequalityof\\n[ name of plaintiff ]\u2019s [ product/service ];\"\n        }\n      ],\n      \"script_spans\": [\n        \"Coors Light. Tastes like a wet napkin. Man ran the best bar on this coast and drank the worst beer in America.\"\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"REPLACE the spoken brand reference 'Coors Light' in scenes S002 and S007 with a fictional beer brand name or generic descriptive phrasing.\",\n      \"basis\": \"script_edit\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Replacing the real brand reference with a fictional or generic name eliminates the disparagement trigger.\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"A filmmaker has every right to dress sets with real products, but no right to disparage a trademark.\"\n        }\n      ],\n      \"script_spans\": [\n        \"Coors Light.\"\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"If the production intends to retain the real brand name and disparaging remarks, consult clearance counsel to evaluate trade libel risk.\",\n      \"basis\": \"inquiry\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"This is a conditional planning inquiry/escalation regarding production clearance decisions.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": []\n    },\n    {\n      \"field\": \"severity\",\n      \"quote\": \"MEDIUM\",\n      \"basis\": \"risk_assessment\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"A direct spoken disparagement of an identifiable commercial product's quality poses an actionable legal risk warranting medium severity.\",\n      \"citation_numbers\": [1, 2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"Trade libel occurs when a product or service is falsely accused of some bad attribute.\"\n        }\n      ],\n      \"script_spans\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F1007",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"Accurately reflects the dialogue spoken by Crow in scene S002.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"Matches the exact screenplay dialogue in scene S002.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 1,\n      \"entailed\": true,\n      \"reason\": \"Accurately reflects the dialogue spoken by Eli in scene S007.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"Matches the exact screenplay dialogue in scene S007.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 2,\n      \"entailed\": true,\n      \"reason\": \"Supported by CACI No. 1731 establishing trade libel elements for disparaging the quality of a product or service.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The cited legal instruction directly supports the stated principle of trade libel.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 3,\n      \"entailed\": true,\n      \"reason\": \"Directly supported by the Bloomberg Law excerpt stating filmmakers have no right to disparage a trademark.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"Matches the cited guidance on trademark disparagement.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 4,\n      \"entailed\": true,\n      \"reason\": \"A properly qualified risk assessment connecting the script's disparaging brand references to cited trade libel and trademark principles.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"Correctly links the script trigger to potential legal risk without overstating certainty.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 5,\n      \"entailed\": true,\n      \"reason\": \"Proposes a standard script edit that removes the specific brand name trigger without introducing unsupported duties or guarantees.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"Directly addresses the brand disparagement trigger identified in the scene.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 6,\n      \"entailed\": true,\n      \"reason\": \"A relevant next-step inquiry conditional on the production's creative decision to retain the brand name.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"Directly relevant to clearance evaluation if the brand reference is retained.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    }
+  ]
+}

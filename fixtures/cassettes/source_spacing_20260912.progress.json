@@ -1,0 +1,56 @@
+[
+  {
+    "flag_id": "ocr_instruction_receipt",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 19131,
+    "input_sha256": "d9fd9860052aa8eb027ea780b49b22a10e376b6eb65531721551b86568d11c32",
+    "usage_available": true,
+    "elapsed_s": 6.17
+  },
+  {
+    "flag_id": "trade_libel_false_attribute",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 18921,
+    "input_sha256": "b51e918d6e48e08b27c3da7ac7968ebea7a6d8539b3a3214d46b0934614f9d2e",
+    "usage_available": true,
+    "elapsed_s": 6.37
+  },
+  {
+    "flag_id": "trade_libel_opinion_guarantee",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 18959,
+    "input_sha256": "6c44c71d163ec744622fe860971fa0f8c43d72c37dd6d9cf716a5b50c72e6d3e",
+    "usage_available": true,
+    "elapsed_s": 4.67
+  },
+  {
+    "flag_id": "trade_libel_permission_rule",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 19906,
+    "input_sha256": "e04c44276221c2e26151239c684949488bc7d6429d731d86d511a486fde88a7c",
+    "usage_available": true,
+    "elapsed_s": 4.74
+  },
+  {
+    "flag_id": "brand_edit_narrow",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 19154,
+    "input_sha256": "19be6b8f23bde7e2b3387ad2fe224b07fd37b4db1558e4744fedb4fee5dc9cab",
+    "usage_available": true,
+    "elapsed_s": 5.43
+  },
+  {
+    "flag_id": "brand_edit_guarantee",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 19060,
+    "input_sha256": "8cd74cc147379ebbf064234e9b2e629902d1e2b408733940e739398ad0c3982c",
+    "usage_available": true,
+    "elapsed_s": 8.03
+  }
+]

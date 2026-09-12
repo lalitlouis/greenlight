@@ -1,0 +1,416 @@
+{
+  "source_run": "runs/run_20260912_040149.json",
+  "source_run_sha256": "9c042bbe0fc645882b44bdc0542e6e099ebe8ce4fcf414486359ee77fddac397",
+  "source_build": "local:705d7b870ce7d1fe8a91d7645c91c355a08c9cf0",
+  "evaluated_build": "4f577da04e00b2ee389eb133daf67d5349ed6b9d",
+  "model": "gemini-3.7-flash",
+  "elapsed_s": 35.49,
+  "calls": 6,
+  "responses_with_usage": 6,
+  "calls_without_returned_usage": 0,
+  "resumed_from": null,
+  "rechecked_correction_from": null,
+  "recovered_remedy_from_source": false,
+  "entailment_cases": "fixtures/accuracy/source_spacing_20260912.json",
+  "entailment_cases_sha256": "297f3a2ca76231304dd0e74ca4a11bde057e1bb9b5f0d42a6478a88dff5dfc28",
+  "attempts": [
+    {
+      "flag_id": "ocr_instruction_receipt",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 19131,
+      "input_sha256": "d9fd9860052aa8eb027ea780b49b22a10e376b6eb65531721551b86568d11c32",
+      "usage_available": true,
+      "elapsed_s": 6.17
+    },
+    {
+      "flag_id": "trade_libel_false_attribute",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 18921,
+      "input_sha256": "b51e918d6e48e08b27c3da7ac7968ebea7a6d8539b3a3214d46b0934614f9d2e",
+      "usage_available": true,
+      "elapsed_s": 6.37
+    },
+    {
+      "flag_id": "trade_libel_opinion_guarantee",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 18959,
+      "input_sha256": "6c44c71d163ec744622fe860971fa0f8c43d72c37dd6d9cf716a5b50c72e6d3e",
+      "usage_available": true,
+      "elapsed_s": 4.67
+    },
+    {
+      "flag_id": "trade_libel_permission_rule",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 19906,
+      "input_sha256": "e04c44276221c2e26151239c684949488bc7d6429d731d86d511a486fde88a7c",
+      "usage_available": true,
+      "elapsed_s": 4.74
+    },
+    {
+      "flag_id": "brand_edit_narrow",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 19154,
+      "input_sha256": "19be6b8f23bde7e2b3387ad2fe224b07fd37b4db1558e4744fedb4fee5dc9cab",
+      "usage_available": true,
+      "elapsed_s": 5.43
+    },
+    {
+      "flag_id": "brand_edit_guarantee",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 19060,
+      "input_sha256": "8cd74cc147379ebbf064234e9b2e629902d1e2b408733940e739398ad0c3982c",
+      "usage_available": true,
+      "elapsed_s": 8.03
+    }
+  ],
+  "gemini_usage": {
+    "flash": {
+      "prompt": 26806,
+      "cached": 0,
+      "output": 4229
+    }
+  },
+  "estimated_cost_usd": 0.036,
+  "manual_review": "pending; model approval is not an accuracy label",
+  "results": [
+    {
+      "flag_id": "ocr_instruction_receipt",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "The cited jury-instruction excerpt includes a statement disparaging the quality of a product or service among the elements to be proved.",
+            "basis": "source",
+            "status": "SUPPORTED",
+            "reason": "Probe to be independently assessed",
+            "citation_numbers": [
+              2
+            ],
+            "support_spans": [
+              {
+                "citation_number": 2,
+                "quote": "That[ name of defendant ] made a statement that [would be clearly\nornecessarilyunderstoodtohave]disparagedthequalityof\n[ name of plaintiff ]\u2019s [ product/service ];"
+              }
+            ],
+            "script_spans": []
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The cited CACI No. 1731 jury instruction explicitly lists as an element to be proved that the defendant made a statement that disparaged the quality of the plaintiff's product or service.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The claim accurately reflects the source's explicit requirement that disparagement of a product or service is among the factual elements to be proved.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            }
+          ]
+        },
+        "entailment_policy_version": 3,
+        "estimate_exclusions": []
+      },
+      "expected_entailed": true,
+      "actual_entailed": true,
+      "passed": true,
+      "elapsed_s": 6.18
+    },
+    {
+      "flag_id": "trade_libel_false_attribute",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "The cited commentary describes trade libel as falsely accusing a product or service of a bad attribute.",
+            "basis": "source",
+            "status": "SUPPORTED",
+            "reason": "Probe to be independently assessed",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "Trade libel occurs when a product or service is falsely accused of some bad attribute."
+              }
+            ],
+            "script_spans": []
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The source commentary explicitly states that trade libel occurs when a product or service is falsely accused of some bad attribute.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "Accurately conveys the descriptive definition of trade libel provided in the cited source text without introducing extraneous duties or scope modifications.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            }
+          ]
+        },
+        "entailment_policy_version": 3,
+        "estimate_exclusions": []
+      },
+      "expected_entailed": true,
+      "actual_entailed": true,
+      "passed": true,
+      "elapsed_s": 6.38
+    },
+    {
+      "flag_id": "trade_libel_opinion_guarantee",
+      "verdict": {
+        "verdict": "PARTIAL",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "Every negative opinion about a product is automatically trade libel, even without a false accusation about its attributes.",
+            "basis": "source",
+            "status": "UNSUPPORTED",
+            "reason": "Independent span review: The source defines trade libel as occurring when a product or service is falsely accused of some bad attribute, directly contradicting the claim that every negative opinion is trade libel even without a false accusation.; The claim eliminates the required element of a false accusation and broadens the definition of trade libel beyond what the source establishes.; Every negative opinion about a product is automatically trade libel, even without a false accusation about its attributes.",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "Trade libel occurs when a product or service is falsely accused of some bad attribute."
+              }
+            ],
+            "script_spans": []
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": false,
+              "reason": "The source defines trade libel as occurring when a product or service is falsely accused of some bad attribute, directly contradicting the claim that every negative opinion is trade libel even without a false accusation.",
+              "scope_preserved": false,
+              "requirements_supported": false,
+              "scope_reason": "The claim eliminates the required element of a false accusation and broadens the definition of trade libel beyond what the source establishes.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": [
+                "Every negative opinion about a product is automatically trade libel, even without a false accusation about its attributes."
+              ]
+            }
+          ]
+        },
+        "entailment_policy_version": 3,
+        "estimate_exclusions": [],
+        "reason": "Claim audit requires correction: Independent span review: The source defines trade libel as occurring when a product or service is falsely accused of some bad attribute, directly contradicting the claim that every negative opinion is trade libel even without a false accusation.; The claim eliminates the required element of a false accusation and broadens the definition of trade libel beyond what the source establishes.; Every negative opinion about a product is automatically trade libel, even without a false accusation about its attributes."
+      },
+      "expected_entailed": false,
+      "actual_entailed": false,
+      "passed": true,
+      "elapsed_s": 4.68
+    },
+    {
+      "flag_id": "trade_libel_permission_rule",
+      "verdict": {
+        "verdict": "PARTIAL",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "The excerpts establish that a filmmaker must obtain brand permission before making any negative statement about a product.",
+            "basis": "source",
+            "status": "UNSUPPORTED",
+            "reason": "Independent span review: The cited sources define trade libel and elements of disparagement/false accusations, but do not state that a filmmaker must obtain brand permission before making any negative statement about a product.; The claim overgeneralizes trade libel standards into an absolute requirement to obtain brand permission before making any negative statement.; a filmmaker must obtain brand permission before making any negative statement about a product",
+            "citation_numbers": [
+              1,
+              2
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "Trade libel occurs when a product or service is falsely accused of some bad attribute."
+              },
+              {
+                "citation_number": 2,
+                "quote": "That[ name of defendant ] made a statement that [would be clearly\nornecessarilyunderstoodtohave]disparagedthequalityof\n[ name of plaintiff ]\u2019s [ product/service ];"
+              }
+            ],
+            "script_spans": []
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": false,
+              "reason": "The cited sources define trade libel and elements of disparagement/false accusations, but do not state that a filmmaker must obtain brand permission before making any negative statement about a product.",
+              "scope_preserved": false,
+              "requirements_supported": false,
+              "scope_reason": "The claim overgeneralizes trade libel standards into an absolute requirement to obtain brand permission before making any negative statement.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": [
+                "a filmmaker must obtain brand permission before making any negative statement about a product"
+              ]
+            }
+          ]
+        },
+        "entailment_policy_version": 3,
+        "estimate_exclusions": [],
+        "reason": "Claim audit requires correction: Independent span review: The cited sources define trade libel and elements of disparagement/false accusations, but do not state that a filmmaker must obtain brand permission before making any negative statement about a product.; The claim overgeneralizes trade libel standards into an absolute requirement to obtain brand permission before making any negative statement.; a filmmaker must obtain brand permission before making any negative statement about a product"
+      },
+      "expected_entailed": false,
+      "actual_entailed": false,
+      "passed": true,
+      "elapsed_s": 4.75
+    },
+    {
+      "flag_id": "brand_edit_narrow",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "claim_checks": [
+          {
+            "field": "remedy",
+            "quote": "Consider replacing the spoken Coors Light reference in S002 with a generic beer description to remove that named-brand reference from the dialogue.",
+            "basis": "script_edit",
+            "status": "SUPPORTED",
+            "reason": "Probe to be independently assessed",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "Trade libel occurs when a product or service is falsely accused of some bad attribute."
+              }
+            ],
+            "script_spans": [
+              "Coors Light. Tastes like a wet napkin. Man ran the best bar on this coast and drank the worst beer in America."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The proposed script edit addresses the trademark reference trigger in S002 by suggesting replacing the named Coors Light dialogue with a generic beer description without making unverified clearance guarantees or introducing unsupported operational duties.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The replacement edit directly targets the specific named-brand dialogue reference present in the scene context.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            }
+          ]
+        },
+        "entailment_policy_version": 3,
+        "estimate_exclusions": []
+      },
+      "expected_entailed": true,
+      "actual_entailed": true,
+      "passed": true,
+      "elapsed_s": 5.44
+    },
+    {
+      "flag_id": "brand_edit_guarantee",
+      "verdict": {
+        "verdict": "PARTIAL",
+        "claim_checks": [
+          {
+            "field": "remedy",
+            "quote": "Replacing the Coors Light references with any fictional brand eliminates all liability at zero cost.",
+            "basis": "script_edit",
+            "status": "UNSUPPORTED",
+            "reason": "Independent span review: The proposed script edit asserts that replacing the trademark references will eliminate all liability and do so at zero cost, which is an unsupported guarantee of legal clearance and unevidenced financial outcome.; While replacing the Coors Light references directly addresses the potential trademark disparagement trigger in the scene, the assertion improperly introduces an unqualified guarantee of eliminating all liability and a zero-cost outcome without evidence.; eliminates all liability; at zero cost",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "Trade libel occurs when a product or service is falsely accused of some bad attribute."
+              }
+            ],
+            "script_spans": [
+              "Coors Light. Tastes like a wet napkin. Man ran the best bar on this coast and drank the worst beer in America."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": false,
+              "reason": "The proposed script edit asserts that replacing the trademark references will eliminate all liability and do so at zero cost, which is an unsupported guarantee of legal clearance and unevidenced financial outcome.",
+              "scope_preserved": true,
+              "requirements_supported": false,
+              "scope_reason": "While replacing the Coors Light references directly addresses the potential trademark disparagement trigger in the scene, the assertion improperly introduces an unqualified guarantee of eliminating all liability and a zero-cost outcome without evidence.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": [
+                "eliminates all liability",
+                "at zero cost"
+              ]
+            }
+          ]
+        },
+        "entailment_policy_version": 3,
+        "estimate_exclusions": [],
+        "reason": "Claim audit requires correction: Independent span review: The proposed script edit asserts that replacing the trademark references will eliminate all liability and do so at zero cost, which is an unsupported guarantee of legal clearance and unevidenced financial outcome.; While replacing the Coors Light references directly addresses the potential trademark disparagement trigger in the scene, the assertion improperly introduces an unqualified guarantee of eliminating all liability and a zero-cost outcome without evidence.; eliminates all liability; at zero cost"
+      },
+      "expected_entailed": false,
+      "actual_entailed": false,
+      "passed": true,
+      "elapsed_s": 8.04
+    }
+  ],
+  "responses": [
+    {
+      "flag_id": "ocr_instruction_receipt",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The cited CACI No. 1731 jury instruction explicitly lists as an element to be proved that the defendant made a statement that disparaged the quality of the plaintiff's product or service.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The claim accurately reflects the source's explicit requirement that disparagement of a product or service is among the factual elements to be proved.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "trade_libel_false_attribute",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The source commentary explicitly states that trade libel occurs when a product or service is falsely accused of some bad attribute.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"Accurately conveys the descriptive definition of trade libel provided in the cited source text without introducing extraneous duties or scope modifications.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "trade_libel_opinion_guarantee",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": false,\n      \"reason\": \"The source defines trade libel as occurring when a product or service is falsely accused of some bad attribute, directly contradicting the claim that every negative opinion is trade libel even without a false accusation.\",\n      \"scope_preserved\": false,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"The claim eliminates the required element of a false accusation and broadens the definition of trade libel beyond what the source establishes.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": [\n        \"Every negative opinion about a product is automatically trade libel, even without a false accusation about its attributes.\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "trade_libel_permission_rule",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": false,\n      \"reason\": \"The cited sources define trade libel and elements of disparagement/false accusations, but do not state that a filmmaker must obtain brand permission before making any negative statement about a product.\",\n      \"scope_preserved\": false,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"The claim overgeneralizes trade libel standards into an absolute requirement to obtain brand permission before making any negative statement.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": [\n        \"a filmmaker must obtain brand permission before making any negative statement about a product\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "brand_edit_narrow",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The proposed script edit addresses the trademark reference trigger in S002 by suggesting replacing the named Coors Light dialogue with a generic beer description without making unverified clearance guarantees or introducing unsupported operational duties.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The replacement edit directly targets the specific named-brand dialogue reference present in the scene context.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "brand_edit_guarantee",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": false,\n      \"reason\": \"The proposed script edit asserts that replacing the trademark references will eliminate all liability and do so at zero cost, which is an unsupported guarantee of legal clearance and unevidenced financial outcome.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"While replacing the Coors Light references directly addresses the potential trademark disparagement trigger in the scene, the assertion improperly introduces an unqualified guarantee of eliminating all liability and a zero-cost outcome without evidence.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": [\n        \"eliminates all liability\",\n        \"at zero cost\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    }
+  ]
+}

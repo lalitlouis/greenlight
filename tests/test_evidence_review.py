@@ -116,6 +116,23 @@ print(json.dumps(apply_estimate_audit(flag, verdict)))
     assert remedy["est_cost_usd"] is None and remedy["est_added_days"] is None
 
 
+def test_saved_brand_repair_delivers_the_checked_warning_without_old_guarantees():
+    record = json.loads((ROOT / "runs/run_20260912_040149.json").read_text())
+    flag = next(f for f in record["rejected_flags"] if f["flag_id"] == "F1007")
+    artifact = json.loads(
+        (ROOT / "fixtures/cassettes/brand_spacing_repair_20260912.json").read_text()
+    )
+    result = artifact["results"][0]
+    kept, dropped = apply_verdicts([flag], {flag["flag_id"]: result["verdict"]})
+    assert kept == result["kept"] and len(kept) == 1 and not dropped
+    assert kept[0]["scene_ids"] == flag["scene_ids"] and kept[0]["citations"] == flag["citations"]
+    prose = kept[0]["finding"] + " " + kept[0]["remedy"]["detail"]
+    assert "out of spite" not in prose and "E&O" not in prose
+    assert "zero" not in prose and "entirely" not in prose
+    assert kept[0]["remedy"]["est_cost_usd"] is None
+    assert kept[0]["remedy"]["est_added_days"] is None
+
+
 def test_mixed_script_and_authorship_check_receives_both_kinds_of_saved_evidence():
     record = json.loads((ROOT / "runs/run_20260912_003816.json").read_text())
     original = next(f for f in record["rejected_flags"] if f["flag_id"] == "F1001")

@@ -508,3 +508,34 @@ partial-word slices. Six frozen live controls include the real joined-word recei
 the falsity condition, an unsupported permission rule and edit/guarantee contrasts.
 Targeted validation of this final receipt fix is pending; both fresh records remain
 unaltered, and no further full run is being spent while the specific miss is open.
+
+Build `4f577da` passed all six new source-spacing controls (three positive, three
+negative; $0.0360) and the fresh brand repair in five calls (228.7 seconds, $0.0608).
+The positive brand result is a conditional clearance/litigation-risk warning with
+an optional dialogue change or risk review. It is not a determination that trade
+libel occurred. It removes the false Eli/spite attribution, unsupported registration
+and E&O/defense-cost specifics, and the blanket zero-cost clearance promise. Source
+receipts and amounts remain traceable/withheld respectively. The new spacing match
+itself is pinned to the original failed receipt in offline tests and the frozen
+live excerpt control; regenerated model wording is not a controlled causal measure.
+
+`fixtures/cassettes/final_accuracy_report_replay_20260912.json` is the latest review
+artifact: **54/54 unchanged checks**, 20 kept, three rejected. It combines the
+unchanged 53/54 fresh record with the separately checked brand correction and binds
+both by hash. Its generation clock is the original report's clock. It remains a
+**cached replay with later live verification**, not a third fresh run; the last
+full fresh run was 53/54 before the final receipt fix. The unresolved drug-rating,
+minor-safety and duplicate territory-supernatural findings still withhold the score.
+
+Across the latest applicable artifacts, **30/30 frozen controls match** (13 positive,
+17 negative). These are developer-labelled excerpt/contract controls, not an estimate
+of paid-customer or population accuracy. The full fixture is development evidence,
+not held-out product qualification. Deployment has not been performed. Validation
+after the final saved-delivery test is recorded below.
+
+Final validation: **660 tests pass**, `make check` passes, and the browser report
+JavaScript syntax check passes. Two separate process rebuilds of the latest replay
+were byte-identical at SHA256
+`cf577e9f4820e9d3469bf2c31bdff644deeda3845052d4052048717e58a5ecd7`.
+The saved fresh records and source excerpts are unchanged. No full-gate thresholds
+were lowered and no unsupported finding was promoted merely to satisfy coverage.
