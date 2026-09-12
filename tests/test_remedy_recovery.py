@@ -27,6 +27,26 @@ from greenlight.agents.verification import (
 ROOT = Path(__file__).resolve().parents[1]
 
 
+@pytest.mark.parametrize(
+    "fid,artifact",
+    [("F1010", "tattoo_inquiry_recovery_20260912"), ("F3004", "firearms_context_repair_20260912")],
+)
+def test_saved_live_inquiry_recovery_delivers_exact_audited_warning(fid, artifact):
+    record = json.loads((ROOT / "runs/run_20260912_030306.json").read_text())
+    flag = next(f for f in record["rejected_flags"] if f["flag_id"] == fid)
+    saved = json.loads((ROOT / f"fixtures/cassettes/{artifact}.json").read_text())
+    result = saved["results"][0]
+    verdict = result["verdict"]
+    assert verdict["evidence_review"]["remedy_fallback"]
+    kept, dropped = apply_verdicts([flag], {fid: verdict})
+    assert kept == result["kept"] and len(kept) == 1 and not dropped
+    assert kept[0]["finding"] == verdict["evidence_review"]["attempted_correction"]["finding"]
+    assert kept[0]["citations"] == flag["citations"]
+    assert kept[0]["remedy"]["action"] == "NO_ACTION"
+    assert kept[0]["remedy"]["est_cost_usd"] is None
+    assert kept[0]["remedy"]["est_added_days"] is None
+
+
 def saved_repair(fid="F1010"):
     record = json.loads((ROOT / "runs/run_20260912_030306.json").read_text())
     flag = next(f for f in record["rejected_flags"] if f["flag_id"] == fid)

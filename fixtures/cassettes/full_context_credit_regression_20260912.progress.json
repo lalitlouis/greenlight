@@ -1,0 +1,20 @@
+[
+  {
+    "flag_id": "record_credit_attributed",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 21296,
+    "input_sha256": "70d11819af10dddfc720f09decf237b1579c667cd98707d2522817b3713c41ce",
+    "usage_available": true,
+    "elapsed_s": 7.06
+  },
+  {
+    "flag_id": "record_credit_inquiry_lead",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 21780,
+    "input_sha256": "13c3e1d2221cab8e4c11898eeab4556948ab5e8106c48b884b2d2c419b146e71",
+    "usage_available": true,
+    "elapsed_s": 59.56
+  }
+]

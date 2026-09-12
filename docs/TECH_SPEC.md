@@ -126,7 +126,12 @@ source support. Desks, repair and both review stages use this same distinction.
 Formatting-only display quotes may be anchored back to one unambiguous raw source
 substring using preserved character offsets: whitespace, complete inline HTTP(S)
 Markdown links, paired bold/underscore emphasis and standalone hash heading markers.
-Words, case, numbers, order and punctuation are not approximated. Truncated markup
+For a quote of at least four whitespace-separated tokens, missing/inserted PDF spaces
+may also be matched using an identical non-whitespace character sequence. The match
+must be unique and begin/end at source word boundaries. The raw substring, including
+its original word spacing, replaces the proposed quote; the model's segmentation
+is never treated as the source. Case, numbers, character order and punctuation are
+not approximated, and negations or qualifications cannot be removed. Truncated markup
 is not repaired. The original excerpt remains immutable; internal
 `support_span_reanchors` records submitted and raw quotes. The independent reviewer
 still receives the raw receipt and full excerpt, so anchoring never establishes truth

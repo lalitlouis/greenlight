@@ -1,12 +1,14 @@
 """Conservative display-text matching that returns an unchanged source substring.
 
-This is not fuzzy matching or a Markdown renderer. Unsupported/truncated markup
-stays literal. Words, punctuation, case and order are never repaired.
+This is not semantic fuzzy matching or a Markdown renderer. Unsupported/truncated
+markup stays literal. Non-whitespace characters, punctuation, case and order stay fixed.
 """
 
 from __future__ import annotations
 
 import re
+
+_MIN_SPACING_WORDS = 4
 
 
 def _display_chars(source: str) -> list[tuple[str, int, int]]:
@@ -51,9 +53,11 @@ def _display_chars(source: str) -> list[tuple[str, int, int]]:
 def anchor_quote(quote: str, excerpt: str) -> str | None:
     """Return the exact receipt, or one unambiguous raw slice for a display quote.
 
-    Only source formatting is interpreted; the requested quote is plain text with
-    whitespace collapsed. Never borrow text from another citation. Full raw source
-    context still goes to independent entailment review, including all negations.
+    For a clause-sized quote, PDF spacing may be missing or inserted inside words.
+    Match only the identical non-whitespace character sequence at source boundaries,
+    then return its RAW substring, never the model's proposed word segmentation.
+    Full raw source context still goes to independent entailment review, including
+    all negations. Provenance matching is not semantic approval.
     """
     if not quote.strip():
         return None
@@ -63,9 +67,20 @@ def anchor_quote(quote: str, excerpt: str) -> str | None:
     chars = _display_chars(excerpt)
     display = "".join(char for char, _, _ in chars)
     start = display.find(wanted)
-    if start < 0 or display.find(wanted, start + 1) >= 0:
-        return None
-    end = start + len(wanted)
+    if start < 0:
+        if len(wanted.split()) < _MIN_SPACING_WORDS:
+            return None
+        positions = [i for i, (char, _, _) in enumerate(chars) if not char.isspace()]
+        compact = "".join(chars[i][0] for i in positions)
+        needle = "".join(wanted.split())
+        offset = compact.find(needle)
+        if offset < 0 or compact.find(needle, offset + 1) >= 0:
+            return None
+        start, end = positions[offset], positions[offset + len(needle) - 1] + 1
+    else:
+        if display.find(wanted, start + 1) >= 0:
+            return None
+        end = start + len(wanted)
     # A formatting repair must not turn a partial word into a new receipt.
     if (start and display[start - 1].isalnum() and wanted[0].isalnum()) or (
         end < len(display) and display[end].isalnum() and wanted[-1].isalnum()

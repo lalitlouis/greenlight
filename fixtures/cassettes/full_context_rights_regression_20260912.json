@@ -1,0 +1,413 @@
+{
+  "source_run": "runs/run_20260912_003816.json",
+  "source_run_sha256": "ea4637bc230fcfd1b7ad6c567c7e8c5e08589a4874596f5206e039f4fdffd3bd",
+  "source_build": "local:9318011a954f4f44149300e8a968c166cd84d973",
+  "evaluated_build": "705d7b870ce7d1fe8a91d7645c91c355a08c9cf0",
+  "model": "gemini-3.7-flash",
+  "elapsed_s": 106.45,
+  "calls": 6,
+  "responses_with_usage": 6,
+  "calls_without_returned_usage": 0,
+  "resumed_from": null,
+  "rechecked_correction_from": null,
+  "recovered_remedy_from_source": false,
+  "entailment_cases": "fixtures/accuracy/input_and_rights_scopes_20260912.json",
+  "entailment_cases_sha256": "3bdd0e0b399057d68ddd5cc31b3543bdb63ff538d0824e7c183a1436609e7038",
+  "attempts": [
+    {
+      "flag_id": "unknown_staging_is_input_limit",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 13733,
+      "input_sha256": "5d75f96b67ac0a9b5a29b0c36c7ed2e600908ad0c526e385c5c5da5b21f4954a",
+      "usage_available": true,
+      "elapsed_s": 24.81
+    },
+    {
+      "flag_id": "unprovided_staging_is_not_confirmed",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 13605,
+      "input_sha256": "fd0fdbd501fd8965549731d7fde9b989b6ab4bc7dd00c6cbdc004ce379ebd5e3",
+      "usage_available": true,
+      "elapsed_s": 3.77
+    },
+    {
+      "flag_id": "generic_sync_licensor_role",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 20598,
+      "input_sha256": "0497d91419a05ed2c477939ac7f255a34c8e0a41d56269f9407dc6d892ab21a9",
+      "usage_available": true,
+      "elapsed_s": 11.52
+    },
+    {
+      "flag_id": "generic_rights_investigation",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 20437,
+      "input_sha256": "063b5d601f2d1a794abf49f549d1d4910bec6d7fb31cc001efc283cf0ed3a1e1",
+      "usage_available": true,
+      "elapsed_s": 19.44
+    },
+    {
+      "flag_id": "credit_not_current_master_owner",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 21595,
+      "input_sha256": "1a4903d8ebdebd106d7fba6ae3d6f12df8ac279ed733ebcb9dc6a67b30311513",
+      "usage_available": true,
+      "elapsed_s": 40.28
+    },
+    {
+      "flag_id": "credit_not_named_licensing_instruction",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 20911,
+      "input_sha256": "92eb5abb553ff1789db12751b4909b7ba03d889f1a18e8f2c87beef30f5eced4",
+      "usage_available": true,
+      "elapsed_s": 6.55
+    }
+  ],
+  "gemini_usage": {
+    "flash": {
+      "prompt": 24985,
+      "cached": 0,
+      "output": 4220
+    }
+  },
+  "estimated_cost_usd": 0.0346,
+  "manual_review": "pending; model approval is not an accuracy label",
+  "results": [
+    {
+      "flag_id": "unknown_staging_is_input_limit",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "Whether the production plans to utilize functional firearms firing blanks or non-firing prop rifles with visual and sound effects remains unconfirmed.",
+            "basis": "planning",
+            "status": "SUPPORTED",
+            "reason": "Probe to be independently assessed",
+            "citation_numbers": [],
+            "support_spans": [],
+            "script_spans": []
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The statement accurately identifies that practical production methods (firing blanks vs non-firing replica rifles with post effects) are unconfirmed by the screenplay, which conforms to the input limitations rules.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "Correctly preserves the unconfirmed status of physical staging and practical execution for the depicted rifle volley.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            }
+          ]
+        },
+        "entailment_policy_version": 3,
+        "estimate_exclusions": []
+      },
+      "expected_entailed": true,
+      "actual_entailed": true,
+      "passed": true,
+      "elapsed_s": 24.82
+    },
+    {
+      "flag_id": "unprovided_staging_is_not_confirmed",
+      "verdict": {
+        "verdict": "PARTIAL",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "The production has confirmed functional rifles firing blank ammunition for this scene.",
+            "basis": "planning",
+            "status": "UNSUPPORTED",
+            "reason": "Independent span review: Screenplay depiction of a rifle volley does not establish real-world production execution, and there is no evidence provided confirming that the production has chosen functional rifles firing blanks.; Script events were improperly converted into a confirmed production method without evidence.; The production has confirmed functional rifles firing blank ammunition for this scene.",
+            "citation_numbers": [],
+            "support_spans": [],
+            "script_spans": []
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": false,
+              "reason": "Screenplay depiction of a rifle volley does not establish real-world production execution, and there is no evidence provided confirming that the production has chosen functional rifles firing blanks.",
+              "scope_preserved": false,
+              "requirements_supported": false,
+              "scope_reason": "Script events were improperly converted into a confirmed production method without evidence.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": [
+                "The production has confirmed functional rifles firing blank ammunition for this scene."
+              ]
+            }
+          ]
+        },
+        "entailment_policy_version": 3,
+        "estimate_exclusions": [],
+        "reason": "Claim audit requires correction: Independent span review: Screenplay depiction of a rifle volley does not establish real-world production execution, and there is no evidence provided confirming that the production has chosen functional rifles firing blanks.; Script events were improperly converted into a confirmed production method without evidence.; The production has confirmed functional rifles firing blank ammunition for this scene."
+      },
+      "expected_entailed": false,
+      "actual_entailed": false,
+      "passed": true,
+      "elapsed_s": 3.78
+    },
+    {
+      "flag_id": "generic_sync_licensor_role",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "Synchronizing a musical composition with visual content in audiovisual media requires a synchronization license from the copyright owner or publishing administrator.",
+            "basis": "application",
+            "status": "SUPPORTED",
+            "reason": "Probe to be independently assessed",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "A synchronization license authorizes the use of a musical composition in timed relation with visual content. This permission is required whenever music is paired with film, television, advertising, video games, online video, or other audiovisual media."
+              }
+            ],
+            "script_spans": [
+              "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The cited source confirms that pairing a musical composition in timed relation with audiovisual media requires a synchronization license. Generic reference to obtaining permission from the copyright owner or publishing administrator accurately reflects the licensing framework without asserting an unqualified specific entity.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The scope accurately reflects the source requirement for synchronization licensing when pairing musical compositions with audiovisual content.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            }
+          ]
+        },
+        "entailment_policy_version": 3,
+        "estimate_exclusions": []
+      },
+      "expected_entailed": true,
+      "actual_entailed": true,
+      "passed": true,
+      "elapsed_s": 11.53
+    },
+    {
+      "flag_id": "generic_rights_investigation",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "claim_checks": [
+          {
+            "field": "remedy",
+            "quote": "Identify the copyright owner or publishing administrator for \"Hallelujah\" and obtain the necessary synchronization license for the audiovisual use.",
+            "basis": "planning",
+            "status": "SUPPORTED",
+            "reason": "Probe to be independently assessed",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "A synchronization license authorizes the use of a musical composition in timed relation with visual content. This permission is required whenever music is paired with film, television, advertising, video games, online video, or other audiovisual media."
+              }
+            ],
+            "script_spans": []
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The source establishes that pairing a musical composition with audiovisual media requires a synchronization license. S004 and S011 feature the song 'Hallelujah', and identifying the generic copyright owner or publishing administrator to obtain a sync license is a supported planning step.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The recommendation addresses the synchronization licensing requirement for musical compositions in audiovisual works without asserting unconfirmed specific owners or unsupported procedural mandates.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            }
+          ]
+        },
+        "entailment_policy_version": 3,
+        "estimate_exclusions": []
+      },
+      "expected_entailed": true,
+      "actual_entailed": true,
+      "passed": true,
+      "elapsed_s": 19.45
+    },
+    {
+      "flag_id": "credit_not_current_master_owner",
+      "verdict": {
+        "verdict": "PARTIAL",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "Incorporating a pre-existing sound recording into an audiovisual work requires obtaining a master use license from the sound recording's owner (Columbia Records / Sony Music Entertainment) in addition to any synchronization license for the underlying musical composition.",
+            "basis": "application",
+            "status": "UNSUPPORTED",
+            "reason": "Independent span review: The claim asserts an unqualified ownership and licensing relationship by naming Columbia Records / Sony Music Entertainment in parentheses as the party from whom the master use license must be obtained. A phonogram copyright credit on a catalog listing is an attribution, not proof of confirmed licensing authority for this production.; While embedding a pre-existing sound recording into an audiovisual work triggers master licensing requirements, asserting a specific named corporate licensor without qualification is unsupported.; Named rights relationships must remain source attributions or leads pending confirmation of authority for the intended use; obtaining a master use license from Columbia Records / Sony Music Entertainment as the confirmed licensing owner/authority",
+            "citation_numbers": [
+              1,
+              2,
+              3
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "When that recording is embedded in visual media, permission from the sound recording\u2019s owner is required in addition to the composition license. This permission is granted through a master use license."
+              },
+              {
+                "citation_number": 2,
+                "quote": "Master Use License: This is the right to reproduce a specific recording of a song in your film."
+              },
+              {
+                "citation_number": 3,
+                "quote": "\u2117 2007 Columbia Records, a division of Sony Music Entertainment"
+              }
+            ],
+            "script_spans": [
+              "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": false,
+              "reason": "The claim asserts an unqualified ownership and licensing relationship by naming Columbia Records / Sony Music Entertainment in parentheses as the party from whom the master use license must be obtained. A phonogram copyright credit on a catalog listing is an attribution, not proof of confirmed licensing authority for this production.",
+              "scope_preserved": true,
+              "requirements_supported": false,
+              "scope_reason": "While embedding a pre-existing sound recording into an audiovisual work triggers master licensing requirements, asserting a specific named corporate licensor without qualification is unsupported.",
+              "named_rights_status": "unqualified_relationship",
+              "unsupported_parts": [
+                "obtaining a master use license from Columbia Records / Sony Music Entertainment as the confirmed licensing owner/authority"
+              ]
+            }
+          ]
+        },
+        "entailment_policy_version": 3,
+        "estimate_exclusions": [],
+        "reason": "Claim audit requires correction: Independent span review: The claim asserts an unqualified ownership and licensing relationship by naming Columbia Records / Sony Music Entertainment in parentheses as the party from whom the master use license must be obtained. A phonogram copyright credit on a catalog listing is an attribution, not proof of confirmed licensing authority for this production.; While embedding a pre-existing sound recording into an audiovisual work triggers master licensing requirements, asserting a specific named corporate licensor without qualification is unsupported.; Named rights relationships must remain source attributions or leads pending confirmation of authority for the intended use; obtaining a master use license from Columbia Records / Sony Music Entertainment as the confirmed licensing owner/authority"
+      },
+      "expected_entailed": false,
+      "actual_entailed": false,
+      "passed": true,
+      "elapsed_s": 40.29
+    },
+    {
+      "flag_id": "credit_not_named_licensing_instruction",
+      "verdict": {
+        "verdict": "PARTIAL",
+        "claim_checks": [
+          {
+            "field": "remedy",
+            "quote": "Obtain a master use license from Columbia Records / Sony Music Entertainment for the Jeff Buckley sound recording of 'Hallelujah'.",
+            "basis": "application",
+            "status": "UNSUPPORTED",
+            "reason": "Independent span review: The claim instructs obtaining a master use license specifically from Columbia Records / Sony Music Entertainment. Under pre-qualification rules, a phonogram credit line (\u2117 credit) is an attribution/lead rather than confirmation of current licensing authority for this production, making this an unsupported unqualified rights relationship.; While a master use license is established for sound recordings embedded in visual media, designating Columbia Records / Sony Music Entertainment as the definitive licensor without qualification is unsupported by the catalog credit.; Named rights relationships must remain source attributions or leads pending confirmation of authority for the intended use; Obtain a master use license from Columbia Records / Sony Music Entertainment",
+            "citation_numbers": [
+              1,
+              3
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "When that recording is embedded in visual media, permission from the sound recording\u2019s owner is required in addition to the composition license. This permission is granted through a master use license."
+              },
+              {
+                "citation_number": 3,
+                "quote": "\u2117 2007 Columbia Records, a division of Sony Music Entertainment"
+              }
+            ],
+            "script_spans": [
+              "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": false,
+              "reason": "The claim instructs obtaining a master use license specifically from Columbia Records / Sony Music Entertainment. Under pre-qualification rules, a phonogram credit line (\u2117 credit) is an attribution/lead rather than confirmation of current licensing authority for this production, making this an unsupported unqualified rights relationship.",
+              "scope_preserved": true,
+              "requirements_supported": false,
+              "scope_reason": "While a master use license is established for sound recordings embedded in visual media, designating Columbia Records / Sony Music Entertainment as the definitive licensor without qualification is unsupported by the catalog credit.",
+              "named_rights_status": "unqualified_relationship",
+              "unsupported_parts": [
+                "Obtain a master use license from Columbia Records / Sony Music Entertainment"
+              ]
+            }
+          ]
+        },
+        "entailment_policy_version": 3,
+        "estimate_exclusions": [],
+        "reason": "Claim audit requires correction: Independent span review: The claim instructs obtaining a master use license specifically from Columbia Records / Sony Music Entertainment. Under pre-qualification rules, a phonogram credit line (\u2117 credit) is an attribution/lead rather than confirmation of current licensing authority for this production, making this an unsupported unqualified rights relationship.; While a master use license is established for sound recordings embedded in visual media, designating Columbia Records / Sony Music Entertainment as the definitive licensor without qualification is unsupported by the catalog credit.; Named rights relationships must remain source attributions or leads pending confirmation of authority for the intended use; Obtain a master use license from Columbia Records / Sony Music Entertainment"
+      },
+      "expected_entailed": false,
+      "actual_entailed": false,
+      "passed": true,
+      "elapsed_s": 6.55
+    }
+  ],
+  "responses": [
+    {
+      "flag_id": "unknown_staging_is_input_limit",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The statement accurately identifies that practical production methods (firing blanks vs non-firing replica rifles with post effects) are unconfirmed by the screenplay, which conforms to the input limitations rules.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"Correctly preserves the unconfirmed status of physical staging and practical execution for the depicted rifle volley.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "unprovided_staging_is_not_confirmed",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": false,\n      \"reason\": \"Screenplay depiction of a rifle volley does not establish real-world production execution, and there is no evidence provided confirming that the production has chosen functional rifles firing blanks.\",\n      \"scope_preserved\": false,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"Script events were improperly converted into a confirmed production method without evidence.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": [\n        \"The production has confirmed functional rifles firing blank ammunition for this scene.\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "generic_sync_licensor_role",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The cited source confirms that pairing a musical composition in timed relation with audiovisual media requires a synchronization license. Generic reference to obtaining permission from the copyright owner or publishing administrator accurately reflects the licensing framework without asserting an unqualified specific entity.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The scope accurately reflects the source requirement for synchronization licensing when pairing musical compositions with audiovisual content.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "generic_rights_investigation",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The source establishes that pairing a musical composition with audiovisual media requires a synchronization license. S004 and S011 feature the song 'Hallelujah', and identifying the generic copyright owner or publishing administrator to obtain a sync license is a supported planning step.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The recommendation addresses the synchronization licensing requirement for musical compositions in audiovisual works without asserting unconfirmed specific owners or unsupported procedural mandates.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "credit_not_current_master_owner",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": false,\n      \"reason\": \"The claim asserts an unqualified ownership and licensing relationship by naming Columbia Records / Sony Music Entertainment in parentheses as the party from whom the master use license must be obtained. A phonogram copyright credit on a catalog listing is an attribution, not proof of confirmed licensing authority for this production.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"While embedding a pre-existing sound recording into an audiovisual work triggers master licensing requirements, asserting a specific named corporate licensor without qualification is unsupported.\",\n      \"named_rights_status\": \"unqualified_relationship\",\n      \"unsupported_parts\": [\n        \"obtaining a master use license from Columbia Records / Sony Music Entertainment as the confirmed licensing owner/authority\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "credit_not_named_licensing_instruction",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": false,\n      \"reason\": \"The claim instructs obtaining a master use license specifically from Columbia Records / Sony Music Entertainment. Under pre-qualification rules, a phonogram credit line (\u2117 credit) is an attribution/lead rather than confirmation of current licensing authority for this production, making this an unsupported unqualified rights relationship.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"While a master use license is established for sound recordings embedded in visual media, designating Columbia Records / Sony Music Entertainment as the definitive licensor without qualification is unsupported by the catalog credit.\",\n      \"named_rights_status\": \"unqualified_relationship\",\n      \"unsupported_parts\": [\n        \"Obtain a master use license from Columbia Records / Sony Music Entertainment\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    }
+  ]
+}

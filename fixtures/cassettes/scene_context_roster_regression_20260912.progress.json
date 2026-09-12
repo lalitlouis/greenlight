@@ -1,0 +1,38 @@
+[
+  {
+    "flag_id": "truncated_roster_is_not_an_or_choice",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 14810,
+    "input_sha256": "83daa5b6c6b619da2ffe59fc5c2693b03ef4279c90097b49a16694f61f394569",
+    "usage_available": true,
+    "elapsed_s": 8.59
+  },
+  {
+    "flag_id": "firearm_source_bound_method_option",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 15309,
+    "input_sha256": "46bc121279916f23e21a85b70aa1778d85f70d2673df456580eb6255cc65b9cc",
+    "usage_available": true,
+    "elapsed_s": 6.09
+  },
+  {
+    "flag_id": "complete_firearm_meeting_sentence",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 14404,
+    "input_sha256": "4ef71cce078b54d1a14707e34dc85337d03ce50aeed3ec0e0431f76ccc8e671d",
+    "usage_available": true,
+    "elapsed_s": 4.68
+  },
+  {
+    "flag_id": "meeting_cannot_exclude_other_personnel",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 14394,
+    "input_sha256": "f11a3a1da2c5f52cabdcf815e71ce8fade69a4c9543fb86facd1168bea883e12",
+    "usage_available": true,
+    "elapsed_s": 3.81
+  }
+]

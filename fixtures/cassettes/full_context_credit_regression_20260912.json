@@ -1,0 +1,172 @@
+{
+  "source_run": "runs/run_20260912_003816.json",
+  "source_run_sha256": "ea4637bc230fcfd1b7ad6c567c7e8c5e08589a4874596f5206e039f4fdffd3bd",
+  "source_build": "local:9318011a954f4f44149300e8a968c166cd84d973",
+  "evaluated_build": "705d7b870ce7d1fe8a91d7645c91c355a08c9cf0",
+  "model": "gemini-3.7-flash",
+  "elapsed_s": 66.67,
+  "calls": 2,
+  "responses_with_usage": 2,
+  "calls_without_returned_usage": 0,
+  "resumed_from": null,
+  "rechecked_correction_from": null,
+  "recovered_remedy_from_source": false,
+  "entailment_cases": "fixtures/accuracy/record_credit_leads_20260912.json",
+  "entailment_cases_sha256": "31ff8e364d190765a617a73590822ed32fdd00b0858d92b7db00d7c4b40ae4cc",
+  "attempts": [
+    {
+      "flag_id": "record_credit_attributed",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 21296,
+      "input_sha256": "70d11819af10dddfc720f09decf237b1579c667cd98707d2522817b3713c41ce",
+      "usage_available": true,
+      "elapsed_s": 7.06
+    },
+    {
+      "flag_id": "record_credit_inquiry_lead",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 21780,
+      "input_sha256": "13c3e1d2221cab8e4c11898eeab4556948ab5e8106c48b884b2d2c419b146e71",
+      "usage_available": true,
+      "elapsed_s": 59.56
+    }
+  ],
+  "gemini_usage": {
+    "flash": {
+      "prompt": 9887,
+      "cached": 0,
+      "output": 1169
+    }
+  },
+  "estimated_cost_usd": 0.0118,
+  "manual_review": "pending; model approval is not an accuracy label",
+  "results": [
+    {
+      "flag_id": "record_credit_attributed",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "The cited Apple Music entry carries a 2007 phonogram credit naming Columbia Records, a division of Sony Music Entertainment.",
+            "basis": "source",
+            "status": "SUPPORTED",
+            "reason": "Probe to be independently assessed",
+            "citation_numbers": [
+              1,
+              2,
+              3
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "When that recording is embedded in visual media, permission from the sound recording\u2019s owner is required in addition to the composition license. This permission is granted through a master use license."
+              },
+              {
+                "citation_number": 2,
+                "quote": "Master Use License: This is the right to reproduce a specific recording of a song in your film."
+              },
+              {
+                "citation_number": 3,
+                "quote": "\u2117 2007 Columbia Records, a division of Sony Music Entertainment"
+              }
+            ],
+            "script_spans": [
+              "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The cited Apple Music source quote explicitly displays '\u2117 2007 Columbia Records, a division of Sony Music Entertainment', which directly confirms the claim.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The statement strictly reports the specific phonogram credit attribution listed on the Apple Music entry.",
+              "named_rights_status": "qualified_attribution_or_lead",
+              "unsupported_parts": []
+            }
+          ]
+        },
+        "entailment_policy_version": 3,
+        "estimate_exclusions": []
+      },
+      "expected_entailed": true,
+      "actual_entailed": true,
+      "passed": true,
+      "elapsed_s": 7.07
+    },
+    {
+      "flag_id": "record_credit_inquiry_lead",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "claim_checks": [
+          {
+            "field": "remedy",
+            "quote": "The cited 2007 record credit names Columbia Records, a division of Sony Music Entertainment. Use that attribution as a starting point to inquire about the recording and confirm who can license the intended use.",
+            "basis": "inquiry",
+            "status": "SUPPORTED",
+            "reason": "Probe to be independently assessed",
+            "citation_numbers": [
+              1,
+              3
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "When that recording is embedded in visual media, permission from the sound recording\u2019s owner is required in addition to the composition license. This permission is granted through a master use license."
+              },
+              {
+                "citation_number": 3,
+                "quote": "\u2117 2007 Columbia Records, a division of Sony Music Entertainment"
+              }
+            ],
+            "script_spans": [
+              "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The cited catalog credit explicitly lists \u2117 2007 Columbia Records, a division of Sony Music Entertainment, and the claim properly treats this as an attribution and investigation starting point to confirm licensing authority rather than asserting an unqualified current ownership or licensing relationship.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The inquiry directly addresses the music clearance requirements established by the source and script context while preserving the distinction between a credit attribution and confirmed licensing authority.",
+              "named_rights_status": "qualified_attribution_or_lead",
+              "unsupported_parts": []
+            }
+          ]
+        },
+        "entailment_policy_version": 3,
+        "estimate_exclusions": []
+      },
+      "expected_entailed": true,
+      "actual_entailed": true,
+      "passed": true,
+      "elapsed_s": 59.57
+    }
+  ],
+  "responses": [
+    {
+      "flag_id": "record_credit_attributed",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The cited Apple Music source quote explicitly displays '\u2117 2007 Columbia Records, a division of Sony Music Entertainment', which directly confirms the claim.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The statement strictly reports the specific phonogram credit attribution listed on the Apple Music entry.\",\n      \"named_rights_status\": \"qualified_attribution_or_lead\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "record_credit_inquiry_lead",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The cited catalog credit explicitly lists \u2117 2007 Columbia Records, a division of Sony Music Entertainment, and the claim properly treats this as an attribution and investigation starting point to confirm licensing authority rather than asserting an unqualified current ownership or licensing relationship.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The inquiry directly addresses the music clearance requirements established by the source and script context while preserving the distinction between a credit attribution and confirmed licensing authority.\",\n      \"named_rights_status\": \"qualified_attribution_or_lead\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    }
+  ]
+}

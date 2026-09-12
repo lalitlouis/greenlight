@@ -1,0 +1,56 @@
+[
+  {
+    "flag_id": "scene_context_funeral",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 13709,
+    "input_sha256": "176767a264857515cc3fb053ec740e399dae024435968613ed546ef7c4c301fb",
+    "usage_available": true,
+    "elapsed_s": 5.95
+  },
+  {
+    "flag_id": "scene_context_false_beach",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 13687,
+    "input_sha256": "18d669ee6d9814162ea028e89fc0f409c9deb3ae96835b2e3dbc0aecfe4a88e8",
+    "usage_available": true,
+    "elapsed_s": 6.17
+  },
+  {
+    "flag_id": "scene_context_actual_blanks",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 13719,
+    "input_sha256": "4a4e6a00cfff20d36d364a78baabb295435d68454a0d56ab7200dfe754472284",
+    "usage_available": true,
+    "elapsed_s": 17.37
+  },
+  {
+    "flag_id": "tattoo_remedy_guarantee",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 18912,
+    "input_sha256": "6819a015a962806e8658cfdf61a12fb89102fde8704bb05a0794a976a054f16e",
+    "usage_available": true,
+    "elapsed_s": 7.11
+  },
+  {
+    "flag_id": "tattoo_cover_option",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 18784,
+    "input_sha256": "3095b7c8d8d094722e26e6d0ceabad94d412d019cb402654e30904aec78b29cb",
+    "usage_available": true,
+    "elapsed_s": 6.05
+  },
+  {
+    "flag_id": "tattoo_input_inquiry",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 13983,
+    "input_sha256": "86235c6f5b3a0c043207855088ac1a56a1178b639f42143719a93f56cee5d935",
+    "usage_available": true,
+    "elapsed_s": 7.15
+  }
+]

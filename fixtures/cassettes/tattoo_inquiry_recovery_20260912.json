@@ -1,0 +1,777 @@
+{
+  "source_run": "runs/run_20260912_030306.json",
+  "source_run_sha256": "c7eee84bd40a5b345c889258d822f76b04121cdb45f583284dfc95f129fc83e0",
+  "source_build": "local:7ac5ac03a127b5edaaa08041613f6e0640e4bd1e",
+  "evaluated_build": "00dc6b40817bd5c788b4701ea1405fac749609ae",
+  "model": "gemini-3.7-flash",
+  "elapsed_s": 29.25,
+  "calls": 2,
+  "responses_with_usage": 2,
+  "calls_without_returned_usage": 0,
+  "resumed_from": null,
+  "rechecked_correction_from": null,
+  "recovered_remedy_from_source": true,
+  "entailment_cases": null,
+  "entailment_cases_sha256": null,
+  "attempts": [
+    {
+      "flag_id": "F1010",
+      "schema": "EvidenceVerdict",
+      "status": "returned",
+      "input_chars": 25726,
+      "input_sha256": "6e0ebe10e62a3a45eae8bcc3ee811bd01f330ccf7f0fb616aa59365eb3a6092e",
+      "usage_available": true,
+      "elapsed_s": 10.2
+    },
+    {
+      "flag_id": "F1010",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 20922,
+      "input_sha256": "ba687d2281899dc2c79cfd1e9f5c4e8fddb439433906772530fbcb62227e94af",
+      "usage_available": true,
+      "elapsed_s": 19.0
+    }
+  ],
+  "gemini_usage": {
+    "flash": {
+      "prompt": 10980,
+      "cached": 0,
+      "output": 2497
+    }
+  },
+  "estimated_cost_usd": 0.0176,
+  "manual_review": "pending; model approval is not an accuracy label",
+  "results": [
+    {
+      "flag_id": "F1010",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "reason": "The script text in scene S002 establishes the custom schooner tattoo design on Crow's forearm, and the cited case law excerpts (Whitmill v. Warner Bros. Entertainment Inc.) support the potential copyright and licensing risks associated with unauthorized depiction of tattoo designs.",
+        "failure_mode": "none",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "In Scene S002, the action description specifies that Crow has a full-rigged schooner tattoo across his forearm ('Teddy Krane's design, inked at his Rockland parlor').",
+            "basis": "script",
+            "status": "SUPPORTED",
+            "reason": "The scene description explicitly mentions Crow having a full-rigged schooner tattoo across his forearm ('Teddy Krane's design, inked at his Rockland parlor').",
+            "citation_numbers": [],
+            "support_spans": [],
+            "script_spans": [
+              "Across his forearm, a full-rigged schooner tattoo in fading blue-black \u2014 Teddy Krane's design, inked at his Rockland parlor the summer the Margaret Rose launched \u2014 rides every pour like weather."
+            ]
+          },
+          {
+            "field": "finding",
+            "quote": "As demonstrated in Whitmill v. Warner Bros. Entertainment Inc., the reproduction or depiction of custom tattoo designs in a film without authorization can lead to copyright infringement litigation and licensing disputes.",
+            "basis": "risk_assessment",
+            "status": "SUPPORTED",
+            "reason": "Citations [1], [2], and [3] demonstrate that Whitmill v. Warner Bros. involved litigation over the unauthorized depiction and reproduction of a tattoo design in a film.",
+            "citation_numbers": [
+              1,
+              2,
+              3
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "Tattoo artist who created Mike Tyson's facial art sues Warner Brothers over the use of a similar tattoo on actor Ed Helms in the film, \"The Hangover 2.\""
+              },
+              {
+                "citation_number": 2,
+                "quote": "artist S. Victor Whitmill (\u201cVictor\u201d), creator of Mike Tyson\u2019s face tattoo, filed a lawsuit against Warner Brothers Entertainment Inc.\n(\u201cWarner Brothers\u201d) for not seeking his approval to use the tattoo design on the face of another character in the movie."
+              },
+              {
+                "citation_number": 3,
+                "quote": "Mr.\nWhitmill had a registered copyright for the design and sought an injunction to prevent release of the movie as Warner Brothers had not sought a license to use his protected work."
+              }
+            ],
+            "script_spans": [
+              "Across his forearm, a full-rigged schooner tattoo in fading blue-black \u2014 Teddy Krane's design, inked at his Rockland parlor the summer the Margaret Rose launched \u2014 rides every pour like weather."
+            ]
+          },
+          {
+            "field": "remedy",
+            "quote": "Confirm the intended screen use, the ownership evidence available and whether permission covering that use has been obtained.",
+            "basis": "inquiry",
+            "status": "SUPPORTED",
+            "reason": "A clearance inquiry regarding intended screen use and permission status is appropriate for clearance due diligence without asserting unverified external facts.",
+            "citation_numbers": [],
+            "support_spans": [],
+            "script_spans": []
+          },
+          {
+            "field": "severity",
+            "quote": "LOW",
+            "basis": "risk_assessment",
+            "status": "SUPPORTED",
+            "reason": "The low severity reflects an early advisory risk check regarding artwork clearance.",
+            "citation_numbers": [],
+            "support_spans": [],
+            "script_spans": []
+          }
+        ],
+        "support_span_version": 3,
+        "audit_input": "ae47bcc09760bc654ef8cd9f2b17239164d8b7b7bb6dbc4c6854ae70a82f76cd",
+        "support_span_reanchors": [
+          {
+            "check_index": 1,
+            "span_index": 1,
+            "citation_number": 2,
+            "submitted_quote": "artist S. Victor Whitmill (\u201cVictor\u201d), creator of Mike Tyson\u2019s face tattoo, filed a lawsuit against Warner Brothers Entertainment Inc. (\u201cWarner Brothers\u201d) for not seeking his approval to use the tattoo design on the face of another character in the movie.",
+            "raw_quote": "artist S. Victor Whitmill (\u201cVictor\u201d), creator of Mike Tyson\u2019s face tattoo, filed a lawsuit against Warner Brothers Entertainment Inc.\n(\u201cWarner Brothers\u201d) for not seeking his approval to use the tattoo design on the face of another character in the movie."
+          },
+          {
+            "check_index": 1,
+            "span_index": 2,
+            "citation_number": 3,
+            "submitted_quote": "Mr. Whitmill had a registered copyright for the design and sought an injunction to prevent release of the movie as Warner Brothers had not sought a license to use his protected work.",
+            "raw_quote": "Mr.\nWhitmill had a registered copyright for the design and sought an injunction to prevent release of the movie as Warner Brothers had not sought a license to use his protected work."
+          }
+        ],
+        "estimate_exclusions": [],
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The claim is an accurate screenplay observation directly matching the text in Scene S002.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The observation accurately reflects the description in the scene without adding unconfirmed external production facts.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            },
+            {
+              "check_index": 1,
+              "entailed": true,
+              "reason": "The cited lawsuit citations support that unauthorized depiction of custom tattoo designs in film productions can lead to copyright infringement claims and licensing disputes.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The potential legal complication is appropriately framed as a potential risk based on the cited litigation history.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            },
+            {
+              "check_index": 2,
+              "entailed": true,
+              "reason": "The inquiry reasonably requests relevant confirmation regarding the intended screen depiction, ownership verification, and permission status for clearance purposes.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The inquiry addresses the clearance issue without asserting unconfirmed facts or imposing unsupported mandatory requirements.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            }
+          ]
+        },
+        "entailment_policy_version": 3,
+        "evidence_review": {
+          "before": {
+            "verdict": "PARTIAL",
+            "reason": "Claim audit requires correction: Independent span review: The provided sources describe the Whitmill lawsuit and allegations, but they do not state the sweeping legal rule that 'under U.S. copyright law, original visual designs fixed on human skin are protected pictorial works with copyright vesting in the tattoo artist'.; The broad statutory/doctrinal statement about copyright vesting in tattoo artists exceeds the provided case lawsuit summaries.; Under U.S. copyright law, original visual designs fixed on human skin are protected pictorial works with copyright vesting in the tattoo artist; Independent span review: The claim states that a release 'is required' as an absolute mandate, whereas the sources only show a lawsuit over an alleged infringement and lack of license, not a definitive operative requirement across all instances.; Strengthens a legal risk into an absolute mandatory requirement.; a tattoo artist copyright release is required; Independent span review: The cited sources discuss a lawsuit regarding Mike Tyson's face tattoo, but do not prescribe or define the specific requirement to obtain an executed Tattoo Artist Copyright Release granting audiovisual reproduction rights.; Prescribes specific legal contract execution requirements not found in the source excerpts.; obtain an executed Tattoo Artist Copyright Release from the inking artist granting audiovisual reproduction rights; Independent span review: The sources do not mention work-made-for-hire agreements, makeup/prosthetic design protocols, or specific contractual procedures for art departments.; Introduces specific legal and production operating requirements (work-made-for-hire agreement assigning all copyright) unsupported by the cited case summaries.; ensure the production's art or makeup department creates an original nautical design under a work-made-for-hire agreement assigning all copyright to the production entity",
+            "failure_mode": "none",
+            "claim_checks": [
+              {
+                "field": "finding",
+                "quote": "In S002, the character Crow has a featured custom forearm tattoo described as 'a full-rigged schooner tattoo in fading blue-black \u2014 Teddy Krane's design, inked at his Rockland parlor the summer the Margaret Rose launched \u2014 rides every pour like weather.'",
+                "basis": "script",
+                "status": "SUPPORTED",
+                "reason": "Matches the action line in S002 verbatim.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "Across his forearm, a full-rigged schooner tattoo in fading blue-black \u2014 Teddy Krane's design, inked at his Rockland parlor the summer the Margaret Rose launched \u2014 rides every pour like weather."
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "Under U.S. copyright law, original visual designs fixed on human skin are protected pictorial works with copyright vesting in the tattoo artist (see Whitmill v. Warner Bros. Entertainment Inc., where display of custom tattoo artwork in a feature film led to copyright infringement litigation).",
+                "basis": "source",
+                "status": "UNSUPPORTED",
+                "reason": "Independent span review: The provided sources describe the Whitmill lawsuit and allegations, but they do not state the sweeping legal rule that 'under U.S. copyright law, original visual designs fixed on human skin are protected pictorial works with copyright vesting in the tattoo artist'.; The broad statutory/doctrinal statement about copyright vesting in tattoo artists exceeds the provided case lawsuit summaries.; Under U.S. copyright law, original visual designs fixed on human skin are protected pictorial works with copyright vesting in the tattoo artist",
+                "citation_numbers": [
+                  1,
+                  3
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "Tattoo artist who created Mike Tyson's facial art sues Warner Brothers over the use of a similar tattoo on actor Ed Helms in the film, \"The Hangover 2.\""
+                  },
+                  {
+                    "citation_number": 3,
+                    "quote": "Mr.\nWhitmill had a registered copyright for the design and sought an injunction to prevent release of the movie as Warner Brothers had not sought a license to use his protected work."
+                  }
+                ],
+                "script_spans": []
+              },
+              {
+                "field": "finding",
+                "quote": "If the actor has a visible real-world custom tattoo or if the production recreates a proprietary design on camera, a tattoo artist copyright release is required.",
+                "basis": "risk_assessment",
+                "status": "UNSUPPORTED",
+                "reason": "Independent span review: The claim states that a release 'is required' as an absolute mandate, whereas the sources only show a lawsuit over an alleged infringement and lack of license, not a definitive operative requirement across all instances.; Strengthens a legal risk into an absolute mandatory requirement.; a tattoo artist copyright release is required",
+                "citation_numbers": [
+                  2,
+                  3
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 2,
+                    "quote": "Victor had obtained a release from Mike Tyson after creating the tattoo and neither Tyson nor Warner Brothers sought his approval."
+                  },
+                  {
+                    "citation_number": 3,
+                    "quote": "sought an injunction to prevent release of the movie as Warner Brothers had not sought a license to use his protected work."
+                  }
+                ],
+                "script_spans": [
+                  "Across his forearm, a full-rigged schooner tattoo in fading blue-black \u2014 Teddy Krane's design, inked at his Rockland parlor the summer the Margaret Rose launched \u2014 rides every pour like weather."
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "If the cast actor has a pre-existing visible custom tattoo, obtain an executed Tattoo Artist Copyright Release from the inking artist granting audiovisual reproduction rights.",
+                "basis": "planning",
+                "status": "UNSUPPORTED",
+                "reason": "Independent span review: The cited sources discuss a lawsuit regarding Mike Tyson's face tattoo, but do not prescribe or define the specific requirement to obtain an executed Tattoo Artist Copyright Release granting audiovisual reproduction rights.; Prescribes specific legal contract execution requirements not found in the source excerpts.; obtain an executed Tattoo Artist Copyright Release from the inking artist granting audiovisual reproduction rights",
+                "citation_numbers": [
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 2,
+                    "quote": "filed a lawsuit against Warner Brothers Entertainment Inc.\n(\u201cWarner Brothers\u201d) for not seeking his approval to use the tattoo design on the face of another character in the movie."
+                  }
+                ],
+                "script_spans": []
+              },
+              {
+                "field": "remedy",
+                "quote": "If the tattoo is a makeup/prosthetic design applied specifically for the character, ensure the production's art or makeup department creates an original nautical design under a work-made-for-hire agreement assigning all copyright to the production entity.",
+                "basis": "planning",
+                "status": "UNSUPPORTED",
+                "reason": "Independent span review: The sources do not mention work-made-for-hire agreements, makeup/prosthetic design protocols, or specific contractual procedures for art departments.; Introduces specific legal and production operating requirements (work-made-for-hire agreement assigning all copyright) unsupported by the cited case summaries.; ensure the production's art or makeup department creates an original nautical design under a work-made-for-hire agreement assigning all copyright to the production entity",
+                "citation_numbers": [
+                  3
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 3,
+                    "quote": "Mr.\nWhitmill had a registered copyright for the design and sought an injunction to prevent release of the movie as Warner Brothers had not sought a license to use his protected work."
+                  }
+                ],
+                "script_spans": []
+              },
+              {
+                "field": "severity",
+                "quote": "LOW",
+                "basis": "risk_assessment",
+                "status": "SUPPORTED",
+                "reason": "A LOW severity rating is appropriate for a conditional artwork clearance check during pre-production.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "Across his forearm, a full-rigged schooner tattoo in fading blue-black \u2014 Teddy Krane's design, inked at his Rockland parlor the summer the Margaret Rose launched \u2014 rides every pour like weather."
+                ]
+              }
+            ],
+            "support_span_version": 3,
+            "audit_input": "6f8bbb728e0874d94225e124b70731c9f3d001284d242cacc4292b305c0ecac9",
+            "support_span_reanchors": [
+              {
+                "check_index": 1,
+                "span_index": 1,
+                "citation_number": 3,
+                "submitted_quote": "Mr. Whitmill had a registered copyright for the design and sought an injunction to prevent release of the movie as Warner Brothers had not sought a license to use his protected work.",
+                "raw_quote": "Mr.\nWhitmill had a registered copyright for the design and sought an injunction to prevent release of the movie as Warner Brothers had not sought a license to use his protected work."
+              },
+              {
+                "check_index": 3,
+                "span_index": 0,
+                "citation_number": 2,
+                "submitted_quote": "filed a lawsuit against Warner Brothers Entertainment Inc. (\u201cWarner Brothers\u201d) for not seeking his approval to use the tattoo design on the face of another character in the movie.",
+                "raw_quote": "filed a lawsuit against Warner Brothers Entertainment Inc.\n(\u201cWarner Brothers\u201d) for not seeking his approval to use the tattoo design on the face of another character in the movie."
+              },
+              {
+                "check_index": 4,
+                "span_index": 0,
+                "citation_number": 3,
+                "submitted_quote": "Mr. Whitmill had a registered copyright for the design and sought an injunction to prevent release of the movie as Warner Brothers had not sought a license to use his protected work.",
+                "raw_quote": "Mr.\nWhitmill had a registered copyright for the design and sought an injunction to prevent release of the movie as Warner Brothers had not sought a license to use his protected work."
+              }
+            ],
+            "citation_index_reanchors": [
+              {
+                "check_index": 1,
+                "submitted_indexes": [
+                  1,
+                  2,
+                  3
+                ],
+                "receipt_indexes": [
+                  1,
+                  3
+                ]
+              },
+              {
+                "check_index": 3,
+                "submitted_indexes": [
+                  2,
+                  3
+                ],
+                "receipt_indexes": [
+                  2
+                ]
+              }
+            ],
+            "estimate_exclusions": [],
+            "entailment_review": {
+              "checks": [
+                {
+                  "check_index": 0,
+                  "entailed": true,
+                  "reason": "The claim accurately reflects the scene description of character Crow's tattoo in S002 from the provided script evidence.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "Matches the script evidence without asserting unconfirmed external facts.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 1,
+                  "entailed": false,
+                  "reason": "The provided sources describe the Whitmill lawsuit and allegations, but they do not state the sweeping legal rule that 'under U.S. copyright law, original visual designs fixed on human skin are protected pictorial works with copyright vesting in the tattoo artist'.",
+                  "scope_preserved": false,
+                  "requirements_supported": false,
+                  "scope_reason": "The broad statutory/doctrinal statement about copyright vesting in tattoo artists exceeds the provided case lawsuit summaries.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": [
+                    "Under U.S. copyright law, original visual designs fixed on human skin are protected pictorial works with copyright vesting in the tattoo artist"
+                  ]
+                },
+                {
+                  "check_index": 2,
+                  "entailed": false,
+                  "reason": "The claim states that a release 'is required' as an absolute mandate, whereas the sources only show a lawsuit over an alleged infringement and lack of license, not a definitive operative requirement across all instances.",
+                  "scope_preserved": false,
+                  "requirements_supported": false,
+                  "scope_reason": "Strengthens a legal risk into an absolute mandatory requirement.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": [
+                    "a tattoo artist copyright release is required"
+                  ]
+                },
+                {
+                  "check_index": 3,
+                  "entailed": false,
+                  "reason": "The cited sources discuss a lawsuit regarding Mike Tyson's face tattoo, but do not prescribe or define the specific requirement to obtain an executed Tattoo Artist Copyright Release granting audiovisual reproduction rights.",
+                  "scope_preserved": false,
+                  "requirements_supported": false,
+                  "scope_reason": "Prescribes specific legal contract execution requirements not found in the source excerpts.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": [
+                    "obtain an executed Tattoo Artist Copyright Release from the inking artist granting audiovisual reproduction rights"
+                  ]
+                },
+                {
+                  "check_index": 4,
+                  "entailed": false,
+                  "reason": "The sources do not mention work-made-for-hire agreements, makeup/prosthetic design protocols, or specific contractual procedures for art departments.",
+                  "scope_preserved": false,
+                  "requirements_supported": false,
+                  "scope_reason": "Introduces specific legal and production operating requirements (work-made-for-hire agreement assigning all copyright) unsupported by the cited case summaries.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": [
+                    "ensure the production's art or makeup department creates an original nautical design under a work-made-for-hire agreement assigning all copyright to the production entity"
+                  ]
+                }
+              ]
+            },
+            "entailment_policy_version": 2
+          },
+          "after": {
+            "verdict": "SUPPORTED",
+            "reason": "The script text in scene S002 establishes the custom schooner tattoo design on Crow's forearm, and the cited case law excerpts (Whitmill v. Warner Bros. Entertainment Inc.) support the potential copyright and licensing risks associated with unauthorized depiction of tattoo designs.",
+            "failure_mode": "none",
+            "claim_checks": [
+              {
+                "field": "finding",
+                "quote": "In Scene S002, the action description specifies that Crow has a full-rigged schooner tattoo across his forearm ('Teddy Krane's design, inked at his Rockland parlor').",
+                "basis": "script",
+                "status": "SUPPORTED",
+                "reason": "The scene description explicitly mentions Crow having a full-rigged schooner tattoo across his forearm ('Teddy Krane's design, inked at his Rockland parlor').",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "Across his forearm, a full-rigged schooner tattoo in fading blue-black \u2014 Teddy Krane's design, inked at his Rockland parlor the summer the Margaret Rose launched \u2014 rides every pour like weather."
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "As demonstrated in Whitmill v. Warner Bros. Entertainment Inc., the reproduction or depiction of custom tattoo designs in a film without authorization can lead to copyright infringement litigation and licensing disputes.",
+                "basis": "risk_assessment",
+                "status": "SUPPORTED",
+                "reason": "Citations [1], [2], and [3] demonstrate that Whitmill v. Warner Bros. involved litigation over the unauthorized depiction and reproduction of a tattoo design in a film.",
+                "citation_numbers": [
+                  1,
+                  2,
+                  3
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "Tattoo artist who created Mike Tyson's facial art sues Warner Brothers over the use of a similar tattoo on actor Ed Helms in the film, \"The Hangover 2.\""
+                  },
+                  {
+                    "citation_number": 2,
+                    "quote": "artist S. Victor Whitmill (\u201cVictor\u201d), creator of Mike Tyson\u2019s face tattoo, filed a lawsuit against Warner Brothers Entertainment Inc.\n(\u201cWarner Brothers\u201d) for not seeking his approval to use the tattoo design on the face of another character in the movie."
+                  },
+                  {
+                    "citation_number": 3,
+                    "quote": "Mr.\nWhitmill had a registered copyright for the design and sought an injunction to prevent release of the movie as Warner Brothers had not sought a license to use his protected work."
+                  }
+                ],
+                "script_spans": [
+                  "Across his forearm, a full-rigged schooner tattoo in fading blue-black \u2014 Teddy Krane's design, inked at his Rockland parlor the summer the Margaret Rose launched \u2014 rides every pour like weather."
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "Confirm the intended screen use, the ownership evidence available and whether permission covering that use has been obtained.",
+                "basis": "inquiry",
+                "status": "SUPPORTED",
+                "reason": "A clearance inquiry regarding intended screen use and permission status is appropriate for clearance due diligence without asserting unverified external facts.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              },
+              {
+                "field": "severity",
+                "quote": "LOW",
+                "basis": "risk_assessment",
+                "status": "SUPPORTED",
+                "reason": "The low severity reflects an early advisory risk check regarding artwork clearance.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              }
+            ],
+            "support_span_version": 3,
+            "audit_input": "ae47bcc09760bc654ef8cd9f2b17239164d8b7b7bb6dbc4c6854ae70a82f76cd",
+            "support_span_reanchors": [
+              {
+                "check_index": 1,
+                "span_index": 1,
+                "citation_number": 2,
+                "submitted_quote": "artist S. Victor Whitmill (\u201cVictor\u201d), creator of Mike Tyson\u2019s face tattoo, filed a lawsuit against Warner Brothers Entertainment Inc. (\u201cWarner Brothers\u201d) for not seeking his approval to use the tattoo design on the face of another character in the movie.",
+                "raw_quote": "artist S. Victor Whitmill (\u201cVictor\u201d), creator of Mike Tyson\u2019s face tattoo, filed a lawsuit against Warner Brothers Entertainment Inc.\n(\u201cWarner Brothers\u201d) for not seeking his approval to use the tattoo design on the face of another character in the movie."
+              },
+              {
+                "check_index": 1,
+                "span_index": 2,
+                "citation_number": 3,
+                "submitted_quote": "Mr. Whitmill had a registered copyright for the design and sought an injunction to prevent release of the movie as Warner Brothers had not sought a license to use his protected work.",
+                "raw_quote": "Mr.\nWhitmill had a registered copyright for the design and sought an injunction to prevent release of the movie as Warner Brothers had not sought a license to use his protected work."
+              }
+            ],
+            "estimate_exclusions": [],
+            "entailment_review": {
+              "checks": [
+                {
+                  "check_index": 0,
+                  "entailed": true,
+                  "reason": "The claim is an accurate screenplay observation directly matching the text in Scene S002.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "The observation accurately reflects the description in the scene without adding unconfirmed external production facts.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 1,
+                  "entailed": true,
+                  "reason": "The cited lawsuit citations support that unauthorized depiction of custom tattoo designs in film productions can lead to copyright infringement claims and licensing disputes.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "The potential legal complication is appropriately framed as a potential risk based on the cited litigation history.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 2,
+                  "entailed": true,
+                  "reason": "The inquiry reasonably requests relevant confirmation regarding the intended screen depiction, ownership verification, and permission status for clearance purposes.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "The inquiry addresses the clearance issue without asserting unconfirmed facts or imposing unsupported mandatory requirements.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                }
+              ]
+            },
+            "entailment_policy_version": 3
+          },
+          "source_rules": [],
+          "attempted_correction": {
+            "finding": "In Scene S002, the action description specifies that Crow has a full-rigged schooner tattoo across his forearm ('Teddy Krane's design, inked at his Rockland parlor'). As demonstrated in Whitmill v. Warner Bros. Entertainment Inc., the reproduction or depiction of custom tattoo designs in a film without authorization can lead to copyright infringement litigation and licensing disputes.",
+            "remedy_detail": "If a custom or proprietary tattoo design is depicted on screen, confirm whether rights or permissions from the design's creator are required. Alternatively, replace the tattoo with an original generic design or cover the artwork during filming to eliminate copyright exposure.",
+            "remedy_action": "REPLACE",
+            "severity": "LOW"
+          },
+          "attempted_after": {
+            "verdict": "PARTIAL",
+            "reason": "Claim audit requires correction: Independent span review: While proposing to replace or cover the tattoo addresses the hazard trigger, asserting that it will 'eliminate copyright exposure' is an unsupported guarantee of clearance.; Addresses the specific on-screen trigger but introduces an impermissible guarantee regarding clearance outcomes.; eliminate copyright exposure",
+            "failure_mode": "none",
+            "claim_checks": [
+              {
+                "field": "finding",
+                "quote": "In Scene S002, the action description specifies that Crow has a full-rigged schooner tattoo across his forearm ('Teddy Krane's design, inked at his Rockland parlor').",
+                "basis": "script",
+                "status": "SUPPORTED",
+                "reason": "The scene description in S002 directly describes Crow having a full-rigged schooner tattoo across his forearm ('Teddy Krane's design, inked at his Rockland parlor').",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "Across his forearm, a full-rigged schooner tattoo in fading blue-black \u2014 Teddy Krane's design, inked at his Rockland parlor the summer the Margaret Rose launched \u2014 rides every pour like weather."
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "As demonstrated in Whitmill v. Warner Bros. Entertainment Inc., the reproduction or depiction of custom tattoo designs in a film without authorization can lead to copyright infringement litigation and licensing disputes.",
+                "basis": "risk_assessment",
+                "status": "SUPPORTED",
+                "reason": "Citations [1], [2], and [3] discuss Whitmill v. Warner Bros. Entertainment Inc., where the depiction/use of a tattoo design in a film resulted in copyright infringement litigation.",
+                "citation_numbers": [
+                  1,
+                  2,
+                  3
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "Tattoo artist who created Mike Tyson's facial art sues Warner Brothers over the use of a similar tattoo on actor Ed Helms in the film, \"The Hangover 2.\""
+                  },
+                  {
+                    "citation_number": 2,
+                    "quote": "artist S. Victor Whitmill (\u201cVictor\u201d), creator of Mike Tyson\u2019s face tattoo, filed a lawsuit against Warner Brothers Entertainment Inc.\n(\u201cWarner Brothers\u201d) for not seeking his approval to use the tattoo design on the face of another character in the movie."
+                  },
+                  {
+                    "citation_number": 3,
+                    "quote": "Mr.\nWhitmill had a registered copyright for the design and sought an injunction to prevent release of the movie as Warner Brothers had not sought a license to use his protected work."
+                  }
+                ],
+                "script_spans": [
+                  "Across his forearm, a full-rigged schooner tattoo in fading blue-black \u2014 Teddy Krane's design, inked at his Rockland parlor the summer the Margaret Rose launched \u2014 rides every pour like weather."
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "If a custom or proprietary tattoo design is depicted on screen, confirm whether rights or permissions from the design's creator are required.",
+                "basis": "application",
+                "status": "SUPPORTED",
+                "reason": "The cited case law establishes the potential necessity of obtaining authorization/license from the tattoo design creator when depicting proprietary tattoos on screen.",
+                "citation_numbers": [
+                  2,
+                  3
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 2,
+                    "quote": "filed a lawsuit against Warner Brothers Entertainment Inc.\n(\u201cWarner Brothers\u201d) for not seeking his approval to use the tattoo design"
+                  },
+                  {
+                    "citation_number": 3,
+                    "quote": "Warner Brothers had not sought a license to use his protected work."
+                  }
+                ],
+                "script_spans": [
+                  "Across his forearm, a full-rigged schooner tattoo in fading blue-black \u2014 Teddy Krane's design, inked at his Rockland parlor the summer the Margaret Rose launched \u2014 rides every pour like weather."
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "Alternatively, replace the tattoo with an original generic design or cover the artwork during filming to eliminate copyright exposure.",
+                "basis": "production_option",
+                "status": "UNSUPPORTED",
+                "reason": "Independent span review: While proposing to replace or cover the tattoo addresses the hazard trigger, asserting that it will 'eliminate copyright exposure' is an unsupported guarantee of clearance.; Addresses the specific on-screen trigger but introduces an impermissible guarantee regarding clearance outcomes.; eliminate copyright exposure",
+                "citation_numbers": [
+                  1,
+                  3
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "Tattoo artist who created Mike Tyson's facial art sues Warner Brothers over the use of a similar tattoo on actor Ed Helms in the film, \"The Hangover 2.\""
+                  },
+                  {
+                    "citation_number": 3,
+                    "quote": "Warner Brothers had not sought a license to use his protected work."
+                  }
+                ],
+                "script_spans": [
+                  "Across his forearm, a full-rigged schooner tattoo in fading blue-black \u2014 Teddy Krane's design, inked at his Rockland parlor the summer the Margaret Rose launched \u2014 rides every pour like weather."
+                ]
+              },
+              {
+                "field": "severity",
+                "quote": "LOW",
+                "basis": "risk_assessment",
+                "status": "SUPPORTED",
+                "reason": "Low severity is appropriate for standard conditional clearance checks of artwork/tattoo designs where production options exist to use generic art or cover it.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              }
+            ],
+            "support_span_version": 3,
+            "audit_input": "2c54cae747f9dea6cb8cccd3f0d74d47ef8e737a409d4e09097fc82673a0311d",
+            "support_span_reanchors": [
+              {
+                "check_index": 1,
+                "span_index": 1,
+                "citation_number": 2,
+                "submitted_quote": "artist S. Victor Whitmill (\u201cVictor\u201d), creator of Mike Tyson\u2019s face tattoo, filed a lawsuit against Warner Brothers Entertainment Inc. (\u201cWarner Brothers\u201d) for not seeking his approval to use the tattoo design on the face of another character in the movie.",
+                "raw_quote": "artist S. Victor Whitmill (\u201cVictor\u201d), creator of Mike Tyson\u2019s face tattoo, filed a lawsuit against Warner Brothers Entertainment Inc.\n(\u201cWarner Brothers\u201d) for not seeking his approval to use the tattoo design on the face of another character in the movie."
+              },
+              {
+                "check_index": 1,
+                "span_index": 2,
+                "citation_number": 3,
+                "submitted_quote": "Mr. Whitmill had a registered copyright for the design and sought an injunction to prevent release of the movie as Warner Brothers had not sought a license to use his protected work.",
+                "raw_quote": "Mr.\nWhitmill had a registered copyright for the design and sought an injunction to prevent release of the movie as Warner Brothers had not sought a license to use his protected work."
+              },
+              {
+                "check_index": 2,
+                "span_index": 0,
+                "citation_number": 2,
+                "submitted_quote": "filed a lawsuit against Warner Brothers Entertainment Inc. (\u201cWarner Brothers\u201d) for not seeking his approval to use the tattoo design",
+                "raw_quote": "filed a lawsuit against Warner Brothers Entertainment Inc.\n(\u201cWarner Brothers\u201d) for not seeking his approval to use the tattoo design"
+              }
+            ],
+            "estimate_exclusions": [],
+            "entailment_review": {
+              "checks": [
+                {
+                  "check_index": 0,
+                  "entailed": true,
+                  "reason": "The claim accurately reflects the scene action description provided in the script evidence.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "Correctly describes the fictional script observation without assuming unconfirmed production facts.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 1,
+                  "entailed": true,
+                  "reason": "The cited case materials support that unauthorized depiction or reproduction of custom tattoo art in a film can lead to copyright litigation.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "Maintains an appropriately scoped risk assessment supported by the cited legal dispute.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 2,
+                  "entailed": true,
+                  "reason": "The conditional guidance properly applies the cited risk to the scene by recommending verification of creator permissions if a custom tattoo is depicted.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "Frames a conditional investigation step without asserting mandatory legal conclusions or specific unverified owners.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 3,
+                  "entailed": false,
+                  "reason": "While proposing to replace or cover the tattoo addresses the hazard trigger, asserting that it will 'eliminate copyright exposure' is an unsupported guarantee of clearance.",
+                  "scope_preserved": true,
+                  "requirements_supported": false,
+                  "scope_reason": "Addresses the specific on-screen trigger but introduces an impermissible guarantee regarding clearance outcomes.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": [
+                    "eliminate copyright exposure"
+                  ]
+                }
+              ]
+            },
+            "entailment_policy_version": 2
+          },
+          "remedy_fallback": true
+        },
+        "correction": {
+          "finding": "In Scene S002, the action description specifies that Crow has a full-rigged schooner tattoo across his forearm ('Teddy Krane's design, inked at his Rockland parlor'). As demonstrated in Whitmill v. Warner Bros. Entertainment Inc., the reproduction or depiction of custom tattoo designs in a film without authorization can lead to copyright infringement litigation and licensing disputes.",
+          "severity": "LOW",
+          "remedy_detail": "Confirm the intended screen use, the ownership evidence available and whether permission covering that use has been obtained.",
+          "remedy_action": "NO_ACTION"
+        },
+        "correction_input": "6f8bbb728e0874d94225e124b70731c9f3d001284d242cacc4292b305c0ecac9"
+      },
+      "kept": [
+        {
+          "flag_id": "F1010",
+          "agent": "clearance_counsel",
+          "scene_ids": [
+            "S002"
+          ],
+          "entity_id": "E007",
+          "severity": "LOW",
+          "category": "artwork_license",
+          "finding": "In Scene S002, the action description specifies that Crow has a full-rigged schooner tattoo across his forearm ('Teddy Krane's design, inked at his Rockland parlor'). As demonstrated in Whitmill v. Warner Bros. Entertainment Inc., the reproduction or depiction of custom tattoo designs in a film without authorization can lead to copyright infringement litigation and licensing disputes.",
+          "citations": [
+            {
+              "source_type": "web",
+              "title": "Whitmill v. Warner Bros. Entertainment Inc.",
+              "url": "https://dockets.justia.com/docket/missouri/moedce/4:2011cv00752/113287",
+              "excerpt": "Tattoo artist who created Mike Tyson's facial art sues Warner Brothers over the use of a similar tattoo on actor Ed Helms in the film, \"The Hangover 2.\"",
+              "retrieved_at": null,
+              "via": "parallel_search"
+            },
+            {
+              "source_type": "web",
+              "title": "Is a Face Tattoo Displayed on a Character in a Film Protected Under the Copyright Law? - Nissenbaum Law Group",
+              "url": "https://www.gdnlaw.com/blog/internet-law/tattoo-film-character-copyright-protected/",
+              "excerpt": "In that case, artist S. Victor Whitmill (\u201cVictor\u201d), creator of Mike Tyson\u2019s face tattoo, filed a lawsuit against Warner Brothers Entertainment Inc.\n(\u201cWarner Brothers\u201d) for not seeking his approval to use the tattoo design on the face of another character in the movie. Victor had obtained a release from Mike Tyson after creating the tattoo and neither Tyson nor Warner Brothers sought his approval.",
+              "retrieved_at": null,
+              "via": "parallel_search"
+            },
+            {
+              "source_type": "web",
+              "title": "Famous Film and Television Projects and the Lawsuits That Plagued Them | The Clearance Lab, LLC",
+              "url": "https://theclearancelab.com/famous-film-and-television-projects-and-the-lawsuits-that-plagued-them/",
+              "excerpt": "Tattoo artist S. Victor Whitmill filed a lawsuit against Warner Brothers Entertainment just a few weeks before the scheduled release of the film. Mr.\nWhitmill had a registered copyright for the design and sought an injunction to prevent release of the movie as Warner Brothers had not sought a license to use his protected work. Warner Brothers\u2019s main defense was that of fair use, and claimed that use of the tattoo design was parody and therefore allowed.",
+              "retrieved_at": null,
+              "via": "parallel_search"
+            }
+          ],
+          "remedy": {
+            "action": "NO_ACTION",
+            "detail": "Confirm the intended screen use, the ownership evidence available and whether permission covering that use has been obtained.",
+            "est_cost_usd": null,
+            "est_added_days": null
+          },
+          "confidence": 0.95
+        }
+      ],
+      "dropped": [],
+      "verification_incomplete": false,
+      "elapsed_s": 29.22
+    }
+  ],
+  "responses": [
+    {
+      "flag_id": "F1010",
+      "schema": "EvidenceVerdict",
+      "text": "{\n  \"verdict\": \"SUPPORTED\",\n  \"reason\": \"The script text in scene S002 establishes the custom schooner tattoo design on Crow's forearm, and the cited case law excerpts (Whitmill v. Warner Bros. Entertainment Inc.) support the potential copyright and licensing risks associated with unauthorized depiction of tattoo designs.\",\n  \"failure_mode\": \"none\",\n  \"claim_checks\": [\n    {\n      \"field\": \"finding\",\n      \"quote\": \"In Scene S002, the action description specifies that Crow has a full-rigged schooner tattoo across his forearm ('Teddy Krane's design, inked at his Rockland parlor').\",\n      \"basis\": \"script\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"The scene description explicitly mentions Crow having a full-rigged schooner tattoo across his forearm ('Teddy Krane's design, inked at his Rockland parlor').\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": [\n        \"Across his forearm, a full-rigged schooner tattoo in fading blue-black \u2014 Teddy Krane's design, inked at his Rockland parlor the summer the Margaret Rose launched \u2014 rides every pour like weather.\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"As demonstrated in Whitmill v. Warner Bros. Entertainment Inc., the reproduction or depiction of custom tattoo designs in a film without authorization can lead to copyright infringement litigation and licensing disputes.\",\n      \"basis\": \"risk_assessment\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Citations [1], [2], and [3] demonstrate that Whitmill v. Warner Bros. involved litigation over the unauthorized depiction and reproduction of a tattoo design in a film.\",\n      \"citation_numbers\": [1, 2, 3],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"Tattoo artist who created Mike Tyson's facial art sues Warner Brothers over the use of a similar tattoo on actor Ed Helms in the film, \\\"The Hangover 2.\\\"\"\n        },\n        {\n          \"citation_number\": 2,\n          \"quote\": \"artist S. Victor Whitmill (\u201cVictor\u201d), creator of Mike Tyson\u2019s face tattoo, filed a lawsuit against Warner Brothers Entertainment Inc. (\u201cWarner Brothers\u201d) for not seeking his approval to use the tattoo design on the face of another character in the movie.\"\n        },\n        {\n          \"citation_number\": 3,\n          \"quote\": \"Mr. Whitmill had a registered copyright for the design and sought an injunction to prevent release of the movie as Warner Brothers had not sought a license to use his protected work.\"\n        }\n      ],\n      \"script_spans\": [\n        \"Across his forearm, a full-rigged schooner tattoo in fading blue-black \u2014 Teddy Krane's design, inked at his Rockland parlor the summer the Margaret Rose launched \u2014 rides every pour like weather.\"\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"Confirm the intended screen use, the ownership evidence available and whether permission covering that use has been obtained.\",\n      \"basis\": \"inquiry\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"A clearance inquiry regarding intended screen use and permission status is appropriate for clearance due diligence without asserting unverified external facts.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": []\n    },\n    {\n      \"field\": \"severity\",\n      \"quote\": \"LOW\",\n      \"basis\": \"risk_assessment\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"The low severity reflects an early advisory risk check regarding artwork clearance.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F1010",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The claim is an accurate screenplay observation directly matching the text in Scene S002.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The observation accurately reflects the description in the scene without adding unconfirmed external production facts.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 1,\n      \"entailed\": true,\n      \"reason\": \"The cited lawsuit citations support that unauthorized depiction of custom tattoo designs in film productions can lead to copyright infringement claims and licensing disputes.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The potential legal complication is appropriately framed as a potential risk based on the cited litigation history.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 2,\n      \"entailed\": true,\n      \"reason\": \"The inquiry reasonably requests relevant confirmation regarding the intended screen depiction, ownership verification, and permission status for clearance purposes.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The inquiry addresses the clearance issue without asserting unconfirmed facts or imposing unsupported mandatory requirements.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    }
+  ]
+}

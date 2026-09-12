@@ -1,0 +1,20 @@
+[
+  {
+    "flag_id": "F1010",
+    "schema": "EvidenceVerdict",
+    "status": "returned",
+    "input_chars": 25726,
+    "input_sha256": "6e0ebe10e62a3a45eae8bcc3ee811bd01f330ccf7f0fb616aa59365eb3a6092e",
+    "usage_available": true,
+    "elapsed_s": 10.2
+  },
+  {
+    "flag_id": "F1010",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 20922,
+    "input_sha256": "ba687d2281899dc2c79cfd1e9f5c4e8fddb439433906772530fbcb62227e94af",
+    "usage_available": true,
+    "elapsed_s": 19.0
+  }
+]

@@ -94,6 +94,19 @@ def test_probes_bind_original_excerpts_and_hide_expected_labels():
         evaluator.entailment_inputs(forged, source)
 
 
+def test_pdf_spacing_control_is_anchored_to_raw_source_before_independent_review():
+    cases = json.loads((ROOT / "fixtures/accuracy/source_spacing_20260912.json").read_text())
+    source = (ROOT / "runs/run_20260912_040149.json").read_bytes()
+    script = (ROOT / "fixtures/slack_tide.fountain").read_text()
+    rows = evaluator.entailment_inputs(cases, source, script)
+    assert len(rows) == 6 and sum(label for _, _, label in rows) == 3
+    flag, verdict, _ = rows[0]
+    span = verdict["claim_checks"][0]["support_spans"][0]
+    assert span["quote"] in flag["citations"][span["citation_number"] - 1]["excerpt"]
+    assert "ornecessarilyunderstoodtohave" in span["quote"]
+    assert span["quote"] != cases["cases"][0]["support_spans"][0]["quote"]
+
+
 @pytest.mark.parametrize("group,expected", [("positive", True), ("negative", False)])
 def test_response_option_controls_bind_real_receipts_and_keep_labels_out_of_review(group, expected):
     cases = json.loads(

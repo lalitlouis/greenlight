@@ -469,3 +469,42 @@ the affected live control rerun is pending.
 source/artifact hashes and the original generation clock; it is not a second fresh
 run. Five other unresolved findings continue to withhold the score. The remaining
 uncertainty is fresh end-to-end output variation after the latest batch.
+
+Build `705d7b8` matched all six affected input/rights controls and both qualified
+credit/lead controls ($0.0464 returned usage). The previously failed generic
+Hallelujah rights-investigation case now receives the actual scene and passes;
+unconfirmed actual staging and unqualified named licensing claims still fail.
+Across the latest applicable results, **24/24 frozen controls match** (10 positive,
+14 negative). The earlier 5/6 result remains saved rather than overwritten.
+
+Two additional offline tests deliver the real accepted tattoo/firearm artifacts
+through the production application path, preserving the exact audited finding,
+source receipts, inquiry action and withheld estimates. All **649 tests** pass;
+`make check` and `node --check web/static/report.js` pass. The second full fresh gate
+started on `705d7b8` at 10:51:19 UTC, log
+`.cache/accuracy/live_gate_20260912_105119.log`. No runtime changes are being made
+while that build is evaluated; its result remains pending here.
+
+The second fresh run finished as `runs/run_20260912_040149.json`: **53/54**, 19 kept
+after adjudication, four rejected, 629.3 seconds. Sync/master, tattoo, the separate
+firearms warning, pyro, water and all deterministic consistency checks passed. The
+rating range changed after drug-finding rejection and correctly explained its
+divergence from the retained R prediction. This shorter run is not evidence of a
+repeatable latency improvement; retrieval/desk trajectories differ between runs.
+
+The remaining miss is brand disparagement, F1007. The primary reviewer reconstructed
+spaces in a retrieved jury-instruction excerpt (`ornecessarilyunderstoodtohave`), so
+receipt matching rejected its quoted support before independent entailment could
+judge the whole corrected claim. The original finding also contained real errors:
+misattributed dialogue, unsupported registration/insurance assertions and a guarantee
+of zero-cost clearance. Those must not be restored to make a coverage check pass.
+
+The receipt matcher now recognizes clause-sized whitespace-only differences with
+identical non-whitespace characters, unique matches and source boundary checks. It
+returns the unchanged raw substring, not the reviewer's reconstructed wording.
+Independent entailment still decides the actual claim against that raw evidence.
+New tests reject missing negations, changed conditions/words, ambiguous matches and
+partial-word slices. Six frozen live controls include the real joined-word receipt,
+the falsity condition, an unsupported permission rule and edit/guarantee contrasts.
+Targeted validation of this final receipt fix is pending; both fresh records remain
+unaltered, and no further full run is being spent while the specific miss is open.

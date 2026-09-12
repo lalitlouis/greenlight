@@ -1,0 +1,414 @@
+{
+  "source_run": "runs/run_20260912_030306.json",
+  "source_run_sha256": "c7eee84bd40a5b345c889258d822f76b04121cdb45f583284dfc95f129fc83e0",
+  "source_build": "local:7ac5ac03a127b5edaaa08041613f6e0640e4bd1e",
+  "evaluated_build": "00dc6b40817bd5c788b4701ea1405fac749609ae",
+  "model": "gemini-3.7-flash",
+  "elapsed_s": 49.86,
+  "calls": 6,
+  "responses_with_usage": 6,
+  "calls_without_returned_usage": 0,
+  "resumed_from": null,
+  "rechecked_correction_from": null,
+  "recovered_remedy_from_source": false,
+  "entailment_cases": "fixtures/accuracy/scene_context_and_remedies_20260912.json",
+  "entailment_cases_sha256": "79cd8e231ce8d0d3d7fca463be6e075463ab7753f559be73ac58894b55e4fc17",
+  "attempts": [
+    {
+      "flag_id": "scene_context_funeral",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 13709,
+      "input_sha256": "176767a264857515cc3fb053ec740e399dae024435968613ed546ef7c4c301fb",
+      "usage_available": true,
+      "elapsed_s": 5.95
+    },
+    {
+      "flag_id": "scene_context_false_beach",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 13687,
+      "input_sha256": "18d669ee6d9814162ea028e89fc0f409c9deb3ae96835b2e3dbc0aecfe4a88e8",
+      "usage_available": true,
+      "elapsed_s": 6.17
+    },
+    {
+      "flag_id": "scene_context_actual_blanks",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 13719,
+      "input_sha256": "4a4e6a00cfff20d36d364a78baabb295435d68454a0d56ab7200dfe754472284",
+      "usage_available": true,
+      "elapsed_s": 17.37
+    },
+    {
+      "flag_id": "tattoo_remedy_guarantee",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 18912,
+      "input_sha256": "6819a015a962806e8658cfdf61a12fb89102fde8704bb05a0794a976a054f16e",
+      "usage_available": true,
+      "elapsed_s": 7.11
+    },
+    {
+      "flag_id": "tattoo_cover_option",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 18784,
+      "input_sha256": "3095b7c8d8d094722e26e6d0ceabad94d412d019cb402654e30904aec78b29cb",
+      "usage_available": true,
+      "elapsed_s": 6.05
+    },
+    {
+      "flag_id": "tattoo_input_inquiry",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 13983,
+      "input_sha256": "86235c6f5b3a0c043207855088ac1a56a1178b639f42143719a93f56cee5d935",
+      "usage_available": true,
+      "elapsed_s": 7.15
+    }
+  ],
+  "gemini_usage": {
+    "flash": {
+      "prompt": 20606,
+      "cached": 0,
+      "output": 4184
+    }
+  },
+  "estimated_cost_usd": 0.0311,
+  "manual_review": "pending; model approval is not an accuracy label",
+  "results": [
+    {
+      "flag_id": "scene_context_funeral",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "Scene S005 depicts an honor guard firing three rifle volleys during an outdoor funeral service.",
+            "basis": "script",
+            "status": "SUPPORTED",
+            "reason": "Probe to be independently assessed",
+            "citation_numbers": [],
+            "support_spans": [],
+            "script_spans": [
+              "The honor guard stands in a row, rifles up at the ready.",
+              "VOLLEY.",
+              "VOLLEY. VOLLEY."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The script evidence and raw scene context explicitly depict an honor guard firing three rifle volleys during an outdoor funeral service in Scene S005.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The claim accurately reflects the fictional events depicted in the screenplay.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            }
+          ]
+        },
+        "entailment_policy_version": 3,
+        "estimate_exclusions": []
+      },
+      "expected_entailed": true,
+      "actual_entailed": true,
+      "passed": true,
+      "elapsed_s": 5.97
+    },
+    {
+      "flag_id": "scene_context_false_beach",
+      "verdict": {
+        "verdict": "PARTIAL",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "Scene S005 depicts an honor guard firing three rifle volleys on a beach at midnight.",
+            "basis": "script",
+            "status": "UNSUPPORTED",
+            "reason": "Independent span review: Scene S005 is set at EXT. ST. BRIGID'S CHURCHYARD - DAY, contradicting the assertion that the scene occurs on a beach at midnight.; The setting in the claim ('on a beach at midnight') directly conflicts with the script's established setting of a churchyard during the day.; on a beach at midnight",
+            "citation_numbers": [],
+            "support_spans": [],
+            "script_spans": [
+              "The honor guard stands in a row, rifles up at the ready.",
+              "VOLLEY.",
+              "VOLLEY. VOLLEY."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": false,
+              "reason": "Scene S005 is set at EXT. ST. BRIGID'S CHURCHYARD - DAY, contradicting the assertion that the scene occurs on a beach at midnight.",
+              "scope_preserved": false,
+              "requirements_supported": false,
+              "scope_reason": "The setting in the claim ('on a beach at midnight') directly conflicts with the script's established setting of a churchyard during the day.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": [
+                "on a beach at midnight"
+              ]
+            }
+          ]
+        },
+        "entailment_policy_version": 3,
+        "estimate_exclusions": [],
+        "reason": "Claim audit requires correction: Independent span review: Scene S005 is set at EXT. ST. BRIGID'S CHURCHYARD - DAY, contradicting the assertion that the scene occurs on a beach at midnight.; The setting in the claim ('on a beach at midnight') directly conflicts with the script's established setting of a churchyard during the day.; on a beach at midnight"
+      },
+      "expected_entailed": false,
+      "actual_entailed": false,
+      "passed": true,
+      "elapsed_s": 6.17
+    },
+    {
+      "flag_id": "scene_context_actual_blanks",
+      "verdict": {
+        "verdict": "PARTIAL",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "Production has confirmed that live blank ammunition will be fired on set during the funeral scene.",
+            "basis": "production",
+            "status": "UNSUPPORTED",
+            "reason": "Independent span review: Script depiction of gunfire does not establish production facts or confirm that live blank ammunition will be used on set, and no external production evidence is provided.; Depiction of a rifle volley in the screenplay does not confirm practical execution methods or that live blank ammunition will be fired on set.; Production has confirmed that live blank ammunition will be fired on set during the funeral scene.",
+            "citation_numbers": [],
+            "support_spans": [],
+            "script_spans": [
+              "The honor guard stands in a row, rifles up at the ready.",
+              "VOLLEY.",
+              "VOLLEY. VOLLEY."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": false,
+              "reason": "Script depiction of gunfire does not establish production facts or confirm that live blank ammunition will be used on set, and no external production evidence is provided.",
+              "scope_preserved": false,
+              "requirements_supported": false,
+              "scope_reason": "Depiction of a rifle volley in the screenplay does not confirm practical execution methods or that live blank ammunition will be fired on set.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": [
+                "Production has confirmed that live blank ammunition will be fired on set during the funeral scene."
+              ]
+            }
+          ]
+        },
+        "entailment_policy_version": 3,
+        "estimate_exclusions": [],
+        "reason": "Claim audit requires correction: Independent span review: Script depiction of gunfire does not establish production facts or confirm that live blank ammunition will be used on set, and no external production evidence is provided.; Depiction of a rifle volley in the screenplay does not confirm practical execution methods or that live blank ammunition will be fired on set.; Production has confirmed that live blank ammunition will be fired on set during the funeral scene."
+      },
+      "expected_entailed": false,
+      "actual_entailed": false,
+      "passed": true,
+      "elapsed_s": 17.38
+    },
+    {
+      "flag_id": "tattoo_remedy_guarantee",
+      "verdict": {
+        "verdict": "PARTIAL",
+        "claim_checks": [
+          {
+            "field": "remedy",
+            "quote": "Alternatively, replace the tattoo with an original generic design or cover the artwork during filming to eliminate copyright exposure.",
+            "basis": "production_option",
+            "status": "UNSUPPORTED",
+            "reason": "Independent span review: The production option guarantees that replacing or covering the tattoo will 'eliminate copyright exposure', which constitutes an impermissible guarantee of clearance or outcome.; The proposed option directly addresses the depicted tattoo artwork trigger, but promises a definitive legal outcome (eliminating copyright exposure).; eliminate copyright exposure",
+            "citation_numbers": [
+              1,
+              2,
+              3
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "Tattoo artist who created Mike Tyson's facial art sues Warner Brothers over the use of a similar tattoo on actor Ed Helms in the film, \"The Hangover 2.\""
+              },
+              {
+                "citation_number": 2,
+                "quote": "artist S. Victor Whitmill (\u201cVictor\u201d), creator of Mike Tyson\u2019s face tattoo, filed a lawsuit against Warner Brothers Entertainment Inc.\n(\u201cWarner Brothers\u201d) for not seeking his approval to use the tattoo design on the face of another character in the movie."
+              },
+              {
+                "citation_number": 3,
+                "quote": "Mr.\nWhitmill had a registered copyright for the design and sought an injunction to prevent release of the movie as Warner Brothers had not sought a license to use his protected work."
+              }
+            ],
+            "script_spans": [
+              "Across his forearm, a full-rigged schooner tattoo in fading blue-black \u2014 Teddy Krane's design, inked at his Rockland parlor the summer the Margaret Rose launched \u2014 rides every pour like weather."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": false,
+              "reason": "The production option guarantees that replacing or covering the tattoo will 'eliminate copyright exposure', which constitutes an impermissible guarantee of clearance or outcome.",
+              "scope_preserved": true,
+              "requirements_supported": false,
+              "scope_reason": "The proposed option directly addresses the depicted tattoo artwork trigger, but promises a definitive legal outcome (eliminating copyright exposure).",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": [
+                "eliminate copyright exposure"
+              ]
+            }
+          ]
+        },
+        "entailment_policy_version": 3,
+        "estimate_exclusions": [],
+        "reason": "Claim audit requires correction: Independent span review: The production option guarantees that replacing or covering the tattoo will 'eliminate copyright exposure', which constitutes an impermissible guarantee of clearance or outcome.; The proposed option directly addresses the depicted tattoo artwork trigger, but promises a definitive legal outcome (eliminating copyright exposure).; eliminate copyright exposure"
+      },
+      "expected_entailed": false,
+      "actual_entailed": false,
+      "passed": true,
+      "elapsed_s": 7.11
+    },
+    {
+      "flag_id": "tattoo_cover_option",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "claim_checks": [
+          {
+            "field": "remedy",
+            "quote": "Consider keeping the custom schooner tattoo out of view during the scene.",
+            "basis": "script_edit",
+            "status": "SUPPORTED",
+            "reason": "Probe to be independently assessed",
+            "citation_numbers": [
+              1,
+              2,
+              3
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "Tattoo artist who created Mike Tyson's facial art sues Warner Brothers over the use of a similar tattoo on actor Ed Helms in the film, \"The Hangover 2.\""
+              },
+              {
+                "citation_number": 2,
+                "quote": "artist S. Victor Whitmill (\u201cVictor\u201d), creator of Mike Tyson\u2019s face tattoo, filed a lawsuit against Warner Brothers Entertainment Inc.\n(\u201cWarner Brothers\u201d) for not seeking his approval to use the tattoo design on the face of another character in the movie."
+              },
+              {
+                "citation_number": 3,
+                "quote": "Mr.\nWhitmill had a registered copyright for the design and sought an injunction to prevent release of the movie as Warner Brothers had not sought a license to use his protected work."
+              }
+            ],
+            "script_spans": [
+              "Across his forearm, a full-rigged schooner tattoo in fading blue-black \u2014 Teddy Krane's design, inked at his Rockland parlor the summer the Margaret Rose launched \u2014 rides every pour like weather."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The proposed script edit suggests keeping the custom tattoo out of view, directly addressing the tattoo copyright risk established by the sources without making unsupported claims or outcome guarantees.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The option directly addresses the tattoo trigger depicted in the screenplay.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            }
+          ]
+        },
+        "entailment_policy_version": 3,
+        "estimate_exclusions": []
+      },
+      "expected_entailed": true,
+      "actual_entailed": true,
+      "passed": true,
+      "elapsed_s": 6.06
+    },
+    {
+      "flag_id": "tattoo_input_inquiry",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "claim_checks": [
+          {
+            "field": "remedy",
+            "quote": "Confirm the intended screen use, the ownership evidence available and whether permission covering that use has been obtained.",
+            "basis": "inquiry",
+            "status": "SUPPORTED",
+            "reason": "Probe to be independently assessed",
+            "citation_numbers": [],
+            "support_spans": [],
+            "script_spans": []
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The inquiry requests relevant missing input regarding the tattoo's intended screen use, ownership evidence, and permission status without introducing unconfirmed factual premises or unsupported mandatory duties.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The inquiry directly addresses the clearance desk finding regarding featured tattoo artwork clearance by seeking the necessary factual determinations.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            }
+          ]
+        },
+        "entailment_policy_version": 3,
+        "estimate_exclusions": []
+      },
+      "expected_entailed": true,
+      "actual_entailed": true,
+      "passed": true,
+      "elapsed_s": 7.15
+    }
+  ],
+  "responses": [
+    {
+      "flag_id": "scene_context_funeral",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The script evidence and raw scene context explicitly depict an honor guard firing three rifle volleys during an outdoor funeral service in Scene S005.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The claim accurately reflects the fictional events depicted in the screenplay.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "scene_context_false_beach",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": false,\n      \"reason\": \"Scene S005 is set at EXT. ST. BRIGID'S CHURCHYARD - DAY, contradicting the assertion that the scene occurs on a beach at midnight.\",\n      \"scope_preserved\": false,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"The setting in the claim ('on a beach at midnight') directly conflicts with the script's established setting of a churchyard during the day.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": [\n        \"on a beach at midnight\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "scene_context_actual_blanks",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": false,\n      \"reason\": \"Script depiction of gunfire does not establish production facts or confirm that live blank ammunition will be used on set, and no external production evidence is provided.\",\n      \"scope_preserved\": false,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"Depiction of a rifle volley in the screenplay does not confirm practical execution methods or that live blank ammunition will be fired on set.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": [\n        \"Production has confirmed that live blank ammunition will be fired on set during the funeral scene.\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "tattoo_remedy_guarantee",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": false,\n      \"reason\": \"The production option guarantees that replacing or covering the tattoo will 'eliminate copyright exposure', which constitutes an impermissible guarantee of clearance or outcome.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"The proposed option directly addresses the depicted tattoo artwork trigger, but promises a definitive legal outcome (eliminating copyright exposure).\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": [\n        \"eliminate copyright exposure\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "tattoo_cover_option",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The proposed script edit suggests keeping the custom tattoo out of view, directly addressing the tattoo copyright risk established by the sources without making unsupported claims or outcome guarantees.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The option directly addresses the tattoo trigger depicted in the screenplay.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "tattoo_input_inquiry",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The inquiry requests relevant missing input regarding the tattoo's intended screen use, ownership evidence, and permission status without introducing unconfirmed factual premises or unsupported mandatory duties.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The inquiry directly addresses the clearance desk finding regarding featured tattoo artwork clearance by seeking the necessary factual determinations.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    }
+  ]
+}

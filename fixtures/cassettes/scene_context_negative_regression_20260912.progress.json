@@ -1,0 +1,56 @@
+[
+  {
+    "flag_id": "script_cannot_prove_owner",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 20019,
+    "input_sha256": "358b24b05abe5cc3d0829a7e5946cbfbf528af50c3db6d635751b671fb6867c7",
+    "usage_available": true,
+    "elapsed_s": 5.13
+  },
+  {
+    "flag_id": "invented_scene_performance",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 19997,
+    "input_sha256": "ee8630fe90dd6ccf3b7337ab105317a516c84561cc856880f8a6d83aed844913",
+    "usage_available": true,
+    "elapsed_s": 5.16
+  },
+  {
+    "flag_id": "firearms_option_safety_guarantee",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 14191,
+    "input_sha256": "9657683a7e0e33e0de2245dda660c8057804b171d7e8f5a6d8416b97fa0938af",
+    "usage_available": true,
+    "elapsed_s": 5.31
+  },
+  {
+    "flag_id": "firearms_option_invented_setup",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 14099,
+    "input_sha256": "c47710d54ffd44e76eb36a5b985a8f42b05dfd80d18687b394adb912a3024656",
+    "usage_available": true,
+    "elapsed_s": 5.53
+  },
+  {
+    "flag_id": "pyro_option_retains_hazard",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 18081,
+    "input_sha256": "89ee34ef36c9f724e5b99e10422f9746492f56627a8f69cdac0f5c34b6bf33df",
+    "usage_available": true,
+    "elapsed_s": 7.0
+  },
+  {
+    "flag_id": "tattoo_original_deadline",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 17945,
+    "input_sha256": "77d95a4a4373b199989872258af09c14208a929a7dd3af951b0b388011937d17",
+    "usage_available": true,
+    "elapsed_s": 7.02
+  }
+]

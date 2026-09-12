@@ -75,3 +75,46 @@ def test_saved_formatting_failures(fid, expected_match):
     assert (result is not None) == expected_match
     if result is not None:
         assert result in source and "no ### later" in result
+
+
+def test_saved_jury_instruction_spacing_returns_the_unmodified_source_receipt():
+    path = Path(__file__).resolve().parents[1] / "runs/run_20260912_040149.json"
+    record = json.loads(path.read_text())
+    flag = next(f for f in record["rejected_flags"] if f["flag_id"] == "F1007")
+    failed = next(
+        c
+        for c in record["verdicts"]["F1007"]["evidence_review"]["after"]["claim_checks"]
+        if c["status"] == "UNKNOWN"
+    )
+    receipt = failed["support_spans"][1]
+    raw = flag["citations"][receipt["citation_number"] - 1]["excerpt"]
+    result = anchor_quote(receipt["quote"], raw)
+    assert result in raw and "ornecessarilyunderstoodtohave" in result
+    assert result != receipt["quote"]
+    assert "".join(result.split()) == "".join(receipt["quote"].split())
+
+
+@pytest.mark.parametrize(
+    ("source", "quote"),
+    [
+        ("Therapist", "The rapist"),  # short word segmentation is ambiguous
+        ("A permitisrequired for all work.", "A permit is permitted for all work."),
+        ("A permitisnotrequired for all work.", "A permit is required for all work."),
+        ("A permitisrequired for all work.", "A permit is required for some work."),
+        ("A permitisrequired for all work.", "A permit is required for all works."),
+        ("Apermitisrequired for all work.", "permit is required for all work."),
+        (
+            "A permitisrequired for all work. A permitisrequired for all work.",
+            "A permit is required for all work.",
+        ),
+    ],
+)
+def test_spacing_repair_cannot_change_characters_conditions_or_choose_an_ambiguous_match(
+    source, quote
+):
+    assert anchor_quote(quote, source) is None
+
+
+def test_spacing_repair_does_not_pass_the_requested_word_segmentation_to_the_reviewer():
+    source = "The therapist provides a service."
+    assert anchor_quote("The the rapist provides a service.", source) == source

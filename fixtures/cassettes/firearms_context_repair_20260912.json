@@ -1,0 +1,917 @@
+{
+  "source_run": "runs/run_20260912_030306.json",
+  "source_run_sha256": "c7eee84bd40a5b345c889258d822f76b04121cdb45f583284dfc95f129fc83e0",
+  "source_build": "local:7ac5ac03a127b5edaaa08041613f6e0640e4bd1e",
+  "evaluated_build": "00dc6b40817bd5c788b4701ea1405fac749609ae",
+  "model": "gemini-3.7-flash",
+  "elapsed_s": 147.77,
+  "calls": 7,
+  "responses_with_usage": 7,
+  "calls_without_returned_usage": 0,
+  "resumed_from": null,
+  "rechecked_correction_from": null,
+  "recovered_remedy_from_source": false,
+  "entailment_cases": null,
+  "entailment_cases_sha256": null,
+  "attempts": [
+    {
+      "flag_id": "F3004",
+      "schema": "EvidenceVerdict",
+      "status": "returned",
+      "input_chars": 24063,
+      "input_sha256": "c34b26dcee8064453625d3ea6aa72a79794ed0a5bffb8adbebde7c46cc5afeed",
+      "usage_available": true,
+      "elapsed_s": 54.54
+    },
+    {
+      "flag_id": "F3004",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 25908,
+      "input_sha256": "b1c869495d5492b9689714e8058baf02e3b4eea92b97bd003dc2c1f885074b9a",
+      "usage_available": true,
+      "elapsed_s": 19.01
+    },
+    {
+      "flag_id": "F3004",
+      "schema": "CorrectedClaim",
+      "status": "returned",
+      "input_chars": 14910,
+      "input_sha256": "d8303db1de60d58f819415ea9a89ff2e81c05d7f7ec16abde551f7c671b1d175",
+      "usage_available": true,
+      "elapsed_s": 8.64
+    },
+    {
+      "flag_id": "F3004",
+      "schema": "EvidenceVerdict",
+      "status": "returned",
+      "input_chars": 23451,
+      "input_sha256": "671fd9f815a4172bd82533b10364079841a55b565267141cd99b0476cade6225",
+      "usage_available": true,
+      "elapsed_s": 24.66
+    },
+    {
+      "flag_id": "F3004",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 22647,
+      "input_sha256": "f781aa1cff7734225540060e37961d1a4cc854603486e37c29e034e0bdced249",
+      "usage_available": true,
+      "elapsed_s": 22.97
+    },
+    {
+      "flag_id": "F3004",
+      "schema": "EvidenceVerdict",
+      "status": "returned",
+      "input_chars": 22940,
+      "input_sha256": "aea8269d7ddadebcc2e14356f9541314052ce1a3b4c7604b965372727448cfcd",
+      "usage_available": true,
+      "elapsed_s": 10.62
+    },
+    {
+      "flag_id": "F3004",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 18742,
+      "input_sha256": "1bc18411b0c8fd83306d7712bfb998cc4c525a35a5f6a298ac3b4d4167b90457",
+      "usage_available": true,
+      "elapsed_s": 7.28
+    }
+  ],
+  "gemini_usage": {
+    "flash": {
+      "prompt": 34771,
+      "cached": 0,
+      "output": 14392
+    }
+  },
+  "estimated_cost_usd": 0.08,
+  "manual_review": "pending; model approval is not an accuracy label",
+  "results": [
+    {
+      "flag_id": "F3004",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "reason": "The scene depicts an honor guard firing rifles in an outdoor cemetery setting. Safety Bulletin #1 excerpts directly substantiate the safety meeting, dry-run/walk-through, and PPE requirements for personnel in close proximity or in the line of fire when firearms are used, while properly noting that practical staging methods remain unconfirmed.",
+        "failure_mode": "none",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "Scene S005 depicts an honor guard firing rifle volleys during an outdoor funeral service.",
+            "basis": "script",
+            "status": "SUPPORTED",
+            "reason": "Scene S005 describes an honor guard with rifles raised at the ready, commanded to fire, followed by three volleys during a funeral in a churchyard.",
+            "citation_numbers": [],
+            "support_spans": [],
+            "script_spans": [
+              "The honor guard stands in a row, rifles up at the ready.",
+              "Ready. Aim. Fire.",
+              "VOLLEY. Gulls explode off the church roof.",
+              "VOLLEY. VOLLEY."
+            ]
+          },
+          {
+            "field": "finding",
+            "quote": "Under Industry-Wide Labor-Management Safety Committee Safety Bulletin #1 guidelines, before any firearm is used, the production must conduct a safety meeting with all involved personnel to review safety issues, including an on-site walk-through and/or dry run",
+            "basis": "source",
+            "status": "SUPPORTED",
+            "reason": "Citation [1] establishes that prior to using firearms, production must conduct a safety meeting with all involved personnel including an on-site walk-through and/or dry run.",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues. This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d with the Property Master, designated Production"
+              }
+            ],
+            "script_spans": []
+          },
+          {
+            "field": "finding",
+            "quote": "and issue protective shields, eye and hearing protection, or other appropriate Personal Protective Equipment (PPE) to all personnel in close proximity or directly in the line of fire.",
+            "basis": "source",
+            "status": "SUPPORTED",
+            "reason": "Citation [2] states that protective shields, eye and hearing protection, or other appropriate PPE must be issued and used by personnel in close proximity and/or line of fire.",
+            "citation_numbers": [
+              2
+            ],
+            "support_spans": [
+              {
+                "citation_number": 2,
+                "quote": "11. Protective shields, eye, and hearing protection or other appropriate Personal Protective Equipment (PPE) shall be issued and utilized by all personnel in close proximity and/or directly in the line of fire."
+              }
+            ],
+            "script_spans": []
+          },
+          {
+            "field": "finding",
+            "quote": "Script action does not establish whether practical firearms or blanks will be used on set, and actual production methods remain unconfirmed.",
+            "basis": "risk_assessment",
+            "status": "SUPPORTED",
+            "reason": "Accurately notes that screenplay action lines do not establish practical set execution methods.",
+            "citation_numbers": [],
+            "support_spans": [],
+            "script_spans": [
+              "The honor guard stands in a row, rifles up at the ready.",
+              "Ready. Aim. Fire.",
+              "VOLLEY."
+            ]
+          },
+          {
+            "field": "remedy",
+            "quote": "Confirm casting, filming jurisdiction and staging method before specifying production requirements.",
+            "basis": "inquiry",
+            "status": "SUPPORTED",
+            "reason": "Appropriately requests confirmation of staging and production details without imposing mandatory obligations before execution methods are determined.",
+            "citation_numbers": [],
+            "support_spans": [],
+            "script_spans": []
+          },
+          {
+            "field": "severity",
+            "quote": "HIGH",
+            "basis": "risk_assessment",
+            "status": "SUPPORTED",
+            "reason": "Depicted firearm discharges represent a critical safety risk requiring verified production planning.",
+            "citation_numbers": [],
+            "support_spans": [],
+            "script_spans": [
+              "The honor guard stands in a row, rifles up at the ready.",
+              "Ready. Aim. Fire."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "audit_input": "b93f529190a3ac87771a2e15824473b6a7289747d83e28f37d0f05aead0b68ef",
+        "estimate_exclusions": [],
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The script evidence and raw scene context directly establish the honor guard firing rifle volleys at an outdoor churchyard funeral service.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The claim accurately reflects the actions and setting depicted in scene S005 without adding unconfirmed production facts.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            },
+            {
+              "check_index": 1,
+              "entailed": true,
+              "reason": "The excerpt from Safety Bulletin #1 supports that before any firearm is used, production conducts a safety meeting with all involved personnel including an on-site walk-through and/or dry run, without asserting truncated list details.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The safety meeting requirement and walkthrough/dry-run components directly match the cited excerpt.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            },
+            {
+              "check_index": 2,
+              "entailed": true,
+              "reason": "The excerpt from Safety Bulletin #1 item 11 explicitly supports issuing protective shields, eye and hearing protection, or other PPE to personnel in close proximity or directly in the line of fire.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The scope of the PPE requirement matches the cited bulletin guideline.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            },
+            {
+              "check_index": 3,
+              "entailed": true,
+              "reason": "The statement accurately reflects the pre-qualification limitation that screenplay depictions do not confirm practical execution methods or firearms on set.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The assessment correctly preserves the boundary between fictional depiction and unconfirmed practical production facts.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            }
+          ]
+        },
+        "entailment_policy_version": 3,
+        "evidence_review": {
+          "before": {
+            "verdict": "PARTIAL",
+            "reason": "Claim audit requires correction: Independent span review: The script establishes that an honor guard stands in a row and fires a three-volley salute, but it does not specify a 'three-rifle' honor guard.; Accurately observes the scene setting and characters, but includes an unconfirmed detail regarding the exact number of rifles.; three-rifle; Independent span review: The cited safety excerpt only specifies requirements for issuing PPE such as protective shields, eye, and hearing protection; it does not enumerate specific physical hazards like muzzle blast blast-wave concussions, burning powder fragments, projectile discharge, or animal spooking.; Addresses the general risk of blank firearm discharge in the scene, but asserts unverified specific medical and physical hazard claims beyond the excerpt.; muzzle blast blast-wave concussions; burning powder fragments; projectile discharge; animal spooking; Independent span review: The provided source excerpts are truncated and do not establish that Safety Bulletin #1 requires direct supervision by a qualified Property Master / Armorer or defined minimum safe distances.; The rule summary covers firearm safety protocols but includes operative requirements and truncated personnel roles not present in the excerpts.; direct supervision by a qualified Property Master / Armorer; defined minimum safe distances; Independent span review: The planning recommendation introduces specific personnel duties and rosters (led by 1st AD, animal handlers, minor guardians), certified PPE requirements, and minimum safe distances that are not supported by the truncated source excerpt.; Addresses on-set firearm safety planning but prescribes unsupported operational procedures, staffing mandates, and equipment standards.; led by the 1st AD and Armorer; specific attendee roster including animal handlers and minor guardians; minimum safe lines of fire and standoff distances; certified hearing protection; Specific procedures for animal acclimation and separate shooting setups are not supported in the provided excerpts.; Material text was omitted from the claim audit",
+            "failure_mode": "none",
+            "claim_checks": [
+              {
+                "field": "finding",
+                "quote": "Scene S005 depicts an honor guard firing a three-rifle three-volley salute in an exterior churchyard during a funeral service, in close proximity to the mourning crowd, a minor child (Sam), and a live dog (Barnacle).",
+                "basis": "script",
+                "status": "UNSUPPORTED",
+                "reason": "Independent span review: The script establishes that an honor guard stands in a row and fires a three-volley salute, but it does not specify a 'three-rifle' honor guard.; Accurately observes the scene setting and characters, but includes an unconfirmed detail regarding the exact number of rifles.; three-rifle",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "The mourners in a loose crescent under a pewter sky. The honor guard stands in a row, rifles up at the ready.\n\nVETERAN\nReady. Aim. Fire.\n\nVOLLEY. Gulls explode off the church roof. Sam clamps his hands over his ears. Barnacle, tied to the fence, points his muzzle at the sky and HOWLS.\n\nVOLLEY. VOLLEY."
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "Discharging firearms or blank ammunition on set presents inherent risks of acoustic trauma, muzzle blast blast-wave concussions, burning powder fragments, projectile discharge, and animal spooking.",
+                "basis": "risk_assessment",
+                "status": "UNSUPPORTED",
+                "reason": "Independent span review: The cited safety excerpt only specifies requirements for issuing PPE such as protective shields, eye, and hearing protection; it does not enumerate specific physical hazards like muzzle blast blast-wave concussions, burning powder fragments, projectile discharge, or animal spooking.; Addresses the general risk of blank firearm discharge in the scene, but asserts unverified specific medical and physical hazard claims beyond the excerpt.; muzzle blast blast-wave concussions; burning powder fragments; projectile discharge; animal spooking",
+                "citation_numbers": [
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 2,
+                    "quote": "Protective shields, eye, and hearing protection or other appropriate Personal Protective Equipment (PPE) shall be issued and utilized by all personnel in close proximity and/or directly in the line of fire."
+                  }
+                ],
+                "script_spans": [
+                  "The honor guard stands in a row, rifles up at the ready.\n\nVETERAN\nReady. Aim. Fire.\n\nVOLLEY."
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "Under CSATF Safety Bulletin #1 ('Recommendations For The Use Of Firearms, Blanks, And Dummy Rounds'), any on-set firearm handling and blank discharge requires direct supervision by a qualified Property Master / Armorer, mandatory safety meetings, dry runs, defined minimum safe distances, and the issuance of appropriate personal protective equipment (PPE), including hearing and eye protection.",
+                "basis": "source",
+                "status": "UNSUPPORTED",
+                "reason": "Independent span review: The provided source excerpts are truncated and do not establish that Safety Bulletin #1 requires direct supervision by a qualified Property Master / Armorer or defined minimum safe distances.; The rule summary covers firearm safety protocols but includes operative requirements and truncated personnel roles not present in the excerpts.; direct supervision by a qualified Property Master / Armorer; defined minimum safe distances",
+                "citation_numbers": [
+                  1,
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues. This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d with the Property Master, designated Production"
+                  },
+                  {
+                    "citation_number": 2,
+                    "quote": "Protective shields, eye, and hearing protection or other appropriate Personal Protective Equipment (PPE) shall be issued and utilized by all personnel in close proximity and/or directly in the line of fire."
+                  }
+                ],
+                "script_spans": []
+              },
+              {
+                "field": "finding",
+                "quote": "The production's chosen firearm staging method (practical blank fire, non-firing inert prop rifles with post-production muzzle flash/sound effects, or electronic gas-simulation weapons) remains unconfirmed.",
+                "basis": "production",
+                "status": "SUPPORTED",
+                "reason": "Properly preserves the production's actual execution plan as unconfirmed.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              },
+              {
+                "field": "remedy",
+                "quote": "Conduct a mandatory safety meeting, walk-through, and dry run led by the 1st AD and Armorer with all cast, background performers, crew, animal handlers, and minor guardians present. Establish established minimum safe lines of fire and standoff distances, and issue certified hearing protection and eye protection to cast and crew within proximity.",
+                "basis": "planning",
+                "status": "UNSUPPORTED",
+                "reason": "Independent span review: The planning recommendation introduces specific personnel duties and rosters (led by 1st AD, animal handlers, minor guardians), certified PPE requirements, and minimum safe distances that are not supported by the truncated source excerpt.; Addresses on-set firearm safety planning but prescribes unsupported operational procedures, staffing mandates, and equipment standards.; led by the 1st AD and Armorer; specific attendee roster including animal handlers and minor guardians; minimum safe lines of fire and standoff distances; certified hearing protection",
+                "citation_numbers": [
+                  1,
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues. This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d with the Property Master, designated Production"
+                  },
+                  {
+                    "citation_number": 2,
+                    "quote": "Protective shields, eye, and hearing protection or other appropriate Personal Protective Equipment (PPE) shall be issued and utilized by all personnel in close proximity and/or directly in the line of fire."
+                  }
+                ],
+                "script_spans": []
+              },
+              {
+                "field": "remedy",
+                "quote": "Coordinate with the animal trainer to acclimate the dog or shoot the dog's reactions separately without live gunfire.",
+                "basis": "planning",
+                "status": "UNKNOWN",
+                "reason": "Specific procedures for animal acclimation and separate shooting setups are not supported in the provided excerpts.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              },
+              {
+                "field": "remedy",
+                "quote": "Alternatively, eliminate on-set live blank discharges entirely by using non-firing replica rifles or rubber props, adding muzzle flashes, smoke, and audio volley sound effects during post-production.",
+                "basis": "production_option",
+                "status": "SUPPORTED",
+                "reason": "Presents a high-level production alternative to eliminate live blank firing and replace effects in post.",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues."
+                  }
+                ],
+                "script_spans": [
+                  "The honor guard stands in a row, rifles up at the ready.\n\nVETERAN\nReady. Aim. Fire.\n\nVOLLEY."
+                ]
+              },
+              {
+                "field": "severity",
+                "quote": "HIGH",
+                "basis": "risk_assessment",
+                "status": "SUPPORTED",
+                "reason": "Firing long guns in proximity to performers, minors, and animals carries substantial safety risks warranting a HIGH rating.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              },
+              {
+                "field": "remedy",
+                "quote": "If blank-firing firearms are utilized, engage a qualified, licensed Property Master / Armorer to maintain custody, load, inspect, and supervise all long guns on set in compliance with CSATF Safety Bulletin #1",
+                "basis": "source",
+                "status": "UNKNOWN",
+                "reason": "Material text was omitted from the claim audit",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              }
+            ],
+            "support_span_version": 3,
+            "audit_input": "a36ebc31ad3e51f0ff8ac9b01f01103de31b723b765ca94be245875cd12e0a80",
+            "citation_index_reanchors": [
+              {
+                "check_index": 1,
+                "submitted_indexes": [
+                  1,
+                  2
+                ],
+                "receipt_indexes": [
+                  2
+                ]
+              },
+              {
+                "check_index": 6,
+                "submitted_indexes": [
+                  1,
+                  2
+                ],
+                "receipt_indexes": [
+                  1
+                ]
+              }
+            ],
+            "estimate_exclusions": [],
+            "entailment_review": {
+              "checks": [
+                {
+                  "check_index": 0,
+                  "entailed": false,
+                  "reason": "The script establishes that an honor guard stands in a row and fires a three-volley salute, but it does not specify a 'three-rifle' honor guard.",
+                  "scope_preserved": true,
+                  "requirements_supported": false,
+                  "scope_reason": "Accurately observes the scene setting and characters, but includes an unconfirmed detail regarding the exact number of rifles.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": [
+                    "three-rifle"
+                  ]
+                },
+                {
+                  "check_index": 1,
+                  "entailed": false,
+                  "reason": "The cited safety excerpt only specifies requirements for issuing PPE such as protective shields, eye, and hearing protection; it does not enumerate specific physical hazards like muzzle blast blast-wave concussions, burning powder fragments, projectile discharge, or animal spooking.",
+                  "scope_preserved": true,
+                  "requirements_supported": false,
+                  "scope_reason": "Addresses the general risk of blank firearm discharge in the scene, but asserts unverified specific medical and physical hazard claims beyond the excerpt.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": [
+                    "muzzle blast blast-wave concussions",
+                    "burning powder fragments",
+                    "projectile discharge",
+                    "animal spooking"
+                  ]
+                },
+                {
+                  "check_index": 2,
+                  "entailed": false,
+                  "reason": "The provided source excerpts are truncated and do not establish that Safety Bulletin #1 requires direct supervision by a qualified Property Master / Armorer or defined minimum safe distances.",
+                  "scope_preserved": true,
+                  "requirements_supported": false,
+                  "scope_reason": "The rule summary covers firearm safety protocols but includes operative requirements and truncated personnel roles not present in the excerpts.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": [
+                    "direct supervision by a qualified Property Master / Armorer",
+                    "defined minimum safe distances"
+                  ]
+                },
+                {
+                  "check_index": 3,
+                  "entailed": true,
+                  "reason": "Accurately identifies that the production's actual practical execution and staging methods remain unconfirmed.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "Correctly states the inherent limitation of screenplay-only inputs regarding production execution.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 4,
+                  "entailed": false,
+                  "reason": "The planning recommendation introduces specific personnel duties and rosters (led by 1st AD, animal handlers, minor guardians), certified PPE requirements, and minimum safe distances that are not supported by the truncated source excerpt.",
+                  "scope_preserved": true,
+                  "requirements_supported": false,
+                  "scope_reason": "Addresses on-set firearm safety planning but prescribes unsupported operational procedures, staffing mandates, and equipment standards.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": [
+                    "led by the 1st AD and Armorer",
+                    "specific attendee roster including animal handlers and minor guardians",
+                    "minimum safe lines of fire and standoff distances",
+                    "certified hearing protection"
+                  ]
+                },
+                {
+                  "check_index": 6,
+                  "entailed": true,
+                  "reason": "Presents a high-level, optional production alternative to eliminate live blank discharges by utilizing inert props and post-production effects without introducing unsupported operating procedures or outcome guarantees.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "Valid production option addressing the blank fire hazard established by the scene depiction.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                }
+              ]
+            },
+            "entailment_policy_version": 3
+          },
+          "after": {
+            "verdict": "SUPPORTED",
+            "reason": "The scene depicts an honor guard firing rifles in an outdoor cemetery setting. Safety Bulletin #1 excerpts directly substantiate the safety meeting, dry-run/walk-through, and PPE requirements for personnel in close proximity or in the line of fire when firearms are used, while properly noting that practical staging methods remain unconfirmed.",
+            "failure_mode": "none",
+            "claim_checks": [
+              {
+                "field": "finding",
+                "quote": "Scene S005 depicts an honor guard firing rifle volleys during an outdoor funeral service.",
+                "basis": "script",
+                "status": "SUPPORTED",
+                "reason": "Scene S005 describes an honor guard with rifles raised at the ready, commanded to fire, followed by three volleys during a funeral in a churchyard.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "The honor guard stands in a row, rifles up at the ready.",
+                  "Ready. Aim. Fire.",
+                  "VOLLEY. Gulls explode off the church roof.",
+                  "VOLLEY. VOLLEY."
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "Under Industry-Wide Labor-Management Safety Committee Safety Bulletin #1 guidelines, before any firearm is used, the production must conduct a safety meeting with all involved personnel to review safety issues, including an on-site walk-through and/or dry run",
+                "basis": "source",
+                "status": "SUPPORTED",
+                "reason": "Citation [1] establishes that prior to using firearms, production must conduct a safety meeting with all involved personnel including an on-site walk-through and/or dry run.",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues. This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d with the Property Master, designated Production"
+                  }
+                ],
+                "script_spans": []
+              },
+              {
+                "field": "finding",
+                "quote": "and issue protective shields, eye and hearing protection, or other appropriate Personal Protective Equipment (PPE) to all personnel in close proximity or directly in the line of fire.",
+                "basis": "source",
+                "status": "SUPPORTED",
+                "reason": "Citation [2] states that protective shields, eye and hearing protection, or other appropriate PPE must be issued and used by personnel in close proximity and/or line of fire.",
+                "citation_numbers": [
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 2,
+                    "quote": "11. Protective shields, eye, and hearing protection or other appropriate Personal Protective Equipment (PPE) shall be issued and utilized by all personnel in close proximity and/or directly in the line of fire."
+                  }
+                ],
+                "script_spans": []
+              },
+              {
+                "field": "finding",
+                "quote": "Script action does not establish whether practical firearms or blanks will be used on set, and actual production methods remain unconfirmed.",
+                "basis": "risk_assessment",
+                "status": "SUPPORTED",
+                "reason": "Accurately notes that screenplay action lines do not establish practical set execution methods.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "The honor guard stands in a row, rifles up at the ready.",
+                  "Ready. Aim. Fire.",
+                  "VOLLEY."
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "Confirm casting, filming jurisdiction and staging method before specifying production requirements.",
+                "basis": "inquiry",
+                "status": "SUPPORTED",
+                "reason": "Appropriately requests confirmation of staging and production details without imposing mandatory obligations before execution methods are determined.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              },
+              {
+                "field": "severity",
+                "quote": "HIGH",
+                "basis": "risk_assessment",
+                "status": "SUPPORTED",
+                "reason": "Depicted firearm discharges represent a critical safety risk requiring verified production planning.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "The honor guard stands in a row, rifles up at the ready.",
+                  "Ready. Aim. Fire."
+                ]
+              }
+            ],
+            "support_span_version": 3,
+            "audit_input": "b93f529190a3ac87771a2e15824473b6a7289747d83e28f37d0f05aead0b68ef",
+            "estimate_exclusions": [],
+            "entailment_review": {
+              "checks": [
+                {
+                  "check_index": 0,
+                  "entailed": true,
+                  "reason": "The script evidence and raw scene context directly establish the honor guard firing rifle volleys at an outdoor churchyard funeral service.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "The claim accurately reflects the actions and setting depicted in scene S005 without adding unconfirmed production facts.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 1,
+                  "entailed": true,
+                  "reason": "The excerpt from Safety Bulletin #1 supports that before any firearm is used, production conducts a safety meeting with all involved personnel including an on-site walk-through and/or dry run, without asserting truncated list details.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "The safety meeting requirement and walkthrough/dry-run components directly match the cited excerpt.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 2,
+                  "entailed": true,
+                  "reason": "The excerpt from Safety Bulletin #1 item 11 explicitly supports issuing protective shields, eye and hearing protection, or other PPE to personnel in close proximity or directly in the line of fire.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "The scope of the PPE requirement matches the cited bulletin guideline.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 3,
+                  "entailed": true,
+                  "reason": "The statement accurately reflects the pre-qualification limitation that screenplay depictions do not confirm practical execution methods or firearms on set.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "The assessment correctly preserves the boundary between fictional depiction and unconfirmed practical production facts.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                }
+              ]
+            },
+            "entailment_policy_version": 3
+          },
+          "source_rules": [],
+          "attempted_correction": {
+            "finding": "Scene S005 depicts an honor guard firing rifle volleys during an outdoor funeral service. Under Industry-Wide Labor-Management Safety Committee Safety Bulletin #1 guidelines, before any firearm is used, the production must conduct a safety meeting with all involved personnel to review safety issues, including an on-site walk-through and/or dry run, and issue protective shields, eye and hearing protection, or other appropriate Personal Protective Equipment (PPE) to all personnel in close proximity or directly in the line of fire. Script action does not establish whether practical firearms or blanks will be used on set, and actual production methods remain unconfirmed.",
+            "remedy_detail": "If live or blank-firing firearms are utilized on set, conduct a safety meeting with all involved personnel to review relevant safety issues, including an on-site walk-through or dry run, and ensure appropriate PPE such as hearing and eye protection is issued and used by personnel in close proximity or in the line of fire. Alternatively, eliminate on-set live blank discharges entirely by using non-firing replica rifles or rubber props, adding muzzle flashes, smoke, and audio volley sound effects during post-production. Confirm the planned shooting method, staging, and prop choices with the production team.",
+            "remedy_action": "REPLACE",
+            "severity": "HIGH"
+          },
+          "attempted_after": {
+            "verdict": "PARTIAL",
+            "reason": "Claim audit requires correction: No exact supporting span for this external claim or prescription. Original assessment: Presents a high-level production hazard-removal alternative using post-production VFX/SFX and replica props.",
+            "failure_mode": "none",
+            "claim_checks": [
+              {
+                "field": "finding",
+                "quote": "Scene S005 depicts an honor guard firing rifle volleys during an outdoor funeral service.",
+                "basis": "script",
+                "status": "SUPPORTED",
+                "reason": "Scene S005 explicitly describes an honor guard with rifles firing multiple volleys at St. Brigid's Churchyard.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "The honor guard stands in a row, rifles up at the ready.\n\nVETERAN\nReady. Aim. Fire.\n\nVOLLEY.",
+                  "VOLLEY. VOLLEY."
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "Under Industry-Wide Labor-Management Safety Committee Safety Bulletin #1 guidelines, before any firearm is used, the production must conduct a safety meeting with all involved personnel to review safety issues, including an on-site walk-through and/or dry run",
+                "basis": "source",
+                "status": "SUPPORTED",
+                "reason": "Directly quoted and supported by Safety Bulletin #1 in Citation [1].",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues. This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d"
+                  }
+                ],
+                "script_spans": []
+              },
+              {
+                "field": "finding",
+                "quote": "issue protective shields, eye and hearing protection, or other appropriate Personal Protective Equipment (PPE) to all personnel in close proximity or directly in the line of fire.",
+                "basis": "source",
+                "status": "SUPPORTED",
+                "reason": "Directly supported by item 11 of Safety Bulletin #1 in Citation [2].",
+                "citation_numbers": [
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 2,
+                    "quote": "Protective shields, eye, and hearing protection or other appropriate Personal Protective Equipment (PPE) shall be issued and utilized by all personnel in close proximity and/or directly in the line of fire."
+                  }
+                ],
+                "script_spans": []
+              },
+              {
+                "field": "finding",
+                "quote": "Script action does not establish whether practical firearms or blanks will be used on set, and actual production methods remain unconfirmed.",
+                "basis": "risk_assessment",
+                "status": "SUPPORTED",
+                "reason": "Accurately notes that practical execution vs non-firing/VFX methods is unconfirmed by script action alone.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "The honor guard stands in a row, rifles up at the ready."
+                ]
+              },
+              {
+                "field": "severity",
+                "quote": "HIGH",
+                "basis": "risk_assessment",
+                "status": "SUPPORTED",
+                "reason": "High severity is justified for scenes depicting multiple firearm discharges and blank/live-fire hazards.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "VOLLEY. VOLLEY."
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "If live or blank-firing firearms are utilized on set, conduct a safety meeting with all involved personnel to review relevant safety issues, including an on-site walk-through or dry run, and ensure appropriate PPE such as hearing and eye protection is issued and used by personnel in close proximity or in the line of fire.",
+                "basis": "application",
+                "status": "SUPPORTED",
+                "reason": "Applies the sourced Safety Bulletin #1 requirements conditionally if blank/live firearms are utilized on set.",
+                "citation_numbers": [
+                  1,
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues. This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d"
+                  },
+                  {
+                    "citation_number": 2,
+                    "quote": "Protective shields, eye, and hearing protection or other appropriate Personal Protective Equipment (PPE) shall be issued and utilized by all personnel in close proximity and/or directly in the line of fire."
+                  }
+                ],
+                "script_spans": [
+                  "The honor guard stands in a row, rifles up at the ready."
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "Alternatively, eliminate on-set live blank discharges entirely by using non-firing replica rifles or rubber props, adding muzzle flashes, smoke, and audio volley sound effects during post-production.",
+                "basis": "production_option",
+                "status": "UNKNOWN",
+                "reason": "No exact supporting span for this external claim or prescription. Original assessment: Presents a high-level production hazard-removal alternative using post-production VFX/SFX and replica props.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "Ready. Aim. Fire.\n\nVOLLEY."
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "Confirm the planned shooting method, staging, and prop choices with the production team.",
+                "basis": "inquiry",
+                "status": "SUPPORTED",
+                "reason": "Valid inquiry seeking necessary operational clarification on prop and staging methods.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              }
+            ],
+            "support_span_version": 3,
+            "audit_input": "7c761a6ac29f99be617be02eb16cb90511b0e829dd1fe4f7f66b3e4b7b6fdb9a",
+            "estimate_exclusions": [],
+            "entailment_review": {
+              "checks": [
+                {
+                  "check_index": 0,
+                  "entailed": true,
+                  "reason": "The script evidence explicitly depicts an honor guard firing rifle volleys during an outdoor churchyard funeral service.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "Script context directly verifies the described scene action and setting.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 1,
+                  "entailed": true,
+                  "reason": "Industry-Wide Labor-Management Safety Committee Safety Bulletin #1 explicitly mandates conducting a safety meeting with all involved personnel, including a walk-through and/or dry run, prior to firearm use.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "The cited safety bulletin excerpt directly supports the stated safety meeting requirement.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 2,
+                  "entailed": true,
+                  "reason": "Safety Bulletin #1 requires issuing protective shields, eye and hearing protection, or other PPE to all personnel in close proximity or directly in the line of fire.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "The excerpt supports the PPE distribution requirement for personnel in close proximity or line of fire.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 3,
+                  "entailed": true,
+                  "reason": "Accurately qualifies the limits of script evidence, noting that physical execution methods and prop choices remain unconfirmed production facts.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "Correctly states the unconfirmed status of practical production methods under qualification rules.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 5,
+                  "entailed": true,
+                  "reason": "The conditional application properly applies Safety Bulletin #1 safety meeting and PPE requirements to the potential use of live or blank-firing firearms on set.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "The conditional rule application directly matches the sourced safety bulletin guidelines and script trigger.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 7,
+                  "entailed": true,
+                  "reason": "The inquiry legitimately seeks necessary missing production input regarding planned shooting methods and prop choices relevant to the safety assessment.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "Addresses the specific unconfirmed production variables relevant to the safety underwriter finding without asserting unsupported facts.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                }
+              ]
+            },
+            "entailment_policy_version": 3
+          },
+          "remedy_fallback": true
+        },
+        "correction": {
+          "finding": "Scene S005 depicts an honor guard firing rifle volleys during an outdoor funeral service. Under Industry-Wide Labor-Management Safety Committee Safety Bulletin #1 guidelines, before any firearm is used, the production must conduct a safety meeting with all involved personnel to review safety issues, including an on-site walk-through and/or dry run, and issue protective shields, eye and hearing protection, or other appropriate Personal Protective Equipment (PPE) to all personnel in close proximity or directly in the line of fire. Script action does not establish whether practical firearms or blanks will be used on set, and actual production methods remain unconfirmed.",
+          "severity": "HIGH",
+          "remedy_detail": "Confirm casting, filming jurisdiction and staging method before specifying production requirements.",
+          "remedy_action": "NO_ACTION"
+        },
+        "correction_input": "a36ebc31ad3e51f0ff8ac9b01f01103de31b723b765ca94be245875cd12e0a80"
+      },
+      "kept": [
+        {
+          "flag_id": "F3004",
+          "agent": "safety_underwriter",
+          "scene_ids": [
+            "S005"
+          ],
+          "entity_id": null,
+          "severity": "HIGH",
+          "category": "firearms_blanks",
+          "finding": "Scene S005 depicts an honor guard firing rifle volleys during an outdoor funeral service. Under Industry-Wide Labor-Management Safety Committee Safety Bulletin #1 guidelines, before any firearm is used, the production must conduct a safety meeting with all involved personnel to review safety issues, including an on-site walk-through and/or dry run, and issue protective shields, eye and hearing protection, or other appropriate Personal Protective Equipment (PPE) to all personnel in close proximity or directly in the line of fire. Script action does not establish whether practical firearms or blanks will be used on set, and actual production methods remain unconfirmed.",
+          "citations": [
+            {
+              "source_type": "web",
+              "title": "INDUSTRY WIDE LABOR-MANAGEMENT SAFETY COMMITTEE",
+              "url": "https://www.csatf.org/01_safety_bltn_firearms/",
+              "excerpt": "Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues. This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d with the Property Master, designated Production",
+              "retrieved_at": null,
+              "via": "parallel_search"
+            },
+            {
+              "source_type": "web",
+              "title": "Safety Bulletin #1",
+              "url": "https://www.csatf.org/wp-content/uploads/2018/05/01FIREARMS.pdf",
+              "excerpt": "11. Protective shields, eye, and hearing protection or other appropriate Personal Protective Equipment (PPE) shall be issued and utilized by all personnel in close proximity and/or directly in the line of fire.",
+              "retrieved_at": null,
+              "via": "parallel_search"
+            }
+          ],
+          "remedy": {
+            "action": "NO_ACTION",
+            "detail": "Confirm casting, filming jurisdiction and staging method before specifying production requirements.",
+            "est_cost_usd": null,
+            "est_added_days": null
+          },
+          "confidence": 0.95
+        }
+      ],
+      "dropped": [],
+      "verification_incomplete": false,
+      "elapsed_s": 147.75
+    }
+  ],
+  "responses": [
+    {
+      "flag_id": "F3004",
+      "schema": "EvidenceVerdict",
+      "text": "{\n  \"verdict\": \"PARTIAL\",\n  \"reason\": \"The scene observation is fully supported by S005 (honor guard rifle volley in the presence of mourners, Sam, and Barnacle the dog). The safety meeting, walk-through/dry run, and PPE (hearing and eye protection) requirements are supported by excerpts from CSATF Safety Bulletin #1. However, specific asserted duties such as licensed armorer custody/loading procedures and mandatory animal trainer coordination are not contained in the provided excerpts.\",\n  \"failure_mode\": \"none\",\n  \"claim_checks\": [\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Scene S005 depicts an honor guard firing a three-rifle three-volley salute in an exterior churchyard during a funeral service, in close proximity to the mourning crowd, a minor child (Sam), and a live dog (Barnacle).\",\n      \"basis\": \"script\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Accurately reflects the action in S005 where the honor guard fires three volleys near mourners, the boy Sam, and the dog Barnacle.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": [\n        \"The mourners in a loose crescent under a pewter sky. The honor guard stands in a row, rifles up at the ready.\\n\\nVETERAN\\nReady. Aim. Fire.\\n\\nVOLLEY. Gulls explode off the church roof. Sam clamps his hands over his ears. Barnacle, tied to the fence, points his muzzle at the sky and HOWLS.\\n\\nVOLLEY. VOLLEY.\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Discharging firearms or blank ammunition on set presents inherent risks of acoustic trauma, muzzle blast blast-wave concussions, burning powder fragments, projectile discharge, and animal spooking.\",\n      \"basis\": \"risk_assessment\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Reasonable safety risk assessment directly tied to the depicted rifle gunfire in proximity to performers, a minor, and an animal.\",\n      \"citation_numbers\": [1, 2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 2,\n          \"quote\": \"Protective shields, eye, and hearing protection or other appropriate Personal Protective Equipment (PPE) shall be issued and utilized by all personnel in close proximity and/or directly in the line of fire.\"\n        }\n      ],\n      \"script_spans\": [\n        \"The honor guard stands in a row, rifles up at the ready.\\n\\nVETERAN\\nReady. Aim. Fire.\\n\\nVOLLEY.\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Under CSATF Safety Bulletin #1 ('Recommendations For The Use Of Firearms, Blanks, And Dummy Rounds'), any on-set firearm handling and blank discharge requires direct supervision by a qualified Property Master / Armorer, mandatory safety meetings, dry runs, defined minimum safe distances, and the issuance of appropriate personal protective equipment (PPE), including hearing and eye protection.\",\n      \"basis\": \"source\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"The cited excerpts establish mandatory safety meetings, dry runs/walk-throughs with the Property Master, and PPE including hearing and eye protection for personnel in close proximity or line of fire.\",\n      \"citation_numbers\": [1, 2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues. This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d with the Property Master, designated Production\"\n        },\n        {\n          \"citation_number\": 2,\n          \"quote\": \"Protective shields, eye, and hearing protection or other appropriate Personal Protective Equipment (PPE) shall be issued and utilized by all personnel in close proximity and/or directly in the line of fire.\"\n        }\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"The production's chosen firearm staging method (practical blank fire, non-firing inert prop rifles with post-production muzzle flash/sound effects, or electronic gas-simulation weapons) remains unconfirmed.\",\n      \"basis\": \"production\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Properly preserves the production's actual execution plan as unconfirmed.\",\n      \"citation_numbers\": [],\n      \"support_spans\": []\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"Conduct a mandatory safety meeting, walk-through, and dry run led by the 1st AD and Armorer with all cast, background performers, crew, animal handlers, and minor guardians present. Establish established minimum safe lines of fire and standoff distances, and issue certified hearing protection and eye protection to cast and crew within proximity.\",\n      \"basis\": \"planning\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Supported by the excerpts prescribing safety meetings, walk-throughs/dry runs, and PPE for personnel in proximity.\",\n      \"citation_numbers\": [1, 2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues. This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d with the Property Master, designated Production\"\n        },\n        {\n          \"citation_number\": 2,\n          \"quote\": \"Protective shields, eye, and hearing protection or other appropriate Personal Protective Equipment (PPE) shall be issued and utilized by all personnel in close proximity and/or directly in the line of fire.\"\n        }\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"Coordinate with the animal trainer to acclimate the dog or shoot the dog's reactions separately without live gunfire.\",\n      \"basis\": \"planning\",\n      \"status\": \"UNKNOWN\",\n      \"reason\": \"Specific procedures for animal acclimation and separate shooting setups are not supported in the provided excerpts.\",\n      \"citation_numbers\": [],\n      \"support_spans\": []\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"Alternatively, eliminate on-set live blank discharges entirely by using non-firing replica rifles or rubber props, adding muzzle flashes, smoke, and audio volley sound effects during post-production.\",\n      \"basis\": \"production_option\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Presents a high-level production alternative to eliminate live blank firing and replace effects in post.\",\n      \"citation_numbers\": [1, 2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues.\"\n        }\n      ],\n      \"script_spans\": [\n        \"The honor guard stands in a row, rifles up at the ready.\\n\\nVETERAN\\nReady. Aim. Fire.\\n\\nVOLLEY.\"\n      ]\n    },\n    {\n      \"field\": \"severity\",\n      \"quote\": \"HIGH\",\n      \"basis\": \"risk_assessment\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Firing long guns in proximity to performers, minors, and animals carries substantial safety risks warranting a HIGH rating.\",\n      \"citation_numbers\": [],\n      \"support_spans\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F3004",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": false,\n      \"reason\": \"The script establishes that an honor guard stands in a row and fires a three-volley salute, but it does not specify a 'three-rifle' honor guard.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"Accurately observes the scene setting and characters, but includes an unconfirmed detail regarding the exact number of rifles.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": [\n        \"three-rifle\"\n      ]\n    },\n    {\n      \"check_index\": 1,\n      \"entailed\": false,\n      \"reason\": \"The cited safety excerpt only specifies requirements for issuing PPE such as protective shields, eye, and hearing protection; it does not enumerate specific physical hazards like muzzle blast blast-wave concussions, burning powder fragments, projectile discharge, or animal spooking.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"Addresses the general risk of blank firearm discharge in the scene, but asserts unverified specific medical and physical hazard claims beyond the excerpt.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": [\n        \"muzzle blast blast-wave concussions\",\n        \"burning powder fragments\",\n        \"projectile discharge\",\n        \"animal spooking\"\n      ]\n    },\n    {\n      \"check_index\": 2,\n      \"entailed\": false,\n      \"reason\": \"The provided source excerpts are truncated and do not establish that Safety Bulletin #1 requires direct supervision by a qualified Property Master / Armorer or defined minimum safe distances.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"The rule summary covers firearm safety protocols but includes operative requirements and truncated personnel roles not present in the excerpts.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": [\n        \"direct supervision by a qualified Property Master / Armorer\",\n        \"defined minimum safe distances\"\n      ]\n    },\n    {\n      \"check_index\": 3,\n      \"entailed\": true,\n      \"reason\": \"Accurately identifies that the production's actual practical execution and staging methods remain unconfirmed.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"Correctly states the inherent limitation of screenplay-only inputs regarding production execution.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 4,\n      \"entailed\": false,\n      \"reason\": \"The planning recommendation introduces specific personnel duties and rosters (led by 1st AD, animal handlers, minor guardians), certified PPE requirements, and minimum safe distances that are not supported by the truncated source excerpt.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"Addresses on-set firearm safety planning but prescribes unsupported operational procedures, staffing mandates, and equipment standards.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": [\n        \"led by the 1st AD and Armorer\",\n        \"specific attendee roster including animal handlers and minor guardians\",\n        \"minimum safe lines of fire and standoff distances\",\n        \"certified hearing protection\"\n      ]\n    },\n    {\n      \"check_index\": 6,\n      \"entailed\": true,\n      \"reason\": \"Presents a high-level, optional production alternative to eliminate live blank discharges by utilizing inert props and post-production effects without introducing unsupported operating procedures or outcome guarantees.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"Valid production option addressing the blank fire hazard established by the scene depiction.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F3004",
+      "schema": "CorrectedClaim",
+      "text": "{\n  \"finding\": \"Scene S005 depicts an honor guard firing rifle volleys during an outdoor funeral service. Under Industry-Wide Labor-Management Safety Committee Safety Bulletin #1 guidelines, before any firearm is used, the production must conduct a safety meeting with all involved personnel to review safety issues, including an on-site walk-through and/or dry run, and issue protective shields, eye and hearing protection, or other appropriate Personal Protective Equipment (PPE) to all personnel in close proximity or directly in the line of fire. Script action does not establish whether practical firearms or blanks will be used on set, and actual production methods remain unconfirmed.\",\n  \"remedy_detail\": \"If live or blank-firing firearms are utilized on set, conduct a safety meeting with all involved personnel to review relevant safety issues, including an on-site walk-through or dry run, and ensure appropriate PPE such as hearing and eye protection is issued and used by personnel in close proximity or in the line of fire. Alternatively, eliminate on-set live blank discharges entirely by using non-firing replica rifles or rubber props, adding muzzle flashes, smoke, and audio volley sound effects during post-production. Confirm the planned shooting method, staging, and prop choices with the production team.\",\n  \"remedy_action\": \"REPLACE\",\n  \"severity\": \"HIGH\"\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F3004",
+      "schema": "EvidenceVerdict",
+      "text": "{\n  \"verdict\": \"SUPPORTED\",\n  \"reason\": \"The script facts accurately reflect Scene S005 where an honor guard fires rifle volleys at a churchyard funeral. The regulatory safety requirements regarding pre-use safety meetings, on-site walkthroughs/dry runs, and PPE issuance for personnel in close proximity or the line of fire are directly supported by Industry-Wide Labor-Management Safety Committee Safety Bulletin #1 excerpts [1] and [2]. The finding and remedy properly maintain production methods and practical firearms use as conditional.\",\n  \"failure_mode\": \"none\",\n  \"claim_checks\": [\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Scene S005 depicts an honor guard firing rifle volleys during an outdoor funeral service.\",\n      \"basis\": \"script\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Scene S005 explicitly describes an honor guard with rifles firing multiple volleys at St. Brigid's Churchyard.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": [\n        \"The honor guard stands in a row, rifles up at the ready.\\n\\nVETERAN\\nReady. Aim. Fire.\\n\\nVOLLEY.\",\n        \"VOLLEY. VOLLEY.\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Under Industry-Wide Labor-Management Safety Committee Safety Bulletin #1 guidelines, before any firearm is used, the production must conduct a safety meeting with all involved personnel to review safety issues, including an on-site walk-through and/or dry run\",\n      \"basis\": \"source\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Directly quoted and supported by Safety Bulletin #1 in Citation [1].\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues. This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d\"\n        }\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"issue protective shields, eye and hearing protection, or other appropriate Personal Protective Equipment (PPE) to all personnel in close proximity or directly in the line of fire.\",\n      \"basis\": \"source\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Directly supported by item 11 of Safety Bulletin #1 in Citation [2].\",\n      \"citation_numbers\": [2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 2,\n          \"quote\": \"Protective shields, eye, and hearing protection or other appropriate Personal Protective Equipment (PPE) shall be issued and utilized by all personnel in close proximity and/or directly in the line of fire.\"\n        }\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Script action does not establish whether practical firearms or blanks will be used on set, and actual production methods remain unconfirmed.\",\n      \"basis\": \"risk_assessment\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Accurately notes that practical execution vs non-firing/VFX methods is unconfirmed by script action alone.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": [\n        \"The honor guard stands in a row, rifles up at the ready.\"\n      ]\n    },\n    {\n      \"field\": \"severity\",\n      \"quote\": \"HIGH\",\n      \"basis\": \"risk_assessment\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"High severity is justified for scenes depicting multiple firearm discharges and blank/live-fire hazards.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": [\n        \"VOLLEY. VOLLEY.\"\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"If live or blank-firing firearms are utilized on set, conduct a safety meeting with all involved personnel to review relevant safety issues, including an on-site walk-through or dry run, and ensure appropriate PPE such as hearing and eye protection is issued and used by personnel in close proximity or in the line of fire.\",\n      \"basis\": \"application\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Applies the sourced Safety Bulletin #1 requirements conditionally if blank/live firearms are utilized on set.\",\n      \"citation_numbers\": [1, 2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues. This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d\"\n        },\n        {\n          \"citation_number\": 2,\n          \"quote\": \"Protective shields, eye, and hearing protection or other appropriate Personal Protective Equipment (PPE) shall be issued and utilized by all personnel in close proximity and/or directly in the line of fire.\"\n        }\n      ],\n      \"script_spans\": [\n        \"The honor guard stands in a row, rifles up at the ready.\"\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"Alternatively, eliminate on-set live blank discharges entirely by using non-firing replica rifles or rubber props, adding muzzle flashes, smoke, and audio volley sound effects during post-production.\",\n      \"basis\": \"production_option\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Presents a high-level production hazard-removal alternative using post-production VFX/SFX and replica props.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": [\n        \"Ready. Aim. Fire.\\n\\nVOLLEY.\"\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"Confirm the planned shooting method, staging, and prop choices with the production team.\",\n      \"basis\": \"inquiry\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Valid inquiry seeking necessary operational clarification on prop and staging methods.\",\n      \"citation_numbers\": [],\n      \"support_spans\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F3004",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The script evidence explicitly depicts an honor guard firing rifle volleys during an outdoor churchyard funeral service.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"Script context directly verifies the described scene action and setting.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 1,\n      \"entailed\": true,\n      \"reason\": \"Industry-Wide Labor-Management Safety Committee Safety Bulletin #1 explicitly mandates conducting a safety meeting with all involved personnel, including a walk-through and/or dry run, prior to firearm use.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The cited safety bulletin excerpt directly supports the stated safety meeting requirement.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 2,\n      \"entailed\": true,\n      \"reason\": \"Safety Bulletin #1 requires issuing protective shields, eye and hearing protection, or other PPE to all personnel in close proximity or directly in the line of fire.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The excerpt supports the PPE distribution requirement for personnel in close proximity or line of fire.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 3,\n      \"entailed\": true,\n      \"reason\": \"Accurately qualifies the limits of script evidence, noting that physical execution methods and prop choices remain unconfirmed production facts.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"Correctly states the unconfirmed status of practical production methods under qualification rules.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 5,\n      \"entailed\": true,\n      \"reason\": \"The conditional application properly applies Safety Bulletin #1 safety meeting and PPE requirements to the potential use of live or blank-firing firearms on set.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The conditional rule application directly matches the sourced safety bulletin guidelines and script trigger.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 7,\n      \"entailed\": true,\n      \"reason\": \"The inquiry legitimately seeks necessary missing production input regarding planned shooting methods and prop choices relevant to the safety assessment.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"Addresses the specific unconfirmed production variables relevant to the safety underwriter finding without asserting unsupported facts.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F3004",
+      "schema": "EvidenceVerdict",
+      "text": "{\n  \"verdict\": \"SUPPORTED\",\n  \"reason\": \"The scene depicts an honor guard firing rifles in an outdoor cemetery setting. Safety Bulletin #1 excerpts directly substantiate the safety meeting, dry-run/walk-through, and PPE requirements for personnel in close proximity or in the line of fire when firearms are used, while properly noting that practical staging methods remain unconfirmed.\",\n  \"failure_mode\": \"none\",\n  \"claim_checks\": [\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Scene S005 depicts an honor guard firing rifle volleys during an outdoor funeral service.\",\n      \"basis\": \"script\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Scene S005 describes an honor guard with rifles raised at the ready, commanded to fire, followed by three volleys during a funeral in a churchyard.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": [\n        \"The honor guard stands in a row, rifles up at the ready.\",\n        \"Ready. Aim. Fire.\",\n        \"VOLLEY. Gulls explode off the church roof.\",\n        \"VOLLEY. VOLLEY.\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Under Industry-Wide Labor-Management Safety Committee Safety Bulletin #1 guidelines, before any firearm is used, the production must conduct a safety meeting with all involved personnel to review safety issues, including an on-site walk-through and/or dry run\",\n      \"basis\": \"source\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Citation [1] establishes that prior to using firearms, production must conduct a safety meeting with all involved personnel including an on-site walk-through and/or dry run.\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues. This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d with the Property Master, designated Production\"\n        }\n      ],\n      \"script_spans\": []\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"and issue protective shields, eye and hearing protection, or other appropriate Personal Protective Equipment (PPE) to all personnel in close proximity or directly in the line of fire.\",\n      \"basis\": \"source\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Citation [2] states that protective shields, eye and hearing protection, or other appropriate PPE must be issued and used by personnel in close proximity and/or line of fire.\",\n      \"citation_numbers\": [2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 2,\n          \"quote\": \"11. Protective shields, eye, and hearing protection or other appropriate Personal Protective Equipment (PPE) shall be issued and utilized by all personnel in close proximity and/or directly in the line of fire.\"\n        }\n      ],\n      \"script_spans\": []\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Script action does not establish whether practical firearms or blanks will be used on set, and actual production methods remain unconfirmed.\",\n      \"basis\": \"risk_assessment\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Accurately notes that screenplay action lines do not establish practical set execution methods.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": [\n        \"The honor guard stands in a row, rifles up at the ready.\",\n        \"Ready. Aim. Fire.\",\n        \"VOLLEY.\"\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"Confirm casting, filming jurisdiction and staging method before specifying production requirements.\",\n      \"basis\": \"inquiry\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Appropriately requests confirmation of staging and production details without imposing mandatory obligations before execution methods are determined.\",\n      \"citation_numbers\": [],\n      \"support_spans\": []\n    },\n    {\n      \"field\": \"severity\",\n      \"quote\": \"HIGH\",\n      \"basis\": \"risk_assessment\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Depicted firearm discharges represent a critical safety risk requiring verified production planning.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": [\n        \"The honor guard stands in a row, rifles up at the ready.\",\n        \"Ready. Aim. Fire.\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F3004",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The script evidence and raw scene context directly establish the honor guard firing rifle volleys at an outdoor churchyard funeral service.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The claim accurately reflects the actions and setting depicted in scene S005 without adding unconfirmed production facts.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 1,\n      \"entailed\": true,\n      \"reason\": \"The excerpt from Safety Bulletin #1 supports that before any firearm is used, production conducts a safety meeting with all involved personnel including an on-site walk-through and/or dry run, without asserting truncated list details.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The safety meeting requirement and walkthrough/dry-run components directly match the cited excerpt.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 2,\n      \"entailed\": true,\n      \"reason\": \"The excerpt from Safety Bulletin #1 item 11 explicitly supports issuing protective shields, eye and hearing protection, or other PPE to personnel in close proximity or directly in the line of fire.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The scope of the PPE requirement matches the cited bulletin guideline.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 3,\n      \"entailed\": true,\n      \"reason\": \"The statement accurately reflects the pre-qualification limitation that screenplay depictions do not confirm practical execution methods or firearms on set.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The assessment correctly preserves the boundary between fictional depiction and unconfirmed practical production facts.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    }
+  ]
+}

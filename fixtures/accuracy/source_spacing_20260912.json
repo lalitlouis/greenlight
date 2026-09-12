@@ -1,0 +1,117 @@
+{
+  "source_run": "runs/run_20260912_040149.json",
+  "source_run_sha256": "9c042bbe0fc645882b44bdc0542e6e099ebe8ce4fcf414486359ee77fddac397",
+  "label_origin": "Developer-labelled excerpt-entailment controls frozen before evaluation, not population legal accuracy.",
+  "cases": [
+    {
+      "case_id": "ocr_instruction_receipt",
+      "source_flag_id": "F1007",
+      "claim": "The cited jury-instruction excerpt includes a statement disparaging the quality of a product or service among the elements to be proved.",
+      "expected_entailed": true,
+      "label_reason": "Narrow attribution of the displayed element; it does not claim this is the whole test.",
+      "support_spans": [
+        {
+          "citation_number": 2,
+          "quote": "That[ name of defendant ] made a statement that [would be clearly or necessarily understood to have] disparaged the quality of [ name of plaintiff ]\u2019s [ product/service ];"
+        }
+      ],
+      "field": "finding",
+      "basis": "source",
+      "action": "NO_ACTION",
+      "script_spans": []
+    },
+    {
+      "case_id": "trade_libel_false_attribute",
+      "source_flag_id": "F1007",
+      "claim": "The cited commentary describes trade libel as falsely accusing a product or service of a bad attribute.",
+      "expected_entailed": true,
+      "label_reason": "Preserves the cited falsity condition.",
+      "support_spans": [
+        {
+          "citation_number": 1,
+          "quote": "Trade libel occurs when a product or service is falsely accused of some bad attribute."
+        }
+      ],
+      "field": "finding",
+      "basis": "source",
+      "action": "NO_ACTION",
+      "script_spans": []
+    },
+    {
+      "case_id": "trade_libel_opinion_guarantee",
+      "source_flag_id": "F1007",
+      "claim": "Every negative opinion about a product is automatically trade libel, even without a false accusation about its attributes.",
+      "expected_entailed": false,
+      "label_reason": "Deletes the explicit false-accusation condition and invents a categorical liability rule.",
+      "support_spans": [
+        {
+          "citation_number": 1,
+          "quote": "Trade libel occurs when a product or service is falsely accused of some bad attribute."
+        }
+      ],
+      "field": "finding",
+      "basis": "source",
+      "action": "NO_ACTION",
+      "script_spans": []
+    },
+    {
+      "case_id": "trade_libel_permission_rule",
+      "source_flag_id": "F1007",
+      "claim": "The excerpts establish that a filmmaker must obtain brand permission before making any negative statement about a product.",
+      "expected_entailed": false,
+      "label_reason": "The excerpts do not establish a universal prior-permission requirement.",
+      "support_spans": [
+        {
+          "citation_number": 1,
+          "quote": "Trade libel occurs when a product or service is falsely accused of some bad attribute."
+        },
+        {
+          "citation_number": 2,
+          "quote": "That[ name of defendant ] made a statement that [would be clearly or necessarily understood to have] disparaged the quality of [ name of plaintiff ]\u2019s [ product/service ];"
+        }
+      ],
+      "field": "finding",
+      "basis": "source",
+      "action": "NO_ACTION",
+      "script_spans": []
+    },
+    {
+      "case_id": "brand_edit_narrow",
+      "source_flag_id": "F1007",
+      "claim": "Consider replacing the spoken Coors Light reference in S002 with a generic beer description to remove that named-brand reference from the dialogue.",
+      "expected_entailed": true,
+      "label_reason": "A proposed content edit changes the named trigger without guaranteeing an outcome.",
+      "support_spans": [
+        {
+          "citation_number": 1,
+          "quote": "Trade libel occurs when a product or service is falsely accused of some bad attribute."
+        }
+      ],
+      "field": "remedy",
+      "basis": "script_edit",
+      "action": "REPLACE",
+      "script_spans": [
+        "Coors Light. Tastes like a wet napkin. Man ran the best bar on this coast and drank the worst beer in America."
+      ]
+    },
+    {
+      "case_id": "brand_edit_guarantee",
+      "source_flag_id": "F1007",
+      "claim": "Replacing the Coors Light references with any fictional brand eliminates all liability at zero cost.",
+      "expected_entailed": false,
+      "label_reason": "An edit does not establish blanket permission, clearance or cost.",
+      "support_spans": [
+        {
+          "citation_number": 1,
+          "quote": "Trade libel occurs when a product or service is falsely accused of some bad attribute."
+        }
+      ],
+      "field": "remedy",
+      "basis": "script_edit",
+      "action": "REPLACE",
+      "script_spans": [
+        "Coors Light. Tastes like a wet napkin. Man ran the best bar on this coast and drank the worst beer in America."
+      ]
+    }
+  ]
+}
