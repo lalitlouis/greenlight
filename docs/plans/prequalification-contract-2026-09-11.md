@@ -286,3 +286,25 @@ must survive; an invented cover performance and ownership assertion must fail. A
 cached presentation replay can demonstrate the deterministic formatting fix without
 representing an old run as a new live result. Overall release qualification remains
 failed until useful music, tattoo and firearm coverage is demonstrated together.
+
+Build `90014da` matched all four new receipt controls (four calls, estimated $0.013
+returned usage), including acceptance of the exact mixed scene/authorship assertion
+previously rejected for absent script evidence. Across this implementation's successive
+builds, 37 isolated development controls matched their labels; they were not all rerun
+on the final build and are not 37 independent scripts or an accuracy percentage.
+
+The cached presentation replay scores **50/54, still failed**, with exactly the same
+15 retained findings, nine rejections, remedies, severities, coordinates, citations
+and measured distributions. Only F2003's independently checked corpus sentence becomes
+a citation pointer. `corpus_presentation_replay_20260912.json` binds this result to the
+unaltered live record by hash. No new desk or verifier decision is claimed for that replay.
+
+Inspection of the recovered pyro finding also exposes remaining reviewer inconsistency:
+its VFX/non-pyrotechnic-prop alternative was accepted as `script_edit`, whereas the
+analogous replica/VFX alternative in the firearm correction was rejected because a
+production-method change is not a screenplay-content edit under the current contract.
+The higher automated retention count therefore cannot be reported as 15 independently
+validated accurate findings. The next semantic batch must resolve this classification
+consistently, together with the master observation's evidence-type mismatch and the
+tattoo remedy's unsupported deadline, while retaining useful pre-qualification options.
+No source rules, release checks or historical labels were loosened to obtain a pass.

@@ -1,0 +1,31 @@
+{
+  "mode": "cached presentation replay; no new model decisions or desk run",
+  "source_run": "runs/run_20260912_003816.json",
+  "source_run_sha256": "ea4637bc230fcfd1b7ad6c567c7e8c5e08589a4874596f5206e039f4fdffd3bd",
+  "evaluated_build": "90014dabc669331d265e7a43bff09101e5c41a2f",
+  "retained_findings_before": 15,
+  "retained_findings_after": 15,
+  "changes": [
+    {
+      "flag_id": "F2003",
+      "presentation_edits": [
+        {
+          "field": "finding",
+          "original_quote": "In the CARA descriptor corpus, unmodified drug references and depictions are associated with an R rating in 77.2% of rationales and a PG-13 rating in 22.6% of rationales across 548 entries.",
+          "replacement": "Corpus figures describe rationales for released films; see the cited distribution.",
+          "citation_numbers": [
+            2
+          ]
+        }
+      ]
+    }
+  ],
+  "replay_gate": "50/54",
+  "gate_exit_code": 1,
+  "failed_checks": [
+    "MISS  music: composition/sync flag  the ownership chase, demo moment #2",
+    "MISS  music: separate master flag  sync and master must be two flags",
+    "MISS  tattoo flagged as visual artwork (Krane schooner)  depicted custom tattoo by a named artist \u2014 the Whitmill scenario",
+    "MISS  safety: firearms/salute flagged"
+  ]
+}

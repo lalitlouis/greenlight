@@ -1,0 +1,284 @@
+{
+  "source_run": "runs/run_20260912_003816.json",
+  "source_run_sha256": "ea4637bc230fcfd1b7ad6c567c7e8c5e08589a4874596f5206e039f4fdffd3bd",
+  "source_build": "local:9318011a954f4f44149300e8a968c166cd84d973",
+  "evaluated_build": "90014dabc669331d265e7a43bff09101e5c41a2f",
+  "model": "gemini-3.7-flash",
+  "elapsed_s": 62.59,
+  "calls": 4,
+  "responses_with_usage": 4,
+  "calls_without_returned_usage": 0,
+  "resumed_from": null,
+  "rechecked_correction_from": null,
+  "entailment_cases": "fixtures/accuracy/script_receipts_20260912.json",
+  "entailment_cases_sha256": "f6f5856d2fd98797919e54435ac415cbdd9f271fe7c06a0dc6d5ffacf11fbcee",
+  "attempts": [
+    {
+      "flag_id": "mixed_script_authorship",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 7420,
+      "input_sha256": "3e25365d2a54dd02c4b36abeac4ca7b0f814a0ddb322ed7d59cc28f007a38980",
+      "usage_available": true,
+      "elapsed_s": 6.03
+    },
+    {
+      "flag_id": "invented_cover_performance",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 7406,
+      "input_sha256": "b6c5a19057e11749de07d756d6502460f06767072af784b1a4cddfb539bf67e7",
+      "usage_available": true,
+      "elapsed_s": 4.99
+    },
+    {
+      "flag_id": "script_cannot_confirm_owner",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 7466,
+      "input_sha256": "4392a3bc8205cd210598eec77d21ff97e71d6a4e6a6d07755e2e752abaccdea8",
+      "usage_available": true,
+      "elapsed_s": 36.19
+    },
+    {
+      "flag_id": "source_authorship_credit",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 6853,
+      "input_sha256": "1910669922f65c31cb774992d6eaa0151db3c555d85ce5aa395c6788852db5a7",
+      "usage_available": true,
+      "elapsed_s": 15.33
+    }
+  ],
+  "gemini_usage": {
+    "flash": {
+      "prompt": 6673,
+      "cached": 0,
+      "output": 2120
+    }
+  },
+  "estimated_cost_usd": 0.013,
+  "manual_review": "pending; model approval is not an accuracy label",
+  "results": [
+    {
+      "flag_id": "mixed_script_authorship",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "Scenes S002, S004, and S011 incorporate the musical composition 'Hallelujah' (written by Leonard Cohen).",
+            "basis": "script",
+            "status": "SUPPORTED",
+            "reason": "Probe to be independently assessed",
+            "citation_numbers": [
+              2
+            ],
+            "support_spans": [
+              {
+                "citation_number": 2,
+                "quote": "By Leonard Cohen"
+              }
+            ],
+            "script_spans": [
+              "\"Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.\"",
+              "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.",
+              "Then, from speakers somebody has rigged on the seawall railing, Buckley's \"Hallelujah\" starts again, drifting out across the water toward the fire."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The script evidence references the musical composition 'Hallelujah' across the scenes, and the cited source confirms it was written by Leonard Cohen.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The scope of the claim matches the script evidence and the source confirmation of authorship.",
+              "unsupported_parts": []
+            }
+          ]
+        },
+        "estimate_exclusions": []
+      },
+      "expected_entailed": true,
+      "actual_entailed": true,
+      "passed": true,
+      "elapsed_s": 6.04
+    },
+    {
+      "flag_id": "invented_cover_performance",
+      "verdict": {
+        "verdict": "PARTIAL",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "Scene S002 depicts Danny performing a new cover version of 'Hallelujah' written by Leonard Cohen.",
+            "basis": "script",
+            "status": "UNSUPPORTED",
+            "reason": "Independent span review: The script evidence specifies that Jeff Buckley's Columbia recording of 'Hallelujah' is played ('Not a cover'), rather than depicting Danny performing a new cover version.; The script does not depict Danny performing a cover version; it explicitly specifies playing the pre-recorded Jeff Buckley recording.; Scene S002 depicts Danny performing a new cover version of 'Hallelujah'",
+            "citation_numbers": [
+              2
+            ],
+            "support_spans": [
+              {
+                "citation_number": 2,
+                "quote": "By Leonard Cohen"
+              }
+            ],
+            "script_spans": [
+              "\"Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.\"",
+              "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.",
+              "Then, from speakers somebody has rigged on the seawall railing, Buckley's \"Hallelujah\" starts again, drifting out across the water toward the fire."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": false,
+              "reason": "The script evidence specifies that Jeff Buckley's Columbia recording of 'Hallelujah' is played ('Not a cover'), rather than depicting Danny performing a new cover version.",
+              "scope_preserved": false,
+              "requirements_supported": false,
+              "scope_reason": "The script does not depict Danny performing a cover version; it explicitly specifies playing the pre-recorded Jeff Buckley recording.",
+              "unsupported_parts": [
+                "Scene S002 depicts Danny performing a new cover version of 'Hallelujah'"
+              ]
+            }
+          ]
+        },
+        "estimate_exclusions": [],
+        "reason": "Claim audit requires correction: Independent span review: The script evidence specifies that Jeff Buckley's Columbia recording of 'Hallelujah' is played ('Not a cover'), rather than depicting Danny performing a new cover version.; The script does not depict Danny performing a cover version; it explicitly specifies playing the pre-recorded Jeff Buckley recording.; Scene S002 depicts Danny performing a new cover version of 'Hallelujah'"
+      },
+      "expected_entailed": false,
+      "actual_entailed": false,
+      "passed": true,
+      "elapsed_s": 5.0
+    },
+    {
+      "flag_id": "script_cannot_confirm_owner",
+      "verdict": {
+        "verdict": "PARTIAL",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "The screenplay confirms that Sony Music Publishing currently controls 100% of worldwide synchronization rights to 'Hallelujah'.",
+            "basis": "script",
+            "status": "UNSUPPORTED",
+            "reason": "Independent span review: Script evidence establishes only fictional content rather than real-world copyright ownership or licensing authority. Furthermore, neither the script nor the excerpt establishes that Sony Music Publishing controls 100% of worldwide synchronization rights.; The screenplay cannot verify real-world copyright administration, worldwide scope, or 100% synchronization rights control.; The screenplay confirms that Sony Music Publishing currently controls 100% of worldwide synchronization rights to 'Hallelujah'.",
+            "citation_numbers": [
+              2
+            ],
+            "support_spans": [
+              {
+                "citation_number": 2,
+                "quote": "By Leonard Cohen"
+              }
+            ],
+            "script_spans": [
+              "\"Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.\"",
+              "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.",
+              "Then, from speakers somebody has rigged on the seawall railing, Buckley's \"Hallelujah\" starts again, drifting out across the water toward the fire."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": false,
+              "reason": "Script evidence establishes only fictional content rather than real-world copyright ownership or licensing authority. Furthermore, neither the script nor the excerpt establishes that Sony Music Publishing controls 100% of worldwide synchronization rights.",
+              "scope_preserved": false,
+              "requirements_supported": false,
+              "scope_reason": "The screenplay cannot verify real-world copyright administration, worldwide scope, or 100% synchronization rights control.",
+              "unsupported_parts": [
+                "The screenplay confirms that Sony Music Publishing currently controls 100% of worldwide synchronization rights to 'Hallelujah'."
+              ]
+            }
+          ]
+        },
+        "estimate_exclusions": [],
+        "reason": "Claim audit requires correction: Independent span review: Script evidence establishes only fictional content rather than real-world copyright ownership or licensing authority. Furthermore, neither the script nor the excerpt establishes that Sony Music Publishing controls 100% of worldwide synchronization rights.; The screenplay cannot verify real-world copyright administration, worldwide scope, or 100% synchronization rights control.; The screenplay confirms that Sony Music Publishing currently controls 100% of worldwide synchronization rights to 'Hallelujah'."
+      },
+      "expected_entailed": false,
+      "actual_entailed": false,
+      "passed": true,
+      "elapsed_s": 36.2
+    },
+    {
+      "flag_id": "source_authorship_credit",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "The composition 'Hallelujah' is credited to Leonard Cohen.",
+            "basis": "source",
+            "status": "SUPPORTED",
+            "reason": "Probe to be independently assessed",
+            "citation_numbers": [
+              2
+            ],
+            "support_spans": [
+              {
+                "citation_number": 2,
+                "quote": "By Leonard Cohen"
+              }
+            ],
+            "script_spans": []
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The cited excerpt lists the work 'By Leonard Cohen', directly supporting the statement that the composition is credited to Leonard Cohen.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The statement accurately reflects the credit attribution shown in the source excerpt without exceeding its scope.",
+              "unsupported_parts": []
+            }
+          ]
+        },
+        "estimate_exclusions": []
+      },
+      "expected_entailed": true,
+      "actual_entailed": true,
+      "passed": true,
+      "elapsed_s": 15.33
+    }
+  ],
+  "responses": [
+    {
+      "flag_id": "mixed_script_authorship",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The script evidence references the musical composition 'Hallelujah' across the scenes, and the cited source confirms it was written by Leonard Cohen.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The scope of the claim matches the script evidence and the source confirmation of authorship.\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "invented_cover_performance",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": false,\n      \"reason\": \"The script evidence specifies that Jeff Buckley's Columbia recording of 'Hallelujah' is played ('Not a cover'), rather than depicting Danny performing a new cover version.\",\n      \"scope_preserved\": false,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"The script does not depict Danny performing a cover version; it explicitly specifies playing the pre-recorded Jeff Buckley recording.\",\n      \"unsupported_parts\": [\n        \"Scene S002 depicts Danny performing a new cover version of 'Hallelujah'\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "script_cannot_confirm_owner",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": false,\n      \"reason\": \"Script evidence establishes only fictional content rather than real-world copyright ownership or licensing authority. Furthermore, neither the script nor the excerpt establishes that Sony Music Publishing controls 100% of worldwide synchronization rights.\",\n      \"scope_preserved\": false,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"The screenplay cannot verify real-world copyright administration, worldwide scope, or 100% synchronization rights control.\",\n      \"unsupported_parts\": [\n        \"The screenplay confirms that Sony Music Publishing currently controls 100% of worldwide synchronization rights to 'Hallelujah'.\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "source_authorship_credit",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The cited excerpt lists the work 'By Leonard Cohen', directly supporting the statement that the composition is credited to Leonard Cohen.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The statement accurately reflects the credit attribution shown in the source excerpt without exceeding its scope.\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    }
+  ]
+}

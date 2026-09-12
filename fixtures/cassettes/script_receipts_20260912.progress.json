@@ -1,0 +1,38 @@
+[
+  {
+    "flag_id": "mixed_script_authorship",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 7420,
+    "input_sha256": "3e25365d2a54dd02c4b36abeac4ca7b0f814a0ddb322ed7d59cc28f007a38980",
+    "usage_available": true,
+    "elapsed_s": 6.03
+  },
+  {
+    "flag_id": "invented_cover_performance",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 7406,
+    "input_sha256": "b6c5a19057e11749de07d756d6502460f06767072af784b1a4cddfb539bf67e7",
+    "usage_available": true,
+    "elapsed_s": 4.99
+  },
+  {
+    "flag_id": "script_cannot_confirm_owner",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 7466,
+    "input_sha256": "4392a3bc8205cd210598eec77d21ff97e71d6a4e6a6d07755e2e752abaccdea8",
+    "usage_available": true,
+    "elapsed_s": 36.19
+  },
+  {
+    "flag_id": "source_authorship_credit",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 6853,
+    "input_sha256": "1910669922f65c31cb774992d6eaa0151db3c555d85ce5aa395c6788852db5a7",
+    "usage_available": true,
+    "elapsed_s": 15.33
+  }
+]
