@@ -1,0 +1,56 @@
+[
+  {
+    "flag_id": "scene_observation_application",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 9317,
+    "input_sha256": "ba8debdd27c3e8233f2361ea100429aee0299ecedf14dd2e9767e2824877d214",
+    "usage_available": true,
+    "elapsed_s": 16.44
+  },
+  {
+    "flag_id": "firearms_option_mislabelled",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 9381,
+    "input_sha256": "149ea731861e1df5cb06a228214e33818c689b3f6af3cb0e85a8e4e2c82ca6f8",
+    "usage_available": true,
+    "elapsed_s": 18.18
+  },
+  {
+    "flag_id": "pyro_option_mislabelled",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 11283,
+    "input_sha256": "4e071b669a52e8a1559ddf2a8a17ab94dfe1bcee2738f5732b4255e6e090b93a",
+    "usage_available": true,
+    "elapsed_s": 6.55
+  },
+  {
+    "flag_id": "tattoo_cover_option",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 10410,
+    "input_sha256": "85fd447031d4128cf241215292b8e8510896cd54832b212fcbb2f361ba460cdf",
+    "usage_available": true,
+    "elapsed_s": 18.61
+  },
+  {
+    "flag_id": "firearms_option_typed",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 9387,
+    "input_sha256": "ea913446a7c1b87df950372a173d952c4109311dfaad8ab98f72071ca4e8a4f0",
+    "usage_available": true,
+    "elapsed_s": 5.66
+  },
+  {
+    "flag_id": "tattoo_permission_condition",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 10414,
+    "input_sha256": "aca124504deef9407de3224c3e390df7d9a4cdf52d72cae65e3710e643a937df",
+    "usage_available": true,
+    "elapsed_s": 5.12
+  }
+]

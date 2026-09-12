@@ -1,0 +1,38 @@
+[
+  {
+    "flag_id": "historical_ownership_qualified",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 9628,
+    "input_sha256": "82641fa4c841e2d4a321e47624eabc07285252d9a7c97dc93201a03ffe6692aa",
+    "usage_available": true,
+    "elapsed_s": 41.94
+  },
+  {
+    "flag_id": "historical_ownership_current",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 10268,
+    "input_sha256": "d7407857f99452f49032fbe7daeba3b9db2c6d2c777c55accb58338648887e18",
+    "usage_available": true,
+    "elapsed_s": 32.67
+  },
+  {
+    "flag_id": "historical_ownership_lead",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 11352,
+    "input_sha256": "bd12015612f7e6822441ab37081aa854a4fbd33b086ca18bc17bba1127dcf87c",
+    "usage_available": true,
+    "elapsed_s": 17.51
+  },
+  {
+    "flag_id": "retrieval_does_not_update_ownership",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 9652,
+    "input_sha256": "57976c6f2a0ee953cddea6c33ef63eeb767f68032e08e383c3a5401a66aba039",
+    "usage_available": true,
+    "elapsed_s": 3.78
+  }
+]

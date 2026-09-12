@@ -1,0 +1,58 @@
+{
+  "source_run": "runs/run_20260912_003816.json",
+  "source_run_sha256": "ea4637bc230fcfd1b7ad6c567c7e8c5e08589a4874596f5206e039f4fdffd3bd",
+  "origin_artifact": "fixtures/cassettes/response_options_repairs_20260912.json",
+  "scope": "Frozen before evaluation: development source/input-scope controls, not independent legal labels.",
+  "cases": [
+    {
+      "case_id": "record_credit_attributed",
+      "source_flag_id": "F1002",
+      "field": "finding",
+      "claim": "The cited Apple Music entry carries a 2007 phonogram credit naming Columbia Records, a division of Sony Music Entertainment.",
+      "basis": "source",
+      "action": "OBTAIN_LICENSE",
+      "support_spans": [
+        {
+          "citation_number": 1,
+          "quote": "When that recording is embedded in visual media, permission from the sound recording\u2019s owner is required in addition to the composition license. This permission is granted through a master use license."
+        },
+        {
+          "citation_number": 2,
+          "quote": "Master Use License: This is the right to reproduce a specific recording of a song in your film."
+        },
+        {
+          "citation_number": 3,
+          "quote": "\u2117 2007 Columbia Records, a division of Sony Music Entertainment"
+        }
+      ],
+      "script_spans": [
+        "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church."
+      ],
+      "expected_entailed": true,
+      "label_reason": "Explicitly describes the dated source attribution without asserting current licensing authority."
+    },
+    {
+      "case_id": "record_credit_inquiry_lead",
+      "source_flag_id": "F1002",
+      "field": "remedy",
+      "claim": "The cited 2007 record credit names Columbia Records, a division of Sony Music Entertainment. Use that attribution as a starting point to inquire about the recording and confirm who can license the intended use.",
+      "basis": "inquiry",
+      "action": "NO_ACTION",
+      "support_spans": [
+        {
+          "citation_number": 1,
+          "quote": "When that recording is embedded in visual media, permission from the sound recording\u2019s owner is required in addition to the composition license. This permission is granted through a master use license."
+        },
+        {
+          "citation_number": 3,
+          "quote": "\u2117 2007 Columbia Records, a division of Sony Music Entertainment"
+        }
+      ],
+      "script_spans": [
+        "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church."
+      ],
+      "expected_entailed": true,
+      "label_reason": "The record credit is a qualified starting point, with authority for the intended use explicitly unconfirmed."
+    }
+  ]
+}

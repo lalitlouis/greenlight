@@ -332,3 +332,34 @@ ownership inferred from script text, an invented performance and unsafe guarante
 These are development entailment controls using saved excerpts, not held-out scripts
 or a measured legal-accuracy rate. Free validation: 605 tests and `make check` pass.
 Live validation is pending at this commit; the earlier failed gate remains the baseline.
+
+Build `f4675b7` matched all twelve new controls and all ten existing safety-scope and
+historical-ownership controls rerun against it (22 calls, estimated $0.0877 returned
+usage). Full saved-finding repair used 20 calls ($0.2074) and retained master and tattoo,
+but rejected sync and firearms. Manual inspection does **not** accept the master
+entry's unqualified Columbia/Sony licensing instruction: it relies on a 2007 phonogram
+credit. That is a false approval despite the older, different historical controls passing.
+The original failed outputs and all model responses are preserved in
+`response_options_repairs_20260912.json`.
+
+The remaining observed problems are specific:
+
+- Sync's generic copyright-owner/administrator role was mistaken for an established
+  named licensing relationship. The quoted excerpt establishes a sync license; asking
+  who can grant it is a useful next step without a resolved company contact.
+- Firearms' statement that the actual filming method was unconfirmed was labelled
+  `planning`, then rejected mechanically for lacking a source quote. The options now
+  passed; the input-limitation statement caused the rejection.
+- The master instruction treated a dated credit as authority for this production.
+
+The follow-up routes all positive finding assertions through independent review,
+including receipt-free descriptions of input limitations. Unsupported screenplay or
+outside-world facts cannot bypass this review under a misleading role label. Named
+rights relationships must remain explicit source attributions or inquiry leads; a new
+required independent `named_rights_status` decision prevents an unqualified named
+licensing instruction from passing merely because the other booleans are positive.
+Eight frozen input/rights-scope controls include both exact rejected generic sync
+clauses, both falsely approved named-master clauses, unconfirmed versus asserted
+staging, and qualified credit/lead alternatives. No additional model calls are added
+to the runtime path; repair remains bounded at five. Live results for this follow-up
+are pending, and no new full gate has been claimed.

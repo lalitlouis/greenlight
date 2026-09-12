@@ -1,0 +1,406 @@
+{
+  "source_run": "fixtures/cassettes/fresh_safety_20260911.json",
+  "source_run_sha256": "ddca289bd0e5eabeb9829e868ce5c2b5f8f419358e5ec21f574545732ffa6731",
+  "source_build": "b49ce03d59b168cf9f616d9e706c22a7b514f577",
+  "evaluated_build": "f4675b74cbe2b262e924bcfb07cee9fe9c826e42",
+  "model": "gemini-3.7-flash",
+  "elapsed_s": 61.55,
+  "calls": 6,
+  "responses_with_usage": 6,
+  "calls_without_returned_usage": 0,
+  "resumed_from": null,
+  "rechecked_correction_from": null,
+  "entailment_cases": "fixtures/accuracy/production_scope_20260911.json",
+  "entailment_cases_sha256": "7e1bcef44368a97a84e522cfb258bcf708f8467a79c9201cb7c13af31be7e938",
+  "attempts": [
+    {
+      "flag_id": "pyro_as_applicable",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 9984,
+      "input_sha256": "6606b79fef2556fb38dd1232e130cd6daccb5660d4930fcca53f4d2ccc576ab5",
+      "usage_available": true,
+      "elapsed_s": 18.86
+    },
+    {
+      "flag_id": "open_flame_scope_expansion",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 10240,
+      "input_sha256": "8a2d8484ec2ee59e06e58c35194d9c8c2879acfe0fdd2dd69508cb56f9e1baca",
+      "usage_available": true,
+      "elapsed_s": 6.82
+    },
+    {
+      "flag_id": "water_monitoring",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 10099,
+      "input_sha256": "40235dff23302a2f07c66ce9db1de1f69d77bc4ae29a7f1b79b4b960687e7695",
+      "usage_available": true,
+      "elapsed_s": 4.39
+    },
+    {
+      "flag_id": "invented_water_equipment",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 10185,
+      "input_sha256": "920a29404f8c0225aa601b05c4d59da0c3bd0235a6369284eacfb9716b8ac483",
+      "usage_available": true,
+      "elapsed_s": 10.24
+    },
+    {
+      "flag_id": "licenses_everywhere",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 9714,
+      "input_sha256": "03650ec24c7e6baea5b2abf54a8244373c4f7a88030ab5d3165394303aca3c86",
+      "usage_available": true,
+      "elapsed_s": 17.19
+    },
+    {
+      "flag_id": "marine_specialist_from_pyro",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 9942,
+      "input_sha256": "2a1d3341abe5607a0f839035ec55be15f53ea5b2b1084d00cde7a1ebc8dc046e",
+      "usage_available": true,
+      "elapsed_s": 4.0
+    }
+  ],
+  "gemini_usage": {
+    "flash": {
+      "prompt": 13154,
+      "cached": 0,
+      "output": 3322
+    }
+  },
+  "estimated_cost_usd": 0.0223,
+  "manual_review": "pending; model approval is not an accuracy label",
+  "results": [
+    {
+      "flag_id": "pyro_as_applicable",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "If practical pyrotechnic special effects are used, any required licenses and permits must be obtained from the proper Authorities Having Jurisdiction beforehand, and pyrotechnic operators must hold valid State and Federal licenses as applicable.",
+            "basis": "source",
+            "status": "SUPPORTED",
+            "reason": "Probe to be independently assessed",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "Any required licenses and/or permits shall be obtained from proper Authorities Having Jurisdiction (AHJ) over pyrotechnic materials prior to using pyrotechnic special effects.\nPyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable."
+              }
+            ],
+            "script_spans": []
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The claim is fully supported by the excerpt, accurately reflecting the requirements for obtaining necessary permits/licenses prior to using pyrotechnic special effects and the applicable state and federal licensing for operators.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The conditions, qualifications ('as applicable'), and timing constraints are accurately preserved from the cited source.",
+              "unsupported_parts": []
+            }
+          ]
+        },
+        "estimate_exclusions": []
+      },
+      "expected_entailed": true,
+      "actual_entailed": true,
+      "passed": true,
+      "elapsed_s": 18.87
+    },
+    {
+      "flag_id": "open_flame_scope_expansion",
+      "verdict": {
+        "verdict": "PARTIAL",
+        "claim_checks": [
+          {
+            "field": "remedy",
+            "quote": "If practical pyrotechnics or open flames are utilized, engage a licensed Pyrotechnic Special Effects Operator holding valid state/federal licenses and obtain required permits from the proper Authorities Having Jurisdiction prior to shooting.",
+            "basis": "application",
+            "status": "UNSUPPORTED",
+            "reason": "Independent span review: The cited safety bulletin specifies requirements for pyrotechnic materials and pyrotechnic special effects, but does not establish that mere open flames trigger the requirement to engage a licensed Pyrotechnic Special Effects Operator or obtain pyrotechnic AHJ permits.; The claim broadens the trigger to include 'open flames' as an alternative condition for pyrotechnic operator and permitting requirements, which is not supported by the cited pyrotechnics safety bulletin.; open flames triggering the requirement to engage a licensed Pyrotechnic Special Effects Operator and obtain pyrotechnic permits",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "Any required licenses and/or permits shall be obtained from proper Authorities Having Jurisdiction (AHJ) over pyrotechnic materials prior to using pyrotechnic special effects.\nPyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable."
+              }
+            ],
+            "script_spans": [
+              "Mara stands, braces, and fires the flare into the soaked blankets amidships.",
+              "Crow touches a road flare to the mortar fuse. The Fourth of July stash goes up -- white and gold chrysanthemums blooming over the burning boat"
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": false,
+              "reason": "The cited safety bulletin specifies requirements for pyrotechnic materials and pyrotechnic special effects, but does not establish that mere open flames trigger the requirement to engage a licensed Pyrotechnic Special Effects Operator or obtain pyrotechnic AHJ permits.",
+              "scope_preserved": false,
+              "requirements_supported": false,
+              "scope_reason": "The claim broadens the trigger to include 'open flames' as an alternative condition for pyrotechnic operator and permitting requirements, which is not supported by the cited pyrotechnics safety bulletin.",
+              "unsupported_parts": [
+                "open flames triggering the requirement to engage a licensed Pyrotechnic Special Effects Operator and obtain pyrotechnic permits"
+              ]
+            }
+          ]
+        },
+        "estimate_exclusions": [],
+        "reason": "Claim audit requires correction: Independent span review: The cited safety bulletin specifies requirements for pyrotechnic materials and pyrotechnic special effects, but does not establish that mere open flames trigger the requirement to engage a licensed Pyrotechnic Special Effects Operator or obtain pyrotechnic AHJ permits.; The claim broadens the trigger to include 'open flames' as an alternative condition for pyrotechnic operator and permitting requirements, which is not supported by the cited pyrotechnics safety bulletin.; open flames triggering the requirement to engage a licensed Pyrotechnic Special Effects Operator and obtain pyrotechnic permits"
+      },
+      "expected_entailed": false,
+      "actual_entailed": false,
+      "passed": true,
+      "elapsed_s": 6.83
+    },
+    {
+      "flag_id": "water_monitoring",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "For cast and crew working in water, monitor the temperature and signs of hyperthermia or hypothermia, and take steps to prevent these conditions.",
+            "basis": "source",
+            "status": "SUPPORTED",
+            "reason": "Probe to be independently assessed",
+            "citation_numbers": [
+              2
+            ],
+            "support_spans": [
+              {
+                "citation_number": 2,
+                "quote": "The temperature should be monitored when cast and crew are expected to be working in water.\nProlonged exposure to water can become hazardous. Cast and crew should be monitored for signs\nand symptoms of both hyperthermia and hypothermia.\nProduction Management should take steps to prevent hyperthermia (elevated body temperature)\nand hypothermia (reduced body temperature). While hyperthermia can occur, hypothermia is a\nmore likely hazard."
+              }
+            ],
+            "script_spans": []
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The source excerpt explicitly states that temperature should be monitored when cast and crew are expected to work in water, that cast and crew should be monitored for signs and symptoms of hyperthermia and hypothermia, and that steps should be taken to prevent these conditions.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The claim preserves the scope of the safety bulletin without adding unsupported duties, conditions, or guarantees.",
+              "unsupported_parts": []
+            }
+          ]
+        },
+        "estimate_exclusions": []
+      },
+      "expected_entailed": true,
+      "actual_entailed": true,
+      "passed": true,
+      "elapsed_s": 4.39
+    },
+    {
+      "flag_id": "invented_water_equipment",
+      "verdict": {
+        "verdict": "PARTIAL",
+        "claim_checks": [
+          {
+            "field": "remedy",
+            "quote": "If a performer enters the harbor, provide heated tents, dry suits and a dedicated lifeguard boat.",
+            "basis": "application",
+            "status": "UNSUPPORTED",
+            "reason": "Independent span review: The cited safety bulletin requires temperature monitoring and general steps to prevent hyperthermia and hypothermia, but does not specify or require heated tents, dry suits, or a dedicated lifeguard boat.; The claim introduces specific operational and equipment requirements (heated tents, dry suits, dedicated lifeguard boat) that are entirely absent from the provided source excerpt.; heated tents; dry suits; dedicated lifeguard boat",
+            "citation_numbers": [
+              2
+            ],
+            "support_spans": [
+              {
+                "citation_number": 2,
+                "quote": "The temperature should be monitored when cast and crew are expected to be working in water.\nProlonged exposure to water can become hazardous. Cast and crew should be monitored for signs\nand symptoms of both hyperthermia and hypothermia.\nProduction Management should take steps to prevent hyperthermia (elevated body temperature)\nand hypothermia (reduced body temperature). While hyperthermia can occur, hypothermia is a\nmore likely hazard."
+              }
+            ],
+            "script_spans": [
+              "she DIVES -- off the skiff into the black water, surfacing in the firelight, swimming hard for the mooring buoy off the Margaret Rose's bow."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": false,
+              "reason": "The cited safety bulletin requires temperature monitoring and general steps to prevent hyperthermia and hypothermia, but does not specify or require heated tents, dry suits, or a dedicated lifeguard boat.",
+              "scope_preserved": false,
+              "requirements_supported": false,
+              "scope_reason": "The claim introduces specific operational and equipment requirements (heated tents, dry suits, dedicated lifeguard boat) that are entirely absent from the provided source excerpt.",
+              "unsupported_parts": [
+                "heated tents",
+                "dry suits",
+                "dedicated lifeguard boat"
+              ]
+            }
+          ]
+        },
+        "estimate_exclusions": [],
+        "reason": "Claim audit requires correction: Independent span review: The cited safety bulletin requires temperature monitoring and general steps to prevent hyperthermia and hypothermia, but does not specify or require heated tents, dry suits, or a dedicated lifeguard boat.; The claim introduces specific operational and equipment requirements (heated tents, dry suits, dedicated lifeguard boat) that are entirely absent from the provided source excerpt.; heated tents; dry suits; dedicated lifeguard boat"
+      },
+      "expected_entailed": false,
+      "actual_entailed": false,
+      "passed": true,
+      "elapsed_s": 10.24
+    },
+    {
+      "flag_id": "licenses_everywhere",
+      "verdict": {
+        "verdict": "PARTIAL",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "Every pyrotechnic operator must hold both State and Federal licenses in every jurisdiction, without exception.",
+            "basis": "source",
+            "status": "UNSUPPORTED",
+            "reason": "Independent span review: The cited source qualifies the licensing rule with 'as applicable', whereas the claim asserts that every pyrotechnic operator must hold both state and federal licenses in every jurisdiction without exception.; The claim omits the source's 'as applicable' qualification and overgeneralizes the licensing requirement to apply universally without exception.; Every pyrotechnic operator must hold both State and Federal licenses in every jurisdiction, without exception.",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "Any required licenses and/or permits shall be obtained from proper Authorities Having Jurisdiction (AHJ) over pyrotechnic materials prior to using pyrotechnic special effects.\nPyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable."
+              }
+            ],
+            "script_spans": []
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": false,
+              "reason": "The cited source qualifies the licensing rule with 'as applicable', whereas the claim asserts that every pyrotechnic operator must hold both state and federal licenses in every jurisdiction without exception.",
+              "scope_preserved": false,
+              "requirements_supported": false,
+              "scope_reason": "The claim omits the source's 'as applicable' qualification and overgeneralizes the licensing requirement to apply universally without exception.",
+              "unsupported_parts": [
+                "Every pyrotechnic operator must hold both State and Federal licenses in every jurisdiction, without exception."
+              ]
+            }
+          ]
+        },
+        "estimate_exclusions": [],
+        "reason": "Claim audit requires correction: Independent span review: The cited source qualifies the licensing rule with 'as applicable', whereas the claim asserts that every pyrotechnic operator must hold both state and federal licenses in every jurisdiction without exception.; The claim omits the source's 'as applicable' qualification and overgeneralizes the licensing requirement to apply universally without exception.; Every pyrotechnic operator must hold both State and Federal licenses in every jurisdiction, without exception."
+      },
+      "expected_entailed": false,
+      "actual_entailed": false,
+      "passed": true,
+      "elapsed_s": 17.19
+    },
+    {
+      "flag_id": "marine_specialist_from_pyro",
+      "verdict": {
+        "verdict": "PARTIAL",
+        "claim_checks": [
+          {
+            "field": "remedy",
+            "quote": "If practical pyrotechnics are used, a dedicated licensed Marine Coordinator must be engaged.",
+            "basis": "application",
+            "status": "UNSUPPORTED",
+            "reason": "Independent span review: The cited safety bulletin specifies requirements for pyrotechnic permits and licensed Pyrotechnic Special Effects Operators, but does not state or require engaging a dedicated licensed Marine Coordinator.; The claim introduces an unsupported mandatory specialist requirement (Marine Coordinator) that is absent from the cited pyrotechnic safety source.; a dedicated licensed Marine Coordinator must be engaged",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "Any required licenses and/or permits shall be obtained from proper Authorities Having Jurisdiction (AHJ) over pyrotechnic materials prior to using pyrotechnic special effects.\nPyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable."
+              }
+            ],
+            "script_spans": [
+              "Mara stands, braces, and fires the flare into the soaked blankets amidships.",
+              "Crow touches a road flare to the mortar fuse. The Fourth of July stash goes up -- white and gold chrysanthemums blooming over the burning boat"
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": false,
+              "reason": "The cited safety bulletin specifies requirements for pyrotechnic permits and licensed Pyrotechnic Special Effects Operators, but does not state or require engaging a dedicated licensed Marine Coordinator.",
+              "scope_preserved": false,
+              "requirements_supported": false,
+              "scope_reason": "The claim introduces an unsupported mandatory specialist requirement (Marine Coordinator) that is absent from the cited pyrotechnic safety source.",
+              "unsupported_parts": [
+                "a dedicated licensed Marine Coordinator must be engaged"
+              ]
+            }
+          ]
+        },
+        "estimate_exclusions": [],
+        "reason": "Claim audit requires correction: Independent span review: The cited safety bulletin specifies requirements for pyrotechnic permits and licensed Pyrotechnic Special Effects Operators, but does not state or require engaging a dedicated licensed Marine Coordinator.; The claim introduces an unsupported mandatory specialist requirement (Marine Coordinator) that is absent from the cited pyrotechnic safety source.; a dedicated licensed Marine Coordinator must be engaged"
+      },
+      "expected_entailed": false,
+      "actual_entailed": false,
+      "passed": true,
+      "elapsed_s": 4.0
+    }
+  ],
+  "responses": [
+    {
+      "flag_id": "pyro_as_applicable",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The claim is fully supported by the excerpt, accurately reflecting the requirements for obtaining necessary permits/licenses prior to using pyrotechnic special effects and the applicable state and federal licensing for operators.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The conditions, qualifications ('as applicable'), and timing constraints are accurately preserved from the cited source.\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "open_flame_scope_expansion",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": false,\n      \"reason\": \"The cited safety bulletin specifies requirements for pyrotechnic materials and pyrotechnic special effects, but does not establish that mere open flames trigger the requirement to engage a licensed Pyrotechnic Special Effects Operator or obtain pyrotechnic AHJ permits.\",\n      \"scope_preserved\": false,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"The claim broadens the trigger to include 'open flames' as an alternative condition for pyrotechnic operator and permitting requirements, which is not supported by the cited pyrotechnics safety bulletin.\",\n      \"unsupported_parts\": [\n        \"open flames triggering the requirement to engage a licensed Pyrotechnic Special Effects Operator and obtain pyrotechnic permits\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "water_monitoring",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The source excerpt explicitly states that temperature should be monitored when cast and crew are expected to work in water, that cast and crew should be monitored for signs and symptoms of hyperthermia and hypothermia, and that steps should be taken to prevent these conditions.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The claim preserves the scope of the safety bulletin without adding unsupported duties, conditions, or guarantees.\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "invented_water_equipment",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": false,\n      \"reason\": \"The cited safety bulletin requires temperature monitoring and general steps to prevent hyperthermia and hypothermia, but does not specify or require heated tents, dry suits, or a dedicated lifeguard boat.\",\n      \"scope_preserved\": false,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"The claim introduces specific operational and equipment requirements (heated tents, dry suits, dedicated lifeguard boat) that are entirely absent from the provided source excerpt.\",\n      \"unsupported_parts\": [\n        \"heated tents\",\n        \"dry suits\",\n        \"dedicated lifeguard boat\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "licenses_everywhere",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": false,\n      \"reason\": \"The cited source qualifies the licensing rule with 'as applicable', whereas the claim asserts that every pyrotechnic operator must hold both state and federal licenses in every jurisdiction without exception.\",\n      \"scope_preserved\": false,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"The claim omits the source's 'as applicable' qualification and overgeneralizes the licensing requirement to apply universally without exception.\",\n      \"unsupported_parts\": [\n        \"Every pyrotechnic operator must hold both State and Federal licenses in every jurisdiction, without exception.\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "marine_specialist_from_pyro",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": false,\n      \"reason\": \"The cited safety bulletin specifies requirements for pyrotechnic permits and licensed Pyrotechnic Special Effects Operators, but does not state or require engaging a dedicated licensed Marine Coordinator.\",\n      \"scope_preserved\": false,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"The claim introduces an unsupported mandatory specialist requirement (Marine Coordinator) that is absent from the cited pyrotechnic safety source.\",\n      \"unsupported_parts\": [\n        \"a dedicated licensed Marine Coordinator must be engaged\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    }
+  ]
+}

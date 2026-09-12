@@ -29,6 +29,7 @@ def positive_check():
         "scope_preserved": True,
         "requirements_supported": True,
         "scope_reason": "Scripted matching scope",
+        "named_rights_status": "not_asserted",
         "unsupported_parts": [],
     }
 
@@ -88,6 +89,36 @@ def test_response_option_controls_bind_real_receipts_and_keep_labels_out_of_revi
         assert payload["script_evidence"] == row["script_spans"]
     if group == "positive":
         assert json.loads(prompts[0].rsplit("\n\n", 1)[1])[0]["support"] == []
+
+
+@pytest.mark.parametrize("name,count", [("input_and_rights_scopes", 6), ("record_credit_leads", 2)])
+def test_input_scope_and_named_rights_controls_are_anchored_and_reach_independent_review(
+    name, count
+):
+    cases = json.loads((ROOT / f"fixtures/accuracy/{name}_20260912.json").read_text())
+    inputs = evaluator.entailment_inputs(
+        cases,
+        (ROOT / "runs/run_20260912_003816.json").read_bytes(),
+        (ROOT / "fixtures/slack_tide.fountain").read_text(),
+    )
+    prompts = []
+
+    async def generate_content(**kwargs):
+        prompts.append(kwargs["contents"])
+        return SimpleNamespace(text=json.dumps({"checks": [positive_check()]}))
+
+    client = SimpleNamespace(
+        aio=SimpleNamespace(models=SimpleNamespace(generate_content=generate_content))
+    )
+    for flag, verdict, _ in inputs:
+        asyncio.run(check_entailment(client, flag, verdict))
+    assert len(prompts) == count
+    for prompt, case in zip(prompts, cases["cases"], strict=True):
+        assert "expected_entailed" not in prompt and case["label_reason"] not in prompt
+    if name == "input_and_rights_scopes":
+        for prompt in prompts[:2]:
+            claim = json.loads(prompt.rsplit("\n\n", 1)[1])[0]
+            assert not claim["support"] and not claim["script_evidence"]
 
 
 def test_recheck_requires_matching_source_and_a_previously_skipped_stage():

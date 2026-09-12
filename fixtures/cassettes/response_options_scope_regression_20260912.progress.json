@@ -1,0 +1,56 @@
+[
+  {
+    "flag_id": "pyro_as_applicable",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 9984,
+    "input_sha256": "6606b79fef2556fb38dd1232e130cd6daccb5660d4930fcca53f4d2ccc576ab5",
+    "usage_available": true,
+    "elapsed_s": 18.86
+  },
+  {
+    "flag_id": "open_flame_scope_expansion",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 10240,
+    "input_sha256": "8a2d8484ec2ee59e06e58c35194d9c8c2879acfe0fdd2dd69508cb56f9e1baca",
+    "usage_available": true,
+    "elapsed_s": 6.82
+  },
+  {
+    "flag_id": "water_monitoring",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 10099,
+    "input_sha256": "40235dff23302a2f07c66ce9db1de1f69d77bc4ae29a7f1b79b4b960687e7695",
+    "usage_available": true,
+    "elapsed_s": 4.39
+  },
+  {
+    "flag_id": "invented_water_equipment",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 10185,
+    "input_sha256": "920a29404f8c0225aa601b05c4d59da0c3bd0235a6369284eacfb9716b8ac483",
+    "usage_available": true,
+    "elapsed_s": 10.24
+  },
+  {
+    "flag_id": "licenses_everywhere",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 9714,
+    "input_sha256": "03650ec24c7e6baea5b2abf54a8244373c4f7a88030ab5d3165394303aca3c86",
+    "usage_available": true,
+    "elapsed_s": 17.19
+  },
+  {
+    "flag_id": "marine_specialist_from_pyro",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 9942,
+    "input_sha256": "2a1d3341abe5607a0f839035ec55be15f53ea5b2b1084d00cde7a1ebc8dc046e",
+    "usage_available": true,
+    "elapsed_s": 4.0
+  }
+]

@@ -151,6 +151,10 @@ even if the first auditor labels it `application` or `source`. The second review
 determines its semantic role from the assertion and evidence, not the suggested label.
 This routing cannot approve a mixed external assertion from screenplay text alone;
 a negative or unavailable independent review still fails closed.
+All positive finding checks now enter that review, even with no receipts: stating
+that no actual production plan has been supplied is an input limitation, whereas a
+screenplay observation or external fact still needs its own evidence. Empty receipts
+cannot bypass independent review under a `script`/`production` label.
 Script receipts establish fictional content, not actual production facts or ownership.
 Citation title and URL accompany
 each excerpt solely for source attribution; metadata cannot supply an operative rule
@@ -169,6 +173,14 @@ production-input inquiry is permitted only for the safety desk. The batch also c
 the initial auditor's positive claims when the overall audit is PARTIAL, before repair
 can inherit them. Scope and requirements are separate returned decisions; a negative
 component overrides a positive overall boolean, and missing components fail verification.
+Under `entailment_policy_version=2`, the required `named_rights_status` separately
+distinguishes no named rights assertion, a qualified source attribution/inquiry lead,
+and an unqualified named owner/licensor relationship. The last cannot pass, even if
+the other review booleans are positive. A name in an instruction to obtain rights,
+or in parentheses after `owner`, asserts the relationship too. Reports preserve the
+source's dated credit and the need to confirm authority for the intended use. Generic
+rights-holder/administrator roles and relevant licensing inquiries do not assert a
+named party's authority. Public report schemas and old saved verdicts are unchanged.
 Those component fields are required in the model response schema, not just checked after
 generation. Repair input consists of identity, original excerpts, accepted assertions,
 exact script receipts and limitations; rejected prose and the initial overall summary

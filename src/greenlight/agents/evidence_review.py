@@ -41,6 +41,9 @@ class EntailmentCheck(BaseModel):
     scope_preserved: bool
     requirements_supported: bool
     scope_reason: str = Field(min_length=1)
+    named_rights_status: Literal[
+        "not_asserted", "qualified_attribution_or_lead", "unqualified_relationship"
+    ]
     unsupported_parts: list[str] = Field(default_factory=list)
 
 
@@ -240,6 +243,7 @@ def _support_problem(  # noqa: PLR0912 - independent provenance boundaries
     if (
         check.basis in {"application", "script_edit", "production_option", "risk_assessment"}
         and not check.script_spans
+        and check.field != "finding"
     ):
         return "An application or edit needs exact screenplay evidence"
     if any(not s.strip() or s not in script_context for s in check.script_spans):
@@ -258,12 +262,11 @@ def _support_problem(  # noqa: PLR0912 - independent provenance boundaries
         and check.field != "severity"
     )
     needs_span |= check.field == "remedy" and check.basis != "inquiry"
-    # The first auditor's role label is not semantic evidence. A finding with
-    # anchored screenplay receipts can go to independent review without a source
-    # receipt. Only that reviewer can establish it is a pure scene observation;
-    # receipt presence alone never approves an external or mixed assertion.
-    script_candidate = check.field == "finding" and bool(check.script_spans)
-    if needs_span and not check.support_spans and not script_candidate:
+    # Finding roles are determined independently, not by the first auditor's
+    # label. Source/script facts need their corresponding receipts; statements
+    # about the absence of a production brief need neither. All positive finding
+    # checks go to the second reviewer, including those with empty receipts.
+    if needs_span and not check.support_spans and check.field != "finding":
         return "No exact supporting span for this external claim or prescription"
     indexes = {span.citation_number for span in check.support_spans}
     if not check.support_spans and indexes != set(check.citation_numbers):
@@ -573,6 +576,7 @@ async def check_entailment(client, flag, verdict):
             not check["support_spans"]
             and not check.get("script_spans")
             and check["basis"] != "inquiry"
+            and check["field"] != "finding"
         ):
             continue  # script facts, severity or the fixed production inquiry
         claims.append(
@@ -619,6 +623,8 @@ async def check_entailment(client, flag, verdict):
     prompt = (
         PREQUALIFICATION_EVIDENCE
         + "\n"
+        + PRODUCTION_EVIDENCE
+        + "\n"
         + RESPONSE_OPTIONS
         + "\nIndependently assess textual entailment, using ONLY the supplied evidence. "
         "source_attribution contains the cited title and URL solely to identify the "
@@ -636,6 +642,12 @@ async def check_entailment(client, flag, verdict):
         "Determine the role from the assertion itself. All external assertions need "
         "source support regardless of basis. A pure screenplay observation needs only "
         "matching script_evidence, even when its suggested basis is application/source. "
+        "No production brief is supplied: casting, permissions, jurisdiction and "
+        "practical execution are not established by this input. A statement that such "
+        "inputs are unconfirmed needs no external or script quote; an assertion that "
+        "they ARE confirmed still needs evidence. With no receipts, reject invented "
+        "screenplay observations or outside-world facts, but allow an accurate "
+        "description of these input limitations. "
         "claim_context is the original full field, supplied only to preserve operators, "
         "conditions and alternatives between atomic quotes. It is NOT additional evidence. "
         "Assess the quoted clause as used in that full sentence, not in isolation. Do not "
@@ -693,6 +705,19 @@ async def check_entailment(client, flag, verdict):
         "Script evidence satisfying one branch cannot justify another branch. Compare "
         "source trigger, exclusions and 'as applicable' qualifications against the claim. "
         "Check every named duty/owner/amount separately from the risk assessment. "
+        "Return named_rights_status for EACH check. Use not_asserted when no named "
+        "ownership/licensing relationship is asserted (a generic rights holder or "
+        "administrator role is not a named party). Use qualified_attribution_or_lead "
+        "only for explicit source attribution, date-qualified historical relationships "
+        "or a lead whose current authority is to be confirmed. Use "
+        "unqualified_relationship for an asserted named owner, controller or licensor "
+        "for this production, including a company in parentheses after 'owner' and "
+        "instructions to obtain rights from a named company. Merely citing a source "
+        "does not qualify the assertion. A copyright/phonogram credit, even on a "
+        "current catalog page, is an attribution, not confirmation of licensing "
+        "authority for this use. Our pre-qualification output must preserve that "
+        "distinction; unqualified_relationship cannot pass. Authorship and the "
+        "screenplay's recording/label description alone do not assert rights ownership. "
         "For an inquiry, script edit or production option, scope_preserved means it "
         "addresses this issue "
         "and requirements_supported means it introduces no unsupported duty or guarantee. "
@@ -728,6 +753,7 @@ async def check_entailment(client, flag, verdict):
             or result_check.scope_preserved is False
             or result_check.requirements_supported is False
             or result_check.unsupported_parts
+            or result_check.named_rights_status == "unqualified_relationship"
         ):
             result_check.entailed = False
             checks[result_check.check_index] = {
@@ -739,6 +765,10 @@ async def check_entailment(client, flag, verdict):
                     for part in (
                         result_check.reason,
                         result_check.scope_reason,
+                        "Named rights relationships must remain source attributions or "
+                        "leads pending confirmation of authority for the intended use"
+                        if result_check.named_rights_status == "unqualified_relationship"
+                        else "",
                         *result_check.unsupported_parts,
                     )
                     if part.strip()
@@ -749,6 +779,7 @@ async def check_entailment(client, flag, verdict):
             **verdict,
             "claim_checks": checks,
             "entailment_review": result.model_dump(),
+            "entailment_policy_version": 2,
         }
     )
 

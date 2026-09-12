@@ -1,0 +1,118 @@
+{
+  "source_run": "runs/run_20260912_003816.json",
+  "source_run_sha256": "ea4637bc230fcfd1b7ad6c567c7e8c5e08589a4874596f5206e039f4fdffd3bd",
+  "origin_artifact": "fixtures/cassettes/response_options_repairs_20260912.json",
+  "scope": "Frozen before evaluation: development source/input-scope controls, not independent legal labels.",
+  "cases": [
+    {
+      "case_id": "unknown_staging_is_input_limit",
+      "source_flag_id": "F3003",
+      "field": "finding",
+      "claim": "Whether the production plans to utilize functional firearms firing blanks or non-firing prop rifles with visual and sound effects remains unconfirmed.",
+      "basis": "planning",
+      "action": "REPLACE",
+      "support_spans": [],
+      "script_spans": [],
+      "expected_entailed": true,
+      "label_reason": "The absence of an actual production plan is an input limitation, not a source-dependent outside-world claim."
+    },
+    {
+      "case_id": "unprovided_staging_is_not_confirmed",
+      "source_flag_id": "F3003",
+      "field": "finding",
+      "claim": "The production has confirmed functional rifles firing blank ammunition for this scene.",
+      "basis": "planning",
+      "action": "REPLACE",
+      "support_spans": [],
+      "script_spans": [],
+      "expected_entailed": false,
+      "label_reason": "No production brief establishes actual blank discharge or prop choice."
+    },
+    {
+      "case_id": "generic_sync_licensor_role",
+      "source_flag_id": "F1001",
+      "field": "finding",
+      "claim": "Synchronizing a musical composition with visual content in audiovisual media requires a synchronization license from the copyright owner or publishing administrator.",
+      "basis": "application",
+      "action": "OBTAIN_LICENSE",
+      "support_spans": [
+        {
+          "citation_number": 1,
+          "quote": "A synchronization license authorizes the use of a musical composition in timed relation with visual content. This permission is required whenever music is paired with film, television, advertising, video games, online video, or other audiovisual media."
+        }
+      ],
+      "script_spans": [
+        "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church."
+      ],
+      "expected_entailed": true,
+      "label_reason": "A generic authorized licensor role is inherent in seeking the cited permission; no named owner is established."
+    },
+    {
+      "case_id": "generic_rights_investigation",
+      "source_flag_id": "F1001",
+      "field": "remedy",
+      "claim": "Identify the copyright owner or publishing administrator for \"Hallelujah\" and obtain the necessary synchronization license for the audiovisual use.",
+      "basis": "planning",
+      "action": "OBTAIN_LICENSE",
+      "support_spans": [
+        {
+          "citation_number": 1,
+          "quote": "A synchronization license authorizes the use of a musical composition in timed relation with visual content. This permission is required whenever music is paired with film, television, advertising, video games, online video, or other audiovisual media."
+        }
+      ],
+      "script_spans": [],
+      "expected_entailed": true,
+      "label_reason": "Identifying who can grant the cited license is a relevant inquiry, not a claim that a named entity owns the rights."
+    },
+    {
+      "case_id": "credit_not_current_master_owner",
+      "source_flag_id": "F1002",
+      "field": "finding",
+      "claim": "Incorporating a pre-existing sound recording into an audiovisual work requires obtaining a master use license from the sound recording's owner (Columbia Records / Sony Music Entertainment) in addition to any synchronization license for the underlying musical composition.",
+      "basis": "application",
+      "action": "OBTAIN_LICENSE",
+      "support_spans": [
+        {
+          "citation_number": 1,
+          "quote": "When that recording is embedded in visual media, permission from the sound recording\u2019s owner is required in addition to the composition license. This permission is granted through a master use license."
+        },
+        {
+          "citation_number": 2,
+          "quote": "Master Use License: This is the right to reproduce a specific recording of a song in your film."
+        },
+        {
+          "citation_number": 3,
+          "quote": "\u2117 2007 Columbia Records, a division of Sony Music Entertainment"
+        }
+      ],
+      "script_spans": [
+        "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church."
+      ],
+      "expected_entailed": false,
+      "label_reason": "The 2007 phonogram credit does not confirm the named party as the owner/licensor for this production."
+    },
+    {
+      "case_id": "credit_not_named_licensing_instruction",
+      "source_flag_id": "F1002",
+      "field": "remedy",
+      "claim": "Obtain a master use license from Columbia Records / Sony Music Entertainment for the Jeff Buckley sound recording of 'Hallelujah'.",
+      "basis": "application",
+      "action": "OBTAIN_LICENSE",
+      "support_spans": [
+        {
+          "citation_number": 1,
+          "quote": "When that recording is embedded in visual media, permission from the sound recording\u2019s owner is required in addition to the composition license. This permission is granted through a master use license."
+        },
+        {
+          "citation_number": 3,
+          "quote": "\u2117 2007 Columbia Records, a division of Sony Music Entertainment"
+        }
+      ],
+      "script_spans": [
+        "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church."
+      ],
+      "expected_entailed": false,
+      "label_reason": "An instruction to obtain rights from a named company asserts authority; a historical record credit supports only a lead."
+    }
+  ]
+}

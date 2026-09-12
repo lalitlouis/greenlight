@@ -1,0 +1,402 @@
+{
+  "source_run": "runs/run_20260912_003816.json",
+  "source_run_sha256": "ea4637bc230fcfd1b7ad6c567c7e8c5e08589a4874596f5206e039f4fdffd3bd",
+  "source_build": "local:9318011a954f4f44149300e8a968c166cd84d973",
+  "evaluated_build": "f4675b74cbe2b262e924bcfb07cee9fe9c826e42",
+  "model": "gemini-3.7-flash",
+  "elapsed_s": 70.61,
+  "calls": 6,
+  "responses_with_usage": 6,
+  "calls_without_returned_usage": 0,
+  "resumed_from": null,
+  "rechecked_correction_from": null,
+  "entailment_cases": "fixtures/accuracy/response_options_positive_20260912.json",
+  "entailment_cases_sha256": "9393eea52479b260a4df3de78078c444e39f2223fab94c78c6e9f66022b3fa2a",
+  "attempts": [
+    {
+      "flag_id": "scene_observation_application",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 9317,
+      "input_sha256": "ba8debdd27c3e8233f2361ea100429aee0299ecedf14dd2e9767e2824877d214",
+      "usage_available": true,
+      "elapsed_s": 16.44
+    },
+    {
+      "flag_id": "firearms_option_mislabelled",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 9381,
+      "input_sha256": "149ea731861e1df5cb06a228214e33818c689b3f6af3cb0e85a8e4e2c82ca6f8",
+      "usage_available": true,
+      "elapsed_s": 18.18
+    },
+    {
+      "flag_id": "pyro_option_mislabelled",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 11283,
+      "input_sha256": "4e071b669a52e8a1559ddf2a8a17ab94dfe1bcee2738f5732b4255e6e090b93a",
+      "usage_available": true,
+      "elapsed_s": 6.55
+    },
+    {
+      "flag_id": "tattoo_cover_option",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 10410,
+      "input_sha256": "85fd447031d4128cf241215292b8e8510896cd54832b212fcbb2f361ba460cdf",
+      "usage_available": true,
+      "elapsed_s": 18.61
+    },
+    {
+      "flag_id": "firearms_option_typed",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 9387,
+      "input_sha256": "ea913446a7c1b87df950372a173d952c4109311dfaad8ab98f72071ca4e8a4f0",
+      "usage_available": true,
+      "elapsed_s": 5.66
+    },
+    {
+      "flag_id": "tattoo_permission_condition",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 10414,
+      "input_sha256": "aca124504deef9407de3224c3e390df7d9a4cdf52d72cae65e3710e643a937df",
+      "usage_available": true,
+      "elapsed_s": 5.12
+    }
+  ],
+  "gemini_usage": {
+    "flash": {
+      "prompt": 13434,
+      "cached": 0,
+      "output": 3865
+    }
+  },
+  "estimated_cost_usd": 0.0246,
+  "manual_review": "pending; model approval is not an accuracy label",
+  "results": [
+    {
+      "flag_id": "scene_observation_application",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "Scenes S002, S004, and S011 specify Jeff Buckley's 'Hallelujah' (the Columbia recording).",
+            "basis": "application",
+            "status": "SUPPORTED",
+            "reason": "Probe to be independently assessed",
+            "citation_numbers": [],
+            "support_spans": [],
+            "script_spans": [
+              "\"Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.\"",
+              "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.",
+              "Buckley's \"Hallelujah\" starts again, drifting out across the water toward the fire."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The script evidence directly specifies Jeff Buckley's 'Hallelujah' (the Columbia recording) across the scenes.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The script receipts accurately match the claim's description of the specified song and recording.",
+              "unsupported_parts": []
+            }
+          ]
+        },
+        "estimate_exclusions": []
+      },
+      "expected_entailed": true,
+      "actual_entailed": true,
+      "passed": true,
+      "elapsed_s": 16.45
+    },
+    {
+      "flag_id": "firearms_option_mislabelled",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "claim_checks": [
+          {
+            "field": "remedy",
+            "quote": "Alternatively, consider using non-firing prop replicas with visual and sound effects added in post-production.",
+            "basis": "script_edit",
+            "status": "SUPPORTED",
+            "reason": "Probe to be independently assessed",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "BLANKS CAN KILL."
+              }
+            ],
+            "script_spans": [
+              "The honor guard stands in a row, rifles up at the ready."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The source establishes the hazard associated with blank-firing firearms, and the claim is a high-level, optional production alternative to avoid on-set firing by using non-firing replicas with visual and sound effects added in post-production, without introducing unsupported mandatory procedures or guarantees.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The proposed production option directly addresses the firearm/blank firing trigger in the script evidence and does not exceed high-level hazard substitution.",
+              "unsupported_parts": []
+            }
+          ]
+        },
+        "estimate_exclusions": []
+      },
+      "expected_entailed": true,
+      "actual_entailed": true,
+      "passed": true,
+      "elapsed_s": 18.19
+    },
+    {
+      "flag_id": "pyro_option_mislabelled",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "claim_checks": [
+          {
+            "field": "remedy",
+            "quote": "Alternatively, replace practical open-flame ignition and live mortar fireworks with digital visual effects (VFX) and non-pyrotechnic prop items.",
+            "basis": "planning",
+            "status": "SUPPORTED",
+            "reason": "Probe to be independently assessed",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "This Safety Bulletin applies to pyrotechnic materials such as explosives and flammable or combustible liquids, gases and solids when used to create pyrotechnic special effects."
+              }
+            ],
+            "script_spans": [
+              "Mara stands, braces, and fires the flare into the soaked blankets amidships.\n\nWHUMP. A line of blue-orange flame walks the deck like it knows the boat. Then the diesel catches and the MARGARET ROSE goes up -- a column of fire standing on the black water, doubled in the swell, huge.",
+              "Crow touches a road flare to the mortar fuse. The Fourth of July stash goes up -- white and gold chrysanthemums blooming over the burning boat, reflections shattering across the harbor."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The claim is a valid high-level production option proposing to substitute practical open flame and pyrotechnics with VFX and non-pyrotechnic props, directly addressing the hazards established by the source and scene.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The proposal directly addresses the pyrotechnic triggers in the scene without introducing unsupported operating duties or guaranteeing safety.",
+              "unsupported_parts": []
+            }
+          ]
+        },
+        "estimate_exclusions": []
+      },
+      "expected_entailed": true,
+      "actual_entailed": true,
+      "passed": true,
+      "elapsed_s": 6.55
+    },
+    {
+      "flag_id": "tattoo_cover_option",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "claim_checks": [
+          {
+            "field": "remedy",
+            "quote": "If the intended tattoo artwork is not cleared for screen use, consider covering it so it is not visible on screen.",
+            "basis": "planning",
+            "status": "SUPPORTED",
+            "reason": "Probe to be independently assessed",
+            "citation_numbers": [
+              1,
+              2
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "An Artwork Release Form is a legal document that grants permission to use a specific artwork or image in a film or television show."
+              },
+              {
+                "citation_number": 2,
+                "quote": "When someone gets a tattoo, the artist maintains the right to display that art in film, commercials, and television."
+              }
+            ],
+            "script_spans": [
+              "Across his forearm, a full-rigged schooner tattoo in fading blue-black \u2014 Teddy Krane's design, inked at his Rockland parlor the summer the Margaret Rose launched \u2014 rides every pour like weather."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The claim is a valid conditional content edit proposing to cover uncleared tattoo artwork so it is not visible on screen, directly addressing the tattoo trigger depicted in the script and supported by the sources concerning artist clearance for tattoos on screen.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The suggested option addresses the specific on-screen tattoo clearance trigger without introducing unsupported operational duties or guaranteeing legal outcomes.",
+              "unsupported_parts": []
+            }
+          ]
+        },
+        "estimate_exclusions": []
+      },
+      "expected_entailed": true,
+      "actual_entailed": true,
+      "passed": true,
+      "elapsed_s": 18.61
+    },
+    {
+      "flag_id": "firearms_option_typed",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "claim_checks": [
+          {
+            "field": "remedy",
+            "quote": "Alternatively, consider using non-firing prop replicas with visual and sound effects added in post-production.",
+            "basis": "production_option",
+            "status": "SUPPORTED",
+            "reason": "Probe to be independently assessed",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "BLANKS CAN KILL."
+              }
+            ],
+            "script_spans": [
+              "The honor guard stands in a row, rifles up at the ready."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The production option provides a high-level alternative to avoid the physical hazards associated with blank/firearm use by suggesting non-firing prop replicas and post-production effects, addressing the rifle presence in the scene without adding unsupported operating requirements.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The suggested option targets the firearm hazard identified in the safety source and script evidence without promising clearance or safety.",
+              "unsupported_parts": []
+            }
+          ]
+        },
+        "estimate_exclusions": []
+      },
+      "expected_entailed": true,
+      "actual_entailed": true,
+      "passed": true,
+      "elapsed_s": 5.66
+    },
+    {
+      "flag_id": "tattoo_permission_condition",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "claim_checks": [
+          {
+            "field": "remedy",
+            "quote": "If a real custom tattoo is intended to be shown on screen, seek permission to use that artwork from its artist.",
+            "basis": "application",
+            "status": "SUPPORTED",
+            "reason": "Probe to be independently assessed",
+            "citation_numbers": [
+              1,
+              2
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "An Artwork Release Form is a legal document that grants permission to use a specific artwork or image in a film or television show."
+              },
+              {
+                "citation_number": 2,
+                "quote": "When someone gets a tattoo, the artist maintains the right to display that art in film, commercials, and television."
+              }
+            ],
+            "script_spans": [
+              "Across his forearm, a full-rigged schooner tattoo in fading blue-black \u2014 Teddy Krane's design, inked at his Rockland parlor the summer the Margaret Rose launched \u2014 rides every pour like weather."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The sources state that tattoo artists retain the right to display their art in film and television, and that an artwork release form is required to grant permission for tattoos visible on screen. The conditional application to seek permission from the artist if a real custom tattoo is shown is fully supported.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The claim preserves the proper conditional scope regarding real tattoos shown on screen and matches the release requirements established in the sources without asserting unsupported duties.",
+              "unsupported_parts": []
+            }
+          ]
+        },
+        "estimate_exclusions": []
+      },
+      "expected_entailed": true,
+      "actual_entailed": true,
+      "passed": true,
+      "elapsed_s": 5.12
+    }
+  ],
+  "responses": [
+    {
+      "flag_id": "scene_observation_application",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The script evidence directly specifies Jeff Buckley's 'Hallelujah' (the Columbia recording) across the scenes.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The script receipts accurately match the claim's description of the specified song and recording.\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "firearms_option_mislabelled",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The source establishes the hazard associated with blank-firing firearms, and the claim is a high-level, optional production alternative to avoid on-set firing by using non-firing replicas with visual and sound effects added in post-production, without introducing unsupported mandatory procedures or guarantees.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The proposed production option directly addresses the firearm/blank firing trigger in the script evidence and does not exceed high-level hazard substitution.\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "pyro_option_mislabelled",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The claim is a valid high-level production option proposing to substitute practical open flame and pyrotechnics with VFX and non-pyrotechnic props, directly addressing the hazards established by the source and scene.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The proposal directly addresses the pyrotechnic triggers in the scene without introducing unsupported operating duties or guaranteeing safety.\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "tattoo_cover_option",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The claim is a valid conditional content edit proposing to cover uncleared tattoo artwork so it is not visible on screen, directly addressing the tattoo trigger depicted in the script and supported by the sources concerning artist clearance for tattoos on screen.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The suggested option addresses the specific on-screen tattoo clearance trigger without introducing unsupported operational duties or guaranteeing legal outcomes.\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "firearms_option_typed",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The production option provides a high-level alternative to avoid the physical hazards associated with blank/firearm use by suggesting non-firing prop replicas and post-production effects, addressing the rifle presence in the scene without adding unsupported operating requirements.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The suggested option targets the firearm hazard identified in the safety source and script evidence without promising clearance or safety.\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "tattoo_permission_condition",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The sources state that tattoo artists retain the right to display their art in film and television, and that an artwork release form is required to grant permission for tattoos visible on screen. The conditional application to seek permission from the artist if a real custom tattoo is shown is fully supported.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The claim preserves the proper conditional scope regarding real tattoos shown on screen and matches the release requirements established in the sources without asserting unsupported duties.\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    }
+  ]
+}

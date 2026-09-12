@@ -243,11 +243,17 @@ def entailment(verdict):
                 "scope_preserved": True,
                 "requirements_supported": True,
                 "scope_reason": "Scripted matching scope.",
+                "named_rights_status": "not_asserted",
                 "unsupported_parts": [],
             }
             for i, check in enumerate(verdict["claim_checks"])
             if check["status"] == "SUPPORTED"
-            and (check["support_spans"] or check.get("script_spans") or check["basis"] == "inquiry")
+            and (
+                check["support_spans"]
+                or check.get("script_spans")
+                or check["basis"] == "inquiry"
+                or check["field"] == "finding"
+            )
             and check["field"] != "severity"
             and check["quote"] != PRODUCTION_INQUIRY
         ]
@@ -712,14 +718,15 @@ def test_saved_minor_correction_supplies_attribution_without_prior_reasoning():
     client = Client(entailment(verdict))  # verifies input isolation, not model accuracy
     asyncio.run(check_entailment(client, candidate, verdict))
     claims = json.loads(client.calls[0]["contents"].rsplit("\n\n", 1)[1])
-    assert len(claims) == 1
-    receipt = claims[0]["support"][0]
+    assert len(claims) == 2  # the old receipt-free scene assertion now also needs review
+    source_claim = next(c for c in claims if c["support"])
+    receipt = source_claim["support"][0]
     source = flag["citations"][1]
     assert receipt["citation_number"] == 2
     assert receipt["source_attribution"] == {k: source[k] for k in ("title", "url")}
     assert receipt["excerpt_context"] == source["excerpt"]
     assert receipt["quote"] in source["excerpt"]
-    assert set(claims[0]) == {
+    assert set(source_claim) == {
         "check_index",
         "claim",
         "claim_context",
@@ -727,8 +734,8 @@ def test_saved_minor_correction_supplies_attribution_without_prior_reasoning():
         "basis",
         "script_evidence",
     }
-    assert claims[0]["script_evidence"] == []
-    assert claims[0]["claim_context"] == candidate["finding"]  # context, not evidence
+    assert source_claim["script_evidence"] == []
+    assert source_claim["claim_context"] == candidate["finding"]  # context, not evidence
 
 
 def test_source_metadata_cannot_replace_an_operative_excerpt_receipt():
@@ -950,14 +957,19 @@ def test_new_audit_is_bound_to_amounts_and_sources_while_legacy_records_are_unch
 
 
 @pytest.mark.parametrize(
-    "component", ["scope_preserved", "requirements_supported", "unsupported_parts"]
+    "component",
+    ["scope_preserved", "requirements_supported", "unsupported_parts", "named_rights_status"],
 )
 def test_failed_scope_or_duty_component_overrides_a_positive_boolean(component):
     flag = saved_flag()
     verdict = checked_verdict(audit(flag), flag)
     response = entailment(verdict)
     response["checks"][0][component] = (
-        ["Unsupported open-flame alternative"] if component == "unsupported_parts" else False
+        ["Unsupported open-flame alternative"]
+        if component == "unsupported_parts"
+        else "unqualified_relationship"
+        if component == "named_rights_status"
+        else False
     )
     client = Client(response)
     result = asyncio.run(check_entailment(client, flag, verdict))
@@ -966,7 +978,10 @@ def test_failed_scope_or_duty_component_overrides_a_positive_boolean(component):
     assert result["entailment_review"]["checks"][0]["entailed"] is False
 
 
-@pytest.mark.parametrize("component", ["scope_preserved", "requirements_supported", "scope_reason"])
+@pytest.mark.parametrize(
+    "component",
+    ["scope_preserved", "requirements_supported", "scope_reason", "named_rights_status"],
+)
 def test_new_live_review_cannot_silently_omit_scope_checks(component):
     flag = saved_flag()
     verdict = checked_verdict(audit(flag), flag)

@@ -16,6 +16,14 @@ licensing cost' without a confirmed owner or quote. Risk magnitude is not certai
 A CUT/REPLACE suggestion can address that trigger without the source prescribing an
 edit. Specific owners, mandatory duties, permits, equipment and numeric prices still
 need their own evidence; adding 'could' does not make an unsupported claim reliable.
+Report named rights relationships as explicit source attributions or investigation
+leads: say what a source credits/lists and what current authority remains to confirm.
+Do not turn a credit, catalog entry or historical owner into the party authorized to
+license this production. An instruction to obtain rights from a named company asserts
+that relationship too, including names inserted in parentheses after 'owner'.
+A generic rights-holder/licensing-administrator role is different: where a source
+establishes a licensing requirement, identifying the party authorized to grant that
+license is a relevant next step. It does not assert a particular company's authority.
 Prefer a narrow useful warning and relevant options over an unrelated generic question.
 Unknown production inputs are normal; do not call them failed verification when the
 conditional assessment itself is supported. Failed or missing evidence is different.

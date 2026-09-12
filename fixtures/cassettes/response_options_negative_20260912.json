@@ -1,0 +1,413 @@
+{
+  "source_run": "runs/run_20260912_003816.json",
+  "source_run_sha256": "ea4637bc230fcfd1b7ad6c567c7e8c5e08589a4874596f5206e039f4fdffd3bd",
+  "source_build": "local:9318011a954f4f44149300e8a968c166cd84d973",
+  "evaluated_build": "f4675b74cbe2b262e924bcfb07cee9fe9c826e42",
+  "model": "gemini-3.7-flash",
+  "elapsed_s": 41.02,
+  "calls": 6,
+  "responses_with_usage": 6,
+  "calls_without_returned_usage": 0,
+  "resumed_from": null,
+  "rechecked_correction_from": null,
+  "entailment_cases": "fixtures/accuracy/response_options_negative_20260912.json",
+  "entailment_cases_sha256": "0b4ad226f07750ef81c240592234d5b8c9551a1213897256a342efaf9e3d7737",
+  "attempts": [
+    {
+      "flag_id": "script_cannot_prove_owner",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 9365,
+      "input_sha256": "55b308a872cc4ccc9e852eb02c42ca75ef4d7514e97b4fce799c4c5412f0822b",
+      "usage_available": true,
+      "elapsed_s": 5.44
+    },
+    {
+      "flag_id": "invented_scene_performance",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 9343,
+      "input_sha256": "e68fef94049c0b254da6b71e39a735cfd1fd998c6a679951355fd02a01b6ccf2",
+      "usage_available": true,
+      "elapsed_s": 4.51
+    },
+    {
+      "flag_id": "firearms_option_safety_guarantee",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 9483,
+      "input_sha256": "b1920f36cf9b23922f7990fa7c73edb7380feb97dc572dc67ebe9b6ed81af637",
+      "usage_available": true,
+      "elapsed_s": 8.02
+    },
+    {
+      "flag_id": "firearms_option_invented_setup",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 9391,
+      "input_sha256": "cd07cbd050413c44e8963233f5c733d30e9b8304cb0697d506872eea0d153710",
+      "usage_available": true,
+      "elapsed_s": 6.76
+    },
+    {
+      "flag_id": "pyro_option_retains_hazard",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 11204,
+      "input_sha256": "969af526dcc4f8ca75b0392534741b0d50ef667c16f95a64c9564dcd29f8cb62",
+      "usage_available": true,
+      "elapsed_s": 7.42
+    },
+    {
+      "flag_id": "tattoo_original_deadline",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 10749,
+      "input_sha256": "43316ad3be68e7d8bac4e3bfd4f65bbf5561184cff83959e57ec172c6e2d2583",
+      "usage_available": true,
+      "elapsed_s": 8.8
+    }
+  ],
+  "gemini_usage": {
+    "flash": {
+      "prompt": 13193,
+      "cached": 0,
+      "output": 4140
+    }
+  },
+  "estimated_cost_usd": 0.0254,
+  "manual_review": "pending; model approval is not an accuracy label",
+  "results": [
+    {
+      "flag_id": "script_cannot_prove_owner",
+      "verdict": {
+        "verdict": "PARTIAL",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "Sony Music Entertainment currently owns and exclusively licenses Jeff Buckley's 'Hallelujah' recording worldwide.",
+            "basis": "application",
+            "status": "UNSUPPORTED",
+            "reason": "Independent span review: No source evidence is provided to verify that Sony Music Entertainment currently owns and exclusively licenses Jeff Buckley's 'Hallelujah' recording worldwide.; Specific current worldwide ownership and exclusive licensing authority cannot be established from script mentions alone and requires external source documentation.; Sony Music Entertainment currently owns and exclusively licenses Jeff Buckley's 'Hallelujah' recording worldwide.",
+            "citation_numbers": [],
+            "support_spans": [],
+            "script_spans": [
+              "\"Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.\"",
+              "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.",
+              "Buckley's \"Hallelujah\" starts again, drifting out across the water toward the fire."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": false,
+              "reason": "No source evidence is provided to verify that Sony Music Entertainment currently owns and exclusively licenses Jeff Buckley's 'Hallelujah' recording worldwide.",
+              "scope_preserved": false,
+              "requirements_supported": false,
+              "scope_reason": "Specific current worldwide ownership and exclusive licensing authority cannot be established from script mentions alone and requires external source documentation.",
+              "unsupported_parts": [
+                "Sony Music Entertainment currently owns and exclusively licenses Jeff Buckley's 'Hallelujah' recording worldwide."
+              ]
+            }
+          ]
+        },
+        "estimate_exclusions": [],
+        "reason": "Claim audit requires correction: Independent span review: No source evidence is provided to verify that Sony Music Entertainment currently owns and exclusively licenses Jeff Buckley's 'Hallelujah' recording worldwide.; Specific current worldwide ownership and exclusive licensing authority cannot be established from script mentions alone and requires external source documentation.; Sony Music Entertainment currently owns and exclusively licenses Jeff Buckley's 'Hallelujah' recording worldwide."
+      },
+      "expected_entailed": false,
+      "actual_entailed": false,
+      "passed": true,
+      "elapsed_s": 5.46
+    },
+    {
+      "flag_id": "invented_scene_performance",
+      "verdict": {
+        "verdict": "PARTIAL",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "In S004 Danny performs a new acoustic cover of 'Hallelujah' instead of playing the Columbia recording.",
+            "basis": "application",
+            "status": "UNSUPPORTED",
+            "reason": "Independent span review: The script evidence directly contradicts the claim: the script explicitly indicates that the Columbia recording of Jeff Buckley's 'Hallelujah' is played rather than a new acoustic cover performed by Danny.; The scene observation asserts an acoustic performance by Danny which is contradicted and unsupported by the script receipts.; In S004 Danny performs a new acoustic cover of 'Hallelujah' instead of playing the Columbia recording.",
+            "citation_numbers": [],
+            "support_spans": [],
+            "script_spans": [
+              "\"Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.\"",
+              "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.",
+              "Buckley's \"Hallelujah\" starts again, drifting out across the water toward the fire."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": false,
+              "reason": "The script evidence directly contradicts the claim: the script explicitly indicates that the Columbia recording of Jeff Buckley's 'Hallelujah' is played rather than a new acoustic cover performed by Danny.",
+              "scope_preserved": false,
+              "requirements_supported": false,
+              "scope_reason": "The scene observation asserts an acoustic performance by Danny which is contradicted and unsupported by the script receipts.",
+              "unsupported_parts": [
+                "In S004 Danny performs a new acoustic cover of 'Hallelujah' instead of playing the Columbia recording."
+              ]
+            }
+          ]
+        },
+        "estimate_exclusions": [],
+        "reason": "Claim audit requires correction: Independent span review: The script evidence directly contradicts the claim: the script explicitly indicates that the Columbia recording of Jeff Buckley's 'Hallelujah' is played rather than a new acoustic cover performed by Danny.; The scene observation asserts an acoustic performance by Danny which is contradicted and unsupported by the script receipts.; In S004 Danny performs a new acoustic cover of 'Hallelujah' instead of playing the Columbia recording."
+      },
+      "expected_entailed": false,
+      "actual_entailed": false,
+      "passed": true,
+      "elapsed_s": 4.51
+    },
+    {
+      "flag_id": "firearms_option_safety_guarantee",
+      "verdict": {
+        "verdict": "PARTIAL",
+        "claim_checks": [
+          {
+            "field": "remedy",
+            "quote": "Use non-firing prop replicas with visual and sound effects in post; this makes the rifle sequence completely safe and eliminates any need for safety planning.",
+            "basis": "production_option",
+            "status": "UNSUPPORTED",
+            "reason": "Independent span review: Production options may propose high-level hazard removal, but they cannot guarantee absolute safety or assert that all safety planning is eliminated. The source does not support the claim that this sequence becomes completely safe or exempt from planning.; While replacing practical firing with prop replicas and post-production effects addresses the blank firing hazard, the claim improperly includes an unsupported guarantee of complete safety and waives safety planning.; this makes the rifle sequence completely safe and eliminates any need for safety planning",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "BLANKS CAN KILL."
+              }
+            ],
+            "script_spans": [
+              "The honor guard stands in a row, rifles up at the ready."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": false,
+              "reason": "Production options may propose high-level hazard removal, but they cannot guarantee absolute safety or assert that all safety planning is eliminated. The source does not support the claim that this sequence becomes completely safe or exempt from planning.",
+              "scope_preserved": true,
+              "requirements_supported": false,
+              "scope_reason": "While replacing practical firing with prop replicas and post-production effects addresses the blank firing hazard, the claim improperly includes an unsupported guarantee of complete safety and waives safety planning.",
+              "unsupported_parts": [
+                "this makes the rifle sequence completely safe and eliminates any need for safety planning"
+              ]
+            }
+          ]
+        },
+        "estimate_exclusions": [],
+        "reason": "Claim audit requires correction: Independent span review: Production options may propose high-level hazard removal, but they cannot guarantee absolute safety or assert that all safety planning is eliminated. The source does not support the claim that this sequence becomes completely safe or exempt from planning.; While replacing practical firing with prop replicas and post-production effects addresses the blank firing hazard, the claim improperly includes an unsupported guarantee of complete safety and waives safety planning.; this makes the rifle sequence completely safe and eliminates any need for safety planning"
+      },
+      "expected_entailed": false,
+      "actual_entailed": false,
+      "passed": true,
+      "elapsed_s": 8.02
+    },
+    {
+      "flag_id": "firearms_option_invented_setup",
+      "verdict": {
+        "verdict": "PARTIAL",
+        "claim_checks": [
+          {
+            "field": "remedy",
+            "quote": "Consider firing quarter-load blanks with performers two metres from the muzzle and wearing flesh-toned earplugs.",
+            "basis": "production_option",
+            "status": "UNSUPPORTED",
+            "reason": "Independent span review: The citation only states 'BLANKS CAN KILL' and does not support specific operating procedures, distances, loads, or PPE requirements such as quarter-load blanks, a two-metre distance, or flesh-toned earplugs.; Specific operational instructions, load specifications, safe distances, and PPE prescriptions require direct source support and cannot be introduced as an unsupported production option.; firing quarter-load blanks; performers two metres from the muzzle; wearing flesh-toned earplugs",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "BLANKS CAN KILL."
+              }
+            ],
+            "script_spans": [
+              "The honor guard stands in a row, rifles up at the ready."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": false,
+              "reason": "The citation only states 'BLANKS CAN KILL' and does not support specific operating procedures, distances, loads, or PPE requirements such as quarter-load blanks, a two-metre distance, or flesh-toned earplugs.",
+              "scope_preserved": false,
+              "requirements_supported": false,
+              "scope_reason": "Specific operational instructions, load specifications, safe distances, and PPE prescriptions require direct source support and cannot be introduced as an unsupported production option.",
+              "unsupported_parts": [
+                "firing quarter-load blanks",
+                "performers two metres from the muzzle",
+                "wearing flesh-toned earplugs"
+              ]
+            }
+          ]
+        },
+        "estimate_exclusions": [],
+        "reason": "Claim audit requires correction: Independent span review: The citation only states 'BLANKS CAN KILL' and does not support specific operating procedures, distances, loads, or PPE requirements such as quarter-load blanks, a two-metre distance, or flesh-toned earplugs.; Specific operational instructions, load specifications, safe distances, and PPE prescriptions require direct source support and cannot be introduced as an unsupported production option.; firing quarter-load blanks; performers two metres from the muzzle; wearing flesh-toned earplugs"
+      },
+      "expected_entailed": false,
+      "actual_entailed": false,
+      "passed": true,
+      "elapsed_s": 6.77
+    },
+    {
+      "flag_id": "pyro_option_retains_hazard",
+      "verdict": {
+        "verdict": "PARTIAL",
+        "claim_checks": [
+          {
+            "field": "remedy",
+            "quote": "Use controlled practical fire bars on a dedicated barge to remove the need for pyrotechnic planning.",
+            "basis": "production_option",
+            "status": "UNSUPPORTED",
+            "reason": "Independent span review: The cited safety bulletin covers flammable or combustible liquids and gases used for special effects, so practical fire bars do not inherently remove pyrotechnic or open-flame safety planning. Furthermore, prescribing specific equipment ('practical fire bars on a dedicated barge') and promising an exemption from planning requirements is not supported by the excerpt.; While the option attempts to propose an alternative physical staging for the boat fire scene, it introduces specific unverified equipment instructions and an unsupported guarantee regarding the elimination of pyrotechnic planning.; controlled practical fire bars on a dedicated barge; remove the need for pyrotechnic planning",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "This Safety Bulletin applies to pyrotechnic materials such as explosives and flammable or combustible liquids, gases and solids when used to create pyrotechnic special effects."
+              }
+            ],
+            "script_spans": [
+              "Mara stands, braces, and fires the flare into the soaked blankets amidships.\n\nWHUMP. A line of blue-orange flame walks the deck like it knows the boat. Then the diesel catches and the MARGARET ROSE goes up -- a column of fire standing on the black water, doubled in the swell, huge.",
+              "Crow touches a road flare to the mortar fuse. The Fourth of July stash goes up -- white and gold chrysanthemums blooming over the burning boat, reflections shattering across the harbor."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": false,
+              "reason": "The cited safety bulletin covers flammable or combustible liquids and gases used for special effects, so practical fire bars do not inherently remove pyrotechnic or open-flame safety planning. Furthermore, prescribing specific equipment ('practical fire bars on a dedicated barge') and promising an exemption from planning requirements is not supported by the excerpt.",
+              "scope_preserved": true,
+              "requirements_supported": false,
+              "scope_reason": "While the option attempts to propose an alternative physical staging for the boat fire scene, it introduces specific unverified equipment instructions and an unsupported guarantee regarding the elimination of pyrotechnic planning.",
+              "unsupported_parts": [
+                "controlled practical fire bars on a dedicated barge",
+                "remove the need for pyrotechnic planning"
+              ]
+            }
+          ]
+        },
+        "estimate_exclusions": [],
+        "reason": "Claim audit requires correction: Independent span review: The cited safety bulletin covers flammable or combustible liquids and gases used for special effects, so practical fire bars do not inherently remove pyrotechnic or open-flame safety planning. Furthermore, prescribing specific equipment ('practical fire bars on a dedicated barge') and promising an exemption from planning requirements is not supported by the excerpt.; While the option attempts to propose an alternative physical staging for the boat fire scene, it introduces specific unverified equipment instructions and an unsupported guarantee regarding the elimination of pyrotechnic planning.; controlled practical fire bars on a dedicated barge; remove the need for pyrotechnic planning"
+      },
+      "expected_entailed": false,
+      "actual_entailed": false,
+      "passed": true,
+      "elapsed_s": 7.43
+    },
+    {
+      "flag_id": "tattoo_original_deadline",
+      "verdict": {
+        "verdict": "PARTIAL",
+        "claim_checks": [
+          {
+            "field": "remedy",
+            "quote": "If the actor cast as Crow possesses a real custom tattoo intended to be featured on screen, obtain a signed artwork or tattoo release agreement from the original tattoo artist prior to principal photography, or alternatively cover the tattoo or substitute it with cleared artwork.",
+            "basis": "planning",
+            "status": "UNSUPPORTED",
+            "reason": "Independent span review: The cited sources support that tattoo artists retain display rights and that artwork release forms grant permission for on-screen tattoos, but they do not establish the specific deadline to obtain the signed release 'prior to principal photography'.; The conditional remedy addresses on-screen tattoo clearance and offers appropriate high-level alternatives (cover or substitute), but includes an unsupported timing requirement.; prior to principal photography",
+            "citation_numbers": [
+              1,
+              2
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "An Artwork Release Form is a legal document that grants permission to use a specific artwork or image in a film or television show."
+              },
+              {
+                "citation_number": 2,
+                "quote": "When someone gets a tattoo, the artist maintains the right to display that art in film, commercials, and television."
+              }
+            ],
+            "script_spans": [
+              "Across his forearm, a full-rigged schooner tattoo in fading blue-black \u2014 Teddy Krane's design, inked at his Rockland parlor the summer the Margaret Rose launched \u2014 rides every pour like weather."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": false,
+              "reason": "The cited sources support that tattoo artists retain display rights and that artwork release forms grant permission for on-screen tattoos, but they do not establish the specific deadline to obtain the signed release 'prior to principal photography'.",
+              "scope_preserved": true,
+              "requirements_supported": false,
+              "scope_reason": "The conditional remedy addresses on-screen tattoo clearance and offers appropriate high-level alternatives (cover or substitute), but includes an unsupported timing requirement.",
+              "unsupported_parts": [
+                "prior to principal photography"
+              ]
+            }
+          ]
+        },
+        "estimate_exclusions": [],
+        "reason": "Claim audit requires correction: Independent span review: The cited sources support that tattoo artists retain display rights and that artwork release forms grant permission for on-screen tattoos, but they do not establish the specific deadline to obtain the signed release 'prior to principal photography'.; The conditional remedy addresses on-screen tattoo clearance and offers appropriate high-level alternatives (cover or substitute), but includes an unsupported timing requirement.; prior to principal photography"
+      },
+      "expected_entailed": false,
+      "actual_entailed": false,
+      "passed": true,
+      "elapsed_s": 8.8
+    }
+  ],
+  "responses": [
+    {
+      "flag_id": "script_cannot_prove_owner",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": false,\n      \"reason\": \"No source evidence is provided to verify that Sony Music Entertainment currently owns and exclusively licenses Jeff Buckley's 'Hallelujah' recording worldwide.\",\n      \"scope_preserved\": false,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"Specific current worldwide ownership and exclusive licensing authority cannot be established from script mentions alone and requires external source documentation.\",\n      \"unsupported_parts\": [\n        \"Sony Music Entertainment currently owns and exclusively licenses Jeff Buckley's 'Hallelujah' recording worldwide.\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "invented_scene_performance",
+      "schema": "EntailmentResult",
+      "text": "{\"checks\":[{\"check_index\":0,\"entailed\":false,\"reason\":\"The script evidence directly contradicts the claim: the script explicitly indicates that the Columbia recording of Jeff Buckley's 'Hallelujah' is played rather than a new acoustic cover performed by Danny.\",\"scope_preserved\":false,\"requirements_supported\":false,\"scope_reason\":\"The scene observation asserts an acoustic performance by Danny which is contradicted and unsupported by the script receipts.\",\"unsupported_parts\":[\"In S004 Danny performs a new acoustic cover of 'Hallelujah' instead of playing the Columbia recording.\"]}]}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "firearms_option_safety_guarantee",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": false,\n      \"reason\": \"Production options may propose high-level hazard removal, but they cannot guarantee absolute safety or assert that all safety planning is eliminated. The source does not support the claim that this sequence becomes completely safe or exempt from planning.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"While replacing practical firing with prop replicas and post-production effects addresses the blank firing hazard, the claim improperly includes an unsupported guarantee of complete safety and waives safety planning.\",\n      \"unsupported_parts\": [\n        \"this makes the rifle sequence completely safe and eliminates any need for safety planning\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "firearms_option_invented_setup",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": false,\n      \"reason\": \"The citation only states 'BLANKS CAN KILL' and does not support specific operating procedures, distances, loads, or PPE requirements such as quarter-load blanks, a two-metre distance, or flesh-toned earplugs.\",\n      \"scope_preserved\": false,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"Specific operational instructions, load specifications, safe distances, and PPE prescriptions require direct source support and cannot be introduced as an unsupported production option.\",\n      \"unsupported_parts\": [\n        \"firing quarter-load blanks\",\n        \"performers two metres from the muzzle\",\n        \"wearing flesh-toned earplugs\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "pyro_option_retains_hazard",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": false,\n      \"reason\": \"The cited safety bulletin covers flammable or combustible liquids and gases used for special effects, so practical fire bars do not inherently remove pyrotechnic or open-flame safety planning. Furthermore, prescribing specific equipment ('practical fire bars on a dedicated barge') and promising an exemption from planning requirements is not supported by the excerpt.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"While the option attempts to propose an alternative physical staging for the boat fire scene, it introduces specific unverified equipment instructions and an unsupported guarantee regarding the elimination of pyrotechnic planning.\",\n      \"unsupported_parts\": [\n        \"controlled practical fire bars on a dedicated barge\",\n        \"remove the need for pyrotechnic planning\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "tattoo_original_deadline",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": false,\n      \"reason\": \"The cited sources support that tattoo artists retain display rights and that artwork release forms grant permission for on-screen tattoos, but they do not establish the specific deadline to obtain the signed release 'prior to principal photography'.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"The conditional remedy addresses on-screen tattoo clearance and offers appropriate high-level alternatives (cover or substitute), but includes an unsupported timing requirement.\",\n      \"unsupported_parts\": [\n        \"prior to principal photography\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    }
+  ]
+}
