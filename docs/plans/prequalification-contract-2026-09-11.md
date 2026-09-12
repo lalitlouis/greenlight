@@ -153,3 +153,30 @@ historical lead from current licensing authority. The reviewer now checks that d
 explicitly. Budget four narrow probes and one fresh-clearance repair after this code
 change, retaining the earlier failure unchanged. A current registry/rights investigation
 and general product accuracy are not established by these source-support tests.
+
+## Evidence-only repair input
+
+Build `27f5986` matched all four temporal controls. Its fresh-clearance correction still
+repeated unqualified current ownership/licensing claims, which the new reviewer rejected
+(five calls, 91.53 seconds, estimated $0.0537). Passing an isolated control did not make
+the free-form repair reliably follow it. The raw rejected paragraph remained a prominent
+input to the generator.
+
+The 20-call safety diagnostic completed after 17 model responses (76.88 seconds), with
+different, richer source excerpts. Its correction review failed because the secondary
+model omitted `scope_preserved` on all four returned checks. The field was optional in
+the response schema despite being mandatory at acceptance. This five-call review took
+76.4 seconds (estimated $0.0449); no unsupported output was delivered.
+
+Repair now receives identity, unchanged sources, accepted assertions, exact script
+receipts and limitations. The rejected finding/remedy and earlier overall summary are
+not supplied. A broad accepted quote containing an explicitly failed subclause is also
+excluded. Script-labelled paraphrases are replaced by their exact scene receipts so
+remembered details do not propagate through repair. Original drafts/audits remain in
+the record. This changes the information flow rather than adding another repair loop.
+
+Scope and requirement decisions are required booleans in the model response schema;
+missing fields still fail closed. Add two frozen water-qualification controls to check
+that 'when necessary' and example alternatives survive (`water_qualifications_20260911.json`).
+Budget those two calls and one review of each unchanged fresh finding after these changes,
+at most ten more logical calls. No further desk generation is needed for that comparison.

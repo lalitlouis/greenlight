@@ -18,6 +18,7 @@ from greenlight.agents.evidence_review import (
     checked_verdict,
     corrected_flag,
     flag_fingerprint,
+    repair_evidence,
     review_incomplete,
 )
 from greenlight.agents.verification import (
@@ -824,8 +825,10 @@ def test_partial_audit_positives_are_checked_before_the_correction_inherits_them
     reviewed = json.loads(
         repair_prompt.split("\nVERIFICATION:\n", 1)[1].split("\nSCENE TEXT:", 1)[0]
     )
-    assert reviewed["claim_checks"][0]["status"] == "UNSUPPORTED"
-    assert "claimed relationship is absent" in reviewed["claim_checks"][0]["reason"]
+    assert any(
+        "claimed relationship is absent" in issue["reason"] for issue in reviewed["limitations"]
+    )
+    assert all(c.get("quote") != flag["finding"] for c in reviewed["accepted_assertions"])
 
 
 @pytest.mark.parametrize("accepted", [True, False])
@@ -898,3 +901,34 @@ def test_redundant_citation_indexes_are_derived_from_valid_receipts_without_addi
     )
     result = asyncio.run(check_entailment(Client(response), candidate, checked))
     assert result["verdict"] == "PARTIAL"  # normalizing indexes cannot override a semantic failure
+
+
+def test_repair_sees_receipts_and_limitations_instead_of_rejected_paragraphs():
+    source = json.loads(
+        (ROOT / "fixtures/cassettes/prequalification_fresh_clearance_20260911.json").read_text()
+    )
+    flag = source["flags"][0]
+    artifact = json.loads(
+        (
+            ROOT / "fixtures/cassettes/prequalification_fresh_clearance_time_review_20260911.json"
+        ).read_text()
+    )
+    before = artifact["results"][0]["verdict"]["evidence_review"]["before"]
+    original = deepcopy(before)
+    identity, evidence = repair_evidence(flag, before)
+    assert before == original
+    assert "finding" not in identity and "remedy" not in identity
+    assert identity["citations"] == flag["citations"]
+    assert "reason" not in evidence
+    assert all("quote" not in c for c in evidence["accepted_assertions"] if c["basis"] == "script")
+    assert evidence["limitations"]
+    assert flag["finding"] not in json.dumps((identity, evidence))
+    assert flag["remedy"]["detail"] not in json.dumps((identity, evidence))
+
+
+def test_a_broad_positive_cannot_reintroduce_an_explicitly_failed_subclause():
+    flag = saved_flag()
+    verdict = audit(flag, issue="Employ a certified Studio Teacher")
+    _, evidence = repair_evidence(flag, verdict)
+    assert all(c.get("field") != "remedy" for c in evidence["accepted_assertions"])
+    assert any(c["field"] == "remedy" for c in evidence["limitations"])

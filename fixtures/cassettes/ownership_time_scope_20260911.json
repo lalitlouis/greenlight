@@ -1,0 +1,285 @@
+{
+  "source_run": "fixtures/cassettes/prequalification_fresh_clearance_20260911.json",
+  "source_run_sha256": "9de01086d0553fa295092598859f3ef9d8b13ba35078b90d001eaf33e4827ec0",
+  "source_build": "ab2efab3710c4e2e1baf73e8f79b23841cffc180",
+  "evaluated_build": "27f598661a5b299389fdd5b94bdf035f5e923624",
+  "model": "gemini-3.7-flash",
+  "elapsed_s": 24.47,
+  "calls": 4,
+  "responses_with_usage": 4,
+  "calls_without_returned_usage": 0,
+  "resumed_from": null,
+  "rechecked_correction_from": null,
+  "entailment_cases": "fixtures/accuracy/ownership_time_scope_20260911.json",
+  "entailment_cases_sha256": "7aa26c00a1c81da3bfe8a998939627abc01c5c9484481149c6b204a78a182ceb",
+  "attempts": [
+    {
+      "flag_id": "historical_ownership_qualified",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 7270,
+      "input_sha256": "c32518500270717f1ad2890f3f9399046e987bd7ebb443c5be5ecb791940cad0",
+      "usage_available": true,
+      "elapsed_s": 4.76
+    },
+    {
+      "flag_id": "historical_ownership_current",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 7910,
+      "input_sha256": "252f49a0b602f9cd8c91b4c4ea9721dd433223f5c39492f7fcb79ecb0b288d69",
+      "usage_available": true,
+      "elapsed_s": 9.42
+    },
+    {
+      "flag_id": "historical_ownership_lead",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 8994,
+      "input_sha256": "b7dbc5ef658c1914979f9a24ad141279002d525b09f80c572c9fa2c21fa274fd",
+      "usage_available": true,
+      "elapsed_s": 5.85
+    },
+    {
+      "flag_id": "retrieval_does_not_update_ownership",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 7294,
+      "input_sha256": "3b12ce1170f081cd956ad87af682cc9ce9bff82fa241ea70fbd97a8c52b16636",
+      "usage_available": true,
+      "elapsed_s": 4.41
+    }
+  ],
+  "gemini_usage": {
+    "flash": {
+      "prompt": 7227,
+      "cached": 0,
+      "output": 2316
+    }
+  },
+  "estimated_cost_usd": 0.0141,
+  "manual_review": "pending; model approval is not an accuracy label",
+  "results": [
+    {
+      "flag_id": "historical_ownership_qualified",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "In the cited 1982 court decision, Universal was identified as the copyright owner of the motion picture JAWS.",
+            "basis": "source",
+            "status": "SUPPORTED",
+            "reason": "Probe to be independently assessed",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "Universal is the owner of the copyright in a motion picture entitled \"Jaws\". Prior to June 20, 1975, Universal produced the motion picture \"Jaws\" based on the book \"Jaws\" written by Benchley."
+              }
+            ],
+            "script_spans": []
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The cited 1982 court excerpt directly states that Universal is the owner of the copyright in the motion picture entitled 'Jaws', and the claim properly scopes this statement to that decision.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The claim explicitly preserves the historical context of the 1982 decision without making unsupported current ownership assertions.",
+              "unsupported_parts": []
+            }
+          ]
+        },
+        "estimate_exclusions": []
+      },
+      "expected_entailed": true,
+      "actual_entailed": true,
+      "passed": true,
+      "elapsed_s": 4.77
+    },
+    {
+      "flag_id": "historical_ownership_current",
+      "verdict": {
+        "verdict": "PARTIAL",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "Universal is the current copyright owner of JAWS, and Universal Studios Media Licensing is authorized to grant the rights needed for this production.",
+            "basis": "source",
+            "status": "UNSUPPORTED",
+            "reason": "Independent span review: A 1982 court case establishes historical ownership at that time rather than current copyright ownership, and generic library marketing does not establish authorization to grant the specific rights needed for this production.; The evidence does not preserve the temporal scope required for an unqualified claim of current ownership or authorization.; Universal is the current copyright owner of JAWS; Universal Studios Media Licensing is authorized to grant the rights needed for this production",
+            "citation_numbers": [
+              1,
+              2
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "Universal is the owner of the copyright in a motion picture entitled \"Jaws\". Prior to June 20, 1975, Universal produced the motion picture \"Jaws\" based on the book \"Jaws\" written by Benchley."
+              },
+              {
+                "citation_number": 2,
+                "quote": "Your source for film and TV clip, still, and elements business to business media licensing from the iconic Universal Pictures, Focus Features, DreamWorks Animation, and MCA Television libraries."
+              }
+            ],
+            "script_spans": []
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": false,
+              "reason": "A 1982 court case establishes historical ownership at that time rather than current copyright ownership, and generic library marketing does not establish authorization to grant the specific rights needed for this production.",
+              "scope_preserved": false,
+              "requirements_supported": false,
+              "scope_reason": "The evidence does not preserve the temporal scope required for an unqualified claim of current ownership or authorization.",
+              "unsupported_parts": [
+                "Universal is the current copyright owner of JAWS",
+                "Universal Studios Media Licensing is authorized to grant the rights needed for this production"
+              ]
+            }
+          ]
+        },
+        "estimate_exclusions": [],
+        "reason": "Claim audit requires correction: Independent span review: A 1982 court case establishes historical ownership at that time rather than current copyright ownership, and generic library marketing does not establish authorization to grant the specific rights needed for this production.; The evidence does not preserve the temporal scope required for an unqualified claim of current ownership or authorization.; Universal is the current copyright owner of JAWS; Universal Studios Media Licensing is authorized to grant the rights needed for this production"
+      },
+      "expected_entailed": false,
+      "actual_entailed": false,
+      "passed": true,
+      "elapsed_s": 9.42
+    },
+    {
+      "flag_id": "historical_ownership_lead",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "claim_checks": [
+          {
+            "field": "remedy",
+            "quote": "The 1982 decision identifies Universal as the owner at that time. Use its media-licensing service as a starting point to inquire about the JAWS clip, and confirm current ownership and authority for the intended use.",
+            "basis": "inquiry",
+            "status": "SUPPORTED",
+            "reason": "Probe to be independently assessed",
+            "citation_numbers": [
+              1,
+              2
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "Universal is the owner of the copyright in a motion picture entitled \"Jaws\". Prior to June 20, 1975, Universal produced the motion picture \"Jaws\" based on the book \"Jaws\" written by Benchley."
+              },
+              {
+                "citation_number": 2,
+                "quote": "Your source for film and TV clip, still, and elements business to business media licensing from the iconic Universal Pictures, Focus Features, DreamWorks Animation, and MCA Television libraries."
+              }
+            ],
+            "script_spans": [
+              "On the corner TV, muted, an old VHS of JAWS is playing. The shark is winning."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The 1982 court decision explicitly establishes that Universal owned the copyright in Jaws at that time, and the licensing service excerpt confirms Universal Studios Media Licensing handles clip licensing for the Universal library. Framing this as a starting point inquiry to confirm current ownership and authority correctly preserves time scope and introduces no unsupported guarantees or mandatory duties.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The inquiry directly addresses the Jaws clip clearance issue identified in the script and finding without asserting unqualified current ownership.",
+              "unsupported_parts": []
+            }
+          ]
+        },
+        "estimate_exclusions": []
+      },
+      "expected_entailed": true,
+      "actual_entailed": true,
+      "passed": true,
+      "elapsed_s": 5.85
+    },
+    {
+      "flag_id": "retrieval_does_not_update_ownership",
+      "verdict": {
+        "verdict": "PARTIAL",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "The historical ownership statement proves Universal still owns JAWS today because the page is available on the web today.",
+            "basis": "source",
+            "status": "UNSUPPORTED",
+            "reason": "Independent span review: A 1982 court ruling establishes copyright ownership at that historical time; web availability/retrieval today does not prove current ownership.; The source is a historical 1982 court decision and does not establish present-day ownership.; proves Universal still owns JAWS today because the page is available on the web today",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "Universal is the owner of the copyright in a motion picture entitled \"Jaws\". Prior to June 20, 1975, Universal produced the motion picture \"Jaws\" based on the book \"Jaws\" written by Benchley."
+              }
+            ],
+            "script_spans": []
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": false,
+              "reason": "A 1982 court ruling establishes copyright ownership at that historical time; web availability/retrieval today does not prove current ownership.",
+              "scope_preserved": false,
+              "requirements_supported": false,
+              "scope_reason": "The source is a historical 1982 court decision and does not establish present-day ownership.",
+              "unsupported_parts": [
+                "proves Universal still owns JAWS today because the page is available on the web today"
+              ]
+            }
+          ]
+        },
+        "estimate_exclusions": [],
+        "reason": "Claim audit requires correction: Independent span review: A 1982 court ruling establishes copyright ownership at that historical time; web availability/retrieval today does not prove current ownership.; The source is a historical 1982 court decision and does not establish present-day ownership.; proves Universal still owns JAWS today because the page is available on the web today"
+      },
+      "expected_entailed": false,
+      "actual_entailed": false,
+      "passed": true,
+      "elapsed_s": 4.41
+    }
+  ],
+  "responses": [
+    {
+      "flag_id": "historical_ownership_qualified",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The cited 1982 court excerpt directly states that Universal is the owner of the copyright in the motion picture entitled 'Jaws', and the claim properly scopes this statement to that decision.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The claim explicitly preserves the historical context of the 1982 decision without making unsupported current ownership assertions.\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "historical_ownership_current",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": false,\n      \"reason\": \"A 1982 court case establishes historical ownership at that time rather than current copyright ownership, and generic library marketing does not establish authorization to grant the specific rights needed for this production.\",\n      \"scope_preserved\": false,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"The evidence does not preserve the temporal scope required for an unqualified claim of current ownership or authorization.\",\n      \"unsupported_parts\": [\n        \"Universal is the current copyright owner of JAWS\",\n        \"Universal Studios Media Licensing is authorized to grant the rights needed for this production\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "historical_ownership_lead",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The 1982 court decision explicitly establishes that Universal owned the copyright in Jaws at that time, and the licensing service excerpt confirms Universal Studios Media Licensing handles clip licensing for the Universal library. Framing this as a starting point inquiry to confirm current ownership and authority correctly preserves time scope and introduces no unsupported guarantees or mandatory duties.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The inquiry directly addresses the Jaws clip clearance issue identified in the script and finding without asserting unqualified current ownership.\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "retrieval_does_not_update_ownership",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": false,\n      \"reason\": \"A 1982 court ruling establishes copyright ownership at that historical time; web availability/retrieval today does not prove current ownership.\",\n      \"scope_preserved\": false,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"The source is a historical 1982 court decision and does not establish present-day ownership.\",\n      \"unsupported_parts\": [\n        \"proves Universal still owns JAWS today because the page is available on the web today\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    }
+  ]
+}

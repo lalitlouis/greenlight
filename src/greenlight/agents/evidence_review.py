@@ -37,9 +37,9 @@ class EntailmentCheck(BaseModel):
     check_index: int
     entailed: bool
     reason: str
-    scope_preserved: bool | None = None
-    requirements_supported: bool | None = None
-    scope_reason: str = ""
+    scope_preserved: bool
+    requirements_supported: bool
+    scope_reason: str = Field(min_length=1)
     unsupported_parts: list[str] = Field(default_factory=list)
 
 
@@ -609,11 +609,7 @@ async def check_entailment(client, flag, verdict):
         )
     checks = [dict(c) for c in verdict["claim_checks"]]
     for result_check in result.checks:
-        if verdict.get("support_span_version", 0) >= AUDIT_VERSION and (
-            result_check.scope_preserved is None
-            or result_check.requirements_supported is None
-            or not result_check.scope_reason.strip()
-        ):
+        if not result_check.scope_reason.strip():
             return unresolved_verdict(
                 verdict, "independent review omitted scope or requirement checks"
             )
@@ -647,12 +643,45 @@ async def check_entailment(client, flag, verdict):
     )
 
 
+def repair_evidence(flag: dict, verdict: dict) -> tuple[dict, dict]:
+    """Construct from checked evidence instead of exposing rejected paragraphs again."""
+    identity = {
+        key: flag[key]
+        for key in ("flag_id", "agent", "scene_ids", "category", "severity", "citations")
+    }
+    accepted, limitations = [], []
+    bad_checks = [c for c in verdict.get("claim_checks", []) if c["status"] != "SUPPORTED"]
+    for check in verdict.get("claim_checks", []):
+        if check["status"] != "SUPPORTED":
+            limitations.append({"field": check["field"], "reason": check["reason"]})
+        elif check["field"] == "severity" or check["field"] in ESTIMATE_FIELDS:
+            continue
+        elif any(
+            bad["field"] == check["field"] and bad["quote"] in check["quote"] for bad in bad_checks
+        ):
+            continue  # a broad positive cannot smuggle a known failed subclause into repair
+        elif check["basis"] in {"script", "production"}:
+            # A script-labelled paraphrase can contain extra remembered details
+            # (e.g. release year). Give the generator the actual scene receipts.
+            if spans := check.get("script_spans"):
+                accepted.append({"basis": "script", "script_spans": spans})
+        else:
+            accepted.append(
+                {
+                    key: check.get(key, [])
+                    for key in ("field", "quote", "basis", "support_spans", "script_spans")
+                }
+            )
+    return identity, {"accepted_assertions": accepted, "limitations": limitations}
+
+
 async def repair_partial(client, flag, context, search, original, verify_once):
     """One correction + one blinded check. No recursive repair or new retrieval."""
     # A censored verifier has not checked the script. It cannot approve a repair.
     if original.get("content_filtered"):
         return unresolved_verdict(original, "script verification was blocked")
     rules = available_rules(flag)
+    identity, evidence = repair_evidence(flag, original)
     prompt = (
         PREQUALIFICATION_EVIDENCE
         + "\n"
@@ -669,7 +698,11 @@ async def repair_partial(client, flag, context, search, original, verify_once):
         "source support. If necessary, ask only for missing input relevant to this desk "
         "and finding. Do not replace a useful supported edit with an unrelated question. "
         "Casting/method inquiries belong to safety, not to ratings, clearance or territory. "
-        + "\nCorrect this partially supported finding AND remedy. Preserve the supported "
+        + "\nConstruct a new finding AND remedy from the accepted assertions, exact scene "
+        "text and original source excerpts below. Rejected prose and the earlier summary "
+        "are deliberately withheld; limitations explain what cannot be asserted. "
+        "An excerpt's historical relationship may become a qualified inquiry lead, not "
+        "a claim of current licensing authority. Preserve the supported "
         "hazard/exposure; remove unsupported obligations and qualify actual casting, method "
         "and jurisdiction assumptions in BOTH fields. Do not invent sources or requirements. "
         "Every external prescription needs an operative supporting span in the supplied "
@@ -702,9 +735,9 @@ async def repair_partial(client, flag, context, search, original, verify_once):
         )
         + "If no supported exposure remains, return an empty finding (repair will be refused).\n\n"
         + "FLAG:\n"
-        + json.dumps(flag)
+        + json.dumps(identity)
         + "\nVERIFICATION:\n"
-        + json.dumps(original)
+        + json.dumps(evidence)
         + "\nSCENE TEXT:\n"
         + context
         + "\nFULL-SCRIPT SEARCH:\n"

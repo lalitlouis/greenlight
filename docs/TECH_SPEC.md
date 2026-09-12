@@ -154,6 +154,10 @@ production-input inquiry is permitted only for the safety desk. The batch also c
 the initial auditor's positive claims when the overall audit is PARTIAL, before repair
 can inherit them. Scope and requirements are separate returned decisions; a negative
 component overrides a positive overall boolean, and missing components fail verification.
+Those component fields are required in the model response schema, not just checked after
+generation. Repair input consists of identity, original excerpts, accepted assertions,
+exact script receipts and limitations; rejected prose and the initial overall summary
+are withheld. A broad positive cannot carry a known failed subclause into the repair.
 This is a structured review contract, not deterministic proof of source interpretation.
 Remedy actions must
 agree with their detail; NO_ACTION is not proof that no follow-up is needed.
