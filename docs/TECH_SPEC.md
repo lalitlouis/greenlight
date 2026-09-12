@@ -117,6 +117,12 @@ scene context. An edit may address a cited trigger without the source literally 
 the screenplay or prescribing that edit, but cannot promise a final rating/clearance
 or invent a specialist, permit or ownership assertion. Missing/non-verbatim receipts and
 unreviewed material text trigger correction.
+The shared response-option contract also permits a high-level optional change to
+staging that removes a cited physical hazard while depicting the event. The internal
+`production_option` basis requires exact hazard and screenplay receipts. Like a content
+edit, the source need not prescribe the option verbatim; equipment specifications,
+operating procedures, staffing, deadlines and safety guarantees are not exempt from
+source support. Desks, repair and both review stages use this same distinction.
 Formatting-only display quotes may be anchored back to one unambiguous raw source
 substring using preserved character offsets: whitespace, complete inline HTTP(S)
 Markdown links, paired bold/underscore emphasis and standalone hash heading markers.
@@ -140,6 +146,11 @@ against its spans and excerpt context. Every available, already anchored screenp
 receipt accompanies its claim, including mixed script/authorship assertions labelled
 `script` or `source`. A model-chosen basis must not hide relevant evidence. The batch
 never receives the earlier auditor's reasoning or severity.
+An anchored screenplay observation is independently reviewable with no source span
+even if the first auditor labels it `application` or `source`. The second reviewer
+determines its semantic role from the assertion and evidence, not the suggested label.
+This routing cannot approve a mixed external assertion from screenplay text alone;
+a negative or unavailable independent review still fails closed.
 Script receipts establish fictional content, not actual production facts or ownership.
 Citation title and URL accompany
 each excerpt solely for source attribution; metadata cannot supply an operative rule

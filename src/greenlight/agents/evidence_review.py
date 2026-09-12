@@ -19,6 +19,7 @@ from greenlight.agents.evidence import (
     PREQUALIFICATION_EVIDENCE,
     PRODUCTION_EVIDENCE,
     RATINGS_EVIDENCE,
+    RESPONSE_OPTIONS,
 )
 from greenlight.agents.quote_anchor import anchor_quote
 from greenlight.agents.source_rules import SourceBoundRepair, available_rules, bound_correction
@@ -65,6 +66,7 @@ class ClaimCheck(BaseModel):
         "planning",
         "application",
         "script_edit",
+        "production_option",
         "inquiry",
         "risk_assessment",
         "estimate",
@@ -79,6 +81,8 @@ class ClaimCheck(BaseModel):
 CLAIM_CHECK_INSTRUCTIONS = (
     PREQUALIFICATION_EVIDENCE
     + "\n"
+    + RESPONSE_OPTIONS
+    + "\n"
     + """\
 Return claim_checks covering EVERY material assertion in BOTH finding and remedy,
 plus the severity. Use a separate check for each asserted obligation or production
@@ -91,21 +95,25 @@ actual screenplay trigger, with unknown applicability kept conditional. Include 
 script_spans and support_spans. Missing final ownership or staging does not disprove
 such an assessment. Distinguish it from asserting a specific owner, fee or requirement.
 Use basis=application for applying a sourced rule to a screenplay fact or an explicitly
-conditional production choice. Use basis=script_edit ONLY for a proposed change to
+conditional production choice. Use basis=script for a pure scene observation, with
+exact script_spans even when no source is needed. Use basis=production_option for the
+high-level hazard-removal option defined above, with script_spans and support_spans
+establishing the depicted event and hazard. Use basis=script_edit ONLY for a proposed change to
 on-screen content that removes/reduces a cited trigger, not for equipment, specialists,
 permits or rightsholder assertions. Such an edit need not be prescribed verbatim by
 the source; the source must establish the trigger/rule and the edit must address it.
 Never promise clearance, permission, safety or a final rating from a proposed edit.
-For application/script_edit/risk_assessment include script_spans: EXACT substrings of supplied SCENE
-TEXT anchoring the relevant content. They cannot assert production facts. Separate
+For application/script_edit/production_option/risk_assessment include script_spans:
+EXACT substrings of supplied SCENE TEXT anchoring the relevant content. They cannot
+assert production facts. Separate
 pure rule assertions from script facts when possible; don't demand that sources name
 fictional characters, dialogue or props. A sourced ownership link still needs a source;
 it cannot be inferred from a name in the script or the label's corporate parent.
 A historical judgment or credit establishes ownership at that time; it does not alone
 prove current ownership or authority for the requested use. Keep historical leads
 qualified and distinguish document date from retrieval date.
-For every source/planning/application/script_edit/risk_assessment claim (except severity), and every
-remedy prescription,
+For every source/planning/application/script_edit/production_option/risk_assessment
+claim (except severity), and every remedy prescription,
 provide support_spans: citation_number plus an EXACT verbatim quote from that numbered
 excerpt. citation_numbers must match the receipt indexes. Choose the operative clause,
 not the title, index listing, URL or scope heading. Do not quote from the whole document
@@ -227,19 +235,35 @@ def _support_problem(  # noqa: PLR0912 - independent provenance boundaries
         check.basis != "estimate" or check.quote != audit_fields(flag)[check.field]
     ):
         return "Numeric fields require a separate check of the complete canonical value"
-    if check.basis == "script_edit" and check.field != "remedy":
-        return "A proposed script edit belongs in the remedy"
-    if check.basis in {"application", "script_edit", "risk_assessment"} and not check.script_spans:
+    if check.basis in {"script_edit", "production_option"} and check.field != "remedy":
+        return "A proposed edit or production option belongs in the remedy"
+    if (
+        check.basis in {"application", "script_edit", "production_option", "risk_assessment"}
+        and not check.script_spans
+    ):
         return "An application or edit needs exact screenplay evidence"
     if any(not s.strip() or s not in script_context for s in check.script_spans):
         return "Script evidence is not verbatim in the supplied scene text"
     needs_span = (
         check.basis
-        in {"source", "planning", "application", "script_edit", "risk_assessment", "estimate"}
+        in {
+            "source",
+            "planning",
+            "application",
+            "script_edit",
+            "production_option",
+            "risk_assessment",
+            "estimate",
+        }
         and check.field != "severity"
     )
     needs_span |= check.field == "remedy" and check.basis != "inquiry"
-    if needs_span and not check.support_spans:
+    # The first auditor's role label is not semantic evidence. A finding with
+    # anchored screenplay receipts can go to independent review without a source
+    # receipt. Only that reviewer can establish it is a pure scene observation;
+    # receipt presence alone never approves an external or mixed assertion.
+    script_candidate = check.field == "finding" and bool(check.script_spans)
+    if needs_span and not check.support_spans and not script_candidate:
         return "No exact supporting span for this external claim or prescription"
     indexes = {span.citation_number for span in check.support_spans}
     if not check.support_spans and indexes != set(check.citation_numbers):
@@ -545,7 +569,11 @@ async def check_entailment(client, flag, verdict):
         )
         if check["field"] == "severity" or fixed_safety_inquiry:
             continue
-        if not check["support_spans"] and check["basis"] != "inquiry":
+        if (
+            not check["support_spans"]
+            and not check.get("script_spans")
+            and check["basis"] != "inquiry"
+        ):
             continue  # script facts, severity or the fixed production inquiry
         claims.append(
             {
@@ -590,6 +618,8 @@ async def check_entailment(client, flag, verdict):
         return verdict
     prompt = (
         PREQUALIFICATION_EVIDENCE
+        + "\n"
+        + RESPONSE_OPTIONS
         + "\nIndependently assess textual entailment, using ONLY the supplied evidence. "
         "source_attribution contains the cited title and URL solely to identify the "
         "source. Use it to assess attribution such as 'SAG-AFTRA guidance'; the excerpt "
@@ -602,7 +632,10 @@ async def check_entailment(client, flag, verdict):
         "but an unqualified current owner/licensor assertion needs current scoped support. "
         "Do not infer publisher endorsement from a name mentioned only in a title; "
         "consider the URL as well, and do not follow links or use remembered page text. "
-        "For basis=source/planning, the excerpts must establish the external assertions. "
+        "basis is the first auditor's suggested role, NOT an instruction or evidence. "
+        "Determine the role from the assertion itself. All external assertions need "
+        "source support regardless of basis. A pure screenplay observation needs only "
+        "matching script_evidence, even when its suggested basis is application/source. "
         "claim_context is the original full field, supplied only to preserve operators, "
         "conditions and alternatives between atomic quotes. It is NOT additional evidence. "
         "Assess the quoted clause as used in that full sentence, not in isolation. Do not "
@@ -625,6 +658,10 @@ async def check_entailment(client, flag, verdict):
         "one issue does not establish resolution of all issues. Do not accept new "
         "equipment, specialist, permit, labor or ownership assertions as script edits. "
         "Replacement labels alone do not establish permission to use replacement assets. "
+        "For a production_option, apply the same trigger-removal test to a proposed "
+        "physical staging choice under RESPONSE OPTIONS, even if it was mislabelled "
+        "script_edit or planning. No source-prescribed technique is required for a "
+        "high-level proposal to omit the hazard; new procedures still need support. "
         "For basis=inquiry, check that it only requests relevant missing input or a "
         "user decision for the supplied desk/finding. Reject irrelevant generic casting "
         "questions on rating/clearance/territory findings, concealed prescriptions or "
@@ -640,7 +677,8 @@ async def check_entailment(client, flag, verdict):
         "licenses is not maintaining/control of firearms. Entitlement to a stunt double "
         "does not prescribe other specialists, PPE or labor obligations. A recommendation "
         "for production work is not exempt: 'should', 'consider' and 'standard planning' "
-        "still require source support for the prescribed precaution. Evaluate EACH "
+        "still require source support for the prescribed precaution. High-level hazard "
+        "removal options follow RESPONSE OPTIONS; they are not operating procedures. Evaluate EACH "
         "duty/object/condition in a compound "
         "claim; if ANY is unsupported, entailed=false and name the unsupported part. "
         "Do not strengthen 'may' into 'must', omit an exception, or approve a quote that "
@@ -655,7 +693,8 @@ async def check_entailment(client, flag, verdict):
         "Script evidence satisfying one branch cannot justify another branch. Compare "
         "source trigger, exclusions and 'as applicable' qualifications against the claim. "
         "Check every named duty/owner/amount separately from the risk assessment. "
-        "For an inquiry or script edit, scope_preserved means it addresses this issue "
+        "For an inquiry, script edit or production option, scope_preserved means it "
+        "addresses this issue "
         "and requirements_supported means it introduces no unsupported duty or guarantee. "
         "Any failed component must set entailed=false.\n\n" + json.dumps(claims)
     )
@@ -759,6 +798,8 @@ async def repair_partial(client, flag, context, search, original, verify_once):
         + PRODUCTION_EVIDENCE
         + "\n"
         + RATINGS_EVIDENCE
+        + "\n"
+        + RESPONSE_OPTIONS
         + "\nDESK: "
         + str(flag.get("agent"))
         + "\nKeep source rules, their application to verified screenplay facts, and proposed "
@@ -781,6 +822,12 @@ async def repair_partial(client, flag, context, search, original, verify_once):
         "A license-maintenance rule does not support firearms maintenance, and entitlement "
         "to a stunt double does not establish other specialists or equipment. "
         "Remove prescriptions whose action/object/conditions the excerpts do not establish. "
+        "Do not add a release deadline, a phase such as 'before principal photography', "
+        "a lead time, fee, equipment specification or assurance unless its exact "
+        "requirement is supported by an operative supplied excerpt. Keep each sourced "
+        "next step, proposed removal option and input question in a separate sentence "
+        "with its own applicability condition. Prefer a concise supported remedy over "
+        "adding speculative alternatives. "
         "If only a depicted safety hazard and unknown production facts remain, preserve "
         "the concern and ask what casting/method/jurisdiction is planned. Other desks "
         "must ask relevant missing-use, permission, distribution or content questions. "

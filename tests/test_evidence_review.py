@@ -103,6 +103,51 @@ def test_mixed_script_and_authorship_check_receives_both_kinds_of_saved_evidence
     )
 
 
+@pytest.mark.parametrize("basis", ["script", "source", "application", "planning"])
+@pytest.mark.parametrize("accepted", [True, False])
+def test_scene_only_receipts_get_independent_review_despite_first_auditor_role(basis, accepted):
+    record = json.loads((ROOT / "runs/run_20260912_003816.json").read_text())
+    original = next(f for f in record["rejected_flags"] if f["flag_id"] == "F1002")
+    trail = record["verdicts"]["F1002"]["evidence_review"]
+    flag = corrected_flag(original, trail["correction"])
+    before = deepcopy(trail["after"])
+    observation = before["claim_checks"][0]
+    assert observation["script_spans"] and not observation["support_spans"]
+    observation.update(basis=basis, status="SUPPORTED")  # first audit, before receipt routing
+    before["verdict"] = "SUPPORTED"
+    checked = checked_verdict(before, flag, (ROOT / "fixtures/slack_tide.fountain").read_text())
+    assert checked["claim_checks"][0]["status"] == "SUPPORTED"
+    response = entailment(checked)
+    response["checks"][0].update(entailed=accepted, reason="Independent scene assessment")
+    client = Client(response)
+    result = asyncio.run(check_entailment(client, flag, checked))
+    payload = json.loads(client.calls[0]["contents"].rsplit("\n\n", 1)[1])
+    assert payload[0]["check_index"] == 0
+    assert payload[0]["script_evidence"] == observation["script_spans"]
+    assert payload[0]["support"] == []
+    assert result["claim_checks"][0]["status"] == ("SUPPORTED" if accepted else "UNSUPPORTED")
+    assert result["verdict"] == ("SUPPORTED" if accepted else "PARTIAL")
+
+
+def test_scene_receipt_routing_never_promotes_a_nonverbatim_receipt_or_failed_review():
+    flag = saved_flag()
+    before = audit(flag)
+    observation = before["claim_checks"][0]
+    observation.update(
+        basis="application",
+        citation_numbers=[],
+        support_spans=[],
+        script_spans=["Invented production approval."],
+    )
+    checked = checked_verdict(before, flag, "Actual screenplay text.")
+    assert checked["claim_checks"][0]["status"] == "UNKNOWN"
+    assert "not verbatim" in checked["claim_checks"][0]["reason"]
+    observation["script_spans"] = ["Actual screenplay text."]
+    checked = checked_verdict(before, flag, "Actual screenplay text.")
+    failed = asyncio.run(check_entailment(Client(RuntimeError("offline")), flag, checked))
+    assert failed["verdict"] == "UNSUPPORTED" and failed["evidence_review_unresolved"]
+
+
 def saved_rating_delivery():
     record = json.loads((ROOT / "runs/run_20260912_003816.json").read_text())
     return (
@@ -202,7 +247,7 @@ def entailment(verdict):
             }
             for i, check in enumerate(verdict["claim_checks"])
             if check["status"] == "SUPPORTED"
-            and (check["support_spans"] or check["basis"] == "inquiry")
+            and (check["support_spans"] or check.get("script_spans") or check["basis"] == "inquiry")
             and check["field"] != "severity"
             and check["quote"] != PRODUCTION_INQUIRY
         ]
@@ -495,7 +540,16 @@ def test_panel_and_salvage_share_repair_semantics(monkeypatch, route, repair_ok)
 
 
 @pytest.mark.parametrize(
-    "basis", ["source", "planning", "script", "production", "application", "script_edit"]
+    "basis",
+    [
+        "source",
+        "planning",
+        "script",
+        "production",
+        "application",
+        "script_edit",
+        "production_option",
+    ],
 )
 def test_relabelling_a_prescription_does_not_bypass_support(basis):
     flag = saved_flag()
@@ -596,7 +650,9 @@ def test_inquiry_label_still_gets_independent_review_without_citations():
     assert payload[1]["desk"] == "safety_underwriter"
 
 
-@pytest.mark.parametrize("basis", ["application", "script_edit", "risk_assessment"])
+@pytest.mark.parametrize(
+    "basis", ["application", "script_edit", "production_option", "risk_assessment"]
+)
 def test_applications_need_both_source_and_exact_script_receipts(basis):
     flag = saved_flag()
     verdict = audit(flag)

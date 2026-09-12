@@ -308,3 +308,27 @@ validated accurate findings. The next semantic batch must resolve this classific
 consistently, together with the master observation's evidence-type mismatch and the
 tattoo remedy's unsupported deadline, while retaining useful pre-qualification options.
 No source rules, release checks or historical labels were loosened to obtain a pass.
+
+## September 12 response-option and receipt-routing fix
+
+The next batch addresses the observed failure mechanisms before another full run:
+
+- Independently review anchored screenplay observations even if a first-pass role
+  label incorrectly demands an external source. A scene quote cannot establish an
+  external owner, method, permission or mixed assertion.
+- Share one explicit contract for optional content edits and high-level production
+  options that remove a cited hazard. The internal `production_option` basis is
+  additive; public schemas, parser, scoring and live retrieval remain unchanged.
+  A prop/VFX option cannot establish setup specifications, procedures, mandatory
+  staffing, deadlines or guaranteed safety. Independently judge semantic content
+  rather than allowing an erroneous role label to decide acceptance.
+- Keep proposed options and sourced requirements separate during correction and
+  prohibit new timing constraints without their own operative support.
+
+Twelve hash-bound controls in `response_options_{positive,negative}_20260912.json`
+freeze six positive and six negative labels before live evaluation. They include the
+firearm/pyro inconsistency, tattoo omission versus an unsupported deadline, wrong
+ownership inferred from script text, an invented performance and unsafe guarantees.
+These are development entailment controls using saved excerpts, not held-out scripts
+or a measured legal-accuracy rate. Free validation: 605 tests and `make check` pass.
+Live validation is pending at this commit; the earlier failed gate remains the baseline.

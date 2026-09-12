@@ -21,7 +21,7 @@ from google.adk.agents import LlmAgent
 from pydantic import BaseModel, Field
 
 from greenlight.agents.common import GEN_CONFIG, PRO, tool_error_shield
-from greenlight.agents.evidence import PREQUALIFICATION_EVIDENCE
+from greenlight.agents.evidence import PREQUALIFICATION_EVIDENCE, RESPONSE_OPTIONS
 
 
 class MergeAction(BaseModel):
@@ -63,6 +63,8 @@ class AdjudicationPlan(BaseModel):
 
 INSTRUCTION = (
     PREQUALIFICATION_EVIDENCE
+    + "\n"
+    + RESPONSE_OPTIONS
     + "\n"
     + """\
 You are the Adjudicator — the producer who reconciles the four clearance desks' findings into

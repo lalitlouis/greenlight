@@ -62,6 +62,34 @@ def test_probes_bind_original_excerpts_and_hide_expected_labels():
         evaluator.entailment_inputs(forged, source)
 
 
+@pytest.mark.parametrize("group,expected", [("positive", True), ("negative", False)])
+def test_response_option_controls_bind_real_receipts_and_keep_labels_out_of_review(group, expected):
+    cases = json.loads(
+        (ROOT / f"fixtures/accuracy/response_options_{group}_20260912.json").read_text()
+    )
+    source = (ROOT / "runs/run_20260912_003816.json").read_bytes()
+    script = (ROOT / "fixtures/slack_tide.fountain").read_text()
+    inputs = evaluator.entailment_inputs(cases, source, script)
+    assert len(inputs) == 6 and all(label is expected for _, _, label in inputs)
+    prompts = []
+
+    async def generate_content(**kwargs):
+        prompts.append(kwargs["contents"])
+        return SimpleNamespace(text=json.dumps({"checks": [positive_check()]}))
+
+    client = SimpleNamespace(
+        aio=SimpleNamespace(models=SimpleNamespace(generate_content=generate_content))
+    )
+    for flag, verdict, _ in inputs:
+        asyncio.run(check_entailment(client, flag, verdict))
+    for prompt, row in zip(prompts, cases["cases"], strict=True):
+        assert row["label_reason"] not in prompt and "expected_entailed" not in prompt
+        payload = json.loads(prompt.rsplit("\n\n", 1)[1])[0]
+        assert payload["script_evidence"] == row["script_spans"]
+    if group == "positive":
+        assert json.loads(prompts[0].rsplit("\n\n", 1)[1])[0]["support"] == []
+
+
 def test_recheck_requires_matching_source_and_a_previously_skipped_stage():
     artifact = json.loads((ROOT / "fixtures/cassettes/firearms_timing_20260911.json").read_text())
     source = (ROOT / "runs/run_20260911_demo.json").read_bytes()

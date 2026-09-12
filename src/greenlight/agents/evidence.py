@@ -21,6 +21,31 @@ Unknown production inputs are normal; do not call them failed verification when 
 conditional assessment itself is supported. Failed or missing evidence is different.
 """
 
+RESPONSE_OPTIONS = """\
+RESPONSE OPTIONS AND EVIDENCE:
+Judge an assertion by what it says and the evidence supplied, not by a previous
+reviewer's basis label. Script receipts can establish a scene observation even if
+labelled application or source. They cannot establish an external owner, permission,
+production method or requirement. Mixed assertions need evidence for every part.
+Distinguish two proposed changes:
+- A content edit removes or changes what the audience sees/hears (for example omitting
+  a song or covering depicted artwork). The cited rule must establish the relevant
+  trigger; it need not prescribe the edit itself.
+- A production option proposes avoiding the physical source of a cited hazard while
+  depicting the event (for example no firing on set, with the effect added in post).
+  The source must establish the hazard; it need not literally prescribe that option.
+  Accept only a high-level, optional removal/substitution of that hazard. This is not
+  evidence that a particular prop, VFX workflow or setup is safe, available or approved.
+For either kind, independently check that the proposed change addresses the cited
+trigger in the supplied scene. Do not promise clearance, safety, permission, price or
+a final rating. Proposed replacement assets still need their own permission assessment.
+An option to remove a hazard does not authorize new operating instructions: equipment
+specifications, distances, handling procedures, staffing, permits and deadlines need
+operative source support. Adding 'consider' does not exempt those prescriptions.
+Split removal options from sourced procedures and requirements when auditing or
+repairing a remedy. A supported option cannot conceal an unsupported deadline or duty.
+"""
+
 PRODUCTION_EVIDENCE = """\
 SCRIPT FACTS AND PRODUCTION FACTS ARE DIFFERENT:
 - The screenplay establishes fictional events, character ages, story locations and dialogue.

@@ -10,7 +10,7 @@ from google.adk.agents import LlmAgent, LoopAgent
 from google.adk.models.google_llm import Gemini
 from google.genai import types
 
-from greenlight.agents.evidence import PREQUALIFICATION_EVIDENCE
+from greenlight.agents.evidence import PREQUALIFICATION_EVIDENCE, RESPONSE_OPTIONS
 from greenlight.models import FLASH_MODEL, PRO_MODEL
 from greenlight.tools import DESK_TOOLS
 from greenlight.tools.toolbelt import RunAbortError
@@ -336,7 +336,15 @@ def make_desk(
         else:
             sliced = {"entities": tri.get("entities", []), desk: tri.get(desk, [])}
             batch_note = ""
-        text = PREQUALIFICATION_EVIDENCE + "\n" + instruction + batch_note + COVERAGE_RULE
+        text = (
+            PREQUALIFICATION_EVIDENCE
+            + "\n"
+            + RESPONSE_OPTIONS
+            + "\n"
+            + instruction
+            + batch_note
+            + COVERAGE_RULE
+        )
         text = text.replace("{triage}", json.dumps(sliced, ensure_ascii=False))
         text = text.replace("{scene_index}", str(ctx.state.get("scene_index", "")))
         adaptation = str(ctx.state.get("adaptation_context") or "").strip() or (

@@ -1,0 +1,120 @@
+{
+  "source_run": "runs/run_20260912_003816.json",
+  "source_run_sha256": "ea4637bc230fcfd1b7ad6c567c7e8c5e08589a4874596f5206e039f4fdffd3bd",
+  "scope": "Predeclared development entailment controls; not independent legal accuracy labels.",
+  "cases": [
+    {
+      "case_id": "script_cannot_prove_owner",
+      "source_flag_id": "F1002",
+      "field": "finding",
+      "action": "REPLACE",
+      "claim": "Sony Music Entertainment currently owns and exclusively licenses Jeff Buckley's 'Hallelujah' recording worldwide.",
+      "basis": "application",
+      "support_spans": [],
+      "script_spans": [
+        "\"Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.\"",
+        "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.",
+        "Buckley's \"Hallelujah\" starts again, drifting out across the water toward the fire."
+      ],
+      "expected_entailed": false,
+      "label_reason": "Screenplay receipts cannot establish current rights ownership or scope."
+    },
+    {
+      "case_id": "invented_scene_performance",
+      "source_flag_id": "F1002",
+      "field": "finding",
+      "action": "REPLACE",
+      "claim": "In S004 Danny performs a new acoustic cover of 'Hallelujah' instead of playing the Columbia recording.",
+      "basis": "application",
+      "support_spans": [],
+      "script_spans": [
+        "\"Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.\"",
+        "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.",
+        "Buckley's \"Hallelujah\" starts again, drifting out across the water toward the fire."
+      ],
+      "expected_entailed": false,
+      "label_reason": "The supplied scene says the recording plays, not that Danny performs a cover."
+    },
+    {
+      "case_id": "firearms_option_safety_guarantee",
+      "source_flag_id": "F3003",
+      "field": "remedy",
+      "action": "REPLACE",
+      "claim": "Use non-firing prop replicas with visual and sound effects in post; this makes the rifle sequence completely safe and eliminates any need for safety planning.",
+      "basis": "production_option",
+      "support_spans": [
+        {
+          "citation_number": 1,
+          "quote": "BLANKS CAN KILL."
+        }
+      ],
+      "script_spans": [
+        "The honor guard stands in a row, rifles up at the ready."
+      ],
+      "expected_entailed": false,
+      "label_reason": "Avoiding blank discharge does not guarantee safety or waive other planning."
+    },
+    {
+      "case_id": "firearms_option_invented_setup",
+      "source_flag_id": "F3003",
+      "field": "remedy",
+      "action": "REPLACE",
+      "claim": "Consider firing quarter-load blanks with performers two metres from the muzzle and wearing flesh-toned earplugs.",
+      "basis": "production_option",
+      "support_spans": [
+        {
+          "citation_number": 1,
+          "quote": "BLANKS CAN KILL."
+        }
+      ],
+      "script_spans": [
+        "The honor guard stands in a row, rifles up at the ready."
+      ],
+      "expected_entailed": false,
+      "label_reason": "Operating parameters and protective equipment are not supported by the blank-hazard excerpt."
+    },
+    {
+      "case_id": "pyro_option_retains_hazard",
+      "source_flag_id": "F3001",
+      "field": "remedy",
+      "action": "REPLACE",
+      "claim": "Use controlled practical fire bars on a dedicated barge to remove the need for pyrotechnic planning.",
+      "basis": "production_option",
+      "support_spans": [
+        {
+          "citation_number": 1,
+          "quote": "This Safety Bulletin applies to pyrotechnic materials such as explosives and flammable or combustible liquids, gases and solids when used to create pyrotechnic special effects."
+        }
+      ],
+      "script_spans": [
+        "Mara stands, braces, and fires the flare into the soaked blankets amidships.\n\nWHUMP. A line of blue-orange flame walks the deck like it knows the boat. Then the diesel catches and the MARGARET ROSE goes up -- a column of fire standing on the black water, doubled in the swell, huge.",
+        "Crow touches a road flare to the mortar fuse. The Fourth of July stash goes up -- white and gold chrysanthemums blooming over the burning boat, reflections shattering across the harbor."
+      ],
+      "expected_entailed": false,
+      "label_reason": "This adds specific unsourced equipment and retains practical flame while asserting an exemption."
+    },
+    {
+      "case_id": "tattoo_original_deadline",
+      "source_flag_id": "F1011",
+      "field": "remedy",
+      "action": "OBTAIN_RELEASE",
+      "claim": "If the actor cast as Crow possesses a real custom tattoo intended to be featured on screen, obtain a signed artwork or tattoo release agreement from the original tattoo artist prior to principal photography, or alternatively cover the tattoo or substitute it with cleared artwork.",
+      "basis": "planning",
+      "support_spans": [
+        {
+          "citation_number": 1,
+          "quote": "An Artwork Release Form is a legal document that grants permission to use a specific artwork or image in a film or television show."
+        },
+        {
+          "citation_number": 2,
+          "quote": "When someone gets a tattoo, the artist maintains the right to display that art in film, commercials, and television."
+        }
+      ],
+      "script_spans": [
+        "Across his forearm, a full-rigged schooner tattoo in fading blue-black \u2014 Teddy Krane's design, inked at his Rockland parlor the summer the Margaret Rose launched \u2014 rides every pour like weather."
+      ],
+      "expected_entailed": false,
+      "label_reason": "Covering the tattoo is a valid option, but the compound statement invents a principal-photography deadline."
+    }
+  ]
+}
