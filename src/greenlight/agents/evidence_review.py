@@ -637,7 +637,9 @@ async def check_entailment(client, flag, verdict, script_context=""):
     # A short receipt can omit the setting or qualifier in the surrounding scene.
     # Supply the same bounded raw context the primary reviewer saw, once per
     # batch. Never expand from model prose or retrieve additional script text.
-    receipt_context = script_context if any(c["script_evidence"] for c in claims) else ""
+    # Do not gate this on a model-selected receipt or basis: a planning-labelled
+    # licence request can name a scripted song without returning a script span.
+    receipt_context = script_context
     prompt = (
         PREQUALIFICATION_EVIDENCE
         + "\n"

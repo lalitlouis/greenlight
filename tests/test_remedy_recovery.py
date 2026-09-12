@@ -227,13 +227,18 @@ def test_runtime_has_one_generation_and_at_most_seven_checks_for_saved_failure()
     assert [c["config"].response_schema.__name__ for c in client.calls].count("CorrectedClaim") == 1
 
 
-def test_secondary_receives_raw_scene_context_without_promoting_production_assumptions():
+@pytest.mark.parametrize("has_receipts", [True, False])
+def test_secondary_receives_raw_scene_context_without_promoting_production_assumptions(
+    has_receipts,
+):
     flag, trail, context, _ = saved_repair("F3004")
     candidate = corrected_flag(flag, trail["correction"])
     after = trail["after"]
     check = deepcopy(after["claim_checks"][0])
     check["status"] = "SUPPORTED"
     assert "funeral" in check["quote"] and not any("mourners" in s for s in check["script_spans"])
+    if not has_receipts:
+        check["script_spans"] = []
     verdict = {"verdict": "SUPPORTED", "claim_checks": [check]}
     client = Client(positive_review(verdict))
     asyncio.run(check_entailment(client, candidate, verdict, context))

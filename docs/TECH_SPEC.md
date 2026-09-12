@@ -146,7 +146,7 @@ against its spans and excerpt context. Every available, already anchored screenp
 receipt accompanies its claim, including mixed script/authorship assertions labelled
 `script` or `source`. A model-chosen basis must not hide relevant evidence. The batch
 never receives the earlier auditor's reasoning or severity.
-Under `entailment_policy_version=3`, a batch containing script receipts also receives
+Under `entailment_policy_version=3`, each batch also receives
 the same bounded raw scene context the primary auditor saw, once per batch. This
 prevents a short action receipt from losing a setting or qualifying detail. Context
 cannot establish external rules, ownership or actual production facts; truncation

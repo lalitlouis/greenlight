@@ -445,3 +445,27 @@ is pending; it does not manufacture a new rating judgement. The shared delivery 
 applies the same reconciliation to live and reverified records. Existing public
 fields carry the explanation, with no public schema, parser, scoring or model change.
 Validation of this batch is pending below.
+
+Build `00dc6b4` passed the exact tattoo inquiry recovery in two calls ($0.0176)
+and recovered the fresh separate firearms finding in seven calls ($0.0800).
+In-session inspection accepts the tattoo's case-supported litigation warning and
+missing-use/ownership inquiry, and the firearms warning's complete meeting/PPE
+guidance with actual execution explicitly unknown. Neither contains the rejected
+clearance guarantee or an invented roster alternative. The firearm repair exercised
+the new final inquiry step in the normal runtime path.
+
+All six new controls, six earlier negative controls and four roster controls matched.
+One of six earlier input/rights controls failed: the generic rights-investigation
+step named Hallelujah but had no script receipt, so the conditional context routing
+omitted the scene establishing its use. This saved failure is preserved. Raw context
+must not depend on the first model's receipt selection either; it is now provided to
+every independent batch. This does not supply source evidence or confirm actual
+ownership/staging. The follow-up has 647 passing tests and passing repository checks;
+the affected live control rerun is pending.
+
+`fixtures/cassettes/fresh_recovery_report_replay_20260912.json` combines the unchanged
+52/54 desk record with those two live-verified corrections and rating reconciliation:
+**54/54**, 19 kept and five rejected. It explicitly records a cached replay, with
+source/artifact hashes and the original generation clock; it is not a second fresh
+run. Five other unresolved findings continue to withhold the score. The remaining
+uncertainty is fresh end-to-end output variation after the latest batch.
