@@ -102,7 +102,9 @@ are unchanged. The same bounded check/repair/check path serves live fan-out, sal
 targeted verification retry. Failed repairs do not enter another recovery loop. Production
 facts (casting, jurisdiction, effects method) cannot be inferred from fictional events.
 
-All desks and reviewers share the automated pre-qualification scope. A `risk_assessment`
+All desks, reviewers and the Adjudicator share the automated pre-qualification scope.
+An unknown cost is not zero; an input-question action does not by itself lower the
+priority of a serious conditional risk. A `risk_assessment`
 may combine exact script and source receipts into a conditional early warning without
 establishing the final licensor, cast or staging method. Normal unknown production facts
 do not by themselves constitute verification failure. Evidence strength and potential
@@ -173,7 +175,8 @@ frozen public schemas are unchanged.
 
 For a small set of development-reviewed production-rule snapshots, repair can select
 source-bound cards from `data/production_rules.json`. A card requires the safety desk,
-an existing Parallel receipt, its exact URL and full excerpt hash. Selection cannot
+an existing Parallel receipt, its exact URL and full excerpt hash (or a separately
+reviewed context-variant hash). The matched hash is retained in the audit. Selection cannot
 introduce a source or accept changed context. `SourceBoundRepair` selects rule IDs and
 writes scene/risk prose; code assembles the remedy from fixed wording that preserves
 each rule's trigger and qualifications. The complete correction still goes through

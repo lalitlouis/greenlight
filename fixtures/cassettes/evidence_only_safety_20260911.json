@@ -1,0 +1,627 @@
+{
+  "source_run": "fixtures/cassettes/prequalification_fresh_safety_20_20260911.json",
+  "source_run_sha256": "4c4d3392dd2bd1a7f1415de7e2724781d81c9f33ee188386b703609abdaa8193",
+  "source_build": "27f598661a5b299389fdd5b94bdf035f5e923624",
+  "evaluated_build": "bfb288cf5e61ce3f3651d8ffc9c58ed54a49b497",
+  "model": "gemini-3.7-flash",
+  "elapsed_s": 88.16,
+  "calls": 5,
+  "responses_with_usage": 5,
+  "calls_without_returned_usage": 0,
+  "resumed_from": null,
+  "rechecked_correction_from": null,
+  "entailment_cases": null,
+  "entailment_cases_sha256": null,
+  "attempts": [
+    {
+      "flag_id": "F3001",
+      "schema": "EvidenceVerdict",
+      "status": "returned",
+      "input_chars": 25393,
+      "input_sha256": "a0b704485b7282473dd39caad739da9f47fd1e72265b39f94dfc4fde5706febe",
+      "usage_available": true,
+      "elapsed_s": 20.01
+    },
+    {
+      "flag_id": "F3001",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 18922,
+      "input_sha256": "1780419d9d1365727b706684c606b0a801020b8e34d8b2f49866907cb89cc736",
+      "usage_available": true,
+      "elapsed_s": 11.16
+    },
+    {
+      "flag_id": "F3001",
+      "schema": "CorrectedClaim",
+      "status": "returned",
+      "input_chars": 17257,
+      "input_sha256": "67a94571f8b0f019d25872550a07aa8cf3d00c74154dce6328aed438a4ca92b7",
+      "usage_available": true,
+      "elapsed_s": 9.44
+    },
+    {
+      "flag_id": "F3001",
+      "schema": "EvidenceVerdict",
+      "status": "returned",
+      "input_chars": 24585,
+      "input_sha256": "20d35bc0dd33ac953ee2f338d094eedf6262204d8439ede180a2ff18d62ff849",
+      "usage_available": true,
+      "elapsed_s": 18.51
+    },
+    {
+      "flag_id": "F3001",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 23137,
+      "input_sha256": "f7b01c82e3246fc8a26e88b02270f93c4036c9842ee230892f7b6e5c2fc5e1aa",
+      "usage_available": true,
+      "elapsed_s": 28.97
+    }
+  ],
+  "gemini_usage": {
+    "flash": {
+      "prompt": 25498,
+      "cached": 0,
+      "output": 13910
+    }
+  },
+  "estimated_cost_usd": 0.0713,
+  "manual_review": "pending; model approval is not an accuracy label",
+  "results": [
+    {
+      "flag_id": "F3001",
+      "verdict": {
+        "verdict": "UNSUPPORTED",
+        "failure_mode": "premise_unsupported",
+        "reason": "Evidence correction unresolved: corrected claim did not pass independent verification",
+        "evidence_review_unresolved": true,
+        "evidence_review": {
+          "before": {
+            "verdict": "PARTIAL",
+            "reason": "Claim audit requires correction: Independent span review: The cited source only states that pyrotechnic materials used on set must be under controlled conditions with due regard for safety; it does not provide or mandate specific alternative execution methods such as CGI/VFX, tank filming, or miniatures.; The source does not establish the specific planning alternatives of CGI/VFX or controlled tank/miniature elements.; execute the vessel burn, flare ignition, and mortar fireworks using CGI/VFX or controlled tank/miniature elements; Independent span review: While the sources mention water safety devices, buddy/accounting systems, and general steps to prevent hypothermia, they do not establish mandates for engaging a Marine Coordinator, CSATF Bulletin #15 requirements, hiring dedicated lifesaving personnel, stunt double mandates, or specific hypothermia measures like warm staging tents, heated dry suits, and immediate medical standby.; Multiple specific roles, equipment specifications, and safety precautions are introduced without backing in the provided excerpts.; engage a Marine Coordinator and dedicated Water Safety / Lifesaving personnel per CSATF Safety Bulletin #17 and #15; qualified stunt doubles for the dive and tow sequence; warm staging areas/tents, heated dry suits or thermal layers, and immediate medical standby; Independent span review: The only provided support is an index title for CSATF Bulletin #6. Titles and index entries cannot establish operative requirements, and no source text is provided supporting minor performer working hours, welfare safeguards, certified animal handler supervision, or plate/split-screen staging alternatives.; Operative rules and safety duties regarding minor casting and certified animal handler supervision are not established by index titles.; enforce jurisdictional minor working hours and welfare safeguards; provide certified animal handler supervision per CSATF Safety Bulletin #6; stage the child and animal elements separately from night water and pyrotechnic filming via plates/split-screen; Material text was omitted from the claim audit; Material text was omitted from the claim audit",
+            "failure_mode": "none",
+            "claim_checks": [
+              {
+                "field": "finding",
+                "quote": "Scenes S009, S010, and S011 depict a heavily stacked sequence of physical hazards taking place in open harbor waters at night. The staged action includes discharging a flare gun into fuel-soaked blankets on an anchored vessel (Margaret Rose), causing an engulfing fire and diesel burn, adjacent aerial mortar fireworks launched from the seawall, a severed anchor line causing the burning vessel to drift toward moored floats, a character (Mara) diving into cold water at night to swim a line to a mooring buoy, boat maneuvers adjacent to flames to tow the vessel, and an adjacent skiff carrying a child character (Sam) and a dog (Barnacle).",
+                "basis": "script",
+                "status": "SUPPORTED",
+                "reason": "Accurately summarizes the depicted action and events in scenes S009, S010, and S011.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "Mara stands, braces, and fires the flare into the soaked blankets amidships.\n\nWHUMP. A line of blue-orange flame walks the deck like it knows the boat. Then the diesel catches and the MARGARET ROSE goes up -- a column of fire standing on the black water, doubled in the swell, huge.",
+                  "Crow touches a road flare to the mortar fuse. The Fourth of July stash goes up -- white and gold chrysanthemums blooming over the burning boat, reflections shattering across the harbor.",
+                  "The anchor line, burned through at the chock, parts. The burning boat swings free and begins to drift, slow and terrible, on the last of the tide.\n\nToward a row of moored floats.",
+                  "Before Danny can speak she has the spare line over her shoulder and she DIVES -- off the skiff into the black water, surfacing in the firelight, swimming hard for the mooring buoy off the Margaret Rose's bow."
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "While the script depicts these story events, practical versus visual effects execution, shooting jurisdiction, casting ages, and marine safety protocols remain unconfirmed production decisions.",
+                "basis": "production",
+                "status": "SUPPORTED",
+                "reason": "Accurately clarifies that physical execution method, casting ages, and production logistics are unconfirmed in the screenplay.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              },
+              {
+                "field": "severity",
+                "quote": "HIGH",
+                "basis": "risk_assessment",
+                "status": "SUPPORTED",
+                "reason": "High severity is appropriate given the multiple compounding high-risk physical hazards (night open water, cold water immersion, fire/pyrotechnics, vessel maneuvering).",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              },
+              {
+                "field": "remedy",
+                "quote": "If practical fire, flare discharge, or fireworks are utilized, engage a licensed Pyrotechnic Special Effects Operator and obtain required permits from the Authority Having Jurisdiction (AHJ) in compliance with CSATF Safety Bulletin #16",
+                "basis": "application",
+                "status": "SUPPORTED",
+                "reason": "CSATF Safety Bulletin #16 specifies required AHJ permits and licensed Pyrotechnic Special Effects Operators when pyrotechnics are used.",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "Any required licenses and/or permits shall be obtained from proper Authorities Having Jurisdiction (AHJ) over pyrotechnic materials prior to using pyrotechnic special effects. Pyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable."
+                  }
+                ],
+                "script_spans": [
+                  "Mara stands, braces, and fires the flare into the soaked blankets amidships.",
+                  "Crow touches a road flare to the mortar fuse. The Fourth of July stash goes up -- white and gold chrysanthemums blooming over the burning boat"
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "alternatively, execute the vessel burn, flare ignition, and mortar fireworks using CGI/VFX or controlled tank/miniature elements to eliminate live open-water fire hazards.",
+                "basis": "planning",
+                "status": "UNSUPPORTED",
+                "reason": "Independent span review: The cited source only states that pyrotechnic materials used on set must be under controlled conditions with due regard for safety; it does not provide or mandate specific alternative execution methods such as CGI/VFX, tank filming, or miniatures.; The source does not establish the specific planning alternatives of CGI/VFX or controlled tank/miniature elements.; execute the vessel burn, flare ignition, and mortar fireworks using CGI/VFX or controlled tank/miniature elements",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "When pyrotechnic materials are used on set, such use shall be under controlled conditions with due regard for the safety of all involved."
+                  }
+                ],
+                "script_spans": []
+              },
+              {
+                "field": "remedy",
+                "quote": "For practical night water work and the depicted swimming stunt, engage a Marine Coordinator and dedicated Water Safety / Lifesaving personnel per CSATF Safety Bulletin #17 and #15. Provide appropriate personal flotation devices, buddy/personnel accounting systems, qualified stunt doubles for the dive and tow sequence, and active hypothermia mitigation measures (including warm staging areas/tents, heated dry suits or thermal layers, and immediate medical standby).",
+                "basis": "application",
+                "status": "UNSUPPORTED",
+                "reason": "Independent span review: While the sources mention water safety devices, buddy/accounting systems, and general steps to prevent hypothermia, they do not establish mandates for engaging a Marine Coordinator, CSATF Bulletin #15 requirements, hiring dedicated lifesaving personnel, stunt double mandates, or specific hypothermia measures like warm staging tents, heated dry suits, and immediate medical standby.; Multiple specific roles, equipment specifications, and safety precautions are introduced without backing in the provided excerpts.; engage a Marine Coordinator and dedicated Water Safety / Lifesaving personnel per CSATF Safety Bulletin #17 and #15; qualified stunt doubles for the dive and tow sequence; warm staging areas/tents, heated dry suits or thermal layers, and immediate medical standby",
+                "citation_numbers": [
+                  2,
+                  3,
+                  5
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 2,
+                    "quote": "Appropriate water safety devices (e.g., life vests, life preservers, safety rings, safety hooks, buoys) should be available for all personnel working in or around water. When necessary, the Production Management should implement a plan to account for personnel in the water, such as a \u201cbuddy\u201d or a check in/check out system."
+                  },
+                  {
+                    "citation_number": 3,
+                    "quote": "The Producer should take steps to prevent hyperthermia (elevated body temperature) and hypothermia (reduced body temperature)."
+                  },
+                  {
+                    "citation_number": 5,
+                    "quote": "Guidelines for Boating/Watercraft Safety for Film Crews"
+                  }
+                ],
+                "script_spans": [
+                  "she DIVES -- off the skiff into the black water, surfacing in the firelight, swimming hard for the mooring buoy off the Margaret Rose's bow.",
+                  "He swings back and hauls Mara over the gunwale, soaked, gasping, shaking with cold and adrenaline and something else entirely."
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "Confirm performer casting age and animal handling plans; if a minor performer or live animal is cast, enforce jurisdictional minor working hours and welfare safeguards, provide certified animal handler supervision per CSATF Safety Bulletin #6, or stage the child and animal elements separately from night water and pyrotechnic filming via plates/split-screen.",
+                "basis": "planning",
+                "status": "UNSUPPORTED",
+                "reason": "Independent span review: The only provided support is an index title for CSATF Bulletin #6. Titles and index entries cannot establish operative requirements, and no source text is provided supporting minor performer working hours, welfare safeguards, certified animal handler supervision, or plate/split-screen staging alternatives.; Operative rules and safety duties regarding minor casting and certified animal handler supervision are not established by index titles.; enforce jurisdictional minor working hours and welfare safeguards; provide certified animal handler supervision per CSATF Safety Bulletin #6; stage the child and animal elements separately from night water and pyrotechnic filming via plates/split-screen",
+                "citation_numbers": [
+                  4
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 4,
+                    "quote": "Animal Handling Rules for the Motion Picture Industry"
+                  }
+                ],
+                "script_spans": []
+              },
+              {
+                "field": "finding",
+                "quote": "These stacked hazards compound fire/pyrotechnics, cold-water immersion, night vessel operations, and vulnerable character presence",
+                "basis": "source",
+                "status": "UNKNOWN",
+                "reason": "Material text was omitted from the claim audit",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              },
+              {
+                "field": "remedy",
+                "quote": "1. Pyrotechnics & Fire: If practical fire, flare discharge, or fireworks are utilized, engage a licensed Pyrotechnic Special Effects Operator and obtain required permits from the Authority Having Jurisdiction (AHJ) in compliance with CSATF Safety Bulletin #16; alternatively, execute the vessel burn, flare ignition, and mortar fireworks using CGI/VFX or controlled tank/miniature elements to eliminate live open-water fire hazards. 2. Marine & Water Safety: For practical night water work and the depicted swimming stunt, engage a Marine Coordinator and dedicated Water Safety / Lifesaving personnel per CSATF Safety Bulletin #17 and #15. Provide appropriate personal flotation devices, buddy/personnel accounting systems, qualified stunt doubles for the dive and tow sequence, and active hypothermia mitigation measures (including warm staging areas/tents, heated dry suits or thermal layers, and immediate medical standby). 3. Minor and Animal Staging: Confirm performer casting age and animal handling plans; if a minor performer or live animal is cast, enforce jurisdictional minor working hours and welfare safeguards, provide certified animal handler supervision per CSATF Safety Bulletin #6, or stage the child and animal elements separately from night water and pyrotechnic filming via plates/split-screen. Schedule and cost estimates are omitted as they depend on the chosen shooting location, marine logistics, and practical versus VFX method determinations",
+                "basis": "source",
+                "status": "UNKNOWN",
+                "reason": "Material text was omitted from the claim audit",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              }
+            ],
+            "support_span_version": 3,
+            "audit_input": "311a25d0a346ed8cba3825e6c06f27572bb58af52565a025fd7439a7ff665e92",
+            "estimate_exclusions": [],
+            "entailment_review": {
+              "checks": [
+                {
+                  "check_index": 3,
+                  "entailed": true,
+                  "reason": "The script depicts flare ignition and fireworks mortar usage, and CSATF Safety Bulletin #16 explicitly requires obtaining required permits from the AHJ and utilizing licensed Pyrotechnic Special Effects Operators when pyrotechnic special effects are used.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "The conditional statement accurately frames the requirements contingent upon utilizing practical fire and pyrotechnics.",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 4,
+                  "entailed": false,
+                  "reason": "The cited source only states that pyrotechnic materials used on set must be under controlled conditions with due regard for safety; it does not provide or mandate specific alternative execution methods such as CGI/VFX, tank filming, or miniatures.",
+                  "scope_preserved": false,
+                  "requirements_supported": false,
+                  "scope_reason": "The source does not establish the specific planning alternatives of CGI/VFX or controlled tank/miniature elements.",
+                  "unsupported_parts": [
+                    "execute the vessel burn, flare ignition, and mortar fireworks using CGI/VFX or controlled tank/miniature elements"
+                  ]
+                },
+                {
+                  "check_index": 5,
+                  "entailed": false,
+                  "reason": "While the sources mention water safety devices, buddy/accounting systems, and general steps to prevent hypothermia, they do not establish mandates for engaging a Marine Coordinator, CSATF Bulletin #15 requirements, hiring dedicated lifesaving personnel, stunt double mandates, or specific hypothermia measures like warm staging tents, heated dry suits, and immediate medical standby.",
+                  "scope_preserved": false,
+                  "requirements_supported": false,
+                  "scope_reason": "Multiple specific roles, equipment specifications, and safety precautions are introduced without backing in the provided excerpts.",
+                  "unsupported_parts": [
+                    "engage a Marine Coordinator and dedicated Water Safety / Lifesaving personnel per CSATF Safety Bulletin #17 and #15",
+                    "qualified stunt doubles for the dive and tow sequence",
+                    "warm staging areas/tents, heated dry suits or thermal layers, and immediate medical standby"
+                  ]
+                },
+                {
+                  "check_index": 6,
+                  "entailed": false,
+                  "reason": "The only provided support is an index title for CSATF Bulletin #6. Titles and index entries cannot establish operative requirements, and no source text is provided supporting minor performer working hours, welfare safeguards, certified animal handler supervision, or plate/split-screen staging alternatives.",
+                  "scope_preserved": false,
+                  "requirements_supported": false,
+                  "scope_reason": "Operative rules and safety duties regarding minor casting and certified animal handler supervision are not established by index titles.",
+                  "unsupported_parts": [
+                    "enforce jurisdictional minor working hours and welfare safeguards",
+                    "provide certified animal handler supervision per CSATF Safety Bulletin #6",
+                    "stage the child and animal elements separately from night water and pyrotechnic filming via plates/split-screen"
+                  ]
+                }
+              ]
+            }
+          },
+          "correction": {
+            "finding": "Scenes S009-S011 depict pyrotechnic ignition (firing a flare gun into fuel-soaked blankets to engulf a boat in flames), aerial fireworks discharge over water, and an actor diving into harbor water at night near a burning vessel. If practical pyrotechnics or live open-water immersion are utilized, these sequences introduce substantial burn and water hazard exposures. Under CSATF Safety Bulletin #16, practical pyrotechnic effects require controlled conditions, advance notifications to all affected departments and performers, licensed Pyrotechnic Special Effects Operators, and applicable permits from the Authority Having Jurisdiction (AHJ). Furthermore, under CSATF Safety Bulletin #17 and Actsafe Safety Bulletin #17, personnel working in or around water require available water safety devices (e.g., life vests, preservers, safety rings, hooks, buoys), a personnel accounting plan (such as a buddy or check-in system), and producer steps to prevent hypothermia.",
+            "remedy_detail": "Confirm the planned production methods for the boat fire, fireworks, and night water sequence. If practical pyrotechnic materials or fireworks are selected, engage a licensed Pyrotechnic Special Effects Operator, secure all required permits from the Authority Having Jurisdiction (AHJ), and issue advance notifications to affected cast and crew pursuant to CSATF Safety Bulletin #16. For any practical water immersion or filming in/around water, make appropriate water safety devices available, establish a personnel accounting system, and implement precautions against hypothermia in accordance with CSATF Safety Bulletin #17 and Actsafe Safety Bulletin #17.",
+            "remedy_action": "ADD_SPECIALIST",
+            "severity": "HIGH"
+          },
+          "after": {
+            "verdict": "PARTIAL",
+            "reason": "Claim audit requires correction: Independent span review: CSATF Safety Bulletin #17 states that a plan to account for personnel should be implemented 'when necessary' for 'personnel in the water', rather than imposing an unqualified requirement for all personnel working in or around water.; The claim omits the 'when necessary' condition and broadens the personnel accounting plan from personnel in the water to all personnel working in or around water.; unqualified requirement for a personnel accounting plan for all personnel working in or around water (CSATF Safety Bulletin #17 specifies 'when necessary' for personnel in the water); Independent span review: Under counterfactual scope testing, filming around water alone does not mandate establishing a personnel accounting system, which CSATF Safety Bulletin #17 recommends only 'when necessary' for personnel in the water.; The alternative trigger 'filming in/around water' is broader than CSATF Safety Bulletin #17, which applies the accounting system conditionally ('when necessary') to personnel in the water.; establishing a personnel accounting system for filming around water (CSATF Safety Bulletin #17 applies the accounting plan when necessary to personnel in the water)",
+            "failure_mode": "none",
+            "claim_checks": [
+              {
+                "field": "severity",
+                "quote": "HIGH",
+                "basis": "risk_assessment",
+                "status": "SUPPORTED",
+                "reason": "High severity is warranted given the co-occurrence of depicted large vessel fire, mortar pyrotechnics, and night open-water immersion hazards.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "WHUMP. A line of blue-orange flame walks the deck like it knows the boat. Then the diesel catches and the MARGARET ROSE goes up -- a column of fire standing on the black water, doubled in the swell, huge.",
+                  "Crow touches a road flare to the mortar fuse. The Fourth of July stash goes up -- white and gold chrysanthemums blooming over the burning boat, reflections shattering across the harbor.",
+                  "Before Danny can speak she has the spare line over her shoulder and she DIVES -- off the skiff into the black water, surfacing in the firelight, swimming hard for the mooring buoy off the Margaret Rose's bow."
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "Scenes S009-S011 depict pyrotechnic ignition (firing a flare gun into fuel-soaked blankets to engulf a boat in flames), aerial fireworks discharge over water, and an actor diving into harbor water at night near a burning vessel.",
+                "basis": "script",
+                "status": "SUPPORTED",
+                "reason": "Accurately summarizes the action in S009-S011.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "Mara stands, braces, and fires the flare into the soaked blankets amidships.",
+                  "Crow touches a road flare to the mortar fuse. The Fourth of July stash goes up -- white and gold chrysanthemums blooming over the burning boat, reflections shattering across the harbor.",
+                  "she DIVES -- off the skiff into the black water, surfacing in the firelight, swimming hard for the mooring buoy off the Margaret Rose's bow."
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "If practical pyrotechnics or live open-water immersion are utilized, these sequences introduce substantial burn and water hazard exposures.",
+                "basis": "risk_assessment",
+                "status": "SUPPORTED",
+                "reason": "Properly identifies conditional hazards arising from the depicted script actions if executed practically.",
+                "citation_numbers": [
+                  1,
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "When pyrotechnic materials are used on set, such use shall be under controlled conditions with due regard for the safety of all involved."
+                  },
+                  {
+                    "citation_number": 2,
+                    "quote": "Appropriate water safety devices (e.g., life vests, life preservers, safety rings, safety hooks, buoys) should be available for all personnel working in or around water."
+                  }
+                ],
+                "script_spans": [
+                  "Mara stands, braces, and fires the flare into the soaked blankets amidships.",
+                  "Crow touches a road flare to the mortar fuse. The Fourth of July stash goes up",
+                  "she DIVES -- off the skiff into the black water"
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "Under CSATF Safety Bulletin #16, practical pyrotechnic effects require controlled conditions, advance notifications to all affected departments and performers, licensed Pyrotechnic Special Effects Operators, and applicable permits from the Authority Having Jurisdiction (AHJ).",
+                "basis": "source",
+                "status": "SUPPORTED",
+                "reason": "Verbatim entailment from CSATF Safety Bulletin #16.",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "When pyrotechnic materials are used on set, such use shall be under controlled conditions with due regard for the safety of all involved. \u2022 The Production Company or Studio shall make sufficient advanced notification of the use of pyrotechnic materials to the appropriate departments (such as Special Effects, Stunts, Camera, Art, Construction, Hair, Make-up and Wardrobe), in order to safely plan pyrotechnic special effects. Any performer who may be involved in a pyrotechnic special effect shall be notified. \u2022 Any required licenses and/or permits shall be obtained from proper Authorities Having Jurisdiction (AHJ) over pyrotechnic materials prior to using pyrotechnic special effects. Pyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable."
+                  }
+                ],
+                "script_spans": []
+              },
+              {
+                "field": "finding",
+                "quote": "Furthermore, under CSATF Safety Bulletin #17 and Actsafe Safety Bulletin #17, personnel working in or around water require available water safety devices (e.g., life vests, preservers, safety rings, hooks, buoys), a personnel accounting plan (such as a buddy or check-in system), and producer steps to prevent hypothermia.",
+                "basis": "source",
+                "status": "UNSUPPORTED",
+                "reason": "Independent span review: CSATF Safety Bulletin #17 states that a plan to account for personnel should be implemented 'when necessary' for 'personnel in the water', rather than imposing an unqualified requirement for all personnel working in or around water.; The claim omits the 'when necessary' condition and broadens the personnel accounting plan from personnel in the water to all personnel working in or around water.; unqualified requirement for a personnel accounting plan for all personnel working in or around water (CSATF Safety Bulletin #17 specifies 'when necessary' for personnel in the water)",
+                "citation_numbers": [
+                  2,
+                  3
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 2,
+                    "quote": "Appropriate water safety devices (e.g., life vests, life preservers, safety rings, safety hooks, buoys) should be available for all personnel working in or around water. When necessary, the Production Management should implement a plan to account for personnel in the water, such as a \u201cbuddy\u201d or a check in/check out system."
+                  },
+                  {
+                    "citation_number": 3,
+                    "quote": "The Producer should take steps to prevent hyperthermia (elevated body temperature) and hypothermia (reduced body temperature)."
+                  }
+                ],
+                "script_spans": []
+              },
+              {
+                "field": "remedy",
+                "quote": "Confirm the planned production methods for the boat fire, fireworks, and night water sequence.",
+                "basis": "inquiry",
+                "status": "SUPPORTED",
+                "reason": "Relevant safety inquiry to determine if practical execution vs. VFX will be used.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              },
+              {
+                "field": "remedy",
+                "quote": "If practical pyrotechnic materials or fireworks are selected, engage a licensed Pyrotechnic Special Effects Operator, secure all required permits from the Authority Having Jurisdiction (AHJ), and issue advance notifications to affected cast and crew pursuant to CSATF Safety Bulletin #16.",
+                "basis": "application",
+                "status": "SUPPORTED",
+                "reason": "Directly applies the requirements of CSATF Safety Bulletin #16 conditionally to practical pyrotechnic staging.",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "The Production Company or Studio shall make sufficient advanced notification of the use of pyrotechnic materials to the appropriate departments (such as Special Effects, Stunts, Camera, Art, Construction, Hair, Make-up and Wardrobe), in order to safely plan pyrotechnic special effects. Any performer who may be involved in a pyrotechnic special effect shall be notified. \u2022 Any required licenses and/or permits shall be obtained from proper Authorities Having Jurisdiction (AHJ) over pyrotechnic materials prior to using pyrotechnic special effects. Pyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable."
+                  }
+                ],
+                "script_spans": [
+                  "Mara stands, braces, and fires the flare into the soaked blankets amidships.",
+                  "Crow touches a road flare to the mortar fuse. The Fourth of July stash goes up -- white and gold chrysanthemums blooming over the burning boat"
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "For any practical water immersion or filming in/around water, make appropriate water safety devices available, establish a personnel accounting system, and implement precautions against hypothermia in accordance with CSATF Safety Bulletin #17 and Actsafe Safety Bulletin #17.",
+                "basis": "application",
+                "status": "UNSUPPORTED",
+                "reason": "Independent span review: Under counterfactual scope testing, filming around water alone does not mandate establishing a personnel accounting system, which CSATF Safety Bulletin #17 recommends only 'when necessary' for personnel in the water.; The alternative trigger 'filming in/around water' is broader than CSATF Safety Bulletin #17, which applies the accounting system conditionally ('when necessary') to personnel in the water.; establishing a personnel accounting system for filming around water (CSATF Safety Bulletin #17 applies the accounting plan when necessary to personnel in the water)",
+                "citation_numbers": [
+                  2,
+                  3
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 2,
+                    "quote": "Appropriate water safety devices (e.g., life vests, life preservers, safety rings, safety hooks, buoys) should be available for all personnel working in or around water. When necessary, the Production Management should implement a plan to account for personnel in the water, such as a \u201cbuddy\u201d or a check in/check out system."
+                  },
+                  {
+                    "citation_number": 3,
+                    "quote": "The Producer should take steps to prevent hyperthermia (elevated body temperature) and hypothermia (reduced body temperature)."
+                  }
+                ],
+                "script_spans": [
+                  "she DIVES -- off the skiff into the black water, surfacing in the firelight, swimming hard for the mooring buoy off the Margaret Rose's bow."
+                ]
+              }
+            ],
+            "support_span_version": 3,
+            "audit_input": "3fcbd8ce075589b79a685144d5395058676990d591dcedf692269a7c2d035312",
+            "citation_index_reanchors": [
+              {
+                "check_index": 2,
+                "submitted_indexes": [
+                  1,
+                  2,
+                  3
+                ],
+                "receipt_indexes": [
+                  1,
+                  2
+                ]
+              }
+            ],
+            "estimate_exclusions": [],
+            "entailment_review": {
+              "checks": [
+                {
+                  "check_index": 2,
+                  "entailed": true,
+                  "reason": "The risk assessment accurately identifies potential burn and water hazards conditionally tied to the practical execution of the pyrotechnic and night water scenes depicted in the script.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "The conditional statement properly reflects the potential hazards without overstating certainty.",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 3,
+                  "entailed": true,
+                  "reason": "CSATF Safety Bulletin #16 explicitly requires controlled conditions, advance notification to affected departments and performers, licensed Pyrotechnic Special Effects Operators, and required permits from the AHJ.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "The scope of the cited CSATF Safety Bulletin #16 requirements matches the source text.",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 4,
+                  "entailed": false,
+                  "reason": "CSATF Safety Bulletin #17 states that a plan to account for personnel should be implemented 'when necessary' for 'personnel in the water', rather than imposing an unqualified requirement for all personnel working in or around water.",
+                  "scope_preserved": false,
+                  "requirements_supported": false,
+                  "scope_reason": "The claim omits the 'when necessary' condition and broadens the personnel accounting plan from personnel in the water to all personnel working in or around water.",
+                  "unsupported_parts": [
+                    "unqualified requirement for a personnel accounting plan for all personnel working in or around water (CSATF Safety Bulletin #17 specifies 'when necessary' for personnel in the water)"
+                  ]
+                },
+                {
+                  "check_index": 5,
+                  "entailed": true,
+                  "reason": "The inquiry requests relevant missing information regarding practical production methods for the identified safety desk finding without asserting unverified facts or imposing unsupported duties.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "The inquiry directly addresses the production methods pertinent to the safety finding.",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 6,
+                  "entailed": true,
+                  "reason": "The application accurately links the practical pyrotechnic and fireworks script actions to the specific operator, permit, and notification requirements established by CSATF Safety Bulletin #16.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "The conditional rule application matches the scope and requirements of CSATF Safety Bulletin #16.",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 7,
+                  "entailed": false,
+                  "reason": "Under counterfactual scope testing, filming around water alone does not mandate establishing a personnel accounting system, which CSATF Safety Bulletin #17 recommends only 'when necessary' for personnel in the water.",
+                  "scope_preserved": false,
+                  "requirements_supported": false,
+                  "scope_reason": "The alternative trigger 'filming in/around water' is broader than CSATF Safety Bulletin #17, which applies the accounting system conditionally ('when necessary') to personnel in the water.",
+                  "unsupported_parts": [
+                    "establishing a personnel accounting system for filming around water (CSATF Safety Bulletin #17 applies the accounting plan when necessary to personnel in the water)"
+                  ]
+                }
+              ]
+            }
+          },
+          "source_rules": []
+        }
+      },
+      "kept": [],
+      "dropped": [
+        {
+          "flag_id": "F3001",
+          "agent": "safety_underwriter",
+          "scene_ids": [
+            "S009",
+            "S010",
+            "S011"
+          ],
+          "entity_id": null,
+          "severity": "HIGH",
+          "category": "stunt_pyro",
+          "finding": "Scenes S009, S010, and S011 depict a heavily stacked sequence of physical hazards taking place in open harbor waters at night. The staged action includes discharging a flare gun into fuel-soaked blankets on an anchored vessel (Margaret Rose), causing an engulfing fire and diesel burn, adjacent aerial mortar fireworks launched from the seawall, a severed anchor line causing the burning vessel to drift toward moored floats, a character (Mara) diving into cold water at night to swim a line to a mooring buoy, boat maneuvers adjacent to flames to tow the vessel, and an adjacent skiff carrying a child character (Sam) and a dog (Barnacle). These stacked hazards compound fire/pyrotechnics, cold-water immersion, night vessel operations, and vulnerable character presence. While the script depicts these story events, practical versus visual effects execution, shooting jurisdiction, casting ages, and marine safety protocols remain unconfirmed production decisions.",
+          "citations": [
+            {
+              "source_type": "web",
+              "title": "CSATF Safety Bulletin #16: Recommended Guidelines for Safety with Pyrotechnic Special Effects",
+              "url": "https://www.csatf.org/wp-content/uploads/2018/05/16PYROTECHNIC.pdf",
+              "excerpt": "When pyrotechnic materials are used on set, such use shall be under controlled conditions with due regard for the safety of all involved. \u2022 The Production Company or Studio shall make sufficient advanced notification of the use of pyrotechnic materials to the appropriate departments (such as Special Effects, Stunts, Camera, Art, Construction, Hair, Make-up and Wardrobe), in order to safely plan pyrotechnic special effects. Any performer who may be involved in a pyrotechnic special effect shall be notified. \u2022 Any required licenses and/or permits shall be obtained from proper Authorities Having Jurisdiction (AHJ) over pyrotechnic materials prior to using pyrotechnic special effects. Pyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable.",
+              "retrieved_at": null,
+              "via": "parallel_search"
+            },
+            {
+              "source_type": "web",
+              "title": "CSATF Safety Bulletin #17: Water Hazards",
+              "url": "https://www.csatf.org/17_safety_bltn_water_hazards/",
+              "excerpt": "Appropriate water safety devices (e.g., life vests, life preservers, safety rings, safety hooks, buoys) should be available for all personnel working in or around water. When necessary, the Production Management should implement a plan to account for personnel in the water, such as a \u201cbuddy\u201d or a check in/check out system.",
+              "retrieved_at": null,
+              "via": "parallel_search"
+            },
+            {
+              "source_type": "web",
+              "title": "Actsafe Safety Bulletin #17: Water Hazards",
+              "url": "https://actsafe.ca/wp-content/uploads/2017/11/Water-Hazards-Motion-Picture-Safety-Bulletin-PDF.pdf",
+              "excerpt": "The Producer should take steps to prevent hyperthermia (elevated body temperature) and hypothermia (reduced body temperature).",
+              "retrieved_at": null,
+              "via": "parallel_search"
+            },
+            {
+              "source_type": "rules_table",
+              "title": "CSATF bulletin index (auto-attached: number verification only)",
+              "url": null,
+              "excerpt": "Animal Handling Rules for the Motion Picture Industry",
+              "retrieved_at": null,
+              "via": "local",
+              "repaired": true
+            },
+            {
+              "source_type": "rules_table",
+              "title": "CSATF bulletin index (auto-attached: number verification only)",
+              "url": null,
+              "excerpt": "Guidelines for Boating/Watercraft Safety for Film Crews",
+              "retrieved_at": null,
+              "via": "local",
+              "repaired": true
+            }
+          ],
+          "remedy": {
+            "action": "ADD_SPECIALIST",
+            "detail": "1. Pyrotechnics & Fire: If practical fire, flare discharge, or fireworks are utilized, engage a licensed Pyrotechnic Special Effects Operator and obtain required permits from the Authority Having Jurisdiction (AHJ) in compliance with CSATF Safety Bulletin #16; alternatively, execute the vessel burn, flare ignition, and mortar fireworks using CGI/VFX or controlled tank/miniature elements to eliminate live open-water fire hazards. 2. Marine & Water Safety: For practical night water work and the depicted swimming stunt, engage a Marine Coordinator and dedicated Water Safety / Lifesaving personnel per CSATF Safety Bulletin #17 and #15. Provide appropriate personal flotation devices, buddy/personnel accounting systems, qualified stunt doubles for the dive and tow sequence, and active hypothermia mitigation measures (including warm staging areas/tents, heated dry suits or thermal layers, and immediate medical standby). 3. Minor and Animal Staging: Confirm performer casting age and animal handling plans; if a minor performer or live animal is cast, enforce jurisdictional minor working hours and welfare safeguards, provide certified animal handler supervision per CSATF Safety Bulletin #6, or stage the child and animal elements separately from night water and pyrotechnic filming via plates/split-screen. Schedule and cost estimates are omitted as they depend on the chosen shooting location, marine logistics, and practical versus VFX method determinations.",
+            "est_cost_usd": null,
+            "est_added_days": null
+          },
+          "confidence": 0.95,
+          "rejection_reason": "Evidence correction unresolved: corrected claim did not pass independent verification",
+          "failure_mode": "premise_unsupported",
+          "recoverable": false
+        }
+      ],
+      "verification_incomplete": true,
+      "elapsed_s": 88.13
+    }
+  ],
+  "responses": [
+    {
+      "flag_id": "F3001",
+      "schema": "EvidenceVerdict",
+      "text": "{\n  \"verdict\": \"SUPPORTED\",\n  \"reason\": \"The script accurately depicts the described night harbor sequence across S009-S011, including flare discharge into fuel-soaked blankets, vessel diesel fire, mortar fireworks, anchor line parting, Mara diving into cold night water to swim a line to a mooring buoy, boat maneuvering near flames, and a skiff carrying Sam and a dog. The cited CSATF Safety Bulletins (#16, #17, #15, #6) and Actsafe Bulletin #17 support the recommended pyrotechnic operator/permits, water safety devices/accounting, hypothermia mitigation, marine/water coordination, and conditional animal/minor safeguards.\",\n  \"failure_mode\": \"none\",\n  \"claim_checks\": [\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Scenes S009, S010, and S011 depict a heavily stacked sequence of physical hazards taking place in open harbor waters at night. The staged action includes discharging a flare gun into fuel-soaked blankets on an anchored vessel (Margaret Rose), causing an engulfing fire and diesel burn, adjacent aerial mortar fireworks launched from the seawall, a severed anchor line causing the burning vessel to drift toward moored floats, a character (Mara) diving into cold water at night to swim a line to a mooring buoy, boat maneuvers adjacent to flames to tow the vessel, and an adjacent skiff carrying a child character (Sam) and a dog (Barnacle).\",\n      \"basis\": \"script\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Accurately summarizes the depicted action and events in scenes S009, S010, and S011.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": [\n        \"Mara stands, braces, and fires the flare into the soaked blankets amidships.\\n\\nWHUMP. A line of blue-orange flame walks the deck like it knows the boat. Then the diesel catches and the MARGARET ROSE goes up -- a column of fire standing on the black water, doubled in the swell, huge.\",\n        \"Crow touches a road flare to the mortar fuse. The Fourth of July stash goes up -- white and gold chrysanthemums blooming over the burning boat, reflections shattering across the harbor.\",\n        \"The anchor line, burned through at the chock, parts. The burning boat swings free and begins to drift, slow and terrible, on the last of the tide.\\n\\nToward a row of moored floats.\",\n        \"Before Danny can speak she has the spare line over her shoulder and she DIVES -- off the skiff into the black water, surfacing in the firelight, swimming hard for the mooring buoy off the Margaret Rose's bow.\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"While the script depicts these story events, practical versus visual effects execution, shooting jurisdiction, casting ages, and marine safety protocols remain unconfirmed production decisions.\",\n      \"basis\": \"production\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Accurately clarifies that physical execution method, casting ages, and production logistics are unconfirmed in the screenplay.\",\n      \"citation_numbers\": [],\n      \"support_spans\": []\n    },\n    {\n      \"field\": \"severity\",\n      \"quote\": \"HIGH\",\n      \"basis\": \"risk_assessment\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"High severity is appropriate given the multiple compounding high-risk physical hazards (night open water, cold water immersion, fire/pyrotechnics, vessel maneuvering).\",\n      \"citation_numbers\": [],\n      \"support_spans\": []\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"If practical fire, flare discharge, or fireworks are utilized, engage a licensed Pyrotechnic Special Effects Operator and obtain required permits from the Authority Having Jurisdiction (AHJ) in compliance with CSATF Safety Bulletin #16\",\n      \"basis\": \"application\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"CSATF Safety Bulletin #16 specifies required AHJ permits and licensed Pyrotechnic Special Effects Operators when pyrotechnics are used.\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"Any required licenses and/or permits shall be obtained from proper Authorities Having Jurisdiction (AHJ) over pyrotechnic materials prior to using pyrotechnic special effects. Pyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable.\"\n        }\n      ],\n      \"script_spans\": [\n        \"Mara stands, braces, and fires the flare into the soaked blankets amidships.\",\n        \"Crow touches a road flare to the mortar fuse. The Fourth of July stash goes up -- white and gold chrysanthemums blooming over the burning boat\"\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"alternatively, execute the vessel burn, flare ignition, and mortar fireworks using CGI/VFX or controlled tank/miniature elements to eliminate live open-water fire hazards.\",\n      \"basis\": \"planning\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Proposes safe alternate execution methods to eliminate live practical fire hazards.\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"When pyrotechnic materials are used on set, such use shall be under controlled conditions with due regard for the safety of all involved.\"\n        }\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"For practical night water work and the depicted swimming stunt, engage a Marine Coordinator and dedicated Water Safety / Lifesaving personnel per CSATF Safety Bulletin #17 and #15. Provide appropriate personal flotation devices, buddy/personnel accounting systems, qualified stunt doubles for the dive and tow sequence, and active hypothermia mitigation measures (including warm staging areas/tents, heated dry suits or thermal layers, and immediate medical standby).\",\n      \"basis\": \"application\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"CSATF #17 and #15 cover water safety devices, personnel accounting, and watercraft guidelines; Actsafe #17 requires steps to prevent hypothermia during water hazards.\",\n      \"citation_numbers\": [2, 3, 5],\n      \"support_spans\": [\n        {\n          \"citation_number\": 2,\n          \"quote\": \"Appropriate water safety devices (e.g., life vests, life preservers, safety rings, safety hooks, buoys) should be available for all personnel working in or around water. When necessary, the Production Management should implement a plan to account for personnel in the water, such as a \u201cbuddy\u201d or a check in/check out system.\"\n        },\n        {\n          \"citation_number\": 3,\n          \"quote\": \"The Producer should take steps to prevent hyperthermia (elevated body temperature) and hypothermia (reduced body temperature).\"\n        },\n        {\n          \"citation_number\": 5,\n          \"quote\": \"Guidelines for Boating/Watercraft Safety for Film Crews\"\n        }\n      ],\n      \"script_spans\": [\n        \"she DIVES -- off the skiff into the black water, surfacing in the firelight, swimming hard for the mooring buoy off the Margaret Rose's bow.\",\n        \"He swings back and hauls Mara over the gunwale, soaked, gasping, shaking with cold and adrenaline and something else entirely.\"\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"Confirm performer casting age and animal handling plans; if a minor performer or live animal is cast, enforce jurisdictional minor working hours and welfare safeguards, provide certified animal handler supervision per CSATF Safety Bulletin #6, or stage the child and animal elements separately from night water and pyrotechnic filming via plates/split-screen.\",\n      \"basis\": \"planning\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Correctly frames minor and animal safeguards as conditional upon actual casting and references CSATF Safety Bulletin #6 for animal handling.\",\n      \"citation_numbers\": [4],\n      \"support_spans\": [\n        {\n          \"citation_number\": 4,\n          \"quote\": \"Animal Handling Rules for the Motion Picture Industry\"\n        }\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F3001",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 3,\n      \"entailed\": true,\n      \"reason\": \"The script depicts flare ignition and fireworks mortar usage, and CSATF Safety Bulletin #16 explicitly requires obtaining required permits from the AHJ and utilizing licensed Pyrotechnic Special Effects Operators when pyrotechnic special effects are used.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The conditional statement accurately frames the requirements contingent upon utilizing practical fire and pyrotechnics.\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 4,\n      \"entailed\": false,\n      \"reason\": \"The cited source only states that pyrotechnic materials used on set must be under controlled conditions with due regard for safety; it does not provide or mandate specific alternative execution methods such as CGI/VFX, tank filming, or miniatures.\",\n      \"scope_preserved\": false,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"The source does not establish the specific planning alternatives of CGI/VFX or controlled tank/miniature elements.\",\n      \"unsupported_parts\": [\n        \"execute the vessel burn, flare ignition, and mortar fireworks using CGI/VFX or controlled tank/miniature elements\"\n      ]\n    },\n    {\n      \"check_index\": 5,\n      \"entailed\": false,\n      \"reason\": \"While the sources mention water safety devices, buddy/accounting systems, and general steps to prevent hypothermia, they do not establish mandates for engaging a Marine Coordinator, CSATF Bulletin #15 requirements, hiring dedicated lifesaving personnel, stunt double mandates, or specific hypothermia measures like warm staging tents, heated dry suits, and immediate medical standby.\",\n      \"scope_preserved\": false,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"Multiple specific roles, equipment specifications, and safety precautions are introduced without backing in the provided excerpts.\",\n      \"unsupported_parts\": [\n        \"engage a Marine Coordinator and dedicated Water Safety / Lifesaving personnel per CSATF Safety Bulletin #17 and #15\",\n        \"qualified stunt doubles for the dive and tow sequence\",\n        \"warm staging areas/tents, heated dry suits or thermal layers, and immediate medical standby\"\n      ]\n    },\n    {\n      \"check_index\": 6,\n      \"entailed\": false,\n      \"reason\": \"The only provided support is an index title for CSATF Bulletin #6. Titles and index entries cannot establish operative requirements, and no source text is provided supporting minor performer working hours, welfare safeguards, certified animal handler supervision, or plate/split-screen staging alternatives.\",\n      \"scope_preserved\": false,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"Operative rules and safety duties regarding minor casting and certified animal handler supervision are not established by index titles.\",\n      \"unsupported_parts\": [\n        \"enforce jurisdictional minor working hours and welfare safeguards\",\n        \"provide certified animal handler supervision per CSATF Safety Bulletin #6\",\n        \"stage the child and animal elements separately from night water and pyrotechnic filming via plates/split-screen\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F3001",
+      "schema": "CorrectedClaim",
+      "text": "{\n  \"finding\": \"Scenes S009-S011 depict pyrotechnic ignition (firing a flare gun into fuel-soaked blankets to engulf a boat in flames), aerial fireworks discharge over water, and an actor diving into harbor water at night near a burning vessel. If practical pyrotechnics or live open-water immersion are utilized, these sequences introduce substantial burn and water hazard exposures. Under CSATF Safety Bulletin #16, practical pyrotechnic effects require controlled conditions, advance notifications to all affected departments and performers, licensed Pyrotechnic Special Effects Operators, and applicable permits from the Authority Having Jurisdiction (AHJ). Furthermore, under CSATF Safety Bulletin #17 and Actsafe Safety Bulletin #17, personnel working in or around water require available water safety devices (e.g., life vests, preservers, safety rings, hooks, buoys), a personnel accounting plan (such as a buddy or check-in system), and producer steps to prevent hypothermia.\",\n  \"remedy_detail\": \"Confirm the planned production methods for the boat fire, fireworks, and night water sequence. If practical pyrotechnic materials or fireworks are selected, engage a licensed Pyrotechnic Special Effects Operator, secure all required permits from the Authority Having Jurisdiction (AHJ), and issue advance notifications to affected cast and crew pursuant to CSATF Safety Bulletin #16. For any practical water immersion or filming in/around water, make appropriate water safety devices available, establish a personnel accounting system, and implement precautions against hypothermia in accordance with CSATF Safety Bulletin #17 and Actsafe Safety Bulletin #17.\",\n  \"remedy_action\": \"ADD_SPECIALIST\",\n  \"severity\": \"HIGH\"\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F3001",
+      "schema": "EvidenceVerdict",
+      "text": "{\n  \"verdict\": \"SUPPORTED\",\n  \"reason\": \"The scene text accurately depicts firing a flare gun into soaked blankets to ignite a boat, launching mortar fireworks over the harbor, and a character diving into cold harbor water at night. The cited safety bulletins fully support the conditional planning precautions for practical pyrotechnics/fireworks (CSATF #16: controlled conditions, advance notifications, licensed Pyrotechnic Special Effects Operators, AHJ permits) and water hazards (CSATF #17 and Actsafe #17: water safety devices, personnel accounting plan, and hypothermia prevention).\",\n  \"failure_mode\": \"none\",\n  \"claim_checks\": [\n    {\n      \"field\": \"severity\",\n      \"quote\": \"HIGH\",\n      \"basis\": \"risk_assessment\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"High severity is warranted given the co-occurrence of depicted large vessel fire, mortar pyrotechnics, and night open-water immersion hazards.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": [\n        \"WHUMP. A line of blue-orange flame walks the deck like it knows the boat. Then the diesel catches and the MARGARET ROSE goes up -- a column of fire standing on the black water, doubled in the swell, huge.\",\n        \"Crow touches a road flare to the mortar fuse. The Fourth of July stash goes up -- white and gold chrysanthemums blooming over the burning boat, reflections shattering across the harbor.\",\n        \"Before Danny can speak she has the spare line over her shoulder and she DIVES -- off the skiff into the black water, surfacing in the firelight, swimming hard for the mooring buoy off the Margaret Rose's bow.\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Scenes S009-S011 depict pyrotechnic ignition (firing a flare gun into fuel-soaked blankets to engulf a boat in flames), aerial fireworks discharge over water, and an actor diving into harbor water at night near a burning vessel.\",\n      \"basis\": \"script\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Accurately summarizes the action in S009-S011.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": [\n        \"Mara stands, braces, and fires the flare into the soaked blankets amidships.\",\n        \"Crow touches a road flare to the mortar fuse. The Fourth of July stash goes up -- white and gold chrysanthemums blooming over the burning boat, reflections shattering across the harbor.\",\n        \"she DIVES -- off the skiff into the black water, surfacing in the firelight, swimming hard for the mooring buoy off the Margaret Rose's bow.\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"If practical pyrotechnics or live open-water immersion are utilized, these sequences introduce substantial burn and water hazard exposures.\",\n      \"basis\": \"risk_assessment\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Properly identifies conditional hazards arising from the depicted script actions if executed practically.\",\n      \"citation_numbers\": [1, 2, 3],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"When pyrotechnic materials are used on set, such use shall be under controlled conditions with due regard for the safety of all involved.\"\n        },\n        {\n          \"citation_number\": 2,\n          \"quote\": \"Appropriate water safety devices (e.g., life vests, life preservers, safety rings, safety hooks, buoys) should be available for all personnel working in or around water.\"\n        }\n      ],\n      \"script_spans\": [\n        \"Mara stands, braces, and fires the flare into the soaked blankets amidships.\",\n        \"Crow touches a road flare to the mortar fuse. The Fourth of July stash goes up\",\n        \"she DIVES -- off the skiff into the black water\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Under CSATF Safety Bulletin #16, practical pyrotechnic effects require controlled conditions, advance notifications to all affected departments and performers, licensed Pyrotechnic Special Effects Operators, and applicable permits from the Authority Having Jurisdiction (AHJ).\",\n      \"basis\": \"source\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Verbatim entailment from CSATF Safety Bulletin #16.\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"When pyrotechnic materials are used on set, such use shall be under controlled conditions with due regard for the safety of all involved. \u2022 The Production Company or Studio shall make sufficient advanced notification of the use of pyrotechnic materials to the appropriate departments (such as Special Effects, Stunts, Camera, Art, Construction, Hair, Make-up and Wardrobe), in order to safely plan pyrotechnic special effects. Any performer who may be involved in a pyrotechnic special effect shall be notified. \u2022 Any required licenses and/or permits shall be obtained from proper Authorities Having Jurisdiction (AHJ) over pyrotechnic materials prior to using pyrotechnic special effects. Pyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable.\"\n        }\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Furthermore, under CSATF Safety Bulletin #17 and Actsafe Safety Bulletin #17, personnel working in or around water require available water safety devices (e.g., life vests, preservers, safety rings, hooks, buoys), a personnel accounting plan (such as a buddy or check-in system), and producer steps to prevent hypothermia.\",\n      \"basis\": \"source\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Directly supported by the cited water safety bulletins.\",\n      \"citation_numbers\": [2, 3],\n      \"support_spans\": [\n        {\n          \"citation_number\": 2,\n          \"quote\": \"Appropriate water safety devices (e.g., life vests, life preservers, safety rings, safety hooks, buoys) should be available for all personnel working in or around water. When necessary, the Production Management should implement a plan to account for personnel in the water, such as a \u201cbuddy\u201d or a check in/check out system.\"\n        },\n        {\n          \"citation_number\": 3,\n          \"quote\": \"The Producer should take steps to prevent hyperthermia (elevated body temperature) and hypothermia (reduced body temperature).\"\n        }\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"Confirm the planned production methods for the boat fire, fireworks, and night water sequence.\",\n      \"basis\": \"inquiry\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Relevant safety inquiry to determine if practical execution vs. VFX will be used.\",\n      \"citation_numbers\": [],\n      \"support_spans\": []\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"If practical pyrotechnic materials or fireworks are selected, engage a licensed Pyrotechnic Special Effects Operator, secure all required permits from the Authority Having Jurisdiction (AHJ), and issue advance notifications to affected cast and crew pursuant to CSATF Safety Bulletin #16.\",\n      \"basis\": \"application\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Directly applies the requirements of CSATF Safety Bulletin #16 conditionally to practical pyrotechnic staging.\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"The Production Company or Studio shall make sufficient advanced notification of the use of pyrotechnic materials to the appropriate departments (such as Special Effects, Stunts, Camera, Art, Construction, Hair, Make-up and Wardrobe), in order to safely plan pyrotechnic special effects. Any performer who may be involved in a pyrotechnic special effect shall be notified. \u2022 Any required licenses and/or permits shall be obtained from proper Authorities Having Jurisdiction (AHJ) over pyrotechnic materials prior to using pyrotechnic special effects. Pyrotechnic Special Effects Operator(s) must hold valid State and Federal license(s), as applicable.\"\n        }\n      ],\n      \"script_spans\": [\n        \"Mara stands, braces, and fires the flare into the soaked blankets amidships.\",\n        \"Crow touches a road flare to the mortar fuse. The Fourth of July stash goes up -- white and gold chrysanthemums blooming over the burning boat\"\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"For any practical water immersion or filming in/around water, make appropriate water safety devices available, establish a personnel accounting system, and implement precautions against hypothermia in accordance with CSATF Safety Bulletin #17 and Actsafe Safety Bulletin #17.\",\n      \"basis\": \"application\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Directly applies the water hazard precautions from CSATF #17 and Actsafe #17 conditionally to water filming.\",\n      \"citation_numbers\": [2, 3],\n      \"support_spans\": [\n        {\n          \"citation_number\": 2,\n          \"quote\": \"Appropriate water safety devices (e.g., life vests, life preservers, safety rings, safety hooks, buoys) should be available for all personnel working in or around water. When necessary, the Production Management should implement a plan to account for personnel in the water, such as a \u201cbuddy\u201d or a check in/check out system.\"\n        },\n        {\n          \"citation_number\": 3,\n          \"quote\": \"The Producer should take steps to prevent hyperthermia (elevated body temperature) and hypothermia (reduced body temperature).\"\n        }\n      ],\n      \"script_spans\": [\n        \"she DIVES -- off the skiff into the black water, surfacing in the firelight, swimming hard for the mooring buoy off the Margaret Rose's bow.\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F3001",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 2,\n      \"entailed\": true,\n      \"reason\": \"The risk assessment accurately identifies potential burn and water hazards conditionally tied to the practical execution of the pyrotechnic and night water scenes depicted in the script.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The conditional statement properly reflects the potential hazards without overstating certainty.\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 3,\n      \"entailed\": true,\n      \"reason\": \"CSATF Safety Bulletin #16 explicitly requires controlled conditions, advance notification to affected departments and performers, licensed Pyrotechnic Special Effects Operators, and required permits from the AHJ.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The scope of the cited CSATF Safety Bulletin #16 requirements matches the source text.\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 4,\n      \"entailed\": false,\n      \"reason\": \"CSATF Safety Bulletin #17 states that a plan to account for personnel should be implemented 'when necessary' for 'personnel in the water', rather than imposing an unqualified requirement for all personnel working in or around water.\",\n      \"scope_preserved\": false,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"The claim omits the 'when necessary' condition and broadens the personnel accounting plan from personnel in the water to all personnel working in or around water.\",\n      \"unsupported_parts\": [\n        \"unqualified requirement for a personnel accounting plan for all personnel working in or around water (CSATF Safety Bulletin #17 specifies 'when necessary' for personnel in the water)\"\n      ]\n    },\n    {\n      \"check_index\": 5,\n      \"entailed\": true,\n      \"reason\": \"The inquiry requests relevant missing information regarding practical production methods for the identified safety desk finding without asserting unverified facts or imposing unsupported duties.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The inquiry directly addresses the production methods pertinent to the safety finding.\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 6,\n      \"entailed\": true,\n      \"reason\": \"The application accurately links the practical pyrotechnic and fireworks script actions to the specific operator, permit, and notification requirements established by CSATF Safety Bulletin #16.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The conditional rule application matches the scope and requirements of CSATF Safety Bulletin #16.\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 7,\n      \"entailed\": false,\n      \"reason\": \"Under counterfactual scope testing, filming around water alone does not mandate establishing a personnel accounting system, which CSATF Safety Bulletin #17 recommends only 'when necessary' for personnel in the water.\",\n      \"scope_preserved\": false,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"The alternative trigger 'filming in/around water' is broader than CSATF Safety Bulletin #17, which applies the accounting system conditionally ('when necessary') to personnel in the water.\",\n      \"unsupported_parts\": [\n        \"establishing a personnel accounting system for filming around water (CSATF Safety Bulletin #17 applies the accounting plan when necessary to personnel in the water)\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    }
+  ]
+}

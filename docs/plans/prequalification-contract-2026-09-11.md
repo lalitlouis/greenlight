@@ -180,3 +180,24 @@ missing fields still fail closed. Add two frozen water-qualification controls to
 that 'when necessary' and example alternatives survive (`water_qualifications_20260911.json`).
 Budget those two calls and one review of each unchanged fresh finding after these changes,
 at most ten more logical calls. No further desk generation is needed for that comparison.
+
+Build `bfb288c` matched both water controls and produced a supported fresh-clearance
+repair (five calls, 101.06 seconds, estimated $0.0483), with no owner, term or price
+assertion. In-session source inspection accepts its licensing/replacement recommendation.
+The fresh safety correction still broadened the water accounting rule by dropping
+'when necessary' and extending it to personnel around water; it was correctly rejected
+(five calls, 88.13 seconds, estimated $0.0713). No full gate was run after that failure.
+
+The reviewed library now includes a water-devices/accounting inquiry that preserves the
+necessity condition and treats buddy/check-in systems as examples. The longer retrieved
+pyrotechnic paragraph is a separately reviewed, exact-hash context variant of the same
+licensing rule; arbitrary additions to the excerpt still disable the card. This is an
+explicit library expansion, not evidence of automatic generalization to unknown sources.
+Adjudication also receives the common pre-qualification scope and no longer treats an
+unknown cost as free or an input-question action as sufficient reason to lower severity.
+
+Budget one new fixed-inquiry probe (`source_bound_water_20260911.json`) and one whole
+fresh-safety verification, at most five logical calls. If the resulting text passes
+manual source inspection, proceed to one complete fixture gate with unchanged seeded
+acceptance checks. The wider 120-case reference set and held-out script evaluation
+remain separate work; no accuracy rate is inferred from these development probes.

@@ -31,15 +31,27 @@ def available_rules(flag: dict) -> list[dict]:
     cards = json.loads(_CARDS_PATH.read_text())["rules"]
     available = []
     for card in cards:
+        reviewed_hashes = {
+            card["source_sha256"],
+            *card.get("additional_reviewed_source_sha256", []),
+        }
         for index, citation in enumerate(flag.get("citations", []), 1):
             excerpt = str(citation.get("excerpt") or "")
+            actual_hash = hashlib.sha256(excerpt.encode()).hexdigest()
             if (
                 citation.get("via") not in {"parallel_search", "parallel_extract"}
                 or citation.get("url") != card["source_url"]
-                or hashlib.sha256(excerpt.encode()).hexdigest() != card["source_sha256"]
+                or actual_hash not in reviewed_hashes
             ):
                 continue
-            available.append({**card, "citation_number": index, "source_quote": excerpt})
+            available.append(
+                {
+                    **card,
+                    "matched_source_sha256": actual_hash,
+                    "citation_number": index,
+                    "source_quote": excerpt,
+                }
+            )
             break
     return available
 

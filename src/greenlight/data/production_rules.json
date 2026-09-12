@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "rules": [
     {
       "rule_id": "csatf16_pyrotechnics_licenses_2018",
@@ -11,7 +11,11 @@
       "source_url": "https://www.csatf.org/wp-content/uploads/2018/05/16PYROTECHNIC.pdf",
       "source_sha256": "5d3c74c45c39439198e6cc1d2846953daac7430b538ba3bfe654a326e5754d1b",
       "reviewed_at": "2026-09-11",
-      "review_scope": "Development wording review against the exact supplied excerpt; not independent professional review or validation of local requirements."
+      "review_scope": "Development wording review against the exact supplied excerpt; not independent professional review or validation of local requirements.",
+      "additional_reviewed_source_sha256": [
+        "e2dacf63236f48a006f09a9a1cf176591e15a5b31c7bda5ac03f1f944f37791d"
+      ],
+      "additional_context_review": "The longer retrieved paragraph adds controlled-use and notification guidance before the unchanged licensing clauses; it introduces no conflicting applicability exception. Reviewed against the complete saved excerpt on 2026-09-11."
     },
     {
       "rule_id": "csatf17_water_exposure_monitoring",
@@ -24,6 +28,18 @@
       "source_sha256": "93d743768d0d6a4992d64af8351201c50180d9773e42ff4d6fde02c06f7eb463",
       "reviewed_at": "2026-09-11",
       "review_scope": "Development wording review against the exact supplied excerpt; not independent professional review or validation of local requirements."
+    },
+    {
+      "rule_id": "csatf17_water_devices_accounting",
+      "source_url": "https://www.csatf.org/17_safety_bltn_water_hazards/",
+      "source_sha256": "0f2be8152b1a6c4f0e3d91af88a26087b5d6f382570af4d7841796dec783496d",
+      "trigger": "Personnel working in or around water for devices; personnel IN the water for accounting, when necessary.",
+      "force": "Recommendations, with necessity qualification and example accounting methods.",
+      "exceptions": "An accounting plan is not an unconditional duty for everyone around water; buddy/check-in systems are examples, not mandatory exclusive methods.",
+      "action": "NO_ACTION",
+      "remedy_detail": "Confirm whether personnel will work in or around water and how appropriate water safety devices will be made available. If personnel will enter the water, determine whether a personnel accounting plan is necessary and, if so, which suitable method to use (for example, a buddy or check-in/check-out system).",
+      "reviewed_at": "2026-09-11",
+      "review_scope": "Development wording review of the complete retrieved paragraph; not independent professional review or a final production plan."
     }
   ]
 }

@@ -1,0 +1,20 @@
+[
+  {
+    "flag_id": "water_qualified_plan",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 7848,
+    "input_sha256": "c2c462497ab89d5cf338feaf500078ac91cb62947b91aa69038986f8b52a7751",
+    "usage_available": true,
+    "elapsed_s": 6.38
+  },
+  {
+    "flag_id": "water_mandatory_buddy",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 7560,
+    "input_sha256": "c81ac9af1db75eb93ce77b6d8e66d3a1839a16cf53590b14fff77ed4b3a4a657",
+    "usage_available": true,
+    "elapsed_s": 4.85
+  }
+]

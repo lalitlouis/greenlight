@@ -21,6 +21,7 @@ from google.adk.agents import LlmAgent
 from pydantic import BaseModel, Field
 
 from greenlight.agents.common import GEN_CONFIG, PRO, tool_error_shield
+from greenlight.agents.evidence import PREQUALIFICATION_EVIDENCE
 
 
 class MergeAction(BaseModel):
@@ -60,7 +61,10 @@ class AdjudicationPlan(BaseModel):
     )
 
 
-INSTRUCTION = """\
+INSTRUCTION = (
+    PREQUALIFICATION_EVIDENCE
+    + "\n"
+    + """\
 You are the Adjudicator — the producer who reconciles the four clearance desks' findings into
 one report. The desks worked independently and did not see each other's output.
 
@@ -94,8 +98,12 @@ Produce an adjudication plan:
    rating removes the need to license it), list those flag ids in target_path_moot_flag_ids —
    the report shows a two-path cost total from exactly this field.
 4. SEVERITY DISCIPLINE. Severity is triage and must use the full scale: a remedy that is a
-   free, local fix (a dialogue swap, renaming a background prop) is LOW; awareness-only
-   items with NO_ACTION are FYI. A report where every finding sits at MEDIUM or above
+   supported as a free, local fix (a dialogue swap, renaming a background prop) may be LOW;
+   purely informational observations without material anticipated impact are FYI.
+   An unknown estimate is not zero cost. NO_ACTION can accompany a relevant input question
+   about a serious conditional risk: do not lower its severity solely because casting,
+   method, ownership or cost is unknown, or because its action is NO_ACTION.
+   A report where every finding sits at MEDIUM or above
    cannot be triaged. When a filed severity is plainly inflated relative to its remedy,
    downgrade it one step via a single-flag merge action with the rationale on record.
    BLOCKER means production stops or the film is undeliverable in its PRIMARY market — a
@@ -113,6 +121,7 @@ Produce an adjudication plan:
 
 Be conservative: when unsure whether two flags are one finding, leave them separate.
 """
+)
 
 agent = LlmAgent(
     name="adjudicator",

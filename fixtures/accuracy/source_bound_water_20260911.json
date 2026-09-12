@@ -1,0 +1,26 @@
+{
+  "source_run_sha256": "4c4d3392dd2bd1a7f1415de7e2724781d81c9f33ee188386b703609abdaa8193",
+  "source_script_sha256": "634444b20de3d73acfaeda4bd89b44f8e62192103cf54302db16fd3304828bfb",
+  "label_scope": "One frozen development check of the new source-bound water inquiry. Earlier qualified/unqualified rule controls remain unchanged.",
+  "cases": [
+    {
+      "case_id": "water_bound_inquiry",
+      "source_flag_id": "F3001",
+      "field": "remedy",
+      "basis": "inquiry",
+      "action": "NO_ACTION",
+      "claim": "Confirm whether personnel will work in or around water and how appropriate water safety devices will be made available. If personnel will enter the water, determine whether a personnel accounting plan is necessary and, if so, which suitable method to use (for example, a buddy or check-in/check-out system).",
+      "support_spans": [
+        {
+          "citation_number": 2,
+          "quote": "Appropriate water safety devices (e.g., life vests, life preservers, safety rings, safety hooks, buoys) should be available for all personnel working in or around water. When necessary, the Production Management should implement a plan to account for personnel in the water, such as a \u201cbuddy\u201d or a check in/check out system."
+        }
+      ],
+      "script_spans": [
+        "she DIVES -- off the skiff into the black water, surfacing in the firelight, swimming hard for the mooring buoy"
+      ],
+      "expected_entailed": true,
+      "label_reason": "Asks relevant input questions; preserves personnel-in-water, necessity and example-method scope without mandating a specific accounting method."
+    }
+  ]
+}

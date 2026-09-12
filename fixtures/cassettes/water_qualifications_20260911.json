@@ -1,0 +1,155 @@
+{
+  "source_run": "fixtures/cassettes/prequalification_fresh_safety_20_20260911.json",
+  "source_run_sha256": "4c4d3392dd2bd1a7f1415de7e2724781d81c9f33ee188386b703609abdaa8193",
+  "source_build": "27f598661a5b299389fdd5b94bdf035f5e923624",
+  "evaluated_build": "bfb288cf5e61ce3f3651d8ffc9c58ed54a49b497",
+  "model": "gemini-3.7-flash",
+  "elapsed_s": 11.27,
+  "calls": 2,
+  "responses_with_usage": 2,
+  "calls_without_returned_usage": 0,
+  "resumed_from": null,
+  "rechecked_correction_from": null,
+  "entailment_cases": "fixtures/accuracy/water_qualifications_20260911.json",
+  "entailment_cases_sha256": "9e078af3c689448d1aaa3e5384d97617d09fce131f2bcbe20d4cbaf507bfde7e",
+  "attempts": [
+    {
+      "flag_id": "water_qualified_plan",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 7848,
+      "input_sha256": "c2c462497ab89d5cf338feaf500078ac91cb62947b91aa69038986f8b52a7751",
+      "usage_available": true,
+      "elapsed_s": 6.38
+    },
+    {
+      "flag_id": "water_mandatory_buddy",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 7560,
+      "input_sha256": "c81ac9af1db75eb93ce77b6d8e66d3a1839a16cf53590b14fff77ed4b3a4a657",
+      "usage_available": true,
+      "elapsed_s": 4.85
+    }
+  ],
+  "gemini_usage": {
+    "flash": {
+      "prompt": 3540,
+      "cached": 0,
+      "output": 1228
+    }
+  },
+  "estimated_cost_usd": 0.0073,
+  "manual_review": "pending; model approval is not an accuracy label",
+  "results": [
+    {
+      "flag_id": "water_qualified_plan",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "For cast and crew working in or around water, appropriate water safety devices should be available. When necessary, production management should implement a plan to account for personnel in the water, for example a buddy or check-in/check-out system.",
+            "basis": "application",
+            "status": "SUPPORTED",
+            "reason": "Probe to be independently assessed",
+            "citation_numbers": [
+              2
+            ],
+            "support_spans": [
+              {
+                "citation_number": 2,
+                "quote": "Appropriate water safety devices (e.g., life vests, life preservers, safety rings, safety hooks, buoys) should be available for all personnel working in or around water. When necessary, the Production Management should implement a plan to account for personnel in the water, such as a \u201cbuddy\u201d or a check in/check out system."
+              }
+            ],
+            "script_spans": [
+              "she DIVES -- off the skiff into the black water, surfacing in the firelight, swimming hard for the mooring buoy"
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The claim accurately reflects the source's guidance regarding water safety devices and personnel accounting systems for individuals working in or around water, applied appropriately to the script's water-based action scene.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The scope, conditions, and recommendations ('should be available', 'when necessary') from CSATF Safety Bulletin #17 are fully preserved without adding mandatory requirements or overstatements.",
+              "unsupported_parts": []
+            }
+          ]
+        },
+        "estimate_exclusions": []
+      },
+      "expected_entailed": true,
+      "actual_entailed": true,
+      "passed": true,
+      "elapsed_s": 6.39
+    },
+    {
+      "flag_id": "water_mandatory_buddy",
+      "verdict": {
+        "verdict": "PARTIAL",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "For all cast and crew working in or around water, production must implement a buddy system on every shoot.",
+            "basis": "application",
+            "status": "UNSUPPORTED",
+            "reason": "Independent span review: The claim strengthens an optional example ('such as a buddy or a check in/check out system') qualified by 'When necessary' and 'should' into a mandatory obligation ('must implement a buddy system on every shoot').; The source only recommends implementing an accountability plan when necessary (providing a buddy system or check-in/check-out system as examples), rather than mandating a buddy system on every shoot.; production must implement a buddy system on every shoot",
+            "citation_numbers": [
+              2
+            ],
+            "support_spans": [
+              {
+                "citation_number": 2,
+                "quote": "Appropriate water safety devices (e.g., life vests, life preservers, safety rings, safety hooks, buoys) should be available for all personnel working in or around water. When necessary, the Production Management should implement a plan to account for personnel in the water, such as a \u201cbuddy\u201d or a check in/check out system."
+              }
+            ],
+            "script_spans": [
+              "she DIVES -- off the skiff into the black water, surfacing in the firelight, swimming hard for the mooring buoy"
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": false,
+              "reason": "The claim strengthens an optional example ('such as a buddy or a check in/check out system') qualified by 'When necessary' and 'should' into a mandatory obligation ('must implement a buddy system on every shoot').",
+              "scope_preserved": false,
+              "requirements_supported": false,
+              "scope_reason": "The source only recommends implementing an accountability plan when necessary (providing a buddy system or check-in/check-out system as examples), rather than mandating a buddy system on every shoot.",
+              "unsupported_parts": [
+                "production must implement a buddy system on every shoot"
+              ]
+            }
+          ]
+        },
+        "estimate_exclusions": [],
+        "reason": "Claim audit requires correction: Independent span review: The claim strengthens an optional example ('such as a buddy or a check in/check out system') qualified by 'When necessary' and 'should' into a mandatory obligation ('must implement a buddy system on every shoot').; The source only recommends implementing an accountability plan when necessary (providing a buddy system or check-in/check-out system as examples), rather than mandating a buddy system on every shoot.; production must implement a buddy system on every shoot"
+      },
+      "expected_entailed": false,
+      "actual_entailed": false,
+      "passed": true,
+      "elapsed_s": 4.85
+    }
+  ],
+  "responses": [
+    {
+      "flag_id": "water_qualified_plan",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The claim accurately reflects the source's guidance regarding water safety devices and personnel accounting systems for individuals working in or around water, applied appropriately to the script's water-based action scene.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The scope, conditions, and recommendations ('should be available', 'when necessary') from CSATF Safety Bulletin #17 are fully preserved without adding mandatory requirements or overstatements.\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "water_mandatory_buddy",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": false,\n      \"reason\": \"The claim strengthens an optional example ('such as a buddy or a check in/check out system') qualified by 'When necessary' and 'should' into a mandatory obligation ('must implement a buddy system on every shoot').\",\n      \"scope_preserved\": false,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"The source only recommends implementing an accountability plan when necessary (providing a buddy system or check-in/check-out system as examples), rather than mandating a buddy system on every shoot.\",\n      \"unsupported_parts\": [\n        \"production must implement a buddy system on every shoot\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    }
+  ]
+}

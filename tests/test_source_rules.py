@@ -84,3 +84,27 @@ def test_water_only_selection_remains_a_specific_input_question_without_inventin
     assert correction["remedy_action"] == "NO_ACTION"
     assert correction["remedy_detail"].startswith("Confirm whether cast or crew will work in water")
     assert "Pyrotechnic" not in correction["remedy_detail"]
+
+
+def test_reviewed_context_variant_preserves_necessity_and_never_accepts_arbitrary_context():
+    flag = json.loads(
+        (ROOT / "fixtures/cassettes/prequalification_fresh_safety_20_20260911.json").read_text()
+    )["flags"][0]
+    rules = available_rules(flag)
+    assert [r["rule_id"] for r in rules] == [
+        "csatf16_pyrotechnics_licenses_2018",
+        "csatf17_water_devices_accounting",
+    ]
+    assert rules[0]["matched_source_sha256"] in rules[0]["additional_reviewed_source_sha256"]
+    proposal = SourceBoundRepair(
+        finding="Fire and night-water hazards if staged practically.",
+        rule_ids=[r["rule_id"] for r in rules],
+        severity="HIGH",
+    )
+    correction, _ = bound_correction(proposal, rules)
+    assert "as applicable" in correction["remedy_detail"]
+    assert "If personnel will enter the water, determine whether" in correction["remedy_detail"]
+    assert "for example" in correction["remedy_detail"]
+    for citation in flag["citations"]:
+        citation["excerpt"] += " These provisions apply only in a different situation."
+    assert not available_rules(flag)  # matching a familiar sentence is not enough
