@@ -18,6 +18,15 @@ from pydantic import BaseModel, Field
 _CARDS_PATH = Path(__file__).resolve().parents[1] / "data/production_rules.json"
 
 
+def _matches_source(citation: dict, source: dict) -> bool:
+    return (
+        citation.get("via") in {"parallel_search", "parallel_extract", "parallel_search_resource"}
+        and citation.get("url") == source["source_url"]
+        and hashlib.sha256(str(citation.get("excerpt") or "").encode()).hexdigest()
+        in {source["source_sha256"], *source.get("additional_reviewed_source_sha256", [])}
+    )
+
+
 class SourceBoundRepair(BaseModel):
     finding: str = Field(min_length=1, max_length=4000)
     rule_ids: list[str] = Field(min_length=1, max_length=4)
@@ -31,19 +40,15 @@ def available_rules(flag: dict) -> list[dict]:
     cards = json.loads(_CARDS_PATH.read_text())["rules"]
     available = []
     for card in cards:
-        reviewed_hashes = {
-            card["source_sha256"],
-            *card.get("additional_reviewed_source_sha256", []),
-        }
+        if any(
+            not any(_matches_source(c, required) for c in flag.get("citations", []))
+            for required in card.get("required_sources", [])
+        ):
+            continue
         for index, citation in enumerate(flag.get("citations", []), 1):
             excerpt = str(citation.get("excerpt") or "")
             actual_hash = hashlib.sha256(excerpt.encode()).hexdigest()
-            if (
-                citation.get("via")
-                not in {"parallel_search", "parallel_extract", "parallel_search_resource"}
-                or citation.get("url") != card["source_url"]
-                or actual_hash not in reviewed_hashes
-            ):
+            if not _matches_source(citation, card):
                 continue
             available.append(
                 {
@@ -66,11 +71,8 @@ def bound_correction(proposal: SourceBoundRepair, rules: list[dict]) -> tuple[di
         raise ValueError("a repair invented a source rule")
     # Stable library order, independent of model list ordering.
     selected = [rule for rule in rules if rule["rule_id"] in proposal.rule_ids]
-    action = (
-        "ADD_SPECIALIST"
-        if any(rule["action"] == "ADD_SPECIALIST" for rule in selected)
-        else "NO_ACTION"
-    )
+    actions = {rule["action"] for rule in selected}
+    action = next(a for a in ("ADD_SPECIALIST", "REPLACE", "NO_ACTION") if a in actions)
     return {
         "finding": proposal.finding,
         "remedy_detail": " ".join(rule["remedy_detail"] for rule in selected),

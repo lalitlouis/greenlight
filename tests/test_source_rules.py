@@ -17,6 +17,53 @@ def saved_fire_flag():
     ][0]
 
 
+def firearm_flag():
+    record = json.loads((ROOT / "runs/run_20260912_003816.json").read_text())
+    return next(f for f in record["rejected_flags"] if f["flag_id"] == "F3003")
+
+
+@pytest.mark.parametrize("index", [0, 1])
+@pytest.mark.parametrize("change", ["excerpt", "url", "via", "missing"])
+def test_firearm_card_requires_both_unchanged_live_source_receipts(index, change):
+    flag = firearm_flag()
+    assert len(available_rules(flag)) == 1
+    if change == "missing":
+        flag["citations"].pop(index)
+    else:
+        flag["citations"][index][change] = {
+            "excerpt": "Changed context or rule.",
+            "url": "https://example.invalid",
+            "via": "local",
+        }[change]
+    assert not available_rules(flag)
+
+
+def test_firearm_card_preserves_complete_meeting_sentence_and_does_not_finish_roster():
+    flag = firearm_flag()
+    rules = available_rules(flag)
+    proposal = SourceBoundRepair(
+        finding="Rifle volleys are depicted; the actual production method is unconfirmed.",
+        rule_ids=[rules[0]["rule_id"]],
+        severity="HIGH",
+    )
+    patch, selected = bound_correction(proposal, rules)
+    assert patch["remedy_action"] == "REPLACE"
+    assert patch["remedy_detail"] == selected[0]["remedy_detail"]
+    assert "all involved personnel" in patch["remedy_detail"]
+    assert "before any firearm is used" in patch["remedy_detail"]
+    assert "without on-set firing" in patch["remedy_detail"]
+    assert "Property Master" not in patch["remedy_detail"]
+    assert "designated production" not in patch["remedy_detail"]
+    for order in (
+        rules + available_rules(saved_fire_flag()),
+        available_rules(saved_fire_flag()) + rules,
+    ):
+        mixed = SourceBoundRepair(
+            finding=proposal.finding, rule_ids=[r["rule_id"] for r in order], severity="HIGH"
+        )
+        assert bound_correction(mixed, order)[0]["remedy_action"] == "ADD_SPECIALIST"
+
+
 def test_retrieved_receipts_use_the_same_rule_on_the_re_source_path():
     flag = saved_fire_flag()
     before = available_rules(flag)

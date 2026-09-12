@@ -198,6 +198,15 @@ interpretation and are not silently represented as having passed the new audit.
 Quote/receipt metadata is session/record-internal (`support_span_version=3`);
 frozen public schemas are unchanged.
 
+Source-bound repair cards can require multiple exact existing Parallel receipts;
+every required URL, retrieval path and full excerpt hash must match. The firearm card
+uses the complete pre-use meeting sentence and a separately retrieved blank-hazard
+receipt. It does not reconstruct the truncated participant list. Its fixed remedy
+asks about staging and proposes a non-firing option under the existing REPLACE action.
+Changed or missing context disables the card; the resulting claim still requires both
+review stages. Across all production work, an unfinished roster cannot establish
+alternative participants or authorize completion of a cut-off role name.
+
 The shared delivery boundary keeps measured rating distributions in their existing
 citation and marginal card. Only a standalone `source` sentence positively checked
 by both reviewers, with no screenplay receipts and support exclusively from the

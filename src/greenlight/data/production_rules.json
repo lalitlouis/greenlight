@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "rules": [
     {
       "rule_id": "csatf16_pyrotechnics_licenses_2018",
@@ -40,6 +40,24 @@
       "remedy_detail": "Confirm whether personnel will work in or around water and how appropriate water safety devices will be made available. If personnel will enter the water, determine whether a personnel accounting plan is necessary and, if so, which suitable method to use (for example, a buddy or check-in/check-out system).",
       "reviewed_at": "2026-09-11",
       "review_scope": "Development wording review of the complete retrieved paragraph; not independent professional review or a final production plan."
+    },
+    {
+      "rule_id": "csatf1_firearm_method_and_meeting",
+      "trigger": "Depicted firearm discharge with actual production method unconfirmed.",
+      "force": "Confirm the intended method and pre-use safety meeting with all involved personnel; optional non-firing staging.",
+      "exceptions": "The second source sentence ends mid-roster; do not infer who may substitute for whom or complete that list. The source does not establish safety of a particular prop or setup.",
+      "action": "REPLACE",
+      "remedy_detail": "Confirm whether firearms will be used on set and how the planned approach addresses the cited guidance for a safety meeting with all involved personnel to review relevant safety issues before any firearm is used. Consider depicting the rifle volleys without on-set firing, using non-firing props and effects added in post-production.",
+      "source_url": "https://www.csatf.org/01_safety_bltn_firearms/",
+      "source_sha256": "fb8b89b4a8a024130c26a6a020d1ff82e83e20aeb0e035c743b8f43314de12f7",
+      "required_sources": [
+        {
+          "source_url": "https://www.csatf.org/wp-content/uploads/2018/05/01FIREARMS.pdf",
+          "source_sha256": "48a9f00af6a615999cdacac777606f1a1a6de331a8d79828ebf74f11d7d62e46"
+        }
+      ],
+      "reviewed_at": "2026-09-12",
+      "review_scope": "Development wording review of both saved Parallel excerpts. Uses only the complete meeting sentence; no reconstruction of the truncated personnel list or independent professional certification."
     }
   ]
 }

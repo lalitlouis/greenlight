@@ -1,0 +1,2169 @@
+{
+  "source_run": "runs/run_20260912_003816.json",
+  "source_run_sha256": "ea4637bc230fcfd1b7ad6c567c7e8c5e08589a4874596f5206e039f4fdffd3bd",
+  "source_build": "local:9318011a954f4f44149300e8a968c166cd84d973",
+  "evaluated_build": "5d56e487af978a999e68e7d3dc70ad1a8d39d2dd",
+  "model": "gemini-3.7-flash",
+  "elapsed_s": 334.98,
+  "calls": 15,
+  "responses_with_usage": 15,
+  "calls_without_returned_usage": 0,
+  "resumed_from": null,
+  "rechecked_correction_from": null,
+  "entailment_cases": null,
+  "entailment_cases_sha256": null,
+  "attempts": [
+    {
+      "flag_id": "F1001",
+      "schema": "EvidenceVerdict",
+      "status": "returned",
+      "input_chars": 29017,
+      "input_sha256": "44c5b68daa119e4f33713fd67779525df8694b9b4d8a657d3773515f120ab113",
+      "usage_available": true,
+      "elapsed_s": 16.85
+    },
+    {
+      "flag_id": "F1001",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 22434,
+      "input_sha256": "722981bc53559e8f23e5defb5acd6efaaf7e349dcb1eca47c79f4b36da3b2502",
+      "usage_available": true,
+      "elapsed_s": 48.99
+    },
+    {
+      "flag_id": "F1001",
+      "schema": "CorrectedClaim",
+      "status": "returned",
+      "input_chars": 21283,
+      "input_sha256": "9f02728371b092759b3770f99dcdf84af31387fbe37221532e54c1cf68e6b653",
+      "usage_available": true,
+      "elapsed_s": 7.15
+    },
+    {
+      "flag_id": "F1001",
+      "schema": "EvidenceVerdict",
+      "status": "returned",
+      "input_chars": 28440,
+      "input_sha256": "ccdee1a3b55fc3993d42d3708854f813348b77339dac3294a7d901b2364e05ae",
+      "usage_available": true,
+      "elapsed_s": 14.31
+    },
+    {
+      "flag_id": "F1001",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 18969,
+      "input_sha256": "65e39e74fc0e02dac45b4c8c25f80e906827e49df846301b2a80212f38a70319",
+      "usage_available": true,
+      "elapsed_s": 53.01
+    },
+    {
+      "flag_id": "F1002",
+      "schema": "EvidenceVerdict",
+      "status": "returned",
+      "input_chars": 29368,
+      "input_sha256": "21386dbac42f2ef1c85ddbc8edb4d541a3f790817c16e917af21a45d0093e2fe",
+      "usage_available": true,
+      "elapsed_s": 37.18
+    },
+    {
+      "flag_id": "F1002",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 24126,
+      "input_sha256": "a2c579be0f2e53636f5a7ad79ee8360b08b058f2eb6c89cc665f03d11c2ae3da",
+      "usage_available": true,
+      "elapsed_s": 11.26
+    },
+    {
+      "flag_id": "F1002",
+      "schema": "CorrectedClaim",
+      "status": "returned",
+      "input_chars": 21992,
+      "input_sha256": "d05e95e5d1c17401fb02569e0f5a7e35b50d874aa1076d8f191b468c09c7a0f9",
+      "usage_available": true,
+      "elapsed_s": 7.21
+    },
+    {
+      "flag_id": "F1002",
+      "schema": "EvidenceVerdict",
+      "status": "returned",
+      "input_chars": 29076,
+      "input_sha256": "3903a6538eead161e189603d370e41781cf95c7ed0808d8e3be479318bc66db3",
+      "usage_available": true,
+      "elapsed_s": 11.35
+    },
+    {
+      "flag_id": "F1002",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 19789,
+      "input_sha256": "780f4cab9c3a334bf3afb438b9f916a64a32a44475105bb25f8d4536df483ef3",
+      "usage_available": true,
+      "elapsed_s": 21.7
+    },
+    {
+      "flag_id": "F3003",
+      "schema": "EvidenceVerdict",
+      "status": "returned",
+      "input_chars": 23359,
+      "input_sha256": "e5b0b9dc9baea9fd219ac4688c37a3d15631bda583b1e4bf373dc5767f0c4d75",
+      "usage_available": true,
+      "elapsed_s": 32.78
+    },
+    {
+      "flag_id": "F3003",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 21129,
+      "input_sha256": "a4c55079767135895b0df3516d193e9942b962b1c00c02e9d87127c795c2f82e",
+      "usage_available": true,
+      "elapsed_s": 6.44
+    },
+    {
+      "flag_id": "F3003",
+      "schema": "CorrectedClaim",
+      "status": "returned",
+      "input_chars": 14272,
+      "input_sha256": "8c1219b8928197fdb85fdc0f2e8f907b3011a553cf12d0fa1f4e0da5df7b3c66",
+      "usage_available": true,
+      "elapsed_s": 7.59
+    },
+    {
+      "flag_id": "F3003",
+      "schema": "EvidenceVerdict",
+      "status": "returned",
+      "input_chars": 22598,
+      "input_sha256": "408250f7b45fb4e2ab9f5b20a11252364203170ef380b3073a3316c7d8b87d81",
+      "usage_available": true,
+      "elapsed_s": 26.54
+    },
+    {
+      "flag_id": "F3003",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 19482,
+      "input_sha256": "e8bb40d327b3dca2bd98f62c8ed9f0da93b258f2d16e2082bafb8da29d110f13",
+      "usage_available": true,
+      "elapsed_s": 32.55
+    }
+  ],
+  "gemini_usage": {
+    "flash": {
+      "prompt": 79340,
+      "cached": 0,
+      "output": 28280
+    }
+  },
+  "estimated_cost_usd": 0.1656,
+  "manual_review": "pending; model approval is not an accuracy label",
+  "results": [
+    {
+      "flag_id": "F1001",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "reason": "The scene text in S004 and S011 depicts playback of the song 'Hallelujah' (with S002 introducing the specific cue instruction in dialogue). The cited sources support the legal requirement for a synchronization license to pair a musical composition with audiovisual media and provide reference catalog data identifying Leonard Cohen and Sony/ATV Music Publishing as licensing investigation leads. The proposed remedy properly distinguishes licensing inquiries from content replacement or removal options.",
+        "failure_mode": "none",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "Scenes S002, S004, and S011 incorporate playback of the song 'Hallelujah'.",
+            "basis": "script",
+            "status": "SUPPORTED",
+            "reason": "Scene S002 introduces the notarized instructions to play the song, while scenes S004 and S011 feature the actual playback of Jeff Buckley's recording of 'Hallelujah'.",
+            "citation_numbers": [],
+            "support_spans": [],
+            "script_spans": [
+              "\"Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.\"",
+              "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.",
+              "Then, from speakers somebody has rigged on the seawall railing, Buckley's \"Hallelujah\" starts again, drifting out across the water toward the fire."
+            ]
+          },
+          {
+            "field": "finding",
+            "quote": "Synchronizing a musical composition with visual images in a motion picture requires a synchronization license from the copyright owner or publishing administrator.",
+            "basis": "source",
+            "status": "SUPPORTED",
+            "reason": "Citation 1 explicitly establishes that synchronization licenses authorize the timed use of musical compositions in film and audiovisual media.",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "A synchronization license authorizes the use of a musical composition in timed relation with visual content. This permission is required whenever music is paired with film, television, advertising, video games, online video, or other audiovisual media."
+              }
+            ],
+            "script_spans": []
+          },
+          {
+            "field": "finding",
+            "quote": "Reference catalog data lists Leonard Cohen as songwriter and Sony/ATV Music Publishing as copyright holder, which serves as an initial inquiry lead to determine the party currently authorized to license the composition.",
+            "basis": "source",
+            "status": "SUPPORTED",
+            "reason": "Citation 2 verifies that reference catalog records list Leonard Cohen as songwriter and Sony/ATV Music Publishing as copyright holder.",
+            "citation_numbers": [
+              2
+            ],
+            "support_spans": [
+              {
+                "citation_number": 2,
+                "quote": "By Leonard Cohen Copyright Sony/ATV Music Publishing"
+              }
+            ],
+            "script_spans": []
+          },
+          {
+            "field": "remedy",
+            "quote": "Identify and contact the current copyright owner or publishing administrator to negotiate and obtain the necessary synchronization license for the composition.",
+            "basis": "planning",
+            "status": "SUPPORTED",
+            "reason": "Identifying and contacting the publisher or copyright owner is the standard procedure to negotiate synchronization rights established by Citation 1.",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "A synchronization license authorizes the use of a musical composition in timed relation with visual content. This permission is required whenever music is paired with film, television, advertising, video games, online video, or other audiovisual media."
+              }
+            ],
+            "script_spans": []
+          },
+          {
+            "field": "remedy",
+            "quote": "Alternatively, replace the cue with an original composition, pre-cleared library track, or public domain work. If audible music is not necessary to the narrative, cut the recorded track from the scenes.",
+            "basis": "script_edit",
+            "status": "SUPPORTED",
+            "reason": "Replacing or omitting the commercial song directly eliminates the trigger that requires a third-party synchronization license.",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "This permission is required whenever music is paired with film, television, advertising, video games, online video, or other audiovisual media."
+              }
+            ],
+            "script_spans": [
+              "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.",
+              "Then, from speakers somebody has rigged on the seawall railing, Buckley's \"Hallelujah\" starts again, drifting out across the water toward the fire."
+            ]
+          },
+          {
+            "field": "severity",
+            "quote": "HIGH",
+            "basis": "risk_assessment",
+            "status": "SUPPORTED",
+            "reason": "Unlicensed synchronization of a prominent commercial song creates major legal and distribution barriers.",
+            "citation_numbers": [],
+            "support_spans": [],
+            "script_spans": []
+          }
+        ],
+        "support_span_version": 3,
+        "audit_input": "266b4b67d3a0128f1f292416a1c047b13bb6b44b9d7fec77514323a740016ba9",
+        "estimate_exclusions": [],
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The script excerpts directly confirm the dialogue reference and playback of the song 'Hallelujah' across the designated scenes.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "Screenplay evidence directly establishes the inclusion and playback of the song in the scenes.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            },
+            {
+              "check_index": 1,
+              "entailed": true,
+              "reason": "The cited source explicitly states that a synchronization license is required whenever music is paired with film or audiovisual media.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The scope of the synchronization licensing rule aligns with the source excerpt.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            },
+            {
+              "check_index": 2,
+              "entailed": true,
+              "reason": "The catalog excerpt attributes authorship to Leonard Cohen and copyright to Sony/ATV Music Publishing, and the claim properly qualifies this as reference data and an investigation lead.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The claim strictly treats catalog data as an inquiry lead rather than an unqualified confirmation of current licensing authority.",
+              "named_rights_status": "qualified_attribution_or_lead",
+              "unsupported_parts": []
+            },
+            {
+              "check_index": 3,
+              "entailed": true,
+              "reason": "Where a synchronization license is established as necessary, identifying and contacting the generic copyright owner or publishing administrator is a supported planning step.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The planning step appropriately targets generic rights holders without asserting specific corporate relationships or unsupported duties.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            },
+            {
+              "check_index": 4,
+              "entailed": true,
+              "reason": "Cutting or replacing the musical cue with original, pre-cleared, or public domain material directly addresses the synchronization clearance trigger present in the script.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The proposed script edits remove or alter the specific content trigger without making unsupported clearance guarantees.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            }
+          ]
+        },
+        "entailment_policy_version": 2,
+        "evidence_review": {
+          "before": {
+            "verdict": "PARTIAL",
+            "reason": "Claim audit requires correction: Independent span review: The script evidence establishes that Jeff Buckley's recording of 'Hallelujah' is requested and played, but does not identify Leonard Cohen as the composer.; The scene observation accurately reflects the scripted scenes and will instructions, but introduces Leonard Cohen's authorship which is not present in the script receipts.; Screenplay specifies Leonard Cohen's composition (script evidence specifies Jeff Buckley's recording); Independent span review: A catalog copyright credit does not establish 100% split administration, nor does it prove current licensing authority or mandate negotiating with Sony Music Publishing's department.; The claim makes an unqualified assertion of current 100% administration and mandatory negotiation authority from a static copyright attribution.; Named rights relationships must remain source attributions or leads pending confirmation of authority for the intended use; 100% administration by Sony Music Publishing; Requirement that sync licensing must be negotiated with Sony Music Publishing's synchronization licensing department; A proposed edit or production option belongs in the remedy. Original assessment: Offers a standard, non-prescriptive production option to substitute the licensed composition if rights clearance cannot be secured.; Independent span review: The cited sources do not establish Sony Music Publishing as the confirmed current licensor for this production, nor do they support the specific scope of worldwide rights across theatrical, streaming, and home video in perpetuity.; The instruction asserts an unqualified licensor and mandates specific distribution windows and perpetuity terms without operative source evidence.; Named rights relationships must remain source attributions or leads pending confirmation of authority for the intended use; Instruction to apply to Sony Music Publishing as the established licensing authority; Mandatory terms covering theatrical, streaming, and home video distribution worldwide in perpetuity; Independent span review: The source only provides a basic copyright credit; it does not indicate 100% ownership splits or prescribe verifying splits via Songview.; The claim asserts specific split percentages and a verification procedure via Songview that are absent from the cited excerpt.; Named rights relationships must remain source attributions or leads pending confirmation of authority for the intended use; Ownership splits indicate 100% control by Sony Music Publishing; Requirement to verify splits via Songview; Independent span review: While replacing a commercial cue with an original composition or library track is a valid trigger-removal concept, the directive to avoid sound-alikes is an unsupported operative prescription.; The high-level substitution addresses the clearance trigger, but the claim introduces an unevidenced restriction regarding sound-alikes.; Prescription that sound-alikes imitating the distinct composition/arrangement should be avoided",
+            "failure_mode": "none",
+            "claim_checks": [
+              {
+                "field": "severity",
+                "quote": "HIGH",
+                "basis": "risk_assessment",
+                "status": "SUPPORTED",
+                "reason": "High severity is appropriate for a prominent, plot-critical commercial musical composition requiring publisher clearance across multiple featured scenes.",
+                "citation_numbers": [
+                  1,
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "This permission is required whenever music is paired with film, television, advertising, video games, online video, or other audiovisual media."
+                  }
+                ],
+                "script_spans": [
+                  "\"Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.\""
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "The screenplay specifies Leonard Cohen's composition 'Hallelujah' as a plot-critical element in Eli Voss's notarized will, which is subsequently played on a boombox at his church funeral service in S004 and broadcast via seawall PA speakers during the harbor boat pyre in S011.",
+                "basis": "script",
+                "status": "UNSUPPORTED",
+                "reason": "Independent span review: The script evidence establishes that Jeff Buckley's recording of 'Hallelujah' is requested and played, but does not identify Leonard Cohen as the composer.; The scene observation accurately reflects the scripted scenes and will instructions, but introduces Leonard Cohen's authorship which is not present in the script receipts.; Screenplay specifies Leonard Cohen's composition (script evidence specifies Jeff Buckley's recording)",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "\"Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.\"",
+                  "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.",
+                  "Then, from speakers somebody has rigged on the seawall railing, Buckley's \"Hallelujah\" starts again, drifting out across the water toward the fire."
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "Synchronizing a musical composition with visual images in a motion picture requires a synchronization license from the copyright owner or publishing administrator.",
+                "basis": "source",
+                "status": "SUPPORTED",
+                "reason": "Citation 1 establishes that pairing a musical composition with audiovisual content requires a synchronization license.",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "A synchronization license authorizes the use of a musical composition in timed relation with visual content. This permission is required whenever music is paired with film, television, advertising, video games, online video, or other audiovisual media."
+                  }
+                ],
+                "script_spans": []
+              },
+              {
+                "field": "finding",
+                "quote": "The publishing copyright for 'Hallelujah' is administered 100% by Sony Music Publishing (formerly Sony/ATV Music Publishing). Sync licensing must be negotiated with Sony Music Publishing's synchronization licensing department.",
+                "basis": "application",
+                "status": "UNSUPPORTED",
+                "reason": "Independent span review: A catalog copyright credit does not establish 100% split administration, nor does it prove current licensing authority or mandate negotiating with Sony Music Publishing's department.; The claim makes an unqualified assertion of current 100% administration and mandatory negotiation authority from a static copyright attribution.; Named rights relationships must remain source attributions or leads pending confirmation of authority for the intended use; 100% administration by Sony Music Publishing; Requirement that sync licensing must be negotiated with Sony Music Publishing's synchronization licensing department",
+                "citation_numbers": [
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 2,
+                    "quote": "By Leonard Cohen Copyright Sony/ATV Music Publishing"
+                  }
+                ],
+                "script_spans": [
+                  "\"Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.\""
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "If clearance is cost-prohibitive or denied, the production must replace the cue with a pre-cleared indie composition or production music library track.",
+                "basis": "production_option",
+                "status": "UNKNOWN",
+                "reason": "A proposed edit or production option belongs in the remedy. Original assessment: Offers a standard, non-prescriptive production option to substitute the licensed composition if rights clearance cannot be secured.",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "This permission is required whenever music is paired with film, television, advertising, video games, online video, or other audiovisual media."
+                  }
+                ],
+                "script_spans": [
+                  "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church."
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "Apply to Sony Music Publishing for a worldwide synchronization license for Leonard Cohen's 'Hallelujah' covering theatrical, streaming, and home video distribution in perpetuity.",
+                "basis": "planning",
+                "status": "UNSUPPORTED",
+                "reason": "Independent span review: The cited sources do not establish Sony Music Publishing as the confirmed current licensor for this production, nor do they support the specific scope of worldwide rights across theatrical, streaming, and home video in perpetuity.; The instruction asserts an unqualified licensor and mandates specific distribution windows and perpetuity terms without operative source evidence.; Named rights relationships must remain source attributions or leads pending confirmation of authority for the intended use; Instruction to apply to Sony Music Publishing as the established licensing authority; Mandatory terms covering theatrical, streaming, and home video distribution worldwide in perpetuity",
+                "citation_numbers": [
+                  1,
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "A synchronization license authorizes the use of a musical composition in timed relation with visual content. This permission is required whenever music is paired with film, television, advertising, video games, online video, or other audiovisual media."
+                  },
+                  {
+                    "citation_number": 2,
+                    "quote": "By Leonard Cohen Copyright Sony/ATV Music Publishing"
+                  }
+                ],
+                "script_spans": []
+              },
+              {
+                "field": "remedy",
+                "quote": "Ownership splits indicate 100% control by Sony Music Publishing; verify splits via Songview before negotiating.",
+                "basis": "planning",
+                "status": "UNSUPPORTED",
+                "reason": "Independent span review: The source only provides a basic copyright credit; it does not indicate 100% ownership splits or prescribe verifying splits via Songview.; The claim asserts specific split percentages and a verification procedure via Songview that are absent from the cited excerpt.; Named rights relationships must remain source attributions or leads pending confirmation of authority for the intended use; Ownership splits indicate 100% control by Sony Music Publishing; Requirement to verify splits via Songview",
+                "citation_numbers": [
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 2,
+                    "quote": "By Leonard Cohen Copyright Sony/ATV Music Publishing"
+                  }
+                ],
+                "script_spans": []
+              },
+              {
+                "field": "remedy",
+                "quote": "As an indie alternative budget path, use a temp track in editorial and budget for an original composition or production music library replacement if major-publisher quotes exceed music clearance allocations. Sound-alikes imitating the distinct composition/arrangement should be avoided.",
+                "basis": "production_option",
+                "status": "UNSUPPORTED",
+                "reason": "Independent span review: While replacing a commercial cue with an original composition or library track is a valid trigger-removal concept, the directive to avoid sound-alikes is an unsupported operative prescription.; The high-level substitution addresses the clearance trigger, but the claim introduces an unevidenced restriction regarding sound-alikes.; Prescription that sound-alikes imitating the distinct composition/arrangement should be avoided",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "A synchronization license authorizes the use of a musical composition in timed relation with visual content."
+                  }
+                ],
+                "script_spans": [
+                  "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church."
+                ]
+              }
+            ],
+            "support_span_version": 3,
+            "audit_input": "7aa4c272f7860fa4724754b0e261cf872ad0482011cd5d398c62a3a89e9a1e68",
+            "estimate_exclusions": [],
+            "entailment_review": {
+              "checks": [
+                {
+                  "check_index": 1,
+                  "entailed": false,
+                  "reason": "The script evidence establishes that Jeff Buckley's recording of 'Hallelujah' is requested and played, but does not identify Leonard Cohen as the composer.",
+                  "scope_preserved": true,
+                  "requirements_supported": false,
+                  "scope_reason": "The scene observation accurately reflects the scripted scenes and will instructions, but introduces Leonard Cohen's authorship which is not present in the script receipts.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": [
+                    "Screenplay specifies Leonard Cohen's composition (script evidence specifies Jeff Buckley's recording)"
+                  ]
+                },
+                {
+                  "check_index": 2,
+                  "entailed": true,
+                  "reason": "The cited source directly establishes that synchronizing a musical composition in timed relation with visual media requires a synchronization license.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "The statement accurately reflects the general sync licensing rule for pairing music with visual content.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 3,
+                  "entailed": false,
+                  "reason": "A catalog copyright credit does not establish 100% split administration, nor does it prove current licensing authority or mandate negotiating with Sony Music Publishing's department.",
+                  "scope_preserved": false,
+                  "requirements_supported": false,
+                  "scope_reason": "The claim makes an unqualified assertion of current 100% administration and mandatory negotiation authority from a static copyright attribution.",
+                  "named_rights_status": "unqualified_relationship",
+                  "unsupported_parts": [
+                    "100% administration by Sony Music Publishing",
+                    "Requirement that sync licensing must be negotiated with Sony Music Publishing's synchronization licensing department"
+                  ]
+                },
+                {
+                  "check_index": 5,
+                  "entailed": false,
+                  "reason": "The cited sources do not establish Sony Music Publishing as the confirmed current licensor for this production, nor do they support the specific scope of worldwide rights across theatrical, streaming, and home video in perpetuity.",
+                  "scope_preserved": false,
+                  "requirements_supported": false,
+                  "scope_reason": "The instruction asserts an unqualified licensor and mandates specific distribution windows and perpetuity terms without operative source evidence.",
+                  "named_rights_status": "unqualified_relationship",
+                  "unsupported_parts": [
+                    "Instruction to apply to Sony Music Publishing as the established licensing authority",
+                    "Mandatory terms covering theatrical, streaming, and home video distribution worldwide in perpetuity"
+                  ]
+                },
+                {
+                  "check_index": 6,
+                  "entailed": false,
+                  "reason": "The source only provides a basic copyright credit; it does not indicate 100% ownership splits or prescribe verifying splits via Songview.",
+                  "scope_preserved": false,
+                  "requirements_supported": false,
+                  "scope_reason": "The claim asserts specific split percentages and a verification procedure via Songview that are absent from the cited excerpt.",
+                  "named_rights_status": "unqualified_relationship",
+                  "unsupported_parts": [
+                    "Ownership splits indicate 100% control by Sony Music Publishing",
+                    "Requirement to verify splits via Songview"
+                  ]
+                },
+                {
+                  "check_index": 7,
+                  "entailed": false,
+                  "reason": "While replacing a commercial cue with an original composition or library track is a valid trigger-removal concept, the directive to avoid sound-alikes is an unsupported operative prescription.",
+                  "scope_preserved": true,
+                  "requirements_supported": false,
+                  "scope_reason": "The high-level substitution addresses the clearance trigger, but the claim introduces an unevidenced restriction regarding sound-alikes.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": [
+                    "Prescription that sound-alikes imitating the distinct composition/arrangement should be avoided"
+                  ]
+                }
+              ]
+            },
+            "entailment_policy_version": 2
+          },
+          "after": {
+            "verdict": "SUPPORTED",
+            "reason": "The scene text in S004 and S011 depicts playback of the song 'Hallelujah' (with S002 introducing the specific cue instruction in dialogue). The cited sources support the legal requirement for a synchronization license to pair a musical composition with audiovisual media and provide reference catalog data identifying Leonard Cohen and Sony/ATV Music Publishing as licensing investigation leads. The proposed remedy properly distinguishes licensing inquiries from content replacement or removal options.",
+            "failure_mode": "none",
+            "claim_checks": [
+              {
+                "field": "finding",
+                "quote": "Scenes S002, S004, and S011 incorporate playback of the song 'Hallelujah'.",
+                "basis": "script",
+                "status": "SUPPORTED",
+                "reason": "Scene S002 introduces the notarized instructions to play the song, while scenes S004 and S011 feature the actual playback of Jeff Buckley's recording of 'Hallelujah'.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "\"Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.\"",
+                  "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.",
+                  "Then, from speakers somebody has rigged on the seawall railing, Buckley's \"Hallelujah\" starts again, drifting out across the water toward the fire."
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "Synchronizing a musical composition with visual images in a motion picture requires a synchronization license from the copyright owner or publishing administrator.",
+                "basis": "source",
+                "status": "SUPPORTED",
+                "reason": "Citation 1 explicitly establishes that synchronization licenses authorize the timed use of musical compositions in film and audiovisual media.",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "A synchronization license authorizes the use of a musical composition in timed relation with visual content. This permission is required whenever music is paired with film, television, advertising, video games, online video, or other audiovisual media."
+                  }
+                ],
+                "script_spans": []
+              },
+              {
+                "field": "finding",
+                "quote": "Reference catalog data lists Leonard Cohen as songwriter and Sony/ATV Music Publishing as copyright holder, which serves as an initial inquiry lead to determine the party currently authorized to license the composition.",
+                "basis": "source",
+                "status": "SUPPORTED",
+                "reason": "Citation 2 verifies that reference catalog records list Leonard Cohen as songwriter and Sony/ATV Music Publishing as copyright holder.",
+                "citation_numbers": [
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 2,
+                    "quote": "By Leonard Cohen Copyright Sony/ATV Music Publishing"
+                  }
+                ],
+                "script_spans": []
+              },
+              {
+                "field": "remedy",
+                "quote": "Identify and contact the current copyright owner or publishing administrator to negotiate and obtain the necessary synchronization license for the composition.",
+                "basis": "planning",
+                "status": "SUPPORTED",
+                "reason": "Identifying and contacting the publisher or copyright owner is the standard procedure to negotiate synchronization rights established by Citation 1.",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "A synchronization license authorizes the use of a musical composition in timed relation with visual content. This permission is required whenever music is paired with film, television, advertising, video games, online video, or other audiovisual media."
+                  }
+                ],
+                "script_spans": []
+              },
+              {
+                "field": "remedy",
+                "quote": "Alternatively, replace the cue with an original composition, pre-cleared library track, or public domain work. If audible music is not necessary to the narrative, cut the recorded track from the scenes.",
+                "basis": "script_edit",
+                "status": "SUPPORTED",
+                "reason": "Replacing or omitting the commercial song directly eliminates the trigger that requires a third-party synchronization license.",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "This permission is required whenever music is paired with film, television, advertising, video games, online video, or other audiovisual media."
+                  }
+                ],
+                "script_spans": [
+                  "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.",
+                  "Then, from speakers somebody has rigged on the seawall railing, Buckley's \"Hallelujah\" starts again, drifting out across the water toward the fire."
+                ]
+              },
+              {
+                "field": "severity",
+                "quote": "HIGH",
+                "basis": "risk_assessment",
+                "status": "SUPPORTED",
+                "reason": "Unlicensed synchronization of a prominent commercial song creates major legal and distribution barriers.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              }
+            ],
+            "support_span_version": 3,
+            "audit_input": "266b4b67d3a0128f1f292416a1c047b13bb6b44b9d7fec77514323a740016ba9",
+            "estimate_exclusions": [],
+            "entailment_review": {
+              "checks": [
+                {
+                  "check_index": 0,
+                  "entailed": true,
+                  "reason": "The script excerpts directly confirm the dialogue reference and playback of the song 'Hallelujah' across the designated scenes.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "Screenplay evidence directly establishes the inclusion and playback of the song in the scenes.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 1,
+                  "entailed": true,
+                  "reason": "The cited source explicitly states that a synchronization license is required whenever music is paired with film or audiovisual media.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "The scope of the synchronization licensing rule aligns with the source excerpt.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 2,
+                  "entailed": true,
+                  "reason": "The catalog excerpt attributes authorship to Leonard Cohen and copyright to Sony/ATV Music Publishing, and the claim properly qualifies this as reference data and an investigation lead.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "The claim strictly treats catalog data as an inquiry lead rather than an unqualified confirmation of current licensing authority.",
+                  "named_rights_status": "qualified_attribution_or_lead",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 3,
+                  "entailed": true,
+                  "reason": "Where a synchronization license is established as necessary, identifying and contacting the generic copyright owner or publishing administrator is a supported planning step.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "The planning step appropriately targets generic rights holders without asserting specific corporate relationships or unsupported duties.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 4,
+                  "entailed": true,
+                  "reason": "Cutting or replacing the musical cue with original, pre-cleared, or public domain material directly addresses the synchronization clearance trigger present in the script.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "The proposed script edits remove or alter the specific content trigger without making unsupported clearance guarantees.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                }
+              ]
+            },
+            "entailment_policy_version": 2
+          },
+          "source_rules": []
+        },
+        "correction": {
+          "finding": "Scenes S002, S004, and S011 incorporate playback of the song 'Hallelujah'. Synchronizing a musical composition with visual images in a motion picture requires a synchronization license from the copyright owner or publishing administrator. Reference catalog data lists Leonard Cohen as songwriter and Sony/ATV Music Publishing as copyright holder, which serves as an initial inquiry lead to determine the party currently authorized to license the composition.",
+          "remedy_detail": "Identify and contact the current copyright owner or publishing administrator to negotiate and obtain the necessary synchronization license for the composition. Alternatively, replace the cue with an original composition, pre-cleared library track, or public domain work. If audible music is not necessary to the narrative, cut the recorded track from the scenes.",
+          "remedy_action": "OBTAIN_LICENSE",
+          "severity": "HIGH"
+        },
+        "correction_input": "7aa4c272f7860fa4724754b0e261cf872ad0482011cd5d398c62a3a89e9a1e68"
+      },
+      "kept": [
+        {
+          "flag_id": "F1001",
+          "agent": "clearance_counsel",
+          "scene_ids": [
+            "S002",
+            "S004",
+            "S011"
+          ],
+          "entity_id": "E009",
+          "severity": "HIGH",
+          "category": "sync_license",
+          "finding": "Scenes S002, S004, and S011 incorporate playback of the song 'Hallelujah'. Synchronizing a musical composition with visual images in a motion picture requires a synchronization license from the copyright owner or publishing administrator. Reference catalog data lists Leonard Cohen as songwriter and Sony/ATV Music Publishing as copyright holder, which serves as an initial inquiry lead to determine the party currently authorized to license the composition.",
+          "citations": [
+            {
+              "source_type": "web",
+              "title": "What Is Synchronization Licensing? | Music Admin",
+              "url": "https://www.musicadmin.com/guides/what-is-synchronization-licensing",
+              "excerpt": "A synchronization license authorizes the use of a musical composition in timed relation with visual content. This permission is required whenever music is paired with film, television, advertising, video games, online video, or other audiovisual media.",
+              "retrieved_at": null,
+              "via": "parallel_search"
+            },
+            {
+              "source_type": "web",
+              "title": "\"Hallelujah\" | By Leonard Cohen | Copyright Sony/ATV Music Publishing | Song Copyright Information | Easy Song",
+              "url": "https://www.easysong.com/search/songs/song-copyright-holder-information.aspx?s=1308274",
+              "excerpt": "By Leonard Cohen Copyright Sony/ATV Music Publishing",
+              "retrieved_at": null,
+              "via": "parallel_search"
+            }
+          ],
+          "remedy": {
+            "action": "OBTAIN_LICENSE",
+            "detail": "Identify and contact the current copyright owner or publishing administrator to negotiate and obtain the necessary synchronization license for the composition. Alternatively, replace the cue with an original composition, pre-cleared library track, or public domain work. If audible music is not necessary to the narrative, cut the recorded track from the scenes.",
+            "est_cost_usd": null,
+            "est_added_days": null
+          },
+          "confidence": 0.95
+        }
+      ],
+      "dropped": [],
+      "verification_incomplete": false,
+      "elapsed_s": 140.33
+    },
+    {
+      "flag_id": "F1002",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "reason": "The scene text in S002, S004, and S011 explicitly references and plays the Columbia recording of Jeff Buckley's 'Hallelujah'. The cited excerpts substantiate that embedding a sound recording into visual media requires a master use license in addition to a composition license, and digital catalog listings identify Columbia Records / Sony Music Entertainment as the credit/copyright owner.",
+        "failure_mode": "none",
+        "claim_checks": [
+          {
+            "field": "finding",
+            "quote": "Scenes S002, S004, and S011 feature the specific commercial sound recording of Jeff Buckley's \"Hallelujah\" (noted in the script as the Columbia recording).",
+            "basis": "script",
+            "status": "SUPPORTED",
+            "reason": "The screenplay explicitly references Jeff Buckley's Columbia recording of 'Hallelujah' in S002, S004, and S011.",
+            "citation_numbers": [],
+            "support_spans": [],
+            "script_spans": [
+              "Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.",
+              "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.",
+              "Then, from speakers somebody has rigged on the seawall railing, Buckley's \"Hallelujah\" starts again, drifting out across the water toward the fire."
+            ]
+          },
+          {
+            "field": "finding",
+            "quote": "Embedding a commercial sound recording into an audiovisual work requires a master use license granting permission from the sound recording copyright holder in addition to a composition license.",
+            "basis": "application",
+            "status": "SUPPORTED",
+            "reason": "Citation [1] establishes that embedding a sound recording in visual media requires a master use license granting permission from the sound recording owner in addition to a composition license.",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "When that recording is embedded in visual media, permission from the sound recording\u2019s owner is required in addition to the composition license. This permission is granted through a master use license."
+              }
+            ],
+            "script_spans": [
+              "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church."
+            ]
+          },
+          {
+            "field": "finding",
+            "quote": "Digital catalog listings credit the recording to Columbia Records / Sony Music Entertainment, which provides an investigative lead to verify current licensing authority for the production.",
+            "basis": "source",
+            "status": "SUPPORTED",
+            "reason": "Citation [3] confirms the digital catalog attribution to Columbia Records, a division of Sony Music Entertainment.",
+            "citation_numbers": [
+              3
+            ],
+            "support_spans": [
+              {
+                "citation_number": 3,
+                "quote": "\u2117 2007 Columbia Records, a division of Sony Music Entertainment"
+              }
+            ],
+            "script_spans": []
+          },
+          {
+            "field": "remedy",
+            "quote": "Identify and contact the current authorized licensing representative for the master sound recording to negotiate a master use license for the film.",
+            "basis": "application",
+            "status": "SUPPORTED",
+            "reason": "Citations [1] and [2] establish that master use licensing from the sound recording owner/licensing entity is required to reproduce a specific recording in a film.",
+            "citation_numbers": [
+              1,
+              2
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "permission from the sound recording\u2019s owner is required in addition to the composition license. This permission is granted through a master use license."
+              },
+              {
+                "citation_number": 2,
+                "quote": "Master Use License: This is the right to reproduce a specific recording of a song in your film."
+              }
+            ],
+            "script_spans": [
+              "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church."
+            ]
+          },
+          {
+            "field": "remedy",
+            "quote": "If master use licensing cannot be secured or proves cost-prohibitive, consider replacing the master track with a separately licensed or bespoke recording, or cutting the recorded cue from the scenes.",
+            "basis": "script_edit",
+            "status": "SUPPORTED",
+            "reason": "Cutting or replacing the specific master recording directly removes the master use license requirement established in Citation [1].",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "When that recording is embedded in visual media, permission from the sound recording\u2019s owner is required in addition to the composition license."
+              }
+            ],
+            "script_spans": [
+              "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church."
+            ]
+          },
+          {
+            "field": "severity",
+            "quote": "HIGH",
+            "basis": "risk_assessment",
+            "status": "SUPPORTED",
+            "reason": "Unlicensed commercial music in an audiovisual production presents high copyright and clearance exposure.",
+            "citation_numbers": [],
+            "support_spans": [],
+            "script_spans": [
+              "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "audit_input": "465f196f30bb236ce946d0b6fbe4bb5be248567995b2080379a311890e60b730",
+        "estimate_exclusions": [],
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The script excerpts directly support that Jeff Buckley's Columbia recording of 'Hallelujah' is called for and played across the scenes.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "Script evidence explicitly details the presence of the specific recording without conflating fictional dialogue with production licensing facts.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            },
+            {
+              "check_index": 1,
+              "entailed": true,
+              "reason": "The cited source explicitly states that embedding a sound recording into visual media requires permission from the sound recording's owner via a master use license in addition to a composition license.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The scope of the requirement matches the cited synchronization licensing guide directly.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            },
+            {
+              "check_index": 2,
+              "entailed": true,
+              "reason": "The catalog listing excerpt supports the phonogram credit to Columbia Records / Sony Music Entertainment, and the claim correctly frames this as a credit and an investigative lead rather than an unqualified current licensor assertion.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The claim strictly frames the catalog copyright credit as an attribution and investigative lead to confirm current licensing authority.",
+              "named_rights_status": "qualified_attribution_or_lead",
+              "unsupported_parts": []
+            },
+            {
+              "check_index": 3,
+              "entailed": true,
+              "reason": "The cited sources establish the legal necessity of obtaining a master use license, making contacting the authorized representative a generic, supported procedural next step.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The recommendation identifies a generic rights-holder role without asserting an unqualified named entity or imposing unsupported technical mandates.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            },
+            {
+              "check_index": 4,
+              "entailed": true,
+              "reason": "The proposed options (cutting the cue or replacing it with a bespoke/separately licensed recording) directly address the master use licensing trigger identified in the source without making absolute clearance guarantees.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The high-level cut/replace options remove the specific underlying master recording trigger present in the script.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            }
+          ]
+        },
+        "entailment_policy_version": 2,
+        "evidence_review": {
+          "before": {
+            "verdict": "PARTIAL",
+            "reason": "Claim audit requires correction: Independent span review: A phonogram copyright notice on a digital platform is an attribution/lead rather than verified proof of current exclusive licensing authority for this production.; Converts a phonogram catalog credit into an unqualified assertion of current ownership and licensing authority.; Named rights relationships must remain source attributions or leads pending confirmation of authority for the intended use; The master recording is owned and controlled by Columbia Records / Sony Music Entertainment.; Independent span review: Mandating direct clearance from Sony Music Entertainment asserts an unqualified licensing relationship that is not substantiated as current licensing authority by the cited credit.; Imposes a mandatory administrative obligation with a specific named entity without verified licensing authority.; Named rights relationships must remain source attributions or leads pending confirmation of authority for the intended use; Master licensing must be secured directly from Sony Music Entertainment's licensing department; Independent span review: Instructing the production to obtain licensing directly from a named entity asserts an unverified licensing authority.; Names a specific company as the required licensor rather than maintaining a qualified lead or generic licensing step.; Named rights relationships must remain source attributions or leads pending confirmation of authority for the intended use; Request a master use license from Sony Music Entertainment / Columbia Records Licensing; Independent span review: The cited source on sound recording copyright does not establish rules, risks, or precautions regarding right of publicity exposure for sound-alikes.; Introduces an unsupported legal risk theory and restriction regarding right of publicity not found in the source.; mitigate right of publicity exposure from sound-alikes imitating vocal style or guitar arrangement",
+            "failure_mode": "none",
+            "claim_checks": [
+              {
+                "field": "severity",
+                "quote": "HIGH",
+                "basis": "risk_assessment",
+                "status": "SUPPORTED",
+                "reason": "Clearance of an iconic, commercially released major-label master recording is a mandatory legal requirement and major cost driver for production.",
+                "citation_numbers": [
+                  1,
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "When that recording is embedded in visual media, permission from the sound recording\u2019s owner is required in addition to the composition license."
+                  }
+                ],
+                "script_spans": [
+                  "\"Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.\"",
+                  "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.",
+                  "Buckley's \"Hallelujah\" starts again, drifting out across the water toward the fire."
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "The screenplay explicitly requires the master recording of Jeff Buckley performing 'Hallelujah' ('The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.') to be played during the funeral service in S004 and the harbor boat pyre in S011.",
+                "basis": "script",
+                "status": "SUPPORTED",
+                "reason": "The screenplay explicitly specifies Jeff Buckley's Columbia recording of 'Hallelujah' in Eli's instructions in S002, played during the funeral in S004 and at the boat burning in S011.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "\"Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.\"",
+                  "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.",
+                  "Buckley's \"Hallelujah\" starts again, drifting out across the water toward the fire."
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "Incorporating a commercially released master sound recording into an audiovisual work requires a master use license from the record label holding master rights.",
+                "basis": "source",
+                "status": "SUPPORTED",
+                "reason": "Supported by excerpts 1 and 2, which confirm that reproducing a specific recorded performance in visual media requires a master use license from the owner.",
+                "citation_numbers": [
+                  1,
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "When that recording is embedded in visual media, permission from the sound recording\u2019s owner is required in addition to the composition license. This permission is granted through a master use license."
+                  },
+                  {
+                    "citation_number": 2,
+                    "quote": "Master Use License: This is the right to reproduce a specific recording of a song in your film."
+                  }
+                ],
+                "script_spans": []
+              },
+              {
+                "field": "finding",
+                "quote": "The master recording is owned and controlled by Columbia Records / Sony Music Entertainment.",
+                "basis": "source",
+                "status": "UNSUPPORTED",
+                "reason": "Independent span review: A phonogram copyright notice on a digital platform is an attribution/lead rather than verified proof of current exclusive licensing authority for this production.; Converts a phonogram catalog credit into an unqualified assertion of current ownership and licensing authority.; Named rights relationships must remain source attributions or leads pending confirmation of authority for the intended use; The master recording is owned and controlled by Columbia Records / Sony Music Entertainment.",
+                "citation_numbers": [
+                  3
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 3,
+                    "quote": "\u2117 2007 Columbia Records, a division of Sony Music Entertainment"
+                  }
+                ],
+                "script_spans": []
+              },
+              {
+                "field": "finding",
+                "quote": "Master licensing must be secured directly from Sony Music Entertainment's licensing department in addition to the publishing sync license.",
+                "basis": "application",
+                "status": "UNSUPPORTED",
+                "reason": "Independent span review: Mandating direct clearance from Sony Music Entertainment asserts an unqualified licensing relationship that is not substantiated as current licensing authority by the cited credit.; Imposes a mandatory administrative obligation with a specific named entity without verified licensing authority.; Named rights relationships must remain source attributions or leads pending confirmation of authority for the intended use; Master licensing must be secured directly from Sony Music Entertainment's licensing department",
+                "citation_numbers": [
+                  1,
+                  3
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "permission from the sound recording\u2019s owner is required in addition to the composition license. This permission is granted through a master use license."
+                  },
+                  {
+                    "citation_number": 3,
+                    "quote": "\u2117 2007 Columbia Records, a division of Sony Music Entertainment"
+                  }
+                ],
+                "script_spans": [
+                  "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church."
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "Request a master use license from Sony Music Entertainment / Columbia Records Licensing for Jeff Buckley's sound recording of 'Hallelujah'.",
+                "basis": "application",
+                "status": "UNSUPPORTED",
+                "reason": "Independent span review: Instructing the production to obtain licensing directly from a named entity asserts an unverified licensing authority.; Names a specific company as the required licensor rather than maintaining a qualified lead or generic licensing step.; Named rights relationships must remain source attributions or leads pending confirmation of authority for the intended use; Request a master use license from Sony Music Entertainment / Columbia Records Licensing",
+                "citation_numbers": [
+                  1,
+                  3
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "This permission is granted through a master use license."
+                  },
+                  {
+                    "citation_number": 3,
+                    "quote": "Columbia Records, a division of Sony Music Entertainment"
+                  }
+                ],
+                "script_spans": [
+                  "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church."
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "For indie budget management, edit with a temp track while pricing the commercial master; if the quote exceeds budget, commission an original, bespoke recording from an emerging artist or production library.",
+                "basis": "production_option",
+                "status": "SUPPORTED",
+                "reason": "Provides standard production options to avoid commercial master licensing costs by commissioning a new sound recording.",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "A sound recording copyright covers a specific recorded performance of a composition."
+                  }
+                ],
+                "script_spans": [
+                  "\"Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.\""
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "Note: avoid commissioning sound-alikes that imitate Jeff Buckley's distinct vocal style or idiosyncratic guitar arrangement to mitigate right of publicity exposure.",
+                "basis": "risk_assessment",
+                "status": "UNSUPPORTED",
+                "reason": "Independent span review: The cited source on sound recording copyright does not establish rules, risks, or precautions regarding right of publicity exposure for sound-alikes.; Introduces an unsupported legal risk theory and restriction regarding right of publicity not found in the source.; mitigate right of publicity exposure from sound-alikes imitating vocal style or guitar arrangement",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "A sound recording copyright covers a specific recorded performance of a composition."
+                  }
+                ],
+                "script_spans": [
+                  "\"Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.\""
+                ]
+              }
+            ],
+            "support_span_version": 3,
+            "audit_input": "3b35f6bc6df18df67104623ff9ea1b92ae6a8aee7f0254a46cff5b9c35d10493",
+            "estimate_exclusions": [],
+            "entailment_review": {
+              "checks": [
+                {
+                  "check_index": 1,
+                  "entailed": true,
+                  "reason": "The claim accurately describes the script directions and dialogue in S004 and S011 based on the provided screenplay excerpts.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "Accurately reflects the content and context of the script evidence.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 2,
+                  "entailed": true,
+                  "reason": "The cited sources explicitly establish that embedding a sound recording in visual media requires a master use license from the owner.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "Preserves the generalized licensing rule without overstepping scope.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 3,
+                  "entailed": false,
+                  "reason": "A phonogram copyright notice on a digital platform is an attribution/lead rather than verified proof of current exclusive licensing authority for this production.",
+                  "scope_preserved": false,
+                  "requirements_supported": false,
+                  "scope_reason": "Converts a phonogram catalog credit into an unqualified assertion of current ownership and licensing authority.",
+                  "named_rights_status": "unqualified_relationship",
+                  "unsupported_parts": [
+                    "The master recording is owned and controlled by Columbia Records / Sony Music Entertainment."
+                  ]
+                },
+                {
+                  "check_index": 4,
+                  "entailed": false,
+                  "reason": "Mandating direct clearance from Sony Music Entertainment asserts an unqualified licensing relationship that is not substantiated as current licensing authority by the cited credit.",
+                  "scope_preserved": false,
+                  "requirements_supported": false,
+                  "scope_reason": "Imposes a mandatory administrative obligation with a specific named entity without verified licensing authority.",
+                  "named_rights_status": "unqualified_relationship",
+                  "unsupported_parts": [
+                    "Master licensing must be secured directly from Sony Music Entertainment's licensing department"
+                  ]
+                },
+                {
+                  "check_index": 5,
+                  "entailed": false,
+                  "reason": "Instructing the production to obtain licensing directly from a named entity asserts an unverified licensing authority.",
+                  "scope_preserved": false,
+                  "requirements_supported": false,
+                  "scope_reason": "Names a specific company as the required licensor rather than maintaining a qualified lead or generic licensing step.",
+                  "named_rights_status": "unqualified_relationship",
+                  "unsupported_parts": [
+                    "Request a master use license from Sony Music Entertainment / Columbia Records Licensing"
+                  ]
+                },
+                {
+                  "check_index": 6,
+                  "entailed": true,
+                  "reason": "Provides a high-level, optional substitution/workflow to avoid the commercial master license trigger without imposing unsupported operating duties or guarantees.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "Addresses the licensing cost risk through an optional production workflow.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 7,
+                  "entailed": false,
+                  "reason": "The cited source on sound recording copyright does not establish rules, risks, or precautions regarding right of publicity exposure for sound-alikes.",
+                  "scope_preserved": false,
+                  "requirements_supported": false,
+                  "scope_reason": "Introduces an unsupported legal risk theory and restriction regarding right of publicity not found in the source.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": [
+                    "mitigate right of publicity exposure from sound-alikes imitating vocal style or guitar arrangement"
+                  ]
+                }
+              ]
+            },
+            "entailment_policy_version": 2
+          },
+          "after": {
+            "verdict": "SUPPORTED",
+            "reason": "The scene text in S002, S004, and S011 explicitly references and plays the Columbia recording of Jeff Buckley's 'Hallelujah'. The cited excerpts substantiate that embedding a sound recording into visual media requires a master use license in addition to a composition license, and digital catalog listings identify Columbia Records / Sony Music Entertainment as the credit/copyright owner.",
+            "failure_mode": "none",
+            "claim_checks": [
+              {
+                "field": "finding",
+                "quote": "Scenes S002, S004, and S011 feature the specific commercial sound recording of Jeff Buckley's \"Hallelujah\" (noted in the script as the Columbia recording).",
+                "basis": "script",
+                "status": "SUPPORTED",
+                "reason": "The screenplay explicitly references Jeff Buckley's Columbia recording of 'Hallelujah' in S002, S004, and S011.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.",
+                  "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.",
+                  "Then, from speakers somebody has rigged on the seawall railing, Buckley's \"Hallelujah\" starts again, drifting out across the water toward the fire."
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "Embedding a commercial sound recording into an audiovisual work requires a master use license granting permission from the sound recording copyright holder in addition to a composition license.",
+                "basis": "application",
+                "status": "SUPPORTED",
+                "reason": "Citation [1] establishes that embedding a sound recording in visual media requires a master use license granting permission from the sound recording owner in addition to a composition license.",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "When that recording is embedded in visual media, permission from the sound recording\u2019s owner is required in addition to the composition license. This permission is granted through a master use license."
+                  }
+                ],
+                "script_spans": [
+                  "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church."
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "Digital catalog listings credit the recording to Columbia Records / Sony Music Entertainment, which provides an investigative lead to verify current licensing authority for the production.",
+                "basis": "source",
+                "status": "SUPPORTED",
+                "reason": "Citation [3] confirms the digital catalog attribution to Columbia Records, a division of Sony Music Entertainment.",
+                "citation_numbers": [
+                  3
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 3,
+                    "quote": "\u2117 2007 Columbia Records, a division of Sony Music Entertainment"
+                  }
+                ],
+                "script_spans": []
+              },
+              {
+                "field": "remedy",
+                "quote": "Identify and contact the current authorized licensing representative for the master sound recording to negotiate a master use license for the film.",
+                "basis": "application",
+                "status": "SUPPORTED",
+                "reason": "Citations [1] and [2] establish that master use licensing from the sound recording owner/licensing entity is required to reproduce a specific recording in a film.",
+                "citation_numbers": [
+                  1,
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "permission from the sound recording\u2019s owner is required in addition to the composition license. This permission is granted through a master use license."
+                  },
+                  {
+                    "citation_number": 2,
+                    "quote": "Master Use License: This is the right to reproduce a specific recording of a song in your film."
+                  }
+                ],
+                "script_spans": [
+                  "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church."
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "If master use licensing cannot be secured or proves cost-prohibitive, consider replacing the master track with a separately licensed or bespoke recording, or cutting the recorded cue from the scenes.",
+                "basis": "script_edit",
+                "status": "SUPPORTED",
+                "reason": "Cutting or replacing the specific master recording directly removes the master use license requirement established in Citation [1].",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "When that recording is embedded in visual media, permission from the sound recording\u2019s owner is required in addition to the composition license."
+                  }
+                ],
+                "script_spans": [
+                  "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church."
+                ]
+              },
+              {
+                "field": "severity",
+                "quote": "HIGH",
+                "basis": "risk_assessment",
+                "status": "SUPPORTED",
+                "reason": "Unlicensed commercial music in an audiovisual production presents high copyright and clearance exposure.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church."
+                ]
+              }
+            ],
+            "support_span_version": 3,
+            "audit_input": "465f196f30bb236ce946d0b6fbe4bb5be248567995b2080379a311890e60b730",
+            "estimate_exclusions": [],
+            "entailment_review": {
+              "checks": [
+                {
+                  "check_index": 0,
+                  "entailed": true,
+                  "reason": "The script excerpts directly support that Jeff Buckley's Columbia recording of 'Hallelujah' is called for and played across the scenes.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "Script evidence explicitly details the presence of the specific recording without conflating fictional dialogue with production licensing facts.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 1,
+                  "entailed": true,
+                  "reason": "The cited source explicitly states that embedding a sound recording into visual media requires permission from the sound recording's owner via a master use license in addition to a composition license.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "The scope of the requirement matches the cited synchronization licensing guide directly.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 2,
+                  "entailed": true,
+                  "reason": "The catalog listing excerpt supports the phonogram credit to Columbia Records / Sony Music Entertainment, and the claim correctly frames this as a credit and an investigative lead rather than an unqualified current licensor assertion.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "The claim strictly frames the catalog copyright credit as an attribution and investigative lead to confirm current licensing authority.",
+                  "named_rights_status": "qualified_attribution_or_lead",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 3,
+                  "entailed": true,
+                  "reason": "The cited sources establish the legal necessity of obtaining a master use license, making contacting the authorized representative a generic, supported procedural next step.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "The recommendation identifies a generic rights-holder role without asserting an unqualified named entity or imposing unsupported technical mandates.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 4,
+                  "entailed": true,
+                  "reason": "The proposed options (cutting the cue or replacing it with a bespoke/separately licensed recording) directly address the master use licensing trigger identified in the source without making absolute clearance guarantees.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "The high-level cut/replace options remove the specific underlying master recording trigger present in the script.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                }
+              ]
+            },
+            "entailment_policy_version": 2
+          },
+          "source_rules": []
+        },
+        "correction": {
+          "finding": "Scenes S002, S004, and S011 feature the specific commercial sound recording of Jeff Buckley's \"Hallelujah\" (noted in the script as the Columbia recording). Embedding a commercial sound recording into an audiovisual work requires a master use license granting permission from the sound recording copyright holder in addition to a composition license. Digital catalog listings credit the recording to Columbia Records / Sony Music Entertainment, which provides an investigative lead to verify current licensing authority for the production.",
+          "remedy_detail": "Identify and contact the current authorized licensing representative for the master sound recording to negotiate a master use license for the film. If master use licensing cannot be secured or proves cost-prohibitive, consider replacing the master track with a separately licensed or bespoke recording, or cutting the recorded cue from the scenes.",
+          "remedy_action": "OBTAIN_LICENSE",
+          "severity": "HIGH"
+        },
+        "correction_input": "3b35f6bc6df18df67104623ff9ea1b92ae6a8aee7f0254a46cff5b9c35d10493"
+      },
+      "kept": [
+        {
+          "flag_id": "F1002",
+          "agent": "clearance_counsel",
+          "scene_ids": [
+            "S002",
+            "S004",
+            "S011"
+          ],
+          "entity_id": "E009",
+          "severity": "HIGH",
+          "category": "master_use_license",
+          "finding": "Scenes S002, S004, and S011 feature the specific commercial sound recording of Jeff Buckley's \"Hallelujah\" (noted in the script as the Columbia recording). Embedding a commercial sound recording into an audiovisual work requires a master use license granting permission from the sound recording copyright holder in addition to a composition license. Digital catalog listings credit the recording to Columbia Records / Sony Music Entertainment, which provides an investigative lead to verify current licensing authority for the production.",
+          "citations": [
+            {
+              "source_type": "web",
+              "title": "What Is Synchronization Licensing? | Music Admin",
+              "url": "https://www.musicadmin.com/guides/what-is-synchronization-licensing",
+              "excerpt": "A sound recording copyright covers a specific recorded performance of a composition. When that recording is embedded in visual media, permission from the sound recording\u2019s owner is required in addition to the composition license. This permission is granted through a master use license.",
+              "retrieved_at": null,
+              "via": "parallel_search"
+            },
+            {
+              "source_type": "web",
+              "title": "ASCAP's Articles and Advice FAQ: How To Acquire Music For Films",
+              "url": "https://www.ascap.com/help/career-development/How-To-Acquire-Music-For-Films",
+              "excerpt": "Master Use License: This is the right to reproduce a specific recording of a song in your film.",
+              "retrieved_at": null,
+              "via": "parallel_search"
+            },
+            {
+              "source_type": "web",
+              "title": "Hallelujah - Single by Jeff Buckley on Apple Music",
+              "url": "https://music.apple.com/us/album/hallelujah-single/1476889562",
+              "excerpt": "\u2117 2007 Columbia Records, a division of Sony Music Entertainment",
+              "retrieved_at": null,
+              "via": "parallel_search"
+            }
+          ],
+          "remedy": {
+            "action": "OBTAIN_LICENSE",
+            "detail": "Identify and contact the current authorized licensing representative for the master sound recording to negotiate a master use license for the film. If master use licensing cannot be secured or proves cost-prohibitive, consider replacing the master track with a separately licensed or bespoke recording, or cutting the recorded cue from the scenes.",
+            "est_cost_usd": null,
+            "est_added_days": null
+          },
+          "confidence": 0.95
+        }
+      ],
+      "dropped": [],
+      "verification_incomplete": false,
+      "elapsed_s": 88.7
+    },
+    {
+      "flag_id": "F3003",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "reason": "The script accurately depicts an honor guard firing rifle volleys at a funeral service in scene S005. The cited excerpts from Safety Bulletin #1 support the core safety warnings regarding blank ammunition, live ammunition prohibitions, and the required safety meeting and dry run procedures. The conditional risk assessment and production options are fully aligned with industry safety standards.",
+        "failure_mode": "none",
+        "claim_checks": [
+          {
+            "field": "severity",
+            "quote": "HIGH",
+            "basis": "risk_assessment",
+            "status": "SUPPORTED",
+            "reason": "High severity is warranted for scenes depicting multi-firearm discharge hazards.",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "BLANKS CAN KILL. TREAT ALL FIREARMS AS THOUGH THEY ARE LOADED."
+              }
+            ],
+            "script_spans": [
+              "The honor guard stands in a row, rifles up at the ready."
+            ]
+          },
+          {
+            "field": "finding",
+            "quote": "Scene S005 depicts an honor guard discharging multiple rifle volleys during a funeral service.",
+            "basis": "script",
+            "status": "SUPPORTED",
+            "reason": "Accurately reflects the action and dialogue in scene S005.",
+            "citation_numbers": [],
+            "support_spans": [],
+            "script_spans": [
+              "The honor guard stands in a row, rifles up at the ready.",
+              "VOLLEY. VOLLEY."
+            ]
+          },
+          {
+            "field": "finding",
+            "quote": "Industry safety standards note that blanks can kill, requiring all firearms to be treated as though they are loaded, and strictly prohibiting live ammunition from being used or brought onto any studio lot or stage.",
+            "basis": "source",
+            "status": "SUPPORTED",
+            "reason": "Directly supported by Industry Safety Bulletin #1.",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "BLANKS CAN KILL. TREAT ALL FIREARMS AS THOUGH THEY ARE LOADED. \"LIVE AMMUNITION\" IS NEVER TO BE USED NOR BROUGHT ONTO ANY STUDIO LOT OR STAGE."
+              }
+            ],
+            "script_spans": []
+          },
+          {
+            "field": "finding",
+            "quote": "If practical firearms or blank rounds are planned, on-set firearm use presents potential physical safety risks.",
+            "basis": "risk_assessment",
+            "status": "SUPPORTED",
+            "reason": "A properly conditional risk assessment anchored in the depicted rifle volleys and safety bulletin warnings.",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "BLANKS CAN KILL. TREAT ALL FIREARMS AS THOUGH THEY ARE LOADED."
+              }
+            ],
+            "script_spans": [
+              "The honor guard stands in a row, rifles up at the ready.",
+              "VOLLEY."
+            ]
+          },
+          {
+            "field": "remedy",
+            "quote": "If firearms are used on set, conduct a safety meeting with all involved personnel to review relevant safety issues, including an on-site walk-through or dry run with the Property Master or designated production personnel before any firearm is used.",
+            "basis": "application",
+            "status": "SUPPORTED",
+            "reason": "Directly supported by the mandatory safety meeting and dry run procedures in Safety Bulletin #1.",
+            "citation_numbers": [
+              2
+            ],
+            "support_spans": [
+              {
+                "citation_number": 2,
+                "quote": "Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues. This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d with the Property Master, designated Production"
+              }
+            ],
+            "script_spans": [
+              "The honor guard stands in a row, rifles up at the ready."
+            ]
+          },
+          {
+            "field": "remedy",
+            "quote": "Alternatively, eliminate on-set discharge hazards by utilizing non-firing replica rifles or inert prop firearms with visual effects and sound added in post-production.",
+            "basis": "production_option",
+            "status": "SUPPORTED",
+            "reason": "A valid production option to eliminate the depicted discharge hazard.",
+            "citation_numbers": [
+              1
+            ],
+            "support_spans": [
+              {
+                "citation_number": 1,
+                "quote": "BLANKS CAN KILL. TREAT ALL FIREARMS AS THOUGH THEY ARE LOADED."
+              }
+            ],
+            "script_spans": [
+              "The honor guard stands in a row, rifles up at the ready.",
+              "VOLLEY."
+            ]
+          },
+          {
+            "field": "remedy",
+            "quote": "Confirm the intended shooting method, equipment, and staging for the honor guard sequence.",
+            "basis": "inquiry",
+            "status": "SUPPORTED",
+            "reason": "Appropriate production planning inquiry regarding staging and physical execution method.",
+            "citation_numbers": [],
+            "support_spans": [],
+            "script_spans": [
+              "The honor guard stands in a row, rifles up at the ready."
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "audit_input": "4706e5eb2d34ae7d64bdeccf9116787512c67ba6174a71d3e839d516cfd3ec0e",
+        "estimate_exclusions": [],
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 1,
+              "entailed": true,
+              "reason": "The script evidence directly supports the depiction of an honor guard discharging rifle volleys.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "Directly matches the scene observation in the script.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            },
+            {
+              "check_index": 2,
+              "entailed": true,
+              "reason": "The source quote verbatim supports that blanks can kill, firearms must be treated as loaded, and live ammunition is prohibited.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "Matches the cited text in Safety Bulletin #1.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            },
+            {
+              "check_index": 3,
+              "entailed": true,
+              "reason": "The risk assessment is appropriately conditional on practical firearms/blanks being planned and supported by the source safety hazard rule.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "Maintains proper conditional framing for an unconfirmed production plan.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            },
+            {
+              "check_index": 4,
+              "entailed": true,
+              "reason": "The cited safety bulletin explicitly mandates a safety meeting, walk-through, or dry run with the property master/designated personnel before firearms are used.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "Correctly conditions the requirement on on-set firearm usage.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            },
+            {
+              "check_index": 5,
+              "entailed": true,
+              "reason": "This is a valid high-level production option proposing hazard removal (inert/replica props with VFX/sound in post) to address the depicted discharge.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "Directly addresses the on-set discharge trigger without introducing unsupported technical procedures or guarantees.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            },
+            {
+              "check_index": 6,
+              "entailed": true,
+              "reason": "The inquiry appropriately seeks relevant missing production information regarding execution, equipment, and staging for the sequence.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "Directly targets unconfirmed production facts relevant to the safety underwriting finding.",
+              "named_rights_status": "not_asserted",
+              "unsupported_parts": []
+            }
+          ]
+        },
+        "entailment_policy_version": 2,
+        "evidence_review": {
+          "before": {
+            "verdict": "PARTIAL",
+            "reason": "Claim audit requires correction: Independent span review: The source excerpt only states 'BLANKS CAN KILL. TREAT ALL FIREARMS AS THOUGH THEY ARE LOADED' and does not provide evidence for specific hazards such as muzzle blast, burning powder fragments, high acoustic sound pressure levels causing permanent hearing damage, or projectile/wad hazards.; Specific physiological hazards (burning powder fragments, high acoustic sound pressure levels causing permanent hearing damage, projectile/wad hazards) exceed the text of the citation.; muzzle blast; burning powder fragments; high acoustic sound pressure levels causing permanent hearing damage; projectile/wad hazards; Independent span review: The cited text only mentions conducting a safety meeting with a walk-through/dry run with the Property Master. It does not substantiate retaining a licensed Armorer, or specific duties regarding custody, inspection, loading, and handling.; Mandates specific specialist retention and handling duties not substantiated by the provided excerpt.; retain a licensed and qualified Armorer / Property Master to manage custody, inspection, loading, and handling of all firearms in strict compliance with CSATF Safety Bulletin #1; Independent span review: The excerpt supports conducting a safety meeting and walk-through/dry run with involved personnel, but does not substantiate specifying all cast, crew, background performers, and nearby minor/animal handlers, nor does it specify conducting it before loading blanks.; Specifies additional attendee categories and timing details not in the cited quote.; background performers, and nearby minor/animal handlers before loading blanks; Material text was omitted from the claim audit; Material text was omitted from the claim audit",
+            "failure_mode": "none",
+            "claim_checks": [
+              {
+                "field": "finding",
+                "quote": "Scene S005 depicts an honor guard of three veterans discharging three synchronized military service rifle volleys (ceremonial blank fire) in a churchyard funeral setting, in close proximity to a crowd of mourners, a child character (Sam), and a dog (Barnacle).",
+                "basis": "script",
+                "status": "SUPPORTED",
+                "reason": "Accurately reflects the action and characters depicted in scene S005.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "The mourners in a loose crescent under a pewter sky. The honor guard stands in a row, rifles up at the ready.",
+                  "VOLLEY. Gulls explode off the church roof. Sam clamps his hands over his ears. Barnacle, tied to the fence, points his muzzle at the sky and HOWLS.",
+                  "VOLLEY. VOLLEY."
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "Live blank ammunition discharges pose serious physical risks including muzzle blast, burning powder fragments, high acoustic sound pressure levels causing permanent hearing damage, and projectile/wad hazards.",
+                "basis": "risk_assessment",
+                "status": "UNSUPPORTED",
+                "reason": "Independent span review: The source excerpt only states 'BLANKS CAN KILL. TREAT ALL FIREARMS AS THOUGH THEY ARE LOADED' and does not provide evidence for specific hazards such as muzzle blast, burning powder fragments, high acoustic sound pressure levels causing permanent hearing damage, or projectile/wad hazards.; Specific physiological hazards (burning powder fragments, high acoustic sound pressure levels causing permanent hearing damage, projectile/wad hazards) exceed the text of the citation.; muzzle blast; burning powder fragments; high acoustic sound pressure levels causing permanent hearing damage; projectile/wad hazards",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "BLANKS CAN KILL. TREAT ALL FIREARMS AS THOUGH THEY ARE LOADED."
+                  }
+                ],
+                "script_spans": [
+                  "The honor guard stands in a row, rifles up at the ready.",
+                  "VOLLEY. Gulls explode off the church roof. Sam clamps his hands over his ears."
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "If practical blank discharge is selected, retain a licensed and qualified Armorer / Property Master to manage custody, inspection, loading, and handling of all firearms in strict compliance with CSATF Safety Bulletin #1.",
+                "basis": "application",
+                "status": "UNSUPPORTED",
+                "reason": "Independent span review: The cited text only mentions conducting a safety meeting with a walk-through/dry run with the Property Master. It does not substantiate retaining a licensed Armorer, or specific duties regarding custody, inspection, loading, and handling.; Mandates specific specialist retention and handling duties not substantiated by the provided excerpt.; retain a licensed and qualified Armorer / Property Master to manage custody, inspection, loading, and handling of all firearms in strict compliance with CSATF Safety Bulletin #1",
+                "citation_numbers": [
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 2,
+                    "quote": "Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues. This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d with the Property Master, designated Production"
+                  }
+                ],
+                "script_spans": [
+                  "The honor guard stands in a row, rifles up at the ready."
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "Conduct a mandatory on-set safety meeting and dry-run walk-through with all cast, crew, background performers, and nearby minor/animal handlers before loading blanks.",
+                "basis": "source",
+                "status": "UNSUPPORTED",
+                "reason": "Independent span review: The excerpt supports conducting a safety meeting and walk-through/dry run with involved personnel, but does not substantiate specifying all cast, crew, background performers, and nearby minor/animal handlers, nor does it specify conducting it before loading blanks.; Specifies additional attendee categories and timing details not in the cited quote.; background performers, and nearby minor/animal handlers before loading blanks",
+                "citation_numbers": [
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 2,
+                    "quote": "Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues. This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d with the Property Master, designated Production"
+                  }
+                ],
+                "script_spans": []
+              },
+              {
+                "field": "remedy",
+                "quote": "Alternatively, eliminate on-set blank discharge hazards entirely by utilizing non-firing replica rifles or inert prop firearms with digital visual effects (VFX) muzzle flashes and sound design added in post-production.",
+                "basis": "production_option",
+                "status": "SUPPORTED",
+                "reason": "Provides a high-level production alternative to eliminate live blank discharge hazards on set.",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "BLANKS CAN KILL. TREAT ALL FIREARMS AS THOUGH THEY ARE LOADED."
+                  }
+                ],
+                "script_spans": [
+                  "The honor guard stands in a row, rifles up at the ready.",
+                  "VOLLEY."
+                ]
+              },
+              {
+                "field": "severity",
+                "quote": "HIGH",
+                "basis": "planning",
+                "status": "SUPPORTED",
+                "reason": "High severity is appropriate given the critical hazards associated with firearm and blank discharge on set.",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "BLANKS CAN KILL."
+                  }
+                ],
+                "script_spans": []
+              },
+              {
+                "field": "finding",
+                "quote": "Whether the production plans to utilize real functional firearms firing quarter/half-load blanks, non-firing replica prop firearms with post-production CGI muzzle flashes and sound design, or electronic gas-discharge props remains unconfirmed",
+                "basis": "source",
+                "status": "UNKNOWN",
+                "reason": "Material text was omitted from the claim audit",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              },
+              {
+                "field": "remedy",
+                "quote": "Establish strict lines of fire with clear safety buffer zones, and issue appropriate eye protection and hearing protection (such as flesh-toned acoustic earplugs) to all performers and crew within proximity. Alternatively, eliminate on-set blank discharge hazards entirely by utilizing non-firing replica rifles or inert prop firearms with digital visual effects (VFX) muzzle flashes and sound design added in post-production. Budget and schedule variances depend on whether a licensed armorer with blank-fire weaponry is contracted or digital post-production effects are utilized",
+                "basis": "source",
+                "status": "UNKNOWN",
+                "reason": "Material text was omitted from the claim audit",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": []
+              }
+            ],
+            "support_span_version": 3,
+            "audit_input": "e49bd29bdf4e35beb6c1869613ba20e3d193f809e79cba74908478d1175128a2",
+            "estimate_exclusions": [],
+            "entailment_review": {
+              "checks": [
+                {
+                  "check_index": 0,
+                  "entailed": true,
+                  "reason": "The script evidence directly describes an honor guard with rifles at the ready, three volleys fired, and Sam and Barnacle nearby in a churchyard funeral setting.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "Accurately reflects the scene depicted in the script evidence.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 1,
+                  "entailed": false,
+                  "reason": "The source excerpt only states 'BLANKS CAN KILL. TREAT ALL FIREARMS AS THOUGH THEY ARE LOADED' and does not provide evidence for specific hazards such as muzzle blast, burning powder fragments, high acoustic sound pressure levels causing permanent hearing damage, or projectile/wad hazards.",
+                  "scope_preserved": true,
+                  "requirements_supported": false,
+                  "scope_reason": "Specific physiological hazards (burning powder fragments, high acoustic sound pressure levels causing permanent hearing damage, projectile/wad hazards) exceed the text of the citation.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": [
+                    "muzzle blast",
+                    "burning powder fragments",
+                    "high acoustic sound pressure levels causing permanent hearing damage",
+                    "projectile/wad hazards"
+                  ]
+                },
+                {
+                  "check_index": 2,
+                  "entailed": false,
+                  "reason": "The cited text only mentions conducting a safety meeting with a walk-through/dry run with the Property Master. It does not substantiate retaining a licensed Armorer, or specific duties regarding custody, inspection, loading, and handling.",
+                  "scope_preserved": false,
+                  "requirements_supported": false,
+                  "scope_reason": "Mandates specific specialist retention and handling duties not substantiated by the provided excerpt.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": [
+                    "retain a licensed and qualified Armorer / Property Master to manage custody, inspection, loading, and handling of all firearms in strict compliance with CSATF Safety Bulletin #1"
+                  ]
+                },
+                {
+                  "check_index": 3,
+                  "entailed": false,
+                  "reason": "The excerpt supports conducting a safety meeting and walk-through/dry run with involved personnel, but does not substantiate specifying all cast, crew, background performers, and nearby minor/animal handlers, nor does it specify conducting it before loading blanks.",
+                  "scope_preserved": false,
+                  "requirements_supported": false,
+                  "scope_reason": "Specifies additional attendee categories and timing details not in the cited quote.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": [
+                    "background performers, and nearby minor/animal handlers before loading blanks"
+                  ]
+                },
+                {
+                  "check_index": 4,
+                  "entailed": true,
+                  "reason": "This is a valid high-level production option proposing to eliminate the physical blank discharge hazard by using replica/inert props and VFX/sound in post, directly addressing the firearm hazard in the scene without prescribing unsupported operational mandates.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "Properly proposes an optional high-level physical hazard removal method addressing the scene's blank fire depiction.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                }
+              ]
+            },
+            "entailment_policy_version": 2
+          },
+          "after": {
+            "verdict": "SUPPORTED",
+            "reason": "The script accurately depicts an honor guard firing rifle volleys at a funeral service in scene S005. The cited excerpts from Safety Bulletin #1 support the core safety warnings regarding blank ammunition, live ammunition prohibitions, and the required safety meeting and dry run procedures. The conditional risk assessment and production options are fully aligned with industry safety standards.",
+            "failure_mode": "none",
+            "claim_checks": [
+              {
+                "field": "severity",
+                "quote": "HIGH",
+                "basis": "risk_assessment",
+                "status": "SUPPORTED",
+                "reason": "High severity is warranted for scenes depicting multi-firearm discharge hazards.",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "BLANKS CAN KILL. TREAT ALL FIREARMS AS THOUGH THEY ARE LOADED."
+                  }
+                ],
+                "script_spans": [
+                  "The honor guard stands in a row, rifles up at the ready."
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "Scene S005 depicts an honor guard discharging multiple rifle volleys during a funeral service.",
+                "basis": "script",
+                "status": "SUPPORTED",
+                "reason": "Accurately reflects the action and dialogue in scene S005.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "The honor guard stands in a row, rifles up at the ready.",
+                  "VOLLEY. VOLLEY."
+                ]
+              },
+              {
+                "field": "finding",
+                "quote": "Industry safety standards note that blanks can kill, requiring all firearms to be treated as though they are loaded, and strictly prohibiting live ammunition from being used or brought onto any studio lot or stage.",
+                "basis": "source",
+                "status": "SUPPORTED",
+                "reason": "Directly supported by Industry Safety Bulletin #1.",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "BLANKS CAN KILL. TREAT ALL FIREARMS AS THOUGH THEY ARE LOADED. \"LIVE AMMUNITION\" IS NEVER TO BE USED NOR BROUGHT ONTO ANY STUDIO LOT OR STAGE."
+                  }
+                ],
+                "script_spans": []
+              },
+              {
+                "field": "finding",
+                "quote": "If practical firearms or blank rounds are planned, on-set firearm use presents potential physical safety risks.",
+                "basis": "risk_assessment",
+                "status": "SUPPORTED",
+                "reason": "A properly conditional risk assessment anchored in the depicted rifle volleys and safety bulletin warnings.",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "BLANKS CAN KILL. TREAT ALL FIREARMS AS THOUGH THEY ARE LOADED."
+                  }
+                ],
+                "script_spans": [
+                  "The honor guard stands in a row, rifles up at the ready.",
+                  "VOLLEY."
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "If firearms are used on set, conduct a safety meeting with all involved personnel to review relevant safety issues, including an on-site walk-through or dry run with the Property Master or designated production personnel before any firearm is used.",
+                "basis": "application",
+                "status": "SUPPORTED",
+                "reason": "Directly supported by the mandatory safety meeting and dry run procedures in Safety Bulletin #1.",
+                "citation_numbers": [
+                  2
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 2,
+                    "quote": "Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues. This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d with the Property Master, designated Production"
+                  }
+                ],
+                "script_spans": [
+                  "The honor guard stands in a row, rifles up at the ready."
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "Alternatively, eliminate on-set discharge hazards by utilizing non-firing replica rifles or inert prop firearms with visual effects and sound added in post-production.",
+                "basis": "production_option",
+                "status": "SUPPORTED",
+                "reason": "A valid production option to eliminate the depicted discharge hazard.",
+                "citation_numbers": [
+                  1
+                ],
+                "support_spans": [
+                  {
+                    "citation_number": 1,
+                    "quote": "BLANKS CAN KILL. TREAT ALL FIREARMS AS THOUGH THEY ARE LOADED."
+                  }
+                ],
+                "script_spans": [
+                  "The honor guard stands in a row, rifles up at the ready.",
+                  "VOLLEY."
+                ]
+              },
+              {
+                "field": "remedy",
+                "quote": "Confirm the intended shooting method, equipment, and staging for the honor guard sequence.",
+                "basis": "inquiry",
+                "status": "SUPPORTED",
+                "reason": "Appropriate production planning inquiry regarding staging and physical execution method.",
+                "citation_numbers": [],
+                "support_spans": [],
+                "script_spans": [
+                  "The honor guard stands in a row, rifles up at the ready."
+                ]
+              }
+            ],
+            "support_span_version": 3,
+            "audit_input": "4706e5eb2d34ae7d64bdeccf9116787512c67ba6174a71d3e839d516cfd3ec0e",
+            "estimate_exclusions": [],
+            "entailment_review": {
+              "checks": [
+                {
+                  "check_index": 1,
+                  "entailed": true,
+                  "reason": "The script evidence directly supports the depiction of an honor guard discharging rifle volleys.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "Directly matches the scene observation in the script.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 2,
+                  "entailed": true,
+                  "reason": "The source quote verbatim supports that blanks can kill, firearms must be treated as loaded, and live ammunition is prohibited.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "Matches the cited text in Safety Bulletin #1.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 3,
+                  "entailed": true,
+                  "reason": "The risk assessment is appropriately conditional on practical firearms/blanks being planned and supported by the source safety hazard rule.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "Maintains proper conditional framing for an unconfirmed production plan.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 4,
+                  "entailed": true,
+                  "reason": "The cited safety bulletin explicitly mandates a safety meeting, walk-through, or dry run with the property master/designated personnel before firearms are used.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "Correctly conditions the requirement on on-set firearm usage.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 5,
+                  "entailed": true,
+                  "reason": "This is a valid high-level production option proposing hazard removal (inert/replica props with VFX/sound in post) to address the depicted discharge.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "Directly addresses the on-set discharge trigger without introducing unsupported technical procedures or guarantees.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                },
+                {
+                  "check_index": 6,
+                  "entailed": true,
+                  "reason": "The inquiry appropriately seeks relevant missing production information regarding execution, equipment, and staging for the sequence.",
+                  "scope_preserved": true,
+                  "requirements_supported": true,
+                  "scope_reason": "Directly targets unconfirmed production facts relevant to the safety underwriting finding.",
+                  "named_rights_status": "not_asserted",
+                  "unsupported_parts": []
+                }
+              ]
+            },
+            "entailment_policy_version": 2
+          },
+          "source_rules": []
+        },
+        "correction": {
+          "finding": "Scene S005 depicts an honor guard discharging multiple rifle volleys during a funeral service. Industry safety standards note that blanks can kill, requiring all firearms to be treated as though they are loaded, and strictly prohibiting live ammunition from being used or brought onto any studio lot or stage. If practical firearms or blank rounds are planned, on-set firearm use presents potential physical safety risks.",
+          "remedy_detail": "If firearms are used on set, conduct a safety meeting with all involved personnel to review relevant safety issues, including an on-site walk-through or dry run with the Property Master or designated production personnel before any firearm is used. Alternatively, eliminate on-set discharge hazards by utilizing non-firing replica rifles or inert prop firearms with visual effects and sound added in post-production. Confirm the intended shooting method, equipment, and staging for the honor guard sequence.",
+          "remedy_action": "REPLACE",
+          "severity": "HIGH"
+        },
+        "correction_input": "e49bd29bdf4e35beb6c1869613ba20e3d193f809e79cba74908478d1175128a2"
+      },
+      "kept": [
+        {
+          "flag_id": "F3003",
+          "agent": "safety_underwriter",
+          "scene_ids": [
+            "S005"
+          ],
+          "entity_id": null,
+          "severity": "HIGH",
+          "category": "firearms_blanks",
+          "finding": "Scene S005 depicts an honor guard discharging multiple rifle volleys during a funeral service. Industry safety standards note that blanks can kill, requiring all firearms to be treated as though they are loaded, and strictly prohibiting live ammunition from being used or brought onto any studio lot or stage. If practical firearms or blank rounds are planned, on-set firearm use presents potential physical safety risks.",
+          "citations": [
+            {
+              "source_type": "web",
+              "title": "Safety Bulletin #1",
+              "url": "https://www.csatf.org/wp-content/uploads/2018/05/01FIREARMS.pdf",
+              "excerpt": "BLANKS CAN KILL. TREAT ALL FIREARMS AS THOUGH THEY ARE LOADED. \"LIVE AMMUNITION\" IS NEVER TO BE USED NOR BROUGHT ONTO ANY STUDIO LOT OR STAGE.",
+              "retrieved_at": null,
+              "via": "parallel_search"
+            },
+            {
+              "source_type": "web",
+              "title": "safety bulletin #1 recommendations for the use of firearms, ...",
+              "url": "https://www.csatf.org/01_safety_bltn_firearms/",
+              "excerpt": "Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues. This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d with the Property Master, designated Production",
+              "retrieved_at": null,
+              "via": "parallel_search"
+            }
+          ],
+          "remedy": {
+            "action": "REPLACE",
+            "detail": "If firearms are used on set, conduct a safety meeting with all involved personnel to review relevant safety issues, including an on-site walk-through or dry run with the Property Master or designated production personnel before any firearm is used. Alternatively, eliminate on-set discharge hazards by utilizing non-firing replica rifles or inert prop firearms with visual effects and sound added in post-production. Confirm the intended shooting method, equipment, and staging for the honor guard sequence.",
+            "est_cost_usd": null,
+            "est_added_days": null
+          },
+          "confidence": 0.95
+        }
+      ],
+      "dropped": [],
+      "verification_incomplete": false,
+      "elapsed_s": 105.91
+    }
+  ],
+  "responses": [
+    {
+      "flag_id": "F1001",
+      "schema": "EvidenceVerdict",
+      "text": "{\n  \"verdict\": \"SUPPORTED\",\n  \"reason\": \"The script accurately depicts Jeff Buckley's recording of Leonard Cohen's composition 'Hallelujah' specified in Eli Voss's notarized will in S002, played via boombox at his funeral in S004, and broadcast over harbor PA speakers in S011. The legal requirement for a synchronization license to synchronize a musical composition with visual media is directly supported by Citation 1, and Sony/ATV Music Publishing's copyright ownership of the Cohen composition is supported by Citation 2.\",\n  \"failure_mode\": \"none\",\n  \"claim_checks\": [\n    {\n      \"field\": \"severity\",\n      \"quote\": \"HIGH\",\n      \"basis\": \"risk_assessment\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"High severity is appropriate for a prominent, plot-critical commercial musical composition requiring publisher clearance across multiple featured scenes.\",\n      \"citation_numbers\": [1, 2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"This permission is required whenever music is paired with film, television, advertising, video games, online video, or other audiovisual media.\"\n        }\n      ],\n      \"script_spans\": [\n        \"\\\"Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.\\\"\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"The screenplay specifies Leonard Cohen's composition 'Hallelujah' as a plot-critical element in Eli Voss's notarized will, which is subsequently played on a boombox at his church funeral service in S004 and broadcast via seawall PA speakers during the harbor boat pyre in S011.\",\n      \"basis\": \"script\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"The screenplay explicitly establishes the song in Eli's notarized instructions in S002, Helen playing it on a boombox in church in S004, and speakers playing it during the harbor pyre in S011.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": [\n        \"\\\"Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.\\\"\",\n        \"The opening guitar of Jeff Buckley's \\\"Hallelujah\\\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.\",\n        \"Then, from speakers somebody has rigged on the seawall railing, Buckley's \\\"Hallelujah\\\" starts again, drifting out across the water toward the fire.\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Synchronizing a musical composition with visual images in a motion picture requires a synchronization license from the copyright owner or publishing administrator.\",\n      \"basis\": \"source\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Citation 1 establishes that pairing a musical composition with audiovisual content requires a synchronization license.\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"A synchronization license authorizes the use of a musical composition in timed relation with visual content. This permission is required whenever music is paired with film, television, advertising, video games, online video, or other audiovisual media.\"\n        }\n      ],\n      \"script_spans\": []\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"The publishing copyright for 'Hallelujah' is administered 100% by Sony Music Publishing (formerly Sony/ATV Music Publishing). Sync licensing must be negotiated with Sony Music Publishing's synchronization licensing department.\",\n      \"basis\": \"application\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Citation 2 confirms copyright ownership by Sony/ATV Music Publishing (Sony Music Publishing) for Leonard Cohen's 'Hallelujah'.\",\n      \"citation_numbers\": [2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 2,\n          \"quote\": \"By Leonard Cohen Copyright Sony/ATV Music Publishing\"\n        }\n      ],\n      \"script_spans\": [\n        \"\\\"Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.\\\"\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"If clearance is cost-prohibitive or denied, the production must replace the cue with a pre-cleared indie composition or production music library track.\",\n      \"basis\": \"production_option\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Offers a standard, non-prescriptive production option to substitute the licensed composition if rights clearance cannot be secured.\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"This permission is required whenever music is paired with film, television, advertising, video games, online video, or other audiovisual media.\"\n        }\n      ],\n      \"script_spans\": [\n        \"The opening guitar of Jeff Buckley's \\\"Hallelujah\\\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.\"\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"Apply to Sony Music Publishing for a worldwide synchronization license for Leonard Cohen's 'Hallelujah' covering theatrical, streaming, and home video distribution in perpetuity.\",\n      \"basis\": \"planning\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Applying for a worldwide sync license from the identified copyright administrator aligns directly with the licensing requirements in Citation 1 and ownership in Citation 2.\",\n      \"citation_numbers\": [1, 2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"A synchronization license authorizes the use of a musical composition in timed relation with visual content. This permission is required whenever music is paired with film, television, advertising, video games, online video, or other audiovisual media.\"\n        },\n        {\n          \"citation_number\": 2,\n          \"quote\": \"By Leonard Cohen Copyright Sony/ATV Music Publishing\"\n        }\n      ],\n      \"script_spans\": []\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"Ownership splits indicate 100% control by Sony Music Publishing; verify splits via Songview before negotiating.\",\n      \"basis\": \"planning\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Recommends confirming publishing administrator splits based on copyright attribution in Citation 2.\",\n      \"citation_numbers\": [2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 2,\n          \"quote\": \"By Leonard Cohen Copyright Sony/ATV Music Publishing\"\n        }\n      ],\n      \"script_spans\": []\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"As an indie alternative budget path, use a temp track in editorial and budget for an original composition or production music library replacement if major-publisher quotes exceed music clearance allocations. Sound-alikes imitating the distinct composition/arrangement should be avoided.\",\n      \"basis\": \"production_option\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Provides a high-level contingency production workflow to handle music clearance cost constraints.\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"A synchronization license authorizes the use of a musical composition in timed relation with visual content.\"\n        }\n      ],\n      \"script_spans\": [\n        \"The opening guitar of Jeff Buckley's \\\"Hallelujah\\\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F1001",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 1,\n      \"entailed\": false,\n      \"reason\": \"The script evidence establishes that Jeff Buckley's recording of 'Hallelujah' is requested and played, but does not identify Leonard Cohen as the composer.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"The scene observation accurately reflects the scripted scenes and will instructions, but introduces Leonard Cohen's authorship which is not present in the script receipts.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": [\n        \"Screenplay specifies Leonard Cohen's composition (script evidence specifies Jeff Buckley's recording)\"\n      ]\n    },\n    {\n      \"check_index\": 2,\n      \"entailed\": true,\n      \"reason\": \"The cited source directly establishes that synchronizing a musical composition in timed relation with visual media requires a synchronization license.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The statement accurately reflects the general sync licensing rule for pairing music with visual content.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 3,\n      \"entailed\": false,\n      \"reason\": \"A catalog copyright credit does not establish 100% split administration, nor does it prove current licensing authority or mandate negotiating with Sony Music Publishing's department.\",\n      \"scope_preserved\": false,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"The claim makes an unqualified assertion of current 100% administration and mandatory negotiation authority from a static copyright attribution.\",\n      \"named_rights_status\": \"unqualified_relationship\",\n      \"unsupported_parts\": [\n        \"100% administration by Sony Music Publishing\",\n        \"Requirement that sync licensing must be negotiated with Sony Music Publishing's synchronization licensing department\"\n      ]\n    },\n    {\n      \"check_index\": 5,\n      \"entailed\": false,\n      \"reason\": \"The cited sources do not establish Sony Music Publishing as the confirmed current licensor for this production, nor do they support the specific scope of worldwide rights across theatrical, streaming, and home video in perpetuity.\",\n      \"scope_preserved\": false,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"The instruction asserts an unqualified licensor and mandates specific distribution windows and perpetuity terms without operative source evidence.\",\n      \"named_rights_status\": \"unqualified_relationship\",\n      \"unsupported_parts\": [\n        \"Instruction to apply to Sony Music Publishing as the established licensing authority\",\n        \"Mandatory terms covering theatrical, streaming, and home video distribution worldwide in perpetuity\"\n      ]\n    },\n    {\n      \"check_index\": 6,\n      \"entailed\": false,\n      \"reason\": \"The source only provides a basic copyright credit; it does not indicate 100% ownership splits or prescribe verifying splits via Songview.\",\n      \"scope_preserved\": false,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"The claim asserts specific split percentages and a verification procedure via Songview that are absent from the cited excerpt.\",\n      \"named_rights_status\": \"unqualified_relationship\",\n      \"unsupported_parts\": [\n        \"Ownership splits indicate 100% control by Sony Music Publishing\",\n        \"Requirement to verify splits via Songview\"\n      ]\n    },\n    {\n      \"check_index\": 7,\n      \"entailed\": false,\n      \"reason\": \"While replacing a commercial cue with an original composition or library track is a valid trigger-removal concept, the directive to avoid sound-alikes is an unsupported operative prescription.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"The high-level substitution addresses the clearance trigger, but the claim introduces an unevidenced restriction regarding sound-alikes.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": [\n        \"Prescription that sound-alikes imitating the distinct composition/arrangement should be avoided\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F1001",
+      "schema": "CorrectedClaim",
+      "text": "{\"finding\":\"Scenes S002, S004, and S011 incorporate playback of the song 'Hallelujah'. Synchronizing a musical composition with visual images in a motion picture requires a synchronization license from the copyright owner or publishing administrator. Reference catalog data lists Leonard Cohen as songwriter and Sony/ATV Music Publishing as copyright holder, which serves as an initial inquiry lead to determine the party currently authorized to license the composition.\",\"remedy_detail\":\"Identify and contact the current copyright owner or publishing administrator to negotiate and obtain the necessary synchronization license for the composition. Alternatively, replace the cue with an original composition, pre-cleared library track, or public domain work. If audible music is not necessary to the narrative, cut the recorded track from the scenes.\",\"remedy_action\":\"OBTAIN_LICENSE\",\"severity\":\"HIGH\"}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F1001",
+      "schema": "EvidenceVerdict",
+      "text": "{\n  \"verdict\": \"SUPPORTED\",\n  \"reason\": \"The scene text in S004 and S011 depicts playback of the song 'Hallelujah' (with S002 introducing the specific cue instruction in dialogue). The cited sources support the legal requirement for a synchronization license to pair a musical composition with audiovisual media and provide reference catalog data identifying Leonard Cohen and Sony/ATV Music Publishing as licensing investigation leads. The proposed remedy properly distinguishes licensing inquiries from content replacement or removal options.\",\n  \"failure_mode\": \"none\",\n  \"claim_checks\": [\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Scenes S002, S004, and S011 incorporate playback of the song 'Hallelujah'.\",\n      \"basis\": \"script\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Scene S002 introduces the notarized instructions to play the song, while scenes S004 and S011 feature the actual playback of Jeff Buckley's recording of 'Hallelujah'.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": [\n        \"\\\"Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.\\\"\",\n        \"The opening guitar of Jeff Buckley's \\\"Hallelujah\\\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.\",\n        \"Then, from speakers somebody has rigged on the seawall railing, Buckley's \\\"Hallelujah\\\" starts again, drifting out across the water toward the fire.\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Synchronizing a musical composition with visual images in a motion picture requires a synchronization license from the copyright owner or publishing administrator.\",\n      \"basis\": \"source\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Citation 1 explicitly establishes that synchronization licenses authorize the timed use of musical compositions in film and audiovisual media.\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"A synchronization license authorizes the use of a musical composition in timed relation with visual content. This permission is required whenever music is paired with film, television, advertising, video games, online video, or other audiovisual media.\"\n        }\n      ],\n      \"script_spans\": []\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Reference catalog data lists Leonard Cohen as songwriter and Sony/ATV Music Publishing as copyright holder, which serves as an initial inquiry lead to determine the party currently authorized to license the composition.\",\n      \"basis\": \"source\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Citation 2 verifies that reference catalog records list Leonard Cohen as songwriter and Sony/ATV Music Publishing as copyright holder.\",\n      \"citation_numbers\": [2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 2,\n          \"quote\": \"By Leonard Cohen Copyright Sony/ATV Music Publishing\"\n        }\n      ],\n      \"script_spans\": []\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"Identify and contact the current copyright owner or publishing administrator to negotiate and obtain the necessary synchronization license for the composition.\",\n      \"basis\": \"planning\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Identifying and contacting the publisher or copyright owner is the standard procedure to negotiate synchronization rights established by Citation 1.\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"A synchronization license authorizes the use of a musical composition in timed relation with visual content. This permission is required whenever music is paired with film, television, advertising, video games, online video, or other audiovisual media.\"\n        }\n      ],\n      \"script_spans\": []\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"Alternatively, replace the cue with an original composition, pre-cleared library track, or public domain work. If audible music is not necessary to the narrative, cut the recorded track from the scenes.\",\n      \"basis\": \"script_edit\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Replacing or omitting the commercial song directly eliminates the trigger that requires a third-party synchronization license.\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"This permission is required whenever music is paired with film, television, advertising, video games, online video, or other audiovisual media.\"\n        }\n      ],\n      \"script_spans\": [\n        \"The opening guitar of Jeff Buckley's \\\"Hallelujah\\\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.\",\n        \"Then, from speakers somebody has rigged on the seawall railing, Buckley's \\\"Hallelujah\\\" starts again, drifting out across the water toward the fire.\"\n      ]\n    },\n    {\n      \"field\": \"severity\",\n      \"quote\": \"HIGH\",\n      \"basis\": \"risk_assessment\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Unlicensed synchronization of a prominent commercial song creates major legal and distribution barriers.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F1001",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The script excerpts directly confirm the dialogue reference and playback of the song 'Hallelujah' across the designated scenes.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"Screenplay evidence directly establishes the inclusion and playback of the song in the scenes.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 1,\n      \"entailed\": true,\n      \"reason\": \"The cited source explicitly states that a synchronization license is required whenever music is paired with film or audiovisual media.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The scope of the synchronization licensing rule aligns with the source excerpt.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 2,\n      \"entailed\": true,\n      \"reason\": \"The catalog excerpt attributes authorship to Leonard Cohen and copyright to Sony/ATV Music Publishing, and the claim properly qualifies this as reference data and an investigation lead.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The claim strictly treats catalog data as an inquiry lead rather than an unqualified confirmation of current licensing authority.\",\n      \"named_rights_status\": \"qualified_attribution_or_lead\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 3,\n      \"entailed\": true,\n      \"reason\": \"Where a synchronization license is established as necessary, identifying and contacting the generic copyright owner or publishing administrator is a supported planning step.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The planning step appropriately targets generic rights holders without asserting specific corporate relationships or unsupported duties.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 4,\n      \"entailed\": true,\n      \"reason\": \"Cutting or replacing the musical cue with original, pre-cleared, or public domain material directly addresses the synchronization clearance trigger present in the script.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The proposed script edits remove or alter the specific content trigger without making unsupported clearance guarantees.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F1002",
+      "schema": "EvidenceVerdict",
+      "text": "{\n  \"verdict\": \"SUPPORTED\",\n  \"reason\": \"The screenplay explicitly specifies the Columbia recording of Jeff Buckley performing 'Hallelujah' in S004 and S011, and the cited sources substantiate that incorporating a master sound recording into an audiovisual work requires a master use license from the master rights owner, identified as Columbia Records / Sony Music Entertainment.\",\n  \"failure_mode\": \"none\",\n  \"claim_checks\": [\n    {\n      \"field\": \"severity\",\n      \"quote\": \"HIGH\",\n      \"basis\": \"risk_assessment\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Clearance of an iconic, commercially released major-label master recording is a mandatory legal requirement and major cost driver for production.\",\n      \"citation_numbers\": [1, 2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"When that recording is embedded in visual media, permission from the sound recording\u2019s owner is required in addition to the composition license.\"\n        }\n      ],\n      \"script_spans\": [\n        \"\\\"Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.\\\"\",\n        \"The opening guitar of Jeff Buckley's \\\"Hallelujah\\\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.\",\n        \"Buckley's \\\"Hallelujah\\\" starts again, drifting out across the water toward the fire.\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"The screenplay explicitly requires the master recording of Jeff Buckley performing 'Hallelujah' ('The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.') to be played during the funeral service in S004 and the harbor boat pyre in S011.\",\n      \"basis\": \"script\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"The screenplay explicitly specifies Jeff Buckley's Columbia recording of 'Hallelujah' in Eli's instructions in S002, played during the funeral in S004 and at the boat burning in S011.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": [\n        \"\\\"Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.\\\"\",\n        \"The opening guitar of Jeff Buckley's \\\"Hallelujah\\\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.\",\n        \"Buckley's \\\"Hallelujah\\\" starts again, drifting out across the water toward the fire.\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Incorporating a commercially released master sound recording into an audiovisual work requires a master use license from the record label holding master rights.\",\n      \"basis\": \"source\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Supported by excerpts 1 and 2, which confirm that reproducing a specific recorded performance in visual media requires a master use license from the owner.\",\n      \"citation_numbers\": [1, 2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"When that recording is embedded in visual media, permission from the sound recording\u2019s owner is required in addition to the composition license. This permission is granted through a master use license.\"\n        },\n        {\n          \"citation_number\": 2,\n          \"quote\": \"Master Use License: This is the right to reproduce a specific recording of a song in your film.\"\n        }\n      ],\n      \"script_spans\": []\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"The master recording is owned and controlled by Columbia Records / Sony Music Entertainment.\",\n      \"basis\": \"source\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Supported by excerpt 3, showing the copyright credit to Columbia Records, a division of Sony Music Entertainment.\",\n      \"citation_numbers\": [3],\n      \"support_spans\": [\n        {\n          \"citation_number\": 3,\n          \"quote\": \"\u2117 2007 Columbia Records, a division of Sony Music Entertainment\"\n        }\n      ],\n      \"script_spans\": []\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Master licensing must be secured directly from Sony Music Entertainment's licensing department in addition to the publishing sync license.\",\n      \"basis\": \"application\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Directly applies the sourced rule that master use licenses must be obtained from the master owner (Sony/Columbia) in addition to sync licensing.\",\n      \"citation_numbers\": [1, 3],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"permission from the sound recording\u2019s owner is required in addition to the composition license. This permission is granted through a master use license.\"\n        },\n        {\n          \"citation_number\": 3,\n          \"quote\": \"\u2117 2007 Columbia Records, a division of Sony Music Entertainment\"\n        }\n      ],\n      \"script_spans\": [\n        \"The opening guitar of Jeff Buckley's \\\"Hallelujah\\\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.\"\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"Request a master use license from Sony Music Entertainment / Columbia Records Licensing for Jeff Buckley's sound recording of 'Hallelujah'.\",\n      \"basis\": \"application\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Directs production to apply to the confirmed master rightsholder for the master use license.\",\n      \"citation_numbers\": [1, 3],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"This permission is granted through a master use license.\"\n        },\n        {\n          \"citation_number\": 3,\n          \"quote\": \"Columbia Records, a division of Sony Music Entertainment\"\n        }\n      ],\n      \"script_spans\": [\n        \"The opening guitar of Jeff Buckley's \\\"Hallelujah\\\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.\"\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"For indie budget management, edit with a temp track while pricing the commercial master; if the quote exceeds budget, commission an original, bespoke recording from an emerging artist or production library.\",\n      \"basis\": \"production_option\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Provides standard production options to avoid commercial master licensing costs by commissioning a new sound recording.\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"A sound recording copyright covers a specific recorded performance of a composition.\"\n        }\n      ],\n      \"script_spans\": [\n        \"\\\"Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.\\\"\"\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"Note: avoid commissioning sound-alikes that imitate Jeff Buckley's distinct vocal style or idiosyncratic guitar arrangement to mitigate right of publicity exposure.\",\n      \"basis\": \"risk_assessment\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Provides sound cautionary planning advice regarding potential sound-alike legal issues if commissioning a replacement track.\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"A sound recording copyright covers a specific recorded performance of a composition.\"\n        }\n      ],\n      \"script_spans\": [\n        \"\\\"Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.\\\"\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F1002",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\"check_index\": 1, \"entailed\": true, \"reason\": \"The claim accurately describes the script directions and dialogue in S004 and S011 based on the provided screenplay excerpts.\", \"scope_preserved\": true, \"requirements_supported\": true, \"scope_reason\": \"Accurately reflects the content and context of the script evidence.\", \"named_rights_status\": \"not_asserted\", \"unsupported_parts\": []},\n    {\"check_index\": 2, \"entailed\": true, \"reason\": \"The cited sources explicitly establish that embedding a sound recording in visual media requires a master use license from the owner.\", \"scope_preserved\": true, \"requirements_supported\": true, \"scope_reason\": \"Preserves the generalized licensing rule without overstepping scope.\", \"named_rights_status\": \"not_asserted\", \"unsupported_parts\": []},\n    {\"check_index\": 3, \"entailed\": false, \"reason\": \"A phonogram copyright notice on a digital platform is an attribution/lead rather than verified proof of current exclusive licensing authority for this production.\", \"scope_preserved\": false, \"requirements_supported\": false, \"scope_reason\": \"Converts a phonogram catalog credit into an unqualified assertion of current ownership and licensing authority.\", \"named_rights_status\": \"unqualified_relationship\", \"unsupported_parts\": [\"The master recording is owned and controlled by Columbia Records / Sony Music Entertainment.\"]},\n    {\"check_index\": 4, \"entailed\": false, \"reason\": \"Mandating direct clearance from Sony Music Entertainment asserts an unqualified licensing relationship that is not substantiated as current licensing authority by the cited credit.\", \"scope_preserved\": false, \"requirements_supported\": false, \"scope_reason\": \"Imposes a mandatory administrative obligation with a specific named entity without verified licensing authority.\", \"named_rights_status\": \"unqualified_relationship\", \"unsupported_parts\": [\"Master licensing must be secured directly from Sony Music Entertainment's licensing department\"]},\n    {\"check_index\": 5, \"entailed\": false, \"reason\": \"Instructing the production to obtain licensing directly from a named entity asserts an unverified licensing authority.\", \"scope_preserved\": false, \"requirements_supported\": false, \"scope_reason\": \"Names a specific company as the required licensor rather than maintaining a qualified lead or generic licensing step.\", \"named_rights_status\": \"unqualified_relationship\", \"unsupported_parts\": [\"Request a master use license from Sony Music Entertainment / Columbia Records Licensing\"]},\n    {\"check_index\": 6, \"entailed\": true, \"reason\": \"Provides a high-level, optional substitution/workflow to avoid the commercial master license trigger without imposing unsupported operating duties or guarantees.\", \"scope_preserved\": true, \"requirements_supported\": true, \"scope_reason\": \"Addresses the licensing cost risk through an optional production workflow.\", \"named_rights_status\": \"not_asserted\", \"unsupported_parts\": []},\n    {\"check_index\": 7, \"entailed\": false, \"reason\": \"The cited source on sound recording copyright does not establish rules, risks, or precautions regarding right of publicity exposure for sound-alikes.\", \"scope_preserved\": false, \"requirements_supported\": false, \"scope_reason\": \"Introduces an unsupported legal risk theory and restriction regarding right of publicity not found in the source.\", \"named_rights_status\": \"not_asserted\", \"unsupported_parts\": [\"mitigate right of publicity exposure from sound-alikes imitating vocal style or guitar arrangement\"]}\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F1002",
+      "schema": "CorrectedClaim",
+      "text": "{\n  \"finding\": \"Scenes S002, S004, and S011 feature the specific commercial sound recording of Jeff Buckley's \\\"Hallelujah\\\" (noted in the script as the Columbia recording). Embedding a commercial sound recording into an audiovisual work requires a master use license granting permission from the sound recording copyright holder in addition to a composition license. Digital catalog listings credit the recording to Columbia Records / Sony Music Entertainment, which provides an investigative lead to verify current licensing authority for the production.\",\n  \"remedy_detail\": \"Identify and contact the current authorized licensing representative for the master sound recording to negotiate a master use license for the film. If master use licensing cannot be secured or proves cost-prohibitive, consider replacing the master track with a separately licensed or bespoke recording, or cutting the recorded cue from the scenes.\",\n  \"remedy_action\": \"OBTAIN_LICENSE\",\n  \"severity\": \"HIGH\"\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F1002",
+      "schema": "EvidenceVerdict",
+      "text": "{\n  \"verdict\": \"SUPPORTED\",\n  \"reason\": \"The scene text in S002, S004, and S011 explicitly references and plays the Columbia recording of Jeff Buckley's 'Hallelujah'. The cited excerpts substantiate that embedding a sound recording into visual media requires a master use license in addition to a composition license, and digital catalog listings identify Columbia Records / Sony Music Entertainment as the credit/copyright owner.\",\n  \"failure_mode\": \"none\",\n  \"claim_checks\": [\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Scenes S002, S004, and S011 feature the specific commercial sound recording of Jeff Buckley's \\\"Hallelujah\\\" (noted in the script as the Columbia recording).\",\n      \"basis\": \"script\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"The screenplay explicitly references Jeff Buckley's Columbia recording of 'Hallelujah' in S002, S004, and S011.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": [\n        \"Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.\",\n        \"The opening guitar of Jeff Buckley's \\\"Hallelujah\\\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.\",\n        \"Then, from speakers somebody has rigged on the seawall railing, Buckley's \\\"Hallelujah\\\" starts again, drifting out across the water toward the fire.\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Embedding a commercial sound recording into an audiovisual work requires a master use license granting permission from the sound recording copyright holder in addition to a composition license.\",\n      \"basis\": \"application\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Citation [1] establishes that embedding a sound recording in visual media requires a master use license granting permission from the sound recording owner in addition to a composition license.\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"When that recording is embedded in visual media, permission from the sound recording\u2019s owner is required in addition to the composition license. This permission is granted through a master use license.\"\n        }\n      ],\n      \"script_spans\": [\n        \"The opening guitar of Jeff Buckley's \\\"Hallelujah\\\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Digital catalog listings credit the recording to Columbia Records / Sony Music Entertainment, which provides an investigative lead to verify current licensing authority for the production.\",\n      \"basis\": \"source\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Citation [3] confirms the digital catalog attribution to Columbia Records, a division of Sony Music Entertainment.\",\n      \"citation_numbers\": [3],\n      \"support_spans\": [\n        {\n          \"citation_number\": 3,\n          \"quote\": \"\u2117 2007 Columbia Records, a division of Sony Music Entertainment\"\n        }\n      ],\n      \"script_spans\": []\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"Identify and contact the current authorized licensing representative for the master sound recording to negotiate a master use license for the film.\",\n      \"basis\": \"application\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Citations [1] and [2] establish that master use licensing from the sound recording owner/licensing entity is required to reproduce a specific recording in a film.\",\n      \"citation_numbers\": [1, 2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"permission from the sound recording\u2019s owner is required in addition to the composition license. This permission is granted through a master use license.\"\n        },\n        {\n          \"citation_number\": 2,\n          \"quote\": \"Master Use License: This is the right to reproduce a specific recording of a song in your film.\"\n        }\n      ],\n      \"script_spans\": [\n        \"The opening guitar of Jeff Buckley's \\\"Hallelujah\\\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.\"\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"If master use licensing cannot be secured or proves cost-prohibitive, consider replacing the master track with a separately licensed or bespoke recording, or cutting the recorded cue from the scenes.\",\n      \"basis\": \"script_edit\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Cutting or replacing the specific master recording directly removes the master use license requirement established in Citation [1].\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"When that recording is embedded in visual media, permission from the sound recording\u2019s owner is required in addition to the composition license.\"\n        }\n      ],\n      \"script_spans\": [\n        \"The opening guitar of Jeff Buckley's \\\"Hallelujah\\\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.\"\n      ]\n    },\n    {\n      \"field\": \"severity\",\n      \"quote\": \"HIGH\",\n      \"basis\": \"risk_assessment\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Unlicensed commercial music in an audiovisual production presents high copyright and clearance exposure.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": [\n        \"The opening guitar of Jeff Buckley's \\\"Hallelujah\\\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F1002",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The script excerpts directly support that Jeff Buckley's Columbia recording of 'Hallelujah' is called for and played across the scenes.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"Script evidence explicitly details the presence of the specific recording without conflating fictional dialogue with production licensing facts.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 1,\n      \"entailed\": true,\n      \"reason\": \"The cited source explicitly states that embedding a sound recording into visual media requires permission from the sound recording's owner via a master use license in addition to a composition license.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The scope of the requirement matches the cited synchronization licensing guide directly.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 2,\n      \"entailed\": true,\n      \"reason\": \"The catalog listing excerpt supports the phonogram credit to Columbia Records / Sony Music Entertainment, and the claim correctly frames this as a credit and an investigative lead rather than an unqualified current licensor assertion.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The claim strictly frames the catalog copyright credit as an attribution and investigative lead to confirm current licensing authority.\",\n      \"named_rights_status\": \"qualified_attribution_or_lead\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 3,\n      \"entailed\": true,\n      \"reason\": \"The cited sources establish the legal necessity of obtaining a master use license, making contacting the authorized representative a generic, supported procedural next step.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The recommendation identifies a generic rights-holder role without asserting an unqualified named entity or imposing unsupported technical mandates.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 4,\n      \"entailed\": true,\n      \"reason\": \"The proposed options (cutting the cue or replacing it with a bespoke/separately licensed recording) directly address the master use licensing trigger identified in the source without making absolute clearance guarantees.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The high-level cut/replace options remove the specific underlying master recording trigger present in the script.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F3003",
+      "schema": "EvidenceVerdict",
+      "text": "{\n  \"verdict\": \"SUPPORTED\",\n  \"reason\": \"Scene S005 accurately depicts an honor guard firing three volleys in the presence of mourners, Sam, and Barnacle. The safety assessment and recommendations for armorer/property master oversight, on-set safety meetings, dry runs, hearing/eye safety, and VFX alternatives are well-supported by CSATF Safety Bulletin #1 and standard production safety planning.\",\n  \"failure_mode\": \"none\",\n  \"claim_checks\": [\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Scene S005 depicts an honor guard of three veterans discharging three synchronized military service rifle volleys (ceremonial blank fire) in a churchyard funeral setting, in close proximity to a crowd of mourners, a child character (Sam), and a dog (Barnacle).\",\n      \"basis\": \"script\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Accurately reflects the action and characters depicted in scene S005.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": [\n        \"The mourners in a loose crescent under a pewter sky. The honor guard stands in a row, rifles up at the ready.\",\n        \"VOLLEY. Gulls explode off the church roof. Sam clamps his hands over his ears. Barnacle, tied to the fence, points his muzzle at the sky and HOWLS.\",\n        \"VOLLEY. VOLLEY.\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Live blank ammunition discharges pose serious physical risks including muzzle blast, burning powder fragments, high acoustic sound pressure levels causing permanent hearing damage, and projectile/wad hazards.\",\n      \"basis\": \"risk_assessment\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Directly supported by the principle that blanks pose lethal and serious physical risks as outlined in Safety Bulletin #1.\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"BLANKS CAN KILL. TREAT ALL FIREARMS AS THOUGH THEY ARE LOADED.\"\n        }\n      ],\n      \"script_spans\": [\n        \"The honor guard stands in a row, rifles up at the ready.\",\n        \"VOLLEY. Gulls explode off the church roof. Sam clamps his hands over his ears.\"\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"If practical blank discharge is selected, retain a licensed and qualified Armorer / Property Master to manage custody, inspection, loading, and handling of all firearms in strict compliance with CSATF Safety Bulletin #1.\",\n      \"basis\": \"application\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Supported by the safety guidelines assigning firearms handling and walk-throughs to the Property Master / armorer role.\",\n      \"citation_numbers\": [2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 2,\n          \"quote\": \"Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues. This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d with the Property Master, designated Production\"\n        }\n      ],\n      \"script_spans\": [\n        \"The honor guard stands in a row, rifles up at the ready.\"\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"Conduct a mandatory on-set safety meeting and dry-run walk-through with all cast, crew, background performers, and nearby minor/animal handlers before loading blanks.\",\n      \"basis\": \"source\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Directly supported by the text of Safety Bulletin #1 requiring a safety meeting and on-site walk-through / dry run before firearm use.\",\n      \"citation_numbers\": [2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 2,\n          \"quote\": \"Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues. This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d with the Property Master, designated Production\"\n        }\n      ],\n      \"script_spans\": []\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"Alternatively, eliminate on-set blank discharge hazards entirely by utilizing non-firing replica rifles or inert prop firearms with digital visual effects (VFX) muzzle flashes and sound design added in post-production.\",\n      \"basis\": \"production_option\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Provides a high-level production alternative to eliminate live blank discharge hazards on set.\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"BLANKS CAN KILL. TREAT ALL FIREARMS AS THOUGH THEY ARE LOADED.\"\n        }\n      ],\n      \"script_spans\": [\n        \"The honor guard stands in a row, rifles up at the ready.\",\n        \"VOLLEY.\"\n      ]\n    },\n    {\n      \"field\": \"severity\",\n      \"quote\": \"HIGH\",\n      \"basis\": \"planning\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"High severity is appropriate given the critical hazards associated with firearm and blank discharge on set.\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"BLANKS CAN KILL.\"\n        }\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F3003",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The script evidence directly describes an honor guard with rifles at the ready, three volleys fired, and Sam and Barnacle nearby in a churchyard funeral setting.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"Accurately reflects the scene depicted in the script evidence.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 1,\n      \"entailed\": false,\n      \"reason\": \"The source excerpt only states 'BLANKS CAN KILL. TREAT ALL FIREARMS AS THOUGH THEY ARE LOADED' and does not provide evidence for specific hazards such as muzzle blast, burning powder fragments, high acoustic sound pressure levels causing permanent hearing damage, or projectile/wad hazards.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"Specific physiological hazards (burning powder fragments, high acoustic sound pressure levels causing permanent hearing damage, projectile/wad hazards) exceed the text of the citation.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": [\n        \"muzzle blast\",\n        \"burning powder fragments\",\n        \"high acoustic sound pressure levels causing permanent hearing damage\",\n        \"projectile/wad hazards\"\n      ]\n    },\n    {\n      \"check_index\": 2,\n      \"entailed\": false,\n      \"reason\": \"The cited text only mentions conducting a safety meeting with a walk-through/dry run with the Property Master. It does not substantiate retaining a licensed Armorer, or specific duties regarding custody, inspection, loading, and handling.\",\n      \"scope_preserved\": false,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"Mandates specific specialist retention and handling duties not substantiated by the provided excerpt.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": [\n        \"retain a licensed and qualified Armorer / Property Master to manage custody, inspection, loading, and handling of all firearms in strict compliance with CSATF Safety Bulletin #1\"\n      ]\n    },\n    {\n      \"check_index\": 3,\n      \"entailed\": false,\n      \"reason\": \"The excerpt supports conducting a safety meeting and walk-through/dry run with involved personnel, but does not substantiate specifying all cast, crew, background performers, and nearby minor/animal handlers, nor does it specify conducting it before loading blanks.\",\n      \"scope_preserved\": false,\n      \"requirements_supported\": false,\n      \"scope_reason\": \"Specifies additional attendee categories and timing details not in the cited quote.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": [\n        \"background performers, and nearby minor/animal handlers before loading blanks\"\n      ]\n    },\n    {\n      \"check_index\": 4,\n      \"entailed\": true,\n      \"reason\": \"This is a valid high-level production option proposing to eliminate the physical blank discharge hazard by using replica/inert props and VFX/sound in post, directly addressing the firearm hazard in the scene without prescribing unsupported operational mandates.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"Properly proposes an optional high-level physical hazard removal method addressing the scene's blank fire depiction.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F3003",
+      "schema": "CorrectedClaim",
+      "text": "{\n  \"finding\": \"Scene S005 depicts an honor guard discharging multiple rifle volleys during a funeral service. Industry safety standards note that blanks can kill, requiring all firearms to be treated as though they are loaded, and strictly prohibiting live ammunition from being used or brought onto any studio lot or stage. If practical firearms or blank rounds are planned, on-set firearm use presents potential physical safety risks.\",\n  \"remedy_detail\": \"If firearms are used on set, conduct a safety meeting with all involved personnel to review relevant safety issues, including an on-site walk-through or dry run with the Property Master or designated production personnel before any firearm is used. Alternatively, eliminate on-set discharge hazards by utilizing non-firing replica rifles or inert prop firearms with visual effects and sound added in post-production. Confirm the intended shooting method, equipment, and staging for the honor guard sequence.\",\n  \"remedy_action\": \"REPLACE\",\n  \"severity\": \"HIGH\"\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F3003",
+      "schema": "EvidenceVerdict",
+      "text": "{\n  \"verdict\": \"SUPPORTED\",\n  \"reason\": \"The script accurately depicts an honor guard firing rifle volleys at a funeral service in scene S005. The cited excerpts from Safety Bulletin #1 support the core safety warnings regarding blank ammunition, live ammunition prohibitions, and the required safety meeting and dry run procedures. The conditional risk assessment and production options are fully aligned with industry safety standards.\",\n  \"failure_mode\": \"none\",\n  \"claim_checks\": [\n    {\n      \"field\": \"severity\",\n      \"quote\": \"HIGH\",\n      \"basis\": \"risk_assessment\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"High severity is warranted for scenes depicting multi-firearm discharge hazards.\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"BLANKS CAN KILL. TREAT ALL FIREARMS AS THOUGH THEY ARE LOADED.\"\n        }\n      ],\n      \"script_spans\": [\n        \"The honor guard stands in a row, rifles up at the ready.\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Scene S005 depicts an honor guard discharging multiple rifle volleys during a funeral service.\",\n      \"basis\": \"script\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Accurately reflects the action and dialogue in scene S005.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": [\n        \"The honor guard stands in a row, rifles up at the ready.\",\n        \"VOLLEY. VOLLEY.\"\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"Industry safety standards note that blanks can kill, requiring all firearms to be treated as though they are loaded, and strictly prohibiting live ammunition from being used or brought onto any studio lot or stage.\",\n      \"basis\": \"source\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Directly supported by Industry Safety Bulletin #1.\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"BLANKS CAN KILL. TREAT ALL FIREARMS AS THOUGH THEY ARE LOADED. \\\"LIVE AMMUNITION\\\" IS NEVER TO BE USED NOR BROUGHT ONTO ANY STUDIO LOT OR STAGE.\"\n        }\n      ]\n    },\n    {\n      \"field\": \"finding\",\n      \"quote\": \"If practical firearms or blank rounds are planned, on-set firearm use presents potential physical safety risks.\",\n      \"basis\": \"risk_assessment\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"A properly conditional risk assessment anchored in the depicted rifle volleys and safety bulletin warnings.\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"BLANKS CAN KILL. TREAT ALL FIREARMS AS THOUGH THEY ARE LOADED.\"\n        }\n      ],\n      \"script_spans\": [\n        \"The honor guard stands in a row, rifles up at the ready.\",\n        \"VOLLEY.\"\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"If firearms are used on set, conduct a safety meeting with all involved personnel to review relevant safety issues, including an on-site walk-through or dry run with the Property Master or designated production personnel before any firearm is used.\",\n      \"basis\": \"application\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Directly supported by the mandatory safety meeting and dry run procedures in Safety Bulletin #1.\",\n      \"citation_numbers\": [2],\n      \"support_spans\": [\n        {\n          \"citation_number\": 2,\n          \"quote\": \"Before any firearm is used, the Production will conduct a safety meeting with all involved personnel to review relevant safety issues. This safety meeting shall include an \u201con-site walk-through\u201d and/or \u201cdry run\u201d with the Property Master, designated Production\"\n        }\n      ],\n      \"script_spans\": [\n        \"The honor guard stands in a row, rifles up at the ready.\"\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"Alternatively, eliminate on-set discharge hazards by utilizing non-firing replica rifles or inert prop firearms with visual effects and sound added in post-production.\",\n      \"basis\": \"production_option\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"A valid production option to eliminate the depicted discharge hazard.\",\n      \"citation_numbers\": [1],\n      \"support_spans\": [\n        {\n          \"citation_number\": 1,\n          \"quote\": \"BLANKS CAN KILL. TREAT ALL FIREARMS AS THOUGH THEY ARE LOADED.\"\n        }\n      ],\n      \"script_spans\": [\n        \"The honor guard stands in a row, rifles up at the ready.\",\n        \"VOLLEY.\"\n      ]\n    },\n    {\n      \"field\": \"remedy\",\n      \"quote\": \"Confirm the intended shooting method, equipment, and staging for the honor guard sequence.\",\n      \"basis\": \"inquiry\",\n      \"status\": \"SUPPORTED\",\n      \"reason\": \"Appropriate production planning inquiry regarding staging and physical execution method.\",\n      \"citation_numbers\": [],\n      \"support_spans\": [],\n      \"script_spans\": [\n        \"The honor guard stands in a row, rifles up at the ready.\"\n      ]\n    }\n  ]\n}",
+      "usage_available": true
+    },
+    {
+      "flag_id": "F3003",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 1,\n      \"entailed\": true,\n      \"reason\": \"The script evidence directly supports the depiction of an honor guard discharging rifle volleys.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"Directly matches the scene observation in the script.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 2,\n      \"entailed\": true,\n      \"reason\": \"The source quote verbatim supports that blanks can kill, firearms must be treated as loaded, and live ammunition is prohibited.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"Matches the cited text in Safety Bulletin #1.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 3,\n      \"entailed\": true,\n      \"reason\": \"The risk assessment is appropriately conditional on practical firearms/blanks being planned and supported by the source safety hazard rule.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"Maintains proper conditional framing for an unconfirmed production plan.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 4,\n      \"entailed\": true,\n      \"reason\": \"The cited safety bulletin explicitly mandates a safety meeting, walk-through, or dry run with the property master/designated personnel before firearms are used.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"Correctly conditions the requirement on on-set firearm usage.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 5,\n      \"entailed\": true,\n      \"reason\": \"This is a valid high-level production option proposing hazard removal (inert/replica props with VFX/sound in post) to address the depicted discharge.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"Directly addresses the on-set discharge trigger without introducing unsupported technical procedures or guarantees.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    },\n    {\n      \"check_index\": 6,\n      \"entailed\": true,\n      \"reason\": \"The inquiry appropriately seeks relevant missing production information regarding execution, equipment, and staging for the sequence.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"Directly targets unconfirmed production facts relevant to the safety underwriting finding.\",\n      \"named_rights_status\": \"not_asserted\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    }
+  ]
+}

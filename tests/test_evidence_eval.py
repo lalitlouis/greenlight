@@ -91,7 +91,10 @@ def test_response_option_controls_bind_real_receipts_and_keep_labels_out_of_revi
         assert json.loads(prompts[0].rsplit("\n\n", 1)[1])[0]["support"] == []
 
 
-@pytest.mark.parametrize("name,count", [("input_and_rights_scopes", 6), ("record_credit_leads", 2)])
+@pytest.mark.parametrize(
+    "name,count",
+    [("input_and_rights_scopes", 6), ("record_credit_leads", 2), ("firearm_roster", 4)],
+)
 def test_input_scope_and_named_rights_controls_are_anchored_and_reach_independent_review(
     name, count
 ):

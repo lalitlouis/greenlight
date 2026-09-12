@@ -1,0 +1,56 @@
+[
+  {
+    "flag_id": "unknown_staging_is_input_limit",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 12572,
+    "input_sha256": "3c8aa1d031d57c93b29e2f0ebd877a58efa4d90187749adcd48294f49cab44f1",
+    "usage_available": true,
+    "elapsed_s": 5.07
+  },
+  {
+    "flag_id": "unprovided_staging_is_not_confirmed",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 12444,
+    "input_sha256": "5a99d2fcc96c3ca895f491c23850dbaeebc0048a848e01d2ecfd341713958ebd",
+    "usage_available": true,
+    "elapsed_s": 22.83
+  },
+  {
+    "flag_id": "generic_sync_licensor_role",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 13491,
+    "input_sha256": "32b5a7960e4344e75f43b747930dbf32cd2eb596ee99c4cb333a8208806aea22",
+    "usage_available": true,
+    "elapsed_s": 49.05
+  },
+  {
+    "flag_id": "generic_rights_investigation",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 13330,
+    "input_sha256": "e225e9ec7cc961410e3342b47a8d6b5ea7af6375db01ace7e75f0c9e10991a76",
+    "usage_available": true,
+    "elapsed_s": 39.55
+  },
+  {
+    "flag_id": "credit_not_current_master_owner",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 14488,
+    "input_sha256": "978554d3fd3b81ea4fa3375a343c6adee80ab8a750ef09de147bc7d52a2c1531",
+    "usage_available": true,
+    "elapsed_s": 19.84
+  },
+  {
+    "flag_id": "credit_not_named_licensing_instruction",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 13804,
+    "input_sha256": "02428d3d7c6bfe0796807de0890b7182cdef177783045e7413684dc3819dcaf3",
+    "usage_available": true,
+    "elapsed_s": 29.86
+  }
+]

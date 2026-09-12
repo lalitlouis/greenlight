@@ -73,6 +73,10 @@ SCRIPT FACTS AND PRODUCTION FACTS ARE DIFFERENT:
   A finding about a hazard that would exist ONLY after an unwritten change is not.
 - Distinguish a cited law, recommended industry practice, and an insurer's own condition.
   A safety bulletin is not itself proof of illegality or denial of insurance.
+- A truncated procedure or personnel list cannot establish its missing continuation.
+  Do not turn commas in an unfinished roster into an 'or' choice, add an 'and', or
+  complete a cut-off job title. Use the complete supported sentence, retaining 'all
+  involved personnel' where stated, and leave the unfinished detail unasserted.
 """
 
 RATINGS_EVIDENCE = """\

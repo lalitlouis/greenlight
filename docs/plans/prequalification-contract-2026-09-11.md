@@ -363,3 +363,26 @@ clauses, both falsely approved named-master clauses, unconfirmed versus asserted
 staging, and qualified credit/lead alternatives. No additional model calls are added
 to the runtime path; repair remains bounded at five. Live results for this follow-up
 are pending, and no new full gate has been claimed.
+
+Build `5d56e48` matched all eight new input/rights controls and all twelve response
+option controls rerun on that build. Complete repairs for sync, master and firearms
+all received model approval (15 calls, estimated $0.1656). Manual source inspection
+accepts the narrowed sync and master findings: corporate credits are now explicit
+investigation leads, with current authority to be confirmed and no invented prices.
+
+Manual inspection still rejects one firearm clause despite its positive model label:
+the remedy substitutes `Property Master or designated production personnel` for an
+excerpt ending `Property Master, designated Production`. The incomplete roster does
+not establish that alternative. The source's first sentence does establish a meeting
+with all involved personnel before any firearm is used.
+
+The follow-up adds an exact-source firearm card (internal library version 3), binding
+both the meeting excerpt and the separate blank-hazard excerpt. Its fixed remedy
+retains a useful staging inquiry and optional non-firing approach without reconstructing
+the roster. Missing/changed receipts disable it. Existing specialist and inquiry cards
+retain their action precedence; the new card uses the existing REPLACE value. Shared
+production instructions explicitly reject invented continuations and alternatives in
+truncated procedures. Four new frozen controls include the actual false approval, the
+fixed remedy, the complete source sentence, and exclusion of other involved personnel.
+No public schema or runtime call-budget change is made. Full-gate validation remains
+pending; model approval alone is not a manual accuracy label.
