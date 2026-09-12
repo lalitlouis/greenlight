@@ -201,3 +201,20 @@ fresh-safety verification, at most five logical calls. If the resulting text pas
 manual source inspection, proceed to one complete fixture gate with unchanged seeded
 acceptance checks. The wider 120-case reference set and held-out script evaluation
 remain separate work; no accuracy rate is inferred from these development probes.
+
+Build `8ccaa75` passed the new fixed water inquiry (one call, estimated $0.0052),
+bringing the isolated development controls to 33/33 matched labels. The whole fresh
+safety review timed out at 240 seconds in the corrected candidate's first audit,
+after completing the original audit, positive-claim review and source-bound repair.
+The cancelled call returned no verdict or usage. Captured usage from three successful
+calls estimates $0.0318 and excludes any charge for the unfinished request. This is
+an incomplete review, not a semantic pass or rejection.
+
+The diagnostic resume path now reconstructs the saved correction and requires its
+complete audit prompt hash to match the cancelled request. Source record, screenplay,
+finding, rule wording and context therefore cannot silently change during resume.
+Only an interrupted audit directly after a returned correction qualifies; a completed
+negative decision cannot be replayed through this path. The same independent audit
+and entailment check must pass, with a two-logical-call limit and no new repair.
+Preserve the timeout artifact and run this remaining stage once before deciding
+whether to start the full fixture gate.

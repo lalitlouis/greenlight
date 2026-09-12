@@ -27,18 +27,23 @@ from greenlight.agents.evidence_review import (
     AUDIT_VERSION,
     ESTIMATE_FIELDS,
     ClaimCheck,
+    CorrectedClaim,
     _support_problem,
     check_entailment,
     checked_verdict,
     corrected_flag,
+    flag_fingerprint,
     repair_partial,
     review_incomplete,
     unresolved_verdict,
 )
+from greenlight.agents.source_rules import SourceBoundRepair, available_rules, bound_correction
 from greenlight.agents.verification import (
     _RETRY_HTTP,
     EvidenceVerdict,
+    _blinded_prompt,
     _call_verifier_once,
+    _refile_gate_problem,
     _scene_context,
     _search_context,
     apply_verdicts,
@@ -210,6 +215,65 @@ async def resume_partial(client, flag, context, search, initial):
     return await repair_partial(client, flag, context, search, reviewed, _call_verifier_once)
 
 
+def resumable_candidate(artifact, source_bytes, flag, context, search):
+    """Recover an exact correction only when its next audit never returned a decision."""
+    if artifact["source_run_sha256"] != hashlib.sha256(source_bytes).hexdigest():
+        raise ValueError("resume artifact is for a different source record")
+    result = next((r for r in artifact["results"] if r["flag_id"] == flag["flag_id"]), None)
+    if not result or result.get("error") != "TimeoutError":
+        raise ValueError("only interrupted cases can be resumed")
+    responses = [r for r in artifact["responses"] if r["flag_id"] == flag["flag_id"]]
+    corrections = [r for r in responses if r["schema"] in {"CorrectedClaim", "SourceBoundRepair"}]
+    if not corrections:
+        return None
+    attempts = [a for a in artifact["attempts"] if a["flag_id"] == flag["flag_id"]]
+    saved = corrections[-1]
+    if (
+        len(attempts) < 2
+        or attempts[-1]["schema"] != "EvidenceVerdict"
+        or attempts[-1]["status"] != "cancelled"
+        or attempts[-2]["schema"] != saved["schema"]
+        or attempts[-2]["status"] != "returned"
+        or responses[-1] is not saved
+    ):
+        raise ValueError("saved correction has no interrupted audit; do not replay a judgement")
+    selected = []
+    if saved["schema"] == "SourceBoundRepair":
+        correction, selected = bound_correction(
+            SourceBoundRepair.model_validate_json(saved["text"]), available_rules(flag)
+        )
+    else:
+        correction = CorrectedClaim.model_validate_json(saved["text"]).model_dump()
+    candidate = corrected_flag(flag, correction)
+    prompt = _blinded_prompt(candidate, context, search)
+    if hashlib.sha256(prompt.encode()).hexdigest() != attempts[-1]["input_sha256"]:
+        raise ValueError("saved correction audit input changed; exact resume refused")
+    if gate := _refile_gate_problem(candidate, check_authority=False):
+        raise ValueError(gate)
+    return {"candidate": candidate, "correction": correction, "source_rules": selected}
+
+
+async def resume_candidate(client, flag, context, search, saved):
+    """Finish the two remaining checks without regenerating or repairing the candidate."""
+    after = await _call_verifier_once(client, saved["candidate"], context, search)
+    verdict = finish_recheck(after)
+    if verdict.get("evidence_review_unresolved"):
+        verdict["evidence_review"].update(
+            correction=saved["correction"], source_rules=saved["source_rules"]
+        )
+        return verdict
+    return {
+        **after,
+        "evidence_review": {
+            "resumed_after_correction": True,
+            "after": after,
+            "source_rules": saved["source_rules"],
+        },
+        "correction": saved["correction"],
+        "correction_input": flag_fingerprint(flag),
+    }
+
+
 def recheck_candidate(artifact, source_bytes, flag, script_context=""):
     """Complete only the skipped entailment stage after a deterministic audit fix."""
     if artifact["source_run_sha256"] != hashlib.sha256(source_bytes).hexdigest():
@@ -245,7 +309,7 @@ def finish_recheck(verdict):
     return verdict
 
 
-async def evaluate(args):  # noqa: PLR0915 - linear, bounded evaluation with resume/accounting
+async def evaluate(args):  # noqa: PLR0912, PLR0915 - bounded diagnostic modes and accounting
     from google import genai
 
     source_bytes = args.record.read_bytes()
@@ -267,16 +331,30 @@ async def evaluate(args):  # noqa: PLR0915 - linear, bounded evaluation with res
     )
     if rechecks:
         flags = [r[0] for r in rechecks]
+    _, scenes = parser.parse_fountain(script)
+    state = {"script_text": script, "scenes": scenes}
     resume = json.loads(args.resume_from.read_text()) if args.resume_from else None
+    candidates = (
+        {
+            f["flag_id"]: resumable_candidate(
+                resume, source_bytes, f, _scene_context(f, state), _search_context(f, state)
+            )
+            for f in flags
+        }
+        if resume
+        else {}
+    )
     resumed = (
-        {f["flag_id"]: resumable_audit(resume, source_bytes, f, script) for f in flags}
+        {
+            f["flag_id"]: resumable_audit(resume, source_bytes, f, script)
+            for f in flags
+            if not candidates.get(f["flag_id"])
+        }
         if resume
         else {}
     )
     if len(flags) > 6 or (not probes and len(set(args.flags)) != len(flags)):
         raise ValueError("select at most six distinct findings")
-    _, scenes = parser.parse_fountain(script)
-    state = {"script_text": script, "scenes": scenes}
     client = genai.Client(
         vertexai=True,
         project=os.environ["GOOGLE_CLOUD_PROJECT"],
@@ -289,7 +367,10 @@ async def evaluate(args):  # noqa: PLR0915 - linear, bounded evaluation with res
         args.output.with_suffix(".progress.json"),
         len(flags)
         if probes or rechecks
-        else sum(4 if resumed.get(f["flag_id"]) else 5 for f in flags),
+        else sum(
+            2 if candidates.get(f["flag_id"]) else 4 if resumed.get(f["flag_id"]) else 5
+            for f in flags
+        ),
     )
     results = []
     started = time.monotonic()
@@ -303,6 +384,8 @@ async def evaluate(args):  # noqa: PLR0915 - linear, bounded evaluation with res
                     operation = check_entailment(tracked, flag, probes[index][1])
                 elif rechecks:
                     operation = check_entailment(tracked, flag, rechecks[index][1])
+                elif candidate := candidates.get(flag["flag_id"]):
+                    operation = resume_candidate(tracked, flag, context, search, candidate)
                 elif initial := resumed.get(flag["flag_id"]):
                     operation = resume_partial(tracked, flag, context, search, initial)
                 else:

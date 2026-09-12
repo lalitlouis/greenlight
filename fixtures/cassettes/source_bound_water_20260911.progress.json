@@ -1,0 +1,11 @@
+[
+  {
+    "flag_id": "water_bound_inquiry",
+    "schema": "EntailmentResult",
+    "status": "returned",
+    "input_chars": 9007,
+    "input_sha256": "51840a709a6deff2390078245e9cd40375a0270f72b7e88400dd4649bbd8caad",
+    "usage_available": true,
+    "elapsed_s": 7.39
+  }
+]

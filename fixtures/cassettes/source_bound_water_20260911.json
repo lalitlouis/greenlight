@@ -1,0 +1,91 @@
+{
+  "source_run": "fixtures/cassettes/prequalification_fresh_safety_20_20260911.json",
+  "source_run_sha256": "4c4d3392dd2bd1a7f1415de7e2724781d81c9f33ee188386b703609abdaa8193",
+  "source_build": "27f598661a5b299389fdd5b94bdf035f5e923624",
+  "evaluated_build": "8ccaa75071fb665fae549e21743f9080b252a268",
+  "model": "gemini-3.7-flash",
+  "elapsed_s": 7.42,
+  "calls": 1,
+  "responses_with_usage": 1,
+  "calls_without_returned_usage": 0,
+  "resumed_from": null,
+  "rechecked_correction_from": null,
+  "entailment_cases": "fixtures/accuracy/source_bound_water_20260911.json",
+  "entailment_cases_sha256": "68534a3b6a43a01558d72d1e687278473c8a6b6f6a17bf57acad07740155fa3a",
+  "attempts": [
+    {
+      "flag_id": "water_bound_inquiry",
+      "schema": "EntailmentResult",
+      "status": "returned",
+      "input_chars": 9007,
+      "input_sha256": "51840a709a6deff2390078245e9cd40375a0270f72b7e88400dd4649bbd8caad",
+      "usage_available": true,
+      "elapsed_s": 7.39
+    }
+  ],
+  "gemini_usage": {
+    "flash": {
+      "prompt": 2042,
+      "cached": 0,
+      "output": 969
+    }
+  },
+  "estimated_cost_usd": 0.0052,
+  "manual_review": "pending; model approval is not an accuracy label",
+  "results": [
+    {
+      "flag_id": "water_bound_inquiry",
+      "verdict": {
+        "verdict": "SUPPORTED",
+        "claim_checks": [
+          {
+            "field": "remedy",
+            "quote": "Confirm whether personnel will work in or around water and how appropriate water safety devices will be made available. If personnel will enter the water, determine whether a personnel accounting plan is necessary and, if so, which suitable method to use (for example, a buddy or check-in/check-out system).",
+            "basis": "inquiry",
+            "status": "SUPPORTED",
+            "reason": "Probe to be independently assessed",
+            "citation_numbers": [
+              2
+            ],
+            "support_spans": [
+              {
+                "citation_number": 2,
+                "quote": "Appropriate water safety devices (e.g., life vests, life preservers, safety rings, safety hooks, buoys) should be available for all personnel working in or around water. When necessary, the Production Management should implement a plan to account for personnel in the water, such as a \u201cbuddy\u201d or a check in/check out system."
+              }
+            ],
+            "script_spans": [
+              "she DIVES -- off the skiff into the black water, surfacing in the firelight, swimming hard for the mooring buoy"
+            ]
+          }
+        ],
+        "support_span_version": 3,
+        "entailment_review": {
+          "checks": [
+            {
+              "check_index": 0,
+              "entailed": true,
+              "reason": "The inquiry directly addresses the scene's water hazard by requesting necessary production clarifications regarding water safety devices and personnel accounting plans in accordance with CSATF Safety Bulletin #17.",
+              "scope_preserved": true,
+              "requirements_supported": true,
+              "scope_reason": "The inquiry accurately frames the source's conditional guidance on water safety devices and accounting systems as open production questions without asserting unsupported mandates.",
+              "unsupported_parts": []
+            }
+          ]
+        },
+        "estimate_exclusions": []
+      },
+      "expected_entailed": true,
+      "actual_entailed": true,
+      "passed": true,
+      "elapsed_s": 7.4
+    }
+  ],
+  "responses": [
+    {
+      "flag_id": "water_bound_inquiry",
+      "schema": "EntailmentResult",
+      "text": "{\n  \"checks\": [\n    {\n      \"check_index\": 0,\n      \"entailed\": true,\n      \"reason\": \"The inquiry directly addresses the scene's water hazard by requesting necessary production clarifications regarding water safety devices and personnel accounting plans in accordance with CSATF Safety Bulletin #17.\",\n      \"scope_preserved\": true,\n      \"requirements_supported\": true,\n      \"scope_reason\": \"The inquiry accurately frames the source's conditional guidance on water safety devices and accounting systems as open production questions without asserting unsupported mandates.\",\n      \"unsupported_parts\": []\n    }\n  ]\n}",
+      "usage_available": true
+    }
+  ]
+}

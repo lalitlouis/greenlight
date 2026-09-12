@@ -1,6 +1,7 @@
 """Offline guardrails for paid evidence evaluation; no live model calls."""
 
 import asyncio
+import hashlib
 import importlib.util
 import json
 from copy import deepcopy
@@ -180,6 +181,111 @@ def test_negative_recheck_cannot_use_legacy_partial_acceptance(verdict):
 def test_successful_recheck_keeps_the_reviewed_verdict():
     verdict = {"verdict": "SUPPORTED", "reason": "Supported by evidence"}
     assert evaluator.finish_recheck(verdict) is verdict
+
+
+def interrupted_correction():
+    """Build a checkpoint with current instructions, without binding tests to old prompts."""
+    source = (
+        ROOT / "fixtures/cassettes/prequalification_fresh_safety_20_20260911.json"
+    ).read_bytes()
+    flag = json.loads(source)["flags"][0]
+    proposal = evaluator.SourceBoundRepair(
+        finding="Scenes S009, S010 and S011 depict fire, fireworks and water immersion.",
+        severity="HIGH",
+        rule_ids=["csatf16_pyrotechnics_licenses_2018", "csatf17_water_devices_accounting"],
+    )
+    correction, _ = evaluator.bound_correction(proposal, evaluator.available_rules(flag))
+    candidate = evaluator.corrected_flag(flag, correction)
+    script = (ROOT / "fixtures/slack_tide.fountain").read_text()
+    _, scenes = evaluator.parser.parse_fountain(script)
+    state = {"script_text": script, "scenes": scenes}
+    context, search = evaluator._scene_context(flag, state), evaluator._search_context(flag, state)
+    artifact = {
+        "source_run_sha256": hashlib.sha256(source).hexdigest(),
+        "results": [{"flag_id": flag["flag_id"], "error": "TimeoutError"}],
+        "responses": [
+            {
+                "flag_id": flag["flag_id"],
+                "schema": "SourceBoundRepair",
+                "text": proposal.model_dump_json(),
+            }
+        ],
+        "attempts": [
+            {"flag_id": flag["flag_id"], "schema": "SourceBoundRepair", "status": "returned"},
+            {
+                "flag_id": flag["flag_id"],
+                "schema": "EvidenceVerdict",
+                "status": "cancelled",
+                "input_sha256": hashlib.sha256(
+                    evaluator._blinded_prompt(candidate, context, search).encode()
+                ).hexdigest(),
+            },
+        ],
+    }
+    return artifact, source, flag, context, search
+
+
+def test_resume_candidate_requires_exact_input_and_unfinished_audit():
+    artifact, source, flag, context, search = interrupted_correction()
+    saved = evaluator.resumable_candidate(artifact, source, flag, context, search)
+    assert len(saved["source_rules"]) == 2
+    assert saved["candidate"]["citations"] == flag["citations"]
+    assert saved["candidate"]["scene_ids"] == flag["scene_ids"]
+    with pytest.raises(ValueError, match="different source"):
+        evaluator.resumable_candidate(artifact, b"changed", flag, context, search)
+    with pytest.raises(ValueError, match="input changed"):
+        evaluator.resumable_candidate(artifact, source, flag, context + "changed", search)
+    changed = deepcopy(artifact)
+    proposal = json.loads(changed["responses"][0]["text"])
+    proposal["finding"] += " Altered candidate."
+    changed["responses"][0]["text"] = json.dumps(proposal)
+    with pytest.raises(ValueError, match="input changed"):
+        evaluator.resumable_candidate(changed, source, flag, context, search)
+    artifact["attempts"][-1]["status"] = "returned"
+    with pytest.raises(ValueError, match="do not replay"):
+        evaluator.resumable_candidate(artifact, source, flag, context, search)
+    artifact["results"][0] = {"flag_id": flag["flag_id"], "verdict": {"verdict": "UNSUPPORTED"}}
+    with pytest.raises(ValueError, match="only interrupted"):
+        evaluator.resumable_candidate(artifact, source, flag, context, search)
+
+
+@pytest.mark.parametrize(
+    "after",
+    [
+        {"verdict": "SUPPORTED"},
+        {"verdict": "PARTIAL"},
+        {"verdict": "UNSUPPORTED"},
+        {"verdict": "SUPPORTED", "fail_open": True},
+        {"verdict": "SUPPORTED", "content_filtered": True},
+    ],
+)
+def test_resume_checks_saved_candidate_once_and_never_repairs_again(monkeypatch, after):
+    artifact, source, flag, context, search = interrupted_correction()
+    saved = evaluator.resumable_candidate(artifact, source, flag, context, search)
+    calls = []
+
+    async def verify_once(client, candidate, actual_context, actual_search):
+        assert candidate == saved["candidate"]
+        assert (actual_context, actual_search) == (context, search)
+        calls.append(candidate)
+        return {
+            **after,
+            "reason": "Scripted check of remaining stage",
+            "support_span_version": evaluator.AUDIT_VERSION,
+            "audit_input": evaluator.flag_fingerprint(candidate),
+            "claim_checks": [],
+        }
+
+    monkeypatch.setattr(evaluator, "_call_verifier_once", verify_once)
+    verdict = asyncio.run(evaluator.resume_candidate(None, flag, context, search, saved))
+    assert len(calls) == 1
+    kept, dropped = apply_verdicts([flag], {flag["flag_id"]: verdict})
+    if after == {"verdict": "SUPPORTED"}:
+        assert kept == [saved["candidate"]] and not dropped
+        assert verdict["correction_input"] == evaluator.flag_fingerprint(flag)
+    else:
+        assert not kept and dropped
+        assert verdict["evidence_review_unresolved"]
 
 
 @pytest.mark.parametrize("outcome", ["returned", "error", "cancelled"])
