@@ -39,7 +39,8 @@ def available_rules(flag: dict) -> list[dict]:
             excerpt = str(citation.get("excerpt") or "")
             actual_hash = hashlib.sha256(excerpt.encode()).hexdigest()
             if (
-                citation.get("via") not in {"parallel_search", "parallel_extract"}
+                citation.get("via")
+                not in {"parallel_search", "parallel_extract", "parallel_search_resource"}
                 or citation.get("url") != card["source_url"]
                 or actual_hash not in reviewed_hashes
             ):

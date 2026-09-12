@@ -136,8 +136,10 @@ the complete field as claim context to judge those operators and each alternativ
 conditions. Claim context is not source evidence or verified script evidence.
 
 Receipts prove provenance, not entailment. A separate blinded batch checks each claim
-against its spans and excerpt context. Applications, edits and risk assessments carry the exact relevant
-script receipts; the batch never receives the earlier auditor's reasoning or severity.
+against its spans and excerpt context. Every available, already anchored screenplay
+receipt accompanies its claim, including mixed script/authorship assertions labelled
+`script` or `source`. A model-chosen basis must not hide relevant evidence. The batch
+never receives the earlier auditor's reasoning or severity.
 Script receipts establish fictional content, not actual production facts or ownership.
 Citation title and URL accompany
 each excerpt solely for source attribution; metadata cannot supply an operative rule
@@ -173,10 +175,21 @@ interpretation and are not silently represented as having passed the new audit.
 Quote/receipt metadata is session/record-internal (`support_span_version=3`);
 frozen public schemas are unchanged.
 
+The shared delivery boundary keeps measured rating distributions in their existing
+citation and marginal card. Only a standalone `source` sentence positively checked
+by both reviewers, with no screenplay receipts and support exclusively from the
+matching local marginal source, can become a pointer to that distribution. Scene
+facts, rules, remedies and partial clauses are not stripped. Unisolated statistics
+remain unresolved instead of bypassing the report invariant. `presentation_edits`
+preserves the original audited sentence, replacement and citation indexes; underlying
+excerpts, marginal data and the remaining finding are unchanged. Legacy audits retain
+their original interpretation.
+
 For a small set of development-reviewed production-rule snapshots, repair can select
 source-bound cards from `data/production_rules.json`. A card requires the safety desk,
 an existing Parallel receipt, its exact URL and full excerpt hash (or a separately
-reviewed context-variant hash). The matched hash is retained in the audit. Selection cannot
+reviewed context-variant hash), including the live re-sourcing receipt tag. The matched
+hash is retained in the audit. Selection cannot
 introduce a source or accept changed context. `SourceBoundRepair` selects rule IDs and
 writes scene/risk prose; code assembles the remedy from fixed wording that preserves
 each rule's trigger and qualifications. The complete correction still goes through

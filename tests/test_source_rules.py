@@ -17,6 +17,14 @@ def saved_fire_flag():
     ][0]
 
 
+def test_retrieved_receipts_use_the_same_rule_on_the_re_source_path():
+    flag = saved_fire_flag()
+    before = available_rules(flag)
+    for citation in flag["citations"]:
+        citation["via"] = "parallel_search_resource"
+    assert available_rules(flag) == before
+
+
 @pytest.mark.parametrize("change", ["url", "excerpt", "via", "desk", "missing"])
 def test_changed_or_missing_source_cannot_activate_a_known_rule(change):
     flag = saved_fire_flag()

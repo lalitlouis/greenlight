@@ -38,6 +38,7 @@ from greenlight.agents.evidence_review import (
     checked_verdict,
     corrected_flag,
     flag_fingerprint,
+    present_corpus_statistics,
     repair_partial,
     unresolved_verdict,
 )
@@ -1121,6 +1122,10 @@ def apply_verdicts(  # noqa: PLR0912 - explicit delivery states
         if v["verdict"] == "SUPPORTED":
             try:
                 flag = apply_estimate_audit(flag, v)  # noqa: PLW2901 - accepted delivery fields
+                flag, edits = present_corpus_statistics(flag, v)  # noqa: PLW2901 - presentation only
+                if edits:
+                    v = {**v, "presentation_edits": edits}
+                    verdicts[flag["flag_id"]] = v
             except (ValueError, KeyError) as exc:
                 v = unresolved_verdict(v, str(exc))
                 verdicts[flag["flag_id"]] = v

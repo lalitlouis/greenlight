@@ -3,6 +3,9 @@
 import asyncio
 import importlib.util
 import json
+import os
+import subprocess
+import sys
 from copy import deepcopy
 from pathlib import Path
 from types import SimpleNamespace
@@ -18,6 +21,7 @@ from greenlight.agents.evidence_review import (
     checked_verdict,
     corrected_flag,
     flag_fingerprint,
+    present_corpus_statistics,
     repair_evidence,
     review_incomplete,
 )
@@ -36,6 +40,112 @@ ROOT = Path(__file__).resolve().parents[1]
 def saved_flag(fid="F3006"):
     record = json.loads((ROOT / "runs/run_20260911_demo.json").read_text())
     return next(f for f in record["flags"] if f["flag_id"] == fid)
+
+
+def test_withheld_optional_estimates_serialize_identically_across_processes():
+    flag = saved_flag()
+    flag["remedy"].pop("est_cost_usd", None)
+    flag["remedy"].pop("est_added_days", None)
+    code = """
+import json
+import sys
+from greenlight.agents.evidence_review import (
+    AUDIT_VERSION, apply_estimate_audit, flag_fingerprint,
+)
+flag = json.load(sys.stdin)
+verdict = {
+    "support_span_version": AUDIT_VERSION,
+    "audit_input": flag_fingerprint(flag),
+    "claim_checks": [],
+}
+print(json.dumps(apply_estimate_audit(flag, verdict)))
+"""
+    outputs = [
+        subprocess.run(
+            [sys.executable, "-c", code],
+            input=json.dumps(flag),
+            text=True,
+            capture_output=True,
+            check=True,
+            env={**os.environ, "PYTHONHASHSEED": seed, "PYTHONPATH": str(ROOT / "src")},
+        ).stdout
+        for seed in ("0", "1")
+    ]
+    assert outputs[0] == outputs[1]
+    remedy = json.loads(outputs[0])["remedy"]
+    assert remedy["est_cost_usd"] is None and remedy["est_added_days"] is None
+
+
+def test_mixed_script_and_authorship_check_receives_both_kinds_of_saved_evidence():
+    record = json.loads((ROOT / "runs/run_20260912_003816.json").read_text())
+    original = next(f for f in record["rejected_flags"] if f["flag_id"] == "F1001")
+    trail = record["verdicts"]["F1001"]["evidence_review"]
+    flag = corrected_flag(original, trail["correction"])
+    check = deepcopy(trail["after"]["claim_checks"][0])
+    assert check["basis"] == "script" and check["script_spans"] and check["support_spans"]
+    check["status"] = "SUPPORTED"  # the first auditor's state, before the false rejection
+    verdict = {"verdict": "SUPPORTED", "claim_checks": [check]}
+    prompts = []
+
+    async def generate_content(**kwargs):
+        prompts.append(kwargs["contents"])
+        return SimpleNamespace(text=json.dumps(entailment(verdict)))
+
+    client = SimpleNamespace(
+        aio=SimpleNamespace(models=SimpleNamespace(generate_content=generate_content))
+    )
+    asyncio.run(check_entailment(client, flag, verdict))
+    claim = json.loads(prompts[0].rsplit("\n\n", 1)[1])[0]
+    assert claim["script_evidence"] == check["script_spans"]
+    assert claim["support"][0]["quote"] == "By Leonard Cohen"
+    assert all(
+        s in (ROOT / "fixtures/slack_tide.fountain").read_text() for s in claim["script_evidence"]
+    )
+
+
+def saved_rating_delivery():
+    record = json.loads((ROOT / "runs/run_20260912_003816.json").read_text())
+    return (
+        next(f for f in record["flags"] if f["flag_id"] == "F2003"),
+        record["verdicts"]["F2003"]["evidence_review"]["after"],
+    )
+
+
+def test_corpus_presentation_preserves_the_warning_remedy_and_measured_distribution():
+    flag, verdict = saved_rating_delivery()
+    original = deepcopy(flag)
+    verdicts = {flag["flag_id"]: deepcopy(verdict)}
+    kept, dropped = apply_verdicts([flag], verdicts)
+    assert len(kept) == 1 and not dropped
+    presented = kept[0]
+    assert flag == original
+    assert "%" not in presented["finding"]
+    for key in ("flag_id", "scene_ids", "severity", "category", "citations", "marginal", "remedy"):
+        assert presented[key] == original[key]
+    assert "Danny and Mara" in presented["finding"] and "at least a PG-13" in presented["finding"]
+    edits = verdicts[flag["flag_id"]]["presentation_edits"]
+    assert len(edits) == 1 and "77.2%" in edits[0]["original_quote"]
+    assert (
+        original["finding"].replace(edits[0]["original_quote"], edits[0]["replacement"])
+        == presented["finding"]
+    )
+
+
+@pytest.mark.parametrize("change", ["unreviewed", "script", "wrong_source", "fragment"])
+def test_corpus_presentation_never_removes_unchecked_or_non_corpus_claims(change):
+    flag, verdict = saved_rating_delivery()
+    check = verdict["claim_checks"][2]
+    if change == "unreviewed":
+        verdict.pop("entailment_review")
+    elif change == "script":
+        check["basis"] = "script"
+        check["script_spans"] = ["The script claims a percentage."]
+    elif change == "wrong_source":
+        flag["citations"][1]["title"] = "Different evidence"
+    else:
+        check["quote"] = check["quote"].removesuffix(".")
+    with pytest.raises(ValueError, match="not isolated"):
+        present_corpus_statistics(flag, verdict)
 
 
 def audit(flag, *, issue=None, verdict="SUPPORTED"):

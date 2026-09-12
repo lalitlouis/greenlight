@@ -1,0 +1,83 @@
+{
+  "source_run": "runs/run_20260912_003816.json",
+  "source_run_sha256": "ea4637bc230fcfd1b7ad6c567c7e8c5e08589a4874596f5206e039f4fdffd3bd",
+  "review_scope": "Developer-authored source-support controls for a captured evidence-routing bug; not independent human review or a product accuracy rate.",
+  "cases": [
+    {
+      "source_flag_id": "F1001",
+      "field": "finding",
+      "basis": "script",
+      "support_spans": [
+        {
+          "citation_number": 2,
+          "quote": "By Leonard Cohen"
+        }
+      ],
+      "script_spans": [
+        "\"Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.\"",
+        "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.",
+        "Then, from speakers somebody has rigged on the seawall railing, Buckley's \"Hallelujah\" starts again, drifting out across the water toward the fire."
+      ],
+      "case_id": "mixed_script_authorship",
+      "claim": "Scenes S002, S004, and S011 incorporate the musical composition 'Hallelujah' (written by Leonard Cohen).",
+      "expected_entailed": true,
+      "label_reason": "The unchanged screenplay receipts establish the cues and the supplied source credits Leonard Cohen; both evidence types must reach review."
+    },
+    {
+      "source_flag_id": "F1001",
+      "field": "finding",
+      "basis": "script",
+      "support_spans": [
+        {
+          "citation_number": 2,
+          "quote": "By Leonard Cohen"
+        }
+      ],
+      "script_spans": [
+        "\"Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.\"",
+        "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.",
+        "Then, from speakers somebody has rigged on the seawall railing, Buckley's \"Hallelujah\" starts again, drifting out across the water toward the fire."
+      ],
+      "case_id": "invented_cover_performance",
+      "claim": "Scene S002 depicts Danny performing a new cover version of 'Hallelujah' written by Leonard Cohen.",
+      "expected_entailed": false,
+      "label_reason": "The scene is a will reading specifying the Buckley recording, not a Danny cover performance."
+    },
+    {
+      "source_flag_id": "F1001",
+      "field": "finding",
+      "basis": "script",
+      "support_spans": [
+        {
+          "citation_number": 2,
+          "quote": "By Leonard Cohen"
+        }
+      ],
+      "script_spans": [
+        "\"Two. At the service, play 'Hallelujah.' The Jeff Buckley one. The Columbia recording. Not a cover. Not your cousin with the ukulele. Buckley, or nothing.\"",
+        "The opening guitar of Jeff Buckley's \"Hallelujah\" -- the Columbia recording, unmistakable, that lone electric guitar in a big empty room -- fills the church.",
+        "Then, from speakers somebody has rigged on the seawall railing, Buckley's \"Hallelujah\" starts again, drifting out across the water toward the fire."
+      ],
+      "case_id": "script_cannot_confirm_owner",
+      "claim": "The screenplay confirms that Sony Music Publishing currently controls 100% of worldwide synchronization rights to 'Hallelujah'.",
+      "expected_entailed": false,
+      "label_reason": "Screenplay song references and an authorship credit establish neither current ownership nor territorial administration shares."
+    },
+    {
+      "source_flag_id": "F1001",
+      "field": "finding",
+      "basis": "source",
+      "support_spans": [
+        {
+          "citation_number": 2,
+          "quote": "By Leonard Cohen"
+        }
+      ],
+      "script_spans": [],
+      "case_id": "source_authorship_credit",
+      "claim": "The composition 'Hallelujah' is credited to Leonard Cohen.",
+      "expected_entailed": true,
+      "label_reason": "The supplied source identifies this composition and explicitly credits Leonard Cohen."
+    }
+  ]
+}

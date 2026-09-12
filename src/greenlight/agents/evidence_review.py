@@ -388,8 +388,79 @@ def apply_estimate_audit(flag: dict[str, Any], verdict: dict[str, Any]) -> dict[
             excluded.add(field)
     return {
         **flag,
-        "remedy": {**flag["remedy"], **{k: None for k in excluded if k in ESTIMATE_FIELDS}},
+        "remedy": {**flag["remedy"], **{k: None for k in sorted(excluded & ESTIMATE_FIELDS)}},
     }
+
+
+def present_corpus_statistics(flag: dict, verdict: dict) -> tuple[dict, list[dict]]:
+    """Move independently audited corpus sentences to their existing citation/card.
+
+    Never strip arbitrary numbers, scene facts, prescriptions or partial clauses.
+    Called after the positive audit's input binding has been checked. The original
+    audited text and exact replacement remain in verdict metadata.
+    """
+    if verdict.get("support_span_version", 0) < AUDIT_VERSION or not str(
+        flag.get("category", "")
+    ).startswith("rating_"):
+        return flag, []
+    statistic = re.compile(r"\d\s*%|\bn\s*=\s*\d")
+    source = (flag.get("marginal") or {}).get("source")
+    bodies = {"finding": flag["finding"], "remedy": flag["remedy"]["detail"]}
+    edits = []
+    reviewed = {
+        c["check_index"]
+        for c in verdict.get("entailment_review", {}).get("checks", [])
+        if c.get("entailed")
+        and c.get("scope_preserved")
+        and c.get("requirements_supported")
+        and not c.get("unsupported_parts")
+    }
+    for index, check in enumerate(verdict.get("claim_checks", [])):
+        field, quote = check["field"], check["quote"]
+        if (
+            field not in bodies
+            or not statistic.search(quote)
+            or check["status"] != "SUPPORTED"
+            or check["basis"] != "source"
+            or check.get("script_spans")
+            or index not in reviewed
+            or not source
+            or not check.get("support_spans")
+        ):
+            continue
+        citations = [flag["citations"][s["citation_number"] - 1] for s in check["support_spans"]]
+        if any(
+            c.get("via") != "local"
+            or c.get("source_type") != "rules_table"
+            or c.get("title") != source
+            for c in citations
+        ):
+            continue
+        body = bodies[field]
+        if body.count(quote) != 1 or quote[-1:] not in {".", "!", "?"}:
+            continue
+        before, after = body.split(quote)
+        if before.strip() and before.rstrip()[-1] not in ".!?":
+            continue  # cannot cut a subordinate clause away from its condition
+        replacement = (
+            "Corpus figures describe rationales for released films; see the cited distribution."
+        )
+        bodies[field] = before + replacement + after
+        edits.append(
+            {
+                "field": field,
+                "original_quote": quote,
+                "replacement": replacement,
+                "citation_numbers": check["citation_numbers"],
+            }
+        )
+    if any(statistic.search(body) for body in bodies.values()):
+        raise ValueError("rating statistics were not isolated as independently audited corpus text")
+    return {
+        **flag,
+        "finding": bodies["finding"],
+        "remedy": {**flag["remedy"], "detail": bodies["remedy"]},
+    }, edits
 
 
 class CorrectedClaim(BaseModel):
@@ -487,9 +558,9 @@ async def check_entailment(client, flag, verdict):
                     if check["field"] == "remedy"
                     else {}
                 ),
-                "script_evidence": check.get("script_spans", [])
-                if check["basis"] in {"application", "script_edit", "inquiry", "risk_assessment"}
-                else [],
+                # All these receipts were anchored by checked_verdict. Mixed
+                # script/authorship assertions also need their screenplay text.
+                "script_evidence": check.get("script_spans", []),
                 **(
                     {"desk": flag.get("agent"), "finding_context": flag["finding"]}
                     if check["basis"] == "inquiry"

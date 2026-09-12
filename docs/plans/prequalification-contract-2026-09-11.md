@@ -234,3 +234,55 @@ it does not establish held-out performance, rating calibration or production rea
 Offline validation at this point: 584 tests passed, lint/format and runtime-dependency
 checks passed. Public schemas, screenplay parsing and production desk call limits
 remain unchanged.
+
+## Full fixture: September 12
+
+The single full run on build `9318011` completed in 1,340.4 seconds and scored
+**49/54, failed**, against the unchanged checks (`runs/run_20260912_003816.json`).
+It retained 15/24 findings, versus 6/22 in the saved 45/54 baseline. Clearance artwork,
+photograph, brand and film-clip concerns and the supernatural territory concern now
+survive. The vessel-fire concern survived the existing bounded re-sourcing path.
+These are two nondeterministic runs with different retrieval, not an isolated estimate
+of the code's causal effect or a population accuracy rate.
+
+The five misses were composition/sync, separate master rights, tattoo clearance,
+firearm safety, and a bare statistic in rating prose. Nine unresolved corrections
+remain on the record; score, cost and days are correctly withheld. The run's $1.5138
+recorded cost excludes direct verifier/repair/entailment calls, so it is not total cost.
+No deployment or second full paid run follows this failed gate.
+
+Source inspection distinguishes concrete causes instead of treating every rejection
+as a factual error:
+
+- The sync correction's valid script receipts were stored, but the secondary payload
+  hid them because the mixed scene/authorship assertion was labelled `script`. The
+  reviewer then rejected scene occurrences for lacking evidence. Forward all already
+  anchored script receipts regardless of basis; continue to distinguish fictional
+  content from actual ownership and production arrangements.
+- The master correction's scene observation was labelled `application` without source
+  spans and rejected mechanically. This classification/receipt mismatch remains open.
+- The tattoo correction combined a release inquiry with an unsupported photography
+  deadline and a cover/replacement option misclassified as planning. It remains open.
+- The firearm correction added a replica/VFX production method under `script_edit`;
+  the source did not establish that alternative. This useful safety warning still
+  needs a correction that preserves its supported meeting requirement and omits the
+  unsupported addition. The baseline retained firearm coverage; this loss is material.
+- The ratings repair reintroduced valid corpus percentages into prose after filing.
+  The shared delivery boundary now projects only independently approved, standalone
+  corpus sentences into a citation pointer. The warning, remedy, severity, coordinates,
+  original citation, and measured distribution stay intact; arbitrary numeric prose
+  and unverified claims cannot be scrubbed into approval.
+
+A cross-process test also reproduced differing JSON key order when optional numeric
+fields were absent. Withheld field insertion is now sorted. The reviewed-rule matcher
+recognizes the real `parallel_search_resource` provenance tag used by the existing
+re-sourcing path, with the same exact URL/full-excerpt-hash requirements. Offline
+validation after these changes: 592 tests and `make check` passed.
+
+Four frozen controls (`script_receipts_20260912.json`, two positive/two negative) test
+the repaired mixed-evidence payload against unchanged full-run sources. Budget four
+logical calls, no new desk generation or full gate. The supported cue/authorship case
+must survive; an invented cover performance and ownership assertion must fail. A
+cached presentation replay can demonstrate the deterministic formatting fix without
+representing an old run as a new live result. Overall release qualification remains
+failed until useful music, tattoo and firearm coverage is demonstrated together.
