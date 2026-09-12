@@ -16,6 +16,7 @@ from google.genai import types
 from pydantic import BaseModel, Field
 
 from greenlight.agents.evidence import PRODUCTION_EVIDENCE, RATINGS_EVIDENCE
+from greenlight.agents.quote_anchor import anchor_quote
 from greenlight.contracts import validate
 from greenlight.models import FLASH_MODEL
 
@@ -122,7 +123,7 @@ input question; it must not disguise a content edit or mandatory production work
 
 
 def _support_problem(check: ClaimCheck, flag: dict[str, Any], script_context: str) -> str | None:
-    """Validate provenance, never pretend substring matching proves entailment."""
+    """Validate provenance and anchor display quotes back to immutable raw sources."""
     if check.field == "severity":
         return None  # field, not a model-chosen basis, defines this judgement
     if check.basis == "inquiry" and check.field != "remedy":
@@ -150,12 +151,18 @@ def _support_problem(check: ClaimCheck, flag: dict[str, Any], script_context: st
     indexes = {span.citation_number for span in check.support_spans}
     if indexes != set(check.citation_numbers):
         return "Citation indexes and supporting spans do not match"
+    anchored = []
     for span in check.support_spans:
         if span.citation_number > len(citations):
             return "Supporting span references a nonexistent citation"
         excerpt = citations[span.citation_number - 1].get("excerpt") or ""
-        if not span.quote.strip() or span.quote not in excerpt:
+        quote = anchor_quote(span.quote, excerpt)
+        if quote is None:
             return "Supporting span is not verbatim in the cited excerpt"
+        anchored.append(quote)
+    # Apply only after every receipt passes; citations themselves never change.
+    for span, quote in zip(check.support_spans, anchored, strict=True):
+        span.quote = quote
     return None
 
 
@@ -184,11 +191,26 @@ def checked_verdict(
         "remedy": flag["remedy"]["detail"],
         "severity": flag["severity"],
     }
-    for check in checks:
+    reanchors = []
+    for check_index, check in enumerate(checks):
         if check.quote not in fields[check.field]:
             raise ValueError("claim audit quote is not in its field")
         if check.status == "SUPPORTED":
+            submitted = [s.quote for s in check.support_spans]
             problem = _support_problem(check, flag, script_context)
+            reanchors.extend(
+                {
+                    "check_index": check_index,
+                    "span_index": span_index,
+                    "citation_number": span.citation_number,
+                    "submitted_quote": before,
+                    "raw_quote": span.quote,
+                }
+                for span_index, (before, span) in enumerate(
+                    zip(submitted, check.support_spans, strict=True)
+                )
+                if before != span.quote
+            )
             if problem:
                 check.status = "UNKNOWN"
                 check.reason = problem + ". Original assessment: " + check.reason
@@ -226,6 +248,7 @@ def checked_verdict(
         **verdict,
         "claim_checks": [c.model_dump() for c in checks],
         "support_span_version": 2,
+        **({"support_span_reanchors": reanchors} if reanchors else {}),
     }
     issues = [c for c in checks if c.status != "SUPPORTED"]
     if issues and verdict["verdict"] == "SUPPORTED":

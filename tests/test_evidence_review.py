@@ -383,6 +383,37 @@ def test_receipts_must_be_verbatim_in_their_own_source(problem):
     assert checked["verdict"] == "PARTIAL"  # correction, not a fake transport outage
 
 
+def test_formatting_repair_keeps_raw_source_and_still_needs_entailment():
+    flag = saved_flag()
+    flag["citations"][0]["excerpt"] = "A **permit** is required only if filming here."
+    original = deepcopy(flag)
+    verdict = audit(flag)
+    for check in verdict["claim_checks"][:2]:
+        check["support_spans"][0]["quote"] = "A permit is required only if filming here."
+    checked = checked_verdict(verdict, flag)
+    assert flag == original
+    assert checked["verdict"] == "SUPPORTED"  # mechanics only
+    assert len(checked["support_span_reanchors"]) == 2
+    for receipt in checked["support_span_reanchors"]:
+        assert receipt["submitted_quote"] != receipt["raw_quote"]
+        assert receipt["raw_quote"] == flag["citations"][0]["excerpt"]
+    response = entailment(checked)
+    response["checks"][0].update(entailed=False, reason="Source does not establish this duty.")
+    client = Client(response)
+    result = asyncio.run(check_entailment(client, flag, checked))
+    assert result["verdict"] == "PARTIAL"
+    assert "**permit**" in client.calls[0]["contents"]
+
+
+def test_display_quote_cannot_borrow_another_citations_receipt():
+    flag = saved_flag()
+    flag["citations"][0]["excerpt"] = "Unrelated source."
+    flag["citations"][1]["excerpt"] = "A **permit** is required."
+    verdict = audit(flag)
+    verdict["claim_checks"][0]["support_spans"][0]["quote"] = "A permit is required."
+    assert checked_verdict(verdict, flag)["verdict"] == "PARTIAL"
+
+
 def test_fixed_inquiry_is_allowed_but_an_unaudited_requirement_is_not():
     flag = saved_flag()
     flag["remedy"]["detail"] = PRODUCTION_INQUIRY

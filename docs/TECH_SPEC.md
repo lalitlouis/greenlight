@@ -109,6 +109,14 @@ scene context. An edit may address a cited trigger without the source literally 
 the screenplay or prescribing that edit, but cannot promise a final rating/clearance
 or invent a specialist, permit or ownership assertion. Missing/non-verbatim receipts and
 unreviewed material text trigger correction.
+Formatting-only display quotes may be anchored back to one unambiguous raw source
+substring using preserved character offsets: whitespace, complete inline HTTP(S)
+Markdown links, paired bold/underscore emphasis and standalone hash heading markers.
+Words, case, numbers, order and punctuation are not approximated. Truncated markup
+is not repaired. The original excerpt remains immutable; internal
+`support_span_reanchors` records submitted and raw quotes. The independent reviewer
+still receives the raw receipt and full excerpt, so anchoring never establishes truth
+or applicability.
 Coverage permits only internal `and`, `and that`, `or` or `and/or` joins between audited clauses;
 omitted conditions, negation and prescriptions still fail. This keeps atomic claim
 quoting from rejecting a finding over a connective alone. The second reviewer receives

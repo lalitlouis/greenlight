@@ -1,0 +1,78 @@
+{
+  "created_at": "2026-09-12T01:51:34.518094+00:00",
+  "runtime_wrapper_sha256": "15e3e1b6626aea7b480db33b780704c7bd86b13e1dd950435dc06d4635137fd8",
+  "execution_script": "\"\"\"One bounded evidence-discovery batch; raw Parallel results, no model judgement.\"\"\"\nimport argparse\nimport hashlib\nimport json\nimport sys\nimport time\nfrom datetime import datetime, timezone\nfrom pathlib import Path\n\nROOT = Path(__file__).resolve().parents[2]\nsys.path.insert(0, str(ROOT / \"src\"))\nfrom dotenv import load_dotenv\n\nload_dotenv(ROOT / \".env\")\nfrom greenlight.tools.toolbelt import _live_extract, _live_search\n\nparser = argparse.ArgumentParser()\nparser.add_argument(\"--output\", type=Path, required=True)\nparser.add_argument(\"--source\", type=Path)\nparser.add_argument(\"--url\", action=\"append\", default=[])\nargs = parser.parse_args()\nif args.output.exists():\n    raise SystemExit(\"Refusing to overwrite saved results\")\njobs = [\n    {\"id\": \"jaws_clip\", \"objective\": \"Find primary evidence identifying the current clip licensing administrator for JAWS (1975), with an exact film-title entry and evidence that the party licenses clips. Distinguish distribution credits from licensing authority; a generic studio catalog alone does not prove the film is represented.\",\n     \"queries\": [\"JAWS 1975 clip licensing rights\", \"JAWS Universal media licensing catalog\"]},\n    {\"id\": \"hallelujah_master\", \"objective\": \"Find primary evidence linking Jeff Buckley's original Hallelujah recording on Grace (1994) to its current master recording owner or licensing administrator. Distinguish composition/publishing rights, distributor or retail credits, corporate affiliation and actual master licensing authority. Return explicit recording/version and party evidence, not an inferred owner.\",\n     \"queries\": [\"Jeff Buckley Hallelujah master licensing\", \"Jeff Buckley Grace Sony sync licensing\"]},\n]\nrecord = {\"created_at\": datetime.now(timezone.utc).isoformat(), \"runtime_wrapper_sha256\": hashlib.sha256((ROOT / \"src/greenlight/tools/toolbelt.py\").read_bytes()).hexdigest(), \"execution_script\": Path(__file__).read_text(), \"kind\": \"extract\" if args.source else \"search\", \"calls\": []}\nif args.source:\n    source_bytes = args.source.read_bytes()\n    source = json.loads(source_bytes)\n    allowed = {r[\"url\"] for c in source[\"calls\"] for r in c.get(\"response\", {}).get(\"results\", [])}\n    if not 1 <= len(args.url) <= 2 or any(url not in allowed for url in args.url):\n        raise SystemExit(\"Extract requires 1-2 URLs from the saved search\")\n    record.update(source_path=str(args.source), source_sha256=hashlib.sha256(source_bytes).hexdigest())\n    jobs = [{\"id\": f\"extract_{i}\", \"url\": url, \"objective\": \"Return verbatim evidence of exact work/version, the named rights party and its licensing role for JAWS (1975) clip licensing or Jeff Buckley's Hallelujah master recording. Include limitations, exclusions, contact instructions and any missing ownership link; do not infer rights from distribution or corporate affiliation.\"} for i, url in enumerate(args.url)]\nelif args.url:\n    raise SystemExit(\"URLs require a saved source\")\nfor job in jobs:\n    call = {\"request\": job, \"started_at\": datetime.now(timezone.utc).isoformat(), \"status\": \"running\"}\n    record[\"calls\"].append(call)\n    args.output.write_text(json.dumps(record, indent=2))\n    started = time.monotonic()\n    try:\n        call[\"response\"] = (_live_extract([job[\"url\"]], job[\"objective\"]) if args.source else _live_search(job[\"objective\"], job[\"queries\"]))\n        call[\"status\"] = \"returned\"\n    except Exception as exc:\n        call[\"status\"] = \"error\"\n        call[\"error_type\"] = type(exc).__name__\n    finally:\n        call[\"elapsed_s\"] = round(time.monotonic() - started, 2)\n        args.output.write_text(json.dumps(record, indent=2))\n        print(job[\"id\"], call[\"status\"], call[\"elapsed_s\"], flush=True)\nraise SystemExit(0 if all(c[\"status\"] == \"returned\" for c in record[\"calls\"]) else 1)\n",
+  "kind": "extract",
+  "calls": [
+    {
+      "request": {
+        "id": "extract_0",
+        "url": "https://bornlicensing.com/universal-studios",
+        "objective": "Return verbatim evidence of exact work/version, the named rights party and its licensing role for JAWS (1975) clip licensing or Jeff Buckley's Hallelujah master recording. Include limitations, exclusions, contact instructions and any missing ownership link; do not infer rights from distribution or corporate affiliation."
+      },
+      "started_at": "2026-09-12T01:51:34.518565+00:00",
+      "status": "returned",
+      "response": {
+        "errors": [],
+        "extract_id": "extract_647ef89f0a6d44cc0fd9e73b0b8df6cc",
+        "results": [
+          {
+            "excerpts": [
+              "# LICENSING AGENTS FOR\n## BORN LICENSING ARE THE APPOINTED LICENSING AGENT FOR UNIVERSAL STUDIOS\u2019 CATALOGUE FOR GLOBAL ADVERTISING & MARKETING CAMPAIGNS\nUniversal is one of Hollywood's \"Big Six\" film studios and is the world's fourth oldest major film studio. Six of Universal Studios' films; Jaws (1975), E.T."
+            ],
+            "url": "https://bornlicensing.com/universal-studios",
+            "full_content": null,
+            "publish_date": null,
+            "title": "Licensing Agents for Universal Studios"
+          }
+        ],
+        "session_id": "session_647ef89f0a6d44cc0fd9e73b0b8df6cc",
+        "usage": [
+          {
+            "count": 1,
+            "name": "sku_extract_excerpts"
+          }
+        ],
+        "warnings": null,
+        "metadata": null
+      },
+      "elapsed_s": 0.99
+    },
+    {
+      "request": {
+        "id": "extract_1",
+        "url": "https://www.legacyrecordings.com/artists/jeff-buckley",
+        "objective": "Return verbatim evidence of exact work/version, the named rights party and its licensing role for JAWS (1975) clip licensing or Jeff Buckley's Hallelujah master recording. Include limitations, exclusions, contact instructions and any missing ownership link; do not infer rights from distribution or corporate affiliation."
+      },
+      "started_at": "2026-09-12T01:51:35.513799+00:00",
+      "status": "returned",
+      "response": {
+        "errors": [],
+        "extract_id": "extract_6da392ad61fb4f67c2ec17b4c219b1f5",
+        "results": [
+          {
+            "excerpts": [
+              "# Legacy Recordings\nAll Rights Reserved.\nLEGACY and the \"L Legacy\" logo are registered trademarks of Sony Music Entertainment.\nFollow Us\n\n...\n\n* [legacy.publicity@sonymusic.com](mailto:legacy.publicity@sonymusic.com)\n* [For Sync Licensing Inquiries click here](https://syncshop.sonymusic.com/)\n* [Send Us Feedback](http://www.sonymusic.com/feedback/)\n* [FAQ](https://www.sonymusic.com/faq/)\n* [Privacy Policy](http://www.sonymusic.com/privacy-policy/)\n* [Terms & Conditions](http://www.sonymusic.com/terms-and-conditions/)"
+            ],
+            "url": "https://www.legacyrecordings.com/artists/jeff-buckley",
+            "full_content": null,
+            "publish_date": "2023-08-08",
+            "title": "Jeff Buckley - Legacy Recordings"
+          }
+        ],
+        "session_id": "session_6da392ad61fb4f67c2ec17b4c219b1f5",
+        "usage": [
+          {
+            "count": 1,
+            "name": "sku_extract_excerpts"
+          }
+        ],
+        "warnings": null,
+        "metadata": null
+      },
+      "elapsed_s": 0.82
+    }
+  ],
+  "source_path": "fixtures/cassettes/ownership_search_20260911.json",
+  "source_sha256": "c9cc7e71e69ef514ff3d8bf7e0c12e418724c504df498c75ca2e7ab77fd3b8a4"
+}

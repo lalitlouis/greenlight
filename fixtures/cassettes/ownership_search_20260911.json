@@ -1,0 +1,206 @@
+{
+  "created_at": "2026-09-12T01:46:41.683927+00:00",
+  "runtime_wrapper_sha256": "15e3e1b6626aea7b480db33b780704c7bd86b13e1dd950435dc06d4635137fd8",
+  "execution_script": "\"\"\"One bounded evidence-discovery batch; raw Parallel results, no model judgement.\"\"\"\nimport argparse\nimport hashlib\nimport json\nimport sys\nimport time\nfrom datetime import datetime, timezone\nfrom pathlib import Path\n\nROOT = Path(__file__).resolve().parents[2]\nsys.path.insert(0, str(ROOT / \"src\"))\nfrom dotenv import load_dotenv\n\nload_dotenv(ROOT / \".env\")\nfrom greenlight.tools.toolbelt import _live_extract, _live_search\n\nparser = argparse.ArgumentParser()\nparser.add_argument(\"--output\", type=Path, required=True)\nparser.add_argument(\"--source\", type=Path)\nparser.add_argument(\"--url\", action=\"append\", default=[])\nargs = parser.parse_args()\nif args.output.exists():\n    raise SystemExit(\"Refusing to overwrite saved results\")\njobs = [\n    {\"id\": \"jaws_clip\", \"objective\": \"Find primary evidence identifying the current clip licensing administrator for JAWS (1975), with an exact film-title entry and evidence that the party licenses clips. Distinguish distribution credits from licensing authority; a generic studio catalog alone does not prove the film is represented.\",\n     \"queries\": [\"JAWS 1975 clip licensing rights\", \"JAWS Universal media licensing catalog\"]},\n    {\"id\": \"hallelujah_master\", \"objective\": \"Find primary evidence linking Jeff Buckley's original Hallelujah recording on Grace (1994) to its current master recording owner or licensing administrator. Distinguish composition/publishing rights, distributor or retail credits, corporate affiliation and actual master licensing authority. Return explicit recording/version and party evidence, not an inferred owner.\",\n     \"queries\": [\"Jeff Buckley Hallelujah master licensing\", \"Jeff Buckley Grace Sony sync licensing\"]},\n]\nrecord = {\"created_at\": datetime.now(timezone.utc).isoformat(), \"runtime_wrapper_sha256\": hashlib.sha256((ROOT / \"src/greenlight/tools/toolbelt.py\").read_bytes()).hexdigest(), \"execution_script\": Path(__file__).read_text(), \"kind\": \"extract\" if args.source else \"search\", \"calls\": []}\nif args.source:\n    source_bytes = args.source.read_bytes()\n    source = json.loads(source_bytes)\n    allowed = {r[\"url\"] for c in source[\"calls\"] for r in c.get(\"response\", {}).get(\"results\", [])}\n    if not 1 <= len(args.url) <= 2 or any(url not in allowed for url in args.url):\n        raise SystemExit(\"Extract requires 1-2 URLs from the saved search\")\n    record.update(source_path=str(args.source), source_sha256=hashlib.sha256(source_bytes).hexdigest())\n    jobs = [{\"id\": f\"extract_{i}\", \"url\": url, \"objective\": \"Return verbatim evidence of exact work/version, the named rights party and its licensing role for JAWS (1975) clip licensing or Jeff Buckley's Hallelujah master recording. Include limitations, exclusions, contact instructions and any missing ownership link; do not infer rights from distribution or corporate affiliation.\"} for i, url in enumerate(args.url)]\nelif args.url:\n    raise SystemExit(\"URLs require a saved source\")\nfor job in jobs:\n    call = {\"request\": job, \"started_at\": datetime.now(timezone.utc).isoformat(), \"status\": \"running\"}\n    record[\"calls\"].append(call)\n    args.output.write_text(json.dumps(record, indent=2))\n    started = time.monotonic()\n    try:\n        call[\"response\"] = (_live_extract([job[\"url\"]], job[\"objective\"]) if args.source else _live_search(job[\"objective\"], job[\"queries\"]))\n        call[\"status\"] = \"returned\"\n    except Exception as exc:\n        call[\"status\"] = \"error\"\n        call[\"error_type\"] = type(exc).__name__\n    finally:\n        call[\"elapsed_s\"] = round(time.monotonic() - started, 2)\n        args.output.write_text(json.dumps(record, indent=2))\n        print(job[\"id\"], call[\"status\"], call[\"elapsed_s\"], flush=True)\nraise SystemExit(0 if all(c[\"status\"] == \"returned\" for c in record[\"calls\"]) else 1)\n",
+  "kind": "search",
+  "calls": [
+    {
+      "request": {
+        "id": "jaws_clip",
+        "objective": "Find primary evidence identifying the current clip licensing administrator for JAWS (1975), with an exact film-title entry and evidence that the party licenses clips. Distinguish distribution credits from licensing authority; a generic studio catalog alone does not prove the film is represented.",
+        "queries": [
+          "JAWS 1975 clip licensing rights",
+          "JAWS Universal media licensing catalog"
+        ]
+      },
+      "started_at": "2026-09-12T01:46:41.684318+00:00",
+      "status": "returned",
+      "response": {
+        "results": [
+          {
+            "excerpts": [
+              "Jaws quickly became the highest-grossing picture of its time \u2013 there will never be another one just like it. It is terrifying, spectacular, suspenseful, action-packed, and sometimes hilarious \u2013 all of which make it another classic Universal film that lives on from generation to generation."
+            ],
+            "url": "https://imglicensing.com/brands/jaws/",
+            "publish_date": null,
+            "title": "Jaws | IMG"
+          },
+          {
+            "excerpts": [
+              "# Jaws\n(1975)\nAvailable Now\nRequest a Quote\n\n...\n\n## Production year\n1975\n\n...\n\n## Studio\nUniversal Pictures\n\n...\n\n## Production year\n1975\n\n...\n\n## Studio\nUniversal Pictures"
+            ],
+            "url": "https://www.swank.com/movie-events/details/14591-jaws",
+            "publish_date": null,
+            "title": "Movie and TV Show Licensing from Swank Motion Pictures"
+          },
+          {
+            "excerpts": [
+              "# LICENSING AGENTS FOR\n## BORN LICENSING ARE THE APPOINTED LICENSING AGENT FOR UNIVERSAL STUDIOS\u2019 CATALOGUE FOR GLOBAL ADVERTISING & MARKETING CAMPAIGNS\nUniversal is one of Hollywood's \"Big Six\" film studios and is the world's fourth oldest major film studio. Six of Universal Studios' films; Jaws (1975), E.T.\n\n...\n\nMedia, Born Licensing\u2019s representation of Universal Studios allows brands and creative agencies to access an extensive variety of clips and characters for global advertising and marketing campaigns."
+            ],
+            "url": "https://bornlicensing.com/universal-studios",
+            "publish_date": null,
+            "title": "Licensing Agents for Universal Studios"
+          },
+          {
+            "excerpts": [
+              "# Jaws ( [1975](https://catalog.afi.com/Search?searchField=ReleaseYear&searchText=1975) )\n## PG | 124 mins | [Drama](https://catalog.afi.com/Search?searchField=Genre&searchText=Drama) | [20 June 1975](https://catalog.afi.com/Search?searchField=ReleaseDate&searchText=20%20June%201975&SortType=sortByRelevance)\n### Cast:\n#### Production Companies:\nA 4 May 1973 _DV_ news item announced that producers Richard D. Zanuck and David Brown and Universal Studios had acquired Peter Benchley \u2019s first novel, _Jaws,_ for $250,000 and 10 percent of the profits.\nA 21 Jun 1973 _DV_ item revealed that Zanuck and Brown had signed Steven Spielberg , who had directed an earlier film for the producers, the 1974 Universal release, _The Sugarland Express_ (see entry).\n\n...\n\nA 4 May 1973 _DV_ news item announced that producers Richard D. Zanuck and David Brown and Universal Studios had acquired Peter Benchley \u2019s first novel, _Jaws,_ for $250,000 and 10 percent of the profits.\n\n...\n\nOne of the models was to be filmed from the right side, the other from the left and the third for angled shots.\n\n...\n\n[MCA, Inc.](https://catalog.afi.com/Search?searchField=ProductionCompany&searchText=MCA%2C%20Inc.&sortType=sortByRelevance)\nDISTRIBUTION COMPANY\n[Universal Pictures](https://catalog.afi.com/Search?searchField=DistributionCompany&searchText=Universal%20Pictures%20&sortType=sortByRelevance)"
+            ],
+            "url": "https://catalog.afi.com/Film/55193-JAWS",
+            "publish_date": null,
+            "title": "AFI|Catalog - Jaws - American Film Institute"
+          },
+          {
+            "excerpts": [
+              "# _Jaws_ . 1975. Directed by Steven Spielberg\n* [Film](https://www.moma.org/calendar?happening_filter=Films)\nNo upcoming events\n3 past events\n**_Jaws_** . 1975. USA. Directed by Steven Spielberg. 124 min.\nMusic by John Williams. With Roy Scheider, Robert Shaw, Richard Dreyfuss, Lorraine Gary, Murray Hamilton. For better or worse, _Jaws_ , like _Bonnie and Clyde_ , is a landmark in the modern history of cinema. In fact, one might argue that Jaws was as revolutionary in its way as D. W.\n\n...\n\n## Past events\n* Fri, Jul 4, 2014, 1:30 p.m.\n  Education Center, Mezzanine, Theater 3\n  The Celeste Bartos Theater\n* Thu, Jul 3, 2014, 1:30 p.m.\n  Education Center, Mezzanine, Theater 3\n  The Celeste Bartos Theater\n* Wed, Jul 2, 2014, 1:30 p.m.\n  Education Center, Mezzanine, Theater 3\n  The Celeste Bartos Theater\nLicensing\n\n...\n\nMoMA licenses archival audio and select out of copyright film clips from our film collection. At this time, MoMA produced video cannot be licensed by MoMA/Scala.\nAll requests to license archival audio or out of copyright film clips should be addressed to Scala Archives at [firenze@scalarchives.com](mailto:firenze@scalarchives.com) . Motion picture film stills cannot be licensed by MoMA/Scala.\nFor access to motion picture film stills for research purposes, please contact the Film Study Center at [fsc@moma.org](mailto:fsc@moma.org) . For more information about film loans and our Circulating Film and Video Library, please visit https://www.moma.org/research/circulating-film ."
+            ],
+            "url": "https://www.moma.org/calendar/events/262",
+            "publish_date": null,
+            "title": "Jaws. 1975. Directed by Steven Spielberg | MoMA"
+          },
+          {
+            "excerpts": [
+              "[IMDbPro](https://pro.imdb.com/title/tt0073195/?rf=cons_ttco_ov_hdr&ref_=cons_ttco_ov_hdr)\nAll topics\nSusan Backlinie and Bruce in Jaws (1975)\n\n# Company credits\n## Jaws\nJump to Production Companies (2) Distributors (231) Special Effects (2) Other Companies (19)\n\n## Production Companies\nEdit\n* [Zanuck/Brown Productions](https://www.imdb.com/company/co0019166/?ref_=ttco_cmpy_1)\n+ (A Zanuck/Brown Production)\n* [Universal Pictures](https://www.imdb.com/company/co0005073/?ref_=ttco_cmpy_2)\n+ (uncredited)\n\n## Distributors\nEdit\n* [Universal Pictures](https://www.imdb.com/company/co0005073/?ref_=ttco_cmpy_1)\n+ (United States, 1975) (Universal, An MCA Company, theatrical)\n* [Cinema International Corporation (CIC)](https://www.imdb.com/company/co0534543/?ref_=ttco_cmpy_2)\n+ (United Kingdom, 1975) (theatrical)\n* [Cinema International Corporation (CIC)](https://www.imdb.com/company/co0645080/?ref_=ttco_cmpy_3)\n+ (Australia, 1975) (theatrical)\n* [Cinema International Corporation (CIC)](https://www.imdb.com/company/co0646534/?ref_=ttco_cmpy_4)\n+ (Brazil, 1975) (theatrical)\n* [Cinema International Corporation (CIC)](https://www.imdb.com/company/co0646536/?ref_=ttco_cmpy_5)\n+ (Canada, 1975) (theatrical)\n50 more See all\n\n...\n\n## More to explore\n### Editorial lists\n[The Holidays Can Be Scary, So Can Their Movies Susan Backlinie and Bruce in Jaws (1975)](https://www.imdb.com/poll/T_mRjAcUn0E/?ref_=ttco_urpl_2)\n[Film Franchises at 100 Years Old Christian Bale in The Dark Knight (2008)](https://www.imdb.com/poll/T85V2a_2epo/?ref_=ttco_urpl_3)\n\n...\n\n### Recently viewed\n* [Site Index](https://help.imdb.com/article/imdb/general-information/imdb-site-index/GNCX7BHNSPBTFALQ)\n* [IMDbPro](https://pro.imdb.com?ref_=cons_tf_pro&rf=cons_tf_pro)\n* [Box Office Mojo](https://www.boxofficemojo.com)\n* [License IMDb Data](https://developer.imdb.com/)"
+            ],
+            "url": "https://www.imdb.com/title/tt0073195/companycredits/",
+            "publish_date": null,
+            "title": "Jaws (1975) - Company credits - IMDb"
+          },
+          {
+            "excerpts": [
+              "[Click to enlarge JAWS logo and Sharky mascot](https://media.aph.org/app/uploads/2019/08/JAWS-screen-reader.png)\n\n# JAWS Annual Student License\n**Note:** Individual JAWS licenses will no longer be available for sale from APH after December 31, 2024. A new version of [Fusion Suite](https://www.aph.org/product/fusion-suite/) is available now!\nThis product is discontinued.\nFederal Quota Eligible\nQty:\nCatalog Number: D-11002-ED\n\n...\n\n## Product Description\n+ [ZoomText Annual Student License](https://www.aph.org/product/zoomtext-annual-student-license/) Catalog Number: D-11003-ED\n* Specs\n  Language: English\n  Federal Quota Funds: Available\n  Media: Software\n* Warranty\n  Contact Customer Service to discuss your warranty options.\n\n...\n\n## Other Products\n### [Spinner Overlays for the Light Box Spinner Overlays for the Light Box kit components](https://www.aph.org/product/spinner-overlays-for-the-light-box/)\n* [APH Catalogs](https://www.aph.org/aph-catalogs/)"
+            ],
+            "url": "https://www.aph.org/product/jaws-annual-student-license/",
+            "publish_date": null,
+            "title": "JAWS Annual Student License | American Printing House"
+          },
+          {
+            "excerpts": [
+              "# Jaws\nYear: 1975\nDirector: Steven Spielberg\nGenre: Action, Adventure, Drama, Thriller\nRuntime: 129 min\nCast:\nRoy Scheider, Richard Dreyfuss, Robert Shaw\nSynopsis:\nWhen a killer shark unleashes chaos on a beach community, it's up to a local sheriff, a marine biologist, and an old seafarer to hunt the beast down.\nAvailable for licensing in Australia\nRating: M\nEnquire about this title\nTerms & Conditions - PPL Blanket License Agreement - Clip Licensing - Privacy Policy - [New Zealand](https://ppl.roadshow.co.nz)"
+            ],
+            "url": "https://ppl.roadshow.com.au/film/HQP9C-Jaws",
+            "publish_date": null,
+            "title": "Jaws - Roadshow Public Performance Licensing"
+          }
+        ],
+        "search_id": "search_1b36a73d11acfac537479d2097c2d0b6",
+        "session_id": "session_1b36a73d11acfac537479d2097c2d0b6",
+        "usage": [
+          {
+            "count": 1,
+            "name": "sku_search"
+          }
+        ],
+        "warnings": null,
+        "metadata": null
+      },
+      "elapsed_s": 1.34
+    },
+    {
+      "request": {
+        "id": "hallelujah_master",
+        "objective": "Find primary evidence linking Jeff Buckley's original Hallelujah recording on Grace (1994) to its current master recording owner or licensing administrator. Distinguish composition/publishing rights, distributor or retail credits, corporate affiliation and actual master licensing authority. Return explicit recording/version and party evidence, not an inferred owner.",
+        "queries": [
+          "Jeff Buckley Hallelujah master licensing",
+          "Jeff Buckley Grace Sony sync licensing"
+        ]
+      },
+      "started_at": "2026-09-12T01:46:43.030448+00:00",
+      "status": "returned",
+      "response": {
+        "results": [
+          {
+            "excerpts": [
+              "# Grace\n## TRACKS:\n**Mojo Pin** \u2013 (Jeff Buckley / Gary Lucas)\n**Grace** \u2013 (Jeff Buckley / Gary Lucas)\n**Last Goodbye** \u2013 (Jeff Buckley)\n**Lilac Wine** \u2013 (J. Shelton)\n**So Real** \u2013 (Jeff Buckley / Michael Tighe)\n**Hallelujah** \u2013 (Leonard Cohen)\n**Lover, You Should`ve Come Over** \u2013 (Jeff Buckley)\n**Corpus Christi Carol** \u2013 (Benjamin Britten)\n\n...\n\n### NOTES\nRecorded in the fall of 1993 at Bearsville Recording Studio in Woodstock, NY, GRACE features Jeff on vocals, guitars, keyboards, dulcimer and tabla; Mick Grondahl and Matt Thompson, members of his touring band, on bass and drums respectively; and production by Andy Wallace (Paw, White Zombie, Soul Asylum).\n\n...\n\nTipping his hat to the master, Buckley renders his interpretation of Leonard Cohen\u2019s \u201cHallelujah,\u201d a solo track recorded live-in-the-studio; the song is one of Jeff\u2019s most enthusiastically-received tunes in-concert."
+            ],
+            "url": "https://jeffbuckley.com/discography/grace/",
+            "publish_date": null,
+            "title": "Grace | Jeff Buckley"
+          },
+          {
+            "excerpts": [
+              "# **\u201cHallelujah\u201d\u2014Jeff Buckley (1994)**\n## **Added to the National Registry: 2014 Essay by Dave Lory and Jim Irvin (guest post)***\n_Jeff Buckley_\n\n### _Dave Lory was co-manager of Jeff Buckley until the artist\u2019s death in 1997. He lives in New Jersey. Jim Irvin is a songwriter and music journalist who lives in the UK. They collaborated on Lory\u2019s memoir, \u201cJeff Buckley: From Hallelujah To The Last Goodbye\u201d published in 2018._\n_*_ The views expressed in this essay are those of the author\nand do not necessarily represent the views of the Library of\nCongress."
+            ],
+            "url": "https://www.loc.gov/static/programs/national-recording-preservation-board/documents/Hallelujah_LoryIrvin.pdf",
+            "publish_date": "2019-06-18",
+            "title": "\u201cHallelujah\u201d\u2014Jeff Buckley (1994) Added to the National Registry: 2014"
+          },
+          {
+            "excerpts": [
+              "# Jeff Buckley \u2013 Hallelujah\n## Credits (6)\n* Mick Grondahl\n  Mick Grondahl\n  Bass\n* Jeff Buckley\n  Jeff Buckley\n  Dulcimer, Guitar, Harmonium, Organ\n* Steve Berkowitz\n  Steve Berkowitz\n  Executive-Producer\n* Jeff Buckley\n  Jeff Buckley\n  Guitar\n* Matt Johnson (3)\n  Matt Johnson (3)\n  Percussion, Drums\n* Jeff Buckley\n  Jeff Buckley\n  Producer\n\n## Versions\nFilter by\nFormat\nLabels & Companies\nCountry\nYear\n4 versions\nAdd to Wantlist\n\n...\n\n## Lists\nAdd to List\n* First and Foremost (Obscure Originals and Hit Covers) by plasquatch\nView More Lists \u2192\n,"
+            ],
+            "url": "https://www.discogs.com/master/486138-Jeff-Buckley-Hallelujah",
+            "publish_date": null,
+            "title": "Jeff Buckley \u2013 Hallelujah | Releases | Discogs"
+          },
+          {
+            "excerpts": [
+              "# Hallelujah _by_ Jeff Buckley\nAdded by silver203  [](https://archive.org/details/06-hallelujah/06+-+Hallelujah.mp3 \"Go to Internet Archive\")\nWritten by\nLeonard Cohen\n```\nEnglish\n```\nFirst recorded in\n1993\nReleased on\nGrace\nGrace\nAlbum\nAugust 23, 1994\nOther version\nHallelujah - I Know It's Over by Jeff Buckley (2000)\n\n...\n\nBuckley's version takes two verses from Cohen's 1984 version and three from his 1988 live version.\nRating\n(3rd best version)\nLicensing\n[Request a synchronization license](https://secondhandsongs.com/license/request/new?performance=1109)"
+            ],
+            "url": "https://secondhandsongs.com/performance/1109/all",
+            "publish_date": null,
+            "title": "Performance: Hallelujah by Jeff Buckley | SecondHandSongs"
+          },
+          {
+            "excerpts": [
+              "# Background\n## Recording\nCale](https://en.wikipedia.org/wiki/John_Cale \"John Cale\") . [[ 5 ]]() [[ 9 ]]() Buckley recorded more than 20 takes of \"Hallelujah\", with the final version edited together from several recordings. [[ 5 ]]()\nNear the end of the sessions, Buckley presented another song, \"Forget Her\", and the band quickly recorded it. Columbia felt the song had commercial potential, but Buckley and the band were unsure. [[ 5 ]]() In early 1994, when _Grace_ was almost complete, Buckley enlisted another guitarist, Moore's childhood friend Michael Tighe.\n\n...\n\n## Release history\n* Europe [[ 108 ]]() |August 15, 1994 |* [CD](https://en.wikipedia.org/wiki/Compact_disc \"Compact disc\")\n* [LP](https://en.wikipedia.org/wiki/LP_record \"LP record\") |[Columbia Records](https://en.wikipedia.org/wiki/Columbia_Records \"Columbia Records\") (Sony) |\n|United States [[ 108 ]]() |August 23, 1994 |CD |"
+            ],
+            "url": "https://en.wikipedia.org/wiki/Grace_(Jeff_Buckley_album)",
+            "publish_date": "2026-08-18",
+            "title": "Grace (Jeff Buckley album) - Wikipedia"
+          },
+          {
+            "excerpts": [
+              "# History\nFrom the album _[Grace](https://en.wikipedia.org/wiki/Grace_(Jeff_Buckley_album) \"Grace (Jeff Buckley album)\")_ , released in 1994. In 2007, Sony BMG rereleased the album (subtitled \"The Legacy Edition\") with a live music video of the song.\n\n...\n\n## Cover versions\n### Jeff Buckley\n[Single](https://en.wikipedia.org/wiki/Single_(music) \"Single (music)\") by [Jeff Buckley](https://en.wikipedia.org/wiki/Jeff_Buckley \"Jeff Buckley\")\nfrom the album _[Grace](https://en.wikipedia.org/wiki/Grace_(Jeff_Buckley_album) \"Grace (Jeff Buckley album)\")_\nReleased\n22 May 2007 [[ 57 ]]()\nRecorded\nLate 1993\u201394\n\n...\n\n[Jeff Buckley](https://en.wikipedia.org/wiki/Jeff_Buckley \"Jeff Buckley\") , inspired by Cale's earlier cover, recorded one of the most acclaimed versions of \"Hallelujah\" for his only complete album, _[Grace](https://en.wikipedia.org/wiki/Grace_(Jeff_Buckley_album) \"Grace (Jeff Buckley album)\")_ , in 1994."
+            ],
+            "url": "https://en.wikipedia.org/wiki/Hallelujah_(Leonard_Cohen_song)",
+            "publish_date": "2026-09-08",
+            "title": "Hallelujah (Leonard Cohen song) - Wikipedia"
+          },
+          {
+            "excerpts": [
+              "# Grace Around the World (CD/DVD)\n## TRACKS\n### NOTES\nIn advance of this summer\u2019s 15th anniversary of the release of Grace, Buckley\u2019s landmark debut album (August 1994), the two GRACE AROUND THE WORLD packages will be available at all physical and digital retail outlets starting June 2nd through Columbia/Legacy, a division of SONY MUSIC ENTERTAINMENT.\n\n...\n\nThese begin with three songs performed in New York for MTV\u2019s 120 Minutes (\u201cGrace,\u201d \u201cSo Real,\u201d \u201cLast Goodbye\u201d), then \u201cVancouver\u201d (from MTV\u2019s Most Wanted in London), and conclude with the original music video for \u201cHallelujah\u201d (directed by Ernie Fritz)."
+            ],
+            "url": "https://jeffbuckley.com/discography/grace-around-the-world-cddvd/",
+            "publish_date": "2009-05-29",
+            "title": "Grace Around the World (CD/DVD) | Jeff Buckley"
+          },
+          {
+            "excerpts": [
+              "# Grace by Jeff Buckley: The Complete Story\n## In TV, film and media\n\"Hallelujah\" is the song that has done most of the sync-licensing work, and it has done a great deal of it: The West Wing (\"Posse Comitatus\", 2002, which won the audio team an Emmy), The OC, ER, House, Scrubs, Cold Case, Without a Trace, Lord of War, the closing montage of multiple sports-broadcast tributes.\n\n...\n\n## Frequently Asked Questions\nAlbum Deep Dive Podcasts\nJeff Buckley 1994 Grace Andy Wallace Bearsville Studios Columbia Records Mick Grondahl Matt Johnson Michael Tighe Hallelujah Sin-e Podcast"
+            ],
+            "url": "https://riffology.co/posts/jeff-buckley-grace/",
+            "publish_date": "2026-05-17",
+            "title": "Grace by Jeff Buckley: The Complete Story"
+          },
+          {
+            "excerpts": [
+              "# Legacy Recordings\nAll Rights Reserved.\nLEGACY and the \"L Legacy\" logo are registered trademarks of Sony Music Entertainment.\nFollow Us\n\n...\n\n* [legacy.publicity@sonymusic.com](mailto:legacy.publicity@sonymusic.com)\n* [For Sync Licensing Inquiries click here](https://syncshop.sonymusic.com/)\n* [Send Us Feedback](http://www.sonymusic.com/feedback/)\n* [FAQ](https://www.sonymusic.com/faq/)\n* [Privacy Policy](http://www.sonymusic.com/privacy-policy/)"
+            ],
+            "url": "https://www.legacyrecordings.com/artists/jeff-buckley",
+            "publish_date": "2023-08-08",
+            "title": "Jeff Buckley - Legacy Recordings"
+          },
+          {
+            "excerpts": [
+              "# Sony (USA) Grace Press Release\nJune 1, 1994\n_Sony (USA) PR_\nSony Music Entertainment Biography\n**Source Region:** US\n**Source Country:** United States\n**Label:** COLUMBIA\n**Repertoire:** All Other, Alternative, AOR, Easy Listening, Heavy Metal, Jazz/Jazz, Rock, Rock\n**Biography Date:** 9406\n**Biography**\nJEFF BUCKLEY\n\n...\n\nTipping his hat to the master, Buckley renders his interpretation of Leonard Cohen\u2019s \u201cHallelujah,\u201d a solo track recorded live-in-the-studio; the song is one of Jeff\u2019s most enthusiastically-received tunes in-concert."
+            ],
+            "url": "https://jeffbuckley.com/articles-and-interviews/sony-usa-grace-press-release/",
+            "publish_date": null,
+            "title": "Sony (USA) Grace Press Release | Jeff Buckley"
+          }
+        ],
+        "search_id": "search_0a15cf520cfb0c2aa5cf147cd413c127",
+        "session_id": "session_0a15cf520cfb0c2aa5cf147cd413c127",
+        "usage": [
+          {
+            "count": 1,
+            "name": "sku_search"
+          }
+        ],
+        "warnings": null,
+        "metadata": null
+      },
+      "elapsed_s": 1.57
+    }
+  ]
+}
