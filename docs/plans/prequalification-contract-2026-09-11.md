@@ -218,3 +218,19 @@ negative decision cannot be replayed through this path. The same independent aud
 and entailment check must pass, with a two-logical-call limit and no new repair.
 Preserve the timeout artifact and run this remaining stage once before deciding
 whether to start the full fixture gate.
+
+Build `9913bfa` completed the exact saved safety candidate's two remaining checks in
+25.01 seconds (estimated $0.0238 returned usage). The accepted HIGH finding preserves
+the depicted fire, fireworks and night-water exposure, unknown production choices,
+conditional pyrotechnic licensing and water-device/accounting inquiries, with no
+numeric budget or schedule claim. In-session inspection against the original script
+and source excerpts accepts this as useful pre-qualification. Across the interrupted
+and resumed artifacts there were five successful logical stages and one cancelled
+attempt; the timeout is not erased from latency or spend evidence.
+
+The fresh clearance and safety examples now both survive without their observed
+unsupported details. This permits one full fixture run using the unchanged 54 checks;
+it does not establish held-out performance, rating calibration or production readiness.
+Offline validation at this point: 584 tests passed, lint/format and runtime-dependency
+checks passed. Public schemas, screenplay parsing and production desk call limits
+remain unchanged.
