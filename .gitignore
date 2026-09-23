@@ -21,3 +21,6 @@ runs/*
 
 .venv/
 .cache/
+
+# Riddlr lives here as its own repo; never part of GREENLIGHT
+riddlr/
