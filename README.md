@@ -2,7 +2,10 @@
 
 **Multi-agent screenplay clearance and production-risk analysis.**
 *(repo codename: greenlight — the product is ScriptRisk; its score kept the old name)*
-Live at **[scriptrisk.com](https://scriptrisk.com)** · built for the Agentic Cinema hackathon, Parallel track.
+> **Project closed (October 2026).** The hosted service at scriptrisk.com has been shut down and
+> this repository is archived read-only. The code remains here as a reference implementation.
+
+Formerly live at scriptrisk.com · built for the Agentic Cinema hackathon, Parallel track.
 
 ![The Production Risk Report — score, blockers, and clearance cost](docs/assets/shot-report-hero.png)
 
